@@ -3,10 +3,10 @@
 SUMMARY = "luna-surfacemanager qtwayland "
 AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
 
-DEPENDS += "webos-wayland-extensions qt-features-webos"
+DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 
 WEBOS_VERSION = "5.4.2-2_966ee3b9374a5925616b497243561031102a5448"
-EXTENDPRAUTO_append = "webos13"
+EXTENDPRAUTO_append = "webos14"
 
 # Upstream 5.5.0 recipe updated LIC_FILES_CHKSUM
 LIC_FILES_CHKSUM = " \
@@ -38,3 +38,13 @@ QT_WAYLAND_DEFINES_append = "QT_COMPOSITOR_QUICK"
 EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CONFIG+=lttng', '', d)}"
 
 EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"
+
+do_install_append_class-target() {
+    sed -i \
+        -e 's/fontdatabase_support//g' \
+        -e 's/eventdispatcher_support//g' \
+        -e 's/theme_support//g' \
+        -e 's/egl_support//g' \
+        ${D}${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/modules/qt_lib_waylandclient.pri \
+        || bbwarn "${D}${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/modules/qt_lib_waylandclient.pri is missing or the sed call failed"
+}
