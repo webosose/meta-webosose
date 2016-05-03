@@ -36,6 +36,7 @@ FILES_${PN}-dev += " \
 
 do_install_append() {
     sed -i 's@prefix=${STAGING_DIR_HOST}@prefix=@g;s@-L${STAGING_DIR_HOST} @ @g;' ${D}${libdir}/pkgconfig/*.pc
+    sed -i "s@-L${STAGING_LIBDIR}@-L\${libdir}@g" ${D}${libdir}/pkgconfig/*.pc
     if ${@bb.utils.contains('PACKAGECONFIG', 'compositor', 'true', 'false', d)}; then
         install -d ${D}${datadir}/webos-keymap
         ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/generate_qmap ${D}${datadir}/webos-keymap/webos-keymap.qmap

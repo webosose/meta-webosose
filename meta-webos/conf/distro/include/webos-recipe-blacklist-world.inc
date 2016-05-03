@@ -64,11 +64,13 @@ PNBLACKLIST[gimp] ?= "depends on blacklisted webkit-gtk"
 
 # Use webOS qt5 configuration
 PNBLACKLIST[qtwebengine] ?= "replaced by new qweless chromium and wam"
+PNBLACKLIST[qtwebview] ?= "depends on blacklisted qtwebengine"
 PNBLACKLIST[qtwebkit] ?= "depends on blacklisted qtlocation"
 PNBLACKLIST[qtwebkit-examples] ?= "depends on qtwebkit"
 PNBLACKLIST[qtquick1] ?= "depends on blacklisted qtwebkit"
 PNBLACKLIST[qttools] ?= "depends on qtwebkit"
 PNBLACKLIST[qt5-creator] ?= "depends on blacklisted qttools"
+PNBLACKLIST[qwt-qt5] ?= "depends on blacklisted qttools"
 PNBLACKLIST[qt3d] ?= "license of current version does not allow redistribution"
 PNBLACKLIST[qtlocation] ?= "has build dependency on qt3d"
 PNBLACKLIST[packagegroup-qt5-toolchain-target] ?= "rdepends on headers from blacklisted qtwebkit, qttools, qt3d, qtlocation"
@@ -76,6 +78,7 @@ PNBLACKLIST[qt5-creator] ?= "rdepends on blacklisted qttools, packagegroup-qt5-t
 PNBLACKLIST[qtscript] ?= "unused in webOS world"
 # https://anaconda.lgsvl.com/jenkins/job/webos-wearable-jansa-jethro-test-dependencies-qemux86/85/artifact/BUILD-ARTIFACTS/qemux86/2_max/failed/libconnman-qt5.log
 PNBLACKLIST[libconnman-qt5] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268"
+PNBLACKLIST[libqofono] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268"
 PNBLACKLIST[maliit-framework-qt5] ?= "maliit-framework-webos is preferred"
 PNBLACKLIST[maliit-plugins-qt5] ?= "depends on blacklisted maliit-framework-qt5"
 
