@@ -326,7 +326,7 @@ CONNECTIVITY_CHECK_URIS ?= "git://git.yoctoproject.org/yocto-firewall-test;proto
                           http://bugzilla.yoctoproject.org/report.cgi"
 
 SANITY_TESTED_DISTROS ?= " \
-    Ubuntu-14.04 \n \
-    Ubuntu-16.04 \n \
-    Ubuntu-18.04 \n \
+    ubuntu-14.04 \n \
+    ubuntu-16.04 \n \
+    ubuntu-18.04 \n \
 "
