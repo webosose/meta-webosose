@@ -1,7 +1,7 @@
-From f6b35bd52a2c91d82625d584d57d3d936e09881d Mon Sep 17 00:00:00 2001
+From 7fc0dadc947f0a259f72398dac45a8275265fca7 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
-Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
+Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
 
 ---
  libopkg/opkg_archive.c | 9 +++++++++
@@ -10,7 +10,7 @@ Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
  3 files changed, 11 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 7c1c823..f414259 100644
+index f7c02c3..74e0af5 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
 @@ -25,6 +25,7 @@
@@ -21,7 +21,7 @@ index 7c1c823..f414259 100644
  #include "file_util.h"
  #include "sprintf_alloc.h"
  #include "xfuncs.h"
-@@ -604,6 +605,14 @@ static int find_inner(struct archive *outer, const char *arname)
+@@ -648,6 +649,14 @@ static int find_inner(struct archive *outer, const char *arname)
          if (!entry)
              return -1;
  
@@ -37,10 +37,10 @@ index 7c1c823..f414259 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index d3a4f39..e90f9c3 100644
+index dfa2c57..8283860 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -110,6 +110,7 @@ typedef struct opkg_conf {
+@@ -118,6 +118,7 @@ typedef struct opkg_conf {
      int combine;
      int cache_local_files;
      int host_cache_dir;
@@ -49,10 +49,10 @@ index d3a4f39..e90f9c3 100644
      /* ssl options: used only when opkg is configured with '--enable-curl',
       * otherwise always NULL or 0.
 diff --git a/src/opkg.c b/src/opkg.c
-index 1aa0fd9..90d454c 100644
+index 6739832..dd338de 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -142,6 +142,7 @@ static int args_parse(int argc, char *argv[])
+@@ -150,6 +150,7 @@ static int args_parse(int argc, char *argv[])
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
@@ -60,3 +60,6 @@ index 1aa0fd9..90d454c 100644
              break;
          case 't':
              opkg_config->tmp_dir = xstrdup(optarg);
+-- 
+2.13.2
+

@@ -1,7 +1,7 @@
-From 79a9d91fed0a8db3468f6e2ad205bab8400487c0 Mon Sep 17 00:00:00 2001
+From ca6a84408a3a736ac2a413e32e57feaef766a139 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 16:54:15 +0530
-Subject: [PATCH] Load installed files before update file ownership
+Subject: [PATCH 1/5] Load installed files before update file ownership
 
 ---
  libopkg/opkg_install.c | 9 +++++++++
@@ -9,10 +9,10 @@ Subject: [PATCH] Load installed files before update file ownership
  2 files changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/libopkg/opkg_install.c b/libopkg/opkg_install.c
-index dbc155a..6af0dc9 100644
+index 76fdba2..d327cb7 100644
 --- a/libopkg/opkg_install.c
 +++ b/libopkg/opkg_install.c
-@@ -869,10 +869,19 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -879,10 +879,19 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
          }
      }
  
@@ -33,10 +33,10 @@ index dbc155a..6af0dc9 100644
       * between opkg database and filesystem */
  
 diff --git a/libopkg/pkg_hash.c b/libopkg/pkg_hash.c
-index f0321f8..c2aff2d 100644
+index f220a98..e4a0687 100644
 --- a/libopkg/pkg_hash.c
 +++ b/libopkg/pkg_hash.c
-@@ -782,11 +782,12 @@ pkg_t *file_hash_get_file_owner(const char *file_name)
+@@ -833,11 +833,12 @@ pkg_t *file_hash_get_file_owner(const char *file_name)
  void file_hash_set_file_owner(const char *file_name, pkg_t * owning_pkg)
  {
      pkg_t *old_owning_pkg;
@@ -52,3 +52,6 @@ index f0321f8..c2aff2d 100644
  
      if (old_owning_pkg) {
          pkg_get_installed_files(old_owning_pkg);
+-- 
+2.13.2
+

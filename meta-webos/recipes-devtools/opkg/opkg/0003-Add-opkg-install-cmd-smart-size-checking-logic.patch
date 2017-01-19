@@ -1,26 +1,25 @@
-From 4fbf30e7f692b9f68b5c074abd0b7e74b43d0108 Mon Sep 17 00:00:00 2001
+From 57aebbe7da6aaf398cf4ecf28ae844c0088da4bf Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
-Date: Fri, 7 Jul 2017 10:48:56 +0530
-Subject: [PATCH] Add opkg install cmd smart size checking logic
+Date: Mon, 6 Jun 2016 11:30:30 +0530
+Subject: [PATCH 3/5] Add opkg install cmd smart size checking logic
 
-Upstream-Status: Pending
 ---
  libopkg/opkg_archive.c  |  28 +++++++
  libopkg/opkg_archive.h  |   1 +
- libopkg/opkg_download.c |   6 ++
- libopkg/opkg_install.c  | 189 +++++++++++++++++++++++++++++++++++++++++++-----
+ libopkg/opkg_download.c |   9 +++
+ libopkg/opkg_install.c  | 192 +++++++++++++++++++++++++++++++++++++++++++-----
  libopkg/opkg_install.h  |   2 +
- libopkg/pkg.c           | 129 +++++++++++++++++++++++++++++++--
+ libopkg/pkg.c           | 149 +++++++++++++++++++++++++++++++++++--
  libopkg/pkg.h           |   7 +-
  libopkg/pkg_extract.c   |  23 ++++++
  libopkg/pkg_extract.h   |   1 +
- 9 files changed, 363 insertions(+), 23 deletions(-)
+ 9 files changed, 389 insertions(+), 23 deletions(-)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 001e8d7..f414259 100644
+index aa85f2d..f7c02c3 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
-@@ -483,6 +483,29 @@ static int extract_all(struct archive *a, const char *dest, int flags)
+@@ -484,6 +484,29 @@ static int extract_all(struct archive *a, const char *dest, int flags, long unsi
      return (r == ARCHIVE_OK) ? 0 : -1;
  }
  
@@ -50,8 +49,8 @@ index 001e8d7..f414259 100644
  /* Open an outer archive with the given filename. */
  static struct archive *open_outer(const char *filename)
  {
-@@ -796,6 +819,11 @@ int ar_extract_all(struct opkg_ar *ar, const char *prefix)
-     return extract_all(ar->ar, prefix, ar->extract_flags);
+@@ -851,6 +874,11 @@ int ar_extract_all(struct opkg_ar *ar, const char *prefix, long unsigned int *si
+     return extract_all(ar->ar, prefix, ar->extract_flags, size);
  }
  
 +int ar_extract_data_file_size_to_stream(struct opkg_ar *ar, FILE * stream)
@@ -63,19 +62,19 @@ index 001e8d7..f414259 100644
  {
      archive_read_free(ar->ar);
 diff --git a/libopkg/opkg_archive.h b/libopkg/opkg_archive.h
-index 55cc7b2..f7fa0b5 100644
+index 1360985..64c552d 100644
 --- a/libopkg/opkg_archive.h
 +++ b/libopkg/opkg_archive.h
 @@ -34,6 +34,7 @@ int ar_extract_file_to_stream(struct opkg_ar *ar, const char *filename,
                                FILE * stream);
  int ar_extract_paths_to_stream(struct opkg_ar *ar, FILE * stream);
- int ar_extract_all(struct opkg_ar *ar, const char *prefix);
+ int ar_extract_all(struct opkg_ar *ar, const char *prefix, long unsigned int *size);
 +int ar_extract_data_file_size_to_stream(struct opkg_ar *ar, FILE * stream);
  void ar_close(struct opkg_ar *ar);
  
  #ifdef __cplusplus
 diff --git a/libopkg/opkg_download.c b/libopkg/opkg_download.c
-index d922ad3..47b84dc 100644
+index a75d713..5ceea84 100644
 --- a/libopkg/opkg_download.c
 +++ b/libopkg/opkg_download.c
 @@ -23,8 +23,10 @@
@@ -89,19 +88,22 @@ index d922ad3..47b84dc 100644
  #include "opkg_message.h"
  #include "opkg_verify.h"
  #include "opkg_utils.h"
-@@ -403,6 +405,10 @@ static int opkg_prepare_file_for_install(const char *path, char **namep)
+@@ -403,6 +405,13 @@ static int opkg_prepare_file_for_install(const char *path, char **namep)
          }
      }
  
 +    // Save previously installed package installed_size
 +    // it's important value which used in verify_pkg_installable()
 +    pkg->prev_installed_size = opkg_get_pkg_installed_size(pkg);
++    // Now installed_size field of old package should be reset to 0
++    // after hash_insert_pkg();
++    pkg->installed_size = 0;
 +
      hash_insert_pkg(pkg, 1);
  
      if (namep)
 diff --git a/libopkg/opkg_install.c b/libopkg/opkg_install.c
-index 6af0dc9..5816fd7 100644
+index d327cb7..345e16a 100644
 --- a/libopkg/opkg_install.c
 +++ b/libopkg/opkg_install.c
 @@ -25,10 +25,14 @@
@@ -172,6 +174,7 @@ index 6af0dc9..5816fd7 100644
 +     str_list_t *new_list;
 +     str_list_elt_t *niter, *iter;
 +     size_t size = 0;
++
 +     new_pkg = pkg_hash_fetch_best_installation_candidate_by_name(pkg->name);
 +     if (!new_pkg)
 +        goto done_fail;
@@ -183,10 +186,10 @@ index 6af0dc9..5816fd7 100644
 +        goto done_fail;
 +
 +     // Achieved list have the following structure
++     // filename1
 +     // filesize1
++     // filename2
 +     // filesize2
-+     // filesize3
-+     // filesize4
 +     // ...
 +     // EOF
 +     // So we need to parse from it lines with sizes
@@ -196,7 +199,6 @@ index 6af0dc9..5816fd7 100644
 +        char *new_file = (char *)iter->data;
 +        size += atoi(new_file);
 +     }
-+
 +     new_pkg->installed_files = NULL;
 +
 +     opkg_msg(DEBUG, "After recalculation: new packages requires %zu bytes\n", size);
@@ -241,7 +243,7 @@ index 6af0dc9..5816fd7 100644
          else
              root_dir = pkg->dest->root_dir;
      }
-@@ -114,18 +206,76 @@ static int verify_pkg_installable(pkg_t * pkg)
+@@ -114,18 +206,79 @@ static int verify_pkg_installable(pkg_t * pkg)
      if (!root_dir)
          root_dir = opkg_config->default_dest->root_dir;
  
@@ -283,6 +285,7 @@ index 6af0dc9..5816fd7 100644
 +                opkg_msg(DEBUG, "File %s size is %zu bytes\n", pkg->local_filename, (size_t) st.st_size);
 +
 +                new_size = st.st_size * IPK_COMPRESS_RATIO;
++                pkg->use_compress_ratio_estimation = 1;
 +
 +                opkg_msg(DEBUG, "With compress ratio %.1f "
 +                        "the size of package should be %zu bytes\n",
@@ -292,7 +295,9 @@ index 6af0dc9..5816fd7 100644
 +
 +        case USE_REAL_CALCULATION: // Get size through calculation. The longest path.
 +            new_size = opkg_get_pkg_size_to_install(pkg);
-+            pkg->use_real_calculation = 1;
++
++            // Reset compress ratio estimation flag, it could be set previously
++            pkg->use_compress_ratio_estimation = 0;
 +            break;
 +    }
 +
@@ -325,7 +330,7 @@ index 6af0dc9..5816fd7 100644
      return 0;
  }
  
-@@ -944,9 +1094,8 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -954,9 +1107,8 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
      opkg_msg(INFO, "Installing maintainer scripts.\n");
      err = install_maintainer_scripts(pkg, old_pkg);
      if (err) {
@@ -337,7 +342,7 @@ index 6af0dc9..5816fd7 100644
          goto pkg_is_hosed;
      }
  
-@@ -957,9 +1106,9 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -967,9 +1119,9 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
  
      err = install_data_files(pkg);
      if (err) {
@@ -350,14 +355,14 @@ index 6af0dc9..5816fd7 100644
          goto pkg_is_hosed;
      }
  
-@@ -989,6 +1138,12 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -999,6 +1151,12 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
          ab_pkg->state_status = pkg->state_status;
  
      sigprocmask(SIG_UNBLOCK, &newset, &oldset);
 +
 +    // Save calculated value to the control file of a package
-+    // Only If we are doing a real calculation to install package
-+    if (pkg->use_real_calculation)
++    // Only If we not used a compress ratio estimation
++    if (!pkg->use_compress_ratio_estimation)
 +        save_field_to_control_file(pkg, "Installed-Size: %lu\n", pkg->installed_size);
 +
      return 0;
@@ -377,7 +382,7 @@ index d1071e1..7bee148 100644
  #ifdef __cplusplus
  }
 diff --git a/libopkg/pkg.c b/libopkg/pkg.c
-index 0f280b3..b6d086c 100644
+index 7e555b8..e8f9891 100644
 --- a/libopkg/pkg.c
 +++ b/libopkg/pkg.c
 @@ -25,6 +25,9 @@
@@ -390,16 +395,16 @@ index 0f280b3..b6d086c 100644
  
  #include "pkg.h"
  
-@@ -121,6 +124,8 @@ static void pkg_init(pkg_t * pkg)
+@@ -119,6 +122,8 @@ static void pkg_init(pkg_t * pkg)
      pkg->sha256sum = NULL;
      pkg->size = 0;
      pkg->installed_size = 0;
 +    pkg->prev_installed_size = 0;
-+    pkg->use_real_calculation = 0;
++    pkg->use_compress_ratio_estimation = 0;
      pkg->priority = NULL;
      pkg->source = NULL;
      conffile_list_init(&pkg->conffiles);
-@@ -392,7 +397,10 @@ int pkg_merge(pkg_t * oldpkg, pkg_t * newpkg)
+@@ -388,7 +393,10 @@ int pkg_merge(pkg_t * oldpkg, pkg_t * newpkg)
  #endif
      if (!oldpkg->size)
          oldpkg->size = newpkg->size;
@@ -411,7 +416,7 @@ index 0f280b3..b6d086c 100644
          oldpkg->installed_size = newpkg->installed_size;
      if (!oldpkg->priority)
          oldpkg->priority = xstrdup(newpkg->priority);
-@@ -433,7 +441,37 @@ abstract_pkg_t *abstract_pkg_new(void)
+@@ -429,7 +437,37 @@ abstract_pkg_t *abstract_pkg_new(void)
      return ab_pkg;
  }
  
@@ -450,7 +455,7 @@ index 0f280b3..b6d086c 100644
  {
      char *file_name;
      FILE *fp;
-@@ -445,12 +483,12 @@ void set_flags_from_control(pkg_t * pkg)
+@@ -441,12 +479,12 @@ void set_flags_from_control(pkg_t * pkg)
      if (fp == NULL) {
          opkg_perror(ERROR, "Failed to open %s", file_name);
          free(file_name);
@@ -465,7 +470,7 @@ index 0f280b3..b6d086c 100644
      if (r != 0) {
          opkg_msg(DEBUG, "Unable to read control file for %s. May be empty.\n",
                   pkg->name);
-@@ -458,7 +496,88 @@ void set_flags_from_control(pkg_t * pkg)
+@@ -454,7 +492,108 @@ void set_flags_from_control(pkg_t * pkg)
  
      fclose(fp);
  
@@ -486,6 +491,7 @@ index 0f280b3..b6d086c 100644
 +     char *list_file_name = NULL;
 +     FILE *list_file = NULL;
 +     char *line = NULL;
++     char *installed_file_name = NULL;
 +     char *installed_file_size = NULL;
 +     struct statvfs st;
 +
@@ -538,10 +544,29 @@ index 0f280b3..b6d086c 100644
 +	  if (line == NULL) {
 +	       break;
 +	  }
-+
++	  if (opkg_config->offline_root) // Check whether option '-o' was used
++		  sprintf_alloc(&installed_file_name, "%s/%s", opkg_config->offline_root, line);
++	  else
++		  sprintf_alloc(&installed_file_name, "/%s", line);
++	  free(line);
++	  line = file_read_line_alloc(list_file);
 +	  sprintf_alloc(&installed_file_size, "%s", line);
 +	  free(line);
 +
++	  if (installed_file_size[0] == '0') {
++		if (!statvfs(installed_file_name, &st)) {
++			if (st.f_flag & ST_RDONLY) {
++				opkg_msg(ERROR, "%s Read-only file system.\n", pkg->local_filename);
++				free(installed_file_name);
++				free(installed_file_size);
++				fclose(list_file);
++				unlink(list_file_name);
++				free(list_file_name);
++				return NULL;
++			}
++		}
++	  }
++	  free(installed_file_name);
 +	  str_list_append(pkg->installed_files, installed_file_size);
 +	  free(installed_file_size);
 +     }
@@ -556,19 +581,19 @@ index 0f280b3..b6d086c 100644
  
  static const char *pkg_state_want_to_str(pkg_state_want_t sw)
 diff --git a/libopkg/pkg.h b/libopkg/pkg.h
-index e6e894b..3812941 100644
+index 426f10e..e979434 100644
 --- a/libopkg/pkg.h
 +++ b/libopkg/pkg.h
-@@ -161,6 +161,8 @@ struct pkg {
+@@ -160,6 +160,8 @@ struct pkg {
      char *sha256sum;
      unsigned long size;     /* in bytes */
      unsigned long installed_size;   /* in bytes */
 +    size_t prev_installed_size; // Previous package installed size
-+    int use_real_calculation;
++    int use_compress_ratio_estimation;
      char *priority;
      char *source;
      conffile_list_t conffiles;
-@@ -204,9 +206,12 @@ int abstract_pkg_name_compare(const void *a, const void *b);
+@@ -203,9 +205,12 @@ int abstract_pkg_name_compare(const void *a, const void *b);
  
  void pkg_formatted_info(FILE * fp, pkg_t * pkg);
  
@@ -583,7 +608,7 @@ index e6e894b..3812941 100644
  void pkg_free_installed_files(pkg_t * pkg);
  void pkg_remove_installed_files_list(pkg_t * pkg);
 diff --git a/libopkg/pkg_extract.c b/libopkg/pkg_extract.c
-index b681f26..250a4e2 100644
+index 796c98b..8e40b9a 100644
 --- a/libopkg/pkg_extract.c
 +++ b/libopkg/pkg_extract.c
 @@ -123,3 +123,26 @@ int pkg_extract_data_file_names_to_stream(pkg_t * pkg, FILE * stream)
@@ -626,5 +651,5 @@ index 2f5cca6..d690044 100644
  #ifdef __cplusplus
  }
 -- 
-1.9.1
+2.13.2
 
