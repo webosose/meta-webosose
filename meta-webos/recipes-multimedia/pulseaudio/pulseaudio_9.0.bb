@@ -2,6 +2,22 @@
 
 require recipes-multimedia/pulseaudio/pulseaudio.inc
 
+# Restore the LIC_FILES_CHKSUM for 9.0 version
+# pulseaudio.inc is already using different one for 10.0
+LICENSE = "GPLv2+ & LGPLv2.1"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=d9ae089c8dc5339f8ac9d8563038a29f \
+                    file://GPL;md5=4325afd396febcb659c36b49533135d4 \
+                    file://LGPL;md5=2d5025d4aa3495befef8f17206a5b0a1 \
+                    file://src/pulsecore/resampler.h;beginline=4;endline=21;md5=09794012ae16912c0270f3280cc8ff84 \
+"
+
+# removed from oe-core's pulseaudio.inc in upgrade from 9.0 to 10.0
+# commit 4ddaf28fd36294fd940f26d55973da20eeeeb0d8
+# Author:  Tanu Kaskinen <tanuk@iki.fi>
+# Date:    Fri Feb 3 09:06:35 2017 +0200
+# Subject: pulseaudio: 9.0 -> 10.0
+DEPENDS += "json-c gdbm"
+
 # This is blacklisted because of the license
 DEPENDS_remove = "libatomic-ops"
 
