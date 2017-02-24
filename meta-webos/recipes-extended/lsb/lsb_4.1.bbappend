@@ -6,8 +6,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 inherit webos_core_os_dep
 
-SRC_URI += "file://fix-lsb_release-to-work-with-busybox-head-and-find.patch \
-            file://fix-lsb_release-to-work-if-there-are-parens-in-release-codename.patch"
+SRC_URI += "file://fix-lsb_release-to-work-if-there-are-parens-in-release-codename.patch"
 
 WEBOS_TARGET_CORE_OS ?= "undefined"
 BUILD_INFO_FILE = "${DISTRO}-release"
