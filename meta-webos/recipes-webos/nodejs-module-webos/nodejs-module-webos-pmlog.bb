@@ -6,7 +6,7 @@ SECTION = "webos/nodejs/module"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS = "pmloglib node-gyp-native"
+DEPENDS = "pmloglib node-gyp-native vim-native"
 
 WEBOS_VERSION = "3.0.1-1_03fc1bc90518390eea0acd7639d6074c16c61195"
 PR = "r6"
