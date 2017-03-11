@@ -22,3 +22,7 @@ SRC_URI_append_class-target = " file://version-script.patch"
 do_install_append() {
     mv ${D}${sysconfdir}/ssl/openssl.cnf ${D}${sysconfdir}/ssl/openssl.cnf.${BPN}
 }
+
+pkg_postinst_openssl-conf_forcevariable () {
+    :
+}
