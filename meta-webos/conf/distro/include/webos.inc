@@ -321,9 +321,14 @@ https://.*/.*    http://downloads.yoctoproject.org/mirror/sources/ \n"
 # The CONNECTIVITY_CHECK_URI's are used to test whether we can succesfully
 # fetch from the network (and warn you if not). To disable the test set
 # the variable to be empty.
-CONNECTIVITY_CHECK_URIS ?= "git://git.yoctoproject.org/yocto-firewall-test;protocol=git;rev=HEAD \
-                          https://eula-downloads.yoctoproject.org/index.php \
-                          http://bugzilla.yoctoproject.org/report.cgi"
+CONNECTIVITY_CHECK_URIS ?= " \
+    git://git.yoctoproject.org/yocto-firewall-test;protocol=git;rev=master \
+    https://eula-downloads.yoctoproject.org/index.php \
+    http://bugzilla.yoctoproject.org/report.cgi"
+
+# Cannot use this now with latest Yocto 2.4 because of ssh removed from HOSTTOOLS, see:
+# http://lists.openembedded.org/pipermail/openembedded-core/2017-October/143279.html
+#    git://gpro.lgsvl.com/webos-pro/meta-lg-webos;protocol=ssh;rev=master
 
 SANITY_TESTED_DISTROS ?= " \
     ubuntu-14.04 \n \
