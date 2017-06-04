@@ -1,7 +1,7 @@
-From b592977293f09793cb7a9da5c08080548948ddbe Mon Sep 17 00:00:00 2001
+From d7513021daba456bd04bf2d666a4534466bca28a Mon Sep 17 00:00:00 2001
 From: Simon Busch <simon.busch@lge.com>
 Date: Fri, 21 Nov 2014 15:46:21 +0100
-Subject: [PATCH 2/2] gdbus-codegen: replace all non alpha characters with an
+Subject: [PATCH] gdbus-codegen: replace all non alpha characters with an
  underscore
 
 We need to replace all non alpha characters in the header guard name
@@ -14,18 +14,18 @@ Upstream-Status: pending
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gio/gdbus-2.0/codegen/codegen.py b/gio/gdbus-2.0/codegen/codegen.py
-index 2f5ba83..5990f82 100644
+index f9f404c91..363098980 100644
 --- a/gio/gdbus-2.0/codegen/codegen.py
 +++ b/gio/gdbus-2.0/codegen/codegen.py
-@@ -49,7 +49,7 @@ class CodeGenerator:
+@@ -50,7 +50,7 @@ class CodeGenerator:
              self.ns_upper = ''
              self.ns_lower = ''
          self.interface_prefix = interface_prefix
--        self.header_guard = self.h.name.upper().replace('.', '_').replace('-', '_').replace('/', '_')
-+        self.header_guard = "".join([c if c.isalpha() else "_" for c in self.h.name])
+-        self.header_guard = header_name.upper().replace('.', '_').replace('-', '_').replace('/', '_')
++        self.header_guard = "".join([c if c.isalpha() else "_" for c in header_name.upper()])
  
      # ----------------------------------------------------------------------------------------------------
  
 -- 
-1.9.1
+2.13.0
 
