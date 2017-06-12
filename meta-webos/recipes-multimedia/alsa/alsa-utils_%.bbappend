@@ -2,7 +2,7 @@
 
 EXTENDPRAUTO_append = "webos2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BP}:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 # this patch adds --disable-libsamplerate configure option
 SRC_URI += "file://disable-libsamplerate.patch"
