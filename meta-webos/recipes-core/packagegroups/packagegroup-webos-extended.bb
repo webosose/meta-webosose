@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r31"
+PR = "r32"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -184,7 +184,7 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
     procps \
     psmisc \
     sqlite3 \
-    ${@'systemd-analyze' if '${VIRTUAL-RUNTIME_init_manager}' == 'systemd' else 'sysvinit-pidof'} \
+    ${@oe.utils.conditional('VIRTUAL-RUNTIME_init_manager', 'systemd', 'systemd-analyze', 'sysvinit-pidof', d)} \
 "
 
 # These packages that are installed in the qemux86 image only.
