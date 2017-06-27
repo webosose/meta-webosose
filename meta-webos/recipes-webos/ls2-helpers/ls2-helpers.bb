@@ -20,3 +20,6 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+# From http://gpro.lgsvl.com/176219
+SRC_URI += "file://0001-test_subscriptionpoint.cpp-Prevent-issues-with-new-g.patch"
