@@ -1,4 +1,4 @@
-From 7fc0dadc947f0a259f72398dac45a8275265fca7 Mon Sep 17 00:00:00 2001
+From 71bf974bb4440a7f4003fb51cf6c9617487ccb2f Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
 Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
@@ -10,7 +10,7 @@ Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
  3 files changed, 11 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index f7c02c3..74e0af5 100644
+index b2edee3..b44e59b 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
 @@ -25,6 +25,7 @@
@@ -21,7 +21,7 @@ index f7c02c3..74e0af5 100644
  #include "file_util.h"
  #include "sprintf_alloc.h"
  #include "xfuncs.h"
-@@ -648,6 +649,14 @@ static int find_inner(struct archive *outer, const char *arname)
+@@ -655,6 +656,14 @@ static int find_inner(struct archive *outer, const char *arname)
          if (!entry)
              return -1;
  
@@ -37,13 +37,13 @@ index f7c02c3..74e0af5 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index dfa2c57..8283860 100644
+index fcac8dd..68eb4a2 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -118,6 +118,7 @@ typedef struct opkg_conf {
-     int combine;
+@@ -119,6 +119,7 @@ typedef struct opkg_conf {
      int cache_local_files;
      int host_cache_dir;
+     int verbose_status_file;
 +    unsigned int webos_offline_root_flag;
  
      /* ssl options: used only when opkg is configured with '--enable-curl',
