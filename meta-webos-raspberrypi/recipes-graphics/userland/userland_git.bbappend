@@ -27,6 +27,7 @@ SRC_URI_remove = "\
     file://0010-Fix-for-framerate-with-nested-composition.patch \
     file://0011-build-shared-library-for-vchostif.patch \
     file://0012-implement-buffer-wrapping-interface-for-dispmanx.patch \
+    file://0013-Implement-triple-buffering-for-wayland.patch \
 "
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"

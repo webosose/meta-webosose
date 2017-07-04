@@ -1,20 +1,20 @@
-From 3f06a98f914eaf4dec492371acb721f1b5adbfa6 Mon Sep 17 00:00:00 2001
+From 961b1cec9296b070b7a6f2fc5e9766d2c2e53d4c Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Tue, 27 Jun 2017 21:22:05 +0900
 Subject: [PATCH] Remove EGL dependency
 
 ---
- CMakeLists.txt                         | 30 +++---------------------------
+ CMakeLists.txt                         | 28 +++-------------------------
  host_applications/linux/CMakeLists.txt | 20 --------------------
  interface/vmcs_host/CMakeLists.txt     |  2 +-
  makefiles/cmake/vmcs.cmake             |  2 +-
  middleware/openmaxil/CMakeLists.txt    |  1 -
  pkgconfig/openmaxil.pc.in              | 10 ++++++++++
- 6 files changed, 15 insertions(+), 50 deletions(-)
+ 6 files changed, 15 insertions(+), 48 deletions(-)
  create mode 100644 pkgconfig/openmaxil.pc.in
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 98252c3..516310d 100644
+index cfc8ae5..6dad654 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -8,13 +8,6 @@ SET(PROJECT_VER_PATCH 0)
@@ -93,19 +93,15 @@ index 98252c3..516310d 100644
  set(vmcs_host_apps_VERSION_MAJOR 1)
  set(vmcs_host_apps_VERSION_MINOR 0)
  
-@@ -122,11 +100,9 @@ include_directories("${PROJECT_BINARY_DIR}")
+@@ -122,7 +100,7 @@ include_directories("${PROJECT_BINARY_DIR}")
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
  	# Produce a pkg-config file
--	foreach(PCFILE bcm_host.pc  egl.pc  glesv2.pc  vg.pc brcmegl.pc  brcmglesv2.pc  brcmvg.pc )
-+	foreach(PCFILE bcm_host.pc vg.pc brcmvg.pc openmaxil.pc)
+-	foreach(PCFILE bcm_host.pc egl.pc glesv2.pc vg.pc brcmegl.pc brcmglesv2.pc  brcmvg.pc vcsm.pc mmal.pc )
++	foreach(PCFILE bcm_host.pc vg.pc brcmvg.pc openmaxil.pc vcsm.pc mmal.pc)
  		configure_file("pkgconfig/${PCFILE}.in" "${PCFILE}" @ONLY)
  		install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PCFILE}"
  			DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
- 	endforeach()
- endif()
--# Remove cache entry, if one added by command line
--unset(KHRONOS_EGL_PLATFORM CACHE)
 diff --git a/host_applications/linux/CMakeLists.txt b/host_applications/linux/CMakeLists.txt
 index e8615cc..5b0966b 100644
 --- a/host_applications/linux/CMakeLists.txt
@@ -135,7 +131,7 @@ index e8615cc..5b0966b 100644
 -endif()
 -
 diff --git a/interface/vmcs_host/CMakeLists.txt b/interface/vmcs_host/CMakeLists.txt
-index 0b3adc9..0f9f64a 100755
+index fde18da..e0cd3ef 100755
 --- a/interface/vmcs_host/CMakeLists.txt
 +++ b/interface/vmcs_host/CMakeLists.txt
 @@ -23,7 +23,7 @@ add_library(vcilcs
@@ -148,7 +144,7 @@ index 0b3adc9..0f9f64a 100755
  # vchostif needs ilcore as well (vmcs_main pulls it in)
  target_link_libraries(vchostif vchiq_arm vcos vcfiled_check)
 diff --git a/makefiles/cmake/vmcs.cmake b/makefiles/cmake/vmcs.cmake
-index 718cd3b..ad0d22b 100644
+index 718cd3b..90a3ec7 100644
 --- a/makefiles/cmake/vmcs.cmake
 +++ b/makefiles/cmake/vmcs.cmake
 @@ -73,8 +73,8 @@ install(DIRECTORY ${vmcs_root}/interface/vctypes   DESTINATION ${VMCS_INSTALL_PR
