@@ -10,7 +10,7 @@ DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 RDEPENDS_${PN} += "qml-webos-components"
 
 WEBOS_VERSION = "1.0.0-2_4b08d42427d1e63f2a89ca15223d88541e193d4c"
-PR = "r10"
+PR = "r11"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -23,3 +23,9 @@ S = "${WORKDIR}/git"
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/WebOSServices/*"
+
+do_install_append() {
+    # until /usr/lib/qt5/qml paths in .qml files are updated to respect OE_QMAKE_PATH_QML
+    ln -snf . ${D}/${libdir}/qt5
+}
+FILES_${PN} += "${libdir}/qt5"
