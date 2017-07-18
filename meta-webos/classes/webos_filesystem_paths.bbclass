@@ -18,7 +18,12 @@ webos_mntdir = "${base_prefix}/mnt"
 webos_pkgconfigdir = "${datadir}/pkgconfig"
 webos_preservedtmpdir = "${localstatedir}/tmp"
 # Having a Qt plugins directory is standard, but the value used by webOS OSE isn't.
-webos_qtpluginsdir = "${libdir}/qt5/plugins"
+# OE_QMAKE_PATH_QT_ARCHDATA might be undefined in components which don't inherit qmake5_paths
+# and cmake-modules-webos-native.bb:do_configure expects absolute path here
+# | CMake Error at webOS/webOS.cmake:316 (message):
+# |   ENV{webos_qtpluginsdir} is not an absolute path:
+# |   '${OE_QMAKE_PATH_QT_ARCHDATA}'
+webos_qtpluginsdir = "${libdir}/plugins"
 webos_runtimeinfodir = "${localstatedir}/run"
 webos_srcdir = "${prefix}/src"
 webos_udevscriptsdir = "${base_libdir}/udev"

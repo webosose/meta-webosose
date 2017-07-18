@@ -287,6 +287,9 @@ EXTRAOPKGCONFIG = ""
 # with multilib libdir would became /usr/lib64 and we want opkg files in /usr/lib
 OPKGLIBDIR_forcevariable := "${exec_prefix}/lib"
 
+# We don't plan to ever support qt4
+QT_DIR_NAME = ""
+
 BB_DISKMON_DIRS = "\
     STOPTASKS,${TMPDIR},2G,100K \
     STOPTASKS,${DL_DIR},2G,100K \
