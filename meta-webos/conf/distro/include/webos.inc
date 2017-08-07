@@ -76,11 +76,7 @@ WEBOS_IMAGE_NAME_PARTITION_SUFFIX ?= ""
 IMAGE_NAME = "${IMAGE_BASENAME}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}"
 IMAGE_LINK_NAME = "${IMAGE_NAME}${WEBOS_IMAGE_NAME_SUFFIX}"
 
-# This is used by image-vmdk.bbclass and default value "${IMGDEPLOYDIR}/${IMAGE_BASENAME}-${MACHINE}.ext3"
-# cannot be used until it's fixed (probably with Yocto 2.1):
-# http://lists.openembedded.org/pipermail/openembedded-core/2015-November/112785.html
-# http://lists.openembedded.org/pipermail/openembedded-core/2015-November/112784.html
-ROOTFS = "${IMGDEPLOYDIR}/${IMAGE_LINK_NAME}.ext4"
+INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}${WEBOS_IMAGE_NAME_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
 
 # Use a different naming scheme for webOS kernel images that uses the component
 # name instead of the name of the image format (KERNEL_IMAGETYPE) and leaves off
@@ -262,19 +258,6 @@ PACKAGE_ARCH_pn-meta-toolchain = "${TUNE_PKGARCH}"
 # packagegroup-cross-canadian-qemux86 package in MACHINE_ARCH feed (opkg-sdk.conf
 # doesn't contain MACHINE_ARCH).
 PACKAGE_ARCH_pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFIX}"
-
-# The webOS OSE distro is packaged into these image types:
-IMAGE_FSTYPES ?= "tar.gz"
-
-# Only create a vmdk image when we're building for x86 emulator,
-# i.e. when MACHINE is qemux86 or qemux86-64
-# If IMAGE_FSTYPES_append_qemux86 = " vmdk" is used, the inherit of
-# image-vmdk.bbclass in image.bbclass doesn't happen, because IMAGE_FSTYPES
-# overrides are expanded too late.
-IMAGE_FSTYPES := "${@ '${IMAGE_FSTYPES} vmdk' if '${MACHINE}'.startswith('qemux86') else '${IMAGE_FSTYPES}' }"
-
-# "tar.bz2 ext3" is added by qemu.inc, replace tar.bz2 with tar.gz in it
-IMAGE_FSTYPES := "${@ ' ${IMAGE_FSTYPES} '.replace(' tar.bz2 ',' tar.gz ') }"
 
 PATH_prepend = "${WEBOS_EXTRA_PATH}"
 

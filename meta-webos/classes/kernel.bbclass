@@ -22,8 +22,8 @@ do_webos_deploy_fixup_prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.bin ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.bin \
                ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_SYMLINK_NAME}.bin
-    [ -e       ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.bin ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_BASE_NAME}.bin \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin \
                ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}
     [ -e       ${DEPLOY_DIR_IMAGE}/${MODULE_IMAGE_BASE_NAME}.tgz ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${MODULE_IMAGE_BASE_NAME}.bin \
