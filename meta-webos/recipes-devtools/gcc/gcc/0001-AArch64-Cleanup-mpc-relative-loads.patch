@@ -1,8 +1,8 @@
-From e0dbfaff1d36bec43bc7a594d28a73ed39d73296 Mon Sep 17 00:00:00 2001
+From 3a03b91c6dc7be9437eacfeb9b167a898ee409b1 Mon Sep 17 00:00:00 2001
 From: Yvan Roux <yvan.roux@linaro.org>
 Date: Sat, 3 Sep 2016 19:13:21 +0200
-Subject: [PATCH] gcc/ Backport from trunk r237607. 2016-06-20 Wilco Dijkstra
- <wdijkstr@arm.com>
+Subject: [PATCH 5/5] 	gcc/ 	Backport from trunk r237607. 	2016-06-20 
+ Wilco Dijkstra  <wdijkstr@arm.com>
 
 	* config/aarch64/aarch64.opt
 	(mpc-relative-literal-loads): Rename internal option name.
@@ -18,12 +18,12 @@ Subject: [PATCH] gcc/ Backport from trunk r237607. 2016-06-20 Wilco Dijkstra
 
 Change-Id: Ie45ef06d2a93809b42915c3109121228867862fc
 ---
- gcc/config/aarch64/aarch64.c   | 64 ++++++++++++++++++++----------------------
+ gcc/config/aarch64/aarch64.c   | 46 ++++++++++++++++++++----------------------
  gcc/config/aarch64/aarch64.opt |  2 +-
- 2 files changed, 31 insertions(+), 35 deletions(-)
+ 2 files changed, 23 insertions(+), 25 deletions(-)
 
 diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
-index 199147adb..5b4cbb3be 100644
+index e79165b0fb2..d2f15e0a0d2 100644
 --- a/gcc/config/aarch64/aarch64.c
 +++ b/gcc/config/aarch64/aarch64.c
 @@ -152,7 +152,7 @@ enum aarch64_processor aarch64_tune = cortexa53;
@@ -44,7 +44,7 @@ index 199147adb..5b4cbb3be 100644
  	    {
  	      gcc_assert (can_create_pseudo_p ());
  	      base = gen_reg_rtx (ptr_mode);
-@@ -4038,7 +4038,7 @@ aarch64_classify_address (struct aarch64_address_info *info,
+@@ -4028,7 +4028,7 @@ aarch64_classify_address (struct aarch64_address_info *info,
  	  return ((GET_CODE (sym) == LABEL_REF
  		   || (GET_CODE (sym) == SYMBOL_REF
  		       && CONSTANT_POOL_ADDRESS_P (sym)
@@ -53,7 +53,7 @@ index 199147adb..5b4cbb3be 100644
  	}
        return false;
  
-@@ -5193,7 +5193,7 @@ aarch64_secondary_reload (bool in_p ATTRIBUTE_UNUSED, rtx x,
+@@ -5183,7 +5183,7 @@ aarch64_secondary_reload (bool in_p ATTRIBUTE_UNUSED, rtx x,
    if (MEM_P (x) && GET_CODE (x) == SYMBOL_REF && CONSTANT_POOL_ADDRESS_P (x)
        && (SCALAR_FLOAT_MODE_P (GET_MODE (x))
  	  || targetm.vector_mode_supported_p (GET_MODE (x)))
@@ -62,7 +62,7 @@ index 199147adb..5b4cbb3be 100644
      {
        sri->icode = aarch64_constant_pool_reload_icode (mode);
        return NO_REGS;
-@@ -5527,7 +5527,7 @@ aarch64_uxt_size (int shift, HOST_WIDE_INT mask)
+@@ -5517,7 +5517,7 @@ aarch64_uxt_size (int shift, HOST_WIDE_INT mask)
  static inline bool
  aarch64_can_use_per_function_literal_pools_p (void)
  {
@@ -71,7 +71,7 @@ index 199147adb..5b4cbb3be 100644
  	  || aarch64_cmodel == AARCH64_CMODEL_LARGE);
  }
  
-@@ -8053,32 +8053,31 @@ aarch64_override_options_after_change_1 (struct gcc_options *opts)
+@@ -8043,32 +8043,31 @@ aarch64_override_options_after_change_1 (struct gcc_options *opts)
  	opts->x_align_functions = aarch64_tune_params.function_align;
      }
  
@@ -120,43 +120,18 @@ index 199147adb..5b4cbb3be 100644
  }
  
  /* 'Unpack' up the internal tuning structs and update the options
-@@ -9280,18 +9279,6 @@ aarch64_classify_symbol (rtx x, rtx offset)
- 
-   if (GET_CODE (x) == SYMBOL_REF)
-     {
--      if (aarch64_cmodel == AARCH64_CMODEL_LARGE)
--	{
--	  /* This is alright even in PIC code as the constant
--	     pool reference is always PC relative and within
--	     the same translation unit.  */
+@@ -9314,8 +9313,7 @@ aarch64_classify_symbol (rtx x, rtx offset)
+ 	  /* This is alright even in PIC code as the constant
+ 	     pool reference is always PC relative and within
+ 	     the same translation unit.  */
 -	  if (nopcrelative_literal_loads
 -	      && CONSTANT_POOL_ADDRESS_P (x))
--	    return SYMBOL_SMALL_ABSOLUTE;
--	  else
--	    return SYMBOL_FORCE_TO_MEM;
--	}
--
-       if (aarch64_tls_symbol_p (x))
- 	return aarch64_classify_tls_symbol (x);
- 
-@@ -9332,6 +9319,15 @@ aarch64_classify_symbol (rtx x, rtx offset)
- 		    ?  SYMBOL_SMALL_GOT_28K : SYMBOL_SMALL_GOT_4G);
- 	  return SYMBOL_SMALL_ABSOLUTE;
- 
-+	case AARCH64_CMODEL_LARGE:
-+	  /* This is alright even in PIC code as the constant
-+	     pool reference is always PC relative and within
-+	     the same translation unit.  */
 +	  if (CONSTANT_POOL_ADDRESS_P (x))
-+	    return SYMBOL_SMALL_ABSOLUTE;
-+	  else
-+	    return SYMBOL_FORCE_TO_MEM;
-+
- 	default:
- 	  gcc_unreachable ();
- 	}
+ 	    return SYMBOL_SMALL_ABSOLUTE;
+ 	  else
+ 	    return SYMBOL_FORCE_TO_MEM;
 diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
-index c637ff43a..bc50ec9d7 100644
+index c637ff43a50..bc50ec9d7e9 100644
 --- a/gcc/config/aarch64/aarch64.opt
 +++ b/gcc/config/aarch64/aarch64.opt
 @@ -146,7 +146,7 @@ EnumValue
@@ -169,5 +144,5 @@ index c637ff43a..bc50ec9d7 100644
  
  mlow-precision-recip-sqrt
 -- 
-2.14.2
+2.15.1
 
