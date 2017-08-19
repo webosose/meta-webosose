@@ -17,3 +17,11 @@ ALTERNATIVE_TARGET[sh] = "${base_bindir}/bash.bash"
 ALTERNATIVE_${PN} += "bash"
 ALTERNATIVE_LINK_NAME[bash] = "${base_bindir}/bash"
 ALTERNATIVE_PRIORITY[bash] = "40"
+
+# We need to revert changes from
+# http://git.openembedded.org/openembedded-core/commit/?h=rocko&id=70e544452b6825686f06484d994936ded677825f
+# because as described in:
+# http://lists.openembedded.org/pipermail/openembedded-commits/2017-November/215520.html
+# it doesn't work when GLIBC_GENERATE_LOCALES are restricted like they are in our builds:
+# meta-webos/conf/distro/include/webos-toolchain.inc:GLIBC_GENERATE_LOCALES = "en_US.UTF-8"
+RDEPENDS_${PN}-ptest_remove_libc-glibc = "locale-base-fr-fr locale-base-de-de"
