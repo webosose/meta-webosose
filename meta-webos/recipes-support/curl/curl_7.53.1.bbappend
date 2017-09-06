@@ -5,6 +5,8 @@ EXTENDPRAUTO_append = "webos6"
 # Enable c-ares for DNS lookup
 PACKAGECONFIG[c-ares] = "--enable-ares,--disable-ares,c-ares"
 PACKAGECONFIG_append_class-target = " c-ares"
+# Added in Yocto 2.4, but conflicts with c-ares implementation
+PACKAGECONFIG_remove_class-target = " threaded-resolver"
 
 # Force to use libcurl5 instead of libcurl4 (like we had with Yocto 1.7 Dizzy)
 # The SONAME isn't bumped automatically since oe-core commit 49c848018484827c433e1bcf9c63416640456f3e
