@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2015 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 DESCRIPTION = "Node.js native addon build tool"
 HOMEPAGE = "https://github.com/TooTallNate/node-gyp"
@@ -6,7 +6,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=694e396551033371686c80d3a1a69e88"
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
-PR = "r3"
+PR = "r4"
 PV = "0.12.2+git${SRCPV}"
 
 # v0.12.2 tag
@@ -60,4 +60,9 @@ do_install () {
     export TMPDIR=${T}
     #install from fetched files
     ${STAGING_LIBDIR_NATIVE}/node_modules/npm/bin/npm-cli.js -g install ${S} --no-registry --cache ${STAGING_DATADIR_NATIVE}/npmcache/node-gyp-native/
+    rmdir ${D}/${sysconfdir} || true
+
+    rm -rf ${D}/${libdir}/node_modules/node-gyp
+    mkdir -p ${D}/${libdir}/node_modules/node-gyp
+    cp -R --no-dereference --preserve=mode,links -v ${S}/addon.gypi ${S}/bin ${S}/gyp ${S}/lib ${S}/LICENSE ${S}/node_modules ${S}/package.json ${S}/README.md ${D}/${libdir}/node_modules/node-gyp
 }
