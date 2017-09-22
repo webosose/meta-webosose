@@ -1,6 +1,5 @@
 # Imported from meta-raspberrypi with one modification to respect our
 # KERNEL_IMAGE_SYMLINK_NAME
-# Added u-boot environment
 
 inherit image_types
 inherit linux-raspberrypi-base
@@ -166,7 +165,6 @@ IMAGE_CMD_rpi-sdimg () {
 		mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/u-boot.bin ::${SDIMG_KERNELIMAGE}
 		mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin ::uImage
 		mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/boot.scr ::boot.scr
-		mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/uboot.env ::uboot.env
 		;;
 	*)
 		mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin ::${SDIMG_KERNELIMAGE}
