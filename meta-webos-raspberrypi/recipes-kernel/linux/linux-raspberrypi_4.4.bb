@@ -13,6 +13,9 @@ SRC_URI = "git://github.com/raspberrypi/linux.git;protocol=git;branch=rpi-4.4.y 
 # require linux-raspberrypi.inc
 require recipes-kernel/linux/linux-raspberrypi.inc
 
+# This old kernel doesn't have poe fan driver
+SRC_URI_remove = "file://rpi-kernel-misc.cfg"
+
 # Backport some kernel patches for fixing compile errors from rpi-4.14.y
 # Refer https://patchwork.ozlabs.org/patch/909905/ https://patchwork.kernel.org/patch/10545399/
 SRC_URI += " \
