@@ -6,7 +6,10 @@
 # All the MACHINE-s supported by this layer are real pieces of hardware.
 WEBOS_TARGET_MACHINE_IMPL = "hardware"
 
-MACHINE_FEATURES_append = " vc4graphics"
+# Set gpu memory to "128M"
+# Wen use default setting (64M), we got the below error
+# [EXIT]: EGL Error : Could not create the egl surface: error = 0x3003
+GPU_MEM = "128"
 
 PREFERRED_PROVIDER_aval-impl = "avoutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_aval-impl = "avoutput-adaptation-layer-rpi"
@@ -29,3 +32,12 @@ MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-bcm2835-wdt \
     kernel-module-uinput \
 "
+
+KERNEL_MODULE_AUTOLOAD_append = " uinput"
+
+# Disabling U-Boot until IP address conflict and ALSA issues resolved (PLAT-46515)
+# RPI_USE_U_BOOT = "1"
+# Enable only for raspberrypi3-64
+RPI_USE_U_BOOT_raspberrypi3-64 = "1"
+
+ENABLE_UART = "1"

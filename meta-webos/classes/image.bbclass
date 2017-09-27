@@ -31,6 +31,10 @@ do_webos_deploy_fixup_prepend() {
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.tar.gz \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.tar.gz
 
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.tar.bz2 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.tar.bz2 \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.tar.bz2
+
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.cpio.gz ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.cpio.gz \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.cpio.gz
@@ -42,6 +46,10 @@ do_webos_deploy_fixup_prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.vmdk ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.vmdk \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.vmdk
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.vfat ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.vfat \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.vfat
 
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.hdddirect ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.hdddirect \

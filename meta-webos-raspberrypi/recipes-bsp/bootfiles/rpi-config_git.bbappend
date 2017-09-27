@@ -1,8 +1,6 @@
 # Copyright (c) 2017 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi2"
-
-ENABLE_UART = "1"
+EXTENDPRAUTO_append = "webosrpi3"
 
 do_deploy_append() {
     echo "dtoverlay=pi3-miniuart-bt" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
