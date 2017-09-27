@@ -1,7 +1,5 @@
-# Imported from meta-raspberrypi with one modification to respect our
-# KERNEL_IMAGE_SYMLINK_NAME, can be removed when upgrading to Yocto 2.6
-# which will contain changes from:
-# https://github.com/agherzan/meta-raspberrypi/pull/281
+# Imported from meta-raspberrypi, the only difference is dependency on
+# do_webos_deploy_fixup instead of just do_deploy for kernel
 
 inherit image_types
 
@@ -33,9 +31,6 @@ IMAGE_TYPEDEP_rpi-sdimg = "${SDIMG_ROOTFS_TYPE}"
 # Set kernel and boot loader
 IMAGE_BOOTLOADER ?= "bcm2835-bootfiles"
 
-# Set initramfs extension
-KERNEL_INITRAMFS ?= ""
-
 # Kernel image name
 SDIMG_KERNELIMAGE_raspberrypi  ?= "kernel.img"
 SDIMG_KERNELIMAGE_raspberrypi2 ?= "kernel7.img"
@@ -52,7 +47,10 @@ IMAGE_ROOTFS_ALIGNMENT = "4096"
 
 # Use an uncompressed ext3 by default as rootfs
 SDIMG_ROOTFS_TYPE ?= "ext3"
-SDIMG_ROOTFS = "${IMGDEPLOYDIR}/${IMAGE_NAME}.rootfs.${SDIMG_ROOTFS_TYPE}"
+SDIMG_ROOTFS = "${IMGDEPLOYDIR}/${IMAGE_LINK_NAME}.${SDIMG_ROOTFS_TYPE}"
+
+# For the names of kernel artifacts
+inherit kernel-artifact-names
 
 do_image_rpi_sdimg[depends] = " \
     parted-native:do_populate_sysroot \
@@ -63,6 +61,8 @@ do_image_rpi_sdimg[depends] = " \
     ${@bb.utils.contains('RPI_USE_U_BOOT', '1', 'u-boot:do_deploy', '',d)} \
     ${@bb.utils.contains('RPI_USE_U_BOOT', '1', 'rpi-u-boot-scr:do_deploy', '',d)} \
 "
+
+do_image_rpi_sdimg[recrdeps] = "do_build"
 
 # SD card image name
 SDIMG = "${IMGDEPLOYDIR}/${IMAGE_NAME}.rootfs.rpi-sdimg"
@@ -126,60 +126,31 @@ IMAGE_CMD_rpi-sdimg () {
     if test -n "${DTS}"; then
         # Copy board device trees to root folder
         for dtbf in ${@split_overlays(d, True)}; do
-            # WEBOS, respect our KERNEL_IMAGE_SYMLINK_NAME
-            # In webOS we're using using following convention:
-            # webos.inc:KERNEL_IMAGE_BASE_NAME = "$\{PREFERRED_PROVIDER_virtual/kernel}-$\{MACHINE}$\{WEBOS_KERNEL_IMAGE_BASE_NAME_PARTITION_SUFFIX}"
-            # webos.inc:KERNEL_IMAGE_SYMLINK_NAME = "$\{KERNEL_IMAGE_BASE_NAME}$\{WEBOS_IMAGE_NAME_SUFFIX}"
-            # While in default oe-core the naming is a lot simpler with just $\{MACHINE} in symlink:
-            # kernel.bbclass:KERNEL_IMAGE_BASE_NAME ?= "$\{PKGE}-$\{PKGV}-$\{PKGR}-$\{MACHINE}-$\{DATETIME}"
-            # kernel.bbclass:KERNEL_IMAGE_SYMLINK_NAME ?= "$\{MACHINE}"
-
-            # kernel.bbclass is also using $\{KERNEL_IMAGETYPE_FOR_MAKE}"-"$\{KERNEL_IMAGE_SYMLINK_NAME}
-            # as a base name for deployed files from $\{KERNEL_DEVICETREE}
-
-            # But then meta-raspberrypi/classes/sdcard_image-rpi.bbclass doesn't respect this and
-            # assumes that the default KERNEL_IMAGE_SYMLINK_NAME (MACHINE) was replaced by DTB_BASE_NAME in:
-            # DTB_SYMLINK_NAME=`echo $\{symlink_name} | sed "s/$\{MACHINE}/$\{DTB_BASE_NAME}/g"`
-            # so it uses only KERNEL_IMAGETYPE as a prefix:
-            # $\{DEPLOY_DIR_IMAGE}/$\{KERNEL_IMAGETYPE}-$\{DTB_BASE_NAME}.dtb
-            #            DTB_BASE_NAME=`basename $\{DTB} .dtb`
-            #            mcopy -i $\{WORKDIR}/boot.img -s $\{DEPLOY_DIR_IMAGE}/$\{KERNEL_IMAGETYPE}-$\{DTB_BASE_NAME}.dtb ::$\{DTB_BASE_NAME}.dtb
-
-            dtb_ext=${dtbf##*.}
-            dtb_base_name=`basename $dtbf ."$dtb_ext"`
-            for kernel_imagetype in ${KERNEL_IMAGETYPE}; do
-                base_name=$kernel_imagetype"-"${KERNEL_IMAGE_BASE_NAME}
-                dtb_name=`echo $base_name | sed "s/${MACHINE}/$dtb_base_name/g"`
-
-                # We assume that there is only one item in KERNEL_IMAGETYPE_FOR_MAKE - Image
-                # If there are more, then $dtb_base_name.dtb will be overwritten and last
-                # type will win
-                mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/$dtb_name.$dtb_ext ::$dtb_base_name.$dtb_ext
-            done
+            dtb=`basename $dtbf`
+            mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/$dtb ::$dtb
         done
 
         # Copy device tree overlays to dedicated folder
         mmd -i ${WORKDIR}/boot.img overlays
         for dtbf in ${@split_overlays(d, False)}; do
-            dtb_ext=${dtbf##*.}
-            dtb_base_name=`basename $dtbf ."$dtb_ext"`
-            for kernel_imagetype in ${KERNEL_IMAGETYPE}; do
-                base_name=$kernel_imagetype"-"${KERNEL_IMAGE_BASE_NAME}
-                dtb_name=`echo $base_name | sed "s/${MACHINE}/$dtb_base_name/g"`
-
-                # We assume that there is only one item in KERNEL_IMAGETYPE_FOR_MAKE - Image
-                # If there are more, then $dtb_base_name.dtb will be overwritten and last
-                # type will win
-                mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/$dtb_name.$dtb_ext ::overlays/$dtb_base_name.$dtb_ext
-            done
+            dtb=`basename $dtbf`
+            mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/$dtb ::overlays/$dtb
         done
     fi
     if [ "${RPI_USE_U_BOOT}" = "1" ]; then
         mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/u-boot.bin ::${SDIMG_KERNELIMAGE}
-        mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin ::${KERNEL_IMAGETYPE}
         mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/boot.scr ::boot.scr
+        if [ ! -z "${INITRAMFS_IMAGE}" -a "${INITRAMFS_IMAGE_BUNDLE}" = "1" ]; then
+            mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${INITRAMFS_SYMLINK_NAME}.bin ::${KERNEL_IMAGETYPE}
+        else
+            mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE} ::${KERNEL_IMAGETYPE}
+        fi
     else
-        mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin ::${SDIMG_KERNELIMAGE}
+        if [ ! -z "${INITRAMFS_IMAGE}" -a "${INITRAMFS_IMAGE_BUNDLE}" = "1" ]; then
+            mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE}-${INITRAMFS_SYMLINK_NAME}.bin ::${SDIMG_KERNELIMAGE}
+        else
+            mcopy -i ${WORKDIR}/boot.img -s ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGETYPE} ::${SDIMG_KERNELIMAGE}
+        fi
     fi
 
     if [ -n ${FATPAYLOAD} ] ; then
