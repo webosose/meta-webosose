@@ -4,7 +4,6 @@
 # https://github.com/agherzan/meta-raspberrypi/pull/281
 
 inherit image_types
-inherit linux-raspberrypi-base
 
 #
 # Create an image that can be written onto a SD card using dd.
@@ -55,14 +54,14 @@ IMAGE_ROOTFS_ALIGNMENT = "4096"
 SDIMG_ROOTFS_TYPE ?= "ext3"
 SDIMG_ROOTFS = "${IMGDEPLOYDIR}/${IMAGE_NAME}.rootfs.${SDIMG_ROOTFS_TYPE}"
 
-IMAGE_DEPENDS_rpi-sdimg = " \
-    parted-native \
-    mtools-native \
-    dosfstools-native \
-    virtual/kernel:do_deploy \
-    ${IMAGE_BOOTLOADER} \
-    ${@bb.utils.contains('RPI_USE_U_BOOT', '1', 'u-boot', '',d)} \
-    ${@bb.utils.contains('RPI_USE_U_BOOT', '1', 'rpi-u-boot-scr', '',d)} \
+do_image_rpi_sdimg[depends] = " \
+    parted-native:do_populate_sysroot \
+    mtools-native:do_populate_sysroot \
+    dosfstools-native:do_populate_sysroot \
+    virtual/kernel:do_webos_deploy_fixup \
+    ${IMAGE_BOOTLOADER}:do_deploy \
+    ${@bb.utils.contains('RPI_USE_U_BOOT', '1', 'u-boot:do_deploy', '',d)} \
+    ${@bb.utils.contains('RPI_USE_U_BOOT', '1', 'rpi-u-boot-scr:do_deploy', '',d)} \
 "
 
 # SD card image name
@@ -84,7 +83,7 @@ SDIMG_VFAT = "${IMAGE_NAME}.vfat"
 SDIMG_LINK_VFAT = "${IMGDEPLOYDIR}/${IMAGE_LINK_NAME}.vfat"
 
 def split_overlays(d, out, ver=None):
-    dts = d.getVar("KERNEL_DEVICETREE", True)
+    dts = d.getVar("KERNEL_DEVICETREE")
     # Device Tree Overlays are assumed to be suffixed by '-overlay.dtb' (4.1.x) or by '.dtbo' (4.4.9+) string and will be put in a dedicated folder
     if out:
         overlays = oe.utils.str_filter_out('\S+\-overlay\.dtb$', dts, d)
