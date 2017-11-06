@@ -1,4 +1,4 @@
-From 36d4395539fb39631920071fc76fa05f192a1fee Mon Sep 17 00:00:00 2001
+From 38f8e1d34bf4ac4403a93dd129e96879b5a8c38a Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:24:12 +0000
 Subject: [PATCH 2/3] date: add support for options -U and -S
@@ -9,10 +9,10 @@ Signed-off-by: Martin Jansa <martin.jansa@lge.com>
  1 file changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/coreutils/date.c b/coreutils/date.c
-index 7965775..1b071ec 100644
+index 9d4a7df..dc0114a 100644
 --- a/coreutils/date.c
 +++ b/coreutils/date.c
-@@ -100,10 +100,13 @@
+@@ -99,10 +99,13 @@
  //usage:       "Display time (using +FMT), or set time\n"
  //usage:	IF_NOT_LONG_OPTS(
  //usage:     "\n	[-s] TIME	Set time to TIME"
@@ -27,9 +27,9 @@ index 7965775..1b071ec 100644
  //usage:     "\n	-R,--rfc-2822	Output RFC-2822 compliant date string"
  //usage:	)
 @@ -138,9 +141,7 @@
- //usage:       "Wed Apr 12 18:52:41 MDT 2000\n"
  
  #include "libbb.h"
+ #include "common_bufsiz.h"
 -#if ENABLE_FEATURE_DATE_NANO
 -# include <sys/syscall.h>
 -#endif
