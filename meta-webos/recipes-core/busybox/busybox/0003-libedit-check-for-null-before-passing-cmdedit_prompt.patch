@@ -1,0 +1,29 @@
+From 82010922911b07482d9ff148cc0538444195bc44 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Mon, 6 Nov 2017 17:24:53 +0000
+Subject: [PATCH 3/3] libedit: check for null before passing cmdedit_prompt to
+ fputs
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ libbb/lineedit.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/libbb/lineedit.c b/libbb/lineedit.c
+index a83e07c..cb99548 100644
+--- a/libbb/lineedit.c
++++ b/libbb/lineedit.c
+@@ -433,7 +433,9 @@ static void put_prompt(void)
+ {
+ 	unsigned w;
+ 
+-	fputs(cmdedit_prompt, stdout);
++	if ( NULL != cmdedit_prompt ) {
++	      fputs(cmdedit_prompt, stdout);
++	}
+ 	fflush_all();
+ 	cursor = 0;
+ 	w = cmdedit_termw; /* read volatile var once */
+-- 
+2.7.4
+
