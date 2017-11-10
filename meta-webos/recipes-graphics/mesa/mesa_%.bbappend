@@ -5,7 +5,7 @@ EXTENDPRAUTO_append = "webos1"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 # Add gallium, gallium-llvmpipe, opengl and enable wayland even without wayland in DISTRO_FEATURES
-PACKAGECONFIG_qemuall = "opengl gbm egl gles dri wayland gallium"
+PACKAGECONFIG_qemuall = "opengl gbm egl gles dri wayland gallium gallium-llvm"
 
 # Add virgl gallium driver
 GALLIUMDRIVERS_qemuall = "virgl"
