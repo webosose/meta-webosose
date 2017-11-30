@@ -1,4 +1,4 @@
-From d7513021daba456bd04bf2d666a4534466bca28a Mon Sep 17 00:00:00 2001
+From 342384fc38345a1f271673f38884746b8549b0f4 Mon Sep 17 00:00:00 2001
 From: Simon Busch <simon.busch@lge.com>
 Date: Fri, 21 Nov 2014 15:46:21 +0100
 Subject: [PATCH] gdbus-codegen: replace all non alpha characters with an
@@ -14,18 +14,18 @@ Upstream-Status: pending
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gio/gdbus-2.0/codegen/codegen.py b/gio/gdbus-2.0/codegen/codegen.py
-index f9f404c91..363098980 100644
+index 3a8347f..6f6658c 100644
 --- a/gio/gdbus-2.0/codegen/codegen.py
 +++ b/gio/gdbus-2.0/codegen/codegen.py
 @@ -50,7 +50,7 @@ class CodeGenerator:
              self.ns_upper = ''
              self.ns_lower = ''
          self.interface_prefix = interface_prefix
--        self.header_guard = header_name.upper().replace('.', '_').replace('-', '_').replace('/', '_')
+-        self.header_guard = header_name.upper().replace('.', '_').replace('-', '_').replace('/', '_').replace(':', '_')
 +        self.header_guard = "".join([c if c.isalpha() else "_" for c in header_name.upper()])
  
      # ----------------------------------------------------------------------------------------------------
  
 -- 
-2.13.0
+2.7.4
 
