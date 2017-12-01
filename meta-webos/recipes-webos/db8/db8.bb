@@ -19,7 +19,7 @@ RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME
 RDEPENDS_${PN}-test_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.2.0-1_b114a6241140198f4313fdc2c3fc4f843e9a9ede"
-PR = "r31"
+PR = "r32"
 
 inherit webos_component
 inherit webos_public_repo
@@ -52,3 +52,6 @@ FILES_${PN}-tests = "${libdir}/${BPN}/tests"
 FILES_${PN} += "${webos_sysbus_datadir}"
 
 BBCLASSEXTEND = "native"
+
+# From http://gpro.lgsvl.com/190951
+SRC_URI += "file://0001-CMakeLists.txt-explicitly-link-with-libatomic-to-fix.patch"
