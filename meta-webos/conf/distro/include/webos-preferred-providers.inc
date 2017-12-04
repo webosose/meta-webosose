@@ -64,7 +64,7 @@ VIRTUAL-RUNTIME_webappmanager_armv4 = ""
 VIRTUAL-RUNTIME_webappmanager_armv5 = ""
 
 VIRTUAL-RUNTIME_initscripts = "webos-initscripts"
-PREFERRED_RPROVIDER_initscripts-functions = "webos-initscripts"
+PREFERRED_RPROVIDER_initd-functions = "webos-initscripts"
 
 # Options are: sysvinit, upstart, systemd
 VIRTUAL-RUNTIME_init_manager = "systemd"

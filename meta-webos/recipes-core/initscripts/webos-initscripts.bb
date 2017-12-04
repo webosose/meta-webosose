@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
 RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_rdx-utils}"
-RPROVIDES_${PN} = "initscripts initscripts-functions"
+RPROVIDES_${PN} = "initscripts initd-functions"
 PROVIDES = "initscripts"
 
 # TODO: systemd dependency is for fake initctl.
