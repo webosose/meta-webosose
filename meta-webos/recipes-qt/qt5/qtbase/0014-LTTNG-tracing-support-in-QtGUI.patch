@@ -1,4 +1,4 @@
-From b85b59829cd14d435b182fe3b6137275ce497792 Mon Sep 17 00:00:00 2001
+From b82c51807e5a300b882740aa1ae0c4311e616ae5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Fri, 13 Jun 2014 18:48:49 +0200
 Subject: [PATCH] LTTNG tracing support in QtGUI
@@ -80,7 +80,7 @@ index 0000000..0742865
 +CONFIG -= qt
 +LIBS +=
 diff --git a/configure b/configure
-index b44b377..679da84 100755
+index 224f9f5..5d761b0 100755
 --- a/configure
 +++ b/configure
 @@ -663,6 +663,7 @@ CFG_EGL_X=auto
@@ -172,10 +172,10 @@ index b44b377..679da84 100755
  report_support "    DirectFB ............." "$CFG_DIRECTFB"
  report_support "    EGLFS ................" "$CFG_EGLFS"
 diff --git a/src/gui/gui.pro b/src/gui/gui.pro
-index 69434e8..c45c396 100644
+index 2cdb3a7..2d17e03 100644
 --- a/src/gui/gui.pro
 +++ b/src/gui/gui.pro
-@@ -49,6 +49,13 @@ include(itemmodels/itemmodels.pri)
+@@ -50,6 +50,13 @@ include(itemmodels/itemmodels.pri)
  QMAKE_LIBS += $$QMAKE_LIBS_GUI
  
  load(qt_module)
@@ -190,7 +190,7 @@ index 69434e8..c45c396 100644
  
  win32: CMAKE_WINDOWS_BUILD = True
 diff --git a/src/gui/image/qimage.cpp b/src/gui/image/qimage.cpp
-index 17d3c02..13f1db2 100644
+index 856ba64..4c8a332 100644
 --- a/src/gui/image/qimage.cpp
 +++ b/src/gui/image/qimage.cpp
 @@ -49,6 +49,7 @@
@@ -264,7 +264,7 @@ index 17d3c02..13f1db2 100644
      int ws = width();
      int hs = height();
 diff --git a/src/gui/image/qpixmap.cpp b/src/gui/image/qpixmap.cpp
-index 78031bc..38ac6c8 100644
+index 3726b21..93160d0 100644
 --- a/src/gui/image/qpixmap.cpp
 +++ b/src/gui/image/qpixmap.cpp
 @@ -43,6 +43,7 @@
@@ -275,7 +275,7 @@ index 78031bc..38ac6c8 100644
  #include "qevent.h"
  #include "qfile.h"
  #include "qfileinfo.h"
-@@ -1165,6 +1166,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
+@@ -1163,6 +1164,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
      if (newSize == size())
          return *this;
  
@@ -284,7 +284,7 @@ index 78031bc..38ac6c8 100644
      QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(),
                                            (qreal)newSize.height() / height());
      QPixmap pix = transformed(wm, mode);
-@@ -1194,6 +1197,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
+@@ -1192,6 +1195,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
      if (w <= 0)
          return QPixmap();
  
@@ -293,7 +293,7 @@ index 78031bc..38ac6c8 100644
      qreal factor = (qreal) w / width();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -1222,6 +1227,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
+@@ -1220,6 +1225,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
      if (h <= 0)
          return QPixmap();
  
@@ -581,7 +581,7 @@ index 0000000..acef2bc
 +
 +#endif // QGUITRACER_P_H
 diff --git a/src/gui/opengl/qopenglframebufferobject.cpp b/src/gui/opengl/qopenglframebufferobject.cpp
-index 1ee90a0..f018e1b 100644
+index b5fa6b9..3f230e6 100644
 --- a/src/gui/opengl/qopenglframebufferobject.cpp
 +++ b/src/gui/opengl/qopenglframebufferobject.cpp
 @@ -39,6 +39,7 @@

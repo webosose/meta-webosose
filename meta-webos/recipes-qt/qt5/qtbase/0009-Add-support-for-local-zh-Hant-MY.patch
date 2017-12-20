@@ -1,4 +1,4 @@
-From 3afb46e31c93a36fe5cc89443cb33ab9200c898f Mon Sep 17 00:00:00 2001
+From a2f91960d0f9c8b8731229e4952e94d13b95ae09 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 12:46:28 +0200
 Subject: [PATCH] Add support for local "zh-Hant-MY"

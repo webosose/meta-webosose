@@ -1,4 +1,4 @@
-From e66425b670260ec8b0662fe66dbceee73633a63b Mon Sep 17 00:00:00 2001
+From e5d301914188ef02c1053af950cd6d7c6a813c90 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Tue, 28 Oct 2014 21:22:59 +0200
 Subject: [PATCH] QOpenGLTextureCache size setting

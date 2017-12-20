@@ -1,4 +1,4 @@
-From 37ea6aaec4c6774cbb34fa9fbab400efa092bd1f Mon Sep 17 00:00:00 2001
+From 7c5dc8f42c107a6b29d172be067528b94b7d70b0 Mon Sep 17 00:00:00 2001
 From: Aram So <aram.so@lge.com>
 Date: Tue, 10 Mar 2015 17:51:05 +0900
 Subject: [PATCH] Revert Make QQuickKeyNavigationAttached respect user set
@@ -24,7 +24,7 @@ Change-Id: If01145c73497141bf0e12f425c0fb13f5a58d4cd
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/src/quick/items/qquickitem.cpp b/src/quick/items/qquickitem.cpp
-index 1c7a556..e2f1851 100644
+index 7acb8b5..7968811 100644
 --- a/src/quick/items/qquickitem.cpp
 +++ b/src/quick/items/qquickitem.cpp
 @@ -476,7 +476,7 @@ QQuickItem *QQuickKeyNavigationAttached::left() const

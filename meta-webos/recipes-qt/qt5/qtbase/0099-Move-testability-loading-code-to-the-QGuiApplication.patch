@@ -1,4 +1,4 @@
-From 2bd45b8807d7c7aff0a44c31414ce2a7882312bb Mon Sep 17 00:00:00 2001
+From 9791a6edf3622f723604a43fe41f2e99d5ed655f Mon Sep 17 00:00:00 2001
 From: Tigran Avanesov <tigran.avanesov@lge.com>
 Date: Fri, 25 Jul 2014 11:13:10 +0300
 Subject: [PATCH] Move testability loading code to the QGuiApplication
@@ -17,7 +17,7 @@ Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
  4 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/src/gui/kernel/qguiapplication.cpp b/src/gui/kernel/qguiapplication.cpp
-index 9cbcd71..c9e4894 100644
+index 4214fc4..8011507 100644
 --- a/src/gui/kernel/qguiapplication.cpp
 +++ b/src/gui/kernel/qguiapplication.cpp
 @@ -106,6 +106,10 @@
@@ -44,7 +44,7 @@ index 9cbcd71..c9e4894 100644
  QPlatformIntegration *QGuiApplicationPrivate::platform_integration = 0;
  QPlatformTheme *QGuiApplicationPrivate::platform_theme = 0;
  
-@@ -572,6 +582,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+@@ -582,6 +592,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
  {
      d_func()->init();
  
@@ -56,7 +56,7 @@ index 9cbcd71..c9e4894 100644
      QCoreApplicationPrivate::eventDispatcher->startingUp();
  }
  
-@@ -581,6 +596,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+@@ -591,6 +606,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
  QGuiApplication::QGuiApplication(QGuiApplicationPrivate &p)
      : QCoreApplication(p)
  {
@@ -67,7 +67,7 @@ index 9cbcd71..c9e4894 100644
  }
  
  /*!
-@@ -632,6 +651,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
+@@ -642,6 +661,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
      is_session_restored = false;
      is_saving_session = false;
  #endif
@@ -76,7 +76,7 @@ index 9cbcd71..c9e4894 100644
  }
  
  /*!
-@@ -3688,6 +3709,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
+@@ -3698,6 +3719,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
  
      return m_inputDeviceManager;
  }
@@ -117,10 +117,10 @@ index 3f233d4..377f625 100644
      Q_DECLARE_PRIVATE(QGuiApplication)
  
 diff --git a/src/gui/kernel/qguiapplication_p.h b/src/gui/kernel/qguiapplication_p.h
-index 306d76c..0a34936 100644
+index b0d4a36..f2e9b87 100644
 --- a/src/gui/kernel/qguiapplication_p.h
 +++ b/src/gui/kernel/qguiapplication_p.h
-@@ -205,6 +205,7 @@ public:
+@@ -206,6 +206,7 @@ public:
      static QWindow *currentMousePressWindow;
      static Qt::ApplicationState applicationState;
      static bool highDpiScalingUpdated;
@@ -129,7 +129,7 @@ index 306d76c..0a34936 100644
  #ifndef QT_NO_CLIPBOARD
      static QClipboard *qt_clipboard;
 diff --git a/src/widgets/kernel/qapplication.cpp b/src/widgets/kernel/qapplication.cpp
-index 917273e..fb22ea8 100644
+index 93ee820..7969450 100644
 --- a/src/widgets/kernel/qapplication.cpp
 +++ b/src/widgets/kernel/qapplication.cpp
 @@ -591,6 +591,7 @@ void QApplicationPrivate::init()

@@ -1,4 +1,4 @@
-From c5b4ba82df3aef0827f7636741c5708d90d6de7c Mon Sep 17 00:00:00 2001
+From 78adc115bd08491479f888c0dca96c7e58693fec Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 11:59:11 +0200
 Subject: [PATCH] network: SSL Handle Multiple Client Certificates

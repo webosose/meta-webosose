@@ -1,4 +1,4 @@
-From 1e7e13692bf55c02f63343f970141470b8c5910a Mon Sep 17 00:00:00 2001
+From 8d62f0965dcae49f57268c5ae204cbcc8e13ed88 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 14 Feb 2014 14:58:58 +0200
 Subject: [PATCH] Revert "Remove dead code."
@@ -10,7 +10,7 @@ This reverts commit 909d3a57dfc279d8a8dee0751bf7635551d6ee3b.
  2 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 8a2471b..abcbb82 100644
+index e19570e..e8d0138 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -269,6 +269,29 @@ void QQuickWindowPrivate::polishItems()
@@ -51,7 +51,7 @@ index 8a2471b..abcbb82 100644
      , dirtyItemList(0)
      , devicePixelRatio(0)
      , context(0)
-@@ -2609,7 +2633,8 @@ void QQuickWindowPrivate::data_clear(QQmlListProperty<QObject> *property)
+@@ -2619,7 +2643,8 @@ void QQuickWindowPrivate::data_clear(QQmlListProperty<QObject> *property)
  bool QQuickWindowPrivate::isRenderable() const
  {
      Q_Q(const QQuickWindow);

@@ -1,4 +1,4 @@
-From 40179e625cf95e305ae4f6c14dce413bb1884318 Mon Sep 17 00:00:00 2001
+From 9583cda391b833ab19f2b02db23fe09bb53e8130 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Thu, 22 Jun 2017 18:40:35 +0900
 Subject: [PATCH] Images can be shared even if cache is false
@@ -38,7 +38,7 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/src/quick/util/qquickpixmapcache.cpp b/src/quick/util/qquickpixmapcache.cpp
-index 230c318..f022ce7 100644
+index 50b6de2..fff6deb 100644
 --- a/src/quick/util/qquickpixmapcache.cpp
 +++ b/src/quick/util/qquickpixmapcache.cpp
 @@ -232,7 +232,7 @@ public:
@@ -85,7 +85,7 @@ index 230c318..f022ce7 100644
  };
  
  int QQuickPixmapReply::finishedIndex = -1;
-@@ -1084,7 +1085,7 @@ void QQuickPixmapData::release()
+@@ -1083,7 +1084,7 @@ void QQuickPixmapData::release()
              QQuickPixmapReader::readerMutex.unlock();
          }
  
@@ -94,7 +94,7 @@ index 230c318..f022ce7 100644
              if (inCache)
                  pixmapStore()->unreferencePixmap(this);
              else
-@@ -1388,6 +1389,11 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1387,6 +1388,11 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
  
      QHash<QQuickPixmapKey, QQuickPixmapData *>::Iterator iter = store->m_cache.end();
  
@@ -106,7 +106,7 @@ index 230c318..f022ce7 100644
      // If Cache is disabled, the pixmap will always be loaded, even if there is an existing
      // cached version.
      if (options & QQuickPixmap::Cache)
-@@ -1414,6 +1420,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1413,6 +1419,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
                  PIXMAP_PROFILE(pixmapLoadingFinished(url, QSize(width(), height())));
                  if (options & QQuickPixmap::Cache)
                      d->addToCache();
@@ -114,7 +114,7 @@ index 230c318..f022ce7 100644
                  return;
              }
              if (d) { // loadable, but encountered error while loading
-@@ -1428,6 +1435,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1427,6 +1434,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
          d = new QQuickPixmapData(this, url, requestSize, requestAutoTransform, requestAutoTransform);
          if (options & QQuickPixmap::Cache)
              d->addToCache();

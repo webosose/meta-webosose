@@ -1,4 +1,4 @@
-From 23dc84febdf518d9b253a67605ce724854770fe1 Mon Sep 17 00:00:00 2001
+From c547bca7afc343087aa20c134cd4852b0eb9f448 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 21 Sep 2017 22:25:17 +0900
 Subject: [PATCH] QQuickWindow: Add invalidateCursorItem
@@ -15,10 +15,10 @@ Upstream-Status: Pending
  2 files changed, 17 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 70526fa..11f79b3 100644
+index ca62ee1..d3afbf5 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -2464,6 +2464,19 @@ QQuickItem *QQuickWindowPrivate::findCursorItem(QQuickItem *item, const QPointF
+@@ -2474,6 +2474,19 @@ QQuickItem *QQuickWindowPrivate::findCursorItem(QQuickItem *item, const QPointF
      }
      return 0;
  }

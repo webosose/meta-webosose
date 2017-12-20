@@ -1,4 +1,4 @@
-From 5d1f31be98b5ee2dfa2db24c6ad5b926d2e1edde Mon Sep 17 00:00:00 2001
+From 49996085a1bd7b8c5353fbfa2cff74349470521d Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 2 Jan 2018 08:36:18 +0900
 Subject: [PATCH] QQuickTextEdit: Fix cursor movement in compose mode
@@ -14,10 +14,10 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/215470]
  1 file changed, 13 insertions(+)
 
 diff --git a/src/quick/items/qquicktextinput.cpp b/src/quick/items/qquicktextinput.cpp
-index f3b217d..37c8f73 100644
+index dab4b06..dd01924 100644
 --- a/src/quick/items/qquicktextinput.cpp
 +++ b/src/quick/items/qquicktextinput.cpp
-@@ -1351,6 +1351,11 @@ void QQuickTextInput::keyPressEvent(QKeyEvent* ev)
+@@ -1352,6 +1352,11 @@ void QQuickTextInput::keyPressEvent(QKeyEvent* ev)
          if (!ignore && cursorPosition == d->m_text.length())
              ignore = ev->key() == (d->layoutDirection() == Qt::LeftToRight ? Qt::Key_Right : Qt::Key_Left);
      }
@@ -29,7 +29,7 @@ index f3b217d..37c8f73 100644
      if (ignore) {
          ev->ignore();
      } else {
-@@ -4281,6 +4286,10 @@ void QQuickTextInputPrivate::processKeyEvent(QKeyEvent* event)
+@@ -4289,6 +4294,10 @@ void QQuickTextInputPrivate::processKeyEvent(QKeyEvent* event)
      else if (event == QKeySequence::MoveToNextChar) {
          if (hasSelectedText()) {
              moveCursor(selectionEnd(), false);
@@ -40,7 +40,7 @@ index f3b217d..37c8f73 100644
          } else {
              cursorForward(0, visual ? 1 : (layoutDirection() == Qt::LeftToRight ? 1 : -1));
          }
-@@ -4291,6 +4300,10 @@ void QQuickTextInputPrivate::processKeyEvent(QKeyEvent* event)
+@@ -4299,6 +4308,10 @@ void QQuickTextInputPrivate::processKeyEvent(QKeyEvent* event)
      else if (event == QKeySequence::MoveToPreviousChar) {
          if (hasSelectedText()) {
              moveCursor(selectionStart(), false);

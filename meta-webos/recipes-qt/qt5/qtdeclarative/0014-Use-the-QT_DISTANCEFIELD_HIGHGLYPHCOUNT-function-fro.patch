@@ -1,4 +1,4 @@
-From 1f0628ed9138fade05160ec566dc51b63cea7e7e Mon Sep 17 00:00:00 2001
+From 2aa02ad7b1fc3a23693dc21b81542810c025f53f Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Tue, 10 May 2016 16:23:24 +0300
 Subject: [PATCH] Use the QT_DISTANCEFIELD_HIGHGLYPHCOUNT function from qtbase
@@ -14,7 +14,7 @@ Change-Id: I2a31f69f282f8c368027ec824b9f3a5334d03892
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/quick/scenegraph/qsgadaptationlayer.cpp b/src/quick/scenegraph/qsgadaptationlayer.cpp
-index bf97133..7cfa32e 100644
+index f32829c..85801d8 100644
 --- a/src/quick/scenegraph/qsgadaptationlayer.cpp
 +++ b/src/quick/scenegraph/qsgadaptationlayer.cpp
 @@ -59,7 +59,7 @@ QSGDistanceFieldGlyphCache::QSGDistanceFieldGlyphCache(QSGDistanceFieldGlyphCach

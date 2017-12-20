@@ -1,4 +1,4 @@
-From 284b14878b15a3a530baac397d92b13b467793ae Mon Sep 17 00:00:00 2001
+From d4c5f69a9573be2f4b96afcb84c71effa95d7f79 Mon Sep 17 00:00:00 2001
 From: Maxim Polyakov <maxim.polyakov@lge.com>
 Date: Fri, 13 Nov 2015 10:36:57 +0300
 Subject: [PATCH] Color emoji support
@@ -71,7 +71,7 @@ index ff9265c..198e517 100644
  }
  
 diff --git a/src/gui/text/qfontdatabase.cpp b/src/gui/text/qfontdatabase.cpp
-index 6425bed..8311659 100644
+index 6e48de1..a53ea3d 100644
 --- a/src/gui/text/qfontdatabase.cpp
 +++ b/src/gui/text/qfontdatabase.cpp
 @@ -239,6 +239,7 @@ struct QtFontStyle
@@ -99,7 +99,7 @@ index 6425bed..8311659 100644
      QtFontSize *size = fontStyle->pixelSize(pixelSize ? pixelSize : SMOOTH_SCALABLE, true);
      if (size->handle) {
          QPlatformIntegration *integration = QGuiApplicationPrivate::platformIntegration();
-@@ -922,6 +924,7 @@ QFontEngine *loadSingleEngine(int script,
+@@ -927,6 +929,7 @@ QFontEngine *loadSingleEngine(int script,
  
      QFontDef def = request;
      def.pixelSize = pixelSize;
@@ -108,7 +108,7 @@ index 6425bed..8311659 100644
      QFontCache *fontCache = QFontCache::instance();
  
 diff --git a/src/gui/text/qfontengine_ft.cpp b/src/gui/text/qfontengine_ft.cpp
-index 1711865..8774af4 100644
+index 199e207..3ad30c7 100644
 --- a/src/gui/text/qfontengine_ft.cpp
 +++ b/src/gui/text/qfontengine_ft.cpp
 @@ -334,7 +334,7 @@ void QFreetypeFace::computeSize(const QFontDef &fontDef, int *xsize, int *ysize,
@@ -384,10 +384,10 @@ index 728b166..2a41434 100644
          families.append(family);
  
 diff --git a/src/platformsupport/fontdatabases/fontconfig/qfontconfigdatabase.cpp b/src/platformsupport/fontdatabases/fontconfig/qfontconfigdatabase.cpp
-index 8ebabf3..9c4a672 100644
+index 7123622..d06083e 100644
 --- a/src/platformsupport/fontdatabases/fontconfig/qfontconfigdatabase.cpp
 +++ b/src/platformsupport/fontdatabases/fontconfig/qfontconfigdatabase.cpp
-@@ -369,6 +369,7 @@ static void populateFromPattern(FcPattern *pattern)
+@@ -375,6 +375,7 @@ static void populateFromPattern(FcPattern *pattern)
      FcChar8 *style_value;
      FcBool scalable;
      FcBool antialias;
@@ -395,7 +395,7 @@ index 8ebabf3..9c4a672 100644
  
      if (FcPatternGetString(pattern, FC_FAMILY, 0, &value) != FcResultMatch)
          return;
-@@ -403,7 +404,10 @@ static void populateFromPattern(FcPattern *pattern)
+@@ -409,7 +410,10 @@ static void populateFromPattern(FcPattern *pattern)
          style_value = 0;
      if (FcPatternGetBool(pattern,FC_ANTIALIAS,0,&antialias) != FcResultMatch)
          antialias = true;
@@ -407,7 +407,7 @@ index 8ebabf3..9c4a672 100644
      QSupportedWritingSystems writingSystems;
      FcLangSet *langset = 0;
      FcResult res = FcPatternGetLangSet(pattern, FC_LANG, 0, &langset);
-@@ -461,7 +465,7 @@ static void populateFromPattern(FcPattern *pattern)
+@@ -467,7 +471,7 @@ static void populateFromPattern(FcPattern *pattern)
      // Note: stretch should really be an int but registerFont incorrectly uses an enum
      QFont::Stretch stretch = QFont::Stretch(stretchFromFcWidth(width_value));
      QString styleName = style_value ? QString::fromUtf8((const char *) style_value) : QString();
@@ -416,7 +416,7 @@ index 8ebabf3..9c4a672 100644
  //        qDebug() << familyName << (const char *)foundry_value << weight << style << &writingSystems << scalable << true << pixel_size;
  
      for (int k = 1; FcPatternGetString(pattern, FC_FAMILY, k, &value) == FcResultMatch; ++k)
-@@ -518,11 +522,12 @@ void QFontconfigDatabase::populateFontDatabase()
+@@ -524,11 +528,12 @@ void QFontconfigDatabase::populateFontDatabase()
      QSupportedWritingSystems ws;
      ws.setSupported(QFontDatabase::Latin);
  
@@ -432,7 +432,7 @@ index 8ebabf3..9c4a672 100644
          ++f;
      }
  
-@@ -850,6 +855,7 @@ QFont QFontconfigDatabase::defaultFont() const
+@@ -856,6 +861,7 @@ QFont QFontconfigDatabase::defaultFont() const
  
  void QFontconfigDatabase::setupFontEngine(QFontEngineFT *engine, const QFontDef &fontDef) const
  {
@@ -440,7 +440,7 @@ index 8ebabf3..9c4a672 100644
      bool antialias = !(fontDef.styleStrategy & QFont::NoAntialias);
      bool forcedAntialiasSetting = !antialias;
  
-@@ -912,6 +918,11 @@ void QFontconfigDatabase::setupFontEngine(QFontEngineFT *engine, const QFontDef
+@@ -918,6 +924,11 @@ void QFontconfigDatabase::setupFontEngine(QFontEngineFT *engine, const QFontDef
              if (FcPatternGetBool(match, FC_ANTIALIAS,0, &fc_antialias) == FcResultMatch)
                  antialias = fc_antialias;
          }
@@ -452,7 +452,7 @@ index 8ebabf3..9c4a672 100644
  
          if (antialias) {
              QFontEngine::SubpixelAntialiasingType subpixelType = QFontEngine::Subpixel_None;
-@@ -922,6 +933,8 @@ void QFontconfigDatabase::setupFontEngine(QFontEngineFT *engine, const QFontDef
+@@ -928,6 +939,8 @@ void QFontconfigDatabase::setupFontEngine(QFontEngineFT *engine, const QFontDef
              format = (subpixelType == QFontEngine::Subpixel_None)
                      ? QFontEngine::Format_A8
                      : QFontEngine::Format_A32;

@@ -1,4 +1,4 @@
-From f4882375875545cc31b5e60ca3ac498ddc0ba3fc Mon Sep 17 00:00:00 2001
+From 141019a06ab07f7589f0c448c2ccd9d11b495a24 Mon Sep 17 00:00:00 2001
 From: Byunggul Koh <byunggul.koh@lge.com>
 Date: Thu, 18 Sep 2014 18:54:09 +0900
 Subject: [PATCH] Update timezone info before localtime_r

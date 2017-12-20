@@ -1,4 +1,4 @@
-From ba1eae68e9b953c35ea099d8564baed5a31057fc Mon Sep 17 00:00:00 2001
+From 9711533bbab9260399871e893028f46ccd8961ed Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 11 Mar 2015 17:16:13 +0900
 Subject: [PATCH] Revert "Fix rendering of fonts matched based on stretch"
@@ -26,10 +26,10 @@ Upstream-Status: do not apply (local workaround)
  1 file changed, 9 deletions(-)
 
 diff --git a/src/gui/text/qfontdatabase.cpp b/src/gui/text/qfontdatabase.cpp
-index 0621f2a..6425bed 100644
+index f147851..6e48de1 100644
 --- a/src/gui/text/qfontdatabase.cpp
 +++ b/src/gui/text/qfontdatabase.cpp
-@@ -948,15 +948,6 @@ QFontEngine *loadSingleEngine(int script,
+@@ -953,15 +953,6 @@ QFontEngine *loadSingleEngine(int script,
                  return engine;
              }
          }

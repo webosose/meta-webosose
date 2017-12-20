@@ -1,4 +1,4 @@
-From e9e4532c2fed1e15f920ead42807fb1c63fd09f9 Mon Sep 17 00:00:00 2001
+From e86a477078b6beb2c41fa7fe738333854bdb4244 Mon Sep 17 00:00:00 2001
 From: Andrey Volykhin <andrey.volykhin@lge.com>
 Date: Fri, 10 Apr 2015 17:10:57 -0700
 Subject: [PATCH] Allow to abort the scene graph rendering of QML
@@ -34,7 +34,7 @@ Updated for qt5.4
  6 files changed, 40 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index bcdcd47..9c9a005 100644
+index 0117311..ca62ee1 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -476,6 +476,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
@@ -45,7 +45,7 @@ index bcdcd47..9c9a005 100644
      , persistentGLContext(true)
      , persistentSceneGraph(true)
      , lastWheelEventAccepted(false)
-@@ -3667,6 +3668,27 @@ bool QQuickWindow::clearBeforeRendering() const
+@@ -3679,6 +3680,27 @@ bool QQuickWindow::clearBeforeRendering() const
  }
  
  /*!
@@ -115,10 +115,10 @@ index 319d0a4..c56048e 100644
      virtual void render() = 0;
  
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index 99040e6..5aa8bba 100644
+index 57b0625..c4111a9 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
-@@ -395,6 +395,9 @@ void QSGGuiThreadRenderLoop::renderWindow(QQuickWindow *window)
+@@ -396,6 +396,9 @@ void QSGGuiThreadRenderLoop::renderWindow(QQuickWindow *window)
  
      cd->syncSceneGraph();
  
@@ -127,9 +127,9 @@ index 99040e6..5aa8bba 100644
 +
      if (profileFrames)
          syncTime = renderTimer.nsecsElapsed();
-     Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphRenderLoopFrame);
+     Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphRenderLoopFrame,
 diff --git a/src/quick/scenegraph/qsgthreadedrenderloop.cpp b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
-index ceb3caa..363c9c6 100644
+index c9cc3b9..9fa9b58 100644
 --- a/src/quick/scenegraph/qsgthreadedrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
 @@ -587,6 +587,13 @@ void QSGRenderThread::syncAndRender()
