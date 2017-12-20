@@ -1,4 +1,4 @@
-From b1a9ee7f3be383bac891dc3c03f1845980ab24bf Mon Sep 17 00:00:00 2001
+From b52e098f55bd207ae0878565d1ced2a73de3870d Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Wed, 29 Oct 2014 00:21:30 +0200
 Subject: [PATCH] QOpenGLTextureGlyphCache limits

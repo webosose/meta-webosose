@@ -1,4 +1,4 @@
-From 93dfe5144d920fbc0c2f25179b27ef739c585952 Mon Sep 17 00:00:00 2001
+From 625a9e994fa776a94b7251f307c947929bea1eb4 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Wed, 1 Feb 2017 16:53:40 +0300
 Subject: [PATCH] Fix distance field rendering of very wide glyphs
@@ -16,18 +16,18 @@ Change-Id: Id606c90c7968a8db75732abc502ca8dcd46b38ba
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/src/gui/text/qdistancefield.cpp b/src/gui/text/qdistancefield.cpp
-index b2eb794..772503b 100644
+index c856498..6c8e4cb 100644
 --- a/src/gui/text/qdistancefield.cpp
 +++ b/src/gui/text/qdistancefield.cpp
-@@ -431,7 +431,7 @@ static void drawPolygons(qint32 *bits, int width, int height, const QPoint *vert
+@@ -430,7 +430,7 @@ static void drawPolygons(qint32 *bits, int width, int height, const QPoint *vert
+                          const quint32 *indices, int indexCount, qint32 value)
  {
      Q_ASSERT(indexCount != 0);
-     Q_ASSERT(height <= 128);
--    QVarLengthArray<quint8, 16> scans[128];
-+    QVarLengthArray<quint16, 16> scans[128];
+-    typedef QVarLengthArray<quint8, 16> ScanLine;
++    typedef QVarLengthArray<quint16, 16> ScanLine;
+     QVarLengthArray<ScanLine, 128> scans(height);
      int first = 0;
      for (int i = 1; i < indexCount; ++i) {
-         quint32 idx1 = indices[i - 1];
 @@ -455,16 +455,16 @@ static void drawPolygons(qint32 *bits, int width, int height, const QPoint *vert
          for (int y = fromY; y < toY; ++y) {
              quint32 c = quint32(x >> 8);

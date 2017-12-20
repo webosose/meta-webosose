@@ -1,4 +1,4 @@
-From 4ec2980bc2bc09d8c7ede63b4fc7aa0d5d5780b6 Mon Sep 17 00:00:00 2001
+From b2ba7f9a3b51b1856ba9d76423bd06a38429ed4c Mon Sep 17 00:00:00 2001
 From: JeongBong Seo <jb.seo@lge.com>
 Date: Thu, 30 Apr 2015 15:04:57 +0900
 Subject: [PATCH] Add the 'accessiblebridge' as a plugintype of gui module
@@ -11,7 +11,7 @@ Upstream-Status: might be upstreamable
  1 file changed, 1 insertion(+)
 
 diff --git a/src/gui/gui.pro b/src/gui/gui.pro
-index c45c396..1590ccc 100644
+index 2d17e03..895049d 100644
 --- a/src/gui/gui.pro
 +++ b/src/gui/gui.pro
 @@ -8,6 +8,7 @@ DEFINES   += QT_NO_USING_NAMESPACE
@@ -20,5 +20,5 @@ index c45c396..1590ccc 100644
  MODULE_PLUGIN_TYPES = \
 +    accessiblebridge \
      platforms \
+     platforms/darwin \
      xcbglintegrations \
-     platformthemes \

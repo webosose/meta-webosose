@@ -1,4 +1,4 @@
-From 2e9ed18a29ec32449e514b976b469013708dc15c Mon Sep 17 00:00:00 2001
+From 15b0a1a7847ab3a5c265562e2f3594e16fab2b06 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Mon, 25 Apr 2016 14:47:21 +0300
 Subject: [PATCH] Prevent rare segfault crashes in QNetworkConfigurationManager
@@ -29,6 +29,8 @@ Upstream-Status: pending
 :Issues Addressed:
 [PLAT-18288] com.webos.app.inputcommon crashes at location
 /usr/lib/libQt5Network.so.5(_ZN35QNetworkConfigurationManagerPrivate11pollEnginesEv+0x15d)
+
+Change-Id: Ia0eff8804807a5dc467a9859a5a7700b0b21384a
 ---
  src/network/bearer/qnetworkconfigmanager_p.cpp | 3 +++
  1 file changed, 3 insertions(+)

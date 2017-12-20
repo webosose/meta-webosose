@@ -1,4 +1,4 @@
-From d96e74d304e60555c4612cf012d5d6a532ab4a7d Mon Sep 17 00:00:00 2001
+From 08c0222443146ac51c2db0fa94dc6308cddc7540 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Wed, 1 Nov 2017 14:37:08 +0300
 Subject: [PATCH] TimeZone fix for QML Date object

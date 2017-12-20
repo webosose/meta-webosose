@@ -1,4 +1,4 @@
-From 5bac64b240745c41b51027edeadd94e26a182ddc Mon Sep 17 00:00:00 2001
+From bbb87fa7c0beaf334694625cdebdbe5b22566f4d Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 7 Nov 2014 17:59:03 -0800
 Subject: [PATCH] QFontEngine glyph cache count
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [specific to tv]
  2 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/src/gui/text/qfontengine.cpp b/src/gui/text/qfontengine.cpp
-index fa49b25..298b807 100644
+index 790dd0b..92ea8e0 100644
 --- a/src/gui/text/qfontengine.cpp
 +++ b/src/gui/text/qfontengine.cpp
 @@ -243,7 +243,8 @@ QFontEngine::QFontEngine(Type type)
@@ -38,7 +38,7 @@ index fa49b25..298b807 100644
  {
      faceData.user_data = this;
      faceData.get_font_table = qt_get_font_table_default;
-@@ -259,6 +260,10 @@ QFontEngine::QFontEngine(Type type)
+@@ -260,6 +261,10 @@ QFontEngine::QFontEngine(Type type)
      if (enginesCollector)
          enginesCollector->append(this);
  #endif
@@ -49,7 +49,7 @@ index fa49b25..298b807 100644
  }
  
  QFontEngine::~QFontEngine()
-@@ -1061,9 +1066,9 @@ void QFontEngine::setGlyphCache(const void *context, QFontEngineGlyphCache *cach
+@@ -1062,9 +1067,9 @@ void QFontEngine::setGlyphCache(const void *context, QFontEngineGlyphCache *cach
              return;
      }
  
@@ -62,10 +62,10 @@ index fa49b25..298b807 100644
  
      GlyphCacheEntry entry;
 diff --git a/src/gui/text/qfontengine_p.h b/src/gui/text/qfontengine_p.h
-index 39cf826..a312f1b 100644
+index 893dfb5..96bd601 100644
 --- a/src/gui/text/qfontengine_p.h
 +++ b/src/gui/text/qfontengine_p.h
-@@ -328,6 +328,7 @@ private:
+@@ -329,6 +329,7 @@ private:
      mutable qreal m_minLeftBearing;
      mutable qreal m_minRightBearing;
  

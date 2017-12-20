@@ -1,15 +1,15 @@
-From a0c4ed1ae6d8fc107ade9df1113906749c8b4344 Mon Sep 17 00:00:00 2001
+From c489ecdb77c7c236e4737149f9ef13de7b88e5b1 Mon Sep 17 00:00:00 2001
 From: "krishna.jha" <krishna.jha@lge.com>
 Date: Thu, 10 Aug 2017 14:40:15 +0530
-Subject: [PATCH] Emulator NYX integeration with eglfs plugin
+Subject: [PATCH] Emulator NYX integration with eglfs plugin
 
 :Release Notes:
-Nyx input subsystem integeration with eglfs plugin.
+Nyx input subsystem integration with eglfs plugin.
 Linux input key code and QT licence update.
 
 :Detailed Notes:
 Emulator screen resolution set to 1920*1080.
-Nyx input subsystem integeration for keybaord and mouse functionality.
+Nyx input subsystem integration for keyboard and mouse functionality.
 
 :Testing Performed:
 Launched Home screen successfuly.
@@ -21,6 +21,8 @@ Keyboard and Mouse function verified.
 [PLAT-38159] Configure mesa for Virtual GPU Device.
 [PLAT-38160] Configure keyboard with QEMU input device.
 [PLAT-38161] Configure mouse with QEMU input device.
+
+Upstream-Status: Inappropriate [webOS specific with nyx dependency]
 
 Change-Id: I1e932ba47f217198fb03eff1bcdb00527598fc38
 ---
@@ -267,7 +269,7 @@ index 12ae0a1..decaeff 100644
  PLUGIN_CLASS_NAME = QEglFSKmsIntegrationPlugin
  load(qt_plugin)
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
-index 8ba0a5c..c39be08 100644
+index f3aeca2..6f17694 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsdevice.cpp
 @@ -43,6 +43,10 @@
@@ -422,7 +424,7 @@ index 0000000..3ecef96
 +
 +
 diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
-index c226c01..bca3cca 100644
+index 2a6f3aa..d5d4023 100644
 --- a/src/plugins/platforms/eglfs/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
 @@ -79,6 +79,11 @@
@@ -470,7 +472,7 @@ index c226c01..bca3cca 100644
  void QEglFSIntegration::createInputHandlers()
  {
  #ifndef QT_NO_LIBINPUT
-@@ -418,6 +447,7 @@ void QEglFSIntegration::createInputHandlers()
+@@ -420,6 +449,7 @@ void QEglFSIntegration::createInputHandlers()
          new QEvdevTouchManager(QLatin1String("EvdevTouch"), QString() /* spec */, this);
  #endif
  }

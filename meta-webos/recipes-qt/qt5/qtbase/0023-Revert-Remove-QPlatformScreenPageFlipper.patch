@@ -1,4 +1,4 @@
-From 688247617914fb314d96d80f2a92e2b6b70e5cca Mon Sep 17 00:00:00 2001
+From 688e51f07db48b1997eab12775f016a25898a7bf Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Thu, 2 Apr 2015 14:35:17 +0900
 Subject: [PATCH] Revert "Remove QPlatformScreenPageFlipper."
@@ -50,7 +50,7 @@ index a60c56b..524c41a 100644
          kernel/qplatformsessionmanager.cpp \
          kernel/qplatformmenu.cpp \
 diff --git a/src/gui/kernel/qplatformscreen.cpp b/src/gui/kernel/qplatformscreen.cpp
-index 8e9767d..75a7e3a 100644
+index 3ec7a4c..0e2292a 100644
 --- a/src/gui/kernel/qplatformscreen.cpp
 +++ b/src/gui/kernel/qplatformscreen.cpp
 @@ -308,6 +308,15 @@ QPlatformScreen * QPlatformScreen::platformScreenForWindow(const QWindow *window

@@ -1,4 +1,4 @@
-From bc4eb1c6094f5a63342cd4408ebc99bbd0afde55 Mon Sep 17 00:00:00 2001
+From bffb58a9974c1aea20646276a2afd68b90abbc4f Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Fri, 17 Apr 2015 14:26:22 +0900
 Subject: [PATCH] Revert "Make SmoothedAnimation and SpringAnimation smoothly

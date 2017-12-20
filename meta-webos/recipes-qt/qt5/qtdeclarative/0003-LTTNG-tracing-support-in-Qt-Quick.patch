@@ -1,4 +1,4 @@
-From cfc3b56660318f1deadb917bd2810c43f51f41c9 Mon Sep 17 00:00:00 2001
+From aa0428d58ac6b55dcf8aa0923766188097fb6e55 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Sat, 14 Jun 2014 00:57:58 +0200
 Subject: [PATCH] LTTNG tracing support in Qt Quick
@@ -54,7 +54,7 @@ index a63ca0a..2955e91 100644
 -qtHaveModule(xmlpatterns) : SUBDIRS += xmllistmodel
 +OE_QTXMLPATTERNS_ENABLED:qtHaveModule(xmlpatterns) : SUBDIRS += xmllistmodel
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index abcbb82..bcdcd47 100644
+index e8d0138..0117311 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -65,6 +65,7 @@
@@ -82,7 +82,7 @@ index abcbb82..bcdcd47 100644
      Q_Q(QQuickWindow);
      if (!renderer)
 diff --git a/src/quick/quick.pro b/src/quick/quick.pro
-index 1c14ff8..b69cf93 100644
+index f129a29..6a3c10f 100644
 --- a/src/quick/quick.pro
 +++ b/src/quick/quick.pro
 @@ -8,6 +8,12 @@ win32-msvc*:DEFINES *= _CRT_SECURE_NO_WARNINGS
@@ -99,7 +99,7 @@ index 1c14ff8..b69cf93 100644
      QMAKE_CXXFLAGS = -fprofile-arcs -ftest-coverage -fno-elide-constructors
      LIBS_PRIVATE += -lgcov
 diff --git a/src/quick/scenegraph/qsgcontext.cpp b/src/quick/scenegraph/qsgcontext.cpp
-index be228e8..3a9c3d4 100644
+index 2580809..0f70386 100644
 --- a/src/quick/scenegraph/qsgcontext.cpp
 +++ b/src/quick/scenegraph/qsgcontext.cpp
 @@ -44,9 +44,11 @@
@@ -212,7 +212,7 @@ index 31275b3..ed903f3 100644
  
          m_funcs->glPixelStorei(GL_UNPACK_ALIGNMENT, alignment); // restore to previous value
 diff --git a/src/quick/scenegraph/util/qsgatlastexture.cpp b/src/quick/scenegraph/util/qsgatlastexture.cpp
-index 1a1f0d3..e4c8b92 100644
+index d266299..02a0d08 100644
 --- a/src/quick/scenegraph/util/qsgatlastexture.cpp
 +++ b/src/quick/scenegraph/util/qsgatlastexture.cpp
 @@ -48,6 +48,8 @@
@@ -224,7 +224,7 @@ index 1a1f0d3..e4c8b92 100644
  QT_BEGIN_NAMESPACE
  
  #ifndef GL_BGRA
-@@ -215,6 +217,7 @@ int Atlas::textureId() const
+@@ -216,6 +218,7 @@ int Atlas::textureId() const
  
  static void swizzleBGRAToRGBA(QImage *image)
  {
@@ -232,7 +232,7 @@ index 1a1f0d3..e4c8b92 100644
      const int width = image->width();
      const int height = image->height();
      uint *p = (uint *) image->bits();
-@@ -228,6 +231,7 @@ static void swizzleBGRAToRGBA(QImage *image)
+@@ -229,6 +232,7 @@ static void swizzleBGRAToRGBA(QImage *image)
  
  void Atlas::upload(Texture *texture)
  {
@@ -240,7 +240,7 @@ index 1a1f0d3..e4c8b92 100644
      const QImage &image = texture->image();
      const QRect &r = texture->atlasSubRect();
  
-@@ -266,6 +270,7 @@ void Atlas::upload(Texture *texture)
+@@ -267,6 +271,7 @@ void Atlas::upload(Texture *texture)
  void Atlas::uploadBgra(Texture *texture)
  {
      QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
@@ -248,7 +248,7 @@ index 1a1f0d3..e4c8b92 100644
      const QRect &r = texture->atlasSubRect();
      QImage image = texture->image();
  
-@@ -329,6 +334,7 @@ void Atlas::uploadBgra(Texture *texture)
+@@ -330,6 +335,7 @@ void Atlas::uploadBgra(Texture *texture)
  void Atlas::bind(QSGTexture::Filtering filtering)
  {
      QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
@@ -257,7 +257,7 @@ index 1a1f0d3..e4c8b92 100644
          m_allocated = true;
  
 diff --git a/src/quick/scenegraph/util/qsgtexture.cpp b/src/quick/scenegraph/util/qsgtexture.cpp
-index df9e569..1fe965c 100644
+index 7625130..e789b5c 100644
 --- a/src/quick/scenegraph/util/qsgtexture.cpp
 +++ b/src/quick/scenegraph/util/qsgtexture.cpp
 @@ -38,6 +38,7 @@
@@ -284,9 +284,9 @@ index df9e569..1fe965c 100644
      if (!m_dirty_texture) {
          funcs->glBindTexture(GL_TEXTURE_2D, m_texture_id);
          if (mipmapFiltering() != QSGTexture::None && !m_mipmaps_generated) {
-@@ -748,7 +751,9 @@ void QSGPlainTexture::bind()
-         swizzleTime = qsg_renderer_timer.nsecsElapsed();
-     Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphTexturePrepare);
+@@ -752,7 +755,9 @@ void QSGPlainTexture::bind()
+     Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphTexturePrepare,
+                               QQuickProfiler::SceneGraphTexturePrepareSwizzle);
  
 +    QTRACE_BEFORE("glTexImage2D");
      funcs->glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_texture_size.width(), m_texture_size.height(), 0, externalFormat, GL_UNSIGNED_BYTE, tmp.constBits());

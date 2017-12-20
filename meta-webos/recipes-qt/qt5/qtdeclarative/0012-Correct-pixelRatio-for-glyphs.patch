@@ -1,4 +1,4 @@
-From 7f25772c0412db57db87297f5e7b26c7d73ec59b Mon Sep 17 00:00:00 2001
+From 4cc13d81bda0cbc034f4e0ff14d85050c2920e02 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Wed, 2 Sep 2015 17:36:45 +0300
 Subject: [PATCH] Correct pixelRatio for glyphs
@@ -34,7 +34,7 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/#/c/125105/]
  2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/src/quick/scenegraph/qsgdefaultglyphnode_p.cpp b/src/quick/scenegraph/qsgdefaultglyphnode_p.cpp
-index 3eba29b..e2f09ce 100644
+index 5ef5c79..bd8f660 100644
 --- a/src/quick/scenegraph/qsgdefaultglyphnode_p.cpp
 +++ b/src/quick/scenegraph/qsgdefaultglyphnode_p.cpp
 @@ -64,9 +64,9 @@ static inline QVector4D qsg_premultiply(const QVector4D &c, float globalOpacity)

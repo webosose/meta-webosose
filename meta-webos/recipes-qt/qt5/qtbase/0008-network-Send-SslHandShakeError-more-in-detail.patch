@@ -1,4 +1,4 @@
-From a3d6894701e742f47d0272843ed90529d3b658aa Mon Sep 17 00:00:00 2001
+From eb19b19286995bc7eac086f9baa4b899bc19a78b Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 11:50:33 +0200
 Subject: [PATCH] network: Send SslHandShakeError more in detail
@@ -12,10 +12,10 @@ Change-Id: I435e30476ad30bf4dd5957b2703d72b865d98669
  4 files changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/src/network/access/qhttpnetworkconnection.cpp b/src/network/access/qhttpnetworkconnection.cpp
-index c4cb8e6..b56cc12 100644
+index 452b998..7b5cec5 100644
 --- a/src/network/access/qhttpnetworkconnection.cpp
 +++ b/src/network/access/qhttpnetworkconnection.cpp
-@@ -815,7 +815,7 @@ bool QHttpNetworkConnectionPrivate::fillPipeline(QList<HttpMessagePair> &queue,
+@@ -822,7 +822,7 @@ bool QHttpNetworkConnectionPrivate::fillPipeline(QList<HttpMessagePair> &queue,
  }
  
  
@@ -24,7 +24,7 @@ index c4cb8e6..b56cc12 100644
  {
      QString errorString;
      switch (errorCode) {
-@@ -847,7 +847,18 @@ QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError e
+@@ -854,7 +854,18 @@ QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError e
          errorString = QCoreApplication::translate("QHttp", "Unknown protocol specified");
          break;
      case QNetworkReply::SslHandshakeFailedError:
@@ -45,10 +45,10 @@ index c4cb8e6..b56cc12 100644
      case QNetworkReply::TooManyRedirectsError:
          errorString = QCoreApplication::translate("QHttp", "Too many redirects");
 diff --git a/src/network/access/qhttpnetworkconnection_p.h b/src/network/access/qhttpnetworkconnection_p.h
-index 9af39d4..a69ca8b 100644
+index d63e722..77bce6b 100644
 --- a/src/network/access/qhttpnetworkconnection_p.h
 +++ b/src/network/access/qhttpnetworkconnection_p.h
-@@ -229,7 +229,7 @@ public:
+@@ -230,7 +230,7 @@ public:
  
      void createAuthorization(QAbstractSocket *socket, QHttpNetworkRequest &request);
  
@@ -58,7 +58,7 @@ index 9af39d4..a69ca8b 100644
  
      void removeReply(QHttpNetworkReply *reply);
 diff --git a/src/network/access/qhttpnetworkconnectionchannel.cpp b/src/network/access/qhttpnetworkconnectionchannel.cpp
-index dfa5d0e..19e823f 100644
+index 946df8d..d68b393 100644
 --- a/src/network/access/qhttpnetworkconnectionchannel.cpp
 +++ b/src/network/access/qhttpnetworkconnectionchannel.cpp
 @@ -252,7 +252,8 @@ void QHttpNetworkConnectionChannel::handleUnexpectedEOF()

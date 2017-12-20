@@ -1,4 +1,4 @@
-From d5b687fb754e62edb176335c4818d09559acdcbb Mon Sep 17 00:00:00 2001
+From e586cddaa9186d3aa0ed8624aeba445dab3b67d2 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Tue, 18 Mar 2014 10:54:28 +0200
 Subject: [PATCH] DisableCertificateVerificationCheck

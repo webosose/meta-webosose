@@ -1,4 +1,4 @@
-From aaf0430f5a85aaf6ddc360b1185bb2f2aededeb4 Mon Sep 17 00:00:00 2001
+From 7473b4fa3cf1da325529919df347fea0ecc5ddc1 Mon Sep 17 00:00:00 2001
 From: Paolo Angelelli <paolo.angelelli@theqtcompany.com>
 Date: Thu, 3 Dec 2015 10:57:55 +0100
 Subject: [PATCH] Fix for deferredDelete() bug when calling the glib loop
@@ -39,7 +39,7 @@ Change-Id: I29ae1aa08e893df40ba36a05d8e744c850a4261b
  4 files changed, 122 insertions(+), 9 deletions(-)
 
 diff --git a/src/corelib/kernel/qcoreapplication.cpp b/src/corelib/kernel/qcoreapplication.cpp
-index f5b1520..6cf0cd8 100644
+index bd3c12c..b502b3e 100644
 --- a/src/corelib/kernel/qcoreapplication.cpp
 +++ b/src/corelib/kernel/qcoreapplication.cpp
 @@ -1425,8 +1425,22 @@ void QCoreApplication::postEvent(QObject *receiver, QEvent *event, int priority)
@@ -123,10 +123,10 @@ index a56b879..5dc8ff5 100644
  
  // thread wrapper for the main() thread
 diff --git a/tests/auto/corelib/kernel/qobject/tst_qobject.cpp b/tests/auto/corelib/kernel/qobject/tst_qobject.cpp
-index 4688922..f93e64a 100644
+index 427a73f..75eafc0 100644
 --- a/tests/auto/corelib/kernel/qobject/tst_qobject.cpp
 +++ b/tests/auto/corelib/kernel/qobject/tst_qobject.cpp
-@@ -149,6 +149,7 @@ private slots:
+@@ -150,6 +150,7 @@ private slots:
      void exceptions();
      void noDeclarativeParentChangedOnDestruction();
      void mutableFunctor();
@@ -134,7 +134,7 @@ index 4688922..f93e64a 100644
  };
  
  struct QObjectCreatedOnShutdown
-@@ -5817,6 +5818,102 @@ void tst_QObject::connectFunctorWithContextUnique()
+@@ -5836,6 +5837,102 @@ void tst_QObject::connectFunctorWithContextUnique()
      QCOMPARE(receiver.count_slot1, 1);
  }
  

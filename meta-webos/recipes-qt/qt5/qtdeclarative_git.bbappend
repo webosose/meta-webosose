@@ -19,14 +19,13 @@ SRC_URI += " \
     file://0012-Correct-pixelRatio-for-glyphs.patch \
     file://0013-Allow-fixed-animation-step-in-QSGGuiThreadRenderLoop.patch \
     file://0014-Use-the-QT_DISTANCEFIELD_HIGHGLYPHCOUNT-function-fro.patch \
-    file://0015-Add-checking-before-as-child-node.patch \
-    file://0016-Check-engine-to-mark-Object-for-garbage-collection.patch \
-    file://0017-Images-can-be-shared-even-if-cache-is-false.patch \
-    file://0018-QQuickWindow-Add-invalidateCursorItem.patch \
-    file://0019-TimeZone-fix-for-QML-Date-object.patch \
-    file://0020-Fix-for-possible-crash-in-QSGDefaultLayer-grab.patch \
-    file://0021-QQuickTextEdit-Fix-cursor-movement-in-compose-mode.patch \
-    file://0022-Fix-for-Hindi-glyph-break.patch \
-    file://0023-Warn-circular-dependency-when-loading-types.patch \
-    file://0024-Fix-baseUrl-returning-an-empty-url.patch \
+    file://0015-Check-engine-to-mark-Object-for-garbage-collection.patch \
+    file://0016-Images-can-be-shared-even-if-cache-is-false.patch \
+    file://0017-QQuickWindow-Add-invalidateCursorItem.patch \
+    file://0018-TimeZone-fix-for-QML-Date-object.patch \
+    file://0019-Fix-for-possible-crash-in-QSGDefaultLayer-grab.patch \
+    file://0020-QQuickTextEdit-Fix-cursor-movement-in-compose-mode.patch \
+    file://0021-Fix-for-Hindi-glyph-break.patch \
+    file://0022-Warn-circular-dependency-when-loading-types.patch \
+    file://0023-Fix-baseUrl-returning-an-empty-url.patch \
 "

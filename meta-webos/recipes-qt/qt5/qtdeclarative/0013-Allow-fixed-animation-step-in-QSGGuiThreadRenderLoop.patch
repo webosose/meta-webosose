@@ -1,4 +1,4 @@
-From 65e61701a97c1f970e3927f92e57a3e02bbd2a87 Mon Sep 17 00:00:00 2001
+From 905de87eb264ae90e5f8fe0de5b018247c0a20c0 Mon Sep 17 00:00:00 2001
 From: Aram So <aram.so@lge.com>
 Date: Wed, 13 May 2015 11:20:47 +0900
 Subject: [PATCH] Allow fixed animation step in QSGGuiThreadRenderLoop
@@ -18,7 +18,7 @@ Upstream-Status: Pending
  1 file changed, 16 insertions(+)
 
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index 5aa8bba..2c3639c 100644
+index c4111a9..caba690 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
 @@ -126,6 +126,8 @@ public:

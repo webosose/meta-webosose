@@ -1,4 +1,4 @@
-From f829303ff1455f4308fd6cfb96b8892726008388 Mon Sep 17 00:00:00 2001
+From f145c6ef3309d33529ba67978bd6f0e7cee4f9eb Mon Sep 17 00:00:00 2001
 From: Jose Dapena Paz <jose.dapena@lge.com>
 Date: Wed, 4 Mar 2015 19:41:45 +0100
 Subject: [PATCH] Revert "Make QElapsedTimer default to invalid (and now

@@ -1,4 +1,4 @@
-From d03200cb8f34c256c1a56f91ffce94cf31e39345 Mon Sep 17 00:00:00 2001
+From f5c47f2978ae2257bff9f7fcdc639ad4c1ac3e11 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Sun, 29 Mar 2015 22:47:43 +0300
 Subject: [PATCH] Preserve OpenGL context on window close

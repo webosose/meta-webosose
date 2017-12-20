@@ -1,4 +1,4 @@
-From c6ca0a86d58ef4b586cdbc90a880807999edee00 Mon Sep 17 00:00:00 2001
+From ef22809dbd0d159bce61520b5d1fd27a5818f97a Mon Sep 17 00:00:00 2001
 From: Jose Dapena Paz <jose.dapena@lge.com>
 Date: Mon, 23 Feb 2015 14:20:58 +0100
 Subject: [PATCH] Revert "Don't accept json strings with trailing garbage"
@@ -55,7 +55,7 @@ index d7a88b2..3171a5a 100644
  
      QString    errorString() const;
 diff --git a/src/corelib/json/qjsonparser.cpp b/src/corelib/json/qjsonparser.cpp
-index b8a628f..fdc49d3 100644
+index a23741a..6432932 100644
 --- a/src/corelib/json/qjsonparser.cpp
 +++ b/src/corelib/json/qjsonparser.cpp
 @@ -71,7 +71,6 @@ QT_BEGIN_NAMESPACE
@@ -99,10 +99,10 @@ index b8a628f..fdc49d3 100644
      {
          if (error) {
 diff --git a/tests/auto/corelib/json/tst_qtjson.cpp b/tests/auto/corelib/json/tst_qtjson.cpp
-index 1665ff6..64ff604 100644
+index f2f9166..877e2a2 100644
 --- a/tests/auto/corelib/json/tst_qtjson.cpp
 +++ b/tests/auto/corelib/json/tst_qtjson.cpp
-@@ -144,7 +144,6 @@ private Q_SLOTS:
+@@ -145,7 +145,6 @@ private Q_SLOTS:
      void objectInitializerList();
  
      void unicodeKeys();
@@ -110,7 +110,7 @@ index 1665ff6..64ff604 100644
  
      void removeNonLatinKey();
  private:
-@@ -2771,19 +2770,6 @@ void tst_QtJson::unicodeKeys()
+@@ -2787,19 +2786,6 @@ void tst_QtJson::unicodeKeys()
      }
  }
  

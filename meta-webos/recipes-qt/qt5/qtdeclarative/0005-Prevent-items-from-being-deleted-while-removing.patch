@@ -1,4 +1,4 @@
-From 301ca0b19eeb5d75da00e917ae3a4be2cb4c11cb Mon Sep 17 00:00:00 2001
+From 8382a39a41246e573349abedb72564e531f30427 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 10 Dec 2014 15:28:17 +0900
 Subject: [PATCH] Prevent items from being deleted while removing
@@ -10,10 +10,10 @@ That may cause to crash. ObjectReference keep the items from being deleted.
  1 file changed, 11 insertions(+)
 
 diff --git a/src/qml/types/qqmldelegatemodel.cpp b/src/qml/types/qqmldelegatemodel.cpp
-index f2de911..c8f8b7c 100644
+index 21f89cd..4b670de 100644
 --- a/src/qml/types/qqmldelegatemodel.cpp
 +++ b/src/qml/types/qqmldelegatemodel.cpp
-@@ -1351,6 +1351,12 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
+@@ -1365,6 +1365,12 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
  
      d->m_count -= count;
      const QList<QQmlDelegateModelItem *> cache = d->m_cache;
@@ -26,7 +26,7 @@ index f2de911..c8f8b7c 100644
      for (int i = 0, c = cache.count();  i < c; ++i) {
          QQmlDelegateModelItem *item = cache.at(i);
          // layout change triggered by removal of a previous item might have
-@@ -1363,6 +1369,11 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
+@@ -1377,6 +1383,11 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
          else  if (item->modelIndex() >= index)
              item->setModelIndex(-1);
      }
