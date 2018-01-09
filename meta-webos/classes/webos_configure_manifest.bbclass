@@ -15,6 +15,10 @@ def webos_configure_manifest_warn(d, message):
     pn = d.getVar("BPN", True)
     bb.warn("webos_configure_manifest: warning in package: %s, with message: %s" % (pn, message))
 
+def webos_configure_manifest_note(d, message):
+    pn = d.getVar("PN", True)
+    bb.note("webos_configure_manifest: note in package: %s, with message: %s" % (pn, message))
+
 def webos_configure_manifest_lookup_files_by_ext(d, dir_var, ext):
     ret = []
 
@@ -218,7 +222,7 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
             role_dir_rel = d.getVar("webos_sysbus_rolesdir", True)
             role_file = os.path.join(role_dir_rel, manifest["id"] + ".app.json")
             if not os.path.exists(dst + role_file):
-                webos_configure_manifest_warn(d, "Can not determinate role file for application %s" % manifest["id"])
+                webos_configure_manifest_note(d, "Can not determinate role file for application %s" % manifest["id"])
                 return None
 
             perm_dir = d.getVar("webos_sysbus_permissionsdir", True)
@@ -313,7 +317,7 @@ fakeroot python do_configure_manifest() {
         webos_configure_manifest_warn(d, "Unrecognized manifest type %s" % manifest_type)
 
     if len(manifests) == 0:
-        webos_configure_manifest_warn(d, "No manifests were configured")
+        webos_configure_manifest_note(d, "No manifests were configured")
         return
 
     man_dir = d.getVar("D", True) + d.getVar("webos_sysbus_manifestsdir", True)

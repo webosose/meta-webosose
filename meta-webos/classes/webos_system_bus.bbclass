@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 #
 # webos_system_bus
 
@@ -69,7 +69,7 @@ do_install_append () {
             webos_system_bus_install_files ${webos_sysbus_prvservicesdir} ${webos_sysbus_pubservicesdir} "*.service"     "*.service"     "$tree"
             webos_system_bus_install_files ${webos_sysbus_prvrolesdir}    ${webos_sysbus_pubrolesdir}    "*.json"        "*.json"        "$tree"
 
-            bbwarn "$pkgname: Installing roles and services files from bitbake is deprecated - use cmake, qmake, etc."
+            bbnote "$pkgname: Installing roles and services files from bitbake is deprecated - use cmake, qmake, etc."
         fi
     fi
 }
