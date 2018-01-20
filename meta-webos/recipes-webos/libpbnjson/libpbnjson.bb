@@ -29,6 +29,10 @@ EXTRA_OECMAKE += "-DCMAKE_AR:FILEPATH=${AR}"
 
 PACKAGECONFIG[tools] = "-DPBNJSON_INSTALL_TOOLS:BOOL=TRUE,-DPBNJSON_INSTALL_TOOLS:BOOL=FALSE"
 
+# Otherwise it fails with:
+# libpbnjson-native/2.15.0-68-r7/git/src/pbnjson_c/validation/schema_builder.c:24:10: fatal error: schema_keywords.h: No such file or directory
+OECMAKE_GENERATOR="Unix Makefiles"
+
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
