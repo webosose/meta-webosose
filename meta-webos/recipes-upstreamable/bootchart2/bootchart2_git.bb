@@ -7,7 +7,7 @@ HOMEPAGE = "https://github.com/xrmx/bootchart"
 LICENSE = "GPL-3.0"
 LIC_FILES_CHKSUM = "file://COPYING;md5=44ac4678311254db62edf8fd39cb8124"
 
-RDEPENDS_${PN} = "python3 python3-pycairo python3-compression python3-image python3-textutils python3-shell python3-codecs python3-misc"
+RDEPENDS_${PN} = "python3 python3-pycairo python3-compression python3-image python3-shell python3-codecs python3-misc"
 
 PR = "r9"
 

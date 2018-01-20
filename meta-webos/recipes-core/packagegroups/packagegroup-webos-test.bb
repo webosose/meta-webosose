@@ -46,7 +46,6 @@ PYTHON = " \
     python-lang \
     python-logging \
     python-mailbox \
-    python-man \
     python-math \
     python-mime \
     python-misc \
@@ -61,7 +60,6 @@ PYTHON = " \
     python-profile \
     python-pydoc \
     python-re \
-    python-readline \
     python-resource \
     python-robotparser \
     python-setuptools \
