@@ -13,7 +13,7 @@ PROVIDES = "webappmanager-webos"
 RDEPENDS_${PN} = "ptmalloc3"
 # webappmgr's upstart conf expects to have ionice available. Under OE-core, this is supplied by util-linux.
 RDEPENDS_${PN} += "util-linux"
-RDEPENDS_${PN} += "qtdeclarative-plugins qtbase-plugins"
+RDEPENDS_${PN} += "qtbase-plugins"
 
 #  webappmgr2's upstart conf expects setcpushares-task to be available
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
@@ -21,7 +21,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
 WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.2_8543be2375652fac62f63bab99e0f87699506b53', '1.0.0-3_964279e2bf5e1a6b961dc886f5480db787f9587b', d)}"
-PR = "r19"
+PR = "r20"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
