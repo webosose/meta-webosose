@@ -28,7 +28,12 @@ SRC_URI_remove = "\
     file://0011-build-shared-library-for-vchostif.patch \
     file://0012-implement-buffer-wrapping-interface-for-dispmanx.patch \
     file://0013-Implement-triple-buffering-for-wayland.patch \
+    file://0016-Allow-multiple-wayland-compositor-state-data-per-pro.patch \
 "
+
+# Remaining patches from meta-raspberrypi:
+# file://0014-GLES2-gl2ext.h-Define-GL_R8_EXT-and-GL_RG8_EXT.patch
+# file://0015-EGL-glplatform.h-define-EGL_CAST.patch
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " file://0001-Remove-EGL-dependency.patch"
