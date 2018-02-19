@@ -789,6 +789,12 @@ PNBLACKLIST[luajit] ?= "BROKEN for aarch64: lj_arch.h:55:2: error: #error \"No s
 PNBLACKLIST[a2jmidid] ?= "BROKEN for aarch64: ../sigsegv.c:95:20: error: 'NGREG' undeclared (first use in this function)"
 PNBLACKLIST[kernel-devsrc] ?= "BROKEN for aarch64: make[4]: *** No rule to make target `/home/jenkins/anaconda/build-apollo-morty/build/BUILD/work/raspberrypi3_64-apollo-linux/kernel-devsrc/1.0-r0/image/usr/src/kernel/arch/arm64/boot/dts/broadcom/../overlays/Makefile'.  Stop"
 
+# Not compatible with linux-4.15
+PNBLACKLIST[openl2tp] ?= "Current version isn't compatible with linux-4.15"
+PNBLACKLIST[tipcutils] ?= "Current version isn't compatible with linux-4.15"
+PNBLACKLIST[ebtables] ?= "Current version isn't compatible with linux-4.15"
+PNBLACKLIST[drbd] ?= "Current version isn't compatible with linux-4.15"
+
 PNBLACKLIST[packagegroup-cli-tools] ?= "Runtime depends on blacklisted sysstat"
 PNBLACKLIST[sysdig] ?= "Depends on unavailable luajit"
 PNBLACKLIST[librcf] ?= "Depends on blacklisted protobuf"
