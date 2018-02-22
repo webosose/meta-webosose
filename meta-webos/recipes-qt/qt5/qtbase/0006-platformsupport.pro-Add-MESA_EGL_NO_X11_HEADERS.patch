@@ -1,4 +1,4 @@
-From 6c86fc63afc0f212abd7aea52d57999cbdced6a8 Mon Sep 17 00:00:00 2001
+From 6cd37e2e0be12bf264b9f88d5773c48a7493cf3e Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:59:35 +0100
 Subject: [PATCH] platformsupport.pro: Add MESA_EGL_NO_X11_HEADERS
@@ -8,10 +8,10 @@ Subject: [PATCH] platformsupport.pro: Add MESA_EGL_NO_X11_HEADERS
  1 file changed, 3 insertions(+)
 
 diff --git a/src/platformsupport/platformsupport.pro b/src/platformsupport/platformsupport.pro
-index 7db6de78b4..3faa26b6fe 100644
+index 6d4f1b93bd..0c94ba0b6e 100644
 --- a/src/platformsupport/platformsupport.pro
 +++ b/src/platformsupport/platformsupport.pro
-@@ -10,6 +10,9 @@ SUBDIRS = \
+@@ -11,6 +11,9 @@ SUBDIRS = \
  qtConfig(freetype)|darwin|win32: \
      SUBDIRS += fontdatabases
  

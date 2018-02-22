@@ -1,4 +1,4 @@
-From 049b20957bad9efefb8d7ef144a680c2ac799800 Mon Sep 17 00:00:00 2001
+From 7dc3cc1b8c2211a683af8b6473acb8d9f10396e4 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Wed, 20 May 2015 14:05:45 +0300
 Subject: [PATCH] Fix-HarfBuzz-NG-regression
@@ -27,10 +27,10 @@ Upstream-Status: Inappropriate[bugfix for DRD-6125]
  1 file changed, 31 insertions(+), 8 deletions(-)
 
 diff --git a/src/gui/text/qtextengine.cpp b/src/gui/text/qtextengine.cpp
-index 596294c018..665c549bbd 100644
+index 87dc63d59c..baa9cd744d 100644
 --- a/src/gui/text/qtextengine.cpp
 +++ b/src/gui/text/qtextengine.cpp
-@@ -1718,16 +1718,39 @@ void QTextEngine::itemize() const
+@@ -2099,16 +2099,39 @@ void QTextEngine::itemize() const
          // ### pretend HB-old behavior for now
          for (int i = 0; i < length; ++i) {
              switch (analysis[i].script) {

@@ -47,7 +47,3 @@ FILES_${PN}-tests += "${datadir}/booster/tests/*"
 
 # we don't provide cmake tests
 EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"
-
-# until pseudo is completely fixed
-# PLAT-48507 pseudo: random package_qa failures
-INSANE_SKIP_${PN} += "host-user-contaminated"

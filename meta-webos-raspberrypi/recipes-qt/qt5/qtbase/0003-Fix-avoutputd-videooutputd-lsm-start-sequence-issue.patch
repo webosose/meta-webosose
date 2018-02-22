@@ -1,6 +1,6 @@
-From 95d52f760769010d0f7e5b0da8b2a06816107c2b Mon Sep 17 00:00:00 2001
+From 630dd814423b30b49909db376e9af6aadcc6fd24 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
-Date: Wed, 3 Apr 2019 06:29:46 +0000
+Date: Thu, 25 Apr 2019 10:24:14 +0000
 Subject: [PATCH] Fix avoutputd/videooutputd, lsm start sequence issue
 
 :Release Notes:
@@ -21,25 +21,23 @@ startup sequence.
 :QA Notes:
 
 :Issues Addressed:
-[PLAT-76527] [Qt 5.9][RPi] Youtube playback is not working
 [PLAT-45032] Investigate app launching issue when
              avoutputd is started before surface manager
 
+Change-Id: Ia6a67d24e56f8953adba80055033d527cbdf40e3
 Upstream-Status: Inappropriate [webOS specific]
-
-Change-Id: I20ac745e2e652d278691a544b1ea101601665491
 ---
- src/platformsupport/kmsconvenience/qkmsdevice.cpp      | 10 ++++++++++
- src/platformsupport/kmsconvenience/qkmsdevice_p.h      |  2 +-
- .../eglfs_kms_support/qeglfskmsintegration.cpp         |  2 ++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp                | 9 +++++++++
+ src/platformsupport/kmsconvenience/qkmsdevice_p.h                | 1 +
+ .../deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp | 2 ++
+ 3 files changed, 12 insertions(+)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index 8e86317a10..f8efdf3d04 100644
+index 9919af4..2720ddb 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -519,6 +519,16 @@ void QKmsDevice::createScreens()
-     }
+@@ -766,6 +766,15 @@ void QKmsDevice::discoverPlanes()
+     drmModeFreePlaneResources(planeResources);
  }
  
 +bool QKmsDevice::setMaster()
@@ -51,33 +49,31 @@ index 8e86317a10..f8efdf3d04 100644
 +    return true;
 +}
 +
-+
  int QKmsDevice::fd() const
  {
      return m_dri_fd;
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-index a07ff257bc..e917a2ac6e 100644
+index 5eecede..ea12f68 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-@@ -136,7 +136,7 @@ public:
-     virtual void *nativeDisplay() const = 0;
- 
+@@ -218,6 +218,7 @@ public:
      void createScreens();
--
-+    bool setMaster();
+ 
      int fd() const;
++     bool setMaster();
      QString devicePath() const;
  
+     QKmsScreenConfig *screenConfig() const;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index fe2ea11e56..4ccf4f3d20 100644
+index 06bc272..1073674 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-@@ -76,6 +76,8 @@ void QEglFSKmsIntegration::platformInit()
+@@ -71,6 +71,8 @@ void QEglFSKmsIntegration::platformInit()
      m_device = createDevice();
      if (Q_UNLIKELY(!m_device->open()))
          qFatal("Could not open DRM device");
 +    if (Q_UNLIKELY(!m_device->setMaster()))
-+        qFatal("Could not set DRM device as master");
++        qFatal("Could not set DRM device as master");      
  }
  
  void QEglFSKmsIntegration::platformDestroy()

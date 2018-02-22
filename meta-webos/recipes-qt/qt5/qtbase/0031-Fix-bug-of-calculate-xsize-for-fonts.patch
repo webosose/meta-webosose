@@ -1,0 +1,30 @@
+From 54b477ce007045fbc64b14aca52dc7561d44bc0c Mon Sep 17 00:00:00 2001
+From: Gleb Manyagin <gleb.manyagin@lge.com>
+Date: Tue, 27 Feb 2018 12:12:59 +0300
+Subject: [PATCH] Fix bug of calculate xsize for fonts
+
+In calculating bounding rect for glyph may be case
+when QFontDef::stretch == QFont::AnyStretch (== 0).
+In this case text for QQuickText item is hidden.
+For fixing this bug it was added check.
+
+Upstream status [Submitted]: https://codereview.qt-project.org/#/c/221473/
+
+Change-Id: I9e4e2a93c8d8b10d9895a9b72164855b0f22642d
+---
+ src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
+index e87404f60d..0b812e3d50 100644
+--- a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
++++ b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
+@@ -351,7 +351,7 @@ void QFreetypeFace::release(const QFontEngine::FaceId &face_id)
+ void QFreetypeFace::computeSize(const QFontDef &fontDef, int *xsize, int *ysize, bool *outline_drawing, QFixed *scalableBitmapScaleFactor)
+ {
+     *ysize = qRound(fontDef.pixelSize * 64);
+-    *xsize = *ysize * fontDef.stretch / 100;
++    *xsize = *ysize * (fontDef.stretch == (uint)QFont::AnyStretch ? (uint)QFont::Unstretched : fontDef.stretch ) / 100;
+     *scalableBitmapScaleFactor = 1;
+     *outline_drawing = false;
+ 

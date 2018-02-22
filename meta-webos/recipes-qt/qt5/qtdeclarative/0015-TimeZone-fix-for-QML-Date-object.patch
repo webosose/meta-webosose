@@ -1,0 +1,170 @@
+From 20e78004598a430d98a776e969b1d6d61b5c9a5b Mon Sep 17 00:00:00 2001
+From: Valery Volgutov <valery.volgutov@lge.com>
+Date: Wed, 1 Nov 2017 14:37:08 +0300
+Subject: [PATCH] TimeZone fix for QML Date object
+
+:Release Notes:
+TimeZone fix for QML Date object
+
+:Detailed Notes:
+When we try to set time to past we can have issue with incorrect
+timezone calculation.
+Timezone calculates for current time (returns "time" function).
+But timezone may be differ for current and past time.
+E.g. Turkey had GMT+2 and +1 daylight save in 2011 year, but
+for 2017 - GMT + 3.
+
+This might be caused by our own .patch:
+
+Update timezone info before localtime_r
+
+According to POSIX.1 8.3.7.2 localtime_r is not required to set tzname.
+So should call tzset() before localtime_r(). And mktime() acts as if it
+called tzset(), POSIX.1 8.1.1. So calculating global time before local
+time can reflect current time-zone information.
+
+And then this might be fixed in upstream commits:
+
+commit 948e24cb6deeaf0e55794032b90fdf20b7ef12c1
+Author: Edward Welbourne <edward.welbourne@qt.io>
+Date:   Thu Nov 3 19:00:24 2016 +0100
+
+    V4 Date.ParseString(): fix UTC-ness of date-only formats
+
+commit 2b8b7a162be52f8cd6c2bc39f498a1ddfb59dd68
+Author: Edward Welbourne <edward.welbourne@qt.io>
+Date:   Fri Oct 28 17:24:46 2016 +0200
+
+    V4 Date: fix what we can within ECMA 262's limitations
+
+:Testing Performed:
+M16p (build 1465).
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-47128] Incorrect time display in QML app
+
+Upstream-Status: [Submitted]
+https://codereview.qt-project.org/#/c/210830/
+
+Change-Id: If0b068b23bc790a70842b4309170c03d06a9e1b3
+---
+ src/qml/jsruntime/qv4dateobject.cpp | 57 +++++++++++++----------------
+ 1 file changed, 26 insertions(+), 31 deletions(-)
+
+diff --git a/src/qml/jsruntime/qv4dateobject.cpp b/src/qml/jsruntime/qv4dateobject.cpp
+index dcce845d0..30847b59f 100644
+--- a/src/qml/jsruntime/qv4dateobject.cpp
++++ b/src/qml/jsruntime/qv4dateobject.cpp
+@@ -89,8 +89,27 @@ static const double msPerMinute = 60000.0;
+ static const double msPerHour = 3600000.0;
+ static const double msPerDay = 86400000.0;
+ 
+-// The current *standard* time offset, regardless of DST:
+-static double LocalTZA = 0.0; // initialized at startup
++static double getLocalTZA(double tt)
++{
++#ifndef Q_OS_WIN
++    struct tm t;
++    time_t curr;
++    tzset();
++    if (qIsNaN(tt))
++        time(&curr);
++    else
++        curr = (time_t)(tt / 1000.0);
++    gmtime_r(&curr, &t);
++    time_t globl = mktime(&t);
++    localtime_r(&curr, &t);
++    time_t locl = mktime(&t);
++    return double(locl - globl) * 1000.0;
++#else
++    TIME_ZONE_INFORMATION tzInfo;
++    GetTimeZoneInformation(&tzInfo);
++    return -tzInfo.Bias * 60.0 * 1000.0;
++#endif
++}
+ 
+ static inline double TimeWithinDay(double t)
+ {
+@@ -320,6 +339,7 @@ static inline double MakeDate(double day, double time)
+ 
+ static inline double DaylightSavingTA(double t) // t is a UTC time
+ {
++    double LocalTZA = getLocalTZA(t);
+     return QTimeZone::systemTimeZone().offsetFromUtc(
+         QDateTime::fromMSecsSinceEpoch(qint64(t), Qt::UTC)) * 1e3 - LocalTZA;
+ }
+@@ -351,6 +371,7 @@ static inline double DaylightSavingTA(double t)
+ static inline double LocalTime(double t)
+ {
+     // Flawed, yet verbatim from the spec:
++    double LocalTZA = getLocalTZA(t);
+     return t + LocalTZA + DaylightSavingTA(t);
+ }
+ 
+@@ -360,6 +381,7 @@ static inline double LocalTime(double t)
+ static inline double UTC(double t)
+ {
+     // Flawed, yet verbatim from the spec:
++    double LocalTZA = getLocalTZA(t);
+     return t - LocalTZA - DaylightSavingTA(t - LocalTZA);
+ }
+ 
+@@ -626,6 +648,7 @@ static inline QString ToString(double t)
+     if (std::isnan(t))
+         return QStringLiteral("Invalid Date");
+     QString str = ToDateTime(t, Qt::LocalTime).toString() + QLatin1String(" GMT");
++    double LocalTZA = getLocalTZA(t);
+     double tzoffset = LocalTZA + DaylightSavingTA(t);
+     if (tzoffset) {
+         int hours = static_cast<int>(::fabs(tzoffset) / 1000 / 60 / 60);
+@@ -673,33 +696,6 @@ static inline QString ToLocaleTimeString(double t)
+     return ToDateTime(t, Qt::LocalTime).time().toString(Qt::LocaleDate);
+ }
+ 
+-static double getLocalTZA()
+-{
+-#ifndef Q_OS_WIN
+-    tzset();
+-#endif
+-#ifdef USE_QTZ_SYSTEM_ZONE
+-    // TODO: QTimeZone::resetSystemTimeZone(), see QTBUG-56899 and comment above.
+-    // Standard offset, with no daylight-savings adjustment, in ms:
+-    return QTimeZone::systemTimeZone().standardTimeOffset(QDateTime::currentDateTime()) * 1e3;
+-#else
+-#  ifdef Q_OS_WIN
+-    TIME_ZONE_INFORMATION tzInfo;
+-    GetTimeZoneInformation(&tzInfo);
+-    return -tzInfo.Bias * 60.0 * 1000.0;
+-#  else
+-    struct tm t;
+-    time_t curr;
+-    time(&curr);
+-    gmtime_r(&curr, &t);
+-    time_t globl = mktime(&t);
+-    localtime_r(&curr, &t);
+-    time_t locl = mktime(&t);
+-    return double(locl - globl) * 1000.0;
+-#  endif
+-#endif // USE_QTZ_SYSTEM_ZONE
+-}
+-
+ DEFINE_OBJECT_VTABLE(DateObject);
+ 
+ void Heap::DateObject::init(const QDateTime &date)
+@@ -796,7 +792,7 @@ void DatePrototype::init(ExecutionEngine *engine, Object *ctor)
+     ScopedObject o(scope);
+     ctor->defineReadonlyProperty(engine->id_prototype(), (o = this));
+     ctor->defineReadonlyConfigurableProperty(engine->id_length(), Primitive::fromInt32(7));
+-    LocalTZA = getLocalTZA();
++    ctor->defineReadonlyProperty(engine->id_length(), Primitive::fromInt32(7));
+ 
+     ctor->defineDefaultProperty(QStringLiteral("parse"), method_parse, 1);
+     ctor->defineDefaultProperty(QStringLiteral("UTC"), method_UTC, 7);
+@@ -1520,5 +1516,4 @@ ReturnedValue DatePrototype::method_toJSON(const FunctionObject *b, const Value
+ 
+ void DatePrototype::timezoneUpdated()
+ {
+-    LocalTZA = getLocalTZA();
+ }

@@ -1,4 +1,4 @@
-From 6faa9822f3ce2bdafe7029292253cf9881d01273 Mon Sep 17 00:00:00 2001
+From 829f8682871058553519e6bfe79628ef8471f3bb Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Tue, 1 Mar 2016 14:27:11 +0300
 Subject: [PATCH] Check if combined glyph exists in font's charmap table
@@ -31,19 +31,19 @@ Change-Id: I4fb669836c9656341e9207eb852f04f925ef75de
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/gui/text/qharfbuzzng.cpp b/src/gui/text/qharfbuzzng.cpp
-index 6aca660205..8777cd4f43 100644
+index 36bd81c76b..d8e8138d85 100644
 --- a/src/gui/text/qharfbuzzng.cpp
 +++ b/src/gui/text/qharfbuzzng.cpp
-@@ -451,7 +451,7 @@ _hb_qt_font_get_nominal_glyph(hb_font_t * /*font*/, void *font_data,
+@@ -462,7 +462,7 @@ _hb_qt_font_get_nominal_glyph(hb_font_t * /*font*/, void *font_data,
  
      *glyph = fe->glyphIndex(unicode);
  
 -    return *glyph != 0;
 +    return (*glyph != 0 || unicode == 0) ? true : false;
  }
- #endif
  
-@@ -467,7 +467,7 @@ _hb_qt_font_get_variation_glyph(hb_font_t * /*font*/, void *font_data,
+ static hb_bool_t
+@@ -477,7 +477,7 @@ _hb_qt_font_get_variation_glyph(hb_font_t * /*font*/, void *font_data,
      // ### TODO add support for variation selectors
      *glyph = fe->glyphIndex(unicode);
  

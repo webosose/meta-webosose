@@ -24,8 +24,3 @@ QMAKE_PROFILES = "${S}/${FILE_READER_PROJECT}"
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/*"
-
-# until pseudo is completely fixed
-# PLAT-48507 pseudo: random package_qa failures
-# ERROR: ilib-qml-plugin-11.0.0-2-r2 do_package_qa: QA Issue: ilib-qml-plugin: /ilib-qml-plugin/usr/lib/qml/iLib/qmldir is owned by uid 1101, which is the same as the user running bitbake. This may be due to host contamination [host-user-contaminated]
-INSANE_SKIP_${PN} += "host-user-contaminated"

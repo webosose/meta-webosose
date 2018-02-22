@@ -1,4 +1,4 @@
-From 2240188ea684fd37288a4ff0512e3bc37e0b645e Mon Sep 17 00:00:00 2001
+From 0ab559934b568d5f637b9373065ca9454e01bbb6 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:58:14 +0100
 Subject: [PATCH] Decrease the size of QFontCache
@@ -8,10 +8,10 @@ Subject: [PATCH] Decrease the size of QFontCache
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/gui/text/qfont.cpp b/src/gui/text/qfont.cpp
-index f0b1e06075..01ad340e32 100644
+index f7462b65c8..a8618723fd 100644
 --- a/src/gui/text/qfont.cpp
 +++ b/src/gui/text/qfont.cpp
-@@ -2696,7 +2696,9 @@ static const int fast_timeout =  10000; // 10s
+@@ -2701,7 +2701,9 @@ static const int fast_timeout =  10000; // 10s
  static const int slow_timeout = 300000; //  5m
  #endif // QFONTCACHE_DEBUG
  

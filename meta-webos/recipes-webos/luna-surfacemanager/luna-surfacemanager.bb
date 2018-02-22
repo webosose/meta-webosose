@@ -75,10 +75,3 @@ FILES_${PN}-conf += " \
     ${WEBOS_SYSTEM_BUS_DIRS} \
 "
 RDEPENDS_${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components"
-
-INSANE_SKIP_${PN}-dev += "host-user-contaminated"
-
-# until pseudo is completely fixed
-# PLAT-48507 pseudo: random package_qa failures
-# http://caprica.lgsvl.com:8080/Errors/Details/1096963
-INSANE_SKIP_${PN}-dev += "host-user-contaminated"

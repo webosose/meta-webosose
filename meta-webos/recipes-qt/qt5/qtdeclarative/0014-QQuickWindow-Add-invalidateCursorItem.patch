@@ -1,4 +1,4 @@
-From f85f21cce8f3b21d53b9bcecc4672019a1bed64b Mon Sep 17 00:00:00 2001
+From cf255001eabd0a9ea4ae14b3032f924ecaa5ccb2 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 21 Sep 2017 22:25:17 +0900
 Subject: [PATCH] QQuickWindow: Add invalidateCursorItem
@@ -15,12 +15,12 @@ Upstream-Status: Pending
  2 files changed, 17 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index c6d18de..d0c164c 100644
+index ca4cf480b..6fd52a4c6 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -2615,6 +2615,19 @@ QQuickItem *QQuickWindowPrivate::findCursorItem(QQuickItem *item, const QPointF
+@@ -2836,6 +2836,19 @@ QQuickItem *QQuickWindowPrivate::findCursorItem(QQuickItem *item, const QPointF
      }
-     return 0;
+     return nullptr;
  }
 +
 +/*!
@@ -37,19 +37,19 @@ index c6d18de..d0c164c 100644
 +}
  #endif
  
- bool QQuickWindowPrivate::sendFilteredTouchEvent(QQuickItem *target, QQuickItem *item, QQuickPointerTouchEvent *event, QSet<QQuickItem *> *hasFiltered)
+ bool QQuickWindowPrivate::sendFilteredPointerEvent(QQuickPointerEvent *event, QQuickItem *receiver, QQuickItem *filteringParent)
 diff --git a/src/quick/items/qquickwindow.h b/src/quick/items/qquickwindow.h
-index a50ba36..cba2c8a 100644
+index f7918e5e7..b99fdf75a 100644
 --- a/src/quick/items/qquickwindow.h
 +++ b/src/quick/items/qquickwindow.h
-@@ -112,6 +112,10 @@ public:
- 
-     QQuickItem *mouseGrabberItem() const;
+@@ -123,6 +123,10 @@ public:
+     QT_DEPRECATED bool sendEvent(QQuickItem *, QEvent *);
+ #endif
  
 +#ifndef QT_NO_CURSOR
 +    void invalidateCursorItem();
 +#endif
 +
-     bool sendEvent(QQuickItem *, QEvent *);
- 
      QImage grabWindow();
+ #if QT_CONFIG(opengl)
+     void setRenderTarget(QOpenGLFramebufferObject *fbo);
