@@ -1,4 +1,4 @@
-From cdd2cd5d21ba3667830c80be23218208d8183a57 Mon Sep 17 00:00:00 2001
+From cda63bc8d0d2dd0e27f2d9ac351e53340a662421 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Tue, 18 Mar 2014 10:54:28 +0200
 Subject: [PATCH] DisableCertificateVerificationCheck
@@ -8,15 +8,15 @@ Subject: [PATCH] DisableCertificateVerificationCheck
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/network/ssl/qsslsocket_openssl.cpp b/src/network/ssl/qsslsocket_openssl.cpp
-index f5b493897e..107ee50761 100644
+index 11f8a40199..1067b8af80 100644
 --- a/src/network/ssl/qsslsocket_openssl.cpp
 +++ b/src/network/ssl/qsslsocket_openssl.cpp
-@@ -1696,7 +1696,7 @@ QList<QSslError> QSslSocketBackendPrivate::verify(const QList<QSslCertificate> &
+@@ -1403,7 +1403,7 @@ QList<QSslError> QSslSocketBackendPrivate::verify(const QList<QSslCertificate> &
      QMutexLocker sslErrorListMutexLocker(&_q_sslErrorList()->mutex);
  
      // Register a custom callback to get all verification errors.
--    X509_STORE_set_verify_cb_func(certStore, q_X509Callback);
-+    //X509_STORE_set_verify_cb_func(certStore, q_X509Callback);
+-    q_X509_STORE_set_verify_cb(certStore, q_X509Callback);
++    //q_X509_STORE_set_verify_cb(certStore, q_X509Callback);
  
      // Build the chain of intermediate certificates
      STACK_OF(X509) *intermediates = 0;

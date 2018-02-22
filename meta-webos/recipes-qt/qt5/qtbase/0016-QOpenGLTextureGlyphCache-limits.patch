@@ -1,4 +1,4 @@
-From 541d5d300e13508ec2bf9984fc499f03799f5c6b Mon Sep 17 00:00:00 2001
+From 258aaf1b34143fe771e5abaa4bab17cfafbc674a Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Wed, 29 Oct 2014 00:21:30 +0200
 Subject: [PATCH] QOpenGLTextureGlyphCache limits
@@ -66,10 +66,10 @@ index 556d52ef99..af8b8414a9
      if (ctx == 0)
          return QImageTextureGlyphCache::maxTextureHeight();
 diff --git a/src/gui/opengl/qopengltextureglyphcache_p.h b/src/gui/opengl/qopengltextureglyphcache_p.h
-index 6a1550dbed..3c59f84482 100644
+index 598cb00ee5..fa17d888fc 100644
 --- a/src/gui/opengl/qopengltextureglyphcache_p.h
 +++ b/src/gui/opengl/qopengltextureglyphcache_p.h
-@@ -166,6 +166,9 @@ private:
+@@ -171,6 +171,9 @@ private:
  
      int m_serialNumber;
  
@@ -95,7 +95,7 @@ index 2a7e0eaa0c..374f290896 100644
              m_w = qNextPowerOfTwo(qCeil(fontEngine->maxCharWidth()) - 1);
      }
 diff --git a/src/gui/painting/qtextureglyphcache_p.h b/src/gui/painting/qtextureglyphcache_p.h
-index 291fb35193..06c8451b46 100644
+index e4db691ad0..e7b95914ef 100644
 --- a/src/gui/painting/qtextureglyphcache_p.h
 +++ b/src/gui/painting/qtextureglyphcache_p.h
 @@ -76,8 +76,14 @@ class Q_GUI_EXPORT QTextureGlyphCache : public QFontEngineGlyphCache

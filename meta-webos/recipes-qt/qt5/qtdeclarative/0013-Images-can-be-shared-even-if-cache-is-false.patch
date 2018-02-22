@@ -1,4 +1,4 @@
-From f285eaa3d63dc0f56b4d6d25434edcc0c5b1a1cf Mon Sep 17 00:00:00 2001
+From c4317c59a7d4001f17f501db27e91d8d0c94a3ed Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Thu, 22 Jun 2017 18:40:35 +0900
 Subject: [PATCH] Images can be shared even if cache is false
@@ -38,46 +38,46 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/src/quick/util/qquickpixmapcache.cpp b/src/quick/util/qquickpixmapcache.cpp
-index 882482a..346b3c3 100644
+index 4237ec3ed..129b09f4c 100644
 --- a/src/quick/util/qquickpixmapcache.cpp
 +++ b/src/quick/util/qquickpixmapcache.cpp
-@@ -244,7 +244,7 @@ public:
+@@ -245,7 +245,7 @@ public:
        url(u), errorString(e), requestSize(s),
        providerOptions(po), appliedTransform(QQuickImageProviderOptions::UsePluginDefaultTransform),
-       textureFactory(0), reply(0), prevUnreferenced(0),
--      prevUnreferencedPtr(0), nextUnreferenced(0)
-+      prevUnreferencedPtr(0), nextUnreferenced(0), storeToCache(true)
+       textureFactory(nullptr), reply(nullptr), prevUnreferenced(nullptr),
+-      prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr)
++      prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr), storeToCache(true)
      {
          declarativePixmaps.insert(pixmap);
      }
-@@ -254,7 +254,7 @@ public:
+@@ -255,7 +255,7 @@ public:
        url(u), requestSize(r),
        providerOptions(po), appliedTransform(aTransform),
-       textureFactory(0), reply(0), prevUnreferenced(0), prevUnreferencedPtr(0),
--      nextUnreferenced(0)
-+      nextUnreferenced(0), storeToCache(true)
+       textureFactory(nullptr), reply(nullptr), prevUnreferenced(nullptr), prevUnreferencedPtr(nullptr),
+-      nextUnreferenced(nullptr)
++      nextUnreferenced(nullptr), storeToCache(true)
      {
          declarativePixmaps.insert(pixmap);
      }
-@@ -265,7 +265,7 @@ public:
+@@ -266,7 +266,7 @@ public:
        url(u), implicitSize(s), requestSize(r),
        providerOptions(po), appliedTransform(aTransform),
-       textureFactory(texture), reply(0), prevUnreferenced(0),
--      prevUnreferencedPtr(0), nextUnreferenced(0)
-+      prevUnreferencedPtr(0), nextUnreferenced(0), storeToCache(true)
+       textureFactory(texture), reply(nullptr), prevUnreferenced(nullptr),
+-      prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr)
++      prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr), storeToCache(true)
      {
          declarativePixmaps.insert(pixmap);
      }
-@@ -274,7 +274,7 @@ public:
+@@ -275,7 +275,7 @@ public:
      : refCount(1), inCache(false), pixmapStatus(QQuickPixmap::Ready),
        appliedTransform(QQuickImageProviderOptions::UsePluginDefaultTransform),
-       textureFactory(texture), reply(0), prevUnreferenced(0),
--      prevUnreferencedPtr(0), nextUnreferenced(0)
-+      prevUnreferencedPtr(0), nextUnreferenced(0), storeToCache(true)
+       textureFactory(texture), reply(nullptr), prevUnreferenced(nullptr),
+-      prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr)
++      prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr), storeToCache(true)
      {
          if (texture)
              requestSize = implicitSize = texture->textureSize();
-@@ -317,6 +317,7 @@ public:
+@@ -318,6 +318,7 @@ public:
      QQuickPixmapData *prevUnreferenced;
      QQuickPixmapData**prevUnreferencedPtr;
      QQuickPixmapData *nextUnreferenced;
@@ -85,7 +85,7 @@ index 882482a..346b3c3 100644
  };
  
  int QQuickPixmapReply::finishedIndex = -1;
-@@ -1132,7 +1133,7 @@ void QQuickPixmapData::release()
+@@ -1198,7 +1199,7 @@ void QQuickPixmapData::release()
              QQuickPixmapReader::readerMutex.unlock();
          }
  
@@ -94,7 +94,7 @@ index 882482a..346b3c3 100644
              if (inCache)
                  pixmapStore()->unreferencePixmap(this);
              else
-@@ -1443,6 +1444,11 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1524,6 +1525,11 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
  
      QHash<QQuickPixmapKey, QQuickPixmapData *>::Iterator iter = store->m_cache.end();
  
@@ -106,7 +106,7 @@ index 882482a..346b3c3 100644
      // If Cache is disabled, the pixmap will always be loaded, even if there is an existing
      // cached version. Unless it's an itemgrabber url, since the cache is used to pass
      // the result between QQuickItemGrabResult and QQuickImage.
-@@ -1476,6 +1482,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1557,6 +1563,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
                  PIXMAP_PROFILE(pixmapLoadingFinished(url, QSize(width(), height())));
                  if (options & QQuickPixmap::Cache)
                      d->addToCache();
@@ -114,7 +114,7 @@ index 882482a..346b3c3 100644
                  return;
              }
              if (d) { // loadable, but encountered error while loading
-@@ -1491,6 +1498,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1572,6 +1579,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
          d = new QQuickPixmapData(this, url, requestSize, providerOptions, QQuickImageProviderOptions::UsePluginDefaultTransform);
          if (options & QQuickPixmap::Cache)
              d->addToCache();

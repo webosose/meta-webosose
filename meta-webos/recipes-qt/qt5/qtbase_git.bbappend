@@ -17,9 +17,6 @@ PACKAGECONFIG_DEFAULT_remove = "dbus"
 # Enable accessibility for qtquickcontrols
 PACKAGECONFIG_append = " accessibility"
 
-# Enable qml-debug for qtdeclarative (added with Qt 5.8 upgrade and moved to qtdeclarative with 5.10 upgrade)
-PACKAGECONFIG_append = " qml-debug"
-
 # Disable widget features
 PACKAGECONFIG_remove = "widgets"
 
@@ -61,7 +58,7 @@ PACKAGECONFIG[no-qpa-platform] = "-no-qpa-platform-guard,,"
 # Depending on whether LTTNG support is enabled or not for the build we need to
 # depend on the LTTNG providers to not let the build fail
 inherit webos_lttng
-PACKAGECONFIG[lttng] = "-lttng,-no-lttng,lttng-ust"
+PACKAGECONFIG[lttng] = "-trace lttng,-trace no,lttng-ust"
 PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' }"
 
 # XXX Try -reduce-exports
@@ -90,7 +87,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.9.meta-webos.21 based on 5.9.meta-qt5-shared.8
+# Patches from 5.11.meta-webos.14 based on 5.11.meta-qt5-shared.14
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-DisableCertificateVerificationCheck.patch \
@@ -118,21 +115,19 @@ SRC_URI_append = " \
     file://0024-Support-wrapMode-wordWrap-for-QML-Text-type-for-Kore.patch \
     file://0025-Check-if-combined-glyph-exists-in-font-s-charmap-tab.patch \
     file://0026-Prevent-rare-segfault-crashes-in-QNetworkConfigurati.patch \
-    file://0027-Fix-distance-field-rendering-of-very-wide-glyphs.patch \
-    file://0028-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
-    file://0029-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
-    file://0030-Workaround-for-SGX-clipping-bug.patch \
-    file://0031-Workaround-for-RGX-broken-render-to-texture-with-siz.patch \
-    file://0032-Fix-bug-of-calculate-xsize-for-fonts.patch \
-    file://0033-Emulator-NYX-integration-with-eglfs-plugin.patch \
-    file://0034-Fix-unicode-Bidi-Algorithm.patch \
+    file://0027-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
+    file://0028-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
+    file://0029-Workaround-for-SGX-clipping-bug.patch \
+    file://0030-Workaround-for-RGX-broken-render-to-texture-with-siz.patch \
+    file://0031-Fix-bug-of-calculate-xsize-for-fonts.patch \
+    file://0032-Emulator-NYX-integration-with-eglfs-plugin.patch \
 "
 
 SRC_URI_append_hardware = " \
-    file://0035-eglfs-Support-multiple-device-integration.patch \
-    file://0036-eglfs-Support-multiple-display.patch \
-    file://0037-eglfs-Associate-keyboard-device-with-window.patch \
-    file://0038-eglfs-Associate-touch-device-with-window.patch \
+    file://0033-eglfs-Support-multiple-device-integration.patch \
+    file://0034-eglfs-Support-multiple-display.patch \
+    file://0035-eglfs-Associate-keyboard-device-with-window.patch \
+    file://0036-eglfs-Associate-touch-device-with-window.patch \
 "
 
 # Do not include Qt testability patch for release
@@ -141,13 +136,3 @@ SRC_URI_append = "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else ' file://0099
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
-
-# until pseudo is completely fixed
-# PLAT-48507 pseudo: random package_qa failures
-INSANE_SKIP_${PN} += "host-user-contaminated"
-INSANE_SKIP_${PN}-mkspecs += "host-user-contaminated"
-INSANE_SKIP_${PN}-plugins += "host-user-contaminated"
-# http://caprica.lgsvl.com:8080/Errors/Details/1136384
-INSANE_SKIP_${PN}-tools += "host-user-contaminated"
-# http://caprica.lgsvl.com:8080/Errors/Details/1109556
-INSANE_SKIP_${PN}-dev += "host-user-contaminated"

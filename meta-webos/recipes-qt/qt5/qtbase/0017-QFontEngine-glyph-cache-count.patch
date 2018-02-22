@@ -1,4 +1,4 @@
-From e88e84f5bf2a78e7576096ab0fc260defef7a930 Mon Sep 17 00:00:00 2001
+From f085e06a52c796cc3fd24109b9a467c2072d2202 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 7 Nov 2014 17:59:03 -0800
 Subject: [PATCH] QFontEngine glyph cache count
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [specific to tv]
  2 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/src/gui/text/qfontengine.cpp b/src/gui/text/qfontengine.cpp
-index 29c48da7be..962537f892 100644
+index 80fd288c04..bc077cd1e5 100644
 --- a/src/gui/text/qfontengine.cpp
 +++ b/src/gui/text/qfontengine.cpp
 @@ -249,7 +249,8 @@ QFontEngine::QFontEngine(Type type)
@@ -49,7 +49,7 @@ index 29c48da7be..962537f892 100644
  }
  
  QFontEngine::~QFontEngine()
-@@ -1067,9 +1072,9 @@ void QFontEngine::setGlyphCache(const void *context, QFontEngineGlyphCache *cach
+@@ -1064,9 +1069,9 @@ void QFontEngine::setGlyphCache(const void *context, QFontEngineGlyphCache *cach
              return;
      }
  
@@ -62,10 +62,10 @@ index 29c48da7be..962537f892 100644
  
      GlyphCacheEntry entry;
 diff --git a/src/gui/text/qfontengine_p.h b/src/gui/text/qfontengine_p.h
-index 514e9424b2..ee36349d2d 100644
+index a411e9ce4c..67853c103a 100644
 --- a/src/gui/text/qfontengine_p.h
 +++ b/src/gui/text/qfontengine_p.h
-@@ -373,6 +373,7 @@ private:
+@@ -379,6 +379,7 @@ private:
      mutable qreal m_minLeftBearing;
      mutable qreal m_minRightBearing;
  

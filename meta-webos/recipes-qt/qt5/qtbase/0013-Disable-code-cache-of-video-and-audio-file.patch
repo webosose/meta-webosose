@@ -1,4 +1,4 @@
-From e64e4e9faa99418711a0ec48687d3622de4418e0 Mon Sep 17 00:00:00 2001
+From f989d3d0a91a17b7d9f08782d43fd75864ddc6e8 Mon Sep 17 00:00:00 2001
 From: Dong-Heon Jung <dongheon.jung@lge.com>
 Date: Tue, 23 Sep 2014 05:29:26 +0200
 Subject: [PATCH] Disable code cache of video and audio file
@@ -17,10 +17,10 @@ Change-Id: Ied1f1d782faa507ba3e8798f853697c710800fe6
  1 file changed, 9 insertions(+)
 
 diff --git a/src/network/access/qnetworkreplyhttpimpl.cpp b/src/network/access/qnetworkreplyhttpimpl.cpp
-index 10d0e86d93..fa48280fff 100644
+index 9067dea8e3..a0c2214a50 100644
 --- a/src/network/access/qnetworkreplyhttpimpl.cpp
 +++ b/src/network/access/qnetworkreplyhttpimpl.cpp
-@@ -1725,6 +1725,15 @@ QNetworkCacheMetaData QNetworkReplyHttpImplPrivate::fetchCacheMetaData(const QNe
+@@ -1744,6 +1744,15 @@ QNetworkCacheMetaData QNetworkReplyHttpImplPrivate::fetchCacheMetaData(const QNe
          else if (cacheControl.contains("no-store"))
              canDiskCache = false;
  

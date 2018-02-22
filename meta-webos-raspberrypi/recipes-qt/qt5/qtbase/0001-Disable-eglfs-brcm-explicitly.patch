@@ -1,4 +1,4 @@
-From 46bab70ba402dd6faeae0a9d7aaa7372f1f1f2ab Mon Sep 17 00:00:00 2001
+From b3b5ae98ad3561b3a18faded9db5b66e2410dfbf Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Thu, 6 Jul 2017 09:41:31 +0900
 Subject: [PATCH] Disable eglfs-brcm explicitly
@@ -21,15 +21,31 @@ Only build tested.
 
 Change-Id: I9392e5aec929fe7d1c3dc9f52f94323ede3f86e0
 ---
- src/gui/configure.json                                     | 7 +------
- .../eglfs/deviceintegration/deviceintegration.pro          | 1 -
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ src/gui/configure.json                                   | 16 +---------------
+ .../eglfs/deviceintegration/deviceintegration.pro        |  1 -
+ 2 files changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/src/gui/configure.json b/src/gui/configure.json
-index 864603429a..a15e9c4c0a 100644
+index bb90970..42c6c4b 100644
 --- a/src/gui/configure.json
 +++ b/src/gui/configure.json
-@@ -1118,11 +1118,6 @@
+@@ -708,15 +708,6 @@
+             },
+             "use": "egl xcb_xlib"
+         },
+-        "egl-brcm": {
+-            "label": "Broadcom EGL (Raspberry Pi)",
+-            "type": "compile",
+-            "test": {
+-                "include": [ "EGL/egl.h", "bcm_host.h" ],
+-                "main": "vc_dispmanx_display_open(0);"
+-            },
+-            "use": "egl bcm_host"
+-        },
+         "egl-egldevice": {
+             "label": "EGLDevice",
+             "type": "compile",
+@@ -1180,11 +1171,6 @@
              "condition": "!config.android && !config.darwin && !config.win32 && features.egl",
              "output": [ "privateFeature" ]
          },
@@ -41,23 +57,23 @@ index 864603429a..a15e9c4c0a 100644
          "eglfs_egldevice": {
              "label": "EGLFS EGLDevice",
              "condition": "features.eglfs && tests.egl-egldevice && features.kms",
-@@ -1636,7 +1631,7 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
+@@ -1719,7 +1705,7 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
                      "section": "EGLFS details",
                      "condition": "features.eglfs",
                      "entries": [
--                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_mali", "eglfs_brcm", "egl_x11"
-+                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_mali", "egl_x11"
+-                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_vsp2", "eglfs_mali", "eglfs_brcm", "egl_x11"
++                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_vsp2", "eglfs_mali", "egl_x11"
                      ]
                  },
                  "linuxfb", "vnc", "mirclient",
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro b/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
-index 92ee83fd8f..7ca4b5378d 100644
+index 919ecd0..788a641 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
 +++ b/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
-@@ -4,7 +4,6 @@ QT_FOR_CONFIG += gui-private
- qtConfig(egl_x11): SUBDIRS += eglfs_x11
+@@ -5,7 +5,6 @@ qtConfig(egl_x11): SUBDIRS += eglfs_x11
  qtConfig(eglfs_gbm): SUBDIRS *= eglfs_kms_support eglfs_kms
  qtConfig(eglfs_egldevice): SUBDIRS *= eglfs_kms_support eglfs_kms_egldevice
+ qtConfig(eglfs_vsp2): SUBDIRS += eglfs_kms_vsp2
 -qtConfig(eglfs_brcm): SUBDIRS += eglfs_brcm
  qtConfig(eglfs_mali): SUBDIRS += eglfs_mali
  qtConfig(eglfs_viv): SUBDIRS += eglfs_viv

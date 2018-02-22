@@ -59,7 +59,3 @@ EXTRA_QMAKEVARS_CONFIGURE = ""
 # instead of old QT_WAYLAND_CONFIG and QT_WAYLAND_DEFINES used by meta-webos qtwayland bbappend
 EXTRA_QMAKEVARS_PRE += "CONFIG+=wayland-compositor CONFIG+=wayland_egl"
 EXTRA_QMAKEVARS_PRE += "DEFINES+=QT_COMPOSITOR_QUICK"
-
-# until pseudo is completely fixed
-# PLAT-48507 pseudo: random package_qa failures
-INSANE_SKIP_${PN}-mkspecs += "host-user-contaminated"

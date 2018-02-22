@@ -1,0 +1,48 @@
+From 747b28d873b8b9a50c36be984a01cd743be1acb2 Mon Sep 17 00:00:00 2001
+From: Byunggul Koh <byunggul.koh@lge.com>
+Date: Thu, 18 Sep 2014 18:54:09 +0900
+Subject: [PATCH] Update timezone info before localtime_r
+
+According to POSIX.1 8.3.7.2 localtime_r is not required to set tzname.
+So should call tzset() before localtime_r(). And mktime() acts as if it
+called tzset(), POSIX.1 8.1.1. So calculating global time before local
+time can reflect current time-zone information.
+
+This might be fixed in upstream commits:
+
+commit 948e24cb6deeaf0e55794032b90fdf20b7ef12c1
+Author: Edward Welbourne <edward.welbourne@qt.io>
+Date:   Thu Nov 3 19:00:24 2016 +0100
+
+    V4 Date.ParseString(): fix UTC-ness of date-only formats
+
+commit 2b8b7a162be52f8cd6c2bc39f498a1ddfb59dd68
+Author: Edward Welbourne <edward.welbourne@qt.io>
+Date:   Fri Oct 28 17:24:46 2016 +0200
+
+    V4 Date: fix what we can within ECMA 262's limitations
+
+Change-Id: I15fefa7fd60819b68e937d234534acd2c3f06ca0
+---
+ src/qml/jsruntime/qv4dateobject.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/qml/jsruntime/qv4dateobject.cpp b/src/qml/jsruntime/qv4dateobject.cpp
+index 5bbe31214..dcce845d0 100644
+--- a/src/qml/jsruntime/qv4dateobject.cpp
++++ b/src/qml/jsruntime/qv4dateobject.cpp
+@@ -691,11 +691,11 @@ static double getLocalTZA()
+     struct tm t;
+     time_t curr;
+     time(&curr);
+-    localtime_r(&curr, &t); // Wrong: includes DST offset
+-    time_t locl = mktime(&t);
+     gmtime_r(&curr, &t);
+     time_t globl = mktime(&t);
+-    return (double(locl) - double(globl)) * 1000.0;
++    localtime_r(&curr, &t);
++    time_t locl = mktime(&t);
++    return double(locl - globl) * 1000.0;
+ #  endif
+ #endif // USE_QTZ_SYSTEM_ZONE
+ }

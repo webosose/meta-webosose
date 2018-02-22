@@ -1,4 +1,4 @@
-From eaa7b084c3c682afec8b0f38ee89ca7f464c230d Mon Sep 17 00:00:00 2001
+From ea57e757a3adc1b626556fcb2e4ff176e968b3e8 Mon Sep 17 00:00:00 2001
 From: JeongBong Seo <jb.seo@lge.com>
 Date: Thu, 30 Apr 2015 15:04:57 +0900
 Subject: [PATCH] Add the 'accessiblebridge' as a plugintype of gui module
@@ -11,7 +11,7 @@ Upstream-Status: might be upstreamable
  1 file changed, 1 insertion(+)
 
 diff --git a/src/gui/gui.pro b/src/gui/gui.pro
-index fd1f412e78..ce53c2cc4e 100644
+index 06c9cd3939..bbe9d44e66 100644
 --- a/src/gui/gui.pro
 +++ b/src/gui/gui.pro
 @@ -8,6 +8,7 @@ DEFINES   += QT_NO_USING_NAMESPACE QT_NO_FOREACH

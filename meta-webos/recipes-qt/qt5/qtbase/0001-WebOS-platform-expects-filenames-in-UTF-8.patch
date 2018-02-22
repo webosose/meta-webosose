@@ -1,4 +1,4 @@
-From 5585ac26dbf8e24841b948890669f14355a7ac90 Mon Sep 17 00:00:00 2001
+From 4c067484e7dc2d669538a71b19b77f5341f72985 Mon Sep 17 00:00:00 2001
 From: Byungseon Shin <sun.shin@lge.com>
 Date: Fri, 7 Feb 2014 04:53:25 +0100
 Subject: [PATCH] WebOS platform expects filenames in UTF-8
@@ -8,7 +8,7 @@ Subject: [PATCH] WebOS platform expects filenames in UTF-8
  1 file changed, 16 insertions(+)
 
 diff --git a/src/corelib/io/qfile.h b/src/corelib/io/qfile.h
-index a2a1b25248..de06b0a25f 100644
+index e6f3d942fe..b40b02fbed 100644
 --- a/src/corelib/io/qfile.h
 +++ b/src/corelib/io/qfile.h
 @@ -49,6 +49,10 @@
@@ -22,8 +22,8 @@ index a2a1b25248..de06b0a25f 100644
  QT_BEGIN_NAMESPACE
  
  class QTemporaryFile;
-@@ -83,6 +87,17 @@ public:
-     {
+@@ -84,6 +88,17 @@ public:
+         // note: duplicated in qglobal.cpp (qEnvironmentVariable)
          return QString::fromUtf8(localFileName).normalized(QString::NormalizationForm_C);
      }
 +#else
@@ -40,7 +40,7 @@ index a2a1b25248..de06b0a25f 100644
  #else
      static inline QByteArray encodeName(const QString &fileName)
      {
-@@ -92,6 +107,7 @@ public:
+@@ -93,6 +108,7 @@ public:
      {
          return QString::fromLocal8Bit(localFileName);
      }

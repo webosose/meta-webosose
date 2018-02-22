@@ -1,4 +1,4 @@
-From d235b8c316df55a120c528fae4708932702fa0ed Mon Sep 17 00:00:00 2001
+From 88f2d31d2615746e59ae0cc07a54008d12ce8211 Mon Sep 17 00:00:00 2001
 From: Anatoliy Klymenko <anatoliy.klimenko@lge.com>
 Date: Tue, 22 Sep 2015 14:36:30 -0700
 Subject: [PATCH] Add QMediaPlayerControl accessor
@@ -27,10 +27,10 @@ Change-Id: I87fe23cc2cba06936248f7951944018f61d5ffb6
  2 files changed, 8 insertions(+)
 
 diff --git a/src/multimedia/playback/qmediaplayer.cpp b/src/multimedia/playback/qmediaplayer.cpp
-index 16fdec8..648c8c8 100644
+index 19d4ec4..67088dc 100644
 --- a/src/multimedia/playback/qmediaplayer.cpp
 +++ b/src/multimedia/playback/qmediaplayer.cpp
-@@ -695,6 +695,13 @@ QMediaContent QMediaPlayer::currentMedia() const
+@@ -710,6 +710,13 @@ QMediaContent QMediaPlayer::currentMedia() const
      return QMediaContent();
  }
  
@@ -45,10 +45,10 @@ index 16fdec8..648c8c8 100644
  {
      QMediaContent m(playlist, QUrl(), false);
 diff --git a/src/multimedia/playback/qmediaplayer.h b/src/multimedia/playback/qmediaplayer.h
-index f23a941..9d89458 100644
+index 5d9a393..834b937 100644
 --- a/src/multimedia/playback/qmediaplayer.h
 +++ b/src/multimedia/playback/qmediaplayer.h
-@@ -135,6 +135,7 @@ public:
+@@ -136,6 +136,7 @@ public:
      const QIODevice *mediaStream() const;
      QMediaPlaylist *playlist() const;
      QMediaContent currentMedia() const;

@@ -1,0 +1,275 @@
+From 189a09aafb73bc2a6758c3fac9041addcdd896dc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
+Date: Sat, 14 Jun 2014 00:57:58 +0200
+Subject: [PATCH] LTTNG tracing support in Qt Quick
+
+:Release Notes:
+LTTNG tracing support in Qt Quick, with misc tracepoints.
+
+:Detailed Notes:
+Added LTTNG tracing for QtQuick.
+
+Added tracepoints for:
+* Scenegraph rendering
+* Material shader processing
+* Texture uploads
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[GF-9999] Summary
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+
+Change-Id: Iadb777c9d8d34ad9bccd5e6582313467ef3f4cd6
+---
+ src/quick/items/qquickwindow.cpp                   |  4 ++++
+ src/quick/quick.pro                                |  3 +++
+ .../qsgdefaultdistancefieldglyphcache.cpp          | 14 ++++++++++++++
+ src/quick/scenegraph/qsgdefaultrendercontext.cpp   |  4 ++++
+ src/quick/scenegraph/util/qsgatlastexture.cpp      |  5 +++++
+ src/quick/scenegraph/util/qsgtexture.cpp           |  4 ++++
+ src/quick/scenegraph/util/qsgtexturematerial.cpp   |  3 +++
+ 7 files changed, 37 insertions(+)
+
+diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
+index 7b2664ab0..4117b36b4 100644
+--- a/src/quick/items/qquickwindow.cpp
++++ b/src/quick/items/qquickwindow.cpp
+@@ -82,6 +82,8 @@
+ #include <private/qdebug_p.h>
+ #endif
+ 
++#include <qtquick_tracepoints_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ Q_LOGGING_CATEGORY(DBG_TOUCH, "qt.quick.touch")
+@@ -435,6 +437,7 @@ void forceUpdate(QQuickItem *item)
+ 
+ void QQuickWindowPrivate::syncSceneGraph()
+ {
++    Q_TRACE(qquickwindowprivate_syncscenegraph_entry);
+     QML_MEMORY_SCOPE_STRING("SceneGraph");
+     Q_Q(QQuickWindow);
+ 
+@@ -470,6 +473,7 @@ void QQuickWindowPrivate::syncSceneGraph()
+ 
+ void QQuickWindowPrivate::renderSceneGraph(const QSize &size)
+ {
++    Q_TRACE(qquickwindowprivate_renderscenegraph_entry);
+     QML_MEMORY_SCOPE_STRING("SceneGraph");
+     Q_Q(QQuickWindow);
+     if (!renderer)
+diff --git a/src/quick/quick.pro b/src/quick/quick.pro
+index e9a8b84b2..b30002ffc 100644
+--- a/src/quick/quick.pro
++++ b/src/quick/quick.pro
+@@ -47,4 +47,7 @@ SOURCES += qtquick2.cpp
+ # To make #include "qquickcontext2d_jsclass.cpp" work
+ INCLUDEPATH += $$PWD
+ 
++TRACEPOINT_PROVIDER = $$PWD/qtquick.tracepoints
++CONFIG += qt_tracepoints
++
+ load(qt_module)
+diff --git a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
+index ef189ba46..4a84d9709 100644
+--- a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
++++ b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
+@@ -42,6 +42,7 @@
+ #include <QtGui/private/qdistancefield_p.h>
+ #include <QtGui/private/qopenglcontext_p.h>
+ #include <QtQml/private/qqmlglobal_p.h>
++#include <qtquick_tracepoints_p.h>
+ #include <qopenglfunctions.h>
+ #include <qopenglframebufferobject.h>
+ #include <qmath.h>
+@@ -159,6 +160,7 @@ void QSGDefaultDistanceFieldGlyphCache::requestGlyphs(const QSet<glyph_t> &glyph
+ 
+ void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField> &glyphs)
+ {
++    Q_TRACE(qsgdefaultdistancefieldglyphcache_storeglyphs_entry);
+     typedef QHash<TextureInfo *, QVector<glyph_t> > GlyphTextureHash;
+     typedef GlyphTextureHash::const_iterator GlyphTextureHashConstIt;
+ 
+@@ -203,16 +205,20 @@ void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField>
+ #endif
+         if (useTextureUploadWorkaround()) {
+             for (int i = 0; i < glyph.height(); ++i) {
++                Q_TRACE(gltexsubimage2d_before)
+                 m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                          c.x - padding, c.y + i - padding, glyph.width(),1,
+                                          format, GL_UNSIGNED_BYTE,
+                                          glyph.scanLine(i));
++                Q_TRACE(gltexsubimage2d_after)
+             }
+         } else {
++            Q_TRACE(gltexsubimage2d_before)
+             m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                      c.x - padding, c.y - padding, glyph.width(), glyph.height(),
+                                      format, GL_UNSIGNED_BYTE,
+                                      glyph.constBits());
++            Q_TRACE(gltexsubimage2d_after)
+         }
+     }
+ 
+@@ -239,6 +245,7 @@ void QSGDefaultDistanceFieldGlyphCache::releaseGlyphs(const QSet<glyph_t> &glyph
+ 
+ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo, int width, int height)
+ {
++    Q_TRACE(qsgdefaultdistancefieldglypcache_createtexture_entry);
+     if (useTextureResizeWorkaround() && texInfo->image.isNull())
+         texInfo->image = QDistanceField(width, height);
+ 
+@@ -262,7 +269,9 @@ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo, int
+ #endif
+ 
+     QByteArray zeroBuf(width * height, 0);
++    Q_TRACE(glteximage2d_before);
+     m_funcs->glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, zeroBuf.constData());
++    Q_TRACE(glteximage2d_after);
+ 
+     texInfo->size = QSize(width, height);
+ 
+@@ -282,6 +291,7 @@ static void freeFramebufferFunc(QOpenGLFunctions *funcs, GLuint id)
+ 
+ void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int width, int height)
+ {
++    Q_TRACE(qsgdefaultdistancefieldglypcache_resizetexture_entry);
+     QOpenGLContext *ctx = QOpenGLContext::currentContext();
+     Q_ASSERT(ctx);
+ 
+@@ -357,16 +367,20 @@ void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int
+ 
+         if (useTextureUploadWorkaround()) {
+             for (int i = 0; i < texInfo->image.height(); ++i) {
++                Q_TRACE(gltexsubimage2d_before);
+                 m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                          0, i, oldWidth, 1,
+                                          format, GL_UNSIGNED_BYTE,
+                                          texInfo->image.scanLine(i));
++                Q_TRACE(gltexsubimage2d_after);
+             }
+         } else {
++            Q_TRACE(gltexsubimage2d_before);
+             m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                      0, 0, oldWidth, oldHeight,
+                                      format, GL_UNSIGNED_BYTE,
+                                      texInfo->image.constBits());
++            Q_TRACE(gltexsubimage2d_after);
+         }
+ 
+         m_funcs->glPixelStorei(GL_UNPACK_ALIGNMENT, alignment); // restore to previous value
+diff --git a/src/quick/scenegraph/qsgdefaultrendercontext.cpp b/src/quick/scenegraph/qsgdefaultrendercontext.cpp
+index 22e97a2dc..ee0a0b907 100644
+--- a/src/quick/scenegraph/qsgdefaultrendercontext.cpp
++++ b/src/quick/scenegraph/qsgdefaultrendercontext.cpp
+@@ -48,6 +48,8 @@
+ #include <QtQuick/private/qsgcompressedtexture_p.h>
+ #include <QtQuick/private/qsgdefaultdistancefieldglyphcache_p.h>
+ 
++#include <qtquick_tracepoints_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ #define QSG_RENDERCONTEXT_PROPERTY "_q_sgrendercontext"
+@@ -176,6 +178,8 @@ static QBasicMutex qsg_framerender_mutex;
+ 
+ void QSGDefaultRenderContext::renderNextFrame(QSGRenderer *renderer, uint fboId)
+ {
++    Q_TRACE(qsgdefaultrendercontext_rendernextframe_entry);
++
+     if (m_serializedRender)
+         qsg_framerender_mutex.lock();
+ 
+diff --git a/src/quick/scenegraph/util/qsgatlastexture.cpp b/src/quick/scenegraph/util/qsgatlastexture.cpp
+index 7608a81dd..e97ce696f 100644
+--- a/src/quick/scenegraph/util/qsgatlastexture.cpp
++++ b/src/quick/scenegraph/util/qsgatlastexture.cpp
+@@ -59,6 +59,8 @@
+ 
+ #include <private/qquickprofiler_p.h>
+ 
++#include <qtquick_tracepoints_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ #ifndef GL_BGRA
+@@ -366,6 +368,7 @@ static void swizzleBGRAToRGBA(QImage *image)
+ 
+ void Atlas::upload(Texture *texture)
+ {
++    Q_TRACE(atlas_upload_entry);
+     const QImage &image = texture->image();
+     const QRect &r = texture->atlasSubRect();
+ 
+@@ -404,6 +407,7 @@ void Atlas::upload(Texture *texture)
+ void Atlas::uploadBgra(Texture *texture)
+ {
+     QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
++    Q_TRACE(atlas_uploadbgra_entry);
+     const QRect &r = texture->atlasSubRect();
+     QImage image = texture->image();
+ 
+@@ -467,6 +471,7 @@ void Atlas::uploadBgra(Texture *texture)
+ void Atlas::generateTexture()
+ {
+     QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
++    Q_TRACE(atlas_generatetexture_entry);
+     funcs->glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, m_size.width(), m_size.height(), 0, m_externalFormat, GL_UNSIGNED_BYTE, nullptr);
+ 
+ #if 0
+diff --git a/src/quick/scenegraph/util/qsgtexture.cpp b/src/quick/scenegraph/util/qsgtexture.cpp
+index fea92a512..014884130 100644
+--- a/src/quick/scenegraph/util/qsgtexture.cpp
++++ b/src/quick/scenegraph/util/qsgtexture.cpp
+@@ -43,6 +43,7 @@
+ #include <qmath.h>
+ #include <private/qquickprofiler_p.h>
+ #include <private/qqmlglobal_p.h>
++#include <qtquick_tracepoints_p.h>
+ #include <QtGui/qguiapplication.h>
+ #include <QtGui/qpa/qplatformnativeinterface.h>
+ #if QT_CONFIG(opengl)
+@@ -717,6 +718,7 @@ void QSGPlainTexture::bind()
+ #if QT_CONFIG(opengl)
+     QOpenGLContext *context = QOpenGLContext::currentContext();
+     QOpenGLFunctions *funcs = context->functions();
++    Q_TRACE(qsgplaintexture_bind_entry);
+     if (!m_dirty_texture) {
+         funcs->glBindTexture(GL_TEXTURE_2D, m_texture_id);
+         if (mipmapFiltering() != QSGTexture::None && !m_mipmaps_generated) {
+@@ -850,7 +852,9 @@ void QSGPlainTexture::bind()
+     Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphTexturePrepare,
+                               QQuickProfiler::SceneGraphTexturePrepareSwizzle);
+ 
++    Q_TRACE(gltextimage2d_before);
+     funcs->glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_texture_size.width(), m_texture_size.height(), 0, externalFormat, GL_UNSIGNED_BYTE, tmp.constBits());
++    Q_TRACE(gltextimage2d_after);
+ 
+     qint64 uploadTime = 0;
+     if (profileFrames)
+diff --git a/src/quick/scenegraph/util/qsgtexturematerial.cpp b/src/quick/scenegraph/util/qsgtexturematerial.cpp
+index 7b1d5abb2..ed34d00f5 100644
+--- a/src/quick/scenegraph/util/qsgtexturematerial.cpp
++++ b/src/quick/scenegraph/util/qsgtexturematerial.cpp
+@@ -44,6 +44,8 @@
+ # include <QtGui/qopenglfunctions.h>
+ #endif
+ 
++#include <qtquick_tracepoints_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ #if QT_CONFIG(opengl)
+@@ -80,6 +82,7 @@ void QSGOpaqueTextureMaterialShader::initialize()
+ void QSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+ {
+     Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
++    Q_TRACE(qsgopaquetexturematerialshader_updatestate_entry);
+     QSGOpaqueTextureMaterial *tx = static_cast<QSGOpaqueTextureMaterial *>(newEffect);
+     QSGOpaqueTextureMaterial *oldTx = static_cast<QSGOpaqueTextureMaterial *>(oldEffect);
+ 

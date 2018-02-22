@@ -1,4 +1,4 @@
-From 5165a3dfeaf2f5dd79514a1796b3d2c3df5dfdc7 Mon Sep 17 00:00:00 2001
+From 4e5bfdb8bcac2b66135b9549712a6fd02190de0a Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Thu, 4 Aug 2016 14:55:38 +0300
 Subject: [PATCH] Fix Do not resize dialog parent window

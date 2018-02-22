@@ -1,10 +1,10 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi5"
+EXTENDPRAUTO_append_rpi = "webosrpi6"
 
 FILESEXTRAPATHS_prepend_rpi := "${THISDIR}/${BPN}:"
 
-# Patches from 5.9.meta-webos-raspberrypi.5 based on 5.9.meta-webos.21
+# Patches from 5.11.meta-webos-raspberrypi.3 based on 5.11.meta-webos.12
 SRC_URI_append_rpi = " \
     file://0001-Disable-eglfs-brcm-explicitly.patch \
     file://0002-Update-eglfs_kms-to-render-on-topmost-drmplane.patch \

@@ -1,4 +1,4 @@
-From 9810112ff0855242aeab341445afbe763193292e Mon Sep 17 00:00:00 2001
+From fa4ab8fe3bd60a5e27381c5d5c73a300b8164fc8 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Fri, 4 Sep 2015 10:17:56 +0300
 Subject: [PATCH] Support wrapMode=wordWrap for QML Text type for Korean
@@ -42,12 +42,12 @@ Text.WordWrap for Korean
  1 file changed, 11 insertions(+)
 
 diff --git a/src/corelib/tools/qunicodetools.cpp b/src/corelib/tools/qunicodetools.cpp
-index ac19d6b6d1..9037d4c5ac 100644
+index c9d0868fef..8b08aa3e94 100644
 --- a/src/corelib/tools/qunicodetools.cpp
 +++ b/src/corelib/tools/qunicodetools.cpp
-@@ -502,6 +502,17 @@ static void getLineBreaks(const ushort *string, quint32 len, QCharAttributes *at
-         const QUnicodeTables::Properties *prop = QUnicodeTables::properties(ucs4);
+@@ -564,6 +564,17 @@ static void getLineBreaks(const ushort *string, quint32 len, QCharAttributes *at
          QUnicodeTables::LineBreakClass ncls = (QUnicodeTables::LineBreakClass) prop->lineBreakClass;
+         QUnicodeTables::LineBreakClass tcls;
  
 +        if (Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_H2) ||
 +            Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_H3) ||
