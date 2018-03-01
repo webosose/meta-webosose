@@ -289,10 +289,6 @@ DEFAULT_WARN_QA = "\
 ERROR_QA_append = " ${DEFAULT_WARN_QA}"
 WARN_QA_remove = "${DEFAULT_WARN_QA}"
 
-# Temporary until pseudo issues are completely resolved
-# [PLAT-48507] pseudo: random package_qa failures
-ERROR_QA_remove = "host-user-contaminated"
-
 # Default WEBOS_TARGET_* values (see webos_cmake.bbclass)
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
 
