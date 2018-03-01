@@ -8,7 +8,7 @@ COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
 # COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
 
-INC_PR = "r1"
+INC_PR = "r2"
 PR = "${INC_PR}.1"
 
 PROVIDES = "node"
@@ -111,12 +111,6 @@ FILES_${PN}-dtrace = "${exec_prefix}/lib/dtrace"
 
 PACKAGES =+ "${PN}-systemtap"
 FILES_${PN}-systemtap = "${datadir}/systemtap"
-
-INSANE_SKIP_${PN} += "file-rdeps"
-INSANE_SKIP_${PN}-dbg += "host-user-contaminated"
-
-INSANE_SKIP_${PN}-npm += "file-rdeps"
-INSANE_SKIP_${PN}-npm-dbg += "host-user-contaminated"
 
 BBCLASSEXTEND = "native nativesdk"
 VIRTUAL-RUNTIME_bash ?= "bash"
