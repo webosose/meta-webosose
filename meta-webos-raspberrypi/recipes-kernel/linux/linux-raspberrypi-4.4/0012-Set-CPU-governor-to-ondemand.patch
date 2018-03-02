@@ -1,0 +1,84 @@
+From: Andre Rosa <andre.rosa@lge.com>
+Date: Tue, 6 Mar 2018 15:15:15 -0800
+Subject: [PATCH] Set CPU governor as ondemand
+
+:Release Notes:
+Set CPU governor as ondemand
+
+:Detailed Notes:
+We inherited Yocto's default CPU governor as "powersave",
+making our build run slower than necessary.
+
+Instead use "ondemand" like Raspbian, so we make sure
+that CPU frequency goes high whenever there's increased
+load in the system.
+
+:Testing Performed:
+Launch browser and check that CPU frequency goes from 600MHz
+to 1.2GHz temporarily until it's launched and load decreases.
+
+Do the same for loading youtube.com and check current CPU
+frequency goes down once page is fully loaded.
+
+:QA Notes:
+None
+
+:Issues Addressed:
+[PLAT-48836] [webOS Open] Performance issue with youtube video play.
+
+Upstream-Status: Inappropriate
+  - Yocto has powersaving as the default for embedded devices instead
+
+---
+
+diff -rdup kernel-source/arch/arm/configs.orig/bcm2709_defconfig kernel-source/arch/arm/configs/bcm2709_defconfig
+--- kernel-source/arch/arm/configs.orig/bcm2709_defconfig	2018-03-06 14:50:59.257696980 -0800
++++ kernel-source/arch/arm/configs/bcm2709_defconfig	2018-03-06 14:53:58.546586025 -0800
+@@ -61,10 +61,10 @@ CONFIG_CMDLINE="console=ttyAMA0,115200 k
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT=m
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+-CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+ CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+ CONFIG_CPU_FREQ_GOV_USERSPACE=y
+-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+ CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+ CONFIG_VFP=y
+ CONFIG_NEON=y
+Only in kernel-source/arch/arm/configs: bcm2709_defconfig.orig
+diff -rdup kernel-source/arch/arm/configs.orig/bcm2835_defconfig kernel-source/arch/arm/configs/bcm2835_defconfig
+--- kernel-source/arch/arm/configs.orig/bcm2835_defconfig	2018-03-06 14:51:09.881749661 -0800
++++ kernel-source/arch/arm/configs/bcm2835_defconfig	2018-03-06 14:53:55.194569403 -0800
+@@ -63,10 +63,10 @@ CONFIG_CRASH_DUMP=y
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT=m
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+-CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+ CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+ CONFIG_CPU_FREQ_GOV_USERSPACE=y
+-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+ CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+ CONFIG_VFP=y
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+Only in kernel-source/arch/arm/configs: bcm2835_defconfig.orig
+diff -rdup kernel-source/arch/arm/configs.orig/bcmrpi_defconfig kernel-source/arch/arm/configs/bcmrpi_defconfig
+--- kernel-source/arch/arm/configs.orig/bcmrpi_defconfig	2018-03-06 14:50:42.297612879 -0800
++++ kernel-source/arch/arm/configs/bcmrpi_defconfig	2018-03-06 14:53:56.882577774 -0800
+@@ -56,10 +56,10 @@ CONFIG_CMDLINE="console=ttyAMA0,115200 k
+ CONFIG_CPU_FREQ=y
+ CONFIG_CPU_FREQ_STAT=m
+ CONFIG_CPU_FREQ_STAT_DETAILS=y
+-CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+ CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+ CONFIG_CPU_FREQ_GOV_USERSPACE=y
+-CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+ CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+ CONFIG_VFP=y
+ CONFIG_BINFMT_MISC=m
+Only in kernel-source/arch/arm/configs: bcmrpi_defconfig.orig

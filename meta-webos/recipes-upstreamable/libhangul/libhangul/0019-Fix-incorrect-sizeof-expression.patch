@@ -1,0 +1,28 @@
+From 4551ffc51aff1b2c8037312a5e2d65a6a81658ac Mon Sep 17 00:00:00 2001
+From: Jihoon Kim <jihoon48.kim@samsung.com>
+Date: Thu, 8 Jan 2015 15:32:44 +0900
+Subject: [PATCH 19/20] Fix incorrect sizeof expression
+
+sizeof of pointer variable returns 4 bytes.
+
+Change-Id: Iaf4444ceabff8ccc9a1f2f397e13bbf01b5feb04
+---
+ hangul/hangulinputcontext.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hangul/hangulinputcontext.c b/hangul/hangulinputcontext.c
+index 04b85d0..8621065 100644
+--- a/hangul/hangulinputcontext.c
++++ b/hangul/hangulinputcontext.c
+@@ -388,7 +388,7 @@ void
+ hangul_keyboard_set_value(HangulKeyboard *keyboard, int key, ucschar value)
+ {
+     if (keyboard != NULL) {
+-	if (key >= 0 && key < N_ELEMENTS(keyboard->table)) {
++	if (key >= 0 && key < HANGUL_KEYBOARD_TABLE_SIZE) {
+ 	    ucschar* table = (ucschar*)keyboard->table;
+ 	    table[key] = value;
+ 	}
+-- 
+1.7.9.5
+

@@ -1,0 +1,43 @@
+From 6251cceeb2e9d6eb35d5fbede4ce9707a5a7b49e Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Thu, 6 Jul 2017 09:41:31 +0900
+Subject: [PATCH] Disable eglfs-brcm explicitly
+
+:Release Notes:
+Disable eglfs-brcm explicitly
+
+:Detailed Notes:
+After applying userland for omxplayer, eglfs-brcm is built.
+However we don't need eglfs-brcm because webOS uses drm and eglfs for
+qpa.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-42918] qtbase build failures on apollo-rpi3 no shared state build
+---
+ configure | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/configure b/configure
+index 679da84..015a04d 100755
+--- a/configure
++++ b/configure
+@@ -5882,11 +5882,6 @@ if [ "$CFG_EGLFS" != "no" ]; then
+     if [ "$XPLATFORM_QNX" = "no" ] && [ "$CFG_OPENGL" != "no" ]; then
+         CFG_EGLFS="$CFG_EGL"
+         # Detect eglfs backends.
+-        if compileTest qpa/eglfs-brcm "eglfs-brcm"; then
+-            CFG_EGLFS_BRCM=yes
+-        else
+-            CFG_EGLFS_BRCM=no
+-        fi
+         if compileTest qpa/eglfs-egldevice "eglfs-egldevice"; then
+             CFG_EGLFS_EGLDEVICE=yes
+         else
+-- 
+1.9.1
+

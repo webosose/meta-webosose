@@ -1,0 +1,52 @@
+From 4f782994260a7bcef6efdb83e9772fe8a5515413 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Mon, 16 Apr 2012 22:47:57 +0900
+Subject: [PATCH 11/20] Additional instructions on how to compile using
+ pkg-config
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+pkg-config를 사용해 컴파일하는 방법에 대한 설명 추가
+
+Change-Id: I7173ec36729062fea653c2ba0cc661112e810ebe
+---
+ doc/mainpage.dox |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/doc/mainpage.dox b/doc/mainpage.dox
+index 919aff6..2e2ac8a 100644
+--- a/doc/mainpage.dox
++++ b/doc/mainpage.dox
+@@ -31,6 +31,28 @@ repository에서 받을 수 있다.
+ git clone git://github.com/choehwanjin/libhangul.git
+ @endcode
+ 
++@section compile libhangul 어플리케이션 컴파일
++libhangul을 사용하는 어플리케이션을 컴파일하기 위해서는 libhangul 헤더파일과
++라이브러리 바이너리 파일의 위치를 컴파일러에게 알려주어야 한다. 이런 것을
++쉽게 하기 위해서 libhangul은 pkg-config를 사용하고 있다.
++
++간단한 사용 예시는 아래와 같이 컴파일하는 것이다. 아래에 사용한 `는
++backtick이라는 것으로 '(작은 따옴표)가 아님에 주의한다.
++@code
++$ cc `pkg-config --cflags --libs libhangul` yoursource.c -o yourbin
++@endcode
++
++또는 아래와 같은 명령으로 컴파일에 필요한 플래그와 링크에 필요한 플래그를 각각
++얻을 수 있다:
++@code
++$ pkg-config --cflags libhangul
++$ pkg-config --libs libhangul
++@endcode
++
++pkg-config에 대한 자세한 정보는 아래 링크를 참조하라:
++
++http://www.freedesktop.org/wiki/Software/pkg-config
++
+ @section bug 버그리포트
+ libhangul의 버그는 <a href="http://code.google.com/">Google code</a>의
+ 버그트래커로 관리하고 있다.
+-- 
+1.7.9.5
+

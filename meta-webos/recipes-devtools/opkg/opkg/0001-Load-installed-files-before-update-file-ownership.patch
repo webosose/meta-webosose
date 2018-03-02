@@ -1,0 +1,54 @@
+From 79a9d91fed0a8db3468f6e2ad205bab8400487c0 Mon Sep 17 00:00:00 2001
+From: Rohit Anand <rohit.anand@lge.com>
+Date: Mon, 30 May 2016 16:54:15 +0530
+Subject: [PATCH] Load installed files before update file ownership
+
+---
+ libopkg/opkg_install.c | 9 +++++++++
+ libopkg/pkg_hash.c     | 7 ++++---
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/libopkg/opkg_install.c b/libopkg/opkg_install.c
+index dbc155a..6af0dc9 100644
+--- a/libopkg/opkg_install.c
++++ b/libopkg/opkg_install.c
+@@ -869,10 +869,19 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+         }
+     }
+ 
++    if (old_pkg) {
++        if (!pkg_get_installed_files(old_pkg))
++             return -1;
++    }
++
+     err = update_file_ownership(pkg, old_pkg);
+     if (err)
+         return -1;
+ 
++    if (old_pkg) {
++        pkg_free_installed_files(old_pkg);
++    }
++
+     /* this next section we do with SIGINT blocked to prevent inconsistency
+      * between opkg database and filesystem */
+ 
+diff --git a/libopkg/pkg_hash.c b/libopkg/pkg_hash.c
+index f0321f8..c2aff2d 100644
+--- a/libopkg/pkg_hash.c
++++ b/libopkg/pkg_hash.c
+@@ -782,11 +782,12 @@ pkg_t *file_hash_get_file_owner(const char *file_name)
+ void file_hash_set_file_owner(const char *file_name, pkg_t * owning_pkg)
+ {
+     pkg_t *old_owning_pkg;
++    const char *strip_file_name;
+ 
+-    file_name = strip_offline_root(file_name);
++    strip_file_name = strip_offline_root(file_name);
+ 
+-    old_owning_pkg = hash_table_get(&opkg_config->file_hash, file_name);
+-    hash_table_insert(&opkg_config->file_hash, file_name, owning_pkg);
++    old_owning_pkg = hash_table_get(&opkg_config->file_hash, strip_file_name);
++    hash_table_insert(&opkg_config->file_hash, strip_file_name, owning_pkg);
+ 
+     if (old_owning_pkg) {
+         pkg_get_installed_files(old_owning_pkg);

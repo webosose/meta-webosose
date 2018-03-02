@@ -1,0 +1,35 @@
+From f9ed6c86b5a9322019e56c5ed38677ce35654923 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sat, 20 Feb 2016 20:37:58 +0900
+Subject: [PATCH 2/6] Allow backspace processing in hangul_ic_process function
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+hangul_ic_process함수에서 backspace 처리도 가능하게 함
+
+ascii 코드를 직접 처리하는 경우 backspace를 예외 처리하기 보다는
+hangul_ic_process함수에서 '\b' 코드로 처리하게 하면 여러 테스트
+코드들이 훨씬 간결해질 수 있다.
+---
+ hangul/hangulinputcontext.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/hangul/hangulinputcontext.c b/hangul/hangulinputcontext.c
+index 2728302..871e0d0 100644
+--- a/hangul/hangulinputcontext.c
++++ b/hangul/hangulinputcontext.c
+@@ -1306,6 +1306,10 @@ hangul_ic_process(HangulInputContext *hic, int ascii)
+     if (hic->on_translate != NULL)
+ 	hic->on_translate(hic, ascii, &c, hic->on_translate_data);
+ 
++    if (ascii == '\b') {
++	return hangul_ic_backspace(hic);
++    }
++
+     if (hangul_keyboard_get_type(hic->keyboard) == HANGUL_KEYBOARD_TYPE_JAMO)
+ 	return hangul_ic_process_jamo(hic, c);
+     else if (hangul_keyboard_get_type(hic->keyboard) == HANGUL_KEYBOARD_TYPE_JASO)
+-- 
+1.9.1
+

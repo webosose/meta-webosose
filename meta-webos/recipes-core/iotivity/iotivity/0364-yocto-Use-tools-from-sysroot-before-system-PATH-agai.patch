@@ -1,0 +1,93 @@
+From b0f0c742ec1e1fc223871f6d98b21de09cf024b7 Mon Sep 17 00:00:00 2001
+From: Philippe Coval <philippe.coval@osg.samsung.com>
+Date: Fri, 16 Sep 2016 20:22:03 +0200
+Subject: [PATCH 364/364] yocto: Use tools from sysroot before system PATH
+ (again)
+
+Reintroduce existing change that was (wrongly?) removed in:
+
+https://gerrit.iotivity.org/gerrit/#/c/12029/64/build_common/SConscript
+
+Original review at:
+
+https://gerrit.iotivity.org/gerrit/11935
+
+To ensure reproductibily Scons avoids to rely on environment
+ but some systems like Yocto are defining their own cross compiling env.
+
+To deal with those orthogonal paradigms,
+ a new CONFIG_ENVIRONMENT_IMPORT variable has been introduced,
+ It enables import of needed variables (PATH and pkg-config's ones).
+
+Without this change, system tools might be used by scons
+ instead of looking into yocto's sysroot.
+ This is not not wanted and may be less reproductible.
+
+This problem was noticed when building Ostro OS
+ (on a system without all Yocto dependencies)
+ reported error messages were:
+
+  | sh: gdbus-codegen: command not found
+  | /bin/sh: 1: pkg-config: not found
+
+More information about using SCONS along Yocto, check some notes at:
+
+https://bitbucket.org/scons/scons/wiki/Notes
+
+Bug: https://jira.iotivity.org/browse/IOT-1219
+Change-Id: I6af59a590f8be489398623d29cf85c2f00000002
+Origin: https://github.com/TizenTeam/iotivity/tree/sandbox/pcoval/on/master/mine
+Thanks-to: Mikko Ylinen <mikko.ylinen@intel.com>
+Signed-off-by: Philippe Coval <philippe.coval@osg.samsung.com>
+Reviewed-on: https://gerrit.iotivity.org/gerrit/16225
+Tested-by: jenkins-iotivity <jenkins-iotivity@opendaylight.org>
+Reviewed-by: Kishen Maloor <kishen.maloor@intel.com>
+(cherry picked from commit 1085512bc103e987d95a43063e6552f39acd40f2)
+Reviewed-on: https://gerrit.iotivity.org/gerrit/16223
+---
+ build_common/SConscript | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/build_common/SConscript b/build_common/SConscript
+index a9ff494..fff1752 100644
+--- a/build_common/SConscript
++++ b/build_common/SConscript
+@@ -194,13 +194,19 @@ if target_os in targets_support_cc:
+ 	if prefix or tc_path:
+ 		print tc_set_msg
+ 
+-# If cross-compiling, honor environment settings for toolchain to avoid picking up native tools
+-if os.environ.get('PKG_CONFIG') != None:
+-	env["ENV"]["PKG_CONFIG"] = os.environ.get("PKG_CONFIG")
+-if os.environ.get('PKG_CONFIG_PATH') != None:
+-	env["ENV"]["PKG_CONFIG_PATH"] = os.environ.get("PKG_CONFIG_PATH")
+-if os.environ.get('PKG_CONFIG_SYSROOT_DIR') != None:
+-	env["ENV"]["PKG_CONFIG_SYSROOT_DIR"] = os.environ.get("PKG_CONFIG_SYSROOT_DIR")
++# Import env variables only if reproductibility is ensured
++if target_os in ['yocto']:
++    env['CONFIG_ENVIRONMENT_IMPORT'] = True
++else:
++    env['CONFIG_ENVIRONMENT_IMPORT'] = False
++
++if env['CONFIG_ENVIRONMENT_IMPORT'] == True:
++    print "warning: importing some environment variables for OS: %s" % target_os
++    for ev in ['PATH', 'PKG_CONFIG', 'PKG_CONFIG_PATH', 'PKG_CONFIG_SYSROOT_DIR']:
++        if os.environ.get(ev) != None:
++            env['ENV'][ev] = os.environ.get(ev)
++    if os.environ['LDFLAGS'] != None:
++        env.AppendUnique(LINKFLAGS = Split(os.environ['LDFLAGS']))
+ 
+ # Ensure scons be able to change its working directory
+ env.SConscriptChdir(1)
+@@ -394,8 +400,6 @@ if target_os == "yocto":
+                         env[tool] = os.path.join(path, os.environ[tool])
+                         break
+         env['CROSS_COMPILE'] = target_prefix[:len(target_prefix) - 1]
+-        if os.environ['LDFLAGS'] != None:
+-            env.AppendUnique(LINKFLAGS = Split(os.environ['LDFLAGS']))
+     except:
+         print "ERROR in Yocto cross-toolchain environment"
+         Exit(1)
+-- 
+1.9.1
+

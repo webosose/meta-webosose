@@ -1,0 +1,37 @@
+From 38253700a125d4f6d911a6a4ca3a6d510cbee927 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sun, 3 Nov 2013 18:05:53 +0900
+Subject: [PATCH 13/20] Add missing place in the table hangul_jamo_to_cjamo
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+hangul_jamo_to_cjamo 테이블에 빠진 곳 추가
+
+0xd7c7 ~ 0xd7ca까지 값이 빠져 있었음
+
+patch from: 김지훈 <jihoon48.kim@samsung.com>
+
+Change-Id: If7ea37cd9906cea63b6b49a30fdb1bbf02e9de3c
+---
+ hangul/hangulctype.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/hangul/hangulctype.c b/hangul/hangulctype.c
+index 6cac081..31dd206 100644
+--- a/hangul/hangulctype.c
++++ b/hangul/hangulctype.c
+@@ -518,6 +518,10 @@ hangul_jamo_to_cjamo(ucschar c)
+ 	0x0000,     /* 0xd7c4 */
+ 	0x0000,     /* 0xd7c5 */
+ 	0x0000,     /* 0xd7c6 */
++	0x0000,     /* 0xd7c7 */
++	0x0000,     /* 0xd7c8 */
++	0x0000,     /* 0xd7c9 */
++	0x0000,     /* 0xd7ca */
+ 	0x0000,     /* 0xd7cb */
+ 	0x0000,     /* 0xd7cc */
+ 	0x3138,     /* 0xd7cd */
+-- 
+1.7.9.5
+

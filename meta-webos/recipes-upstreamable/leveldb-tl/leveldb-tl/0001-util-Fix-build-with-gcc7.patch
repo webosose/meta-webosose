@@ -1,0 +1,47 @@
+From 72f7f92eb1d0779aff27f716bd638d946b31a3c8 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 15 Jun 2017 08:58:53 +0000
+Subject: [PATCH] util: Fix build with gcc7
+
+:Release Notes:
+Add correct include as described in:
+https://gcc.gnu.org/gcc-7/porting_to.html
+
+:Detailed Notes:
+Fixes:
+leveldb-tl/0.1.6-r2/git/test/util.hpp:33:10: error: 'std::function' has not been declared
+leveldb-tl/0.1.6-r2/git/test/util.hpp:33:18: error: expected ',' or '...' before '<' token
+leveldb-tl/0.1.6-r2/git/test/util.hpp:36:9: error: 'pred' was not declared in this scope
+leveldb-tl/0.1.6-r2/git/test/util.hpp:33:10: error: 'std::function' has not been declared
+leveldb-tl/0.1.6-r2/git/test/util.hpp:33:18: error: expected ',' or '...' before '<' token
+leveldb-tl/0.1.6-r2/git/test/util.hpp:36:9: error: 'pred' was not declared in this scope
+leveldb-tl/0.1.6-r2/git/test/util.hpp:44:41: error: too few arguments to function 'testing::AssertionResult check(const leveldb::Status&, int)'
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[PLAT-42189] leveldb-tl fails to build with gcc-7
+---
+ test/util.hpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test/util.hpp b/test/util.hpp
+index b6a44f9..da57588 100644
+--- a/test/util.hpp
++++ b/test/util.hpp
+@@ -19,6 +19,7 @@
+ 
+ #pragma once
+ 
++#include <functional>
+ #include <leveldb/slice.h>
+ 
+ #include <gtest/gtest.h>
+-- 
+1.9.1
+

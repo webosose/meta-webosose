@@ -1,0 +1,45 @@
+From 18c1310b658d48657138fa0cfe26520105443f5e Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Tue, 11 Aug 2015 15:11:56 +0530
+Subject: [PATCH 20/20] Fix buid error "required file 'ABOUT-NLS' not found"
+
+:Release Notes:
+Fixed build error: required file './ABOUT-NLS' not found
+
+:Detailed Notes:
+
+:Testing Performed:
+lib tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-2607] Build libhangul open source library
+ as dynamically linked library
+
+Change-Id: Ia14d951fdef867371118f4e231ded8134c0a10fb
+Reviewed-on: https://gpro.lgsvl.com/116213
+Reviewed-by: Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>
+Tested-by: Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>
+Reviewed-by: Jongsoo Lee <jongsoo.lee@lge.com>
+Tested-by: Jongsoo Lee <jongsoo.lee@lge.com>
+---
+ configure.ac |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index cde5bad..ba1bf16 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3,7 +3,7 @@
+ 
+ AC_PREREQ(2.57)
+ AC_INIT(libhangul, 0.1.0, http://code.google.com/p/libhangul/)
+-AM_INIT_AUTOMAKE
++AM_INIT_AUTOMAKE([foreign])
+ AC_CONFIG_SRCDIR([hangul/hangul.h])
+ AC_CONFIG_HEADER([config.h])
+ 
+-- 
+1.7.9.5
+

@@ -1,0 +1,25 @@
+From 4889599cefb71fad280c4f9c029d1abda7d522c0 Mon Sep 17 00:00:00 2001
+From: Roman Savchenko <roman.savchenko@lge.com>
+Date: Fri, 22 May 2015 13:12:55 +0300
+Subject: [PATCH 2/3] libavcodec/takdec: Check for possible EINVAL value
+
+---
+ libavcodec/takdec.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libavcodec/takdec.c b/libavcodec/takdec.c
+index 9bfbfcc..2c97024 100644
+--- a/libavcodec/takdec.c
++++ b/libavcodec/takdec.c
+@@ -744,6 +744,8 @@ static int tak_decode_frame(AVCodecContext *avctx, void *data,
+         int buf_size = av_samples_get_buffer_size(NULL, avctx->channels,
+                                                   s->nb_samples,
+                                                   AV_SAMPLE_FMT_S32P, 0);
++        if (buf_size < 0)
++            return AVERROR(EINVAL);
+         av_fast_malloc(&s->decode_buffer, &s->decode_buffer_size, buf_size);
+         if (!s->decode_buffer)
+             return AVERROR(ENOMEM);
+-- 
+1.9.1
+

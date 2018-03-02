@@ -1,0 +1,38 @@
+From afbde6a4ab4b857ad8e46d840506659e6298795f Mon Sep 17 00:00:00 2001
+From: Dong-Heon Jung <dongheon.jung@lge.com>
+Date: Tue, 23 Sep 2014 05:29:26 +0200
+Subject: [PATCH] Disable code cache of video and audio file
+
+In Youtube, video and audio files are delivered to TV.
+These files are all cacheable in disk.
+However, cached video and audio files in disk are not used at all,
+because YouTube app requests different url for same YouTube content.
+And cached video and audio files are so big.
+Big and useless video and audio cache files are saved in disk cache.
+So I disable code cache of media files.
+
+Change-Id: Ied1f1d782faa507ba3e8798f853697c710800fe6
+---
+ src/network/access/qnetworkreplyhttpimpl.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/network/access/qnetworkreplyhttpimpl.cpp b/src/network/access/qnetworkreplyhttpimpl.cpp
+index 94235a4..eb42d2d 100644
+--- a/src/network/access/qnetworkreplyhttpimpl.cpp
++++ b/src/network/access/qnetworkreplyhttpimpl.cpp
+@@ -1619,6 +1619,15 @@ QNetworkCacheMetaData QNetworkReplyHttpImplPrivate::fetchCacheMetaData(const QNe
+         else if (cacheControl.contains("no-store"))
+             canDiskCache = false;
+ 
++        // Check the Content-Type header.
++        // If type is video or audio, disables disk cache.
++        it = cacheHeaders.findRawHeader("content-type");
++        if (it != cacheHeaders.rawHeaders.constEnd()) {
++            QByteArray type = it->second;
++            if(type.startsWith("audio/") || type.startsWith("video/"))
++                canDiskCache = false;
++        }
++
+     // responses to POST might be cacheable
+     } else if (httpRequest.operation() == QHttpNetworkRequest::Post) {
+ 

@@ -1,0 +1,27 @@
+From 2a8154ecd35de171e64ed1c1819c519c84d315fe Mon Sep 17 00:00:00 2001
+From: Bob Moragues <bob.moragues@lge.com>
+Date: Mon, 14 Aug 2017 16:49:17 -0700
+Subject: [PATCH] vc4-kms: Add bcm2710 to compatibility lisf ot
+ vc4-kms-v3d-overlay.dts
+
+Change-Id: Iedbc344ef72919d0961a3a40cb85c73028e7904a
+---
+ arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts b/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts
+index bf93950..6582f1d 100644
+--- a/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts
++++ b/arch/arm/boot/dts/overlays/vc4-kms-v3d-overlay.dts
+@@ -8,7 +8,7 @@
+ #include <dt-bindings/clock/bcm2835.h>
+ 
+ / {
+-	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709";
++	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2710";
+ 
+ 	fragment@0 {
+ 		target-path = "/chosen";
+-- 
+1.9.1
+

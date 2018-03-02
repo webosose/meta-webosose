@@ -1,0 +1,106 @@
+From 8f5d35c4db14169924eb7e8982e735af947a5926 Mon Sep 17 00:00:00 2001
+From: Soumya Aithal <soumya_aithal@hotmail.com>
+Date: Wed, 13 Sep 2017 15:27:52 -0700
+Subject: [PATCH] Fix redundant kernel console log spew
+
+:Release Notes:
+
+Replace printk with DRM debug logs in code introduced for custom set_plane
+
+:Testing Performed:
+Replace printk with DRM debug logs. These logs can be enabled
+at boot time if needed for debugging.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-45324] Outputs unnecessary logs to the console.
+---
+ drivers/gpu/drm/drm_plane.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index 47837ba..0c1a454 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -619,7 +619,7 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 		uint32_t src_h, src_w;
+ 	} *scale_param;
+ 
+-	printk("\n drm_mode_plane_set_custom_prop arg->value = %llx arg->prop_id = %x plane_id = %d",arg->value, arg->prop_id, arg->obj_id);
++	DRM_DEBUG_KMS("\n drm_mode_plane_set_custom_prop arg->value = %llx arg->prop_id = %x plane_id = %d",arg->value, arg->prop_id, arg->obj_id);
+ 
+ 	switch (arg->prop_id) {
+ 		case 0xff02:
+@@ -628,12 +628,12 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				/* i + planeBase th Val = z[i] + planeBase th Val */
+ 				plane = drm_plane_find(plane->dev, z[i]+planeBase);
+ 				memcpy(state + i, plane->state, sizeof *(plane->state));
+-				printk("\n storing %dth plane values to %d plane", z[i] + planeBase, i + planeBase);
++				DRM_DEBUG_KMS("\n storing %dth plane values to %d plane", z[i] + planeBase, i + planeBase);
+ 			}
+ 			for (i = max_planes-1; i >= 0; i--) {
+ 				plane = drm_plane_find(plane->dev, i + planeBase);
+ 				if (plane->state->fb && state[i].fb == NULL) {
+-					printk("\n Disabling plane for z index %d", i);
++					DRM_DEBUG_KMS("\n Disabling plane for z index %d", i);
+ 					/* Here you are setting NULL to ith index, then ith OLD_FB will be dereferenced so we should first
+ 					   set this OLD_FB to its new place and then set this plane to NULL search for i in z[], get its
+ 					   index (destination plane), take state[index] (only if valid) index+planebase get plane to it
+@@ -653,7 +653,7 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				} else if (state[i].fb && (state[i].crtc == NULL || plane->crtc == NULL)) {
+ 					state[i].crtc = drm_crtc_find(dev, 43);
+ 					if (!state[i].crtc) {
+-						printk("\n Unknown crtc ID \n");
++						DRM_DEBUG_KMS("\n Unknown crtc ID \n");
+ 						return -ENOENT;
+ 					}
+ 				} else {
+@@ -668,9 +668,9 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 			return ret;
+ 		case 0xff03:
+ 			scale_param = (struct io_rect *) arg->value;
+-			printk("src rect: %d %d %d %d", scale_param->src_x, scale_param->src_y,
++			DRM_DEBUG_KMS("src rect: %d %d %d %d", scale_param->src_x, scale_param->src_y,
+ 				   scale_param->src_w>>16, scale_param->src_h>>16);
+-			printk("crtc rect: %d %d %d %d", scale_param->crtc_x, scale_param->crtc_y,
++			DRM_DEBUG_KMS("crtc rect: %d %d %d %d", scale_param->crtc_x, scale_param->crtc_y,
+ 				   scale_param->crtc_w, scale_param->crtc_h);
+ 			ret = __setplane_internal(plane, crtc, fb, scale_param->crtc_x, scale_param->crtc_y,
+ 									  scale_param->crtc_w, scale_param->crtc_h,
+@@ -680,20 +680,20 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 			break;
+ 
+ 		case 0xff01:
+-			printk("\n Going to look for framebuffer %d ", arg->value);
++			DRM_DEBUG_KMS("\n Going to look for framebuffer %d ", arg->value);
+ 			if (arg->value) {
+ 				fb = drm_framebuffer_lookup(plane->dev, arg->value);
+ 				if (!fb) {
+ 					DRM_DEBUG_KMS("Unknown framebuffer ID %d\n",
+ 								  arg->value);
+-					printk("\n Unknown framebuffer ID %d ", arg->value);
++					DRM_DEBUG_KMS("\n Unknown framebuffer ID %d ", arg->value);
+ 					return -ENOENT;
+ 				}
+ 			} else {
+ 				fb = 0;
+ 			}
+ 			if (!crtc) {
+-				printk("\n plane %d is not initialized yet ");
++				DRM_DEBUG_KMS("\n plane %d is not initialized yet ");
+ 				return -ENOENT;
+ 			}
+ 			ret = __setplane_internal_custom(plane, crtc, fb,
+@@ -703,7 +703,7 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 									  plane->state->src_w, plane->state->src_h);
+ 			break;
+ 		default:
+-			printk("\n prop ID %d ", arg->prop_id);
++			DRM_DEBUG_KMS("\n prop ID %d ", arg->prop_id);
+ 			return -ENOENT;
+ 	}
+ 	return ret;
+-- 
+1.9.1
+

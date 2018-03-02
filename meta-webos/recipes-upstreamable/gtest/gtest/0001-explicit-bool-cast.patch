@@ -1,0 +1,26 @@
+Copyright (c) 2014 LG Electronics, Inc.
+
+From: Andrii Motsok <andrii.motsok@lge.com>
+Date: Wed, 28 May 2014 14:40:31 +0300
+Subject: [PATCH] Explicit bool cast
+
+---
+ include/gtest/internal/gtest-internal.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/gtest/internal/gtest-internal.h b/include/gtest/internal/gtest-internal.h
+index 0dcc3a3..d5c13cf 100644
+--- a/include/gtest/internal/gtest-internal.h
++++ b/include/gtest/internal/gtest-internal.h
+@@ -1108,7 +1108,7 @@ class NativeArray {
+ #define GTEST_TEST_BOOLEAN_(expression, text, actual, expected, fail) \
+   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+   if (const ::testing::AssertionResult gtest_ar_ = \
+-      ::testing::AssertionResult(expression)) \
++      ::testing::AssertionResult(bool(expression))) \
+     ; \
+   else \
+     fail(::testing::internal::GetBoolAssertionFailureMessage(\
+--
+1.7.9.5
+

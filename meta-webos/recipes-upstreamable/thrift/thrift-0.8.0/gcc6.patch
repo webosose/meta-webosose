@@ -1,0 +1,44 @@
+diff -uNr thrift-0.8.0.orig/compiler/cpp/src/generate/t_rb_generator.cc thrift-0.8.0/compiler/cpp/src/generate/t_rb_generator.cc
+--- thrift-0.8.0.orig/compiler/cpp/src/generate/t_rb_generator.cc	2011-11-26 20:00:48.000000000 +0100
++++ thrift-0.8.0/compiler/cpp/src/generate/t_rb_generator.cc	2016-12-06 21:33:24.625498611 +0100
+@@ -321,7 +321,7 @@
+   for(c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
+     // Populate the hash
+     int value = (*c_iter)->get_value();
+-    first ? first = false : f_types_ << ", ";
++    if (first) { first = false; } else { f_types_ << ", "; }
+     f_types_ << value << " => \"" << capitalize((*c_iter)->get_name()) << "\"";
+   }
+   f_types_ << "}" << endl;
+@@ -331,7 +331,7 @@
+   first = true;
+   for (c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
+     // Populate the set
+-    first ? first = false : f_types_ << ", ";
++    if (first) { first = false; } else { f_types_ << ", "; }
+     f_types_ << capitalize((*c_iter)->get_name());
+   }
+   f_types_ << "]).freeze" << endl;
+diff -uNr thrift-0.8.0.orig/lib/cpp/Makefile.am thrift-0.8.0/lib/cpp/Makefile.am
+--- thrift-0.8.0.orig/lib/cpp/Makefile.am	2011-11-26 20:00:42.000000000 +0100
++++ thrift-0.8.0/lib/cpp/Makefile.am	2016-12-06 21:44:27.648522383 +0100
+@@ -40,7 +40,7 @@
+ pkgconfig_DATA += thrift-z.pc
+ endif
+ 
+-AM_CXXFLAGS = -Wall
++AM_CXXFLAGS = -Wall -Wno-narrowing
+ AM_CPPFLAGS = $(BOOST_CPPFLAGS) -I$(srcdir)/src
+ AM_LDFLAGS = $(BOOST_LDFLAGS)
+ 
+--- thrift-0.8.0.orig/lib/cpp/Makefile.in	2016-12-06 21:51:01.073536489 +0100
++++ thrift-0.8.0/lib/cpp/Makefile.in	2011-11-26 22:25:01.000000000 +0100
+@@ -460,7 +460,7 @@
+ lib_LTLIBRARIES = libthrift.la $(am__append_2) $(am__append_4)
+ pkgconfig_DATA = thrift.pc $(am__append_3) $(am__append_5)
+ libthrift_la_LDFLAGS = -release $(VERSION) $(BOOST_LDFLAGS)
+-AM_CXXFLAGS = -Wall
++AM_CXXFLAGS = -Wall -Wno-narrowing
+ AM_CPPFLAGS = $(BOOST_CPPFLAGS) -I$(srcdir)/src
+ AM_LDFLAGS = $(BOOST_LDFLAGS)
+ 

@@ -1,0 +1,37 @@
+From e66425b670260ec8b0662fe66dbceee73633a63b Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Tue, 28 Oct 2014 21:22:59 +0200
+Subject: [PATCH] QOpenGLTextureCache size setting
+
+:Release Notes:
+QOpenGLTextureCache size setting
+
+:Detailed Notes:
+Expose an environment variable for tuning QOpenGLTextureCache size
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[CTO-2118] Expose Texture size as env variable
+
+Upstream-Status: Inappropriate [specific to tv]
+---
+ src/gui/opengl/qopengltexturecache.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/gui/opengl/qopengltexturecache.cpp b/src/gui/opengl/qopengltexturecache.cpp
+index f80a55f..6c52a73 100644
+--- a/src/gui/opengl/qopengltexturecache.cpp
++++ b/src/gui/opengl/qopengltexturecache.cpp
+@@ -119,6 +119,9 @@ QOpenGLTextureCache::QOpenGLTextureCache(QOpenGLContext *ctx)
+     : QOpenGLSharedResource(ctx->shareGroup())
+     , m_cache(64 * 1024) // 64 MB cache
+ {
++    const QByteArray cacheSize = qgetenv("QT_OPENGL_TEXTURE_CACHE_SIZE");
++    if (!cacheSize.isEmpty())
++        m_cache.setMaxCost(cacheSize.toInt() * 1024);
+ }
+ 
+ QOpenGLTextureCache::~QOpenGLTextureCache()

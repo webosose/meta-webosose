@@ -1,0 +1,96 @@
+diff --git a/iotop/data.py b/iotop/data.py
+index 25b659e..7d719dd 100644
+--- a/iotop/data.py
++++ b/iotop/data.py
+@@ -32,7 +32,8 @@ import time
+ # Check for requirements:
+ #   o Linux >= 2.6.20 with I/O accounting and VM event counters
+ #
+-
++overPid = 70000
++overIndex = 0
+ ioaccounting = os.path.exists('/proc/self/io')
+
+ try:
+@@ -156,6 +157,7 @@ class TaskStatsNetlink(object):
+                 break
+         else:
+             return
++
+         taskstats_data = reply[TASKSTATS_TYPE_STATS].data
+         if len(taskstats_data) < 272:
+             # Short reply
+@@ -243,6 +245,7 @@ class ProcessInfo(DumpableObject):
+         self.stats_delta = Stats.build_all_zero()
+         self.stats_accum = Stats.build_all_zero()
+         self.stats_accum_timestamp = time.time()
++        self.cmdline = 'no name'
+
+     def is_monitored(self, options):
+         if (options.pids and not options.processes and
+@@ -288,7 +291,8 @@ class ProcessInfo(DumpableObject):
+             proc_cmdline = open('/proc/%d/cmdline' % self.pid)
+             cmdline = proc_cmdline.read(4096)
+         except IOError:
+-            return '{no such process}'
++            #return '{no such process}'
++            return self.cmdline
+         proc_status = parse_proc_pid_status(self.pid)
+         if not cmdline:
+             # Probably a kernel thread, get its name from /proc/PID/status
+@@ -311,7 +315,9 @@ class ProcessInfo(DumpableObject):
+             first_command_char = parts[0].rfind('/') + 1
+             parts[0] = parts[0][first_command_char:]
+         cmdline = ' '.join(parts).strip()
+-        return safe_utf8_decode(cmdline + suffix)
++        self.cmdline = safe_utf8_decode(cmdline + suffix)
++        return self.cmdline
++#        return safe_utf8_decode(cmdline + suffix)
+
+     def did_some_io(self, accumulated):
+         if accumulated:
+@@ -342,6 +348,9 @@ class ProcessInfo(DumpableObject):
+         return thread
+
+     def update_stats(self):
++        global overPid
++        global overIndex
++
+         stats_delta = Stats.build_all_zero()
+         for tid, thread in self.threads.items():
+             if not thread.mark:
+@@ -350,11 +359,19 @@ class ProcessInfo(DumpableObject):
+                              self.threads.items() if not thread.mark])
+
+         nr_threads = len(self.threads)
+-        if not nr_threads:
+-            return False
++#        if not nr_threads:
++#            return False
++
++#        stats_delta.blkio_delay_total /= nr_threads
++#        stats_delta.swapin_delay_total /= nr_threads
+
+-        stats_delta.blkio_delay_total /= nr_threads
+-        stats_delta.swapin_delay_total /= nr_threads
++        if nr_threads:
++            stats_delta.blkio_delay_total /= nr_threads
++            stats_delta.swapin_delay_total /= nr_threads
++        elif self.pid < overPid:
++            self.cmdline = '[' + `self.pid` + ']' + self.cmdline
++            self.pid = overPid+overIndex
++            overIndex = overIndex+1
+
+         self.stats_delta = stats_delta
+         self.stats_accum.accumulate(self.stats_delta, self.stats_accum)
+@@ -448,6 +465,10 @@ class ProcessList(DumpableObject):
+         self.processes = dict([(pid, process) for pid, process in
+                                self.processes.items() if
+                                process.update_stats()])
++        for (key, value) in self.processes.items():
++            if key!= value.pid:
++                self.processes[value.pid] = value
++                del self.processes[key]
+
+         return total_read_and_write
+

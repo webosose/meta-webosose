@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: CppUtest
+URL: https://github.com/cpputest/cpputest
+Description: Easy to use unit test framework for C/C++
+Version: @PACKAGE_VERSION@
+Cflags: -I${includedir}/CppUTest -DCPPUTEST_MEM_LEAK_DETECTION_DISABLED
+Libs: -L${libdir} -lstdc++ -lCppUTest -lCppUTestExt
+

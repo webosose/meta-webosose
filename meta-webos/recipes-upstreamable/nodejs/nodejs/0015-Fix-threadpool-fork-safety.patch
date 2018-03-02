@@ -1,0 +1,324 @@
+From 5bacd9ccea3b95807cfd5c39c77e5c0694d229d1 Mon Sep 17 00:00:00 2001
+From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Date: Thu, 28 May 2015 21:50:49 +0300
+Subject: [PATCH 14/17] [PATCH 09/10] Fix threadpool fork safety
+
+:Release Notes:
+Fixes libuv`s threadpool fork safety
+
+:Detailed Notes:
+Adapts libuv`s threadpool fork safety from
+https://github.com/joyent/libuv/pull/1136
+- restarts threadpool`s threads after fork.
+Changes made to above pull request:
+ added deinitialization of synchronization variables;
+ fixed do_fork_guard to be volatile;
+ added ifdefs to exclude from WIN32 build;
+ fixed incorrect jobs queueing for spinning up worker threads;
+ added memory check for malloc;
+ made flag checks atomic to avoid issues on non-cache-coherent systems;
+
+:Testing Performed:
+One simple test is included into node`s test suite.
+Checked via htop that forked process restarts threadpool
+threads.
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-4340] Using fork for loading new node instance
+
+Change-Id: Iec277dcd93b8adecaf8387dc1ba1a007c0c282dd
+Open-webOS-DCO-1.0-Signed-off-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Reviewed-on: https://gpro.lgsvl.com/111233
+Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Tested-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+---
+ deps/uv/checksparse.sh              |   1 +
+ deps/uv/src/threadpool.c            | 119 ++++++++++++++++++++++++++++++++++++
+ deps/uv/test/test-threadpool-fork.c |  71 +++++++++++++++++++++
+ deps/uv/uv.gyp                      |   1 +
+ 4 files changed, 192 insertions(+)
+ create mode 100644 deps/uv/test/test-threadpool-fork.c
+
+diff --git a/deps/uv/checksparse.sh b/deps/uv/checksparse.sh
+index 68e3bde..197b51d 100755
+--- a/deps/uv/checksparse.sh
++++ b/deps/uv/checksparse.sh
+@@ -153,6 +153,7 @@ test/test-tcp-write-to-half-open-connection.c
+ test/test-tcp-writealot.c
+ test/test-thread.c
+ test/test-threadpool-cancel.c
++test/test-threadpool-fork.c
+ test/test-threadpool.c
+ test/test-timer-again.c
+ test/test-timer.c
+diff --git a/deps/uv/src/threadpool.c b/deps/uv/src/threadpool.c
+index 2c5152b..407e800 100644
+--- a/deps/uv/src/threadpool.c
++++ b/deps/uv/src/threadpool.c
+@@ -23,6 +23,7 @@
+ 
+ #if !defined(_WIN32)
+ # include "unix/internal.h"
++# include "unix/atomic-ops.h"
+ #else
+ # include "win/req-inl.h"
+ /* TODO(saghul): unify internal req functions */
+@@ -52,6 +53,15 @@ static QUEUE exit_message;
+ static QUEUE wq;
+ static volatile int initialized;
+ 
++#if !defined(_WIN32)
++static uv_barrier_t fork_barrier;
++static uv_mutex_t fork_mutex;
++static int do_fork_guard;
++
++static void fork_guard(void);
++static void init_fork_protection(int);
++#endif
++
+ 
+ static void uv__cancelled(struct uv__work* w) {
+   abort();
+@@ -68,6 +78,12 @@ static void worker(void* arg) {
+   (void) arg;
+ 
+   for (;;) {
++#if !defined(_WIN32)
++    if (cmpxchgi(&do_fork_guard, 1, 1)) {
++      fork_guard();
++    }
++#endif
++
+     uv_mutex_lock(&mutex);
+ 
+     while (QUEUE_EMPTY(&wq)) {
+@@ -104,6 +120,83 @@ static void worker(void* arg) {
+ }
+ 
+ 
++#if !defined(_WIN32)
++static void fork_guard(void) {
++  // give all the worker threads time to get to the same place
++  uv_barrier_wait(&fork_barrier);
++
++  // wait for the fork to occur
++  uv_mutex_lock(&fork_mutex);
++  // since we were just waiting for the fork now release the resource and go
++  uv_mutex_unlock(&fork_mutex);
++}
++
++static void seed_work_cb(uv_work_t *data) {
++}
++
++static void after_work_cb(uv_work_t *data, int status) {
++  free(data);
++}
++
++static void prepare_fork(void) {
++  assert(1 == initialized);
++
++  // tell the threads to start getting ready to fork
++  int oldval = cmpxchgi(&do_fork_guard, 0, 1);
++  assert(0 == oldval);
++
++  // seed nthreads jobs to spin up threads
++  // not taking into account any possible tasks in progress.
++  // Be careful though that if some tasks are in queue then they will be copied
++  // to the child process. Prefer to do fork with an empty queue.
++  unsigned int i = 0;
++  for (; i < nthreads; ++i) {
++    uv_work_t *req = malloc(sizeof(uv_work_t));
++    if (req == NULL) {
++        abort();
++    }
++    // it`s ok to use default loop here even if user has it`s own loop
++    uv_queue_work(uv_default_loop(), req, &seed_work_cb, &after_work_cb);
++  }
++
++  // lock now so when the barrier hits we know the threads will halt
++  uv_mutex_lock(&fork_mutex);
++  // wait for the threads to get here
++  // This can take a while if worker have some long time operation in progress
++  uv_barrier_wait(&fork_barrier);
++}
++
++static void parent_process(void) {
++  assert(1 == initialized);
++
++  // the parent threads can go and do what they want to do
++  int oldval = cmpxchgi(&do_fork_guard, 1, 0);
++  assert(1 == oldval);
++  // let them move on with life
++  uv_mutex_unlock(&fork_mutex);
++}
++
++static void child_process(void) {
++  assert(1 == initialized);
++
++  // set the guard to 0 so the newly spun up threads don't wait in the barrier
++  // and deadlock
++  int oldval = cmpxchgi(&do_fork_guard, 1, 0);
++  assert(1 == oldval);
++  uv_mutex_unlock(&fork_mutex);
++
++  // our state will say we're initialized, so let's make it a reality for the
++  // child
++  int i;
++  for (i = 0; i < nthreads; i++) {
++    if (uv_thread_create(threads + i, worker, NULL)) {
++      abort();
++    }
++  }
++}
++#endif
++
++
+ static void post(QUEUE* q) {
+   uv_mutex_lock(&mutex);
+   QUEUE_INSERT_TAIL(&wq, q);
+@@ -114,6 +207,13 @@ static void post(QUEUE* q) {
+ 
+ 
+ #ifndef _WIN32
++static void deinit_fork_protection(void) {
++    uv_mutex_destroy(&fork_mutex);
++    uv_barrier_destroy(&fork_barrier);
++    cmpxchgi(&do_fork_guard, 1, 0);
++}
++
++
+ UV_DESTRUCTOR(static void cleanup(void)) {
+   unsigned int i;
+ 
+@@ -132,10 +232,25 @@ UV_DESTRUCTOR(static void cleanup(void)) {
+   uv_mutex_destroy(&mutex);
+   uv_cond_destroy(&cond);
+ 
++  deinit_fork_protection();
++
+   threads = NULL;
+   nthreads = 0;
+   initialized = 0;
+ }
++
++
++static void init_fork_protection(int num_threads) {
++  do_fork_guard = 0;
++  // init the fork to num_threads, plus the main thread
++  if (uv_barrier_init(&fork_barrier, num_threads + 1))
++    abort();
++  if (uv_mutex_init(&fork_mutex))
++    abort();
++  // register the fork functions
++  if (pthread_atfork(&prepare_fork, &parent_process, &child_process))
++    abort();
++}
+ #endif
+ 
+ 
+@@ -152,6 +267,10 @@ static void init_once(void) {
+   if (nthreads > MAX_THREADPOOL_SIZE)
+     nthreads = MAX_THREADPOOL_SIZE;
+ 
++#if !defined(_WIN32)
++  init_fork_protection(nthreads);
++#endif
++
+   threads = default_threads;
+   if (nthreads > ARRAY_SIZE(default_threads)) {
+     threads = uv__malloc(nthreads * sizeof(threads[0]));
+diff --git a/deps/uv/test/test-threadpool-fork.c b/deps/uv/test/test-threadpool-fork.c
+new file mode 100644
+index 0000000..3ff5a25
+--- /dev/null
++++ b/deps/uv/test/test-threadpool-fork.c
+@@ -0,0 +1,71 @@
++/* Copyright Joyent, Inc. and other Node contributors. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to
++ * deal in the Software without restriction, including without limitation the
++ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
++ * sell copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
++ * IN THE SOFTWARE.
++ */
++
++#ifndef _WIN32
++#include "uv.h"
++#include "task.h"
++
++static int work_cb_count;
++static int after_work_cb_count;
++static uv_work_t work_req;
++static char data;
++
++
++static void work_cb(uv_work_t* req) {
++  ASSERT(req == &work_req);
++  ASSERT(req->data == &data);
++  work_cb_count++;
++}
++
++
++static void after_work_cb(uv_work_t* req, int status) {
++  ASSERT(status == 0);
++  ASSERT(req == &work_req);
++  ASSERT(req->data == &data);
++  after_work_cb_count++;
++}
++
++
++TEST_IMPL(threadpool_queue_work_after_fork) {
++  int r;
++
++  work_req.data = &data;
++  r = uv_queue_work(uv_default_loop(), &work_req, work_cb, after_work_cb);
++  ASSERT(r == 0);
++  uv_run(uv_default_loop(), UV_RUN_DEFAULT);
++
++  ASSERT(work_cb_count == 1);
++  ASSERT(after_work_cb_count == 1);
++
++  pid_t p = fork();
++
++  // both sides should be able to run jobs
++  r = uv_queue_work(uv_default_loop(), &work_req, work_cb, after_work_cb);
++  ASSERT(r == 0);
++  uv_run(uv_default_loop(), UV_RUN_DEFAULT);
++
++  ASSERT(work_cb_count == 2);
++  ASSERT(after_work_cb_count == 2);
++
++  MAKE_VALGRIND_HAPPY();
++  return 0;
++}
++#endif
+diff --git a/deps/uv/uv.gyp b/deps/uv/uv.gyp
+index 49d5d22..3426297 100644
+--- a/deps/uv/uv.gyp
++++ b/deps/uv/uv.gyp
+@@ -427,6 +427,7 @@
+         'test/test-tcp-write-queue-order.c',
+         'test/test-threadpool.c',
+         'test/test-threadpool-cancel.c',
++        'test/test-threadpool-fork.c',
+         'test/test-thread-equal.c',
+         'test/test-tmpdir.c',
+         'test/test-mutexes.c',
+-- 
+1.9.1
+

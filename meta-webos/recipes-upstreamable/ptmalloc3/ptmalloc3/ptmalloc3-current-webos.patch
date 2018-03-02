@@ -1,0 +1,338 @@
+Index: ptmalloc3/Makefile.palm
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ ptmalloc3/Makefile.palm	2012-07-02 10:17:26.000000000 -0700
+@@ -0,0 +1,32 @@
++CC := gcc
++
++# Note: we preserve the optimizations and flags from OE by tacking them on
++# the end here, so they will override anything you specify here (but we
++# leave that for desktop builds)
++CFLAGS := -O2 -g -D_GNU_SOURCE=1 -DPIC -fPIC -Wall -Werror -Wstrict-prototypes \
++		-DMALLOC_DEBUG=2 -DUSE_TSD_DATA_HACK -Isysdeps/pthread -Isysdeps/generic -I. $(CFLAGS)
++
++# -DMAP_DEV_HEAP: enable to see all allocations in /proc/pid/maps as /dev/heap
++
++LDFLAGS := -pthread -shared -fPIC -lpthread -Wl,--no-undefined -Wl,-O1 -Wl,--hash-style=gnu
++
++all: libptmalloc3.so
++
++ptmalloc3.o: ptmalloc3.c
++	$(CC) $(CFLAGS) -c -DFOOTERS=0 -DMSPACES=1 -o $@ $+
++
++malloc.o: malloc.c
++	$(CC) $(CFLAGS) -c -DFOOTERS=0 -DONLY_MSPACES -DUSE_LOCKS=0 -fvisibility=hidden -o $@ $+
++
++malloc_utils.o: malloc_utils.c
++	$(CC) $(CFLAGS) -c -fvisibility=hidden -o $@ $+
++
++libptmalloc3.so: ptmalloc3.o malloc.o malloc_utils.o
++	$(CC) $(LDFLAGS) -o $@ $+
++
++install: libptmalloc3.so
++	cp libptmalloc3.so $(BEDLAM_ROOT)/lib
++	$(shell cd $(BEDLAM_ROOT)/lib; ln -sf libptmalloc3.so libptmalloc3.so)
++
++clean:
++	rm -f *.o *.so
+Index: ptmalloc3/malloc.c
+===================================================================
+--- ptmalloc3.orig/malloc.c	2006-03-30 08:47:29.000000000 -0800
++++ ptmalloc3/malloc.c	2012-07-02 10:17:26.000000000 -0700
+@@ -1431,6 +1431,12 @@
+ #ifndef WIN32
+ #define CALL_MUNMAP(a, s)    munmap((a), (s))
+ #define MMAP_PROT            (PROT_READ|PROT_WRITE)
++
++
++#ifdef MAP_DEV_HEAP
++int dev_heap_works = 1;
++#include "mmap_dev_heap.h"
++#else /* MAP_DEV_HEAP */
+ #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
+ #define MAP_ANONYMOUS        MAP_ANON
+ #endif /* MAP_ANON */
+@@ -1449,6 +1455,7 @@
+             mmap(0, (s), MMAP_PROT, MMAP_FLAGS, dev_zero_fd, 0)) : \
+             mmap(0, (s), MMAP_PROT, MMAP_FLAGS, dev_zero_fd, 0))
+ #endif /* MAP_ANONYMOUS */
++#endif /* MAP_DEV_HEAP */
+ 
+ #define DIRECT_MMAP(s)       CALL_MMAP(s)
+ #else /* WIN32 */
+@@ -1971,6 +1978,7 @@
+   ((MCHUNK_SIZE + CHUNK_ALIGN_MASK) & ~CHUNK_ALIGN_MASK)
+ 
+ /* conversion from malloc headers to user pointers, and back */
++/* DAIQ-389: If you change the chunk2mem macro you must also change TOP_FOOT_SIZE */
+ #define chunk2mem(p)        ((void*)((char*)(p)       + TWO_SIZE_T_SIZES))
+ #define mem2chunk(mem)      ((mchunkptr)((char*)(mem) - TWO_SIZE_T_SIZES))
+ /* chunk associated with aligned address A */
+@@ -2463,9 +2471,11 @@
+   TOP_FOOT_SIZE is padding at the end of a segment, including space
+   that may be needed to place segment records and fenceposts when new
+   noncontiguous segments are added.
++
++  DAIQ-389: align_offset(chunk2mem(0)) was changed to align_offset(TWO_SIZE_T_SIZES)
+ */
+ #define TOP_FOOT_SIZE\
+-  (align_offset(chunk2mem(0))+pad_request(sizeof(struct malloc_segment))+MIN_CHUNK_SIZE)
++  (align_offset(TWO_SIZE_T_SIZES)+pad_request(sizeof(struct malloc_segment))+MIN_CHUNK_SIZE)
+
+ 
+ /* -------------------------------  Hooks -------------------------------- */
+@@ -4163,7 +4173,7 @@
+         if (rsize >= MIN_CHUNK_SIZE) {
+           mchunkptr remainder = chunk_plus_offset(newp, nb);
+           set_inuse(m, newp, nb);
+-          set_inuse(m, remainder, rsize);
++          set_inuse_and_pinuse(m, remainder, rsize);
+           extra = chunk2mem(remainder);
+         }
+       }
+Index: ptmalloc3/malloc-private.h
+===================================================================
+--- ptmalloc3.orig/malloc-private.h	2006-03-31 04:56:52.000000000 -0800
++++ ptmalloc3/malloc-private.h	2012-07-02 10:17:26.000000000 -0700
+@@ -25,6 +25,9 @@
+  ((((size_t)(A) & CHUNK_ALIGN_MASK) == 0)? 0 :\
+   ((MALLOC_ALIGNMENT - ((size_t)(A) & CHUNK_ALIGN_MASK)) & CHUNK_ALIGN_MASK))
+ 
++#ifdef MAP_DEV_HEAP
++#include "mmap_dev_heap.h"
++#else /* MAP_DEV_HEAP */
+ #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
+ #define MAP_ANONYMOUS        MAP_ANON
+ #endif /* MAP_ANON */
+@@ -44,6 +47,7 @@
+             mmap(0, (s), PROT_READ|PROT_WRITE, MMAP_FLAGS, dev_zero_fd, 0)) : \
+             mmap(0, (s), PROT_READ|PROT_WRITE, MMAP_FLAGS, dev_zero_fd, 0))
+ #endif /* MAP_ANONYMOUS */
++#endif /* MAP_DEV_HEAP */
+ #define CALL_MUNMAP(a, s) munmap((a), (s))
+ 
+ struct malloc_chunk {
+@@ -102,16 +106,21 @@
+   TOP_FOOT_SIZE is padding at the end of a segment, including space
+   that may be needed to place segment records and fenceposts when new
+   noncontiguous segments are added.
++
++  DAIQ-389: align_offset(chunk2mem(0)) was changed to align_offset(TWO_SIZE_T_SIZES)
+ */
+ #define TOP_FOOT_SIZE\
+-  (align_offset(chunk2mem(0))+pad_request(sizeof(struct malloc_segment))+MIN_CHUNK_SIZE)
++  (align_offset(TWO_SIZE_T_SIZES)+pad_request(sizeof(struct malloc_segment))+MIN_CHUNK_SIZE)
+ 
+ /* ------------------- Chunks sizes and alignments ----------------------- */
+ 
+ #define MCHUNK_SIZE         (sizeof(mchunk))
+ 
++#if FOOTERS
++#define CHUNK_OVERHEAD      (TWO_SIZE_T_SIZES)
++#else   /* FOOTERS */
+ #define CHUNK_OVERHEAD      (SIZE_T_SIZE)
+-
++#endif /* FOOTERS */
+ /* MMapped chunks need a second word of overhead ... */
+ #define MMAP_CHUNK_OVERHEAD (TWO_SIZE_T_SIZES)
+ /* ... and additional padding for fake next-chunk at foot */
+@@ -122,6 +131,7 @@
+   ((MCHUNK_SIZE + CHUNK_ALIGN_MASK) & ~CHUNK_ALIGN_MASK)
+ 
+ /* conversion from malloc headers to user pointers, and back */
++/* DAIQ-389: If you change the chunk2mem macro you must also change TOP_FOOT_SIZE */
+ #define chunk2mem(p)        ((void*)((char*)(p)       + TWO_SIZE_T_SIZES))
+ #define mem2chunk(mem)      ((mchunkptr)((char*)(mem) - TWO_SIZE_T_SIZES))
+ /* chunk associated with aligned address A */
+Index: ptmalloc3/malloc_utils.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ ptmalloc3/malloc_utils.c	2012-07-02 10:17:26.000000000 -0700
+@@ -0,0 +1,91 @@
++/** 
++ *******************************************************************************
++ * @file malloc_utils.c
++ * 
++ * Copyright (c) 2010-2013 LG Electronics, Inc.
++ * 
++ * @brief Useful malloc utility functions.
++ * 
++ * @author Tom Hughes
++ * 
++ * @version  0.10  2010-08-09  <tdh>  Initial creation
++ *******************************************************************************
++ */
++
++#include <unistd.h>
++#include <errno.h>
++#include <string.h>
++#include <sys/file.h>
++#include <stdbool.h>
++
++#define ERROR_BUF_SIZE_BYTES    64
++static char err_buf[ERROR_BUF_SIZE_BYTES];
++
++/** 
++ *******************************************************************************
++ * @brief Safe print routine that can be called from malloc without leading to
++ * recursive malloc calls that might fail under ENOMEM conditions.
++ * 
++ * @param  s    IN      message to print 
++ *******************************************************************************
++ */
++static void _malloc_print(const char* s, bool needs_lock)
++{
++    int bytes_written = 0;
++    int ret = 0;
++    int len = strlen(s);
++
++    if (needs_lock) {
++        flock(STDERR_FILENO, LOCK_EX);
++    }
++
++    while (bytes_written < len)
++    {
++        ret = write(STDERR_FILENO, s, len - bytes_written);
++
++        if (ret < 0) {
++            /* not much we can do in case of failure */
++            goto done;
++        }
++
++        /* partial write, so we account for amount written */
++        bytes_written += ret;
++    }
++
++done:
++    if (needs_lock) {
++        flock(STDERR_FILENO, LOCK_UN);
++    }
++}
++
++void malloc_print(const char* s)
++{
++    _malloc_print(s, true);
++}
++
++void malloc_print_unlocked(const char* s)
++{
++    _malloc_print(s, false);
++}
++
++/** 
++ *******************************************************************************
++ * @brief perror replacement that doesn't allocate memory.
++ * 
++ * @param  s    IN      message to print
++ *******************************************************************************
++ */
++void malloc_perror(const char* s)
++{
++    char *err_str = strerror_r(errno, err_buf, sizeof(err_buf));
++    
++    flock(STDERR_FILENO, LOCK_EX);
++    malloc_print_unlocked(s);
++    if (err_str) {
++        malloc_print_unlocked(" : ");
++        malloc_print_unlocked(err_str);
++    }
++    malloc_print_unlocked("\n");
++    fsync(STDERR_FILENO);
++    flock(STDERR_FILENO, LOCK_UN);
++}
+Index: ptmalloc3/malloc_utils.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ ptmalloc3/malloc_utils.h	2012-07-02 10:17:26.000000000 -0700
+@@ -0,0 +1,15 @@
++#ifndef MALLOC_UTILS_H
++#define MALLOC_UTILS_H
++
++#if __GNUC__
++#define likely(x)       __builtin_expect(!!(x), 1)
++#define unlikely(x)     __builtin_expect(!!(x), 0)
++#else
++#define likely(x)       (x)
++#define unlikely(x)     (x)
++#endif
++
++void malloc_print(const char* s);
++void malloc_perror(const char* s);
++
++#endif  /* MALLOC_UTILS_H */
+Index: ptmalloc3/mmap_dev_heap.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ ptmalloc3/mmap_dev_heap.h	2012-07-02 10:17:26.000000000 -0700
+@@ -0,0 +1,41 @@
++#ifndef MMAP_DEV_HEAP_H
++#define MMAP_DEV_HEAP_H
++
++#ifdef MAP_DEV_HEAP
++#include <fcntl.h>  /* for O_RDWR */
++#include <unistd.h> /* for close  */
++#define MMAP_FLAGS           (MAP_PRIVATE)
++
++#include "malloc_utils.h"
++
++extern int dev_heap_works;
++
++static inline void* CALL_MMAP(size_t s)
++{
++  if (dev_heap_works) {
++    /* Note that we have to open and close the file descriptor each
++     * time because some processes may close all of their file descriptors.
++     * For example, pulseaudio closes all of its file descriptors on startup
++     * when dropping permissions. It's also common for processes to close
++     * all file descriptors in the child process after forking (which may
++     * occur after any pthread_atfork() handler, so we can't rely on that).
++     * We don't want to try just re-opening a file descriptor after an mmap
++     * fails because we may inadvertently mmap a real file.
++     */
++    int dev_heap_fd = open("/dev/heap", O_RDWR);
++    
++    if (dev_heap_fd >= 0) {
++      void *ret = mmap(0, s, PROT_READ|PROT_WRITE, MMAP_FLAGS, dev_heap_fd, 0);
++      close(dev_heap_fd);
++      return ret;
++    } else {
++      dev_heap_works = 0;
++    }
++  }
++
++  /* We couldn't open /dev/heap, so fall back to anonymous mmap */
++  return mmap(0, s, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
++}
++
++#endif /* MAP_DEV_HEAP */
++#endif /* MMAP_DEV_HEAP_H */
+Index: ptmalloc3/ptmalloc3.c
+===================================================================
+--- ptmalloc3.orig/ptmalloc3.c	2006-03-31 07:57:28.000000000 -0800
++++ ptmalloc3/ptmalloc3.c	2012-07-02 10:17:26.000000000 -0700
+@@ -216,7 +216,7 @@
+ static struct malloc_arena* _int_new_arena(size_t size);
+ 
+ /* Buffer for the main arena. */
+-static struct malloc_arena main_arena;
++static struct malloc_arena main_arena __attribute__ ((aligned (MALLOC_ALIGNMENT)));
+ 
+ /* For now, store arena in footer.  This means typically 4bytes more
+    overhead for each non-main-arena chunk, but is fast and easy to
+@@ -1083,6 +1083,16 @@
+   return result;
+ }
+ 
++struct mallinfo
++public_mALLINFo()
++{
++  struct mallinfo result;
++  (void)mutex_lock(&main_arena.mutex);
++  result = mspace_mallinfo(arena_to_mspace(&main_arena));
++  (void)mutex_unlock(&main_arena.mutex);
++  return result;
++}
++
+ void
+ public_mSTATs(void)
+ {

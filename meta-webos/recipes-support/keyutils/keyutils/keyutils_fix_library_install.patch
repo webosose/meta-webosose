@@ -1,0 +1,30 @@
+Index: keyutils-1.5.5/Makefile
+===================================================================
+--- keyutils-1.5.5.orig/Makefile	2011-11-30 17:27:43.000000000 +0200
++++ keyutils-1.5.5/Makefile	2011-12-21 16:05:53.000000000 +0200
+@@ -59,13 +59,13 @@
+ 
+ ifeq ($(BUILDFOR),32-bit)
+ CFLAGS		+= -m32
+-LIBDIR		:= /lib
++LIBDIR		:= /usr/lib
+ USRLIBDIR	:= /usr/lib
+ else
+ ifeq ($(BUILDFOR),64-bit)
+ CFLAGS		+= -m64
+-LIBDIR		:= /lib64
+-USRLIBDIR	:= /usr/lib64
++LIBDIR		:= /usr/lib
++USRLIBDIR	:= /usr/lib
+ endif
+ endif
+ 
+@@ -152,7 +152,7 @@
+ 	$(INSTALL) -D $(LIBNAME) $(DESTDIR)$(LIBDIR)/$(LIBNAME)
+ 	$(LNS) $(LIBNAME) $(DESTDIR)$(LIBDIR)/$(SONAME)
+ 	mkdir -p $(DESTDIR)$(USRLIBDIR)
+-	$(LNS) $(LIBDIR)/$(SONAME) $(DESTDIR)$(USRLIBDIR)/$(DEVELLIB)
++	$(LNS) $(SONAME) $(DESTDIR)$(USRLIBDIR)/$(DEVELLIB)
+ 	$(INSTALL) -D keyctl $(DESTDIR)$(BINDIR)/keyctl
+ 	$(INSTALL) -D request-key $(DESTDIR)$(SBINDIR)/request-key
+ 	$(INSTALL) -D request-key-debug.sh $(DESTDIR)$(SHAREDIR)/request-key-debug.sh

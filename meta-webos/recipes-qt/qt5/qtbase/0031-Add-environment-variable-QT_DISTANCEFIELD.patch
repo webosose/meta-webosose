@@ -1,0 +1,177 @@
+From da7d6d96f9ae98c9ea3cd641002a7bdd2f0f7167 Mon Sep 17 00:00:00 2001
+From: Alexey Turitsyn <alexey.turitsyn@lge.com>
+Date: Tue, 10 May 2016 15:44:45 +0300
+Subject: [PATCH] Add environment variable QT_DISTANCEFIELD
+
+DistanceField technique was not intended for rendering very large glyph.
+In some case need the qEnvironmentVariable.
+
+Upstream-Status: Backport
+  - backported from dev branch
+  - https://codereview.qt-project.org/#/c/151521/13
+---
+ src/gui/text/qdistancefield.cpp | 87 +++++++++++++++++++++++++++++++++++++++++
+ src/gui/text/qdistancefield_p.h | 23 ++++-------
+ 2 files changed, 95 insertions(+), 15 deletions(-)
+
+diff --git a/src/gui/text/qdistancefield.cpp b/src/gui/text/qdistancefield.cpp
+index efe4cc9..b2eb794 100644
+--- a/src/gui/text/qdistancefield.cpp
++++ b/src/gui/text/qdistancefield.cpp
+@@ -39,6 +39,8 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
++Q_LOGGING_CATEGORY(lcDistanceField, "qt.distanceField");
++
+ namespace
+ {
+     enum FillHDir
+@@ -730,8 +732,45 @@ static bool imageHasNarrowOutlines(const QImage &im)
+     return minHThick == 1 || minVThick == 1;
+ }
+ 
++static int QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE = 54;
++static int QT_DISTANCEFIELD_DEFAULT_TILESIZE = 64;
++static int QT_DISTANCEFIELD_DEFAULT_SCALE = 16;
++static int QT_DISTANCEFIELD_DEFAULT_RADIUS = 80;
++static int QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT = 2000;
++
++static void initialDistanceFieldFactor()
++{
++    static bool initialized = false;
++    if (initialized)
++        return;
++    initialized = true;
++
++    if (qEnvironmentVariableIsSet("QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE")) {
++        QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE = qgetenv("QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE").toInt();
++        qCDebug(lcDistanceField) << "set the QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE:" << QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE;
++    }
++
++    if (qEnvironmentVariableIsSet("QT_DISTANCEFIELD_DEFAULT_TILESIZE")) {
++        QT_DISTANCEFIELD_DEFAULT_TILESIZE = qgetenv("QT_DISTANCEFIELD_DEFAULT_TILESIZE").toInt();
++        qCDebug(lcDistanceField) << "set the QT_DISTANCEFIELD_DEFAULT_TILESIZE:" << QT_DISTANCEFIELD_DEFAULT_TILESIZE;
++    }
++    if (qEnvironmentVariableIsSet("QT_DISTANCEFIELD_DEFAULT_SCALE")) {
++        QT_DISTANCEFIELD_DEFAULT_SCALE = qgetenv("QT_DISTANCEFIELD_DEFAULT_SCALE").toInt();
++        qCDebug(lcDistanceField) << "set the QT_DISTANCEFIELD_DEFAULT_SCALE:" << QT_DISTANCEFIELD_DEFAULT_SCALE;
++    }
++    if (qEnvironmentVariableIsSet("QT_DISTANCEFIELD_DEFAULT_RADIUS")) {
++        QT_DISTANCEFIELD_DEFAULT_RADIUS = qgetenv("QT_DISTANCEFIELD_DEFAULT_RADIUS").toInt();
++        qDebug(lcDistanceField) << "set the QT_DISTANCEFIELD_DEFAULT_RADIUS:" << QT_DISTANCEFIELD_DEFAULT_RADIUS;
++    }
++    if (qEnvironmentVariableIsSet("QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT")) {
++        QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT = qgetenv("QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT").toInt();
++        qCDebug(lcDistanceField) << "set the QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT:" << QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT;
++    }
++}
++
+ bool qt_fontHasNarrowOutlines(QFontEngine *fontEngine)
+ {
++    initialDistanceFieldFactor();
+     QFontEngine *fe = fontEngine->cloneWithSize(QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE);
+     if (!fe)
+         return false;
+@@ -751,6 +790,7 @@ bool qt_fontHasNarrowOutlines(QFontEngine *fontEngine)
+ bool qt_fontHasNarrowOutlines(const QRawFont &f)
+ {
+     QRawFont font = f;
++    initialDistanceFieldFactor();
+     font.setPixelSize(QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE);
+     if (!font.isValid())
+         return false;
+@@ -763,6 +803,53 @@ bool qt_fontHasNarrowOutlines(const QRawFont &f)
+                                                         QRawFont::PixelAntialiasing));
+ }
+ 
++int QT_DISTANCEFIELD_BASEFONTSIZE(bool narrowOutlineFont)
++{
++    initialDistanceFieldFactor();
++
++    if (Q_UNLIKELY(narrowOutlineFont))
++        return QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE * 2;
++    else
++        return QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE;
++}
++
++int QT_DISTANCEFIELD_TILESIZE(bool narrowOutlineFont)
++{
++    initialDistanceFieldFactor();
++
++    if (Q_UNLIKELY(narrowOutlineFont))
++        return (QT_DISTANCEFIELD_DEFAULT_TILESIZE * 2 <= 128)
++                ? QT_DISTANCEFIELD_DEFAULT_TILESIZE * 2
++                : QT_DISTANCEFIELD_DEFAULT_TILESIZE;
++    else
++        return QT_DISTANCEFIELD_DEFAULT_TILESIZE;
++}
++
++int QT_DISTANCEFIELD_SCALE(bool narrowOutlineFont)
++{
++    initialDistanceFieldFactor();
++
++    if (Q_UNLIKELY(narrowOutlineFont))
++        return QT_DISTANCEFIELD_DEFAULT_SCALE / 2;
++    else
++        return QT_DISTANCEFIELD_DEFAULT_SCALE;
++}
++
++int QT_DISTANCEFIELD_RADIUS(bool narrowOutlineFont)
++{
++    initialDistanceFieldFactor();
++
++    if (Q_UNLIKELY(narrowOutlineFont))
++        return QT_DISTANCEFIELD_DEFAULT_RADIUS / 2;
++    else
++        return QT_DISTANCEFIELD_DEFAULT_RADIUS;
++}
++
++int QT_DISTANCEFIELD_HIGHGLYPHCOUNT()
++{
++    initialDistanceFieldFactor();
++    return QT_DISTANCEFIELD_DEFAULT_HIGHGLYPHCOUNT;
++}
+ 
+ QDistanceFieldData::QDistanceFieldData(const QDistanceFieldData &other)
+     : QSharedData(other)
+diff --git a/src/gui/text/qdistancefield_p.h b/src/gui/text/qdistancefield_p.h
+index 85662d6..560fb62 100644
+--- a/src/gui/text/qdistancefield_p.h
++++ b/src/gui/text/qdistancefield_p.h
+@@ -48,27 +48,20 @@
+ #include <qrawfont.h>
+ #include <private/qfontengine_p.h>
+ #include <QtCore/qshareddata.h>
++#include <QtCore/qglobal.h>
++#include <QLoggingCategory>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-#define QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE 54
+-#define QT_DISTANCEFIELD_DEFAULT_SCALE 16
+-#define QT_DISTANCEFIELD_DEFAULT_RADIUS 80
+-#define QT_DISTANCEFIELD_HIGHGLYPHCOUNT 2000
+-
+-#define QT_DISTANCEFIELD_BASEFONTSIZE(NarrowOutlineFont) \
+-    (NarrowOutlineFont ? QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE * 2 : \
+-                         QT_DISTANCEFIELD_DEFAULT_BASEFONTSIZE)
+-#define QT_DISTANCEFIELD_SCALE(NarrowOutlineFont) \
+-    (NarrowOutlineFont ? QT_DISTANCEFIELD_DEFAULT_SCALE / 2 : \
+-                         QT_DISTANCEFIELD_DEFAULT_SCALE)
+-#define QT_DISTANCEFIELD_RADIUS(NarrowOutlineFont) \
+-    (NarrowOutlineFont ? QT_DISTANCEFIELD_DEFAULT_RADIUS / 2 : \
+-                         QT_DISTANCEFIELD_DEFAULT_RADIUS)
+-
+ bool Q_GUI_EXPORT qt_fontHasNarrowOutlines(const QRawFont &f);
+ bool Q_GUI_EXPORT qt_fontHasNarrowOutlines(QFontEngine *fontEngine);
+ 
++int Q_GUI_EXPORT QT_DISTANCEFIELD_BASEFONTSIZE(bool narrowOutlineFont);
++int Q_GUI_EXPORT QT_DISTANCEFIELD_TILESIZE(bool narrowOutlineFont);
++int Q_GUI_EXPORT QT_DISTANCEFIELD_SCALE(bool narrowOutlineFont);
++int Q_GUI_EXPORT QT_DISTANCEFIELD_RADIUS(bool narrowOutlineFont);
++int Q_GUI_EXPORT QT_DISTANCEFIELD_HIGHGLYPHCOUNT();
++
+ class Q_GUI_EXPORT QDistanceFieldData : public QSharedData
+ {
+ public:

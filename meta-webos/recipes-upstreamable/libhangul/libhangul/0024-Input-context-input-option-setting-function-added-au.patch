@@ -1,0 +1,306 @@
+From 7fcb2291c336454a2cf3b169001e726d4a8b69cf Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sun, 21 Feb 2016 21:34:28 +0900
+Subject: [PATCH 4/6] Input context input option setting function added: auto
+ reorder
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+input context 입력 옵션 설정 기능 추가: auto reorder
+
+hangul_ic_set_option 함수를 통해서 입력 옵션 설정이 가능하다.
+처음에는 filter 함수를 이용해서 라이브러리 외부에서 좀더 유연하게
+조종할 수 있도록 하려 했었는데, 옵션을 만드는 쪽이 구현과 사용이 더
+쉬울 것 같아서 옵션으로 추가한다.
+
+첫번째 구현으로 auto reorder 옵션을 추가하고, 관련 테스트 코드도
+추가한다. 기본값은 MS IME 호환을 위해서 false로 설정한다.
+---
+ hangul/hangul.h             |  6 ++++
+ hangul/hangulinputcontext.c | 72 ++++++++++++++++++++++++++++++++++++++---
+ test/test.c                 | 79 +++++++++++++++++++++++++++++++++++++++------
+ 3 files changed, 142 insertions(+), 15 deletions(-)
+
+diff --git a/hangul/hangul.h b/hangul/hangul.h
+index d437ef4..539096b 100644
+--- a/hangul/hangul.h
++++ b/hangul/hangul.h
+@@ -86,6 +86,10 @@ enum {
+     HANGUL_KEYBOARD_TYPE_ROMAJA
+ };
+ 
++enum {
++    HANGUL_IC_OPTION_AUTO_REORDER,
++};
++
+ /* keyboard */
+ HangulKeyboard* hangul_keyboard_new(void);
+ void    hangul_keyboard_delete(HangulKeyboard *keyboard);
+@@ -112,6 +116,8 @@ bool hangul_ic_has_jungseong(HangulInputContext *hic);
+ bool hangul_ic_has_jongseong(HangulInputContext *hic);
+ bool hangul_ic_is_transliteration(HangulInputContext *hic);
+ 
++bool hangul_ic_get_option(HangulInputContext *hic, int option);
++void hangul_ic_set_option(HangulInputContext *hic, int option, bool value);
+ void hangul_ic_set_output_mode(HangulInputContext *hic, int mode);
+ void hangul_ic_set_keyboard(HangulInputContext *hic,
+ 			    const HangulKeyboard *keyboard);
+diff --git a/hangul/hangulinputcontext.c b/hangul/hangulinputcontext.c
+index 871e0d0..f4addda 100644
+--- a/hangul/hangulinputcontext.c
++++ b/hangul/hangulinputcontext.c
+@@ -234,6 +234,7 @@ struct _HangulInputContext {
+     void*               on_transition_data;
+ 
+     unsigned int use_jamo_mode_only : 1;
++    unsigned int option_auto_reorder : 1;
+ };
+ 
+ #include "hangulkeyboard.h"
+@@ -928,7 +929,15 @@ hangul_ic_process_jamo(HangulInputContext *hic, ucschar ch)
+ 		    }
+ 		}
+ 	    } else {
+-		if (!hangul_ic_push(hic, ch)) {
++		if (hic->option_auto_reorder) {
++		    /* kr 처럼 자모가 역순인 경우 처리 */
++		    if (!hangul_ic_push(hic, ch)) {
++			if (!hangul_ic_push(hic, ch)) {
++			    return false;
++			}
++		    }
++		} else {
++		    hangul_ic_save_commit_string(hic);
+ 		    if (!hangul_ic_push(hic, ch)) {
+ 			return false;
+ 		    }
+@@ -995,9 +1004,24 @@ hangul_ic_process_jaso(HangulInputContext *hic, ucschar ch)
+ {
+     if (hangul_is_choseong(ch)) {
+ 	if (hic->buffer.choseong == 0) {
+-	    if (!hangul_ic_push(hic, ch)) {
++	    if (hic->option_auto_reorder) {
+ 		if (!hangul_ic_push(hic, ch)) {
+-		    return false;
++		    if (!hangul_ic_push(hic, ch)) {
++			return false;
++		    }
++		}
++	    } else {
++		if (hangul_ic_has_jungseong(hic) || hangul_ic_has_jongseong(hic)) {
++		    hangul_ic_save_commit_string(hic);
++		    if (!hangul_ic_push(hic, ch)) {
++			return false;
++		    }
++		} else {
++		    if (!hangul_ic_push(hic, ch)) {
++			if (!hangul_ic_push(hic, ch)) {
++			    return false;
++			}
++		    }
+ 		}
+ 	    }
+ 	} else {
+@@ -1021,9 +1045,24 @@ hangul_ic_process_jaso(HangulInputContext *hic, ucschar ch)
+ 	}
+     } else if (hangul_is_jungseong(ch)) {
+ 	if (hic->buffer.jungseong == 0) {
+-	    if (!hangul_ic_push(hic, ch)) {
++	    if (hic->option_auto_reorder) {
+ 		if (!hangul_ic_push(hic, ch)) {
+-		    return false;
++		    if (!hangul_ic_push(hic, ch)) {
++			return false;
++		    }
++		}
++	    } else {
++		if (hangul_ic_has_jongseong(hic)) {
++		    hangul_ic_save_commit_string(hic);
++		    if (!hangul_ic_push(hic, ch)) {
++			return false;
++		    }
++		} else {
++		    if (!hangul_ic_push(hic, ch)) {
++			if (!hangul_ic_push(hic, ch)) {
++			    return false;
++			}
++		    }
+ 		}
+ 	    }
+ 	} else {
+@@ -1529,6 +1568,27 @@ hangul_ic_has_jongseong(HangulInputContext *hic)
+     return hangul_buffer_has_jongseong(&hic->buffer);
+ }
+ 
++bool
++hangul_ic_get_option(HangulInputContext* hic, int option)
++{
++    switch (option) {
++    case HANGUL_IC_OPTION_AUTO_REORDER:
++	return hic->option_auto_reorder;
++    }
++
++    return false;
++}
++
++void
++hangul_ic_set_option(HangulInputContext* hic, int option, bool value)
++{
++    switch (option) {
++    case HANGUL_IC_OPTION_AUTO_REORDER:
++	hic->option_auto_reorder = value;
++	break;
++    }
++}
++
+ void
+ hangul_ic_set_output_mode(HangulInputContext *hic, int mode)
+ {
+@@ -1685,6 +1745,8 @@ hangul_ic_new(const char* keyboard)
+ 
+     hic->use_jamo_mode_only = FALSE;
+ 
++    hic->option_auto_reorder = false;
++
+     hangul_ic_set_output_mode(hic, HANGUL_OUTPUT_SYLLABLE);
+     hangul_ic_select_keyboard(hic, keyboard);
+ 
+diff --git a/test/test.c b/test/test.c
+index 1c8ad57..982e58b 100644
+--- a/test/test.c
++++ b/test/test.c
+@@ -8,15 +8,12 @@
+ #define countof(x)  ((sizeof(x)) / (sizeof(x[0])))
+ 
+ static bool
+-check_preedit(const char* keyboard, const char* input, const wchar_t* output)
++check_preedit_with_ic(HangulInputContext* ic, const char* input, const wchar_t* output)
+ {
+-    HangulInputContext* ic;
+     const char* p;
+     const ucschar* preedit;
+     int res;
+ 
+-    ic = hangul_ic_new(keyboard);
+-
+     p = input;
+     while (*p != '\0') {
+ 	hangul_ic_process(ic, *p);
+@@ -27,21 +24,31 @@ check_preedit(const char* keyboard, const char* input, const wchar_t* output)
+ 
+     res = wcscmp((const wchar_t*)preedit, output);
+ 
+-    hangul_ic_delete(ic);
+-
+     return res == 0;
+ }
+ 
+ static bool
+-check_commit(const char* keyboard, const char* input, const wchar_t* output)
++check_preedit(const char* keyboard, const char* input, const wchar_t* output)
+ {
+     HangulInputContext* ic;
+-    const char* p;
+-    const ucschar* commit;
+     int res;
+ 
+     ic = hangul_ic_new(keyboard);
+ 
++    res = check_preedit_with_ic(ic, input, output);;
++
++    hangul_ic_delete(ic);
++
++    return res;
++}
++
++static bool
++check_commit_with_ic(HangulInputContext* ic, const char* input, const wchar_t* output)
++{
++    const char* p;
++    const ucschar* commit;
++    int res;
++
+     p = input;
+     while (*p != '\0') {
+ 	hangul_ic_process(ic, *p);
+@@ -52,9 +59,22 @@ check_commit(const char* keyboard, const char* input, const wchar_t* output)
+ 
+     res = wcscmp((const wchar_t*)commit, output);
+ 
++    return res == 0;
++}
++
++static bool
++check_commit(const char* keyboard, const char* input, const wchar_t* output)
++{
++    HangulInputContext* ic;
++    int res;
++
++    ic = hangul_ic_new(keyboard);
++
++    res = check_commit_with_ic(ic, input, output);
++
+     hangul_ic_delete(ic);
+ 
+-    return res == 0;
++    return res;
+ }
+ 
+ START_TEST(test_hangul_ic_process_2)
+@@ -271,6 +291,44 @@ START_TEST(test_hangul_ic_process_romaja)
+ }
+ END_TEST
+ 
++START_TEST(test_hangul_ic_auto_reorder)
++{
++    HangulInputContext* ic = hangul_ic_new("2");
++
++    hangul_ic_set_option(ic, HANGUL_IC_OPTION_AUTO_REORDER, true);
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "rk", L"가"));
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "kr", L"가"));
++
++    hangul_ic_set_option(ic, HANGUL_IC_OPTION_AUTO_REORDER, false);
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "rk", L"가"));
++    hangul_ic_reset(ic);
++    fail_unless(check_commit_with_ic(ic, "kr", L"ㅏ"));
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "kr", L"ㄱ"));
++
++    hangul_ic_select_keyboard(ic, "3f");
++
++    hangul_ic_set_option(ic, HANGUL_IC_OPTION_AUTO_REORDER, true);
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "kf", L"가"));
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "fk", L"가"));
++
++    hangul_ic_set_option(ic, HANGUL_IC_OPTION_AUTO_REORDER, false);
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "kf", L"가"));
++    hangul_ic_reset(ic);
++    fail_unless(check_commit_with_ic(ic, "fk", L"ㅏ"));
++    hangul_ic_reset(ic);
++    fail_unless(check_preedit_with_ic(ic, "fk", L"ㄱ"));
++
++    hangul_ic_delete(ic);
++}
++END_TEST
++
+ START_TEST(test_syllable_iterator)
+ {
+     ucschar str[] = {
+@@ -432,6 +490,7 @@ Suite* libhangul_suite()
+     tcase_add_test(hangul, test_hangul_ic_process_2y);
+     tcase_add_test(hangul, test_hangul_ic_process_3f);
+     tcase_add_test(hangul, test_hangul_ic_process_romaja);
++    tcase_add_test(hangul, test_hangul_ic_auto_reorder);
+     tcase_add_test(hangul, test_syllable_iterator);
+     tcase_add_test(hangul, test_hangul_keyboard);
+     tcase_add_test(hangul, test_hangul_jamo_to_cjamo);
+-- 
+1.9.1
+

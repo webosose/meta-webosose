@@ -1,0 +1,118 @@
+From f829303ff1455f4308fd6cfb96b8892726008388 Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jose.dapena@lge.com>
+Date: Wed, 4 Mar 2015 19:41:45 +0100
+Subject: [PATCH] Revert "Make QElapsedTimer default to invalid (and now
+ non-POD)."
+
+:Release Notes:
+Revert defaulting QElapsedTimer to invalid.
+
+:Detailed Notes:
+
+This reverts commit 3006bd2d44298babd1339c3fc3a67ad0696bcefc.
+
+Revert "Make QElapsedTimer default to invalid (and now non-POD)."
+
+On WebKit we use QElapsedTimer as implementation of the monotonically
+increasing timer, and we share values among processes, so we don't
+start the QElapsedTimer on purpose (so all processes keep the same
+reference).
+
+Forcing us to start makes us have different timer references in each
+process, breaking animations.
+
+:Testing performed:
+After reverting the fix, first use animations are not flickering
+anymore.
+
+:QA Notes:
+
+:Issues addressed:
+[DRD-3718] First Use: Remote pairing screen is flickering
+
+Upstream-Status: not upstreamable (local workaround).
+---
+ src/corelib/tools/qelapsedtimer.cpp                       | 15 ++-------------
+ src/corelib/tools/qelapsedtimer.h                         |  7 -------
+ .../corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp     | 10 ++++++++--
+ 3 files changed, 10 insertions(+), 22 deletions(-)
+
+diff --git a/src/corelib/tools/qelapsedtimer.cpp b/src/corelib/tools/qelapsedtimer.cpp
+index 9336f18..4af8a43 100644
+--- a/src/corelib/tools/qelapsedtimer.cpp
++++ b/src/corelib/tools/qelapsedtimer.cpp
+@@ -194,17 +194,6 @@ QT_BEGIN_NAMESPACE
+ */
+ 
+ /*!
+-    \fn QElapsedTimer::QElapsedTimer()
+-    \since 5.4
+-
+-    Constructs an invalid QElapsedTimer. A timer becomes valid once it has been
+-    started.
+-
+-    \sa isValid(), start()
+-*/
+-
+-
+-/*!
+     \fn bool QElapsedTimer::operator ==(const QElapsedTimer &other) const
+ 
+     Returns \c true if this object and \a other contain the same time.
+@@ -233,8 +222,8 @@ void QElapsedTimer::invalidate() Q_DECL_NOTHROW
+ }
+ 
+ /*!
+-    Returns \c false if the timer has never been started or invalidated by a
+-    call to invalidate().
++    Returns \c false if this object was invalidated by a call to invalidate() and
++    has not been restarted since.
+ 
+     \sa invalidate(), start(), restart()
+ */
+diff --git a/src/corelib/tools/qelapsedtimer.h b/src/corelib/tools/qelapsedtimer.h
+index 2a73757..8421b57 100644
+--- a/src/corelib/tools/qelapsedtimer.h
++++ b/src/corelib/tools/qelapsedtimer.h
+@@ -49,13 +49,6 @@ public:
+         MachAbsoluteTime,
+         PerformanceCounter
+     };
+-
+-    Q_DECL_CONSTEXPR QElapsedTimer()
+-        : t1(Q_INT64_C(0x8000000000000000)),
+-          t2(Q_INT64_C(0x8000000000000000))
+-    {
+-    }
+-
+     static ClockType clockType() Q_DECL_NOTHROW;
+     static bool isMonotonic() Q_DECL_NOTHROW;
+ 
+diff --git a/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp b/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp
+index 4d6b5e4..57fa010 100644
+--- a/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp
++++ b/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp
+@@ -40,7 +40,12 @@ static const int minResolution = 50; // the minimum resolution for the tests
+ 
+ QDebug operator<<(QDebug s, const QElapsedTimer &t)
+ {
+-    s.nospace() << "(" << t.msecsSinceReference() << ")";
++    union {
++        QElapsedTimer t;
++        struct { qint64 t1, t2; } i;
++    } copy;
++    copy.t = t;
++    s.nospace() << "(" <<  copy.i.t1 << ", " << copy.i.t2 << ")";
+     return s.space();
+ }
+ 
+@@ -68,7 +73,8 @@ void tst_QElapsedTimer::validity()
+ {
+     QElapsedTimer t;
+ 
+-    QVERIFY(!t.isValid()); // non-POD now, it should always start invalid
++    t.invalidate();
++    QVERIFY(!t.isValid());
+ 
+     t.start();
+     QVERIFY(t.isValid());

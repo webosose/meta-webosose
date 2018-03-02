@@ -1,0 +1,150 @@
+From 5bdee391a8c173d901f2a2187594d32178df5ec5 Mon Sep 17 00:00:00 2001
+From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Date: Mon, 26 Oct 2015 14:46:40 +0200
+Subject: [PATCH 16/17] [PATCH] Fix possible out of resources in init_once
+ function
+
+:Release Notes:
+Fix possible out of resources in init_once function.
+
+:Detailed Notes:
+The return value of atoi(3)  in init_once function in libuv is not
+checking against -1. This can lead to attempt to start 128 threads
+which is too big for wearables and TV and may end up with abort(3)
+in nodejs. To prevent this strtoul(3) is used instead of atoi(3).
+Additionally, default and maximum threadpool size was reduced.
+
+:Testing Performed:
+Manually tested with #941 build on wearables and TV
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-9173] node crashes at location /lib/libc.so.6(gsignal+0x34)
+
+Change-Id: Ib02d416391a50a6e527f8d22cf29bf6b68c13f92
+Reviewed-on: https://gpro.lgsvl.com/124228
+Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Reviewed-by: Valerii Shevchuk <valerii.shevchuk@lge.com>
+Reviewed-by: Andrii Koval <andrii.koval@lge.com>
+Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+---
+ deps/uv/src/threadpool.c | 48 ++++++++++++++++++++++++++++++------------------
+ 1 file changed, 30 insertions(+), 18 deletions(-)
+
+diff --git a/deps/uv/src/threadpool.c b/deps/uv/src/threadpool.c
+index 407e800..f36eabe 100644
+--- a/deps/uv/src/threadpool.c
++++ b/deps/uv/src/threadpool.c
+@@ -18,7 +18,7 @@
+  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  * IN THE SOFTWARE.
+  */
+-
++#include <syslog.h>
+ #include "uv-common.h"
+ 
+ #if !defined(_WIN32)
+@@ -40,7 +40,12 @@ static void uv__req_init(uv_loop_t* loop,
+ 
+ #include <stdlib.h>
+ 
+-#define MAX_THREADPOOL_SIZE 128
++#define MAX_THREADPOOL_SIZE 4
++#define DEF_THREADPOOL_SIZE 2
++
++#if DEF_THREADPOOL_SIZE > MAX_THREADPOOL_SIZE
++#error "Default number of threads cannot be greater than maximum number"
++#endif
+ 
+ static uv_once_t once = UV_ONCE_INIT;
+ static uv_cond_t cond;
+@@ -48,7 +53,7 @@ static uv_mutex_t mutex;
+ static unsigned int idle_threads;
+ static unsigned int nthreads;
+ static uv_thread_t* threads;
+-static uv_thread_t default_threads[4];
++static uv_thread_t default_threads[MAX_THREADPOOL_SIZE];
+ static QUEUE exit_message;
+ static QUEUE wq;
+ static volatile int initialized;
+@@ -243,13 +248,19 @@ UV_DESTRUCTOR(static void cleanup(void)) {
+ static void init_fork_protection(int num_threads) {
+   do_fork_guard = 0;
+   // init the fork to num_threads, plus the main thread
+-  if (uv_barrier_init(&fork_barrier, num_threads + 1))
++  if (uv_barrier_init(&fork_barrier, num_threads + 1)) {
++    syslog(LOG_ERR, "%s:%d: stop because of uv_barrier_init: %m", __FILE__, __LINE__);
+     abort();
+-  if (uv_mutex_init(&fork_mutex))
++  }
++  if (uv_mutex_init(&fork_mutex)) {
++    syslog(LOG_ERR, "%s:%d: stop because of uv_mutex_init: %m", __FILE__, __LINE__);
+     abort();
++  }
+   // register the fork functions
+-  if (pthread_atfork(&prepare_fork, &parent_process, &child_process))
++  if (pthread_atfork(&prepare_fork, &parent_process, &child_process)) {
++    syslog(LOG_ERR, "%s:%d: stop because of pthread_atfork: %m", __FILE__, __LINE__);
+     abort();
++  }
+ }
+ #endif
+ 
+@@ -258,39 +269,40 @@ static void init_once(void) {
+   unsigned int i;
+   const char* val;
+ 
+-  nthreads = ARRAY_SIZE(default_threads);
++  nthreads = DEF_THREADPOOL_SIZE;
+   val = getenv("UV_THREADPOOL_SIZE");
+   if (val != NULL)
+-    nthreads = atoi(val);
++    nthreads = strtoul(val, NULL, 10);
+   if (nthreads == 0)
+     nthreads = 1;
+   if (nthreads > MAX_THREADPOOL_SIZE)
+     nthreads = MAX_THREADPOOL_SIZE;
+ 
++  assert(nthreads <= ARRAY_SIZE(default_threads));
++
+ #if !defined(_WIN32)
+   init_fork_protection(nthreads);
+ #endif
+ 
+   threads = default_threads;
+-  if (nthreads > ARRAY_SIZE(default_threads)) {
+-    threads = uv__malloc(nthreads * sizeof(threads[0]));
+-    if (threads == NULL) {
+-      nthreads = ARRAY_SIZE(default_threads);
+-      threads = default_threads;
+-    }
+-  }
+ 
+-  if (uv_cond_init(&cond))
++  if (uv_cond_init(&cond)) {
++    syslog(LOG_ERR, "%s:%d: stop because of uv_cond_init: %m", __FILE__, __LINE__);
+     abort();
++  }
+ 
+-  if (uv_mutex_init(&mutex))
++  if (uv_mutex_init(&mutex)) {
++    syslog(LOG_ERR, "%s:%d: stop because of uv_mutex_init: %m", __FILE__, __LINE__);
+     abort();
++  }
+ 
+   QUEUE_INIT(&wq);
+ 
+   for (i = 0; i < nthreads; i++)
+-    if (uv_thread_create(threads + i, worker, NULL))
++    if (uv_thread_create(threads + i, worker, NULL)) {
++      syslog(LOG_ERR, "%s:%d: stop because of uv_thread_create: %m", __FILE__, __LINE__);
+       abort();
++    }
+ 
+   initialized = 1;
+ }
+-- 
+1.9.1
+

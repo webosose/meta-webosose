@@ -1,0 +1,19 @@
+Index: keyutils-1.5.5/Makefile
+===================================================================
+--- keyutils-1.5.5.orig/Makefile	2011-12-20 11:05:10.000000000 +0200
++++ keyutils-1.5.5/Makefile	2011-12-20 11:06:27.000000000 +0200
+@@ -58,12 +58,12 @@
+ LNS		:= ln -sf
+ 
+ ifeq ($(BUILDFOR),32-bit)
+-CFLAGS		+= -m32
++#CFLAGS		+= -m32
+ LIBDIR		:= /usr/lib
+ USRLIBDIR	:= /usr/lib
+ else
+ ifeq ($(BUILDFOR),64-bit)
+-CFLAGS		+= -m64
++#CFLAGS		+= -m64
+ LIBDIR		:= /usr/lib
+ USRLIBDIR	:= /usr/lib
+ endif

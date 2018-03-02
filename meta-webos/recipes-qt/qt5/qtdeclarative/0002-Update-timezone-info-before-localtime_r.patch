@@ -1,0 +1,37 @@
+From f4882375875545cc31b5e60ca3ac498ddc0ba3fc Mon Sep 17 00:00:00 2001
+From: Byunggul Koh <byunggul.koh@lge.com>
+Date: Thu, 18 Sep 2014 18:54:09 +0900
+Subject: [PATCH] Update timezone info before localtime_r
+
+According to POSIX.1 8.3.7.2 localtime_r is not required to set tzname.
+So should call tzset() before localtime_r(). And mktime() acts as if it
+called tzset(), POSIX.1 8.1.1. So calculating global time before local
+time can reflect current time-zone information.
+
+Change-Id: I15fefa7fd60819b68e937d234534acd2c3f06ca0
+
+Conflicts:
+	src/qml/jsruntime/qv4dateobject.cpp
+---
+ src/qml/jsruntime/qv4dateobject.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/qml/jsruntime/qv4dateobject.cpp b/src/qml/jsruntime/qv4dateobject.cpp
+index a6e1f47..36754a1 100644
+--- a/src/qml/jsruntime/qv4dateobject.cpp
++++ b/src/qml/jsruntime/qv4dateobject.cpp
+@@ -614,11 +614,11 @@ static double getLocalTZA()
+     time_t curr;
+     tzset();
+     time(&curr);
+-    localtime_r(&curr, &t);
+-    time_t locl = mktime(&t);
+     gmtime_r(&curr, &t);
+     time_t globl = mktime(&t);
+-    return (double(locl) - double(globl)) * 1000.0;
++    localtime_r(&curr, &t);
++    time_t locl = mktime(&t);
++    return double(locl - globl) * 1000.0;
+ #else
+     TIME_ZONE_INFORMATION tzInfo;
+     GetTimeZoneInformation(&tzInfo);

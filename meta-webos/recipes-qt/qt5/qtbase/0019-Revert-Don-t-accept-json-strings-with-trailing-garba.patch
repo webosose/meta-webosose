@@ -1,0 +1,132 @@
+From c6ca0a86d58ef4b586cdbc90a880807999edee00 Mon Sep 17 00:00:00 2001
+From: Jose Dapena Paz <jose.dapena@lge.com>
+Date: Mon, 23 Feb 2015 14:20:58 +0100
+Subject: [PATCH] Revert "Don't accept json strings with trailing garbage"
+
+:Release Notes:
+Revert more strict JSON parsing.
+
+:Detailed Notes:
+This reverts commit df25927a6827c0abce6d35440359a835d23226f7.
+
+Revert upstream patch "Don't accept json strings with trailing
+garbage".
+
+On WebAppManager PalmSystem implementation, we pass the Palm
+JSON request and response using WebKit API (and IPC) between
+UI and web process. On web process we obtain a buffer with
+the JSON, but the length is the maximum needed to host the
+data.
+
+Because of this, the buffer we allocate is bigger than the final
+JSON string. With new Qt 5.4 JSON validation this means we
+have trailing garbage at the end of the buffer, and so, it is
+not valid anymore.
+
+:Testing performed:
+After reverting the fix, Smartshare and input picker work again.
+
+:QA Notes:
+
+:Issues addressed:
+[DRD-3554] Smartshare renders an empty screen with music bar
+[DRD-3556] Input Picker web application shows empty screen when launched
+
+Change-Id: Ia6f1019081262c1255c73eb0bb7532683b2a91d5
+Upstream-Status: not upstreamable (local workaround).
+---
+ src/corelib/json/qjsondocument.h       |  3 +--
+ src/corelib/json/qjsonparser.cpp       | 12 ------------
+ tests/auto/corelib/json/tst_qtjson.cpp | 14 --------------
+ 3 files changed, 1 insertion(+), 28 deletions(-)
+
+diff --git a/src/corelib/json/qjsondocument.h b/src/corelib/json/qjsondocument.h
+index d7a88b2..3171a5a 100644
+--- a/src/corelib/json/qjsondocument.h
++++ b/src/corelib/json/qjsondocument.h
+@@ -60,8 +60,7 @@ struct Q_CORE_EXPORT QJsonParseError
+         UnterminatedString,
+         MissingObject,
+         DeepNesting,
+-        DocumentTooLarge,
+-        GarbageAtEnd
++        DocumentTooLarge
+     };
+ 
+     QString    errorString() const;
+diff --git a/src/corelib/json/qjsonparser.cpp b/src/corelib/json/qjsonparser.cpp
+index b8a628f..fdc49d3 100644
+--- a/src/corelib/json/qjsonparser.cpp
++++ b/src/corelib/json/qjsonparser.cpp
+@@ -71,7 +71,6 @@ QT_BEGIN_NAMESPACE
+ #define JSONERR_MISS_OBJ    QT_TRANSLATE_NOOP("QJsonParseError", "object is missing after a comma")
+ #define JSONERR_DEEP_NEST   QT_TRANSLATE_NOOP("QJsonParseError", "too deeply nested document")
+ #define JSONERR_DOC_LARGE   QT_TRANSLATE_NOOP("QJsonParseError", "too large document")
+-#define JSONERR_GARBAGEEND  QT_TRANSLATE_NOOP("QJsonParseError", "garbage at the end of the document")
+ 
+ /*!
+     \class QJsonParseError
+@@ -105,8 +104,6 @@ QT_BEGIN_NAMESPACE
+     \value MissingObject            An object was expected but couldn't be found
+     \value DeepNesting              The JSON document is too deeply nested for the parser to parse it
+     \value DocumentTooLarge         The JSON document is too large for the parser to parse it
+-    \value GarbageAtEnd             The parsed document contains additional garbage characters at the end
+-
+ */
+ 
+ /*!
+@@ -178,9 +175,6 @@ QString QJsonParseError::errorString() const
+     case DocumentTooLarge:
+         sz = JSONERR_DOC_LARGE;
+         break;
+-    case GarbageAtEnd:
+-        sz = JSONERR_GARBAGEEND;
+-        break;
+     }
+ #ifndef QT_BOOTSTRAPPED
+     return QCoreApplication::translate("QJsonParseError", sz);
+@@ -322,12 +316,6 @@ QJsonDocument Parser::parse(QJsonParseError *error)
+         goto error;
+     }
+ 
+-    eatSpace();
+-    if (json < end) {
+-        lastError = QJsonParseError::GarbageAtEnd;
+-        goto error;
+-    }
+-
+     END;
+     {
+         if (error) {
+diff --git a/tests/auto/corelib/json/tst_qtjson.cpp b/tests/auto/corelib/json/tst_qtjson.cpp
+index 1665ff6..64ff604 100644
+--- a/tests/auto/corelib/json/tst_qtjson.cpp
++++ b/tests/auto/corelib/json/tst_qtjson.cpp
+@@ -144,7 +144,6 @@ private Q_SLOTS:
+     void objectInitializerList();
+ 
+     void unicodeKeys();
+-    void garbageAtEnd();
+ 
+     void removeNonLatinKey();
+ private:
+@@ -2771,19 +2770,6 @@ void tst_QtJson::unicodeKeys()
+     }
+ }
+ 
+-void tst_QtJson::garbageAtEnd()
+-{
+-    QJsonParseError error;
+-    QJsonDocument doc = QJsonDocument::fromJson("{},", &error);
+-    QVERIFY(error.error == QJsonParseError::GarbageAtEnd);
+-    QVERIFY(error.offset == 2);
+-    QVERIFY(doc.isEmpty());
+-
+-    doc = QJsonDocument::fromJson("{}    ", &error);
+-    QVERIFY(error.error == QJsonParseError::NoError);
+-    QVERIFY(!doc.isEmpty());
+-}
+-
+ void tst_QtJson::removeNonLatinKey()
+ {
+     const QString nonLatinKeyName = QString::fromUtf8("Атрибут100500");

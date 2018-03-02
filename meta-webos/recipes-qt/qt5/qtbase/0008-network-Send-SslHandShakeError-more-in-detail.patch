@@ -1,0 +1,86 @@
+From a3d6894701e742f47d0272843ed90529d3b658aa Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Mon, 9 Jun 2014 11:50:33 +0200
+Subject: [PATCH] network: Send SslHandShakeError more in detail
+
+Change-Id: I435e30476ad30bf4dd5957b2703d72b865d98669
+---
+ src/network/access/qhttpnetworkconnection.cpp        | 15 +++++++++++++--
+ src/network/access/qhttpnetworkconnection_p.h        |  2 +-
+ src/network/access/qhttpnetworkconnectionchannel.cpp |  3 ++-
+ src/network/access/qnetworkreply.h                   |  2 ++
+ 4 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/src/network/access/qhttpnetworkconnection.cpp b/src/network/access/qhttpnetworkconnection.cpp
+index c4cb8e6..b56cc12 100644
+--- a/src/network/access/qhttpnetworkconnection.cpp
++++ b/src/network/access/qhttpnetworkconnection.cpp
+@@ -815,7 +815,7 @@ bool QHttpNetworkConnectionPrivate::fillPipeline(QList<HttpMessagePair> &queue,
+ }
+ 
+ 
+-QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError errorCode, QAbstractSocket *socket, const QString &extraDetail)
++QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError &errorCode, QAbstractSocket *socket, const QString &extraDetail)
+ {
+     QString errorString;
+     switch (errorCode) {
+@@ -847,7 +847,18 @@ QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError e
+         errorString = QCoreApplication::translate("QHttp", "Unknown protocol specified");
+         break;
+     case QNetworkReply::SslHandshakeFailedError:
+-        errorString = QCoreApplication::translate("QHttp", "SSL handshake failed");
++    {
++        QSslSocket* sslSocket = static_cast<QSslSocket* >(socket);
++        //new error code for ssl error (59 ~ 84)
++        if (sslSocket) {
++            if (!sslSocket->sslErrors().isEmpty()) {
++                errorCode = QNetworkReply::NetworkError((int)errorCode * 10 + (int)sslSocket->sslErrors().first().error());
++                errorString = QCoreApplication::translate("QHttp", sslSocket->errorString().toUtf8().constData());
++            } else
++                errorString = QCoreApplication::translate("QHttp", "SSL handshake failed");
++        } else
++            errorString = QCoreApplication::translate("QHttp", "SSL handshake failed");
++    }
+         break;
+     case QNetworkReply::TooManyRedirectsError:
+         errorString = QCoreApplication::translate("QHttp", "Too many redirects");
+diff --git a/src/network/access/qhttpnetworkconnection_p.h b/src/network/access/qhttpnetworkconnection_p.h
+index 9af39d4..a69ca8b 100644
+--- a/src/network/access/qhttpnetworkconnection_p.h
++++ b/src/network/access/qhttpnetworkconnection_p.h
+@@ -229,7 +229,7 @@ public:
+ 
+     void createAuthorization(QAbstractSocket *socket, QHttpNetworkRequest &request);
+ 
+-    QString errorDetail(QNetworkReply::NetworkError errorCode, QAbstractSocket *socket,
++    QString errorDetail(QNetworkReply::NetworkError &errorCode, QAbstractSocket *socket,
+                         const QString &extraDetail = QString());
+ 
+     void removeReply(QHttpNetworkReply *reply);
+diff --git a/src/network/access/qhttpnetworkconnectionchannel.cpp b/src/network/access/qhttpnetworkconnectionchannel.cpp
+index dfa5d0e..19e823f 100644
+--- a/src/network/access/qhttpnetworkconnectionchannel.cpp
++++ b/src/network/access/qhttpnetworkconnectionchannel.cpp
+@@ -252,7 +252,8 @@ void QHttpNetworkConnectionChannel::handleUnexpectedEOF()
+         // too many errors reading/receiving/parsing the status, close the socket and emit error
+         requeueCurrentlyPipelinedRequests();
+         close();
+-        reply->d_func()->errorString = connection->d_func()->errorDetail(QNetworkReply::RemoteHostClosedError, socket);
++        QNetworkReply::NetworkError error = QNetworkReply::RemoteHostClosedError;
++        reply->d_func()->errorString = connection->d_func()->errorDetail(error, socket);
+         emit reply->finishedWithError(QNetworkReply::RemoteHostClosedError, reply->d_func()->errorString);
+         reply = 0;
+         if (protocolHandler)
+diff --git a/src/network/access/qnetworkreply.h b/src/network/access/qnetworkreply.h
+index 254dd3f..08e8f9e 100644
+--- a/src/network/access/qnetworkreply.h
++++ b/src/network/access/qnetworkreply.h
+@@ -73,6 +73,8 @@ public:
+         InsecureRedirectError,
+         UnknownNetworkError = 99,
+ 
++        //ssl errors(59 ~ 84)
++
+         // proxy errors (101-199):
+         ProxyConnectionRefusedError = 101,
+         ProxyConnectionClosedError,

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# node-inspector launch script for webOS emulator
+# Usage: node-inspector [inspectorPort]
+
+INSPECTOR_DIR="/usr/share/node-inspector"
+
+if [ -n "${1}" ] ; then
+	INSPECTOR_PORT="${1}"
+fi
+
+# in emulator, bind to any interface
+WEB_HOST="--web-host=0.0.0.0"
+
+# Launch node-inspector
+# NOTE: If node-inspector is already running, this will simply return with an error which we can ignore
+node ${INSPECTOR_DIR}/bin/inspector.js ${INSPECTOR_PORT} ${WEB_HOST} &
+

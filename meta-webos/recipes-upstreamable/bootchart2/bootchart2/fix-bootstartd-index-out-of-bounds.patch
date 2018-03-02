@@ -1,0 +1,20 @@
+--- site-packages.patched/pybootchartgui/process_tree.py	2015-05-07 19:01:58.340062363 -0700
++++ site-packages/pybootchartgui/process_tree.py	2015-05-07 18:56:54.160072958 -0700
+@@ -196,7 +196,7 @@ class ProcessTree:
+         count = 1
+         for proc in self.process_list:
+             index = 1
+-            if proc.cmd == "initctl" and proc.args[index] == "emit":
++            if proc.cmd == "initctl" and (len(proc.args) > index and proc.args[index] == "emit"):
+                 #self.writer.status("Upstart event #%d: %s" % (count, proc.args))
+                 index += 1
+ 
+@@ -237,7 +237,7 @@ class ProcessTree:
+                 if p.duration <= 2 * self.sample_period:
+                     # short-lived process
+                     prune = True
+-                    if p.cmd == 'initctl' and p.args[1] == 'emit':
++                    if p.cmd == 'initctl' and (len(p.args) > 1 and p.args[1] == 'emit'):
+                         prune = False
+ 
+                 if prune:

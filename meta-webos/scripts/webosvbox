@@ -1,0 +1,443 @@
+#!/bin/bash
+
+# Copyright (c) 2013-2018 LG Electronics, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Print usage and exit
+
+function Usage {
+ cat <<-END
+
+NAME:
+    webosvbox - Manage webOS VirtualBox virtual machines
+
+SYNOPSIS:
+    webosvbox [-c count] [-i image] [-n name]
+              [-r ram] [-s port] [-v vram] <command>[ <command> ...]
+
+    NOTE: As this is a shell script, commands must come AFTER the options
+
+DESCRIPTION:
+    This script is a wrapper around VirtualBox's VBoxManage command line
+    utility. It's main purpose is ensure that all VM's are configured
+    correctly. As a side benefit, it avoids everyone having to learn the
+    somewhat arcane CLI for VBoxManage.
+
+    It allows VM's to be created, deleted, updated, started, and stopped.
+
+OPTIONS:
+    -c count        Assign <count> CPU's to the VM.
+                    Defaults to 1.
+
+    -i image        Specify the path to an alternative vmdk image to use.
+                    Defaults to image in local folder or, if it doesn't exist,
+                    to the latest image in BUILD-qemux86/deploy/image
+
+    -n name         Set the VM name to <name>. Do not include spaces.
+                    Defaults to "webos-image". Can be overriden by setting
+                    the WEBOSVBOX_VM_NAME environment variable.
+
+    -p port         Define the host port used for ssh port forwarding.
+                    Defaults to 5522.
+
+                    Typically overridden if you expect to have multiple VM's
+                    running at the same time.
+
+    -r ram          Provide the VM with <ram> MB of system memory.
+                    Defaults to 512
+
+    -v vram         Assign <vram> MB of system memory to the VM's display card.
+                    Defaults to 12.
+
+COMMANDS:
+    If multiple commands are specified, they are executed in the order entered.
+
+    attach          Attach a new image to the VM. Detaches any existing
+                    image first.
+
+    create          Create a new VM
+
+    delete          Delete an existing VM. Any disk image will be detached
+                    first to ensure it is not accidentally deleted.
+
+    detach          Detaches any image from the VM
+
+    start           Start the VM. If no image is currently attached, the
+                    latest image from the build will be used. Use -i to
+                    specify a different image.
+
+    ssh             ssh into a started VM
+
+    stop            Shutdown the VM.
+                    NOTE: This is the same as pulling the plug, and will not
+                    save state etc.
+
+EXAMPLES:
+
+    Perform a build, create a VM, attach the most recent output and then start it:
+
+        $ make
+        $ ./webosvbox create start
+
+    Attach the latest image to an existing machine, start it, then ssh in
+
+        $ ./webosvbox attach start ssh
+
+    Create a virtual machine, with a different name and ssh port
+
+        $ ./webosvbox -n testvm -p 6622 create
+
+SEE ALSO:
+    VBoxManage(1)
+
+END
+    exit 1
+}
+
+# Set the defaults for command line options. If you change these,
+# update the defaults in the usage text
+
+function setDefaults {
+
+    # Use the default image name from the mcf Makefile template to
+    # select the correct link, and define defaults for the various
+    # named items (VM name, IDE controller etc) based on it for
+    # consistency
+    local VMIMAGESTEM=`grep "^all:" Makefile.in | cut -s -d ' ' -f 2`
+
+    if [ "$VMIMAGESTEM" = "" ]
+    then
+        VMIMAGESTEM=webos-image
+    fi
+
+    if [ "$WEBOSVBOX_VM_NAME" != "" ]
+    then
+        VMNAME=$WEBOSVBOX_VM_NAME
+    else
+        VMNAME=$VMIMAGESTEM
+    fi
+
+    # Default settings for number of CPUS, system and video RAM, and SSH port
+    VMCPUS=1
+    VMRAM=512
+    VMVRAM=12
+    VMHOSTSSH=5522
+
+    # Default name for the IDE controller
+    IDENAME=$VMIMAGESTEM
+
+    # Default to the latest VMDK image and check if it's in local folder first
+    if [ -f $VMIMAGESTEM-qemux86.vmdk ] ; then
+        VMIMAGE="$VMIMAGESTEM-qemux86.vmdk"
+    else
+        VMIMAGE=`readlink -f BUILD-qemux86/deploy/images/$VMIMAGESTEM-qemux86.vmdk`
+    fi
+}
+
+# Check versions of VirtualBox etc
+
+function checkVbox {
+    # Get path to the CLI manager for VirtualBox
+    VBM=`which VBoxManage`
+
+    if [ "$VBM" == "" ]
+    then
+        echo "Cannot find VBoxManage. Please install VirtualBox"
+        exit 1
+    fi
+
+    # Get the virtual box manager version and split it into its components
+    local VV=`VBoxManage --version | grep -o "^[0-9.]*"`
+    local VBMAJOR=`echo $VV | cut -d '.' -f 1`
+    local VBMINOR=`echo $VV | cut -d '.' -f 2`
+    local VBPATCH=`echo $VV | cut -d '.' -f 3`
+
+    # Ubuntu 12.04 ships with V4.1.12 of VirtualBox, thus that is our
+    # oldest supported version
+    if [ $VBMAJOR -gt 4 ]
+    then
+        :
+    elif [ $VBMAJOR -eq 4 -a $VBMINOR -ge 1 ]
+    then
+        :
+    elif [ $VBMAJOR -eq 4 -a $VBMINOR -eq 1 -a $VBPATCH -ge 12 ]
+    then
+        :
+    else
+        echo "Installed version of VirtualBox is too old. You need at least version 4.1.12"
+        exit 1
+    fi
+}
+
+# Work out if the VM exists, and whether it is running.
+
+function checkVmState {
+    $VBM list runningvms | grep -oq "^\"$VMNAME\""
+    VMISRUNNING=$?
+
+    $VBM list vms | grep -oq "^\"$VMNAME\""
+    VMEXISTS=$?
+}
+
+# Make sure we're in a build-webos style directory
+function checkInBuildWebos {
+    if [ -d oe-core -a -e Makefile.in -a -x mcf -a -d bitbake ]
+    then
+        # Highly probable we're in the right place. Use a null-if
+        # to avoid negating all those tests above
+        :
+    else
+        echo "$(pwd) does not appear to be a build directory. Exiting"
+        exit 1
+    fi
+
+    if [ ! -d BUILD-qemux86/deploy/images ]
+    then
+        echo "No BUILD output directory detected. You probably want to do a build first"
+        exit 1
+    fi
+}
+
+#
+# The following functions check for preconditions and exit the script if
+# they are not met. Although simplistic, they allow preconditions to be
+# succinctly in the main command dispatch code.
+#
+
+function vmMustExist {
+    if [ $VMEXISTS -ne 0 ]
+    then
+        echo "VM $VMNAME does not exist. Exiting"
+        exit 1
+    fi
+}
+
+function vmMustNotExist {
+    if [ $VMEXISTS -eq 0 ]
+    then
+        echo "VM $VMNAME already exists. Exiting"
+        exit 1
+    fi
+}
+
+function vmMustNotBeRunning {
+    if [ $VMEXISTS -eq 0 -a $VMISRUNNING -eq 0 ]
+    then
+         echo "VM $VMNAME already exists, and is currently running. Exiting"
+         exit 1
+    fi
+}
+
+function vmMustBeRunning {
+    if [ $VMEXISTS -eq 1 -o $VMISRUNNING -eq 1 ]
+    then
+         echo "VM $VMNAME is not currently running. Exiting"
+         exit 1
+    fi
+}
+
+function vmdkImageMustExist {
+    if [ "$VMIMAGE" = "" -o ! -e "$VMIMAGE" ]
+    then
+        echo "VMDK image file \"$VMIMAGE\" does not exist. Exiting"
+        exit 1
+    fi
+}
+
+# Detach the current image from the VM
+
+function detachimage {
+    $VBM storageattach $VMNAME --storagectl "$IDENAME" --type hdd --medium emptydrive --port 0 --device 0
+}
+
+#   attach a new image to the virtual machine.
+#
+#   The precondition that the image file exists is normally checked
+#   in the mainline. But this can also be called from createvm
+#
+function attachimage {
+    if [ "$VMIMAGE" != "" ]
+    then
+        echo "Attaching vmdk image $VMIMAGE"
+        $VBM storageattach $VMNAME --storagectl "$IDENAME" --type hdd --port 0 --device 0 --medium "$VMIMAGE"
+    fi
+}
+
+# Create a new VM.
+#
+#   If one with the same name already exists, delete it first.
+#   If there is an image in the BUILD-qemux directly, attach it
+
+function createvm {
+    echo "Creating VM $VMNAME with "
+    echo "    $VMCPUS CPU(s) "
+    echo "    ${VMRAM}MB of RAM"
+    echo "    ${VMVRAM}MB of video RAM; and"
+    echo "    Using port $VMHOSTSSH on the host for ssh forwarding"
+    echo ""
+
+    deletevm
+
+    # Create the VM and register it, then add an IDE Controller and make
+    # it the only boot source
+    echo "Creating new virtual machine $VMNAME"
+    $VBM createvm --ostype Linux --register --name $VMNAME
+    $VBM storagectl $VMNAME --add ide --name "$IDENAME"
+    $VBM modifyvm $VMNAME --boot1 disk --boot2 none --boot3 none --boot4 none
+
+    # Set basic system characteristics (RAM, VRAM, #Cpu's)
+    $VBM modifyvm $VMNAME --memory $VMRAM --vram $VMVRAM --ioapic on --cpus $VMCPUS
+
+    # Enable the usb tablet and sound
+    $VBM modifyvm $VMNAME --mouse usbtablet --audio pulse
+
+    # Setup networking and forward the SSH command
+    $VBM modifyvm $VMNAME --nic1 nat --natpf1 ssh,tcp,,$VMHOSTSSH,,22
+
+    # Set up COM1 so that the console goes to the bitbucket
+    $VBM modifyvm $VMNAME --uart1 0x3f8 4 --uartmode1 file /dev/null
+
+    attachimage
+}
+
+# Delete an existing VM
+
+function deletevm {
+    if [ $VMEXISTS -eq 0 ]
+    then
+        echo "Deleting existing VM $VMNAME"
+
+        # First detach any mounted image to ensure it doesn't get deleted
+        detachimage
+
+        # Unregister and delete (all files!) an existing VM
+        $VBM unregistervm $VMNAME --delete
+    fi
+}
+
+# Launch an existing VM
+
+function startvm {
+    $VBM startvm $VMNAME
+}
+
+# stop a running VM
+function stopvm {
+    $VBM controlvm $VMNAME poweroff
+}
+
+# ssh into the vm
+function sshIntoVm {
+    # In case they have manually changed the port, or specified an unusual
+    # one when the machine was created, we pull the port number from the
+    # virtual machine itself.
+    #
+    # If there isn't a port forwarding rule set, then we are not going to
+    # be able to ssh in in any case.
+    #
+    port=`VBoxManage showvminfo $VMNAME | grep "name = ssh,.*host port = [0-9]*,.*guest port = 22" | grep -o "host port = [0-9]*" | cut -d '=' -f 2`
+    if [ "$port" == "" ]
+    then
+        echo "VM $VMNAME does not appear to have ssh port forwarding enabled. Exiting"
+        exit 1;
+    fi
+
+    # Use /dev/null as the known hosts file to avoid an error whenever the
+    # Virtual Machine's identity changes. Disabling strict host checking
+    # avoids being asked to accept the new key.
+    #
+    # Whilst these options are a "bad idea" when connecting to a real host,
+    # this script is explicitly used to connect to VM's running webOS OSE
+    # whose identities change regularly.
+    #
+    # It does, however, result in a Warning on every connection that the
+    # host has been permanently added to the known hosts file (i.e. /dev/null).
+    #
+    ssh -p $port -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@localhost
+}
+
+# Check some fundamental prerequisites:
+#   - Must be run from the root of a build directory
+#   - Must have virtualbox installed
+checkInBuildWebos
+checkVbox
+
+# Set up defaults before parsing command options
+setDefaults
+
+# Parse the command line.
+#
+# This can't be in a function as it needs to access and shift the command
+# line arguments.
+if [ $# -ne 0 ]    # Script invoked with command-line args
+then
+    while getopts ":c:i:n:p:r:v:" Option
+    do
+      case $Option in
+        c) VMCPUS=$OPTARG;;
+        i) VMIMAGE=$OPTARG;;
+        n) VMNAME=$OPTARG;;
+        p) VMHOSTSSH=$OPTARG;;
+        r) VMRAM=$OPTARG;;
+        v) VMVRAM=$OPTARG;;
+        *) echo "Unimplemented option chosen ($Option)."; Usage ;;
+      esac
+    done
+
+    shift $(($OPTIND - 1))
+fi
+
+if [ "$1" == "" ]
+then
+    echo "No command specified";
+    Usage;
+else
+    # Loop through positional commands in the order they are provided
+
+    while [ "$1" != "" ]
+    do
+        # Refresh the VM state as a previous command probably
+        # changed it.
+        checkVmState
+
+        case "$1" in
+            create) vmMustNotBeRunning;
+                    createvm ;;
+
+            delete) vmMustExist; vmMustNotBeRunning;
+                    deletevm ;;
+
+            attach) vmMustExist; vmMustNotBeRunning; vmdkImageMustExist ;
+                    attachimage ;;
+
+            detach) vmMustExist; vmMustNotBeRunning;
+                    detachimage ;;
+
+            ssh)    vmMustExist; vmMustBeRunning;
+                    sshIntoVm ;;
+
+            start)  vmMustExist; vmMustNotBeRunning;
+                    startvm ;;
+
+            stop)   vmMustExist; vmMustBeRunning;
+                    stopvm ;;
+
+            *)      Usage ;;
+        esac
+
+        shift
+    done
+fi
+
+exit 0

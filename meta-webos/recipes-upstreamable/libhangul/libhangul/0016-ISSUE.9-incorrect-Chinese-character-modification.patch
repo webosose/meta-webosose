@@ -1,0 +1,42 @@
+From e6c8dea477d09eac91bfbfd9e99d4558ac1c5ea8 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Wed, 10 Sep 2014 18:09:44 +0900
+Subject: [PATCH 16/20] ISSUE.9 incorrect Chinese character modification
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ISSUE.9 잘못된 한자어 수정(車裂形 -> 車裂刑, 家門形 -> 家門刑)
+
+https://code.google.com/p/libhangul/issues/detail?id=9
+
+Change-Id: I3e0f696426edf23fb32ae26402746146ca6223aa
+---
+ data/hanja/hanja.txt |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/data/hanja/hanja.txt b/data/hanja/hanja.txt
+index 1e39de4..6b03ff7 100644
+--- a/data/hanja/hanja.txt
++++ b/data/hanja/hanja.txt
+@@ -794,7 +794,7 @@
+ 가문:嘉聞:
+ 가문서:假文書:
+ 가문설화:可聞說話:
+-가문형:家門形:
++가문형:家門刑:
+ 가문흐름량:가문흐름量:
+ 가물치회:가물치膾:
+ 가물칫과:가물칫科:
+@@ -7928,7 +7928,7 @@
+ 거열:居烈:
+ 거열군:居列郡:
+ 거열성:居列城:
+-거열형:車裂形:
++거열형:車裂刑:
+ 거오:倨傲:
+ 거오방자:倨傲放恣:
+ 거오스럽다:倨傲스럽다:
+-- 
+1.7.9.5
+

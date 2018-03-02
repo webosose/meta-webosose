@@ -1,0 +1,36 @@
+From e807c5c87831e2bf74545522d3eb25f77b94c91c Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sun, 8 Jan 2012 21:12:52 +0900
+Subject: [PATCH 09/20] delete the incorrect Chinese character
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+暎畵는 잘못된 한자어이므로 삭제
+
+Change-Id: Ib2a1bf9a974068573a0da205da3c3ffe98479239
+---
+ data/hanja/hanja.txt |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/data/hanja/hanja.txt b/data/hanja/hanja.txt
+index 007645a..1e39de4 100644
+--- a/data/hanja/hanja.txt
++++ b/data/hanja/hanja.txt
+@@ -171659,12 +171659,11 @@
+ 영혼절멸론:靈魂絶滅論:
+ 영홍문관사:領弘文館事:
+ 영화:榮華:
+-영화:暎畵:
++영화:映畵:
+ 영화:英華:
+ 영화:英貨:
+ 영화:靈化:
+ 영화:英和:
+-영화:映畵:
+ 영화가:映畵街:
+ 영화각본:映畵脚本:
+ 영화감독:映畵監督:
+-- 
+1.7.9.5
+

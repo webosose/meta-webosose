@@ -1,0 +1,75 @@
+From fa402200c917a9b938c3d65c043ac53a2d070303 Mon Sep 17 00:00:00 2001
+From: Jeong YunWon <jeong@youknowone.org>
+Date: Wed, 9 Nov 2011 02:35:41 +0900
+Subject: [PATCH 03/20] Change wrong name hangul_jongseong_{dicompose ->
+ decompose}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+잘못 이름지은 함수 hangul_jongseong_dicompose 를 hangul_jongseong_decompose 로 바꿈
+hangul_jongseong_dicompose 심볼이 같은 기능을 하도록 보존
+
+Change-Id: I86df313d49420930f88814728f48bf38e5577934
+---
+ hangul/hangul.h             |    3 ++-
+ hangul/hangulctype.c        |    8 +++++++-
+ hangul/hangulinputcontext.c |    2 +-
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/hangul/hangul.h b/hangul/hangul.h
+index bf16afd..1c675ff 100644
+--- a/hangul/hangul.h
++++ b/hangul/hangul.h
+@@ -54,7 +54,8 @@ ucschar hangul_jamo_to_cjamo(ucschar ch);
+ 
+ ucschar hangul_choseong_to_jongseong(ucschar ch);
+ ucschar hangul_jongseong_to_choseong(ucschar ch);
+-void    hangul_jongseong_dicompose(ucschar ch, ucschar* jong, ucschar* cho);
++void    hangul_jongseong_decompose(ucschar ch, ucschar* jong, ucschar* cho);
++void    hangul_jongseong_dicompose(ucschar ch, ucschar* jong, ucschar* cho) LIBHANGUL_DEPRECATED;
+ 
+ const ucschar* hangul_syllable_iterator_prev(const ucschar* str,
+ 					     const ucschar* begin);
+diff --git a/hangul/hangulctype.c b/hangul/hangulctype.c
+index 53ada66..4ba2415 100644
+--- a/hangul/hangulctype.c
++++ b/hangul/hangulctype.c
+@@ -882,7 +882,7 @@ hangul_jongseong_to_choseong(ucschar c)
+ }
+ 
+ void
+-hangul_jongseong_dicompose(ucschar c, ucschar* jong, ucschar* cho)
++hangul_jongseong_decompose(ucschar c, ucschar* jong, ucschar* cho)
+ {
+     static ucschar table[][2] = {
+     { 0,      0x1100 }, /* jong kiyeok	      = cho  kiyeok               */
+@@ -918,6 +918,12 @@ hangul_jongseong_dicompose(ucschar c, ucschar* jong, ucschar* cho)
+     *cho  = table[c - 0x11a8][1];
+ }
+ 
++void
++hangul_jongseong_dicompose(ucschar c, ucschar* jong, ucschar* cho)
++{
++    hangul_jongseong_decompose(c, jong, cho);
++}
++
+ static int
+ hangul_jongseong_get_ncomponent(ucschar jong)
+ {
+diff --git a/hangul/hangulinputcontext.c b/hangul/hangulinputcontext.c
+index 46fc740..972e75e 100644
+--- a/hangul/hangulinputcontext.c
++++ b/hangul/hangulinputcontext.c
+@@ -1142,7 +1142,7 @@ hangul_ic_process_romaja(HangulInputContext *hic, int ascii, ucschar ch)
+ 		    }
+ 		} else {
+ 		    ucschar choseong = 0, jongseong = 0; 
+-		    hangul_jongseong_dicompose(hic->buffer.jongseong,
++		    hangul_jongseong_decompose(hic->buffer.jongseong,
+ 					       &jongseong, &choseong);
+ 		    hic->buffer.jongseong = jongseong;
+ 		    hangul_ic_save_commit_string(hic);
+-- 
+1.7.9.5
+

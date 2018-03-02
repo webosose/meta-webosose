@@ -1,0 +1,45 @@
+From 468d842a1ea1537e9f30af680eea5f2e3afd32ae Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Tue, 28 May 2013 18:12:55 +0200
+Subject: [PATCH 2/2] Fix includes with newer glib
+
+* newer glib version allow only glib.h to be included directly,
+  fixes a lot of errors like this:
+  /usr/include/glib-2.0/glib/gmacros.h:32:2: error: #error "Only <glib.h> can be included directly."
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ glibmm-utils/date.cc    |    2 +-
+ glibmm-utils/ustring.cc |    3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/glibmm-utils/date.cc b/glibmm-utils/date.cc
+index f62f531..555fabc 100644
+--- a/glibmm-utils/date.cc
++++ b/glibmm-utils/date.cc
+@@ -25,7 +25,7 @@
+ 
+ #include <sys/time.h>
+ 
+-#include <glib/gmessages.h>
++#include <glib.h>
+ 
+ #include <glibmm/convert.h>
+ #include <glibmm/date.h>
+diff --git a/glibmm-utils/ustring.cc b/glibmm-utils/ustring.cc
+index f8a7da4..a5f0f8b 100644
+--- a/glibmm-utils/ustring.cc
++++ b/glibmm-utils/ustring.cc
+@@ -20,8 +20,7 @@
+  */
+ 
+ #include <cstring> // for g++ 4.3
+-#include <glib/gmem.h>
+-#include <glib/gmessages.h>
++#include <glib.h>
+ #include "ustring.h"
+ 
+ namespace Glib {
+-- 
+1.7.10.4
+

@@ -1,0 +1,136 @@
+From 98ca2dd3e1df5af38e11a344a32773d57e83ea3f Mon Sep 17 00:00:00 2001
+From: Purushottam Narayana <purushottam.narayana@lge.com>
+Date: Fri, 10 Nov 2017 11:01:08 -0800
+Subject: [PATCH] Fix kernel division by 0 exception.
+
+:Release Notes:
+Fix kernel division by 0 exception
+
+:Detailed Notes:
+BRCM kernel driver cannot handle all zero destination rectangle.
+Hence returning invalid arg.
+
+:Testing Performed:
+With QML video, do video playback and simulate crash.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-47568] Kernel crashes when changing video-ouput-window sizes
+---
+ drivers/gpu/drm/drm_plane.c | 61 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 42 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index 0c1a454..e274559 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -533,14 +533,7 @@ static int __setplane_internal_custom(struct drm_plane *plane,
+ 	int ret = 0;
+ 	/* No fb means shut it down */
+ 	if (!fb) {
+-		plane->old_fb = plane->fb;
+-		ret = plane->funcs->disable_plane(plane);
+-		if (!ret) {
+-			plane->crtc = NULL;
+-			plane->fb = NULL;
+-		} else {
+-			plane->old_fb = NULL;
+-		}
++		plane->fb = NULL;
+ 		goto out;
+ 	}
+ 
+@@ -587,9 +580,6 @@ static int __setplane_internal_custom(struct drm_plane *plane,
+ 	}
+ 
+ out:
+-	if (fb)
+-		drm_framebuffer_unreference(fb);
+-
+ 	plane->old_fb = NULL;
+ 
+ 	return ret;
+@@ -605,10 +595,13 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 	struct drm_mode_obj_set_property *arg = ar;
+ 	struct drm_plane_state state[4];
+ 	uint64_t mask = ~(~0 << 16);
+-	uint16_t planeBase = 44;// Only single crtc is supported now.
+ 	int i = 0, j = 0;
++	/* TODO: Find a better place to associate webOS specific limits with
++	   Driver/platform specific code */
+ 	uint16_t z[4] = {0}; //Maintain this globally later
+ 	uint8_t max_planes = 4;
++	uint32_t crtc_id = 43;
++	uint16_t planeBase = 44;// Only single crtc is supported now.
+ 	struct io_rect {
+ 		/* Signed dest location allows it to be partially off screen */
+ 		int32_t crtc_x, crtc_y;
+@@ -651,7 +644,7 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 						}
+ 					}
+ 				} else if (state[i].fb && (state[i].crtc == NULL || plane->crtc == NULL)) {
+-					state[i].crtc = drm_crtc_find(dev, 43);
++					state[i].crtc = drm_crtc_find(dev, crtc_id);
+ 					if (!state[i].crtc) {
+ 						DRM_DEBUG_KMS("\n Unknown crtc ID \n");
+ 						return -ENOENT;
+@@ -672,10 +665,29 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				   scale_param->src_w>>16, scale_param->src_h>>16);
+ 			DRM_DEBUG_KMS("crtc rect: %d %d %d %d", scale_param->crtc_x, scale_param->crtc_y,
+ 				   scale_param->crtc_w, scale_param->crtc_h);
+-			ret = __setplane_internal(plane, crtc, fb, scale_param->crtc_x, scale_param->crtc_y,
+-									  scale_param->crtc_w, scale_param->crtc_h,
+-									  scale_param->src_x, scale_param->src_y,
+-									  scale_param->src_w << 16, scale_param->src_h << 16);
++			if (!scale_param || (scale_param->crtc_x == 0 && scale_param->crtc_y == 0
++								 && scale_param->crtc_w == 0 && scale_param->crtc_h == 0)) {
++				DRM_DEBUG_KMS("\n Invalid values, Dst rect is all zero");
++				return -ENOENT;
++			}
++
++			if (!fb) {
++				DRM_DEBUG_KMS("\n No FB connected yet, store the values");
++				plane->state->crtc_x = scale_param->crtc_x;
++				plane->state->crtc_y = scale_param->crtc_y;
++				plane->state->crtc_w = scale_param->crtc_w;
++				plane->state->crtc_h = scale_param->crtc_h;
++
++				plane->state->src_x = scale_param->src_x;
++				plane->state->src_y = scale_param->src_y;
++				plane->state->src_w = scale_param->src_w << 16;
++				plane->state->src_h = scale_param->src_h << 16;
++			} else {
++				ret = __setplane_internal_custom(plane, crtc, fb, scale_param->crtc_x, scale_param->crtc_y,
++												 scale_param->crtc_w, scale_param->crtc_h,
++												 scale_param->src_x, scale_param->src_y,
++												 scale_param->src_w << 16, scale_param->src_h << 16);
++			}
+ 
+ 			break;
+ 
+@@ -693,8 +705,19 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				fb = 0;
+ 			}
+ 			if (!crtc) {
+-				DRM_DEBUG_KMS("\n plane %d is not initialized yet ");
+-				return -ENOENT;
++				crtc = drm_crtc_find(dev, crtc_id);
++			}
++			DRM_DEBUG_KMS("src rect: %d %d %d %d", plane->state->src_x, plane->state->src_y,
++				   plane->state->src_w, plane->state->src_h);
++			DRM_DEBUG_KMS("crtc rect: %d %d %d %d", plane->state->crtc_x, plane->state->crtc_y,
++				   plane->state->crtc_w, plane->state->crtc_h);
++			if (!(plane->state->crtc_w & plane->state->crtc_h)) {
++				plane->state->crtc_w = fb->width;
++				plane->state->crtc_h = fb->height;
++			}
++			if (!(plane->state->src_w & plane->state->src_h)) {
++				plane->state->src_w = fb->width;
++				plane->state->src_h = fb->height;
+ 			}
+ 			ret = __setplane_internal_custom(plane, crtc, fb,
+ 									  plane->state->crtc_x, plane->state->crtc_y,
+-- 
+1.9.1
+

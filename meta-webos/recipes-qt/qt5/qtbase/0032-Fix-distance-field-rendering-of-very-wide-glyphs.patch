@@ -1,0 +1,59 @@
+From 93dfe5144d920fbc0c2f25179b27ef739c585952 Mon Sep 17 00:00:00 2001
+From: Valery Volgutov <valery.volgutov@lge.com>
+Date: Wed, 1 Feb 2017 16:53:40 +0300
+Subject: [PATCH] Fix distance field rendering of very wide glyphs
+
+When glyph width more then 256 (8bits), this glyph
+will be rendered with artefacts.
+
+Upstream-Status: Accepted
+[https://codereview.qt-project.org/#/c/184367/]
+
+Task-number: QTBUG-51714
+Change-Id: Id606c90c7968a8db75732abc502ca8dcd46b38ba
+---
+ src/gui/text/qdistancefield.cpp | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/gui/text/qdistancefield.cpp b/src/gui/text/qdistancefield.cpp
+index b2eb794..772503b 100644
+--- a/src/gui/text/qdistancefield.cpp
++++ b/src/gui/text/qdistancefield.cpp
+@@ -431,7 +431,7 @@ static void drawPolygons(qint32 *bits, int width, int height, const QPoint *vert
+ {
+     Q_ASSERT(indexCount != 0);
+     Q_ASSERT(height <= 128);
+-    QVarLengthArray<quint8, 16> scans[128];
++    QVarLengthArray<quint16, 16> scans[128];
+     int first = 0;
+     for (int i = 1; i < indexCount; ++i) {
+         quint32 idx1 = indices[i - 1];
+@@ -455,16 +455,16 @@ static void drawPolygons(qint32 *bits, int width, int height, const QPoint *vert
+         for (int y = fromY; y < toY; ++y) {
+             quint32 c = quint32(x >> 8);
+             if (c < quint32(width))
+-                scans[y].append(quint8(c));
++                scans[y].append(quint16(c));
+             x += dx;
+         }
+     }
+     for (int i = 0; i < height; ++i) {
+-        quint8 *scanline = scans[i].data();
++        quint16 *scanline = scans[i].data();
+         int size = scans[i].size();
+         for (int j = 1; j < size; ++j) {
+             int k = j;
+-            quint8 value = scanline[k];
++            quint16 value = scanline[k];
+             for (; k != 0 && value < scanline[k - 1]; --k)
+                 scanline[k] = scanline[k - 1];
+             scanline[k] = value;
+@@ -472,7 +472,7 @@ static void drawPolygons(qint32 *bits, int width, int height, const QPoint *vert
+         qint32 *line = bits + i * width;
+         int j = 0;
+         for (; j + 1 < size; j += 2) {
+-            for (quint8 x = scanline[j]; x < scanline[j + 1]; ++x)
++            for (quint16 x = scanline[j]; x < scanline[j + 1]; ++x)
+                 line[x] = value;
+         }
+         if (j < size) {

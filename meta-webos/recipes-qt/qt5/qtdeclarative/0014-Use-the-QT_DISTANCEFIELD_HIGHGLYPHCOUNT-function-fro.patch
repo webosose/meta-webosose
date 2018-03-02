@@ -1,0 +1,41 @@
+From 1f0628ed9138fade05160ec566dc51b63cea7e7e Mon Sep 17 00:00:00 2001
+From: Alexey Turitsyn <alexey.turitsyn@lge.com>
+Date: Tue, 10 May 2016 16:23:24 +0300
+Subject: [PATCH] Use the QT_DISTANCEFIELD_HIGHGLYPHCOUNT function from qtbase
+
+Upstream-Status: Backport
+  - Backported from dev branch
+  - https://codereview.qt-project.org/#/c/151871/3
+
+Change-Id: I2a31f69f282f8c368027ec824b9f3a5334d03892
+---
+ src/quick/scenegraph/qsgadaptationlayer.cpp                | 2 +-
+ src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/quick/scenegraph/qsgadaptationlayer.cpp b/src/quick/scenegraph/qsgadaptationlayer.cpp
+index bf97133..7cfa32e 100644
+--- a/src/quick/scenegraph/qsgadaptationlayer.cpp
++++ b/src/quick/scenegraph/qsgadaptationlayer.cpp
+@@ -59,7 +59,7 @@ QSGDistanceFieldGlyphCache::QSGDistanceFieldGlyphCache(QSGDistanceFieldGlyphCach
+     QRawFontPrivate *fontD = QRawFontPrivate::get(font);
+     m_glyphCount = fontD->fontEngine->glyphCount();
+ 
+-    m_doubleGlyphResolution = qt_fontHasNarrowOutlines(font) && m_glyphCount < QT_DISTANCEFIELD_HIGHGLYPHCOUNT;
++    m_doubleGlyphResolution = qt_fontHasNarrowOutlines(font) && m_glyphCount < QT_DISTANCEFIELD_HIGHGLYPHCOUNT();
+ 
+     m_referenceFont = font;
+     // we set the same pixel size as used by the distance field internally.
+diff --git a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
+index ed903f3..e6a1a49 100644
+--- a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
++++ b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
+@@ -516,7 +516,7 @@ bool QSGDefaultDistanceFieldGlyphCache::useTextureUploadWorkaround() const
+ 
+ bool QSGDefaultDistanceFieldGlyphCache::createFullSizeTextures() const
+ {
+-    return qsgPreferFullSizeGlyphCacheTextures() && glyphCount() > QT_DISTANCEFIELD_HIGHGLYPHCOUNT;
++    return qsgPreferFullSizeGlyphCacheTextures() && glyphCount() > QT_DISTANCEFIELD_HIGHGLYPHCOUNT();
+ }
+ 
+ int QSGDefaultDistanceFieldGlyphCache::maxTextureSize() const

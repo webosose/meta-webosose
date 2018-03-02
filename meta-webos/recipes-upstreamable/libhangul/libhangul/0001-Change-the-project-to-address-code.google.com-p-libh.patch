@@ -1,0 +1,111 @@
+From 7281e3b24ad41c82bf0551b91be9b2f665475960 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Thu, 3 Nov 2011 23:23:21 +0900
+Subject: [PATCH 01/20] Change the project to address
+ code.google.com/p/libhangul
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+프로젝트 주소를 http://code.google.com/p/libhangul/ 로 바꿈
+
+프로젝트 호스팅 사이트를 http://kldp.net/ 에서
+http://code.google.com/로 바꿨다.
+그에 맞게 관련 주소를 변경한다.
+
+Change-Id: If8f57fc8518c2f7eee33c00a552de7973957a849
+---
+ README           |    9 +++------
+ configure.ac     |    2 +-
+ doc/mainpage.dox |   20 +++++++-------------
+ po/Makevars      |    2 +-
+ 4 files changed, 12 insertions(+), 21 deletions(-)
+
+diff --git a/README b/README
+index 66517c8..3c4c484 100644
+--- a/README
++++ b/README
+@@ -8,13 +8,10 @@ How to build
+  # make
+ 
+ Download:
+- * http://kldp.net/projects/hangul/download
++ * http://code.google.com/p/libhangul/downloads/list
+ 
+ Bug report:
+- * bug tracker: http://kldp.net/projects/hangul/bugs
+-
+-Forum:
+- * http://kldp.net/projects/hangul/forum
++ * http://code.google.com/p/libhangul/issues/list
+ 
+ Web sites
+- * Project page: http://kldp.net/projects/hangul/
++ * Project page: http://code.google.com/p/libhangul/
+diff --git a/configure.ac b/configure.ac
+index 8b389be..cde5bad 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2,7 +2,7 @@
+ # Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ(2.57)
+-AC_INIT(libhangul, 0.1.0, http://kldp.net/projects/hangul/)
++AC_INIT(libhangul, 0.1.0, http://code.google.com/p/libhangul/)
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_SRCDIR([hangul/hangul.h])
+ AC_CONFIG_HEADER([config.h])
+diff --git a/doc/mainpage.dox b/doc/mainpage.dox
+index 7278e20..989263a 100644
+--- a/doc/mainpage.dox
++++ b/doc/mainpage.dox
+@@ -17,26 +17,20 @@ libhangul에서 제공하는 기능들은 다음 레퍼런스에서 찾아볼 
+ 
+ @section download 다운로드
+ 최근 릴리스들은 libhangul의 프로젝트 페이지에서 받을 수 있습니다.
+-@li http://kldp.net/frs/?group_id=362
++@li http://code.google.com/p/libhangul/downloads/list
+ 
+-개발버젼의 소스는 <a href="http://kldp.net/">KLDP.net</a>의 subversion 
++개발버젼의 소스는 <a href="http://github.com/">github</a>의 
+ repository에서 받을 수 있습니다.
+-@li subversion: http://kldp.net/scm/?group_id=362
++@li git: git://github.com/choehwanjin/libhangul.git
+ 
+ @section bug 버그리포트
+-libhangul의 버그는 <a href="http://kldp.net/">KLDP.net</a>의 버그트래커로
++libhangul의 버그는 <a href="http://code.google.com/">Google code</a>의 버그트래커로
+ 관리하고 있습니다.
+ 
+-@li 버그트래커: http://kldp.net/tracker/?group_id=362
+-
+-@section mailinglist 메일링 리스트
+-@li 메일링리스트: http://lists.kldp.net/mailman/listinfo/hangul-hackers
+-@li 메일링리스트 아카이브: http://lists.kldp.net/pipermail/hangul-hackers/
++@li 버그트래커: http://code.google.com/p/libhangul/issues/list
+ 
+ @section website 웹주소
+-libhangul은 <a href="http://kldp.net/">KLDP.net</a>에서 호스팅되고 있습니다.
+- @li Home page: http://hangul.kldp.net/
+- @li Project page: http://kldp.net/projects/hangul/
+- @li Wiki page: http://wiki.kldp.org/wiki.php/libhangul
++libhangul은 <a href="http://code.google.com/">Google code</a>에서 호스팅되고 있습니다.
++ @li Project page: http://code.google.com/p/libhangul/
+ 
+  */
+diff --git a/po/Makevars b/po/Makevars
+index f7ed7fa..f4b8e81 100644
+--- a/po/Makevars
++++ b/po/Makevars
+@@ -34,7 +34,7 @@ COPYRIGHT_HOLDER = Free Software Foundation, Inc.
+ # It can be your email address, or a mailing list address where translators
+ # can write to without being subscribed, or the URL of a web page through
+ # which the translators can contact you.
+-MSGID_BUGS_ADDRESS = http://kldp.net/projects/hangul
++MSGID_BUGS_ADDRESS = http://code.google.com/p/libhangul/
+ 
+ # This is the list of locale categories, beyond LC_MESSAGES, for which the
+ # message catalogs shall be used.  It is usually empty.
+-- 
+1.7.9.5
+
