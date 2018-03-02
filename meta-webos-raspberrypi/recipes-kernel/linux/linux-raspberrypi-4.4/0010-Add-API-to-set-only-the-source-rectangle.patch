@@ -1,0 +1,77 @@
+From 587b57e90faa67088dd1b696ca0a8a4a9dab6701 Mon Sep 17 00:00:00 2001
+From: Purushottam Narayana <purushottam.narayana@lge.com>
+Date: Thu, 18 Jan 2018 17:59:55 -0800
+Subject: [PATCH] Add API to set only the source rectangle
+
+:Release Notes:
+Add API to set only the source rectangle
+
+:Detailed Notes:
+In adaptive streaming the pipeline knows the new source rectangle soon
+after resoulution upgrade/degrade and switches to process the new FB.
+However this information is sent via MDC to AvOutputd to set scaling, hence
+there is a small window where wrong scaling can be seen. To overcome
+this pipeline can set source rectangle when it process new frame without
+touching destination window.
+
+:Testing Performed:
+Play YouTube video on app and browser.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-48893] Scaling process is shown a moment when port setting is changed
+---
+ drivers/gpu/drm/drm_crtc.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 5028ae7..561ff50 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -5081,6 +5081,33 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 												 scale_param->src_w << 16, scale_param->src_h << 16);
+ 			}
+ 			break;
++		case 0xff04:
++			scale_param = (struct io_rect *) arg->value;
++			DRM_DEBUG_KMS("src rect: %d %d %d %d \n", scale_param->src_x, scale_param->src_y,
++				   scale_param->src_w, scale_param->src_h);
++
++			if (!plane->state->fb) {
++				DRM_DEBUG_KMS("\n No FB connected yet, store the values");
++
++				plane->state->src_x = scale_param->src_x;
++				plane->state->src_y = scale_param->src_y;
++				plane->state->src_w = scale_param->src_w << 16;
++				plane->state->src_h = scale_param->src_h << 16;
++				ret = 0;
++			} else {
++				DRM_DEBUG_KMS("crtc rect: %d %d %d %d", plane->state->crtc_x, plane->state->crtc_y,
++					   plane->state->crtc_w, plane->state->crtc_h);
++
++				if (plane->state->crtc_w == 0 || plane->state->crtc_h == 0) {
++					DRM_DEBUG_KMS("\n Invalid values, Dst rect width or height or both zeros");
++					return -ENOENT;
++				}
++				ret = __setplane_internal_custom(plane, crtc, plane->state->fb, plane->state->crtc_x, plane->state->crtc_y,
++												 plane->state->crtc_w, plane->state->crtc_h,
++												 scale_param->src_x, scale_param->src_y,
++												 scale_param->src_w << 16, scale_param->src_h << 16);
++			}
++			break;
+ 
+ 		case 0xff01:
+ 			DRM_DEBUG_KMS("\n Look for framebuffer %d ", arg->value);
+@@ -5119,7 +5146,7 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				   plane->state->src_w >> 16, plane->state->src_h >> 16);
+ 			DRM_DEBUG_KMS("crtc rect: %d %d %d %d", plane->state->crtc_x, plane->state->crtc_y,
+ 				   plane->state->crtc_w, plane->state->crtc_h);
+-			ret = __setplane_internal_custom(plane, crtc, fb,
++			ret = __setplane_internal_custom(plane, crtc, plane->state->fb,
+ 									  plane->state->crtc_x, plane->state->crtc_y,
+ 									  plane->state->crtc_w, plane->state->crtc_h,
+ 									  plane->state->src_x, plane->state->src_y,
+-- 
+1.9.1
+

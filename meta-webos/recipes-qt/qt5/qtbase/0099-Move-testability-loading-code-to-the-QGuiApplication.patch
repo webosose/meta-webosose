@@ -1,0 +1,142 @@
+From 2bd45b8807d7c7aff0a44c31414ce2a7882312bb Mon Sep 17 00:00:00 2001
+From: Tigran Avanesov <tigran.avanesov@lge.com>
+Date: Fri, 25 Jul 2014 11:13:10 +0300
+Subject: [PATCH] Move testability loading code to the QGuiApplication
+
+Move testability loading code to the QGuiApplication from
+QApplication to make no changes in existing QML applications and
+be able to use -testability switch.
+
+Change-Id: Ieb0ace469028f37be868d031946e37715e61b8af
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ src/gui/kernel/qguiapplication.cpp  | 39 +++++++++++++++++++++++++++++++++++++
+ src/gui/kernel/qguiapplication.h    |  3 ++-
+ src/gui/kernel/qguiapplication_p.h  |  1 +
+ src/widgets/kernel/qapplication.cpp |  1 +
+ 4 files changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/kernel/qguiapplication.cpp b/src/gui/kernel/qguiapplication.cpp
+index 9cbcd71..c9e4894 100644
+--- a/src/gui/kernel/qguiapplication.cpp
++++ b/src/gui/kernel/qguiapplication.cpp
+@@ -106,6 +106,10 @@
+ 
+ #include <ctype.h>
+ 
++#ifndef QT_NO_LIBRARY
++#include "qlibrary.h"
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ // Helper macro for static functions to check on the existence of the application class.
+@@ -133,6 +137,12 @@ Qt::ApplicationState QGuiApplicationPrivate::applicationState = Qt::ApplicationI
+ 
+ bool QGuiApplicationPrivate::highDpiScalingUpdated = false;
+ 
++#ifdef QT_DISABLE_TESTABILITY_BY_DEFAULT
++bool QGuiApplicationPrivate::load_testability = false;
++#else
++bool QGuiApplicationPrivate::load_testability = true;
++#endif
++
+ QPlatformIntegration *QGuiApplicationPrivate::platform_integration = 0;
+ QPlatformTheme *QGuiApplicationPrivate::platform_theme = 0;
+ 
+@@ -572,6 +582,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+ {
+     d_func()->init();
+ 
++    if (QGuiApplicationPrivate::load_testability)
++    {
++        loadTestability();
++    }
++
+     QCoreApplicationPrivate::eventDispatcher->startingUp();
+ }
+ 
+@@ -581,6 +596,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+ QGuiApplication::QGuiApplication(QGuiApplicationPrivate &p)
+     : QCoreApplication(p)
+ {
++    if (QGuiApplicationPrivate::load_testability)
++    {
++        loadTestability();
++    }
+ }
+ 
+ /*!
+@@ -632,6 +651,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
+     is_session_restored = false;
+     is_saving_session = false;
+ #endif
++
++    load_testability = true;
+ }
+ 
+ /*!
+@@ -3688,6 +3709,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
+ 
+     return m_inputDeviceManager;
+ }
++void QGuiApplication::loadTestability()
++{
++#ifndef QT_NO_LIBRARY
++    QLibrary testLib(QLatin1String("qttestability"));
++    if (testLib.load()) {
++        qDebug() << "qttestability successfully loaded";
++        typedef void (*TasInitialize)(void);
++        TasInitialize initFunction = (TasInitialize)testLib.resolve("qt_testability_init");
++        if (initFunction) {
++            initFunction();
++        } else {
++            qCritical("Library qttestability resolve failed!");
++        }
++    } else {
++        qCritical("Library qttestability load failed!");
++    }
++#endif
++}
+ 
+ #include "moc_qguiapplication.cpp"
+ 
+diff --git a/src/gui/kernel/qguiapplication.h b/src/gui/kernel/qguiapplication.h
+index 3f233d4..377f625 100644
+--- a/src/gui/kernel/qguiapplication.h
++++ b/src/gui/kernel/qguiapplication.h
+@@ -179,8 +179,9 @@ protected:
+     bool compressEvent(QEvent *, QObject *receiver, QPostEventList *) Q_DECL_OVERRIDE;
+ 
+     QGuiApplication(QGuiApplicationPrivate &p);
+-
+ private:
++    static void loadTestability();
++
+     Q_DISABLE_COPY(QGuiApplication)
+     Q_DECLARE_PRIVATE(QGuiApplication)
+ 
+diff --git a/src/gui/kernel/qguiapplication_p.h b/src/gui/kernel/qguiapplication_p.h
+index 306d76c..0a34936 100644
+--- a/src/gui/kernel/qguiapplication_p.h
++++ b/src/gui/kernel/qguiapplication_p.h
+@@ -205,6 +205,7 @@ public:
+     static QWindow *currentMousePressWindow;
+     static Qt::ApplicationState applicationState;
+     static bool highDpiScalingUpdated;
++    static bool load_testability;
+ 
+ #ifndef QT_NO_CLIPBOARD
+     static QClipboard *qt_clipboard;
+diff --git a/src/widgets/kernel/qapplication.cpp b/src/widgets/kernel/qapplication.cpp
+index 917273e..fb22ea8 100644
+--- a/src/widgets/kernel/qapplication.cpp
++++ b/src/widgets/kernel/qapplication.cpp
+@@ -591,6 +591,7 @@ void QApplicationPrivate::init()
+     extern void qt_gui_eval_init(QCoreApplicationPrivate::Type);
+     qt_gui_eval_init(application_type);
+ #endif
++
+ #ifndef QT_NO_ACCESSIBILITY
+     // factory for accessible interfaces for widgets shipped with Qt
+     QAccessible::installFactory(&qAccessibleFactory);

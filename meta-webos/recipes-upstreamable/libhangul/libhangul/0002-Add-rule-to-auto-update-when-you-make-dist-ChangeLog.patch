@@ -1,0 +1,43 @@
+From c08fa77f839112691095a3fec8daec78ccc36864 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Thu, 3 Nov 2011 23:26:14 +0900
+Subject: [PATCH 02/20] Add rule to auto update when you make dist ChangeLog
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+make dist 할때 자동으로 ChangeLog를 갱신하는 룰 추가
+
+소스 레포지토리를 git으로 바꿨기 때문에 ChangeLog를 생성하는
+룰을 git 명령으로 바꿨다. 그리고 릴리스 할때 ChangeLog 갱신 작업을
+빠트리지 않도록 하기 위해서 make dist할때 자동으로 생성되게
+dist-hook에 룰을 추가했다.
+
+Change-Id: Ifafcda616e4f219f2fd19f510352e9a1f4da63e2
+---
+ Makefile.am |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 9b48d50..c8a416b 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -15,10 +15,9 @@ EXTRA_DIST = \
+     test/hanja.c \
+     test/test.c
+ 
+-log:
+-	unset LC_ALL; \
+-	export LANG=C ; \
+-	export LC_CTYPE=ko_KR.UTF-8; \
+-	svn log -v > ChangeLog
+-
+ ACLOCAL_AMFLAGS = -I m4
++
++dist-hook:
++	if test -d .git; then \
++		git log --name-status --date=iso > $(distdir)/ChangeLog ; \
++	fi
+-- 
+1.7.9.5
+

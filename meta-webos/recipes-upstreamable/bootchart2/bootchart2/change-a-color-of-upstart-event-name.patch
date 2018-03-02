@@ -1,0 +1,24 @@
+Change the color of process label to red one if the process is an
+Upstart event, not a real process.
+--- a/pybootchartgui/draw.py	2013-12-12 14:04:49.925721974 +0900
++++ b/pybootchartgui/draw.py	2013-12-12 14:27:23.401028370 +0900
+@@ -98,6 +98,7 @@
+ 
+ # Process label color.
+ PROC_TEXT_COLOR = (0.19, 0.19, 0.19, 1.0)
++UPSTART_EVENT_TEXT_COLOR = (1.0, 0.0, 0.0, 1.0)
+ # Process label font.
+ PROC_TEXT_FONT_SIZE = 12
+ 
+@@ -516,7 +517,10 @@
+ 		else:
+ 			cmdString = cmdString + " " + proc.exe
+ 
+-	draw_label_in_box(ctx, PROC_TEXT_COLOR, cmdString, x, y + proc_h - 4, w, rect[0] + rect[2])
++	color = PROC_TEXT_COLOR
++	if proc.args and (proc.args[0] == 'initctl' or proc.args[0] == '/sbin/initctl'):
++		color = UPSTART_EVENT_TEXT_COLOR
++	draw_label_in_box(ctx, color, cmdString, x, y + proc_h - 4, w, rect[0] + rect[2])
+ 
+ 	next_y = y + proc_h
+ 	for child in proc.child_list:

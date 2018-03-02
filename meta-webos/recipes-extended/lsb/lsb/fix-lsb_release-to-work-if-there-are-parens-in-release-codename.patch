@@ -1,0 +1,12 @@
+diff -ru orig-lsb-release-1.4/lsb_release lsb-release-1.4/lsb_release
+--- orig-lsb-release-1.4/lsb_release	2013-04-17 12:41:20.282584874 +0300
++++ lsb-release-1.4/lsb_release	2013-04-17 12:32:24.422411095 +0300
+@@ -330,7 +330,7 @@
+     if [ -z "$DISTRIB_CODENAME" ]
+     then                       # parse the "$DISTRIB_DESCRIPTION" string
+         DISTRIB_CODENAME=$(echo "$TMP_DISTRIB_DESC" |                         \
+-                           sed -e "s/.*$DESCSTR_DELI.*(\(.*\)).*/\1/")
++                           sed -e "s/.*$DESCSTR_DELI[^(]*(\(.*\))[^)]*/\1/")
+         [ "$DISTRIB_CODENAME" = "$TMP_DISTRIB_DESC" ]                         \
+             || [ -z "$DISTRIB_CODENAME" ]                                     \
+             && DISTRIB_CODENAME=$MSG_NA

@@ -1,0 +1,75 @@
+From 0b7e8bc7be9d9db575fc1b36a989e77a357f95c6 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sat, 17 Dec 2011 16:34:19 +0900
+Subject: [PATCH 07/20] Add your ignore list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ignore list 추가
+
+Change-Id: Id655cc3e350523590565ff585fffa26522e4d20e
+---
+ .gitignore |   50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 .gitignore
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..7cb2394
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,50 @@
++ABOUT-NLS
++ChangeLog
++INSTALL
++Makefile
++Makefile.in
++aclocal.m4
++autom4te.cache
++compile
++config.guess
++config.h
++config.h.in
++config.log
++config.rpath
++config.status
++config.sub
++configure
++data/hanja/Makefile
++data/hanja/Makefile.in
++depcomp
++doc/Doxyfile
++doc/hangulkeyboards.dox
++install-sh
++libhangul.pc
++libtool
++ltmain.sh
++m4
++missing
++po/Makevars.template
++po/POTFILES
++po/Rules-quot
++po/boldquot.sed
++po/en@boldquot.header
++po/en@quot.header
++po/insert-header.sin
++po/ko.gmo
++po/libhangul.pot
++po/quot.sed
++po/remove-potcdate.sed
++po/remove-potcdate.sin
++po/stamp-po
++stamp-h1
++tools/hangul
++*/Makefile
++*/Makefile.in
++*/Makefile.in.in
++*/*.la
++*/*.lo
++*/*.o
++*/.deps
++*/.libs
+-- 
+1.7.9.5
+

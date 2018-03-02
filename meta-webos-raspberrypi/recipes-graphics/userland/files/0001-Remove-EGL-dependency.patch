@@ -1,0 +1,194 @@
+From 3f06a98f914eaf4dec492371acb721f1b5adbfa6 Mon Sep 17 00:00:00 2001
+From: Changhyeok Bae <changhyeok.bae@gmail.com>
+Date: Tue, 27 Jun 2017 21:22:05 +0900
+Subject: [PATCH] Remove EGL dependency
+
+---
+ CMakeLists.txt                         | 30 +++---------------------------
+ host_applications/linux/CMakeLists.txt | 20 --------------------
+ interface/vmcs_host/CMakeLists.txt     |  2 +-
+ makefiles/cmake/vmcs.cmake             |  2 +-
+ middleware/openmaxil/CMakeLists.txt    |  1 -
+ pkgconfig/openmaxil.pc.in              | 10 ++++++++++
+ 6 files changed, 15 insertions(+), 50 deletions(-)
+ create mode 100644 pkgconfig/openmaxil.pc.in
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 98252c3..516310d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -8,13 +8,6 @@ SET(PROJECT_VER_PATCH 0)
+ SET(PROJECT_VER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}.${PROJECT_VER_PATCH}")
+ SET(PROJECT_APIVER "${PROJECT_VER}")
+ 
+-if(ARM64)
+-   set(BUILD_MMAL FALSE)
+-   set(BUILD_MMAL_APPS FALSE)
+-else()
+-   set(BUILD_MMAL TRUE)
+-   set(BUILD_MMAL_APPS TRUE)
+-endif()
+ set(vmcs_root ${PROJECT_SOURCE_DIR})
+ get_filename_component(VIDEOCORE_ROOT . ABSOLUTE)
+ 
+@@ -27,17 +20,14 @@ include(makefiles/cmake/vmcs.cmake)
+ enable_language(ASM)
+ 
+ # Global include paths
+-include_directories(host_applications/framework)
+ include_directories(${PROJECT_SOURCE_DIR})
+ include_directories(interface/vcos/pthreads)
+ include_directories(interface/vmcs_host/linux)
+ include_directories(interface/vmcs_host)
+ include_directories(interface/vmcs_host/khronos)
+-include_directories(interface/khronos/include)
+ include_directories(${PROJECT_BINARY_DIR})
+ include_directories(interface/vchiq_arm)
+ #include_directories(tools/inet_transport)
+-include_directories(host_support/include)
+ 
+ # Global compiler flags
+ if(CMAKE_COMPILER_IS_GNUCC)
+@@ -47,7 +37,6 @@ endif()
+ add_definitions(-D_REENTRANT)
+ add_definitions(-DUSE_VCHIQ_ARM -DVCHI_BULK_ALIGN=1 -DVCHI_BULK_GRANULARITY=1)
+ add_definitions(-DOMX_SKIP64BIT)
+-add_definitions(-DEGL_SERVER_DISPMANX)
+ add_definitions(-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64)
+ add_definitions(-D_GNU_SOURCE)
+ 
+@@ -66,16 +55,8 @@ endif()
+ add_subdirectory(interface/vcos)
+ add_subdirectory(interface/vmcs_host)
+ add_subdirectory(interface/vchiq_arm)
+-if(NOT ARM64)
+-   add_subdirectory(interface/khronos)
+-endif()
+ 
+ #add_subdirectory(opensrc/tools/lua)
+-if(BUILD_MMAL)
+-   include_directories(interface/mmal)
+-   add_subdirectory(interface/mmal)
+-   add_subdirectory(containers)
+-endif()
+ 
+ # VidTex supports Android and Linux
+ if(BUILD_MMAL_APPS)
+@@ -105,16 +86,13 @@ endif()
+ #add_subdirectory(host_applications/framework)
+ 
+ # add_subdirectory(interface/vchiq/test/win32)
++# add linux apps
++add_subdirectory(host_applications/linux)
+ 
+ # Apps and libraries supporting Camera Tuning Tool
+ #add_subdirectory(tools/inet_transport/linux)
+ #add_subdirectory(host_support/vcstandalone)
+ 
+-# add linux apps
+-add_subdirectory(host_applications/linux)
+-add_subdirectory(opensrc/helpers/libfdt)
+-add_subdirectory(helpers/dtoverlay)
+-
+ set(vmcs_host_apps_VERSION_MAJOR 1)
+ set(vmcs_host_apps_VERSION_MINOR 0)
+ 
+@@ -122,11 +100,9 @@ include_directories("${PROJECT_BINARY_DIR}")
+ include(FindPkgConfig QUIET)
+ if(PKG_CONFIG_FOUND)
+ 	# Produce a pkg-config file
+-	foreach(PCFILE bcm_host.pc  egl.pc  glesv2.pc  vg.pc brcmegl.pc  brcmglesv2.pc  brcmvg.pc )
++	foreach(PCFILE bcm_host.pc vg.pc brcmvg.pc openmaxil.pc)
+ 		configure_file("pkgconfig/${PCFILE}.in" "${PCFILE}" @ONLY)
+ 		install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PCFILE}"
+ 			DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
+ 	endforeach()
+ endif()
+-# Remove cache entry, if one added by command line
+-unset(KHRONOS_EGL_PLATFORM CACHE)
+diff --git a/host_applications/linux/CMakeLists.txt b/host_applications/linux/CMakeLists.txt
+index e8615cc..5b0966b 100644
+--- a/host_applications/linux/CMakeLists.txt
++++ b/host_applications/linux/CMakeLists.txt
+@@ -3,23 +3,3 @@
+ if(NOT ARM64)
+    add_subdirectory(libs/bcm_host)
+ endif()
+-add_subdirectory(apps/gencmd)
+-add_subdirectory(apps/tvservice)
+-add_subdirectory(apps/vcmailbox)
+-if(NOT ARM64)
+-   add_subdirectory(apps/raspicam)
+-   add_subdirectory(libs/sm)
+-   add_subdirectory(apps/smem)
+-endif()
+-add_subdirectory(libs/debug_sym)
+-add_subdirectory(apps/dtoverlay)
+-add_subdirectory(apps/dtmerge)
+-
+-if(ALL_APPS)
+- add_subdirectory(apps/vcdbg)
+- add_subdirectory(libs/elftoolchain)
+- # add_subdirectory(apps/smct)
+- add_subdirectory(apps/edid_parser)
+- add_subdirectory(apps/hello_pi)
+-endif()
+-
+diff --git a/interface/vmcs_host/CMakeLists.txt b/interface/vmcs_host/CMakeLists.txt
+index 0b3adc9..0f9f64a 100755
+--- a/interface/vmcs_host/CMakeLists.txt
++++ b/interface/vmcs_host/CMakeLists.txt
+@@ -23,7 +23,7 @@ add_library(vcilcs
+             vcilcs.c vcilcs_in.c vcilcs_out.c vcilcs_common.c)
+ 
+ # ILCS pulls in EGL for the ILCS/EGL surface API support
+-target_link_libraries(vcilcs brcmEGL brcmGLESv2 khrn_client vchiq_arm vcos)
++target_link_libraries(vcilcs vchiq_arm vcos)
+ 
+ # vchostif needs ilcore as well (vmcs_main pulls it in)
+ target_link_libraries(vchostif vchiq_arm vcos vcfiled_check)
+diff --git a/makefiles/cmake/vmcs.cmake b/makefiles/cmake/vmcs.cmake
+index 718cd3b..ad0d22b 100644
+--- a/makefiles/cmake/vmcs.cmake
++++ b/makefiles/cmake/vmcs.cmake
+@@ -73,8 +73,8 @@ install(DIRECTORY ${vmcs_root}/interface/vctypes   DESTINATION ${VMCS_INSTALL_PR
+ install(DIRECTORY ${vmcs_root}/vcinclude           DESTINATION ${VMCS_INSTALL_PREFIX}/include           FILES_MATCHING PATTERN "*.h")
+ install(DIRECTORY ${vmcs_root}/interface/vmcs_host DESTINATION ${VMCS_INSTALL_PREFIX}/include/interface FILES_MATCHING PATTERN "*.h" PATTERN "${vmcs_root}/interface/vmcs_host/khronos" EXCLUDE)
+ 
+-install(DIRECTORY ${vmcs_root}/interface/khronos/include       DESTINATION ${VMCS_INSTALL_PREFIX}     FILES_MATCHING PATTERN "*.h")
+ install(DIRECTORY ${vmcs_root}/interface/vmcs_host/khronos/IL  DESTINATION ${VMCS_INSTALL_PREFIX}/include     FILES_MATCHING PATTERN "*.h")
+ 
++install(DIRECTORY ${vmcs_root}/interface/khronos/include/VG       DESTINATION ${VMCS_INSTALL_PREFIX}/include     FILES_MATCHING PATTERN "*.h")
+ install(DIRECTORY ${vmcs_root}/host_applications/linux/libs/bcm_host/include     DESTINATION ${VMCS_INSTALL_PREFIX}       FILES_MATCHING PATTERN "*.h")
+ 
+diff --git a/middleware/openmaxil/CMakeLists.txt b/middleware/openmaxil/CMakeLists.txt
+index 3e9c5f9..ae958ed 100644
+--- a/middleware/openmaxil/CMakeLists.txt
++++ b/middleware/openmaxil/CMakeLists.txt
+@@ -21,7 +21,6 @@ if (VIDEOCORE_SIMULATION)
+                 core/ilutil.c)
+ 
+    add_subdirectory (components)
+-
+ else ()
+ 
+    # Host build.
+diff --git a/pkgconfig/openmaxil.pc.in b/pkgconfig/openmaxil.pc.in
+new file mode 100644
+index 0000000..8793a61
+--- /dev/null
++++ b/pkgconfig/openmaxil.pc.in
+@@ -0,0 +1,10 @@
++prefix=@CMAKE_INSTALL_PREFIX@
++exec_prefix=${prefix}
++libdir=${exec_prefix}/lib
++includedir=${prefix}/include
++
++Name: openmaxil
++Description: Broadcom openmaxil library
++Version: 1
++Libs: -L${libdir} -lopenmaxil -lvcos -lvchiq_arm -pthread
++Cflags: -I${includedir} -I${includedir}/IL -I${includedir}/interface/vmcs_host/linux -I${includedir}/interface/vcos/pthreads -DUSE_VCHIQ_ARM
+-- 
+1.9.1
+

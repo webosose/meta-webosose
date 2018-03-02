@@ -1,0 +1,168 @@
+From 057c97c265e28aa8bc77ac2d30d2eb76f01757c9 Mon Sep 17 00:00:00 2001
+From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Date: Fri, 24 Jul 2015 16:04:29 +0300
+Subject: [PATCH 09/17] [PATCH 04/10] Implement initial test suit for forked
+ node.js
+
+:Release Notes:
+Implement wrapper program for using with standard node.js tests
+for testing under forked environment.
+
+:Detailed Notes:
+Wrapper program tools/fork-node.sh allows manual testing standard
+node.js test under forked environment.
+Typical usage (at root node build directory):
+tools/fork-test.sh -f -t test/tmp -n out/Release/node test-file
+
+:Testing Performed:
+Locally tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-2914] Implement node fork functionality tests
+
+Change-Id: Iba5888c43669eba283c64ce2fbc75f93bc7c909c
+Reviewed-on: https://gpro.lgsvl.com/114608
+Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+Open-webOS-DCO-1.0-Signed-off-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+---
+ tools/fork-test.sh | 124 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 124 insertions(+)
+ create mode 100755 tools/fork-test.sh
+
+diff --git a/tools/fork-test.sh b/tools/fork-test.sh
+new file mode 100755
+index 0000000..042263a
+--- /dev/null
++++ b/tools/fork-test.sh
+@@ -0,0 +1,124 @@
++#/bin/sh
++
++# see /usr/inclide/sysexist.h
++EX_USAGE=64
++EX_NOINPUT=66
++EX_UNAVAILABLE=69
++EX_NOPERM=77
++
++TMPDIR=/tmp
++EXTFLAGS=""
++
++check_flags=no
++always_rm_tmp=no
++NODE=/usr/bin/node
++
++while [ $# -gt 0 ] ; do
++	case $1 in
++		-a) shift; always_rm_tmp=yes ;;
++		-f) shift; check_flags=yes ;;
++		-n) shift; NODE=$1; shift ;;
++		-t) shift; TMPDIR=$1; shift ;;
++		--*) shft; EXTFLAGS="$EXTFLAGS $1"; shift ;;
++                *) break ;;
++	esac
++done
++
++if [ $# -eq 0 ] ; then
++	echo "Usage: $0 [-a] [-f] [-n node-executable] [-t tmp-dir] test-file"
++	echo "	-a -- rm tmp file even if test is broken"
++	echo "	-f -- check \"// Flags:\" in .js files byself"
++	echo "	-n -- node-executable file"
++	echo "	-t -- directory where tmp file are stored (would be created if does not exist)"
++	exit $EX_USAGE
++fi
++
++TESTNAM=$1
++if [ ! -f $TESTNAM ] ; then
++	echo "File $TESTNAM does not exist"
++	exit $EX_NOINPUT
++fi
++
++if [ ! -f $NODE ] ; then
++	echo "Node file $NODE does not exist"
++	exit $EX_UNAVAILABLE
++fi
++
++if [ ! -e $TMPDIR ] ; then
++	mkdir -p $TMPDIR || exit $EX_NOPERM
++elif [ ! -d $TMPDIR ] ; then
++	echo "$TMPDIR is not a directory"
++	exit $EX_UNAVAILABLE
++fi
++
++FILENAM=$TMPDIR/`basename $TESTNAM`
++
++if [ $always_rm_tmp = yes ] ; then
++	trap HUP INT QUIT "rm $FILENAM"
++fi
++
++echo "var testScript = \"$FILENAM\";" > $FILENAM
++cat >> $FILENAM <<EOF_PART_BEGIN
++
++(function runScript(path) {
++
++	var child_process = require('child_process');
++	var forkedChild;
++	var path;
++	var args;
++	var options = {
++		script: path,
++		noexec: true,
++		silent: false
++		};
++
++	try {
++		forkedChild = child_process.fork(path, options);
++	} catch (e) {
++		console.error("Failed to fork %s: " + e, path);
++		process.exit(71)
++	}
++
++	if (forkedChild.pid == 0) {
++		process.stdio = process.stdout = process.stderr = null;
++		if (process.env.NODE_CHANNEL_FD) {
++			var fd = parseInt(process.env.NODE_CHANNEL_FD, 10);
++			delete process.env.NODE_CHANNEL_FD;
++			child_process._forkChild(fd);
++		}
++EOF_PART_BEGIN
++
++cat $TESTNAM >> $FILENAM
++
++cat >> $FILENAM <<EOF_PART_END
++	} else {
++		if (options.silent) {
++			forkedChild.stdout.on('data', function(data) {
++				process.stdout.write(data);
++			});
++			forkedChild.stderr.on('data', function(data) {
++				process.stderr.write(data);
++			});
++		}
++		forkedChild.on('exit', function(code, signal) {
++			process.exit(code);
++		});
++	}
++})(testScript);
++EOF_PART_END
++
++if [ $check_flags = yes ] ; then
++	flags=`grep '^// Flags: ' $FILENAM | cut -c 11-`
++	if [ $flags ] ; then
++		EXTFLAG="$EXTFLAGS $flags"
++	fi
++fi
++ulimit -c 1024000000
++echo $NODE --noconcurrent_recompilation --noconcurrent_osr --noconcurrent_sweeping $EXTFLAG $FILENAM
++$NODE --noconcurrent_recompilation --noconcurrent_osr --noconcurrent_sweeping $EXTFLAG $FILENAM
++EXITCOD=$?
++if [ $always_rm_tmp != yes ] ; then 
++	[ $EXITCOD -eq 0 ] && rm $FILENAM
++fi
++exit $EXITCOD
++
+-- 
+1.9.1
+

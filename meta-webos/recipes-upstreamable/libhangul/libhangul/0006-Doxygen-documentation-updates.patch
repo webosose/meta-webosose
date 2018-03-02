@@ -1,0 +1,989 @@
+From 56a5ea0b5a73390b152b8917b90c351ef372a67c Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sat, 17 Dec 2011 16:31:11 +0900
+Subject: [PATCH 06/20] Doxygen documentation updates
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Doxygen 문서 업데이트
+
+libhangul이 지원하는 자판에 대한 문서 추가
+ref 태그에 띠어 쓰기가 없는 오류 수정
+mainpage도 나머지 문서와 어투를 맞춤
+
+Change-Id: I44e2e23334f778d6ffc345e1a826d627a7f2113f
+---
+ doc/Makefile                |    1 +
+ doc/gen_hangulkeyboards.py  |  505 +++++++++++++++++++++++++++++++++++++++++++
+ doc/mainpage.dox            |   43 ++--
+ hangul/hangulinputcontext.c |   98 +++++----
+ hangul/hanja.c              |   42 ++--
+ 5 files changed, 603 insertions(+), 86 deletions(-)
+ create mode 100755 doc/gen_hangulkeyboards.py
+
+diff --git a/doc/Makefile b/doc/Makefile
+index 03172d6..abf0896 100644
+--- a/doc/Makefile
++++ b/doc/Makefile
+@@ -1,4 +1,5 @@
+ doc:
++	./gen_hangulkeyboards.py > hangulkeyboards.dox
+ 	doxygen
+ 
+ clean:
+diff --git a/doc/gen_hangulkeyboards.py b/doc/gen_hangulkeyboards.py
+new file mode 100755
+index 0000000..48ad975
+--- /dev/null
++++ b/doc/gen_hangulkeyboards.py
+@@ -0,0 +1,505 @@
++#!/usr/bin/env python
++# coding=utf-8
++
++import sys
++
++table = {}
++
++current_name = ''
++current_table = []
++
++src = open('../hangul/hangulkeyboard.h', 'r')
++for i in src.readlines():
++	pos = i.find('hangul_keyboard_table_')
++	if pos >= 0:
++		end = i.find('[')
++		current_name = i[pos + 22:end];
++		continue
++		
++	pos = i.find('}')
++	if pos >= 0:
++		if len(current_name) > 0:
++			table[current_name] = current_table
++			current_name = ''
++			current_table = []
++		continue
++
++	if len(current_name) > 0:
++		code = int(i.split()[0].replace(',', ''), 16)
++		current_table.append(code)
++
++def jamo_to_compat_jamo(code):
++	table = [
++		0x3131, 0x3132, 0x3134, 0x3137,
++		0x3138, 0x3139, 0x3141, 0x3142,
++		0x3143, 0x3145, 0x3146, 0x3147,
++		0x3148, 0x3149, 0x314a, 0x314b,
++		0x314c, 0x314d, 0x314e, 0x0000,
++		0x3165, 0x3166, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x3140, 0x0000,
++		0x316e, 0x3171, 0x3172, 0x0000,
++		0x3173, 0x3144, 0x3174, 0x3175,
++		0x0000, 0x0000, 0x0000, 0x3176,
++		0x0000, 0x3177, 0x0000, 0x3178,
++		0x3179, 0x317a, 0x317b, 0x317c,
++		0x0000, 0x0000, 0x317d, 0x0000,
++		0x0000, 0x0000, 0x317e, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x317f, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x3180,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x3181, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x3184,
++		0x3185, 0x3186, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x3164, 0x314f, 0x3150, 0x3151,
++		0x3152, 0x3153, 0x3154, 0x3155,
++		0x3156, 0x3157, 0x3158, 0x3159,
++		0x315a, 0x315b, 0x315c, 0x315d,
++		0x315e, 0x315f, 0x3160, 0x3161,
++		0x3162, 0x3163, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x3187, 0x3188, 0x0000, 0x0000,
++		0x3189, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x318a, 0x318b, 0x0000,
++		0x318c, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x318d, 0x0000,
++		0x0000, 0x318e, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x3131, 0x3132, 0x3133, 0x3134,
++		0x3135, 0x3136, 0x3137, 0x3139,
++		0x313a, 0x313b, 0x313c, 0x313d,
++		0x313e, 0x313f, 0x3140, 0x3141,
++		0x3142, 0x3144, 0x3145, 0x3146,
++		0x3147, 0x3148, 0x314a, 0x314b,
++		0x314c, 0x314d, 0x314e, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x3167,
++		0x3168, 0x0000, 0x0000, 0x0000,
++		0x3169, 0x0000, 0x316a, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x316b,
++		0x0000, 0x0000, 0x0000, 0x316c,
++		0x0000, 0x316d, 0x0000, 0x0000,
++		0x0000, 0x316f, 0x0000, 0x3170,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x3182, 0x3183, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++		0x0000, 0x0000, 0x0000, 0x0000,
++	]
++
++	ret = 0
++	if code >= 0x1100 and code <= 0x11ff:
++		ret = table[code - 0x1100]
++
++	if ret == 0:
++		return code
++	else:
++		return ret
++
++def is_choseong(code):
++	if code >= 0x1100 and code <= 0x115f:
++		return True
++	else:
++		return False
++
++def is_jungseong(code):
++	if code >= 0x1160 and code <= 0x11a7:
++		return True
++	else:
++		return False
++
++def is_jongseong(code):
++	if code >= 0x11a8 and code <= 0x11ff:
++		return True
++	else:
++		return False
++
++def to_html_entity(code):
++	if is_choseong(code):
++		return '&#%d;&#%d;' % (code, 0x1160)
++	elif is_jungseong(code):
++		return '&#%d;&#%d;' % (0x115f, code)
++	elif is_jongseong(code):
++		return '&#%d;&#%d;&#%d;' % (0x115f, 0x1160, code)
++	else:
++		return '&#%d;' % code
++#	if is_choseong(code):
++#		return (unichr(code) + u'\x1160').encode('utf-8')
++#	elif is_jungseong(code):
++#		return (u'\0x115f' + unichr(code)).encode('utf-8')
++#	elif is_jongseong(code):
++#		return (u'\x115f\x1160' + unichr(code)).encode('utf-8')
++#	else:
++#		return unichr(code).encode('utf-8')
++
++def to_choseong_label(s):
++	return '<span class="choseong">%s</span>' % s
++
++def to_jungseong_label(s):
++	return '<span class="jungseong">%s</span>' % s
++
++def to_jongseong_label(s):
++	return '<span class="jongseong">%s</span>' % s
++
++def to_regular_label(s):
++	return '<span class="other">%s</span>' % s
++
++def make_label(code):
++	c = jamo_to_compat_jamo(code)
++	s = to_html_entity(c);
++
++	if is_choseong(code):
++		return to_choseong_label(s)
++	elif is_jungseong(code):
++		return to_jungseong_label(s)
++	elif is_jongseong(code):
++		return to_jongseong_label(s)
++	else:
++		return to_regular_label(s)
++
++def print_empty_cell():
++	print '<td class="emptycell"></td>'
++
++def print_cell_with_label(label, span):
++	print '<td class="graykeycell" colspan="%d">%s</td>' % (span, label)
++
++def print_cell_with_table(table, upper_index, lower_index, span = 4):
++	upper = table[upper_index];
++	lower = table[lower_index];	
++
++	if upper == lower:
++		upper = ord(' ')
++
++	print '<td class="keycell" colspan="%d">%s<br/>%s</td>' % (span, make_label(upper), make_label(lower))
++
++def print_keyboard_table(table):
++	print ''
++	print '@htmlonly'
++	print ''
++	print '<table class="keyboard">'
++
++	print '<tr>'
++	for i in range(0, 60):
++		print_empty_cell()
++	print '</tr>'
++
++	# 1st row
++	print '<tr>'
++	print_cell_with_table(table, 0x7e, 0x60)
++	print_cell_with_table(table, 0x21, 0x31)
++	print_cell_with_table(table, 0x40, 0x32)
++	print_cell_with_table(table, 0x23, 0x33)
++	print_cell_with_table(table, 0x24, 0x34)
++	print_cell_with_table(table, 0x25, 0x35)
++	print_cell_with_table(table, 0x5e, 0x36)
++	print_cell_with_table(table, 0x26, 0x37)
++	print_cell_with_table(table, 0x2a, 0x38)
++	print_cell_with_table(table, 0x28, 0x39)
++	print_cell_with_table(table, 0x29, 0x30)
++	print_cell_with_table(table, 0x5f, 0x2d)
++	print_cell_with_table(table, 0x2b, 0x3d)
++	print_cell_with_label('Backspace', 8)
++	print '</tr>'
++
++	# 2nd row
++	print '<tr>'
++	print_cell_with_label('Tab', 6)
++	print_cell_with_table(table, 0x51, 0x71)
++	print_cell_with_table(table, 0x57, 0x77)
++	print_cell_with_table(table, 0x45, 0x65)
++	print_cell_with_table(table, 0x52, 0x72)
++	print_cell_with_table(table, 0x54, 0x74)
++	print_cell_with_table(table, 0x59, 0x79)
++	print_cell_with_table(table, 0x55, 0x75)
++	print_cell_with_table(table, 0x49, 0x69)
++	print_cell_with_table(table, 0x4f, 0x6f)
++	print_cell_with_table(table, 0x50, 0x70)
++	print_cell_with_table(table, 0x7b, 0x5b)
++	print_cell_with_table(table, 0x7d, 0x5d)
++	print_cell_with_table(table, 0x7c, 0x5c, 6)
++	print '</tr>'
++
++	# 3rd row
++	print '<tr>'
++	print_cell_with_label('Caps Lock', 8)
++	print_cell_with_table(table, 0x41, 0x61)
++	print_cell_with_table(table, 0x53, 0x73)
++	print_cell_with_table(table, 0x44, 0x64)
++	print_cell_with_table(table, 0x46, 0x66)
++	print_cell_with_table(table, 0x47, 0x67)
++	print_cell_with_table(table, 0x48, 0x68)
++	print_cell_with_table(table, 0x4a, 0x6a)
++	print_cell_with_table(table, 0x4b, 0x6b)
++	print_cell_with_table(table, 0x4c, 0x6c)
++	print_cell_with_table(table, 0x3a, 0x3b)
++	print_cell_with_table(table, 0x22, 0x27)
++	print_cell_with_label('Enter', 8)
++	print '</tr>'
++
++	# 4th row
++	print '<tr>'
++	print_cell_with_label('Shift', 10)
++	print_cell_with_table(table, 0x5a, 0x7a)
++	print_cell_with_table(table, 0x58, 0x78)
++	print_cell_with_table(table, 0x43, 0x63)
++	print_cell_with_table(table, 0x56, 0x76)
++	print_cell_with_table(table, 0x42, 0x62)
++	print_cell_with_table(table, 0x4e, 0x6e)
++	print_cell_with_table(table, 0x4d, 0x6d)
++	print_cell_with_table(table, 0x3c, 0x2c)
++	print_cell_with_table(table, 0x3e, 0x2e)
++	print_cell_with_table(table, 0x3f, 0x2f)
++	print_cell_with_label('Shift', 10)
++	print '</tr>'
++
++	# 5th row
++	print '<!--'
++	print '<tr>'
++	print_cell_with_label('Ctrl', 5)
++	print_cell_with_label('Super', 4)
++	print_cell_with_label('Alt', 5)
++	print_cell_with_label('한자', 4)
++	print_cell_with_label('&nbsp;<br/>&nbsp;', 20)
++	print_cell_with_label('한/영', 4)
++	print_cell_with_label('Alt', 5)
++	print_cell_with_label('Super', 4)
++	print_cell_with_label('Menu', 4)
++	print_cell_with_label('Ctrl', 5)
++	print '</tr>'
++	print '-->'
++	print '</table>'
++	print ''
++	print '@endhtmlonly'
++	print ''
++
++
++print '''/**
++
++@defgroup hangulkeyboards 한글 자판
++
++libhangul에서 builtin으로 지원하는 자판은 @ref layout_2, @ref layout_2y,
++@ref layout_3f, @ref layout_390, @ref layout_3s, @ref layout_2y,
++@ref layout_3y, @ref layout_ahn, @ref layout_ro 자판 이다.
++
++아래의 자판 배열은 libhangul에서 지원하는 자판을 알아보기 쉽게 그림형태로
++나타낸 것이다.
++@li 각 네모에 표시된 글자중 위에 있는 글자는 shift와 함께 눌렀을때
++입력되는 글자고 아래에 있는 글자는 그냥 눌렀을때 입력되는 글자다.
++@li 초성, 중성, 종성은 각각 붉은색, 녹색, 파란색(RGB 순서)으로 표시하였다.
++@li 한글이 아닌 것은 검은색으로 표시하였다.
++
++@htmlonly
++
++<style type="text/css">
++
++.choseong {
++	color: darkred;
++}
++
++.jungseong {
++	color: darkgreen;
++}
++
++.jongseong {
++	color: darkblue;
++}
++
++.other {
++	color: black;
++}
++
++table.keyboard {
++	font-family: sans-serif;
++	font-size: 120%;
++	border: 0px solid darkgray;
++	padding: 3px;
++	border-collapse: collapse;
++	border-collapse: separate;
++}
++
++td.emptycell {
++	width: 8px;
++	height: -3px;
++	padding: 0px;
++	margin: 0px;
++	border-style: none;
++}
++
++td.keycell {
++	text-align: center;
++	line-height: 110%;
++	background: whitesmoke;
++	padding: 2px;
++	margin: 1px;
++	border: 1px solid dimgray;
++	//border-width: 0px 1px 1px 0px;
++}
++
++td.graykeycell {
++	font-size: small;
++	text-align: center;
++	line-height: 110%;
++	color: lightgray;
++	background-color: white;
++	padding: 2px;
++	margin: 0px;
++	border: 2px solid lightgray;
++	border-width: 1px 1px 1px 1px;
++}
++
++</style>
++
++@endhtmlonly
++
++'''
++
++print '''@section layout_2 두벌식
++이 자판은 표준 두벌식을 구현한 것이다. 그러나 표준 자판과 조금 다른 동작이
++있다. 된소리 ㅃㅉㄸㄲㅆ들은 shift와 함께 누르는 방법 이외에도 반복해서
++누르면 입력된다.
++'''
++print_keyboard_table(table['2'])
++print ''
++
++print '''@section layout_2y 두벌식 옛글
++이 자판은 옛한글을 입력하기 위한 두벌식 자판이다. 아래한글의 두벌식 옛글 자판과
++같은 배열을 가지도록 만들었다. @ref layout_2 자판과 마찬가지로 된소리를 두번
++누르는 방법으로 입력할 수 있다.
++'''
++print_keyboard_table(table['2y'])
++print ''
++
++print '''@section layout_3f 세벌식 최종
++이 자판은 세벌식 최종 자판을 구현한 것이다. 원래 방식대로라면 왼쪽의 ㅗㅜ는
++다른 모음과 조합되지 않아야 하지만, libhangul에서는 좌우의 ㅗㅜ를 구분하지
++않고 다른 모음과 조합된다.
++'''
++print_keyboard_table(table['3final'])
++print ''
++
++print '''@section layout_390 세벌식 390
++이 자판은 세벌식 390 자판을 구현한 것이다. 원래 방식대로라면 왼쪽의 ㅗㅜ는
++다른 모음과 조합되지 않아야 하지만, libhangul에서는 좌우의 ㅗㅜ를 구분하지
++않고 다른 모음과 조합된다.
++'''
++print_keyboard_table(table['390'])
++print ''
++
++print '''@section layout_3s 세벌식 순아래
++이 자판은 세벌식 순아래 자판을 구현한 것이다.
++'''
++print_keyboard_table(table['3sun'])
++print ''
++
++print '''@section layout_3y 세벌식 옛글
++이 자판은 세벌식 옛글 자판을 구현한 것이다. 자판 배열은 아래한글의 세벌식
++옛글 자판과 동일하다.
++'''
++print_keyboard_table(table['3yet'])
++print ''
++
++print '''@section layout_32 세벌식 두벌배열
++이 자판은 두벌식 자판의 배열을 그대로 사용하면서 shift와 함께 자음을 누르면
++종성으로 입력되도록 만든 자판이다. 일반 사용을 위해 만들어진 것이 아니고
++두벌식 사용자가 손쉽게 세벌식 자판의 테스트를 할 수 있도록 하기 위해서
++만든 자판이다.
++'''
++print_keyboard_table(table['32'])
++print ''
++
++print '''@section layout_ahn 안마태
++이 자판은 안마태 자판을 구현한 것이다. libhangul의 안마태 자판 구현은
++안마태 자판의 규격을 충실하게 구현한 것은 아니고 적당한 수준에서 사용가능하게
++만든 것이다. 키입력이 동시에 일어났는지 판단하여 입력을 하는 방식이 아니고,
++키를 순서대로 입력하여도 자모를 조합하도록 구현하여, 안마태 자판과 유사한
++동작을 하도록 구현하였다.
++'''
++print_keyboard_table(table['ahn'])
++print ''
++
++print '''@section layout_ro 로마자
++이 자판은 현재 자판 배열의 라틴 문자를 음차하여 한글로 입력되도록 만든 자판이다.
++예를 들면 'an'을 치면 '안'이 입력되는 방식이다.
++로마자 자판은 다른 한글자판과 달리 <a href="http://en.wikipedia.org/wiki/Transliteration">Transliteration</a> 방식으로 작동하는
++자판이므로 별도의 레이아웃이 없다. 이 입력 자판에서 사용한 알파벳과 한글
++자모의 대응은 기본적으로 한글 로마자 표기법과 유사하지만
++동일하지는 않다. 로마자 자판은 한글을 입력하기 위한 것이므로 한글을 그럴듯
++하게 표기하기 위한 로마자 표기법과는 목적이 다르다. 주로 한글 자모를 모두
++입력할 수 있도록 하는 것을 우선적으로 고려하였다. 따라서 아래 자판의 대응대로
++한글을 로마자로 표기하는 것은 로마자 표기법으로는 적절하지 않다.
++
++한글 자모와 알파벳의 대응은 아래와 같다.
++@li ㄱ : g
++@li ㄴ : n
++@li ㄷ : d
++@li ㄹ : r, l
++@li ㅁ : m
++@li ㅂ : b, v
++@li ㅅ : s
++@li ㅇ : ng
++@li ㅈ : j
++@li ㅊ : c, ch
++@li ㅋ : k, q
++@li ㅌ : t
++@li ㅍ : f, p
++@li ㅎ : h
++
++@li ㄲ : gg
++@li ㄸ : dd
++@li ㅃ : bb
++@li ㅆ : ss
++@li ㅉ : jj
++@li ㅊ : ch
++
++@li ㅏ : a
++@li ㅐ : ae, ai
++@li ㅑ : ya, ia
++@li ㅒ : yae, yai, iae, iai
++@li ㅓ : eo
++@li ㅔ : e
++@li ㅕ : yeo, ieo
++@li ㅖ : ye, ie
++@li ㅗ : o
++@li ㅘ : oa, wa
++@li ㅙ : oae, oai
++@li ㅚ : oi
++@li ㅛ : yo, io
++@li ㅜ : u, w
++@li ㅝ : ueo,  weo, uo
++@li ㅞ : ue
++@li ㅟ : ui, wi
++@li ㅠ : yu, iu
++@li ㅡ : eu
++@li ㅢ : eui
++@li ㅣ : i, y
++
++그 외에 다음과 같은 조합 규칙이 있다.
++
++@li 자음없이 모음만 먼저 입력하면 초성 ㅇ이 추가된다.
++    예를 들어 'a'만 눌러도 '아'로 입력된다.
++@li ng 는 종성 ㅇ으로 입력된다.
++@li x는 음절의 시작에서는 초성 ㅈ, 끝에서는 종성 ㄳ으로 입력된다.
++@li 종성의 자음군은 앞음절의 글자로 입력된다.
++    예를 들어 'banga'는 '방아'로 입력된다.
++@li 대문자를 입력하면 음절의 시작으로 인식한다.
++    예를 들어 'banga'는 '방아'로, 'banGa'는 '반가'로 입력된다.
++    'beos'는 '벗'으로 'beOs'는 '베옷'으로 입력된다.
++@li 자음군으로 음절이 시작되면 ㅡ를 자동으로 추가한다.
++    예를 들어 'string'을 입력하면 s와 t에 ㅡ가 붙게 되어 '스트링'으로 입력된다.
++
++@sa
++다음 위키 페이지를 참조하라. @n
++http://en.wikipedia.org/wiki/Korean_romanization @n
++http://en.wikipedia.org/wiki/Revised_Romanization_of_Korean
++
++'''
++print '*/'
+diff --git a/doc/mainpage.dox b/doc/mainpage.dox
+index 989263a..0c986f0 100644
+--- a/doc/mainpage.dox
++++ b/doc/mainpage.dox
+@@ -3,34 +3,43 @@
+ @mainpage
+ 
+ @section introduction libhangul 소개
+-libhangul은 기본적인 한글 관련 루틴들을 구현한 라이브러리입니다.
++libhangul은 기본적인 한글 관련 루틴들을 구현한 라이브러리다.
+ 주로 한글 입력기능을 구현한 것으로 이 라이브러리를 사용하면 비교적 손쉽게
+-한글 입력기를 구현할 수 있습니다. 현재 많은 linux의 입력기들이 이 라이브러리로
+-구현되어 있습니다.
++한글 입력기를 구현할 수 있다. 현재 많은 linux의 입력기들이 이 라이브러리로
++구현되어 있다.
+ 
+ @section documentation 개발 문서
+-libhangul에서 제공하는 기능들은 다음 레퍼런스에서 찾아볼 수 있습니다.
+-@li @ref hangulctype : 유니코드에서 한글 글자를 구분하고 조작하는 함수들입니다.
+-이 함수들을 이용하면 자모 코드를 음절로 조합할 수 있고 또 음절을 자모 코드로 분리할 수 있습니다.
+-@li @ref hangulicusage : 한글 입력 기능을 제공합니다. 이 함수들을 이용하여 키 입력에 따른 한글 조합 기능을 손쉽게 구현할 수 있습니다.
+-@li @ref hanjadictionaryusage : 한자 사전 파일 관련 기능을 제공합니다. 이 함수들을 이용하여 libhangul에서 제공하는 한자 사전 파일을 찾아볼 수 있습니다.
++libhangul에서 제공하는 기능들은 다음 레퍼런스에서 찾아볼 수 있다.
++@li @ref hangulctype : 유니코드로된 한글 글자를 구분하고 조작하는 함수이다.
++이 함수들을 이용하면 자모 코드를 음절로 조합할 수 있고 또 음절을 자모 코드로
++분리할 수 있다.
++@li @ref hangulicusage : 한글 입력 기능을 제공한다. 이 함수들을 이용하여 키
++입력에 따른 한글 조합 기능을 손쉽게 구현할 수 있다.
++@li @ref hanjadictionaryusage : 한자 사전 파일 관련 기능을 제공한다.
++이 함수들을 이용하여 libhangul에서 제공하는 한자 사전 파일을 찾아볼 수 있다.
+ 
+ @section download 다운로드
+-최근 릴리스들은 libhangul의 프로젝트 페이지에서 받을 수 있습니다.
+-@li http://code.google.com/p/libhangul/downloads/list
++최근 릴리스들은 libhangul의 프로젝트 페이지에서 받을 수 있다.
++
++http://code.google.com/p/libhangul/downloads/list
+ 
+ 개발버젼의 소스는 <a href="http://github.com/">github</a>의 
+-repository에서 받을 수 있습니다.
+-@li git: git://github.com/choehwanjin/libhangul.git
++repository에서 받을 수 있다.
++
++@code
++git clone git://github.com/choehwanjin/libhangul.git
++@endcode
+ 
+ @section bug 버그리포트
+-libhangul의 버그는 <a href="http://code.google.com/">Google code</a>의 버그트래커로
+-관리하고 있습니다.
++libhangul의 버그는 <a href="http://code.google.com/">Google code</a>의
++버그트래커로 관리하고 있다.
+ 
+-@li 버그트래커: http://code.google.com/p/libhangul/issues/list
++버그트래커: http://code.google.com/p/libhangul/issues/list
+ 
+ @section website 웹주소
+-libhangul은 <a href="http://code.google.com/">Google code</a>에서 호스팅되고 있습니다.
+- @li Project page: http://code.google.com/p/libhangul/
++libhangul은 <a href="http://code.google.com/">Google code</a>에서 호스팅되고
++있다.
++
++Project page: http://code.google.com/p/libhangul/
+ 
+  */
+diff --git a/hangul/hangulinputcontext.c b/hangul/hangulinputcontext.c
+index 972e75e..0915c76 100644
+--- a/hangul/hangulinputcontext.c
++++ b/hangul/hangulinputcontext.c
+@@ -55,8 +55,8 @@
+  * string 형태로 보내여 입력을 완료하는 것이다. 다음 키를 받게 되면 
+  * 이 과정을 반복해서 수행한다.
+  * 
+- * libhangul에서 한글 조합 기능은 @ref HangulInputContext를 이용해서 구현하게
+- * 되는데 기본 적인 방법은 @ref HangulInputContext에 사용자로부터의 입력을
++ * libhangul에서 한글 조합 기능은 @ref HangulInputContext 를 이용해서 구현하게
++ * 되는데 기본 적인 방법은 @ref HangulInputContext 에 사용자로부터의 입력을
+  * 순서대로 전달하면서 그 상태가 바뀜에 따라서 preedit 나 commit 스트링을
+  * 상황에 맞게 변화시키는 것이다.
+  * 
+@@ -1259,7 +1259,7 @@ flush:
+  * @brief 키 입력을 처리하여 실제로 한글 조합을 하는 함수
+  * @param hic @ref HangulInputContext 오브젝트
+  * @param ascii 키 이벤트
+- * @return @ref HangulInputContext가 이 키를 사용했으면 true,
++ * @return @ref HangulInputContext 가 이 키를 사용했으면 true,
+  *	     사용하지 않았으면 false
+  *
+  * ascii 값으로 주어진 키 이벤트를 받아서 내부의 한글 조합 상태를
+@@ -1278,7 +1278,7 @@ flush:
+  * 
+  * 이 함수의 사용법에 대한 설명은 @ref hangulicusage 부분을 참조한다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시킨다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시킨다.
+  */
+ bool
+ hangul_ic_process(HangulInputContext *hic, int ascii)
+@@ -1313,7 +1313,7 @@ hangul_ic_process(HangulInputContext *hic, int ascii)
+  * 이 함수는  @a hic 내부의 현재 상태의 preedit string을 리턴한다.
+  * 따라서 hic가 다른 키 이벤트를 처리하고 나면 그 내용이 바뀔 수 있다.
+  * 
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시키지 않는다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시키지 않는다.
+  */
+ const ucschar*
+ hangul_ic_get_preedit_string(HangulInputContext *hic)
+@@ -1334,7 +1334,7 @@ hangul_ic_get_preedit_string(HangulInputContext *hic)
+  * 이 함수는  @a hic 내부의 현재 상태의 commit string을 리턴한다.
+  * 따라서 hic가 다른 키 이벤트를 처리하고 나면 그 내용이 바뀔 수 있다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시키지 않는다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시키지 않는다.
+  */
+ const ucschar*
+ hangul_ic_get_commit_string(HangulInputContext *hic)
+@@ -1347,17 +1347,17 @@ hangul_ic_get_commit_string(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext를 초기상태로 되돌리는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 를 초기상태로 되돌리는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  * 
+- * 이 함수는 @a hic가 가리키는 @ref HangulInputContext의 상태를 
++ * 이 함수는 @a hic가 가리키는 @ref HangulInputContext 의 상태를 
+  * 처음 상태로 되돌린다. preedit 스트링, commit 스트링, flush 스트링이
+  * 없어지고, 입력되었던 키에 대한 기록이 없어진다.
+  * 영어 상태로 바뀌는 것이 아니다.
+  *
+  * 비교: hangul_ic_flush()
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시킨다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시킨다.
+  */
+ void
+ hangul_ic_reset(HangulInputContext *hic)
+@@ -1385,12 +1385,12 @@ hangul_ic_flush_internal(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext의 입력 상태를 완료하는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 의 입력 상태를 완료하는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  * @return 조합 완료된 스트링, 스트링의 길이가 0이면 조합 완료된 스트링이 
+  *	  없는 것
+  *
+- * 이 함수는 @a hic가 가리키는 @ref HangulInputContext의 입력 상태를 완료한다.
++ * 이 함수는 @a hic가 가리키는 @ref HangulInputContext 의 입력 상태를 완료한다.
+  * 조합중이던 스트링을 완성하여 리턴한다. 그리고 입력 상태가 초기 상태로 
+  * 되돌아 간다. 조합중이던 글자를 강제로 commit하고 싶을때 사용하는 함수다.
+  * 보통의 경우 입력 framework에서 focus가 나갈때 이 함수를 불러서 마지막 
+@@ -1398,7 +1398,7 @@ hangul_ic_flush_internal(HangulInputContext *hic)
+  *
+  * 비교: hangul_ic_reset()
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시킨다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시킨다.
+  */
+ const ucschar*
+ hangul_ic_flush(HangulInputContext *hic)
+@@ -1426,16 +1426,16 @@ hangul_ic_flush(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext가 backspace 키를 처리하도록 하는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 가 backspace 키를 처리하도록 하는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  * @return @a hic가 키를 사용했으면 true, 사용하지 않았으면 false
+  * 
+- * 이 함수는 @a hic가 가리키는 @ref HangulInputContext의 조합중이던 글자를
++ * 이 함수는 @a hic가 가리키는 @ref HangulInputContext 의 조합중이던 글자를
+  * 뒤에서부터 하나 지우는 기능을 한다. backspace 키를 눌렀을 때 발생하는 
+  * 동작을 한다. 따라서 이 함수를 부르고 나면 preedit string이 바뀌므로
+  * 반드시 업데이트를 해야 한다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시킨다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시킨다.
+  */
+ bool
+ hangul_ic_backspace(HangulInputContext *hic)
+@@ -1456,12 +1456,12 @@ hangul_ic_backspace(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext가 조합중인 글자를 가지고 있는지 확인하는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 가 조합중인 글자를 가지고 있는지 확인하는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  *
+- * @ref HangulInputContext가 조합중인 글자가 있으면 true를 리턴한다.
++ * @ref HangulInputContext 가 조합중인 글자가 있으면 true를 리턴한다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시키지 않는다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시키지 않는다.
+  */
+ bool
+ hangul_ic_is_empty(HangulInputContext *hic)
+@@ -1471,12 +1471,12 @@ hangul_ic_is_empty(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext가 조합중인 초성을 가지고 있는지 확인하는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 가 조합중인 초성을 가지고 있는지 확인하는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  *
+- * @ref HangulInputContext가 조합중인 글자가 초성이 있으면 true를 리턴한다.
++ * @ref HangulInputContext 가 조합중인 글자가 초성이 있으면 true를 리턴한다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시키지 않는다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시키지 않는다.
+  */
+ bool
+ hangul_ic_has_choseong(HangulInputContext *hic)
+@@ -1486,12 +1486,12 @@ hangul_ic_has_choseong(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext가 조합중인 중성을 가지고 있는지 확인하는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 가 조합중인 중성을 가지고 있는지 확인하는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  *
+- * @ref HangulInputContext가 조합중인 글자가 중성이 있으면 true를 리턴한다.
++ * @ref HangulInputContext 가 조합중인 글자가 중성이 있으면 true를 리턴한다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시키지 않는다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시키지 않는다.
+  */
+ bool
+ hangul_ic_has_jungseong(HangulInputContext *hic)
+@@ -1501,12 +1501,12 @@ hangul_ic_has_jungseong(HangulInputContext *hic)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext가 조합중인 종성을 가지고 있는지 확인하는 함수
+- * @param hic @ref HangulInputContext를 가리키는 포인터
++ * @brief @ref HangulInputContext 가 조합중인 종성을 가지고 있는지 확인하는 함수
++ * @param hic @ref HangulInputContext 를 가리키는 포인터
+  *
+- * @ref HangulInputContext가 조합중인 글자가 종성이 있으면 true를 리턴한다.
++ * @ref HangulInputContext 가 조합중인 글자가 종성이 있으면 true를 리턴한다.
+  *
+- * @remarks 이 함수는 @ref HangulInputContext의 상태를 변화 시키지 않는다.
++ * @remarks 이 함수는 @ref HangulInputContext 의 상태를 변화 시키지 않는다.
+  */
+ bool
+ hangul_ic_has_jongseong(HangulInputContext *hic)
+@@ -1591,23 +1591,25 @@ hangul_ic_get_keyboard_by_id(const char* id)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext의 자판 배열을 바꾸는 함수
++ * @brief @ref HangulInputContext 의 자판 배열을 바꾸는 함수
+  * @param hic @ref HangulInputContext 오브젝트
+  * @param id 선택하고자 하는 자판, 아래와 같은 값을 선택할 수 있다.
+- *	    @li "2"   두벌식 자판
+- *	    @li "32"  세벌식 자판으로 두벌식의 배열을 가진 자판.
+- *		      두벌식 사용자가 쉽게 세벌식 테스트를 할 수 있다.
+- *		      shift를 누르면 자음이 종성으로 동작한다.
+- *	    @li "3f"  세벌식 최종
+- *	    @li "39"  세벌식 390
+- *	    @li "3s"  세벌식 순아래
+- *	    @li "3y"  세벌식 옛글
+- *	    @li "ro"  로마자 방식 자판
++ *   @li "2"   @ref layout_2 자판
++ *   @li "2y"  @ref layout_2y 자판
++ *   @li "3f"  @ref layout_3f 자판
++ *   @li "39"  @ref layout_390 자판
++ *   @li "3s"  @ref layout_3s 자판
++ *   @li "3y"  @ref layout_3y 자판
++ *   @li "32"  @ref layout_32 자판
++ *   @li "ro"  @ref layout_ro 자판
++ *
++ *   libhangul이 지원하는 자판에 대한 정보는 @ref hangulkeyboards 페이지를
++ *   참조하라.
+  * @return 없음
+  * 
+- * 이 함수는 @ref HangulInputContext의 자판을 @a id로 지정된 것으로 변경한다.
++ * 이 함수는 @ref HangulInputContext 의 자판을 @a id로 지정된 것으로 변경한다.
+  * 
+- * @remarks 이 함수는 @ref HangulInputContext의 내부 조합 상태에는 영향을
++ * @remarks 이 함수는 @ref HangulInputContext 의 내부 조합 상태에는 영향을
+  * 미치지 않는다.  따라서 입력 중간에 자판을 변경하더라도 조합 상태는 유지된다.
+  */
+ void
+@@ -1640,7 +1642,7 @@ hangul_ic_set_combination(HangulInputContext *hic,
+  * @brief @ref HangulInputContext 오브젝트를 생성한다.
+  * @param keyboard 사용하고자 하는 키보드, 사용 가능한 값에 대해서는
+  *	hangul_ic_select_keyboard() 함수 설명을 참조한다.
+- * @return 새로 생성된 @ref HangulInputContext에 대한 포인터
++ * @return 새로 생성된 @ref HangulInputContext 에 대한 포인터
+  * 
+  * 이 함수는 한글 조합 기능을 제공하는 @ref HangulInputContext 오브젝트를 
+  * 생성한다. 생성할때 지정한 자판은 나중에 hangul_ic_select_keyboard() 함수로
+@@ -1678,7 +1680,7 @@ hangul_ic_new(const char* keyboard)
+ 
+ /**
+  * @ingroup hangulic
+- * @brief @ref HangulInputContext를 삭제하는 함수
++ * @brief @ref HangulInputContext 를 삭제하는 함수
+  * @param hic @ref HangulInputContext 오브젝트
+  * 
+  * @a hic가 가리키는 @ref HangulInputContext 오브젝트의 메모리를 해제한다.
+diff --git a/hangul/hanja.c b/hangul/hanja.c
+index 6d2de65..84c57b0 100644
+--- a/hangul/hanja.c
++++ b/hangul/hanja.c
+@@ -93,8 +93,8 @@
+  * 한자 사전 포맷은 @ref HanjaTable 부분을 참조한다.
+  *
+  * 한자 사전을 검색하면 결과는 Hanja 오브젝트의 리스트 형태로 전달된다.
+- * @ref HanjaList에서 각 엔트리의 내용을 하나씩 확인할 수 있다.
+- * Hanja의 멤버는 직접 참조할 수 없고, hanja_get_key(), hanja_get_value(),
++ * @ref HanjaList 에서 각 엔트리의 내용을 하나씩 확인할 수 있다.
++ * @ref Hanja 의 멤버는 직접 참조할 수 없고, hanja_get_key(), hanja_get_value(),
+  * hanja_get_comment() 함수로 찾아볼 수 있다.
+  * char 스트링으로 전달되는 내용은 모두 UTF-8 인코딩으로 되어 있다.
+  */
+@@ -107,7 +107,7 @@
+  * 한자 사전의 검색 함수를 사용하면 이 타입으로 결과를 리턴한다. 
+  * 이 오브젝트에서 hanja_list_get_nth()함수를 이용하여 검색 결과를
+  * 이터레이션할 수 있다.  내부 구현 내용은 외부로 노출되어 있지 않다.
+- * @ref HanjaList가 가지고 있는 아이템들은 accessor 함수들을 이용해서 참조한다.
++ * @ref HanjaList 가 가지고 있는 아이템들은 accessor 함수들을 이용해서 참조한다.
+  *
+  * 참조: hanja_list_get_nth(), hanja_list_get_nth_key(),
+  * hanja_list_get_nth_value(), hanja_list_get_nth_comment()
+@@ -133,7 +133,7 @@
+  *
+  * 각 필드는 @b @c : 으로 구분하고, 첫번째 필드는 각 한자를 찾을 키값이고 
+  * 두번째 필드는 그 키값에 해당하는 한자 스트링, 세번째 필드는 이 키와
+- * 값에 대한 설명이다. #으로 시작하는 라인은 주석으로 무시된다.
++ * 값에 대한 설명이다. @# 으로 시작하는 라인은 주석으로 무시된다.
+  *
+  * 실제 예를 들면 다음과 같은 식이다.
+  *
+@@ -276,7 +276,7 @@ hanja_delete(Hanja* hanja)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref Hanja의 키를 찾아본다.
++ * @brief @ref Hanja 의 키를 찾아본다.
+  * @return @a hanja 오브젝트의 키, UTF-8
+  *
+  * 일반적으로 @ref Hanja 아이템의 키는 한글이다.
+@@ -295,7 +295,7 @@ hanja_get_key(const Hanja* hanja)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref Hanja의 값을 찾아본다.
++ * @brief @ref Hanja 의 값을 찾아본다.
+  * @return @a hanja 오브젝트의 값, UTF-8
+  *
+  * 일반적으로 @ref Hanja 아이템의 값은 key에 대응되는 한자다.
+@@ -314,7 +314,7 @@ hanja_get_value(const Hanja* hanja)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref Hanja의 설명을 찾아본다.
++ * @brief @ref Hanja 의 설명을 찾아본다.
+  * @return @a hanja 오브젝트의 comment 필드, UTF-8
+  *
+  * 일반적으로 @ref Hanja 아이템의 설명은 한글과 그 한자에 대한 설명이다.
+@@ -660,7 +660,7 @@ hanja_table_match_suffix(const HanjaTable* table, const char *key)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref HanjaList가 가지고 있는 아이템의 갯수를 구하는 함수
++ * @brief @ref HanjaList 가 가지고 있는 아이템의 갯수를 구하는 함수
+  */
+ int
+ hanja_list_get_size(const HanjaList *list)
+@@ -672,18 +672,18 @@ hanja_list_get_size(const HanjaList *list)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref HanjaList가 생성될때 검색함수에서 사용한 키를 구하는 함수
+- * @return @ref HanjaList의 key 스트링
++ * @brief @ref HanjaList 가 생성될때 검색함수에서 사용한 키를 구하는 함수
++ * @return @ref HanjaList 의 key 스트링
+  *
+- * 한자 사전 검색 함수로 HanjaList를 생성하면 HanjaList는 그 검색할때 사용한
+- * 키를 기억하고 있다. 이 값을 확인할때 사용한다.
++ * 한자 사전 검색 함수로 @ref HanjaList 를 생성하면 @ref HanjaList 는
++ * 그 검색할때 사용한 키를 기억하고 있다. 이 값을 확인할때 사용한다.
+  * 주의할 점은, 각 Hanja 아이템들은 각각의 키를 가지고 있지만, 이것이
+- * 반드시 @ref HanjaList와 일치하지는 않는다는 것이다.
++ * 반드시 @ref HanjaList 와 일치하지는 않는다는 것이다.
+  * 검색할 당시에 사용한 함수가 prefix나 suffix계열이면 더 짧은 키로도 
+- * 검색하기 때문에 @ref HanjaList의 키와 검색 결과의 키와 다른 것들도 
++ * 검색하기 때문에 @ref HanjaList 의 키와 검색 결과의 키와 다른 것들도 
+  * 가지고 있게 된다.
+  *
+- * 리턴된 스트링 포인터는 @ref HanjaList에서 관리하는 스트링으로
++ * 리턴된 스트링 포인터는 @ref HanjaList 에서 관리하는 스트링으로
+  * 수정하거나 free해서는 안된다.
+  */
+ const char*
+@@ -697,15 +697,15 @@ hanja_list_get_key(const HanjaList *list)
+ /**
+  * @ingroup hanjadictionary
+  * @brief @ref HanjaList 의 n번째 @ref Hanja 아이템의 포인터를 구하는 함수
+- * @param list @ref HanjaList를 가리키는 포인터
++ * @param list @ref HanjaList 를 가리키는 포인터
+  * @param n 참조할 아이템의 인덱스
+- * @return @ref Hanja를 가리키는 포인터
++ * @return @ref Hanja 를 가리키는 포인터
+  * 
+- * 이 함수는 @a list가 가리키는 @ref HanjaList의 n번째 @ref Hanja 오브젝트를
++ * 이 함수는 @a list가 가리키는 @ref HanjaList 의 n번째 @ref Hanja 오브젝트를
+  * 가리키는 포인터를 리턴한다.
+  * @ref HanjaList 의 각 아이템은 정수형 인덱스로 각각 참조할 수 있다.
+  * @ref HanjaList 가 가진 엔트리 갯수를 넘어서는 인덱스를 주면 NULL을 리턴한다.
+- * 리턴된 @ref Hanja 오브젝트는 @ref HanjaList가 관리하는 오브젝트로 free하거나
++ * 리턴된 @ref Hanja 오브젝트는 @ref HanjaList 가 관리하는 오브젝트로 free하거나
+  * 수정해서는 안된다.
+  *
+  * 다음의 예제는 list로 주어진 @ref HanjaList 의 모든 값을 프린트 하는 
+@@ -749,7 +749,7 @@ hanja_list_get_nth_key(const HanjaList *list, unsigned int n)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref HanjaList의 n번째 아이템의 값를 구하는 함수
++ * @brief @ref HanjaList 의 n번째 아이템의 값를 구하는 함수
+  * @return n번째 아이템의 값(value), UTF-8
+  *
+  * HanjaList_get_nth()의 convenient 함수
+@@ -763,7 +763,7 @@ hanja_list_get_nth_value(const HanjaList *list, unsigned int n)
+ 
+ /**
+  * @ingroup hanjadictionary
+- * @brief @ref HanjaList의 n번째 아이템의 설명을 구하는 함수
++ * @brief @ref HanjaList 의 n번째 아이템의 설명을 구하는 함수
+  * @return n번째 아이템의 설명(comment), UTF-8
+  *
+  * HanjaList_get_nth()의 convenient 함수
+-- 
+1.7.9.5
+

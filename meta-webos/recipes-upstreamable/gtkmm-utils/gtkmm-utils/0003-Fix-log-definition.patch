@@ -1,0 +1,13 @@
+diff --git a/glibmm-utils/log-stream-utils.h b/glibmm-utils/log-stream-utils.h
+index e7621ea..bc67685 100644
+--- a/glibmm-utils/log-stream-utils.h
++++ b/glibmm-utils/log-stream-utils.h
+@@ -107,7 +107,7 @@ LOG_STREAM << LOG_LEVEL_VERBOSE___ << LOG_MARKER_INFO << HERE << message << Glib
+ #endif
+ 
+ #ifndef LOG_VERBOSE_D
+-#define LOG_VERBOSE_D(message) \
++#define LOG_VERBOSE_D(message, domain) \
+ LOG_STREAM.push_domain (domain) ; LOG_VERBOSE(message) ;LOG_STREAM.pop_domain();
+ #endif
+ 

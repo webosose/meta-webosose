@@ -1,0 +1,36 @@
+From e321845b3752572ae3b376eadefaada15315ae00 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sun, 21 Feb 2016 09:31:08 +0900
+Subject: [PATCH 3/6] Add backspace test case: two sets
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+backspace 테스트 케이스 추가: 두벌식
+---
+ test/test.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/test/test.c b/test/test.c
+index 28b4509..1c8ad57 100644
+--- a/test/test.c
++++ b/test/test.c
+@@ -77,6 +77,15 @@ START_TEST(test_hangul_ic_process_2)
+     fail_unless(check_preedit("2", "rt", L"ㄳ"));
+     fail_unless(check_commit("2", "rtk", L"ㄱ"));
+     fail_unless(check_preedit("2", "rtk", L"사"));
++
++    /* backspace */
++    fail_unless(check_preedit("2", "rkT\b", L"가"));
++    fail_unless(check_preedit("2", "rktt\b", L"갓"));
++    fail_unless(check_preedit("2", "rt\bk", L"가"));
++    fail_unless(check_preedit("2", "akfr\b", L"말"));
++    fail_unless(check_preedit("2", "dnp\b", L"우"));
++    fail_unless(check_preedit("2", "qqnpfr\b\b\b\b\b\b", L""));
++    fail_unless(check_preedit("2", "Qnpfr\b\b\b\b\b", L""));
+ }
+ END_TEST
+ 
+-- 
+1.9.1
+

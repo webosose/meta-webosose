@@ -1,0 +1,83 @@
+From 37ea6aaec4c6774cbb34fa9fbab400efa092bd1f Mon Sep 17 00:00:00 2001
+From: Aram So <aram.so@lge.com>
+Date: Tue, 10 Mar 2015 17:51:05 +0900
+Subject: [PATCH] Revert Make QQuickKeyNavigationAttached respect user set
+ values
+
+:Release Notes:
+The problem occurred in keyNavigation of QML Repeater.
+
+:Detailed Notes:
+
+:Testing Performed:
+- When showup the pincodePrompt, press the right key.
+- When showup the VKB, press the right key.
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-4593] [GT-13343] MRCU 5 Way Navigation - ">" button doesn't work
+Upstream-Status: do not apply (local workaround)
+Change-Id: If01145c73497141bf0e12f425c0fb13f5a58d4cd
+---
+ src/quick/items/qquickitem.cpp | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/quick/items/qquickitem.cpp b/src/quick/items/qquickitem.cpp
+index 1c7a556..e2f1851 100644
+--- a/src/quick/items/qquickitem.cpp
++++ b/src/quick/items/qquickitem.cpp
+@@ -476,7 +476,7 @@ QQuickItem *QQuickKeyNavigationAttached::left() const
+ void QQuickKeyNavigationAttached::setLeft(QQuickItem *i)
+ {
+     Q_D(QQuickKeyNavigationAttached);
+-    if (d->leftSet && d->left == i)
++    if (d->left == i)
+         return;
+     d->left = i;
+     d->leftSet = true;
+@@ -498,7 +498,7 @@ QQuickItem *QQuickKeyNavigationAttached::right() const
+ void QQuickKeyNavigationAttached::setRight(QQuickItem *i)
+ {
+     Q_D(QQuickKeyNavigationAttached);
+-    if (d->rightSet && d->right == i)
++    if (d->right == i)
+         return;
+     d->right = i;
+     d->rightSet = true;
+@@ -520,7 +520,7 @@ QQuickItem *QQuickKeyNavigationAttached::up() const
+ void QQuickKeyNavigationAttached::setUp(QQuickItem *i)
+ {
+     Q_D(QQuickKeyNavigationAttached);
+-    if (d->upSet && d->up == i)
++    if (d->up == i)
+         return;
+     d->up = i;
+     d->upSet = true;
+@@ -542,7 +542,7 @@ QQuickItem *QQuickKeyNavigationAttached::down() const
+ void QQuickKeyNavigationAttached::setDown(QQuickItem *i)
+ {
+     Q_D(QQuickKeyNavigationAttached);
+-    if (d->downSet && d->down == i)
++    if (d->down == i)
+         return;
+     d->down = i;
+     d->downSet = true;
+@@ -564,7 +564,7 @@ QQuickItem *QQuickKeyNavigationAttached::tab() const
+ void QQuickKeyNavigationAttached::setTab(QQuickItem *i)
+ {
+     Q_D(QQuickKeyNavigationAttached);
+-    if (d->tabSet && d->tab == i)
++    if (d->tab == i)
+         return;
+     d->tab = i;
+     d->tabSet = true;
+@@ -586,7 +586,7 @@ QQuickItem *QQuickKeyNavigationAttached::backtab() const
+ void QQuickKeyNavigationAttached::setBacktab(QQuickItem *i)
+ {
+     Q_D(QQuickKeyNavigationAttached);
+-    if (d->backtabSet && d->backtab == i)
++    if (d->backtab == i)
+         return;
+     d->backtab = i;
+     d->backtabSet = true;

@@ -1,0 +1,31 @@
+From 1512eaef63ce0999fa224870aa9e5108f9d9abd6 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Wed, 23 Nov 2011 21:52:45 +0900
+Subject: [PATCH 05/20] Do not use the fullpath to the file name from Doxygen
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Doxygen에서 파일 이름에 fullpath를 사용하지 않음
+
+Change-Id: I8c3c54284cf9983da400aec512884673227679c1
+---
+ doc/Doxyfile.in |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/doc/Doxyfile.in b/doc/Doxyfile.in
+index dc865d5..2413056 100644
+--- a/doc/Doxyfile.in
++++ b/doc/Doxyfile.in
+@@ -106,7 +106,7 @@ INLINE_INHERITED_MEMB  = NO
+ # path before files name in the file list and in the header files. If set 
+ # to NO the shortest path that makes the file name unique will be used.
+ 
+-FULL_PATH_NAMES        = YES
++FULL_PATH_NAMES        = NO
+ 
+ # If the FULL_PATH_NAMES tag is set to YES then the STRIP_FROM_PATH tag 
+ # can be used to strip a user-defined part of the path. Stripping is 
+-- 
+1.7.9.5
+

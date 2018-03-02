@@ -1,0 +1,69 @@
+From 0ed24ea1a39e5b2f3da8a066db9ea25fe61c25b4 Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Sat, 28 Mar 2015 16:03:14 +0200
+Subject: [PATCH] Preserve render loop OpenGL context
+
+:Release Notes:
+Preserve render loop OpenGL context
+
+:Detailed Notes:
+Add environment variable option to control
+GUI thread render loop OpenGL context lifetime.
+
+QSG_RENDER_LOOP_PRESERVE_OPENGL_CONTEXT
+
+By default OpenGL context destroyed when all windows have
+been closed but with this option enabled context is
+destroyed only when application is closed. This option
+is used by WAM.
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-6157] Stability: WebAppMgr crashes at multiple locations
+
+Change-Id: Ic38ef5b759e2a678a6003b450c44a15ce411c6af
+---
+ src/quick/scenegraph/qsgrenderloop.cpp | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
+index 68947d3..42d0d2f 100644
+--- a/src/quick/scenegraph/qsgrenderloop.cpp
++++ b/src/quick/scenegraph/qsgrenderloop.cpp
+@@ -76,6 +76,8 @@ extern Q_GUI_EXPORT QImage qt_gl_read_framebuffer(const QSize &size, bool alpha_
+ DEFINE_BOOL_CONFIG_OPTION(qmlNoThreadedRenderer, QML_BAD_GUI_RENDER_LOOP);
+ DEFINE_BOOL_CONFIG_OPTION(qmlForceThreadedRenderer, QML_FORCE_THREADED_RENDERER); // Might trigger graphics driver threading bugs, use at own risk
+ 
++static bool qsg_preserve_opengl_context = qgetenv("QSG_RENDER_LOOP_PRESERVE_OPENGL_CONTEXT").toInt();
++
+ QSGRenderLoop *QSGRenderLoop::s_instance = 0;
+ 
+ QSGRenderLoop::~QSGRenderLoop()
+@@ -268,6 +270,9 @@ QSGGuiThreadRenderLoop::QSGGuiThreadRenderLoop()
+ {
+     sg = QSGContext::createDefaultContext();
+     rc = sg->createRenderContext();
++
++    if (gl && qsg_preserve_opengl_context)
++        delete gl;
+ }
+ 
+ QSGGuiThreadRenderLoop::~QSGGuiThreadRenderLoop()
+@@ -319,9 +324,11 @@ void QSGGuiThreadRenderLoop::windowDestroyed(QQuickWindow *window)
+     d->cleanupNodesOnShutdown();
+     if (m_windows.size() == 0) {
+         rc->invalidate();
+-        delete gl;
+-        gl = 0;
+-    } else if (gl && window == gl->surface() && current) {
++        if (!qsg_preserve_opengl_context) {
++            delete gl;
++            gl = 0;
++        }
++    } else if (gl && window == gl->surface() && current && !qsg_preserve_opengl_context) {
+         gl->doneCurrent();
+     }
+ 

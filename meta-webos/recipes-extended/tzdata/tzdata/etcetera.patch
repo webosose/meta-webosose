@@ -1,0 +1,108 @@
+From 0225540f52a5c1d12be5e3cd0fef0e42cbbb7a40 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Sun, 2 Oct 2016 17:26:06 +0200
+Subject: [PATCH] etcetera: Add fractional Etc/GMT time zones
+
+:Release Notes:
+Add fractional Etc/GMT time zones. The format changed in 2016g release
+so we should check if settings app really depend on GMT* format or can
+use new numeric formats as well.
+
+:Detailed Notes:
+It was introduced as a .patch in this meta-lg-webos change:
+  commit 68c9a2a2f71938cc0a1a369462b8e11734ab1de4
+  Author: Sapna Todwal <sapna.todwal@lge.com>
+  Date:   Tue May 27 15:15:23 2014 -0700
+
+    .........-image: tzdata=........1
+
+    :Release Notes:
+    Add fractional Etc/GMT time zones.
+
+    :Detailed Notes:
+    The settings app now needs to be able to add manual timezones which
+    can be anywhere from GMT-12, GMT-11:30, GMT-11 ... GMT+13:30, GMT+14.
+    So this change adds all these new fractional timezones to the
+    /usr/share/zoneinfo/Etc directory.
+
+    :Testing Perfomed:
+    Verified that the /usr/share/zoneinfo/Etc directory now lists all the new
+    fractional timezones.
+
+The format was changed in upstream change:
+https://github.com/eggert/tz/commit/5659c5322976ea171e6a5afe14e9bc8172a51e24
+  Author: Paul Eggert <eggert@cs.ucla.edu>
+  Date:   Tue Aug 23 16:35:24 2016 -0700
+  Subject: Phase out alphanumeric abbrs from etcetera
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+---
+ etcetera | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/etcetera b/etcetera
+index f5fa4c9..8157423 100644
+--- a/etcetera
++++ b/etcetera
+@@ -51,28 +51,54 @@ Link	Etc/GMT				Etc/GMT0
+ # Also, the time zone abbreviations are now compatible with %z.
+ 
+ Zone	Etc/GMT-14	14	-	+14
++Zone	Etc/GMT-13:30	13:30	-	+13:30
+ Zone	Etc/GMT-13	13	-	+13
++Zone	Etc/GMT-12:30	12:30	-	+12:30
+ Zone	Etc/GMT-12	12	-	+12
++Zone	Etc/GMT-11:30	11:30	-	+11:30
+ Zone	Etc/GMT-11	11	-	+11
++Zone	Etc/GMT-10:30	10:30	-	+10:30
+ Zone	Etc/GMT-10	10	-	+10
++Zone	Etc/GMT-9:30	9:30	-	+09:30
+ Zone	Etc/GMT-9	9	-	+09
++Zone	Etc/GMT-8:30	8:30	-	+08:30
+ Zone	Etc/GMT-8	8	-	+08
++Zone	Etc/GMT-7:30	7:30	-	+07:30
+ Zone	Etc/GMT-7	7	-	+07
++Zone	Etc/GMT-6:30	6:30	-	+06:30
+ Zone	Etc/GMT-6	6	-	+06
++Zone	Etc/GMT-5:30	5:30	-	+05:30
+ Zone	Etc/GMT-5	5	-	+05
++Zone	Etc/GMT-4:30	4:30	-	+04:30
+ Zone	Etc/GMT-4	4	-	+04
++Zone	Etc/GMT-3:30	3:30	-	+03:30
+ Zone	Etc/GMT-3	3	-	+03
++Zone	Etc/GMT-2:30	2:30	-	+02:30
+ Zone	Etc/GMT-2	2	-	+02
++Zone	Etc/GMT-1:30	1:30	-	+01:30
+ Zone	Etc/GMT-1	1	-	+01
++Zone	Etc/GMT-0:30	0:30	-	+00:30
++Zone	Etc/GMT+0:30	-0:30	-	-00:30
+ Zone	Etc/GMT+1	-1	-	-01
++Zone	Etc/GMT+1:30	-1:30	-	-01:30
+ Zone	Etc/GMT+2	-2	-	-02
++Zone	Etc/GMT+2:30	-2:30	-	-02:30
+ Zone	Etc/GMT+3	-3	-	-03
++Zone	Etc/GMT+3:30	-3:30	-	-03:30
+ Zone	Etc/GMT+4	-4	-	-04
++Zone	Etc/GMT+4:30	-4:30	-	-04:30
+ Zone	Etc/GMT+5	-5	-	-05
++Zone	Etc/GMT+5:30	-5:30	-	-05:30
+ Zone	Etc/GMT+6	-6	-	-06
++Zone	Etc/GMT+6:30	-6:30	-	-06:30
+ Zone	Etc/GMT+7	-7	-	-07
++Zone	Etc/GMT+7:30	-7:30	-	-07:30
+ Zone	Etc/GMT+8	-8	-	-08
++Zone	Etc/GMT+8:30	-8:30	-	-08:30
+ Zone	Etc/GMT+9	-9	-	-09
++Zone	Etc/GMT+9:30	-9:30	-	-09:30
+ Zone	Etc/GMT+10	-10	-	-10
++Zone	Etc/GMT+10:30	-10:30	-	-10:30
+ Zone	Etc/GMT+11	-11	-	-11
++Zone	Etc/GMT+11:30	-11:30	-	-11:30
+ Zone	Etc/GMT+12	-12	-	-12
+-- 
+2.7.4
+

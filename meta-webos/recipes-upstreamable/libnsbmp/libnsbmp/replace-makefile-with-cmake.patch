@@ -1,0 +1,78 @@
+diff -wurN libnsbmp-0.1.0/Makefile libnsbmp-0.1.0/Makefile
+--- libnsbmp-0.1.0/Makefile	2013-04-20 04:07:55.000000000 +0900
++++ libnsbmp-0.1.0/Makefile	1970-01-01 09:00:00.000000000 +0900
+@@ -1,35 +0,0 @@
+-# Component settings
+-COMPONENT := nsbmp
+-COMPONENT_VERSION := 0.1.0
+-# Default to a static library
+-COMPONENT_TYPE ?= lib-static
+-
+-# Setup the tooling
+-PREFIX ?= /opt/netsurf
+-NSSHARED ?= $(PREFIX)/share/netsurf-buildsystem
+-include $(NSSHARED)/makefiles/Makefile.tools
+-
+-# Toolchain flags
+-WARNFLAGS := -Wall -W -Wundef -Wpointer-arith -Wcast-align \
+-	-Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
+-	-Wmissing-declarations -Wnested-externs -pedantic
+-# BeOS/Haiku standard library headers create warnings
+-ifneq ($(TARGET),beos)
+-  WARNFLAGS := $(WARNFLAGS) -Werror
+-endif
+-CFLAGS := -D_BSD_SOURCE -I$(CURDIR)/include/ \
+-	-I$(CURDIR)/src $(WARNFLAGS) $(CFLAGS)
+-ifneq ($(GCCVER),2)
+-  CFLAGS := $(CFLAGS) -std=c99
+-else
+-  # __inline__ is a GCCism
+-  CFLAGS := $(CFLAGS) -Dinline="__inline__"
+-endif
+-
+-include $(NSBUILD)/Makefile.top
+-
+-# Extra installation rules
+-I := /include/
+-INSTALL_ITEMS := $(INSTALL_ITEMS) $(I):include/libnsbmp.h
+-INSTALL_ITEMS := $(INSTALL_ITEMS) /lib/pkgconfig:lib$(COMPONENT).pc.in
+-INSTALL_ITEMS := $(INSTALL_ITEMS) /lib:$(OUTPUT)
+diff -urN libnsbmp-0.1.0/CMakeLists.txt libnsbmp-0.1.0/CMakeLists.txt
+--- libnsbmp-0.1.0/CMakeLists.txt    2013-04-20 04:07:55.000000000 +0900
++++ libnsbmp-0.1.0/CMakeLists.txt    2013-08-05 09:59:30.000000000 +0900
+@@ -0,0 +1,35 @@
++# ---
++# libnsbmp CMake script
++# by Jinho Lee (jh0506.lee@lge.com)
++cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
++project(nsbmp C)
++
++# ---
++# set version
++set(NSBMP_VERSION "0.1.0")
++message(STATUS "nsbmp version=[${NSBMP_VERSION}]")
++
++# ---
++# add work directory
++include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include)
++
++# ---
++# define header file
++set(NSBMP_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/include/libnsbmp.h)
++
++# ---
++# define src file
++set(NSBMP_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/libnsbmp.c)
++
++# ---
++# add library
++add_library(nsbmp SHARED ${NSBMP_SRCS} ${NSBMP_HDRS})
++
++# ---
++# set properties
++set_target_properties(nsbmp PROPERTIES SOVERSION ${NSBMP_VERSION})
++
++# ---
++# install library
++install(FILES ${NSBMP_HDRS} DESTINATION include)
++install(TARGETS nsbmp LIBRARY DESTINATION lib)

@@ -1,0 +1,259 @@
+From 0776d79932bc4f1faedf014fbaa6c6a432e43d04 Mon Sep 17 00:00:00 2001
+From: Andrii Koval <andrii.koval@lge.com>
+Date: Fri, 31 Jul 2015 11:48:20 +0300
+Subject: [PATCH] [PATCH 07/10] Provide option "--compile-js" to node for .js
+ compilation
+
+:Release Notes:
+Provide option "--compile-js" to node for .js compilation
+
+:Detailed Notes:
+Added option "--compile-js" to node for compilation JS files.
+This option will work only if node is buit with option
+--v8-options="-serialize_toplevel"
+Steps to build node:
+./configure --v8-options="-serialize_toplevel"
+make
+Using: node --compile-js input.js output.jsb
+
+:Testing Performed:
+Using new option, I locally compiled the set of different
+*.js files.
+All localy tests I performed using build #886
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-2298] Provide option to node for .js compilation
+
+Change-Id: I93c0d93cda85b427498bc88cfa08921366c54eeb
+Reviewed-on: https://gpro.lgsvl.com/115378
+Reviewed-by: Andrii Koval <andrii.koval@lge.com>
+Tested-by: Andrii Koval <andrii.koval@lge.com>
+Reviewed-by: Denys Romanchuk <denys.romanchuk@lge.com>
+Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+---
+ node.gyp          |  2 ++
+ src/node.cc       | 21 ++++++++++++++
+ src/precompile.cc | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/precompile.h  | 28 ++++++++++++++++++
+ 4 files changed, 137 insertions(+)
+ create mode 100644 src/precompile.cc
+ create mode 100644 src/precompile.h
+
+diff --git a/node.gyp b/node.gyp
+index 8bf26e2..caaaca5 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -181,6 +181,7 @@
+         'src/udp_wrap.cc',
+         'src/util.cc',
+         'src/uv.cc',
++        'src/precompile.cc',
+         # headers to make for a more pleasant IDE experience
+         'src/async-wrap.h',
+         'src/async-wrap-inl.h',
+@@ -589,6 +590,7 @@
+         '<(OBJ_PATH)/stream_base.<(OBJ_SUFFIX)',
+         '<(OBJ_PATH)/node_constants.<(OBJ_SUFFIX)',
+         '<(OBJ_PATH)/node_revert.<(OBJ_SUFFIX)',
++        '<(OBJ_PATH)/precompile.<(OBJ_SUFFIX)',
+       ],
+ 
+       'defines': [
+diff --git a/src/node.cc b/src/node.cc
+index 30db9e5..77c4406 100644
+--- a/src/node.cc
++++ b/src/node.cc
+@@ -7,6 +7,7 @@
+ #include "node_version.h"
+ #include "node_internals.h"
+ #include "node_revert.h"
++#include "precompile.h"
+ 
+ #if defined HAVE_PERFCTR
+ #include "node_counters.h"
+@@ -161,6 +162,7 @@ static int v8_thread_pool_size = v8_default_thread_pool_size;
+ static bool prof_process = false;
+ static bool v8_is_profiling = false;
+ static bool node_is_initialized = false;
++static bool compile_mode = false;
+ static node_module* modpending;
+ static node_module* modlist_builtin;
+ static node_module* modlist_linked;
+@@ -3745,6 +3747,7 @@ static void PrintHelp() {
+          "  --preserve-symlinks   preserve symbolic links when resolving\n"
+          "                        and caching modules.\n"
+ #endif
++         "  --compile-js         compile JS to binary file\n"
+          "\n"
+          "Environment variables:\n"
+ #ifdef _WIN32
+@@ -3916,6 +3919,8 @@ static void ParseArgs(int* argc,
+     } else if (strcmp(arg, "--expose-internals") == 0 ||
+                strcmp(arg, "--expose_internals") == 0) {
+       // consumed in js
++    } else if (strcmp(arg, "--compile-js") == 0) {
++      compile_mode = true;
+     } else if (strcmp(arg, "--") == 0) {
+       index += 1;
+       break;
+@@ -4653,6 +4658,19 @@ Environment* CreateEnvironment(Isolate* isolate,
+   return env;
+ }
+ 
++static void CompileFile(int argc, const char** argv)
++{
++  if (argc < 3) {
++    fprintf(stderr, "Please enter input and output file names.\n");
++    exit(1);
++  }
++
++  if (node::PrecompileJS::Compile(argv[1], argv[2]) < 0) {
++     exit(1);
++  }
++
++  exit(0);
++}
+ 
+ // Entry point for new node instances, also called directly for the main
+ // node instance.
+@@ -4690,6 +4708,9 @@ static void StartNodeInstance(void* arg) {
+     isolate->SetAbortOnUncaughtExceptionCallback(
+         ShouldAbortOnUncaughtException);
+ 
++    if (compile_mode)
++      CompileFile(instance_data->argc(), instance_data->argv());
++
+     // Start debug agent when argv has --debug
+     if (instance_data->use_debug_agent()) {
+       const char* path = instance_data->argc() > 1
+diff --git a/src/precompile.cc b/src/precompile.cc
+new file mode 100644
+index 0000000..149a0d0
+--- /dev/null
++++ b/src/precompile.cc
+@@ -0,0 +1,86 @@
++// @@@LICENSE
++//
++// Copyright (c ) 2015 LG Electronics, Inc.
++//
++// Confidential computer software. Valid license from LG required for
++// possession, use or copying. Consistent with FAR 12.211 and 12.212,
++// Commercial Computer Software, Computer Software Documentation, and
++// Technical Data for Commercial Items are licensed to the U.S. Government
++// under vendor's standard commercial license.
++//
++// LICENSE@@@
++
++#include "node.h"
++#include "precompile.h"
++
++#include <iostream>
++#include <fstream>
++#include <stdio.h>
++#include <memory>
++#include <sstream>
++
++namespace node {
++namespace PrecompileJS {
++
++int Compile(const std::string& source_file_name, const std::string& cache_file_name)
++{
++  std::string err_str;
++  while (true) {
++    v8::Isolate *isolate = v8::Isolate::GetCurrent();
++    v8::HandleScope scope(isolate);
++
++    // open 'source_file_name' and read into string
++    std::ifstream in_file(source_file_name.c_str(), std::ifstream::binary);
++    if (!in_file.is_open()) {
++      std::ostringstream err_buf;
++      err_buf << "Can't open input file " << source_file_name;
++      err_str = err_buf.str();
++      break;
++    }
++
++    in_file.seekg(0, std::ios::end);
++    size_t in_file_size = in_file.tellg();
++    in_file.seekg(0, std::ios::beg);
++
++    std::string in_buf;
++    in_buf.reserve(in_file_size);
++    in_buf.assign((std::istreambuf_iterator<char>(in_file)), std::istreambuf_iterator<char>());
++    in_file.close();
++
++    // compile into unbound script
++    v8::Local<v8::String> source_str = v8::String::NewFromUtf8(isolate, in_buf.c_str());
++    v8::ScriptCompiler::Source source(source_str);
++
++    v8::ScriptCompiler::CompileUnbound(isolate, &source, v8::ScriptCompiler::kProduceCodeCache);
++
++    const v8::ScriptCompiler::CachedData *cache = source.GetCachedData();
++    if (!cache) {
++      err_str = "Failed to get cached data.";
++      break;
++    }
++
++    // save cached data in 'cache_file_name'
++    std::ofstream out_file(cache_file_name.c_str(), std::ofstream::binary);
++    if (!out_file.is_open()) {
++      std::ostringstream err_buf;
++      err_buf << "Can't open output file " << cache_file_name;
++      err_str = err_buf.str();
++      break;
++    }
++    out_file.write((const char*)cache->data, cache->length);
++    out_file.close();
++
++    fprintf(stdout, "Compilation completed. Result saved into %s.\n", cache_file_name.c_str());
++    break;
++  }
++
++  if (!err_str.empty()) {
++    fprintf(stderr, "Error: %s\n", err_str.c_str());
++    return -1;
++  }
++
++  return 0;
++}
++
++} // namespace PrecompileJS
++} // namespace node
+diff --git a/src/precompile.h b/src/precompile.h
+new file mode 100644
+index 0000000..85e2bc5
+--- /dev/null
++++ b/src/precompile.h
+@@ -0,0 +1,28 @@
++// @@@LICENSE
++//
++// Copyright (c ) 2015 LG Electronics, Inc.
++//
++// Confidential computer software. Valid license from LG required for
++// possession, use or copying. Consistent with FAR 12.211 and 12.212,
++// Commercial Computer Software, Computer Software Documentation, and
++// Technical Data for Commercial Items are licensed to the U.S. Government
++// under vendor's standard commercial license.
++//
++// LICENSE@@@
++
++#ifndef SRC_PRE_COMPILE_JS_H_
++#define SRC_PRE_COMPILE_JS_H_
++
++#include "v8.h"
++#include <string>
++
++namespace node {
++namespace PrecompileJS {
++
++int Compile(const std::string& source_file_name, const std::string& cache_file_name);
++
++
++}  // namespace PrecompileJS
++}  // namespace node
++
++#endif  // SRC_PRE_COMPILE_JS_H_
+-- 
+1.9.1
+

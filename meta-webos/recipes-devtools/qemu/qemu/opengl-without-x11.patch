@@ -1,0 +1,38 @@
+Allow to build with opengl enabled and x11 disabled
+
+* otherwise build fails to find Window as shown in:
+  http://errors.yoctoproject.org/Errors/Details/156041/
+
+Upstream-Status: Pending
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+
+--- qemu-2.10.0/ui/egl-helpers.c	2017-08-30 18:50:41.000000000 +0200
++++ qemu-2.10.0.new/ui/egl-helpers.c	2017-09-19 15:33:32.620330065 +0200
+@@ -235,6 +235,7 @@
+ 
+ /* ---------------------------------------------------------------------- */
+ 
++#ifdef I_REALLY_WANT_X11
+ EGLSurface qemu_egl_init_surface_x11(EGLContext ectx, Window win)
+ {
+     EGLSurface esurface;
+@@ -256,6 +257,7 @@
+ 
+     return esurface;
+ }
++#endif
+ 
+ /* ---------------------------------------------------------------------- */
+ 
+--- qemu-2.10.0/include/ui/egl-helpers.h	2017-08-30 18:50:41.000000000 +0200
++++ qemu-2.10.0.new/include/ui/egl-helpers.h	2017-09-19 15:28:08.145322242 +0200
+@@ -34,7 +34,9 @@
+ 
+ #endif
+ 
++#ifdef O_REALLY_WANT_X11
+ EGLSurface qemu_egl_init_surface_x11(EGLContext ectx, Window win);
++#endif
+ 
+ int qemu_egl_init_dpy_x11(EGLNativeDisplayType dpy);
+ int qemu_egl_init_dpy_mesa(EGLNativeDisplayType dpy);

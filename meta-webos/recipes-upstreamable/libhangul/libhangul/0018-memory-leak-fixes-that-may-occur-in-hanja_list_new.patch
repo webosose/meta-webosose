@@ -1,0 +1,56 @@
+From aef07692da45ec61ed7eb25b41ae959704fb99ee Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Mon, 23 Feb 2015 23:57:06 +0900
+Subject: [PATCH 18/20] memory leak fixes that may occur in hanja_list_new
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+hanja_list_new()에서 발생할 가능성이 있는 memory leak 수정
+
+strdup이 실패할 경우와 malloc이 실패할 경우에 대한 처리를 강화한다.
+
+Change-Id: I460e771228381c2fd449ed199ecb5acbad7d2fce
+---
+ hangul/hanja.c |   25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/hangul/hanja.c b/hangul/hanja.c
+index 84c57b0..0cc7349 100644
+--- a/hangul/hanja.c
++++ b/hangul/hanja.c
+@@ -338,15 +338,22 @@ hanja_list_new(const char *key)
+     HanjaList *list;
+ 
+     list = malloc(sizeof(*list));
+-    if (list != NULL) {
+-	list->key = strdup(key);
+-	list->len = 0;
+-	list->alloc = 1;
+-	list->items = malloc(list->alloc * sizeof(list->items[0]));
+-	if (list->items == NULL) {
+-	    free(list);
+-	    list = NULL;
+-	}
++    if (list == NULL)
++	return NULL;
++
++    list->key = strdup(key);
++    if (list->key == NULL) {
++	free(list);
++	return NULL;
++    }
++
++    list->len = 0;
++    list->alloc = 1;
++    list->items = malloc(list->alloc * sizeof(list->items[0]));
++    if (list->items == NULL) {
++	free(list->key);
++	free(list);
++	return NULL;
+     }
+ 
+     return list;
+-- 
+1.7.9.5
+

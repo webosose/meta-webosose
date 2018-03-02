@@ -1,0 +1,32 @@
+From 6389d430f9e7b33d82a1ebd984d7195adc2ee67f Mon Sep 17 00:00:00 2001
+From: Dong-Heon Jung <dongheon.jung@lge.com>
+Date: Tue, 11 Nov 2014 16:37:00 +0900
+Subject: [PATCH] QNetworkDiskCache: Disable disk cache if content have cookie
+ informations
+
+If we save cookie information to disk cache and load from disk cache,
+it can cause some security issues.
+So we disable disk cache for contents which have cookie information
+
+Change-Id: Iacae9938046bc19d1de0b043bfadeab7b2a9489a
+Upstream-Status: unknown
+---
+ src/network/access/qnetworkreplyhttpimpl.cpp | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/network/access/qnetworkreplyhttpimpl.cpp b/src/network/access/qnetworkreplyhttpimpl.cpp
+index eb42d2d..a6eeca4 100644
+--- a/src/network/access/qnetworkreplyhttpimpl.cpp
++++ b/src/network/access/qnetworkreplyhttpimpl.cpp
+@@ -1619,6 +1619,11 @@ QNetworkCacheMetaData QNetworkReplyHttpImplPrivate::fetchCacheMetaData(const QNe
+         else if (cacheControl.contains("no-store"))
+             canDiskCache = false;
+ 
++        // Disable disk cache for contents which has set-cookie
++        it = cacheHeaders.findRawHeader("set-cookie");
++        if (it != cacheHeaders.rawHeaders.constEnd())
++            canDiskCache = false;
++
+         // Check the Content-Type header.
+         // If type is video or audio, disables disk cache.
+         it = cacheHeaders.findRawHeader("content-type");

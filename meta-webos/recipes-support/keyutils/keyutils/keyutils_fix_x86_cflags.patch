@@ -1,0 +1,13 @@
+Index: git/Makefile
+===================================================================
+--- git.orig/Makefile	2012-11-16 15:40:05.258723425 +0200
++++ git/Makefile	2012-11-16 15:41:08.978725491 +0200
+@@ -53,7 +53,7 @@
+ ###############################################################################
+ LIBDIR		:= $(shell ldd /usr/bin/make | grep '\(/libc\)' | sed -e 's!.*\(/.*\)/libc[.].*!\1!')
+ USRLIBDIR	:= $(patsubst /lib/%,/usr/lib/%,$(LIBDIR))
+-BUILDFOR	:= $(shell file /usr/bin/make | sed -e 's!.*ELF \(32\|64\)-bit.*!\1!')-bit
++BUILDFOR	:= 32-bit
+ 
+ LNS		:= ln -sf
+ 

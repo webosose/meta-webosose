@@ -1,0 +1,23 @@
+From 6d0f618d54350ae4bf92c175c6410cb9a49a58b5 Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Thu, 12 Dec 2013 21:48:35 +0200
+Subject: [PATCH] Fix floating point clip rectangle rounding in OpenGL paint
+ engine
+
+---
+ src/gui/opengl/qopenglpaintengine.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gui/opengl/qopenglpaintengine.cpp b/src/gui/opengl/qopenglpaintengine.cpp
+index 252ab60..f89c615 100644
+--- a/src/gui/opengl/qopenglpaintengine.cpp
++++ b/src/gui/opengl/qopenglpaintengine.cpp
+@@ -2366,7 +2366,7 @@ void QOpenGL2PaintEngineEx::clip(const QVectorPath &path, Qt::ClipOperation op)
+                 && qFuzzyIsNull(state()->matrix.m11())
+                 && qFuzzyIsNull(state()->matrix.m22())))
+         {
+-            state()->rectangleClip = state()->rectangleClip.intersected(state()->matrix.mapRect(rect).toRect());
++            state()->rectangleClip = state()->rectangleClip.intersected(state()->matrix.mapRect(rect).toAlignedRect());
+             d->updateClipScissorTest();
+             return;
+         }

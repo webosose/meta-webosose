@@ -1,0 +1,643 @@
+From b85b59829cd14d435b182fe3b6137275ce497792 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
+Date: Fri, 13 Jun 2014 18:48:49 +0200
+Subject: [PATCH] LTTNG tracing support in QtGUI
+
+:Release Notes:
+LTTNG tracing support in QtGUI, with image processing tracepoints.
+
+:Detailed Notes:
+Added LTTNG build detection support.
+
+Added LTTNG tracing for QtGUI.
+
+Added tracepoints for:
+* QImage and QPixmap copy and transform operations.
+* OpenGL paint engine texture cache texture upload
+* OpenGL paint engine draw texture
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[BHV-10150] Update sprint 1 lttng analysis with new image decoder tracepoints
+[BHV-6572] LSM animations may stall during app launch (was: Double swipe stalls while loading apps)
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+
+Conflicts:
+	configure
+	src/gui/image/qimage.cpp
+
+Change-Id: I03150d6ff80cbbcd787133d75854715cb81b5571
+---
+ config.tests/unix/lttng/lttng.cpp           |  12 +++
+ config.tests/unix/lttng/lttng.pro           |   3 +
+ configure                                   |  39 +++++++++
+ src/gui/gui.pro                             |   7 ++
+ src/gui/image/qimage.cpp                    |  14 ++++
+ src/gui/image/qpixmap.cpp                   |   7 ++
+ src/gui/kernel/kernel.pri                   |  14 ++++
+ src/gui/kernel/qguilttngprovider.c          |  26 ++++++
+ src/gui/kernel/qguilttngprovider_p.h        |  92 +++++++++++++++++++++
+ src/gui/kernel/qguitracer_p.h               | 120 ++++++++++++++++++++++++++++
+ src/gui/opengl/qopenglframebufferobject.cpp |   2 +
+ src/gui/opengl/qopenglpaintengine.cpp       |   3 +
+ src/gui/opengl/qopengltexturecache.cpp      |   2 +
+ 13 files changed, 341 insertions(+)
+ create mode 100644 config.tests/unix/lttng/lttng.cpp
+ create mode 100644 config.tests/unix/lttng/lttng.pro
+ create mode 100644 src/gui/kernel/qguilttngprovider.c
+ create mode 100644 src/gui/kernel/qguilttngprovider_p.h
+ create mode 100644 src/gui/kernel/qguitracer_p.h
+
+diff --git a/config.tests/unix/lttng/lttng.cpp b/config.tests/unix/lttng/lttng.cpp
+new file mode 100644
+index 0000000..02532ad
+--- /dev/null
++++ b/config.tests/unix/lttng/lttng.cpp
+@@ -0,0 +1,12 @@
++
++#include <sys/types.h>
++#include <stdio.h>
++extern "C" {
++#include <lttng/ust-error.h>
++}
++
++int main(int, char **)
++{
++    lttng_ust_strerror(0);
++    return 0;
++}
+diff --git a/config.tests/unix/lttng/lttng.pro b/config.tests/unix/lttng/lttng.pro
+new file mode 100644
+index 0000000..0742865
+--- /dev/null
++++ b/config.tests/unix/lttng/lttng.pro
+@@ -0,0 +1,3 @@
++SOURCES = lttng.cpp
++CONFIG -= qt
++LIBS +=
+diff --git a/configure b/configure
+index b44b377..679da84 100755
+--- a/configure
++++ b/configure
+@@ -663,6 +663,7 @@ CFG_EGL_X=auto
+ CFG_FONTCONFIG=auto
+ CFG_FREETYPE=auto
+ CFG_HARFBUZZ=qt
++CFG_LTTNG=auto
+ CFG_SQL_AVAILABLE=
+ QT_ALL_BUILD_PARTS=" libs tools examples tests "
+ QT_DEFAULT_BUILD_PARTS="libs tools examples"
+@@ -847,6 +848,10 @@ QT_LIBS_DBUS=
+ QT_CFLAGS_GLIB=
+ QT_LIBS_GLIB=
+ 
++# flags for LTTNG
++QT_CFLAGS_LTTNG=
++QT_LIBS_LTTNG=
++
+ # default qpa platform
+ QT_QPA_DEFAULT_PLATFORM=
+ 
+@@ -2101,6 +2106,13 @@ while [ "$#" -gt 0 ]; do
+             fi
+         fi
+         ;;
++    lttng)
++        if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
++            CFG_LTTNG="$VAL"
++        else
++            UNKNOWN_OPT=yes
++        fi
++        ;;
+     confirm-license)
+         if [ "$VAL" = "yes" ]; then
+             OPT_CONFIRM_LICENSE="$VAL"
+@@ -5272,6 +5284,30 @@ if [ "$CFG_PULSEAUDIO" != "no" ]; then
+     fi
+ fi
+ 
++# Auto-detect LTTNG UST support
++if [ "$CFG_LTTNG" != "no" ]; then
++    if [ -n "$PKG_CONFIG" ]; then
++        QT_CFLAGS_LTTNG=`$PKG_CONFIG --cflags lttng-ust 2>/dev/null`
++        QT_LIBS_LTTNG=`$PKG_CONFIG --libs lttng-ust 2>/dev/null`
++	EXTRA_LFLAGS="$EXTRA_LFLAGS $QT_LIBS_LTTNG"
++    fi
++    if compileTest unix/lttng "LTTNG-UST" $QT_CFLAGS_LTTNG $QT_LIBS_LTTNG; then
++        CFG_LTTNG=yes
++        QMakeVar set QT_CFLAGS_LTTNG "$QT_CFLAGS_LTTNG"
++        QMakeVar set QT_LIBS_LTTNG "$QT_LIBS_LTTNG"
++    else
++        if [ "$CFG_LTTNG" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
++            echo "LTTNG support cannot be enabled due to functionality tests!"
++            echo " Turn on verbose messaging (-v) to $0 to see the final report."
++            echo " If you believe this message is in error you may use the continue"
++            echo " switch (-continue) to $0 to continue."
++            exit 101
++        else
++            CFG_LTTNG=no
++        fi
++    fi
++fi
++
+ # X11/MINGW OpenGL
+ if [ "$XPLATFORM_MINGW" = "yes" ]; then
+     # auto-detect OpenGL support (es2 = OpenGL ES 2.0 or higher)
+@@ -6498,6 +6534,7 @@ fi
+ [ "$CFG_ICONV" = "sun" ] && QT_CONFIG="$QT_CONFIG sun-libiconv"
+ [ "$CFG_ICONV" = "gnu" ] && QT_CONFIG="$QT_CONFIG gnu-libiconv"
+ [ "$CFG_GLIB" = "yes" ] && QT_CONFIG="$QT_CONFIG glib"
++[ "$CFG_LTTNG" = "yes" ] && QT_CONFIG="$QT_CONFIG lttng"
+ [ "$CFG_DBUS" != "no" ] && QT_CONFIG="$QT_CONFIG dbus"
+ [ "$CFG_DBUS" = "linked" ] && QT_CONFIG="$QT_CONFIG dbus-linked"
+ [ "$CFG_OPENSSL" = "yes" ] && QT_CONFIG="$QT_CONFIG openssl"
+@@ -6921,6 +6958,7 @@ QMakeVar set sql-plugins "$SQL_PLUGINS"
+ [ "$CFG_OPENSSL" = "linked" ]&& QCONFIG_FLAGS="$QCONFIG_FLAGS QT_LINKED_OPENSSL"
+ [ "$CFG_OPENSSL" = "no" ] && [ "$CFG_SECURETRANSPORT" = "no" ] && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_SSL"
+ [ "$CFG_SECURETRANSPORT" = "yes" ] && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_SECURETRANSPORT"
++[ "$CFG_LTTNG" = "no" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_LTTNG"
+ 
+ [ "$CFG_SM" = "no" ]         && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_SESSIONMANAGER"
+ [ "$CFG_TSLIB" = "no" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_TSLIB"
+@@ -7399,6 +7437,7 @@ else
+     report_support "  pkg-config ............. no"
+ fi
+ report_support "  PulseAudio ............." "$CFG_PULSEAUDIO"
++report_support "  lttng .................." "$CFG_LTTNG"
+ report_support "  QPA backends:"
+ report_support "    DirectFB ............." "$CFG_DIRECTFB"
+ report_support "    EGLFS ................" "$CFG_EGLFS"
+diff --git a/src/gui/gui.pro b/src/gui/gui.pro
+index 69434e8..c45c396 100644
+--- a/src/gui/gui.pro
++++ b/src/gui/gui.pro
+@@ -49,6 +49,13 @@ include(itemmodels/itemmodels.pri)
+ QMAKE_LIBS += $$QMAKE_LIBS_GUI
+ 
+ load(qt_module)
++
++contains(QT_CONFIG, lttng) {
++    QMAKE_CXXFLAGS += $$QT_CFLAGS_LTTNG
++    LIBS_PRIVATE +=$$QMAKE_LIBS_DYNLOAD
++    LIBS_PRIVATE +=$$QT_LIBS_LTTNG
++}
++
+ load(cmake_functions)
+ 
+ win32: CMAKE_WINDOWS_BUILD = True
+diff --git a/src/gui/image/qimage.cpp b/src/gui/image/qimage.cpp
+index 17d3c02..13f1db2 100644
+--- a/src/gui/image/qimage.cpp
++++ b/src/gui/image/qimage.cpp
+@@ -49,6 +49,7 @@
+ #include <limits.h>
+ #include <qpa/qplatformpixmap.h>
+ #include <private/qdrawhelper_p.h>
++#include <private/qguitracer_p.h>
+ #include <private/qmemrotate_p.h>
+ #include <private/qimagescale_p.h>
+ #include <private/qsimd_p.h>
+@@ -110,6 +111,8 @@ QImageData * QImageData::create(const QSize &size, QImage::Format format)
+     if (!size.isValid() || format == QImage::Format_Invalid)
+         return 0;                                // invalid parameter(s)
+ 
++    QTRACE_FUNCTION;
++
+     uint width = size.width();
+     uint height = size.height();
+     uint depth = qt_depthForFormat(format);
+@@ -1144,6 +1147,7 @@ static void copyMetadata(QImageData *dst, const QImageData *src)
+ */
+ QImage QImage::copy(const QRect& r) const
+ {
++    QTRACE_FUNCTION;
+     if (!d)
+         return QImage();
+ 
+@@ -2656,6 +2660,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
+     if (newSize == size())
+         return *this;
+ 
++    QTRACE_FUNCTION;
++
+     QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(), (qreal)newSize.height() / height());
+     QImage img = transformed(wm, mode);
+     return img;
+@@ -2684,6 +2690,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
+     if (w <= 0)
+         return QImage();
+ 
++    QTRACE_FUNCTION;
++
+     qreal factor = (qreal) w / width();
+     QTransform wm = QTransform::fromScale(factor, factor);
+     return transformed(wm, mode);
+@@ -2712,6 +2720,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
+     if (h <= 0)
+         return QImage();
+ 
++    QTRACE_FUNCTION;
++
+     qreal factor = (qreal) h / height();
+     QTransform wm = QTransform::fromScale(factor, factor);
+     return transformed(wm, mode);
+@@ -3170,6 +3180,8 @@ QImage QImage::rgbSwapped_helper() const
+     if (isNull())
+         return *this;
+ 
++    QTRACE_FUNCTION;
++
+     QImage res;
+ 
+     switch (d->format) {
+@@ -4591,6 +4603,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
+     if (!d)
+         return QImage();
+ 
++    QTRACE_FUNCTION;
++
+     // source image data
+     int ws = width();
+     int hs = height();
+diff --git a/src/gui/image/qpixmap.cpp b/src/gui/image/qpixmap.cpp
+index 78031bc..38ac6c8 100644
+--- a/src/gui/image/qpixmap.cpp
++++ b/src/gui/image/qpixmap.cpp
+@@ -43,6 +43,7 @@
+ #include "qdatastream.h"
+ #include "qbuffer.h"
+ #include <private/qguiapplication_p.h>
++#include <private/qguitracer_p.h>
+ #include "qevent.h"
+ #include "qfile.h"
+ #include "qfileinfo.h"
+@@ -1165,6 +1166,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
+     if (newSize == size())
+         return *this;
+ 
++    QTRACE_FUNCTION;
++
+     QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(),
+                                           (qreal)newSize.height() / height());
+     QPixmap pix = transformed(wm, mode);
+@@ -1194,6 +1197,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
+     if (w <= 0)
+         return QPixmap();
+ 
++    QTRACE_FUNCTION;
++
+     qreal factor = (qreal) w / width();
+     QTransform wm = QTransform::fromScale(factor, factor);
+     return transformed(wm, mode);
+@@ -1222,6 +1227,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
+     if (h <= 0)
+         return QPixmap();
+ 
++    QTRACE_FUNCTION;
++
+     qreal factor = (qreal) h / height();
+     QTransform wm = QTransform::fromScale(factor, factor);
+     return transformed(wm, mode);
+diff --git a/src/gui/kernel/kernel.pri b/src/gui/kernel/kernel.pri
+index 73a5a7b..a60c56b 100644
+--- a/src/gui/kernel/kernel.pri
++++ b/src/gui/kernel/kernel.pri
+@@ -151,3 +151,17 @@ contains(QT_CONFIG, opengl)|contains(QT_CONFIG, opengles2) {
+ }
+ 
+ win32:HEADERS+=kernel/qwindowdefs_win.h
++
++# lttng-ust
++HEADERS += \
++	kernel/qguitracer_p.h \
++	kernel/qguilttngprovider_p.h
++
++contains(QT_CONFIG, lttng) {
++    SOURCES += \
++	kernel/qguilttngprovider.c
++
++    QMAKE_CXXFLAGS += $$QT_CFLAGS_LTTNG
++    LIBS_PRIVATE +=$$QMAKE_LIBS_DYNLOAD
++    LIBS_PRIVATE +=$$QT_LIBS_LTTNG
++}
+diff --git a/src/gui/kernel/qguilttngprovider.c b/src/gui/kernel/qguilttngprovider.c
+new file mode 100644
+index 0000000..cfbd0be
+--- /dev/null
++++ b/src/gui/kernel/qguilttngprovider.c
+@@ -0,0 +1,26 @@
++/*
++ * qguilttngprovider.c
++ *
++ * Tracepoint provider file for LTTng UST tracing in QT GUI
++ *
++ * For more information on see:
++ *    http://lttng.org/files/doc/man-pages/man3/lttng-ust.3.html
++ *
++ * The application level API to these tracepoints is in qtguitracer_p.h
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef QT_NO_LTTNG
++/*
++ * These #defines alter the behavior of qguilttngprovider_p.h to define the tracing
++ * primitives rather than just declaring them.
++ */
++#define TRACEPOINT_CREATE_PROBES
++#define TRACEPOINT_DEFINE
++/*
++ * The header containing our TRACEPOINT_EVENTs.
++ */
++#include "qguilttngprovider_p.h"
++
++#endif // QT_NO_LTTNG
+diff --git a/src/gui/kernel/qguilttngprovider_p.h b/src/gui/kernel/qguilttngprovider_p.h
+new file mode 100644
+index 0000000..544cefe
+--- /dev/null
++++ b/src/gui/kernel/qguilttngprovider_p.h
+@@ -0,0 +1,92 @@
++/*
++ * qguilttngprovider_p.h
++ *
++ * Tracepoint provider file for LTTng UST tracing in QT GUI.
++ *
++ * For more information on see:
++ *    http://lttng.org/files/doc/man-pages/man3/lttng-ust.3.html
++ *
++ * The application level API to these tracepoints is in qguitracer_p.h
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef QT_NO_LTTNG
++
++#undef TRACEPOINT_PROVIDER
++#define TRACEPOINT_PROVIDER qtgui
++
++#undef TRACEPOINT_INCLUDE_FILE
++#define TRACEPOINT_INCLUDE_FILE ./kernel/qguilttngprovider_p.h
++
++#ifdef __cplusplus
++extern "C"{
++#endif /*__cplusplus */
++
++#if !defined(_QGUILTTNGPROVIDER_P_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
++#define _QGUILTTNGPROVIDER_P_H
++
++#include <lttng/tracepoint.h>
++
++/* "message" tracepoint should be used for single event trace points */
++TRACEPOINT_EVENT(
++    qtgui,
++    message,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "keyValue" tracepoint should be used for event with type and context data */
++TRACEPOINT_EVENT(
++    qtgui,
++    keyValue,
++    TP_ARGS(char*, eventType, char*, contextData),
++    TP_FIELDS(ctf_string(key, eventType) ctf_string(value, contextData)))
++TRACEPOINT_EVENT(
++    qtgui,
++    before,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    qtgui,
++    after,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "scope_entry"/"scope_exit" tracepoints should be used only by
++   PmtraceTraceScope class to measure the duration of a scope within
++   a function in C++ code. In C code these may be used directly for
++   the same purpose, just make sure you trace any early exit from the
++   scope such as break statements or gotos.  */
++TRACEPOINT_EVENT(
++    qtgui,
++    scope_entry,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    qtgui,
++    scope_exit,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "function_entry"/"function_exit" tracepoints should be used only by
++   PmtraceTraceFunction class to measure the duration of a function
++   in C++ code. In C code it may be used directly for the same
++   purpose, just make sure you capture any early exit from the
++   function such as return statements. */
++TRACEPOINT_EVENT(
++    qtgui,
++    function_entry,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    qtgui,
++    function_exit,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++
++#endif /* _QGUILTTNGPROVIDER__PH */
++
++#include <lttng/tracepoint-event.h>
++
++#ifdef __cplusplus
++}
++#endif /*__cplusplus */
++
++#endif // QT_NO_LTTNG
+diff --git a/src/gui/kernel/qguitracer_p.h b/src/gui/kernel/qguitracer_p.h
+new file mode 100644
+index 0000000..acef2bc
+--- /dev/null
++++ b/src/gui/kernel/qguitracer_p.h
+@@ -0,0 +1,120 @@
++/*
++ * qguitracer_p.h
++ *
++ * Tracepoint API for using LTTng UST tracing in QT GUI.
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef QGUITRACER_P_H
++#define QGUITRACER_P_H
++
++#ifndef QT_NO_LTTNG
++
++#include "qguilttngprovider_p.h"
++
++/* QTRACE is for free form tracing. Provide a string
++   which uniquely identifies your trace point. */
++#define QTRACE(label) \
++    tracepoint(qtgui, message, label)
++
++/* QTRACE_KEY_VALUE_LOG tracepoint records a event with type and context data. */
++#define QTRACE_KEY_VALUE_LOG(eventType, contextData) \
++    tracepoint(qtgui, keyValue, eventType, contextData)
++
++/* QTRACE_BEFORE / AFTER is for tracing a time duration
++ * which is not contained within a scope (curly braces) or function,
++ * or in C code where there is no mechanism to automatically detect
++ * exiting a scope or function.
++ */
++#define QTRACE_BEFORE(label) \
++    tracepoint(qtgui, before, label)
++#define QTRACE_AFTER(label) \
++    tracepoint(qtgui, after, label)
++
++/* QTRACE_SCOPE* is for tracing a the duration of a scope.  In
++ * C++ code use QTRACE_SCOPE only, in C code use the
++ * ENTRY/EXIT macros and be careful to catch all exit cases.
++ */
++#define QTRACE_SCOPE_ENTRY(label) \
++    tracepoint(qtgui, scope_entry, label)
++#define QTRACE_SCOPE_EXIT(label) \
++    tracepoint(qtgui, scope_exit, label)
++#define QTRACE_SCOPE(label) \
++    QTraceScope traceScope(label)
++
++/* QTRACE_FUNCTION* is for tracing a the duration of a scope.
++ * In C++ code use QTRACE_FUNCTION only, in C code use the
++ * ENTRY/EXIT macros and be careful to catch all exit cases.
++ */
++#define QTRACE_FUNCTION_ENTRY(label) \
++    tracepoint(qtgui, function_entry, label)
++#define QTRACE_FUNCTION_EXIT(label) \
++    tracepoint(qtgui, function_exit, label)
++#define QTRACE_FUNCTION \
++    QTraceFunction traceFunction(const_cast<char*>(Q_FUNC_INFO))
++
++class QTraceScope {
++public:
++    QTraceScope(char* label)
++        : scopeLabel(label)
++    {
++        QTRACE_SCOPE_ENTRY(scopeLabel);
++    }
++
++    ~QTraceScope()
++    {
++        QTRACE_SCOPE_EXIT(scopeLabel);
++    }
++
++private:
++    char* scopeLabel;
++
++    // Prevent heap allocation
++    void operator delete(void*);
++    void* operator new(size_t);
++    QTraceScope(const QTraceScope&);
++    QTraceScope& operator=(const QTraceScope&);
++};
++
++class QTraceFunction {
++public:
++    QTraceFunction(char* label)
++        : fnLabel(label)
++    {
++        QTRACE_FUNCTION_ENTRY(fnLabel);
++    }
++
++    ~QTraceFunction()
++    {
++        QTRACE_FUNCTION_EXIT(fnLabel);
++    }
++
++private:
++    char* fnLabel;
++
++    // Prevent heap allocation
++    void operator delete(void*);
++    void* operator new(size_t);
++    QTraceFunction(const QTraceFunction&);
++    QTraceFunction& operator=(const QTraceFunction&);
++};
++
++#else // QT_NO_LTTNG
++
++#define QTRACE(label)
++#define QTRACE_KEY_VALUE_LOG(eventType, contextData)
++#define QTRACE_POSITION(label, x, y)
++#define QTRACE_MOUSEEVENT(label, button, x, y)
++#define QTRACE_BEFORE(label)
++#define QTRACE_AFTER(label)
++#define QTRACE_SCOPE_ENTRY(label)
++#define QTRACE_SCOPE_EXIT(label)
++#define QTRACE_SCOPE(label)
++#define QTRACE_FUNCTION_ENTRY(label)
++#define QTRACE_FUNCTION_EXIT(label)
++#define QTRACE_FUNCTION
++
++#endif // QT_NO_LTTNG
++
++#endif // QGUITRACER_P_H
+diff --git a/src/gui/opengl/qopenglframebufferobject.cpp b/src/gui/opengl/qopenglframebufferobject.cpp
+index 1ee90a0..f018e1b 100644
+--- a/src/gui/opengl/qopenglframebufferobject.cpp
++++ b/src/gui/opengl/qopenglframebufferobject.cpp
+@@ -39,6 +39,7 @@
+ #include <private/qopenglcontext_p.h>
+ #include <private/qopenglextensions_p.h>
+ #include <private/qfont_p.h>
++#include <private/qguitracer_p.h>
+ 
+ #include <qwindow.h>
+ #include <qlibrary.h>
+@@ -442,6 +443,7 @@ void QOpenGLFramebufferObjectPrivate::init(QOpenGLFramebufferObject *, const QSi
+                                            GLenum texture_target, GLenum internal_format,
+                                            GLint samples, bool mipmap)
+ {
++    QTRACE_FUNCTION;
+     QOpenGLContext *ctx = QOpenGLContext::currentContext();
+ 
+     funcs.initializeOpenGLFunctions();
+diff --git a/src/gui/opengl/qopenglpaintengine.cpp b/src/gui/opengl/qopenglpaintengine.cpp
+index f89c615..5420c74 100644
+--- a/src/gui/opengl/qopenglpaintengine.cpp
++++ b/src/gui/opengl/qopenglpaintengine.cpp
+@@ -74,6 +74,7 @@
+ #include <private/qdatabuffer_p.h>
+ #include <private/qstatictext_p.h>
+ #include <private/qtriangulator_p.h>
++#include <private/qguitracer_p.h>
+ 
+ #include "qopenglengineshadermanager_p.h"
+ #include "qopengl2pexvertexarray_p.h"
+@@ -548,6 +549,8 @@ static inline void setCoords(GLfloat *coords, const QOpenGLRect &rect)
+ 
+ void QOpenGL2PaintEngineExPrivate::drawTexture(const QOpenGLRect& dest, const QOpenGLRect& src, const QSize &textureSize, bool opaque, bool pattern)
+ {
++    QTRACE_FUNCTION;
++
+     // Setup for texture drawing
+     currentBrush = noBrush;
+ 
+diff --git a/src/gui/opengl/qopengltexturecache.cpp b/src/gui/opengl/qopengltexturecache.cpp
+index 72df636..f80a55f 100644
+--- a/src/gui/opengl/qopengltexturecache.cpp
++++ b/src/gui/opengl/qopengltexturecache.cpp
+@@ -37,6 +37,7 @@
+ #include <private/qopenglcontext_p.h>
+ #include <private/qopenglextensions_p.h>
+ #include <private/qimagepixmapcleanuphooks_p.h>
++#include <private/qguitracer_p.h>
+ #include <qpa/qplatformpixmap.h>
+ 
+ QT_BEGIN_NAMESPACE
+@@ -184,6 +185,7 @@ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, const QImage &i
+ 
+ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, qint64 key, const QImage &image, BindOptions options)
+ {
++    QTRACE_FUNCTION;
+     GLuint id;
+     QOpenGLFunctions *funcs = context->functions();
+     funcs->glGenTextures(1, &id);

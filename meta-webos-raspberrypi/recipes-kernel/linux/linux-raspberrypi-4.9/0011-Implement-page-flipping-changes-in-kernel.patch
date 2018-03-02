@@ -1,0 +1,247 @@
+From 1482789e64183f752dd41fe1d5f3744214722ab9 Mon Sep 17 00:00:00 2001
+From: Purushottam Narayana <purushottam.narayana@lge.com>
+Date: Mon, 5 Mar 2018 14:17:24 -0800
+Subject: [PATCH] Implement page flipping changes in kernel.
+
+:Release Notes:
+Implement page flipping feature to overcome glitches, tearing effects.
+
+:Detailed Notes:
+Page flipping will help to overcome tearing artifacts on video.
+It also eliminates any glitches occuring while scaling in particular
+during adaptive streaming and resolution change.
+
+:Testing Performed:
+Play YouTube, change resolution manually, check adaptive streaming and
+ensured no glitches or scaling artifacts are seen on video.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-51178] [webOS OSE]:Glitches are observed when a youtube video is played from Youtube App
+[PLAT-51656] Implement Page Flipping for video renderer.
+---
+ drivers/gpu/drm/drm_plane.c | 132 ++++++++++++++++++++++++++++++--------------
+ 1 file changed, 91 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
+index a96788b..9026dad 100644
+--- a/drivers/gpu/drm/drm_plane.c
++++ b/drivers/gpu/drm/drm_plane.c
+@@ -541,8 +541,14 @@ static int __setplane_internal_custom(struct drm_plane *plane,
+ 	int ret = 0;
+ 	/* No fb means shut it down */
+ 	if (!fb) {
+-		plane->funcs->disable_plane(plane);
+-		plane->fb = NULL;
++		plane->old_fb = plane->fb;
++		ret = plane->funcs->disable_plane(plane);
++		if (!ret) {
++			plane->crtc = NULL;
++			plane->fb = NULL;
++		} else {
++			plane->old_fb = NULL;
++		}
+ 		goto out;
+ 	}
+ 
+@@ -589,6 +595,10 @@ static int __setplane_internal_custom(struct drm_plane *plane,
+ 	}
+ 
+ out:
++	if (fb)
++		drm_framebuffer_unreference(fb);
++	if (plane->old_fb)
++		drm_framebuffer_unreference(plane->old_fb);
+ 	plane->old_fb = NULL;
+ 
+ 	return ret;
+@@ -611,6 +621,8 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 	uint8_t max_planes = 4;
+ 	uint32_t crtc_id = 43;
+ 	uint16_t planeBase = 44;// Only single crtc is supported now.
++	bool framearrived = false;
++	struct drm_framebuffer *fbs = NULL;
+ 	struct io_rect {
+ 		/* Signed dest location allows it to be partially off screen */
+ 		int32_t crtc_x, crtc_y;
+@@ -619,9 +631,18 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 		/* Source values are 16.16 fixed point */
+ 		uint32_t src_x, src_y;
+ 		uint32_t src_h, src_w;
+-	} *scale_param;
++	};
++	struct ifb_rect {
++		/* Source values are 16.16 fixed point */
++		uint32_t src_x, src_y;
++		uint32_t src_w, src_h;
++		uint32_t fb_id; // Optional needed onl for 0xff05
++	};
++	struct io_rect scale_param;
++	struct ifb_rect scale_param_fb;
++	struct io_rect *scale_param_ip;
+ 
+-	DRM_DEBUG_KMS("\n drm_mode_plane_set_custom_prop arg->value = %llx arg->prop_id = %x plane_id = %d",arg->value, arg->prop_id, arg->obj_id);
++	DRM_DEBUG_KMS("drm_mode_plane_set_custom_prop arg->value = %llx arg->prop_id = %x plane_id = %d \n",arg->value, arg->prop_id, arg->obj_id);
+ 
+ 	switch (arg->prop_id) {
+ 		case 0xff02:
+@@ -669,53 +690,60 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 			}
+ 			return ret;
+ 		case 0xff03:
+-			scale_param = (struct io_rect *) arg->value;
+-			DRM_DEBUG_KMS("src rect: %d %d %d %d", scale_param->src_x, scale_param->src_y,
+-				   scale_param->src_w>>16, scale_param->src_h>>16);
+-			DRM_DEBUG_KMS("crtc rect: %d %d %d %d", scale_param->crtc_x, scale_param->crtc_y,
+-				   scale_param->crtc_w, scale_param->crtc_h);
++			memcpy((void *)&scale_param, (struct io_rect *)arg->value, sizeof(scale_param));
++			printk("ff03 src rect: %d %d %d %d \n", scale_param.src_x, scale_param.src_y,
++				   scale_param.src_w, scale_param.src_h);
++			DRM_DEBUG_KMS("ff03 crtc rect: %d %d %d %d \n", scale_param.crtc_x, scale_param.crtc_y,
++				   scale_param.crtc_w, scale_param.crtc_h);
+ 
+ 			/* BRCM RPI drivers gives div 0 exception when display width/height being 0 */
+ 			/* Scale param check is not required anymore as stack address passing is rectified in
+ 			 upper layer */
+-			if (scale_param->crtc_w == 0 || scale_param->crtc_h == 0) {
++			if (scale_param.crtc_w == 0 || scale_param.crtc_h == 0) {
+ 				DRM_DEBUG_KMS("\n Invalid values, Dst rect width or height or both zeros");
+ 				return -ENOENT;
+ 			}
+ 
+-			if (!fb) {
++			if (plane->state->crtc_x == scale_param.crtc_x && plane->state->crtc_y == scale_param.crtc_y &&
++				plane->state->crtc_w == scale_param.crtc_w && plane->state->crtc_h == scale_param.crtc_h &&
++				plane->state->src_x == (scale_param.src_x << 16) && plane->state->src_y == (scale_param.src_y << 16) &&
++				plane->state->src_w == (scale_param.src_w << 16) && plane->state->src_h == (scale_param.src_h << 16)) {
++				DRM_DEBUG_KMS("ff03 No change in values");
++				return 0;
++			}
++
++			if (!plane->state->fb || (!scale_param.crtc_x && !scale_param.crtc_y && !framearrived)) {
+ 				DRM_DEBUG_KMS("\n No FB connected yet, store the values");
+-				plane->state->crtc_x = scale_param->crtc_x;
+-				plane->state->crtc_y = scale_param->crtc_y;
+-				plane->state->crtc_w = scale_param->crtc_w;
+-				plane->state->crtc_h = scale_param->crtc_h;
+-
+-				plane->state->src_x = scale_param->src_x;
+-				plane->state->src_y = scale_param->src_y;
+-				plane->state->src_w = scale_param->src_w << 16;
+-				plane->state->src_h = scale_param->src_h << 16;
++				plane->state->crtc_x = scale_param.crtc_x;
++				plane->state->crtc_y = scale_param.crtc_y;
++				plane->state->crtc_w = scale_param.crtc_w;
++				plane->state->crtc_h = scale_param.crtc_h;
++
++				plane->state->src_x = scale_param.src_x << 16;
++				plane->state->src_y = scale_param.src_y << 16;
++				plane->state->src_w = scale_param.src_w << 16;
++				plane->state->src_h = scale_param.src_h << 16;
++				framearrived = false;
+ 				ret = 0;
+ 			} else {
+-				ret = __setplane_internal_custom(plane, crtc, plane->state->fb, scale_param->crtc_x, scale_param->crtc_y,
+-												 scale_param->crtc_w, scale_param->crtc_h,
+-												 scale_param->src_x, scale_param->src_y,
+-												 scale_param->src_w << 16, scale_param->src_h << 16);
++				DRM_DEBUG_KMS("Call __setplane_internal_custom");
++				ret = __setplane_internal_custom(plane, crtc, plane->state->fb, scale_param.crtc_x, scale_param.crtc_y,
++												 scale_param.crtc_w, scale_param.crtc_h,
++												 scale_param.src_x << 16, scale_param.src_y << 16,
++												 scale_param.src_w << 16, scale_param.src_h << 16);
+ 			}
+-
+ 			break;
+-
+ 		case 0xff04:
+-			scale_param = (struct io_rect *) arg->value;
+-			DRM_DEBUG_KMS("src rect: %d %d %d %d \n", scale_param->src_x, scale_param->src_y,
+-				   scale_param->src_w, scale_param->src_h);
++			scale_param_ip = (struct io_rect *) arg->value;
++			DRM_DEBUG_KMS("src rect: %d %d %d %d \n", scale_param_ip->src_x, scale_param_ip->src_y,
++				   scale_param_ip->src_w, scale_param_ip->src_h);
+ 
+ 			if (!plane->state->fb) {
+ 				DRM_DEBUG_KMS("\n No FB connected yet, store the values");
+-
+-				plane->state->src_x = scale_param->src_x;
+-				plane->state->src_y = scale_param->src_y;
+-				plane->state->src_w = scale_param->src_w << 16;
+-				plane->state->src_h = scale_param->src_h << 16;
++				plane->state->src_x = scale_param_ip->src_x << 16;
++				plane->state->src_y = scale_param_ip->src_y << 16;
++				plane->state->src_w = scale_param_ip->src_w << 16;
++				plane->state->src_h = scale_param_ip->src_h << 16;
+ 				ret = 0;
+ 			} else {
+ 				DRM_DEBUG_KMS("crtc rect: %d %d %d %d", plane->state->crtc_x, plane->state->crtc_y,
+@@ -727,18 +755,16 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				}
+ 				ret = __setplane_internal_custom(plane, crtc, plane->state->fb, plane->state->crtc_x, plane->state->crtc_y,
+ 												 plane->state->crtc_w, plane->state->crtc_h,
+-												 scale_param->src_x, scale_param->src_y,
+-												 scale_param->src_w << 16, scale_param->src_h << 16);
++												 scale_param_ip->src_x << 16, scale_param_ip->src_y << 16,
++												 scale_param_ip->src_w << 16, scale_param_ip->src_h << 16);
+ 			}
+ 			break;
+ 
+ 		case 0xff01:
+-			DRM_DEBUG_KMS("\n Going to look for framebuffer %d ", arg->value);
++			DRM_DEBUG_KMS("\n Look for framebuffer %d ", arg->value);
+ 			if (arg->value) {
+ 				fb = drm_framebuffer_lookup(plane->dev, arg->value);
+ 				if (!fb) {
+-					DRM_DEBUG_KMS("Unknown framebuffer ID %d\n",
+-								  arg->value);
+ 					DRM_DEBUG_KMS("\n Unknown framebuffer ID %d ", arg->value);
+ 					return -ENOENT;
+ 				}
+@@ -767,16 +793,40 @@ int drm_mode_plane_set_custom_prop(struct drm_device *dev, struct drm_plane *pla
+ 				DRM_DEBUG_KMS("\n Src width or height of dst is 0");
+ 			}
+ 			/* src_{x,y,w,h} values are stored as 16.16 fixed point */
+-			DRM_DEBUG_KMS("src rect: %d %d %d %d", plane->state->src_x, plane->state->src_y,
++			DRM_DEBUG_KMS("src rect: %d %d %d %d", plane->state->src_x >> 16, plane->state->src_y >> 16,
+ 				   plane->state->src_w >> 16, plane->state->src_h >> 16);
+ 			DRM_DEBUG_KMS("crtc rect: %d %d %d %d", plane->state->crtc_x, plane->state->crtc_y,
+ 				   plane->state->crtc_w, plane->state->crtc_h);
+-			ret = __setplane_internal_custom(plane, crtc, plane->state->fb,
++			ret = __setplane_internal_custom(plane, crtc, fb,
+ 									  plane->state->crtc_x, plane->state->crtc_y,
+ 									  plane->state->crtc_w, plane->state->crtc_h,
+ 									  plane->state->src_x, plane->state->src_y,
+ 									  plane->state->src_w, plane->state->src_h);
+ 			break;
++		case 0xff05:
++			memcpy((void *)&scale_param_fb, (void *)arg->value, sizeof(scale_param_fb));
++			DRM_DEBUG_KMS("src rect: %d %d %d %d fb_id = %d", scale_param_fb.src_x, scale_param_fb.src_y,
++						  scale_param_fb.src_w, scale_param_fb.src_h, scale_param_fb.fb_id);
++
++			fbs = drm_framebuffer_lookup(plane->dev, scale_param_fb.fb_id);
++			if (!fbs) {
++				DRM_DEBUG_KMS("\n Unknown framebuffer ID %d ", arg->value);
++				return -ENOENT;
++			} else {
++				DRM_DEBUG_KMS("crtc rect: %d %d %d %d", plane->state->crtc_x, plane->state->crtc_y,
++					   plane->state->crtc_w, plane->state->crtc_h);
++
++				if (plane->state->crtc_w == 0 || plane->state->crtc_h == 0) {
++					DRM_DEBUG_KMS("\n Invalid values, Dst rect width or height or both zeros");
++					return -ENOENT;
++				}
++				ret = __setplane_internal_custom(plane, crtc, fbs, plane->state->crtc_x, plane->state->crtc_y,
++												 plane->state->crtc_w, plane->state->crtc_h,
++												 plane->state->src_x, plane->state->src_y,
++												 scale_param_fb.src_w << 16, scale_param_fb.src_h << 16);
++				framearrived = true;
++			}
++			break;
+ 		default:
+ 			DRM_DEBUG_KMS("\n prop ID %d ", arg->prop_id);
+ 			return -ENOENT;
+-- 
+1.9.1
+

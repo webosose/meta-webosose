@@ -1,0 +1,23 @@
+From 1146819a993b8ba43700a60d879678ca5b2c8303 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Fri, 7 Feb 2014 04:59:35 +0100
+Subject: [PATCH] platformsupport.pro: Add MESA_EGL_NO_X11_HEADERS
+
+---
+ src/platformsupport/platformsupport.pro | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/platformsupport/platformsupport.pro b/src/platformsupport/platformsupport.pro
+index c5894c4..54c1868 100644
+--- a/src/platformsupport/platformsupport.pro
++++ b/src/platformsupport/platformsupport.pro
+@@ -4,6 +4,9 @@ QT         = core-private gui-private
+ CONFIG += static internal_module
+ mac:LIBS_PRIVATE += -lz
+ 
++#Avoid X11 header collision
++DEFINES += MESA_EGL_NO_X11_HEADERS
++
+ DEFINES += QT_NO_CAST_FROM_ASCII
+ PRECOMPILED_HEADER = ../corelib/global/qt_pch.h
+ 

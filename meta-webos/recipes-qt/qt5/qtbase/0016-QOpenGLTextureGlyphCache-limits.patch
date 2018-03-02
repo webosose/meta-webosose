@@ -1,0 +1,141 @@
+From b1a9ee7f3be383bac891dc3c03f1845980ab24bf Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Wed, 29 Oct 2014 00:21:30 +0200
+Subject: [PATCH] QOpenGLTextureGlyphCache limits
+
+:Release Notes:
+Expose environment variables to control glyph cache limits
+
+Upstream-Status: Inappropriate [specific to tv]
+---
+ src/gui/opengl/qopengltextureglyphcache.cpp | 16 ++++++++++++++++
+ src/gui/opengl/qopengltextureglyphcache_p.h |  3 +++
+ src/gui/painting/qtextureglyphcache.cpp     |  4 ++--
+ src/gui/painting/qtextureglyphcache_p.h     | 14 +++++++++++---
+ 4 files changed, 32 insertions(+), 5 deletions(-)
+ mode change 100644 => 100755 src/gui/opengl/qopengltextureglyphcache.cpp
+
+diff --git a/src/gui/opengl/qopengltextureglyphcache.cpp b/src/gui/opengl/qopengltextureglyphcache.cpp
+old mode 100644
+new mode 100755
+index fad68d5..b045681
+--- a/src/gui/opengl/qopengltextureglyphcache.cpp
++++ b/src/gui/opengl/qopengltextureglyphcache.cpp
+@@ -51,6 +51,8 @@ QOpenGLTextureGlyphCache::QOpenGLTextureGlyphCache(QFontEngine::GlyphFormat form
+     , m_filterMode(Nearest)
+     , m_serialNumber(qopengltextureglyphcache_serial_number.fetchAndAddRelaxed(1))
+     , m_buffer(QOpenGLBuffer::VertexBuffer)
++    , m_maxDefaultTextureWidth(0)
++    , m_maxDefaultTextureHeight(0)
+ {
+ #ifdef QT_GL_TEXTURE_GLYPH_CACHE_DEBUG
+     qDebug(" -> QOpenGLTextureGlyphCache() %p for context %p.", this, QOpenGLContext::currentContext());
+@@ -72,6 +74,14 @@ QOpenGLTextureGlyphCache::QOpenGLTextureGlyphCache(QFontEngine::GlyphFormat form
+     m_textureCoordinateArray[5] = 1.0f;
+     m_textureCoordinateArray[6] = 0.0f;
+     m_textureCoordinateArray[7] = 1.0f;
++
++    const QByteArray w = qgetenv("QT_OPENGL_TEXTURE_GLYPH_CACHE_MAX_WIDTH");
++    if (!w.isEmpty())
++        m_maxDefaultTextureWidth = w.toInt();
++
++    const QByteArray h = qgetenv("QT_OPENGL_TEXTURE_GLYPH_CACHE_MAX_HEIGHT");
++    if (!h.isEmpty())
++        m_maxDefaultTextureHeight = h.toInt();
+ }
+ 
+ QOpenGLTextureGlyphCache::~QOpenGLTextureGlyphCache()
+@@ -421,6 +431,9 @@ int QOpenGLTextureGlyphCache::glyphPadding() const
+ 
+ int QOpenGLTextureGlyphCache::maxTextureWidth() const
+ {
++    if (m_maxDefaultTextureWidth)
++        return m_maxDefaultTextureWidth;
++
+     QOpenGLContext *ctx = const_cast<QOpenGLContext *>(QOpenGLContext::currentContext());
+     if (ctx == 0)
+         return QImageTextureGlyphCache::maxTextureWidth();
+@@ -430,6 +443,9 @@ int QOpenGLTextureGlyphCache::maxTextureWidth() const
+ 
+ int QOpenGLTextureGlyphCache::maxTextureHeight() const
+ {
++    if (m_maxDefaultTextureHeight)
++        return m_maxDefaultTextureHeight;
++
+     QOpenGLContext *ctx = const_cast<QOpenGLContext *>(QOpenGLContext::currentContext());
+     if (ctx == 0)
+         return QImageTextureGlyphCache::maxTextureHeight();
+diff --git a/src/gui/opengl/qopengltextureglyphcache_p.h b/src/gui/opengl/qopengltextureglyphcache_p.h
+index 47fdd70..fb31cfe 100644
+--- a/src/gui/opengl/qopengltextureglyphcache_p.h
++++ b/src/gui/opengl/qopengltextureglyphcache_p.h
+@@ -159,6 +159,9 @@ private:
+ 
+     int m_serialNumber;
+ 
++    int m_maxDefaultTextureWidth;
++    int m_maxDefaultTextureHeight;
++
+     QOpenGLBuffer m_buffer;
+     QOpenGLVertexArrayObject m_vao;
+ };
+diff --git a/src/gui/painting/qtextureglyphcache.cpp b/src/gui/painting/qtextureglyphcache.cpp
+index 20039d9..9f63e0e 100644
+--- a/src/gui/painting/qtextureglyphcache.cpp
++++ b/src/gui/painting/qtextureglyphcache.cpp
+@@ -171,8 +171,8 @@ bool QTextureGlyphCache::populate(QFontEngine *fontEngine, int numGlyphs, const
+     rowHeight += paddingDoubled;
+ 
+     if (m_w == 0) {
+-        if (fontEngine->maxCharWidth() <= QT_DEFAULT_TEXTURE_GLYPH_CACHE_WIDTH)
+-            m_w = QT_DEFAULT_TEXTURE_GLYPH_CACHE_WIDTH;
++        if (fontEngine->maxCharWidth() <= defaultGlyphCacheWidth())
++            m_w = defaultGlyphCacheWidth();
+         else
+             m_w = qNextPowerOfTwo(qCeil(fontEngine->maxCharWidth()) - 1);
+     }
+diff --git a/src/gui/painting/qtextureglyphcache_p.h b/src/gui/painting/qtextureglyphcache_p.h
+index 96043a5..3d81230 100644
+--- a/src/gui/painting/qtextureglyphcache_p.h
++++ b/src/gui/painting/qtextureglyphcache_p.h
+@@ -69,8 +69,14 @@ class Q_GUI_EXPORT QTextureGlyphCache : public QFontEngineGlyphCache
+ public:
+     QTextureGlyphCache(QFontEngine::GlyphFormat format, const QTransform &matrix)
+         : QFontEngineGlyphCache(format, matrix), m_current_fontengine(0),
+-                                               m_w(0), m_h(0), m_cx(0), m_cy(0), m_currentRowHeight(0)
+-        { }
++                                               m_w(0), m_h(0), m_cx(0), m_cy(0), m_currentRowHeight(0),
++                                               m_defaultGlyphCacheWidth(QT_DEFAULT_TEXTURE_GLYPH_CACHE_WIDTH)
++        {
++            static const QByteArray env = qgetenv("QT_DEFAULT_TEXTURE_GLYPH_CACHE_WIDTH");
++            if (!env.isEmpty())
++                m_defaultGlyphCacheWidth = env.toInt();
++        }
++
+ 
+     ~QTextureGlyphCache();
+ 
+@@ -129,13 +135,14 @@ public:
+     inline bool isNull() const { return m_h == 0; }
+ 
+     QHash<GlyphAndSubPixelPosition, Coord> coords;
+-    virtual int maxTextureWidth() const { return QT_DEFAULT_TEXTURE_GLYPH_CACHE_WIDTH; }
++    virtual int maxTextureWidth() const { return m_defaultGlyphCacheWidth; }
+     virtual int maxTextureHeight() const { return -1; }
+ 
+     QImage textureMapForGlyph(glyph_t g, QFixed subPixelPosition) const;
+ 
+ protected:
+     int calculateSubPixelPositionCount(glyph_t) const;
++    int defaultGlyphCacheWidth() { return m_defaultGlyphCacheWidth; }
+ 
+     QFontEngine *m_current_fontengine;
+     QHash<GlyphAndSubPixelPosition, Coord> m_pendingGlyphs;
+@@ -145,6 +152,7 @@ protected:
+     int m_cx; // current x
+     int m_cy; // current y
+     int m_currentRowHeight; // Height of last row
++    int m_defaultGlyphCacheWidth;
+ };
+ 
+ inline uint qHash(const QTextureGlyphCache::GlyphAndSubPixelPosition &g)

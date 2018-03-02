@@ -1,0 +1,487 @@
+From bc4eb1c6094f5a63342cd4408ebc99bbd0afde55 Mon Sep 17 00:00:00 2001
+From: Elvis Lee <kwangwoong.lee@lge.com>
+Date: Fri, 17 Apr 2015 14:26:22 +0900
+Subject: [PATCH] Revert "Make SmoothedAnimation and SpringAnimation smoothly
+ transition again."
+
+:Release Notes:
+Revert "Make SmoothedAnimation and SpringAnimation smoothly transition again."
+
+:Detailed Notes:
+This reverts commit 7da483bfbefcaabb1dbbf3e2f1d5b5f7aadc3b06.
+https://codereview.qt-project.org/#/c/78662/
+
+The upstream patche cause a animation to be reset when the target value
+is changed continuosly. In view of webos, That might be a kind of regression.
+
+:Issues Addressed:
+[DRD-8066] Launcher EditMode: Animation is not smooth
+
+Upstream-Status: do not apply, we may consider right fix for this.
+---
+ src/qml/animations/animations.pri                  |   2 -
+ src/qml/animations/qabstractanimationjob.cpp       |  10 +-
+ src/qml/animations/qabstractanimationjob_p.h       |   3 +
+ .../animations/qcontinuinganimationgroupjob.cpp    | 124 ---------------------
+ .../animations/qcontinuinganimationgroupjob_p.h    |  71 ------------
+ src/quick/util/qquicksmoothedanimation.cpp         |  18 ++-
+ src/quick/util/qquicksmoothedanimation_p_p.h       |   4 +-
+ src/quick/util/qquickspringanimation.cpp           |  24 ++--
+ 8 files changed, 31 insertions(+), 225 deletions(-)
+ delete mode 100644 src/qml/animations/qcontinuinganimationgroupjob.cpp
+ delete mode 100644 src/qml/animations/qcontinuinganimationgroupjob_p.h
+
+diff --git a/src/qml/animations/animations.pri b/src/qml/animations/animations.pri
+index a379692..01ac25a 100644
+--- a/src/qml/animations/animations.pri
++++ b/src/qml/animations/animations.pri
+@@ -5,7 +5,6 @@ HEADERS += \
+         $$PWD/qanimationgroupjob_p.h \
+         $$PWD/qsequentialanimationgroupjob_p.h \
+         $$PWD/qparallelanimationgroupjob_p.h \
+-        $$PWD/qcontinuinganimationgroupjob_p.h \
+         $$PWD/qpauseanimationjob_p.h \
+         $$PWD/qanimationjobutil_p.h
+ 
+@@ -14,5 +13,4 @@ SOURCES += \
+         $$PWD/qanimationgroupjob.cpp \
+         $$PWD/qsequentialanimationgroupjob.cpp \
+         $$PWD/qparallelanimationgroupjob.cpp \
+-        $$PWD/qcontinuinganimationgroupjob.cpp \
+         $$PWD/qpauseanimationjob.cpp
+diff --git a/src/qml/animations/qabstractanimationjob.cpp b/src/qml/animations/qabstractanimationjob.cpp
+index d301c43..43c8c17 100644
+--- a/src/qml/animations/qabstractanimationjob.cpp
++++ b/src/qml/animations/qabstractanimationjob.cpp
+@@ -54,7 +54,7 @@ QAnimationJobChangeListener::~QAnimationJobChangeListener()
+ }
+ 
+ QQmlAnimationTimer::QQmlAnimationTimer() :
+-    QAbstractAnimationTimer(), lastTick(0),
++    QAbstractAnimationTimer(), lastTick(0), lastDelta(0),
+     currentAnimationIdx(0), insideTick(false),
+     startAnimationPending(false), stopTimerPending(false),
+     runningLeafAnimations(0)
+@@ -98,6 +98,7 @@ void QQmlAnimationTimer::updateAnimationsTime(qint64 delta)
+         return;
+ 
+     lastTick += delta;
++    lastDelta = delta;
+ 
+     //we make sure we only call update time if the time has actually changed
+     //it might happen in some cases that the time doesn't change because events are delayed
+@@ -143,7 +144,8 @@ void QQmlAnimationTimer::startAnimations()
+         return;
+     startAnimationPending = false;
+     //force timer to update, which prevents large deltas for our newly added animations
+-    QUnifiedTimer::instance()->maybeUpdateAnimationsToCurrentTime();
++    if (!animations.isEmpty())
++        QUnifiedTimer::instance()->maybeUpdateAnimationsToCurrentTime();
+ 
+     //we transfer the waiting animations into the "really running" state
+     animations += animationsToStart;
+@@ -155,12 +157,12 @@ void QQmlAnimationTimer::startAnimations()
+ void QQmlAnimationTimer::stopTimer()
+ {
+     stopTimerPending = false;
+-    bool pendingStart = startAnimationPending && animationsToStart.size() > 0;
+-    if (animations.isEmpty() && !pendingStart) {
++    if (animations.isEmpty()) {
+         QUnifiedTimer::resumeAnimationTimer(this);
+         QUnifiedTimer::stopAnimationTimer(this);
+         // invalidate the start reference time
+         lastTick = 0;
++        lastDelta = 0;
+     }
+ }
+ 
+diff --git a/src/qml/animations/qabstractanimationjob_p.h b/src/qml/animations/qabstractanimationjob_p.h
+index 14dbf85..6e254e5 100644
+--- a/src/qml/animations/qabstractanimationjob_p.h
++++ b/src/qml/animations/qabstractanimationjob_p.h
+@@ -215,6 +215,8 @@ public:
+     void restartAnimationTimer();
+     void updateAnimationsTime(qint64 timeStep);
+ 
++    int currentDelta() { return lastDelta; }
++
+     //useful for profiling/debugging
+     int runningAnimationCount() { return animations.count(); }
+ 
+@@ -226,6 +228,7 @@ public Q_SLOTS:
+ 
+ private:
+     qint64 lastTick;
++    int lastDelta;
+     int currentAnimationIdx;
+     bool insideTick;
+     bool startAnimationPending;
+diff --git a/src/qml/animations/qcontinuinganimationgroupjob.cpp b/src/qml/animations/qcontinuinganimationgroupjob.cpp
+deleted file mode 100644
+index 88005ba..0000000
+--- a/src/qml/animations/qcontinuinganimationgroupjob.cpp
++++ /dev/null
+@@ -1,124 +0,0 @@
+-/****************************************************************************
+-**
+-** Copyright (C) 2014 Jolla Ltd.
+-** Contact: http://www.qt.io/licensing/
+-**
+-** This file is part of the QtQml module of the Qt Toolkit.
+-**
+-** $QT_BEGIN_LICENSE:LGPL21$
+-** Commercial License Usage
+-** Licensees holding valid commercial Qt licenses may use this file in
+-** accordance with the commercial license agreement provided with the
+-** Software or, alternatively, in accordance with the terms contained in
+-** a written agreement between you and The Qt Company. For licensing terms
+-** and conditions see http://www.qt.io/terms-conditions. For further
+-** information use the contact form at http://www.qt.io/contact-us.
+-**
+-** GNU Lesser General Public License Usage
+-** Alternatively, this file may be used under the terms of the GNU Lesser
+-** General Public License version 2.1 or version 3 as published by the Free
+-** Software Foundation and appearing in the file LICENSE.LGPLv21 and
+-** LICENSE.LGPLv3 included in the packaging of this file. Please review the
+-** following information to ensure the GNU Lesser General Public License
+-** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
+-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+-**
+-** As a special exception, The Qt Company gives you certain additional
+-** rights. These rights are described in The Qt Company LGPL Exception
+-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+-**
+-** $QT_END_LICENSE$
+-**
+-****************************************************************************/
+-
+-#include "private/qcontinuinganimationgroupjob_p.h"
+-#include "private/qanimationjobutil_p.h"
+-
+-QT_BEGIN_NAMESPACE
+-
+-QContinuingAnimationGroupJob::QContinuingAnimationGroupJob()
+-    : QAnimationGroupJob()
+-{
+-}
+-
+-QContinuingAnimationGroupJob::~QContinuingAnimationGroupJob()
+-{
+-}
+-
+-void QContinuingAnimationGroupJob::updateCurrentTime(int /*currentTime*/)
+-{
+-    Q_ASSERT(firstChild());
+-
+-    for (QAbstractAnimationJob *animation = firstChild(); animation; animation = animation->nextSibling()) {
+-        if (animation->state() == state()) {
+-            RETURN_IF_DELETED(animation->setCurrentTime(m_currentTime));
+-        }
+-    }
+-}
+-
+-void QContinuingAnimationGroupJob::updateState(QAbstractAnimationJob::State newState,
+-                                          QAbstractAnimationJob::State oldState)
+-{
+-    QAnimationGroupJob::updateState(newState, oldState);
+-
+-    switch (newState) {
+-    case Stopped:
+-        for (QAbstractAnimationJob *animation = firstChild(); animation; animation = animation->nextSibling())
+-            animation->stop();
+-        break;
+-    case Paused:
+-        for (QAbstractAnimationJob *animation = firstChild(); animation; animation = animation->nextSibling())
+-            if (animation->isRunning())
+-                animation->pause();
+-        break;
+-    case Running:
+-        if (!firstChild()) {
+-            stop();
+-            return;
+-        }
+-        for (QAbstractAnimationJob *animation = firstChild(); animation; animation = animation->nextSibling()) {
+-            resetUncontrolledAnimationFinishTime(animation);
+-            animation->setDirection(m_direction);
+-            animation->start();
+-        }
+-        break;
+-    }
+-}
+-
+-void QContinuingAnimationGroupJob::updateDirection(QAbstractAnimationJob::Direction direction)
+-{
+-    if (!isStopped()) {
+-        for (QAbstractAnimationJob *animation = firstChild(); animation; animation = animation->nextSibling()) {
+-            animation->setDirection(direction);
+-        }
+-    }
+-}
+-
+-void QContinuingAnimationGroupJob::uncontrolledAnimationFinished(QAbstractAnimationJob *animation)
+-{
+-    Q_ASSERT(animation && (animation->duration() == -1));
+-    int uncontrolledRunningCount = 0;
+-
+-    for (QAbstractAnimationJob *child = firstChild(); child; child = child->nextSibling()) {
+-        if (child == animation)
+-            setUncontrolledAnimationFinishTime(animation, animation->currentTime());
+-        else if (uncontrolledAnimationFinishTime(child) == -1)
+-            ++uncontrolledRunningCount;
+-    }
+-
+-    if (uncontrolledRunningCount > 0)
+-        return;
+-
+-    setUncontrolledAnimationFinishTime(this, currentTime());
+-    stop();
+-}
+-
+-void QContinuingAnimationGroupJob::debugAnimation(QDebug d) const
+-{
+-    d << "ContinuingAnimationGroupJob(" << hex << (const void *) this << dec << ")";
+-
+-    debugChildren(d);
+-}
+-
+-QT_END_NAMESPACE
+-
+diff --git a/src/qml/animations/qcontinuinganimationgroupjob_p.h b/src/qml/animations/qcontinuinganimationgroupjob_p.h
+deleted file mode 100644
+index b9827ab..0000000
+--- a/src/qml/animations/qcontinuinganimationgroupjob_p.h
++++ /dev/null
+@@ -1,71 +0,0 @@
+-/****************************************************************************
+-**
+-** Copyright (C) 2014 Jolla Ltd.
+-** Contact: http://www.qt.io/licensing/
+-**
+-** This file is part of the QtQml module of the Qt Toolkit.
+-**
+-** $QT_BEGIN_LICENSE:LGPL21$
+-** Commercial License Usage
+-** Licensees holding valid commercial Qt licenses may use this file in
+-** accordance with the commercial license agreement provided with the
+-** Software or, alternatively, in accordance with the terms contained in
+-** a written agreement between you and The Qt Company. For licensing terms
+-** and conditions see http://www.qt.io/terms-conditions. For further
+-** information use the contact form at http://www.qt.io/contact-us.
+-**
+-** GNU Lesser General Public License Usage
+-** Alternatively, this file may be used under the terms of the GNU Lesser
+-** General Public License version 2.1 or version 3 as published by the Free
+-** Software Foundation and appearing in the file LICENSE.LGPLv21 and
+-** LICENSE.LGPLv3 included in the packaging of this file. Please review the
+-** following information to ensure the GNU Lesser General Public License
+-** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
+-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+-**
+-** As a special exception, The Qt Company gives you certain additional
+-** rights. These rights are described in The Qt Company LGPL Exception
+-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+-**
+-** $QT_END_LICENSE$
+-**
+-****************************************************************************/
+-
+-#ifndef QCONTINUINGANIMATIONGROUPJOB_P_H
+-#define QCONTINUINGANIMATIONGROUPJOB_P_H
+-
+-//
+-//  W A R N I N G
+-//  -------------
+-//
+-// This file is not part of the Qt API.  It exists purely as an
+-// implementation detail.  This header file may change from version to
+-// version without notice, or even be removed.
+-//
+-// We mean it.
+-//
+-
+-#include "private/qanimationgroupjob_p.h"
+-
+-QT_BEGIN_NAMESPACE
+-
+-class Q_QML_PRIVATE_EXPORT QContinuingAnimationGroupJob : public QAnimationGroupJob
+-{
+-    Q_DISABLE_COPY(QContinuingAnimationGroupJob)
+-public:
+-    QContinuingAnimationGroupJob();
+-    ~QContinuingAnimationGroupJob();
+-
+-    int duration() const { return -1; }
+-
+-protected:
+-    void updateCurrentTime(int currentTime);
+-    void updateState(QAbstractAnimationJob::State newState, QAbstractAnimationJob::State oldState);
+-    void updateDirection(QAbstractAnimationJob::Direction direction);
+-    void uncontrolledAnimationFinished(QAbstractAnimationJob *animation);
+-    void debugAnimation(QDebug d) const;
+-};
+-
+-QT_END_NAMESPACE
+-
+-#endif // QCONTINUINGANIMATIONGROUPJOB_P_H
+diff --git a/src/quick/util/qquicksmoothedanimation.cpp b/src/quick/util/qquicksmoothedanimation.cpp
+index 6d585d3..92b95fa 100644
+--- a/src/quick/util/qquicksmoothedanimation.cpp
++++ b/src/quick/util/qquicksmoothedanimation.cpp
+@@ -35,7 +35,6 @@
+ #include "qquicksmoothedanimation_p_p.h"
+ 
+ #include "qquickanimation_p_p.h"
+-#include "private/qcontinuinganimationgroupjob_p.h"
+ 
+ #include <qmath.h>
+ #include <qqmlproperty.h>
+@@ -71,7 +70,7 @@ QSmoothedAnimation::QSmoothedAnimation(QQuickSmoothedAnimationPrivate *priv)
+     : QAbstractAnimationJob(), to(0), velocity(200), userDuration(-1), maximumEasingTime(-1),
+       reversingMode(QQuickSmoothedAnimation::Eased), initialVelocity(0),
+       trackVelocity(0), initialValue(0), invert(false), finalDuration(-1), lastTime(0),
+-      skipUpdate(false), delayedStopTimer(new QSmoothedAnimationTimer(this)), animationTemplate(priv)
++      useDelta(false), delayedStopTimer(new QSmoothedAnimationTimer(this)), animationTemplate(priv)
+ {
+     delayedStopTimer->setInterval(DELAY_STOP_TIMER_INTERVAL);
+     delayedStopTimer->setSingleShot(true);
+@@ -113,11 +112,11 @@ void QSmoothedAnimation::prepareForRestart()
+     initialVelocity = trackVelocity;
+     if (isRunning()) {
+         //we are joining a new wrapper group while running, our times need to be restarted
+-        skipUpdate = true;
++        useDelta = true;
+         init();
+         lastTime = 0;
+     } else {
+-        skipUpdate = false;
++        useDelta = false;
+         //we'll be started when the group starts, which will force an init()
+     }
+ }
+@@ -235,15 +234,12 @@ qreal QSmoothedAnimation::easeFollow(qreal time_seconds)
+ 
+ void QSmoothedAnimation::updateCurrentTime(int t)
+ {
+-    if (skipUpdate) {
+-        skipUpdate = false;
+-        return;
+-    }
+-
+     if (!isRunning() && !isPaused()) // This can happen if init() stops the animation in some cases
+         return;
+ 
+-    qreal time_seconds = qreal(t - lastTime) / 1000.;
++    qreal time_seconds = useDelta ? qreal(QQmlAnimationTimer::instance()->currentDelta()) / 1000. : qreal(t - lastTime) / 1000.;
++    if (useDelta)
++        useDelta = false;
+ 
+     qreal value = easeFollow(time_seconds);
+     value *= (invert? -1.0: 1.0);
+@@ -406,7 +402,7 @@ QAbstractAnimationJob* QQuickSmoothedAnimation::transition(QQuickStateActions &a
+ 
+     QQuickStateActions dataActions = QQuickPropertyAnimation::createTransitionActions(actions, modified, defaultTarget);
+ 
+-    QContinuingAnimationGroupJob *wrapperGroup = new QContinuingAnimationGroupJob();
++    QParallelAnimationGroupJob *wrapperGroup = new QParallelAnimationGroupJob();
+ 
+     if (!dataActions.isEmpty()) {
+         QSet<QAbstractAnimationJob*> anims;
+diff --git a/src/quick/util/qquicksmoothedanimation_p_p.h b/src/quick/util/qquicksmoothedanimation_p_p.h
+index 868bbd7..07f5588 100644
+--- a/src/quick/util/qquicksmoothedanimation_p_p.h
++++ b/src/quick/util/qquicksmoothedanimation_p_p.h
+@@ -50,6 +50,8 @@
+ 
+ #include "qquickanimation_p_p.h"
+ 
++#include "private/qparallelanimationgroupjob_p.h"
++
+ #include <private/qobject_p.h>
+ #include <QBasicTimer>
+ 
+@@ -120,7 +122,7 @@ private:
+     qreal s;  // Total s
+ 
+     int lastTime;
+-    bool skipUpdate;
++    bool useDelta;
+ 
+     bool recalc();
+     void delayedStop();
+diff --git a/src/quick/util/qquickspringanimation.cpp b/src/quick/util/qquickspringanimation.cpp
+index 125d6f5..726bb84 100644
+--- a/src/quick/util/qquickspringanimation.cpp
++++ b/src/quick/util/qquickspringanimation.cpp
+@@ -35,7 +35,7 @@
+ 
+ #include "qquickanimation_p_p.h"
+ #include <private/qqmlproperty_p.h>
+-#include "private/qcontinuinganimationgroupjob_p.h"
++#include "private/qparallelanimationgroupjob_p.h"
+ 
+ #include <QtCore/qdebug.h>
+ 
+@@ -84,7 +84,7 @@ public:
+ 
+     bool useMass : 1;
+     bool haveModulus : 1;
+-    bool skipUpdate : 1;
++    bool useDelta : 1;
+     typedef QHash<QQmlProperty, QSpringAnimation*> ActiveAnimationHash;
+     typedef ActiveAnimationHash::Iterator ActiveAnimationHashIt;
+ 
+@@ -153,7 +153,7 @@ QSpringAnimation::QSpringAnimation(QQuickSpringAnimationPrivate *priv)
+     , modulus(0.0)
+     , useMass(false)
+     , haveModulus(false)
+-    , skipUpdate(false)
++    , useDelta(false)
+     , animationTemplate(priv)
+ {
+ }
+@@ -185,10 +185,11 @@ int QSpringAnimation::duration() const
+ void QSpringAnimation::restart()
+ {
+     if (isRunning() || (stopTime != -1 && (animationTemplate->elapsed.elapsed() - stopTime) < DELAY_STOP_TIMER_INTERVAL)) {
+-        skipUpdate = true;
++        useDelta = true;
+         init();
++        lastTime = 0;
+     } else {
+-        skipUpdate = false;
++        useDelta = false;
+         //init() will be triggered when group starts
+     }
+ }
+@@ -201,17 +202,16 @@ void QSpringAnimation::init()
+ 
+ void QSpringAnimation::updateCurrentTime(int time)
+ {
+-    if (skipUpdate) {
+-        skipUpdate = false;
+-        return;
+-    }
+-
+     if (mode == Track) {
+         stop();
+         return;
+     }
+ 
+-    int elapsed = time - lastTime;
++    int elapsed = useDelta ? QQmlAnimationTimer::instance()->currentDelta() : time - lastTime;
++    if (useDelta) {
++        startTime = time - elapsed;
++        useDelta = false;
++    }
+ 
+     if (!elapsed)
+         return;
+@@ -531,7 +531,7 @@ QAbstractAnimationJob* QQuickSpringAnimation::transition(QQuickStateActions &act
+     Q_D(QQuickSpringAnimation);
+     Q_UNUSED(direction);
+ 
+-    QContinuingAnimationGroupJob *wrapperGroup = new QContinuingAnimationGroupJob();
++    QParallelAnimationGroupJob *wrapperGroup = new QParallelAnimationGroupJob();
+ 
+     QQuickStateActions dataActions = QQuickNumberAnimation::createTransitionActions(actions, modified, defaultTarget);
+     if (!dataActions.isEmpty()) {

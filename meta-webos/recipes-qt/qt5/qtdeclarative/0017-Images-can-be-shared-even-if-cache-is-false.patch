@@ -1,0 +1,124 @@
+From 40179e625cf95e305ae4f6c14dce413bb1884318 Mon Sep 17 00:00:00 2001
+From: Elvis Lee <kwangwoong.lee@lge.com>
+Date: Thu, 22 Jun 2017 18:40:35 +0900
+Subject: [PATCH] Images can be shared even if cache is false
+
+:Release Notes:
+Regardless Image::cache property, pixmap will be shared between images
+having same source.
+
+:Detailed Notes:
+Image::cache property had two aspect of internal functionality.
+ 1. Share image instance if source file is same.
+ 2. Store cache for a while even if unreferenced.
+
+So we couldn't choose one of them with existing the cache property.
+In webOS, sharing image instance is quite natural. So by default, the
+sharing is always supported regardless the cache property.
+And the property will only cares the 2nd functionality to store cache.
+
+:Testing Performed:
+master 1377
+
+1. PSS of LSM is decreased 3MB after reboot.
+2. Confirmed QImages are not excessively created with profiling code.
+3. Confirmed ANG-10888 still fixed with test script.
+   The script is commented in the PLAT ticket.
+
+:QA Notes:
+
+:Issues Addressed:
+[ANG-10888] Netflix Icon mismatch on launcher bar
+[PLAT-42510] Not to load every launch point icon as a new allocation
+
+Change-Id: I68208cf633ce2afd5f086a61dcc77d0f3d0da037
+Upstream-Status: Inappropriate [webOS specific]
+---
+ src/quick/util/qquickpixmapcache.cpp | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/src/quick/util/qquickpixmapcache.cpp b/src/quick/util/qquickpixmapcache.cpp
+index 230c318..f022ce7 100644
+--- a/src/quick/util/qquickpixmapcache.cpp
++++ b/src/quick/util/qquickpixmapcache.cpp
+@@ -232,7 +232,7 @@ public:
+       url(u), errorString(e), requestSize(s),
+       requestedTransform(transform), appliedTransform(UsePluginDefault),
+       textureFactory(0), reply(0), prevUnreferenced(0),
+-      prevUnreferencedPtr(0), nextUnreferenced(0)
++      prevUnreferencedPtr(0), nextUnreferenced(0), storeToCache(true)
+     {
+         declarativePixmaps.insert(pixmap);
+     }
+@@ -242,7 +242,7 @@ public:
+       url(u), requestSize(r),
+       requestedTransform(rTransform), appliedTransform(aTransform),
+       textureFactory(0), reply(0), prevUnreferenced(0), prevUnreferencedPtr(0),
+-      nextUnreferenced(0)
++      nextUnreferenced(0), storeToCache(true)
+     {
+         declarativePixmaps.insert(pixmap);
+     }
+@@ -253,7 +253,7 @@ public:
+       url(u), implicitSize(s), requestSize(r),
+       requestedTransform(rTransform), appliedTransform(aTransform),
+       textureFactory(texture), reply(0), prevUnreferenced(0),
+-      prevUnreferencedPtr(0), nextUnreferenced(0)
++      prevUnreferencedPtr(0), nextUnreferenced(0), storeToCache(true)
+     {
+         declarativePixmaps.insert(pixmap);
+     }
+@@ -262,7 +262,7 @@ public:
+     : refCount(1), inCache(false), pixmapStatus(QQuickPixmap::Ready),
+       requestedTransform(UsePluginDefault), appliedTransform(UsePluginDefault),
+       textureFactory(texture), reply(0), prevUnreferenced(0),
+-      prevUnreferencedPtr(0), nextUnreferenced(0)
++      prevUnreferencedPtr(0), nextUnreferenced(0), storeToCache(true)
+     {
+         if (texture)
+             requestSize = implicitSize = texture->textureSize();
+@@ -305,6 +305,7 @@ public:
+     QQuickPixmapData *prevUnreferenced;
+     QQuickPixmapData**prevUnreferencedPtr;
+     QQuickPixmapData *nextUnreferenced;
++    bool storeToCache;
+ };
+ 
+ int QQuickPixmapReply::finishedIndex = -1;
+@@ -1084,7 +1085,7 @@ void QQuickPixmapData::release()
+             QQuickPixmapReader::readerMutex.unlock();
+         }
+ 
+-        if (pixmapStatus == QQuickPixmap::Ready) {
++        if (pixmapStatus == QQuickPixmap::Ready && storeToCache) {
+             if (inCache)
+                 pixmapStore()->unreferencePixmap(this);
+             else
+@@ -1388,6 +1389,11 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+ 
+     QHash<QQuickPixmapKey, QQuickPixmapData *>::Iterator iter = store->m_cache.end();
+ 
++    QQuickPixmap::Options orgOptions = options;
++    // In webOS, we suppose that cache is always enabled to share image instances along its source.
++    // So, original option(orgOptions) for cache only decides whether to store the instances when it's unreferenced.
++    options |= QQuickPixmap::Cache;
++
+     // If Cache is disabled, the pixmap will always be loaded, even if there is an existing
+     // cached version.
+     if (options & QQuickPixmap::Cache)
+@@ -1414,6 +1420,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+                 PIXMAP_PROFILE(pixmapLoadingFinished(url, QSize(width(), height())));
+                 if (options & QQuickPixmap::Cache)
+                     d->addToCache();
++                d->storeToCache = orgOptions & QQuickPixmap::Cache;
+                 return;
+             }
+             if (d) { // loadable, but encountered error while loading
+@@ -1428,6 +1435,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+         d = new QQuickPixmapData(this, url, requestSize, requestAutoTransform, requestAutoTransform);
+         if (options & QQuickPixmap::Cache)
+             d->addToCache();
++        d->storeToCache = orgOptions & QQuickPixmap::Cache;
+ 
+         QQuickPixmapReader::readerMutex.lock();
+         d->reply = QQuickPixmapReader::instance(engine)->getImage(d);

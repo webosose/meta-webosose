@@ -1,0 +1,11 @@
+--- iotivity-0.9.2/extlibs/hippomocks-master/HippoMocks/hippomocks.h	2015-02-05 01:38:46.000000000 -0800
++++ iotivity/extlibs/hippomocks-master/HippoMocks/hippomocks.h	2015-09-21 01:19:18.516718907 -0700
+@@ -89,6 +89,8 @@ extern "C" __declspec(dllimport) void WI
+ #define SOME_X86
+ #elif defined(arm) || defined(__arm__) || defined(ARM) || defined(_ARM_)
+ #define SOME_ARM
++#elif defined(mips) || defined(__mips__)
++#define SOME_ARM
+ #endif
+ 
+ #if defined(__x86_64__) || defined(_M_X64)

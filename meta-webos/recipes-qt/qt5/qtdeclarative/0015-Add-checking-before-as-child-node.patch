@@ -1,0 +1,37 @@
+From 474b458939525532eac457b3776b6bc905c1e174 Mon Sep 17 00:00:00 2001
+From: Inhye Seo <inhye.seo@lge.com>
+Date: Fri, 21 Oct 2016 17:31:18 +0900
+Subject: [PATCH] Add checking "before" as child node
+
+qquickitem_before_paintNode returns the transform node for the rectangle
+as child node. But the node has no parent. It leads to following assertion
+case at QSGNode::insertChildNodeAfter(). But, I tested it in release mode,
+so no assertion happened. So, Some node not be able to add group node
+from this cause.
+
+Task-number: QTBUG-56657
+Change-Id: Ie032dc6c56984bcb58cfcd348ff532f56e39e5b8
+Upstream-Status: Accepted [https://codereview.qt-project.org/#/c/174566/]
+---
+ src/quick/items/qquickwindow.cpp | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
+index 9c9a005..70526fa 100644
+--- a/src/quick/items/qquickwindow.cpp
++++ b/src/quick/items/qquickwindow.cpp
+@@ -3086,10 +3086,12 @@ void QQuickWindowPrivate::updateDirtyNode(QQuickItem *item)
+ 
+             if (itemPriv->paintNode && itemPriv->paintNode->parent() == 0) {
+                 QSGNode *before = qquickitem_before_paintNode(itemPriv);
+-                if (before)
++                if (before && before->parent()) {
++                    Q_ASSERT(before->parent() == itemPriv->childContainerNode());
+                     itemPriv->childContainerNode()->insertChildNodeAfter(itemPriv->paintNode, before);
+-                else
++                } else {
+                     itemPriv->childContainerNode()->prependChildNode(itemPriv->paintNode);
++                }
+             }
+         } else if (itemPriv->paintNode) {
+             delete itemPriv->paintNode;

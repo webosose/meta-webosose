@@ -1,0 +1,24 @@
+From 5a4e076e2cea3d95c76498743a255ac68f73f30e Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Fri, 7 Feb 2014 04:58:14 +0100
+Subject: [PATCH] Decrease the size of QFontCache
+
+---
+ src/gui/text/qfont.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/text/qfont.cpp b/src/gui/text/qfont.cpp
+index 2496147..fde88bf 100644
+--- a/src/gui/text/qfont.cpp
++++ b/src/gui/text/qfont.cpp
+@@ -2664,7 +2664,9 @@ static const int fast_timeout =  10000; // 10s
+ static const int slow_timeout = 300000; //  5m
+ #endif // QFONTCACHE_DEBUG
+ 
+-const uint QFontCache::min_cost = 4*1024; // 4mb
++//for webos platform, it's quite big.
++//const uint QFontCache::min_cost = 4*1024; // 4mb
++const uint QFontCache::min_cost = 512; // 512Kb
+ 
+ #ifdef QT_NO_THREAD
+ Q_GLOBAL_STATIC(QFontCache, theFontCache)

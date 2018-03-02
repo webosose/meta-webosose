@@ -1,0 +1,158 @@
+From bdc4276b10409c3c11aa15e1d37f85a47562ebb8 Mon Sep 17 00:00:00 2001
+From: Martin Ertsaas <mertsas@cisco.com>
+Date: Fri, 10 Oct 2014 20:42:43 +0200
+Subject: [PATCH 1/2] Search replace this == 0 to false and != 0 to true
+
+this == 0 is caught by clang 3.5 and newer in the
+-Wtautological-undefined-compare warning
+
+Conflicts:
+	tests/TestUTestMacro.cpp
+---
+ tests/TestUTestMacro.cpp | 52 ++++++++++++++++++++++++------------------------
+ 1 file changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/tests/TestUTestMacro.cpp b/tests/TestUTestMacro.cpp
+index 39ca962..b078247 100644
+--- a/tests/TestUTestMacro.cpp
++++ b/tests/TestUTestMacro.cpp
+@@ -81,11 +81,11 @@ TEST(UnitTestMacros, FAILWillPrintTheFileThatItFailed)
+ 
+ TEST(UnitTestMacros, FAILBehavesAsAProperMacro)
+ {
+-	if (this == 0) FAIL("")
+-	else CHECK(true)
++    if (false) FAIL("")
++    else CHECK(true)
+ 
+-	if (this != 0) CHECK(true)
+-	else FAIL("")
++    if (true) CHECK(true)
++    else FAIL("")
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, FAILworksInAnIngoredTest)
+@@ -107,8 +107,8 @@ TEST(UnitTestMacros, FailureWithCHECK)
+ 
+ TEST(UnitTestMacros, CHECKBehavesAsProperMacro)
+ {
+-	if (this == 0) CHECK(false)
+-	else CHECK(true)
++    if (false) CHECK(false)
++    else CHECK(true)
+ }
+ 
+ static void _failingTestMethodWithCHECK_TEXT()
+@@ -125,8 +125,8 @@ TEST(UnitTestMacros, FailureWithCHECK_TEXT)
+ 
+ TEST(UnitTestMacros, CHECK_TEXTBehavesAsProperMacro)
+ {
+-	if (this == 0) CHECK_TEXT(false, "false")
+-	else CHECK_TEXT(true, "true")
++    if (false) CHECK_TEXT(false, "false")
++    else CHECK_TEXT(true, "true")
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, CHECKWorksInAnIgnoredTest)
+@@ -148,8 +148,8 @@ TEST(UnitTestMacros, FailureWithCHECK_TRUE)
+ 
+ TEST(UnitTestMacros, CHECK_TRUEBehavesAsProperMacro)
+ {
+-	if (this == 0) CHECK_TRUE(false)
+-	else CHECK_TRUE(true)
++    if (false) CHECK_TRUE(false)
++    else CHECK_TRUE(true)
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, CHECK_TRUEWorksInAnIgnoredTest)
+@@ -171,8 +171,8 @@ TEST(UnitTestMacros, FailureWithCHECK_FALSE)
+ 
+ TEST(UnitTestMacros, CHECK_FALSEBehavesAsProperMacro)
+ {
+-	if (this == 0) CHECK_FALSE(true)
+-	else CHECK_FALSE(false)
++    if (false) CHECK_FALSE(true)
++    else CHECK_FALSE(false)
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, CHECK_FALSEWorksInAnIgnoredTest)
+@@ -194,8 +194,8 @@ TEST(UnitTestMacros, FailureWithCHECK_EQUAL)
+ 
+ TEST(UnitTestMacros, CHECK_EQUALBehavesAsProperMacro)
+ {
+-	if (this == 0) CHECK_EQUAL(1, 2)
+-	else CHECK_EQUAL(1, 1)
++    if (false) CHECK_EQUAL(1, 2)
++    else CHECK_EQUAL(1, 1)
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, CHECK_EQUALWorksInAnIgnoredTest)
+@@ -217,8 +217,8 @@ TEST(UnitTestMacros, FailureWithSTRCMP_CONTAINS)
+ 
+ TEST(UnitTestMacros, STRCMP_CONTAINSBehavesAsProperMacro)
+ {
+-	if (this == 0) STRCMP_CONTAINS("1", "2")
+-	else STRCMP_CONTAINS("1", "1")
++    if (false) STRCMP_CONTAINS("1", "2")
++    else STRCMP_CONTAINS("1", "1")
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, STRCMP_CONTAINSWorksInAnIgnoredTest)
+@@ -240,8 +240,8 @@ TEST(UnitTestMacros, FailureWithSTRCMP_NOCASE_CONTAINS)
+ 
+ TEST(UnitTestMacros, STRCMP_NOCASE_CONTAINSBehavesAsProperMacro)
+ {
+-	if (this == 0) STRCMP_NOCASE_CONTAINS("never", "executed")
+-	else STRCMP_NOCASE_CONTAINS("hello", "HELLO WORLD")
++    if (false) STRCMP_NOCASE_CONTAINS("never", "executed")
++    else STRCMP_NOCASE_CONTAINS("hello", "HELLO WORLD")
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, STRCMP_NO_CASE_CONTAINSWorksInAnIgnoredTest)
+@@ -264,8 +264,8 @@ TEST(UnitTestMacros, FailurePrintHexOutputForLongInts)
+ 
+ TEST(UnitTestMacros, LONGS_EQUALBehavesAsProperMacro)
+ {
+-	if (this == 0) LONGS_EQUAL(1, 2)
+-	else LONGS_EQUAL(10, 10)
++    if (false) LONGS_EQUAL(1, 2)
++    else LONGS_EQUAL(10, 10)
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, LONGS_EQUALWorksInAnIgnoredTest)
+@@ -287,8 +287,8 @@ TEST(UnitTestMacros, FailureWithBYTES_EQUAL)
+ 
+ TEST(UnitTestMacros, BYTES_EQUALBehavesAsProperMacro)
+ {
+-	if (this == 0) BYTES_EQUAL('a', 'b')
+-	else BYTES_EQUAL('c', 'c')
++    if (false) BYTES_EQUAL('a', 'b')
++    else BYTES_EQUAL('c', 'c')
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, BYTES_EQUALWorksInAnIgnoredTest)
+@@ -311,8 +311,8 @@ TEST(UnitTestMacros, FailurePrintHexOutputForPointers)
+ 
+ TEST(UnitTestMacros, POINTERS_EQUALBehavesAsProperMacro)
+ {
+-	if (this == 0) POINTERS_EQUAL(0, (void*) 0xbeefbeef)
+-	else POINTERS_EQUAL((void*)0xdeadbeef, (void*)0xdeadbeef)
++    if (false) POINTERS_EQUAL(0, (void*) 0xbeefbeef)
++    else POINTERS_EQUAL((void*)0xdeadbeef, (void*)0xdeadbeef)
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, POINTERS_EQUALWorksInAnIgnoredTest)
+@@ -335,8 +335,8 @@ TEST(UnitTestMacros, FailureWithDOUBLES_EQUAL)
+ 
+ TEST(UnitTestMacros, DOUBLES_EQUALBehavesAsProperMacro)
+ {
+-	if (this == 0) DOUBLES_EQUAL(0.0, 1.1, 0.0005)
+-	else DOUBLES_EQUAL(0.1, 0.2, 0.2)
++    if (false) DOUBLES_EQUAL(0.0, 1.1, 0.0005)
++    else DOUBLES_EQUAL(0.1, 0.2, 0.2)
+ }
+ 
+ IGNORE_TEST(UnitTestMacros, DOUBLES_EQUALWorksInAnIgnoredTest)
+-- 
+1.9.1
+

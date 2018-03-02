@@ -1,0 +1,50 @@
+From 14164621008032f4398e668349c5ca985cf77bfe Mon Sep 17 00:00:00 2001
+From: Byungseon Shin <sun.shin@lge.com>
+Date: Fri, 7 Feb 2014 04:53:25 +0100
+Subject: [PATCH] WebOS platform expects filenames in UTF-8
+
+---
+ src/corelib/io/qfile.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/src/corelib/io/qfile.h b/src/corelib/io/qfile.h
+index 4eac710..fc4e4d5 100644
+--- a/src/corelib/io/qfile.h
++++ b/src/corelib/io/qfile.h
+@@ -42,6 +42,10 @@
+ #error qfile.h must be included before any header file that defines open
+ #endif
+ 
++#ifndef Q_OS_WEBOS
++#define Q_OS_WEBOS
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ class QTemporaryFile;
+@@ -77,6 +81,17 @@ public:
+         return QString::fromUtf8(localFileName).normalized(QString::NormalizationForm_C);
+     }
+ #else
++#if defined(Q_OS_WEBOS)
++    // WebOS platform expects filenames in UTF-8
++    static inline QByteArray encodeName(const QString &fileName)
++    {
++        return fileName.toUtf8();
++    }
++    static QString decodeName(const QByteArray &localFileName)
++    {
++        return QString::fromUtf8(localFileName);
++    }
++#else
+     static inline QByteArray encodeName(const QString &fileName)
+     {
+         return fileName.toLocal8Bit();
+@@ -86,6 +101,7 @@ public:
+         return QString::fromLocal8Bit(localFileName);
+     }
+ #endif
++#endif
+     inline static QString decodeName(const char *localFileName)
+         { return decodeName(QByteArray(localFileName)); }
+ 

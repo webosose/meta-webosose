@@ -1,0 +1,62 @@
+From f6b35bd52a2c91d82625d584d57d3d936e09881d Mon Sep 17 00:00:00 2001
+From: Rohit Anand <rohit.anand@lge.com>
+Date: Mon, 30 May 2016 17:23:37 +0530
+Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
+
+---
+ libopkg/opkg_archive.c | 9 +++++++++
+ libopkg/opkg_conf.h    | 1 +
+ src/opkg.c             | 1 +
+ 3 files changed, 11 insertions(+)
+
+diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
+index 7c1c823..f414259 100644
+--- a/libopkg/opkg_archive.c
++++ b/libopkg/opkg_archive.c
+@@ -25,6 +25,7 @@
+ #include "opkg_conf.h"
+ #include "opkg_message.h"
+ #include "opkg_archive.h"
++#include "opkg_conf.h"
+ #include "file_util.h"
+ #include "sprintf_alloc.h"
+ #include "xfuncs.h"
+@@ -604,6 +605,14 @@ static int find_inner(struct archive *outer, const char *arname)
+         if (!entry)
+             return -1;
+ 
++        mode_t offline_mode;
++        if (opkg_config->webos_offline_root_flag) {
++            offline_mode = 01777;
++        } else {
++            offline_mode = 07777;
++        }
++
++        archive_entry_set_mode(entry, archive_entry_mode(entry) & offline_mode);
+         /* Cleanup the path of the entry incase it starts with './' or
+          * other prefixes.
+          *
+diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
+index d3a4f39..e90f9c3 100644
+--- a/libopkg/opkg_conf.h
++++ b/libopkg/opkg_conf.h
+@@ -110,6 +110,7 @@ typedef struct opkg_conf {
+     int combine;
+     int cache_local_files;
+     int host_cache_dir;
++    unsigned int webos_offline_root_flag;
+ 
+     /* ssl options: used only when opkg is configured with '--enable-curl',
+      * otherwise always NULL or 0.
+diff --git a/src/opkg.c b/src/opkg.c
+index 1aa0fd9..90d454c 100644
+--- a/src/opkg.c
++++ b/src/opkg.c
+@@ -142,6 +142,7 @@ static int args_parse(int argc, char *argv[])
+             break;
+         case 'o':
+             opkg_config->offline_root = xstrdup(optarg);
++            opkg_config->webos_offline_root_flag = 1;
+             break;
+         case 't':
+             opkg_config->tmp_dir = xstrdup(optarg);

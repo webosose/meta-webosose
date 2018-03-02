@@ -1,0 +1,25 @@
+From 2c76cc352c330fd3b1a89cb66a9ff896e0ff2b85 Mon Sep 17 00:00:00 2001
+From: Bob Moragues <bob.moragues@lge.com>
+Date: Tue, 19 Sep 2017 21:54:44 +0000
+Subject: [PATCH] miniuart: Add bcm2709,bcm2710 to compatibility
+
+---
+ arch/arm/boot/dts/overlays/pi3-miniuart-bt-overlay.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/overlays/pi3-miniuart-bt-overlay.dts b/arch/arm/boot/dts/overlays/pi3-miniuart-bt-overlay.dts
+index 17d04cf..a99a1eb 100644
+--- a/arch/arm/boot/dts/overlays/pi3-miniuart-bt-overlay.dts
++++ b/arch/arm/boot/dts/overlays/pi3-miniuart-bt-overlay.dts
+@@ -16,7 +16,7 @@
+ */
+ 
+ /{
+-	compatible = "brcm,bcm2708";
++	compatible = "brcm,bcm2708,bcm2709,bcm2710";
+ 
+ 	fragment@0 {
+ 		target = <&uart0>;
+-- 
+1.9.1
+

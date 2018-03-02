@@ -1,0 +1,29 @@
+Since tzdata-2015e there are UTF-8 characters in iso3166.tab, see:
+http://mm.icann.org/pipermail/tz/2015-May/022258.html
+http://mm.icann.org/pipermail/tz/2015-June/022306.html
+
+pytz/__init__.py:_CountryNameDict(LazyDict) is using:
+        zone_tab = open_resource('iso3166.tab')
+        try:
+            for line in zone_tab.readlines():
+                line = line.decode('US-ASCII')
+
+to read it and fails on AX, CI, RE lines, using UTF-8 fixes the
+issues and should work OK even with older tzdata releases.
+
+Upstream-Status: Submitted (https://bugs.launchpad.net/pytz/+bug/1473533)
+
+Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+
+diff -uNr pytz-2015.4.orig/pytz/__init__.py pytz-2015.4/pytz/__init__.py
+--- pytz-2015.4.orig/pytz/__init__.py	2015-05-13 03:50:26.000000000 -0700
++++ pytz-2015.4/pytz/__init__.py	2015-07-10 11:35:30.080242726 -0700
+@@ -357,7 +357,7 @@
+         zone_tab = open_resource('iso3166.tab')
+         try:
+             for line in zone_tab.readlines():
+-                line = line.decode('US-ASCII')
++                line = line.decode('UTF-8')
+                 if line.startswith('#'):
+                     continue
+                 code, name = line.split(None, 1)

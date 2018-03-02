@@ -1,0 +1,53 @@
+From 9eb7957d8b3e926d0133110faeca585b91331a20 Mon Sep 17 00:00:00 2001
+From: Choe Hwanjin <choe.hwanjin@gmail.com>
+Date: Sat, 12 Nov 2011 13:14:34 +0900
+Subject: [PATCH 04/20] Move internal implementation to hangulinternals.h
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+내부 구현에서만 사용할 함수는 hangulinternals.h로 옮김
+
+hangul_choseong_to_jongseong(), hangul_jongseong_to_choseong(),
+hangul_jongseong_decompose() 함수들은 두벌식 자판을 구현할때
+사용하는 함수들로 일반적인 목적으로 사용하기에 적당하지 않다.
+내부에서만 사용하는 함수로 옮기는 것이 적절하겠다.
+
+Change-Id: I3e0147bcae3f9eef063186165c0c9c03f183d9f5
+---
+ hangul/hangul.h          |    5 -----
+ hangul/hangulinternals.h |    4 ++++
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/hangul/hangul.h b/hangul/hangul.h
+index 1c675ff..d437ef4 100644
+--- a/hangul/hangul.h
++++ b/hangul/hangul.h
+@@ -52,11 +52,6 @@ bool hangul_is_cjamo(ucschar c);
+ 
+ ucschar hangul_jamo_to_cjamo(ucschar ch);
+ 
+-ucschar hangul_choseong_to_jongseong(ucschar ch);
+-ucschar hangul_jongseong_to_choseong(ucschar ch);
+-void    hangul_jongseong_decompose(ucschar ch, ucschar* jong, ucschar* cho);
+-void    hangul_jongseong_dicompose(ucschar ch, ucschar* jong, ucschar* cho) LIBHANGUL_DEPRECATED;
+-
+ const ucschar* hangul_syllable_iterator_prev(const ucschar* str,
+ 					     const ucschar* begin);
+ const ucschar* hangul_syllable_iterator_next(const ucschar* str,
+diff --git a/hangul/hangulinternals.h b/hangul/hangulinternals.h
+index 8475bcd..70f8857 100644
+--- a/hangul/hangulinternals.h
++++ b/hangul/hangulinternals.h
+@@ -5,4 +5,8 @@
+ 
+ ucschar hangul_jongseong_get_diff(ucschar prevjong, ucschar jong);
+ 
++ucschar hangul_choseong_to_jongseong(ucschar ch);
++ucschar hangul_jongseong_to_choseong(ucschar ch);
++void    hangul_jongseong_decompose(ucschar ch, ucschar* jong, ucschar* cho);
++
+ #endif /* libhangul_hangulinternals_h */
+-- 
+1.7.9.5
+

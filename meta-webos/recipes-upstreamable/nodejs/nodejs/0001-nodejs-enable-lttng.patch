@@ -1,0 +1,286 @@
+From 5d4c237704cf1731caac94cceede82f5451d2f3a Mon Sep 17 00:00:00 2001
+From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
+Date: Thu, 24 Aug 2017 13:04:27 -0700
+Subject: [PATCH 01/17] nodejs enable lttng
+
+:Release Notes:
+
+:Detailed Notes:
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+
+Change-Id: Iedab6e6a8923a49395773feb645e3044009a2af1
+---
+ node.gypi                   |   3 +-
+ src/webosTracer.h           | 116 ++++++++++++++++++++++++++++++++++++++++++++
+ src/webos_nodejs_provider.c |  23 +++++++++
+ src/webos_nodejs_provider.h |  86 ++++++++++++++++++++++++++++++++
+ 4 files changed, 227 insertions(+), 1 deletion(-)
+ create mode 100644 src/webosTracer.h
+ create mode 100644 src/webos_nodejs_provider.c
+ create mode 100644 src/webos_nodejs_provider.h
+
+diff --git a/node.gypi b/node.gypi
+index 6aaabee..2eedbc4 100644
+--- a/node.gypi
++++ b/node.gypi
+@@ -195,7 +195,8 @@
+       'include_dirs': [ '<(SHARED_INTERMEDIATE_DIR)' ],
+       'libraries': [ '-llttng-ust' ],
+       'sources': [
+-        'src/node_lttng.cc'
++        'src/node_lttng.cc',
++        'src/webos_nodejs_provider.c',
+       ],
+     } ],
+     [ 'node_use_etw=="true"', {
+diff --git a/src/webosTracer.h b/src/webosTracer.h
+new file mode 100644
+index 0000000..a8272e4
+--- /dev/null
++++ b/src/webosTracer.h
+@@ -0,0 +1,116 @@
++/*
++ * webosTracer.h
++ *
++ * Tracepoint API for using LTTng UST tracing in nodejs.
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef webosTracer_h
++#define webosTracer_h
++
++#ifdef HAVE_LTTNG
++
++#include "webos_nodejs_provider.h"
++
++/* WEBOS_TRACE is for free form tracing. Provide a string in
++   "label" which uniquely identifies your trace point. */
++#define WEBOS_TRACE(label) \
++    tracepoint(webos_nodejs, message, label)
++
++/* WEBOS_TRACE_BEFORE / AFTER is for tracing a time duration
++ * which is not contained within a scope (curly braces) or function,
++ * or in C code where there is no mechanism to automatically detect
++ * exiting a scope or function.
++ */
++#define WEBOS_TRACE_BEFORE(label) \
++    tracepoint(webos_nodejs, before, label)
++#define WEBOS_TRACE_AFTER(label) \
++    tracepoint(webos_nodejs, after, label)
++
++/* WEBOS_TRACE_SCOPE* is for tracing a the duration of a scope.  In
++ * C++ code use WEBOS_TRACE_SCOPE only, in C code use the
++ * ENTRY/EXIT macros and be careful to catch all exit cases.
++ */
++#define WEBOS_TRACE_SCOPE_ENTRY(label) \
++    tracepoint(webos_nodejs, scope_entry, label)
++#define WEBOS_TRACE_SCOPE_EXIT(label) \
++    tracepoint(webos_nodejs, scope_exit, label)
++#define WEBOS_TRACE_SCOPE(label) \
++    LttngNodeJS::WebosTraceScope traceScope(label)
++
++/* WEBOS_TRACE_FUNCTION* is for tracing a the duration of a scope.
++ * In C++ code use WEBOS_TRACE_FUNCTION only, in C code use the
++ * ENTRY/EXIT macros and be careful to catch all exit cases.
++ */
++#define WEBOS_TRACE_FUNCTION_ENTRY(label) \
++    tracepoint(webos_nodejs, function_entry, label)
++#define WEBOS_TRACE_FUNCTION_EXIT(label) \
++    tracepoint(webos_nodejs, function_exit, label)
++#define WEBOS_TRACE_FUNCTION \
++    LttngNodeJS::WebosTraceFunction traceFunction(const_cast<char*>(__FUNCTION__))
++
++namespace LttngNodeJS {
++
++class WebosTraceScope {
++public:
++    WebosTraceScope(char* label)
++        : scopeLabel(label)
++    {
++        WEBOS_TRACE_SCOPE_ENTRY(scopeLabel);
++    }
++
++    ~WebosTraceScope()
++    {
++        WEBOS_TRACE_SCOPE_EXIT(scopeLabel);
++    }
++
++private:
++    char* scopeLabel;
++
++    // Prevent heap allocation
++    void operator delete(void*);
++    void* operator new(size_t);
++    WebosTraceScope(const WebosTraceScope&);
++    WebosTraceScope& operator=(const WebosTraceScope&);
++};
++
++class WebosTraceFunction {
++public:
++    WebosTraceFunction(char* label)
++        : fnLabel(label)
++    {
++        WEBOS_TRACE_FUNCTION_ENTRY(fnLabel);
++    }
++
++    ~WebosTraceFunction()
++    {
++        WEBOS_TRACE_FUNCTION_EXIT(fnLabel);
++    }
++
++private:
++    char* fnLabel;
++
++    // Prevent heap allocation
++    void operator delete(void*);
++    void* operator new(size_t);
++    WebosTraceFunction(const WebosTraceFunction&);
++    WebosTraceFunction& operator=(const WebosTraceFunction&);
++};
++
++} // namespace LttngNodeJS
++
++#else // HAVE_LTTNG
++
++#define WEBOS_TRACE(label)
++#define WEBOS_TRACE_BEFORE(label)
++#define WEBOS_TRACE_AFTER(label)
++#define WEBOS_TRACE_SCOPE_ENTRY(label)
++#define WEBOS_TRACE_SCOPE_EXIT(label)
++#define WEBOS_TRACE_SCOPE(label)
++#define WEBOS_TRACE_FUNCTION_ENTRY(label)
++#define WEBOS_TRACE_FUNCTION_EXIT(label)
++#define WEBOS_TRACE_FUNCTION
++
++#endif // HAVE_LTTNG
++#endif // webosTracer_h
+diff --git a/src/webos_nodejs_provider.c b/src/webos_nodejs_provider.c
+new file mode 100644
+index 0000000..c785100
+--- /dev/null
++++ b/src/webos_nodejs_provider.c
+@@ -0,0 +1,23 @@
++/*
++ * webos_nodejs_provider.c
++ *
++ * Tracepoint provider file for LTTng UST tracing in nodejs.
++ *
++ * For more information on see:
++ *    http://lttng.org/files/doc/man-pages/man3/lttng-ust.3.html
++ *
++ * The application level API to these tracepoints is in webosTracer.h
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++/*
++ * These #defines alter the behavior of webos_nodejs_provider.h to define the tracing
++ * primitives rather than just declaring them.
++ */
++#define TRACEPOINT_CREATE_PROBES
++#define TRACEPOINT_DEFINE
++/*
++ * The header containing our TRACEPOINT_EVENTs.
++ */
++#include "webos_nodejs_provider.h"
+diff --git a/src/webos_nodejs_provider.h b/src/webos_nodejs_provider.h
+new file mode 100644
+index 0000000..ce40bfb
+--- /dev/null
++++ b/src/webos_nodejs_provider.h
+@@ -0,0 +1,86 @@
++/*
++ * webos_nodejs_provider.h
++ *
++ * Tracepoint provider file for LTTng UST tracing in nodejs.
++ *
++ * For more information on see:
++ *    http://lttng.org/files/doc/man-pages/man3/lttng-ust.3.html
++ *
++ * The application level API to these tracepoints is in webosTracer.h
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#undef TRACEPOINT_PROVIDER
++#define TRACEPOINT_PROVIDER webos_nodejs
++
++#undef TRACEPOINT_INCLUDE_FILE
++#define TRACEPOINT_INCLUDE_FILE ./webos_nodejs_provider.h
++
++#ifdef __cplusplus
++extern "C"{
++#endif /*__cplusplus */
++
++
++#if !defined(_WEBOS_NODEJS_PROVIDER_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
++#define _WEBOS_NODEJS_PROVIDER_H
++
++#include <lttng/tracepoint.h>
++
++/* "message" tracepoint should be used for single event trace points */
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    message,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "before"/"after" tracepoint should be used for measuring the
++   duration of something that doesn't correspond with a function call or scope */
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    before,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    after,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "scope_entry"/"scope_exit" tracepoints should be used only by
++   WebosTraceScope class to measure the duration of a scope within
++   a function in C++ code. In C code these may be used directly for
++   the same purpose, just make sure you trace any early exit from the
++   scope such as break statements or gotos.  */
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    scope_entry,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    scope_exit,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "function_entry"/"function_exit" tracepoints should be used only by
++   WebosTraceFunction class to measure the duration of a function
++   in C++ code. In C code it may be used directly for the same
++   purpose, just make sure you capture any early exit from the
++   function such as return statements. */
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    function_entry,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    webos_nodejs,
++    function_exit,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++
++#endif /* _WEBOS_NODEJS_PROVIDER_H */
++
++#include <lttng/tracepoint-event.h>
++
++#ifdef __cplusplus
++}
++#endif /*__cplusplus */
++
+-- 
+1.9.1
+

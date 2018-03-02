@@ -1,0 +1,5 @@
+# Copyright (c) 2017 LG Electronics, Inc.
+
+meta-webos/lib/__pycache__/
+meta-webos-backports/meta-webos-backports-2.3/lib/oe/__pycache__/
+MCF-PATCHES*

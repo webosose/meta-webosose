@@ -1,0 +1,54 @@
+From ec7db961ca9a2a81e306201fcfbe1995d684ac5c Mon Sep 17 00:00:00 2001
+From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
+Date: Wed, 10 Apr 2013 12:24:48 -0700
+Subject: [PATCH] Do not compile doc directory if doxygen is missing.
+
+Add conditions for making doxgen dependency optional.
+Build will now not fail if doxygen is missing.
+
+Change-Id: I86fc95d7f53d363c23a851d7a98f238ae38ec127
+---
+ Makefile.am  |    6 +++++-
+ configure.ac |   11 ++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 0c8d13b..2b9e049 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,6 +1,10 @@
+ include_HEADERS = src/sp_measure.h src/sp_measure_system.h src/sp_measure_process.h
+ 
+-SUBDIRS = src doc tests
++SUBDIRS = src tests
++
++if HAVE_DOXYGEN
++    SUBDIRS += doc
++endif
+ 
+ DISTCLEANFILES = Makefile Makefile.in configure config.* autoscan.log aclocal.m4 config-*
+ 
+diff --git a/configure.ac b/configure.ac
+index d4f4c0e..551a612 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -36,6 +36,15 @@ AC_CHECK_FUNCS([gettimeofday memset strchr strdup strrchr strstr])
+ 
+ AC_CONFIG_FILES([Makefile
+ 		src/Makefile
+-		doc/Makefile
+ 		tests/Makefile])
++
++AC_CHECK_FUNCS([doxygen])
++
++if test "x$ac_cv_func_doxygen" = "xyes"; then
++AC_MSG_NOTICE(Doxygen installed)
++AC_CONFIG_FILES([doc/Makefile])
++fi
++
++AM_CONDITIONAL([HAVE_DOXYGEN], [test "x$ac_cv_func_doxygen" = "xyes"])
++
+ AC_OUTPUT
+-- 
+1.7.9.5
+
