@@ -8,7 +8,7 @@ DEPENDS_remove = "libatomic-ops"
 DEPENDS += "pmloglib"
 
 WEBOS_VERSION = "9.0-3_2147b7e2cb2754f38d706d51c7f75de006da864d"
-PR = "r17"
+PR = "r18"
 
 inherit webos_enhanced_submissions
 
@@ -17,6 +17,7 @@ inherit webos_public_repo
 WEBOS_REPO_NAME = "pulseaudio-webos"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://pulseaudio.conf \
+    file://0001-memfd-wrappers-only-define-memfd_create-if-not-alrea.patch \
 "
 S = "${WORKDIR}/git"
 
