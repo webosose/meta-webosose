@@ -1,4 +1,4 @@
-From 71bf974bb4440a7f4003fb51cf6c9617487ccb2f Mon Sep 17 00:00:00 2001
+From 452bea4f7cc17e6f484476f90b239f8d44f48b08 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
 Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
@@ -10,7 +10,7 @@ Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
  3 files changed, 11 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index b2edee3..b44e59b 100644
+index 2a6233d..38cea20 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
 @@ -25,6 +25,7 @@
@@ -37,22 +37,22 @@ index b2edee3..b44e59b 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index fcac8dd..68eb4a2 100644
+index 0f65cab..df47f07 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -119,6 +119,7 @@ typedef struct opkg_conf {
-     int cache_local_files;
+@@ -120,6 +120,7 @@ typedef struct opkg_conf {
      int host_cache_dir;
      int verbose_status_file;
+     int compress_list_files;
 +    unsigned int webos_offline_root_flag;
  
      /* ssl options: used only when opkg is configured with '--enable-curl',
       * otherwise always NULL or 0.
 diff --git a/src/opkg.c b/src/opkg.c
-index 6739832..dd338de 100644
+index f23467d..31a2afe 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -150,6 +150,7 @@ static int args_parse(int argc, char *argv[])
+@@ -154,6 +154,7 @@ static int args_parse(int argc, char *argv[])
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
@@ -61,5 +61,5 @@ index 6739832..dd338de 100644
          case 't':
              opkg_config->tmp_dir = xstrdup(optarg);
 -- 
-2.13.2
+2.15.1
 

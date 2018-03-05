@@ -1,4 +1,4 @@
-From 8a01d38c9955fa5be6f09e6e2115c7c35baf76ab Mon Sep 17 00:00:00 2001
+From 61d84d69ec04261281f3a754222b540fbfd4442f Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 6 Jun 2016 11:30:30 +0530
 Subject: [PATCH 3/5] Add opkg install cmd smart size checking logic
@@ -16,7 +16,7 @@ Subject: [PATCH 3/5] Add opkg install cmd smart size checking logic
  9 files changed, 413 insertions(+), 20 deletions(-)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 2d76657..b2edee3 100644
+index ee328cd..2a6233d 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
 @@ -491,6 +491,29 @@ static int extract_all(struct archive *a, const char *dest, int flags, long unsi
@@ -49,7 +49,7 @@ index 2d76657..b2edee3 100644
  /* Open an outer archive with the given filename. */
  static struct archive *open_outer(const char *filename)
  {
-@@ -858,6 +881,11 @@ int ar_extract_all(struct opkg_ar *ar, const char *prefix, long unsigned int *si
+@@ -911,6 +934,11 @@ int ar_extract_all(struct opkg_ar *ar, const char *prefix, long unsigned int *si
      return extract_all(ar->ar, prefix, ar->extract_flags, size);
  }
  
@@ -62,25 +62,25 @@ index 2d76657..b2edee3 100644
  {
      archive_read_free(ar->ar);
 diff --git a/libopkg/opkg_archive.h b/libopkg/opkg_archive.h
-index 1360985..64c552d 100644
+index 0702c1f..846a3b9 100644
 --- a/libopkg/opkg_archive.h
 +++ b/libopkg/opkg_archive.h
-@@ -34,6 +34,7 @@ int ar_extract_file_to_stream(struct opkg_ar *ar, const char *filename,
-                               FILE * stream);
+@@ -35,6 +35,7 @@ int ar_extract_file_to_stream(struct opkg_ar *ar, const char *filename,
  int ar_extract_paths_to_stream(struct opkg_ar *ar, FILE * stream);
  int ar_extract_all(struct opkg_ar *ar, const char *prefix, long unsigned int *size);
+ int gz_write_archive(const char *filename, const char *gz_filename);
 +int ar_extract_data_file_size_to_stream(struct opkg_ar *ar, FILE * stream);
  void ar_close(struct opkg_ar *ar);
  
  #ifdef __cplusplus
 diff --git a/libopkg/opkg_download.c b/libopkg/opkg_download.c
-index 8a97556..403aa38 100644
+index 480ae02..6afdfeb 100644
 --- a/libopkg/opkg_download.c
 +++ b/libopkg/opkg_download.c
 @@ -23,8 +23,10 @@
- #include <stdlib.h>
  #include <string.h>
  #include <unistd.h>
+ #include <libgen.h>
 +#include <setjmp.h>
  
  #include "opkg_download.h"
@@ -103,12 +103,12 @@ index 8a97556..403aa38 100644
  
      if (namep)
 diff --git a/libopkg/opkg_install.c b/libopkg/opkg_install.c
-index 04c7e93..c4478ad 100644
+index 23a5a50..ed38baf 100644
 --- a/libopkg/opkg_install.c
 +++ b/libopkg/opkg_install.c
-@@ -25,10 +25,14 @@
+@@ -24,10 +24,14 @@
+ #include <unistd.h>
  #include <sys/stat.h>
- #include <malloc.h>
  #include <stdlib.h>
 +#include <setjmp.h>
 +#include <errno.h>
@@ -121,7 +121,7 @@ index 04c7e93..c4478ad 100644
  
  #include "opkg_configure.h"
  #include "opkg_download.h"
-@@ -45,6 +49,88 @@
+@@ -44,6 +48,88 @@
  #include "xsystem.h"
  #include "xfuncs.h"
  
@@ -210,7 +210,7 @@ index 04c7e93..c4478ad 100644
  static int update_file_ownership(pkg_t * new_pkg, pkg_t * old_pkg)
  {
      file_list_t *new_list, *old_list;
-@@ -91,22 +177,28 @@ static int update_file_ownership(pkg_t * new_pkg, pkg_t * old_pkg)
+@@ -90,22 +176,28 @@ static int update_file_ownership(pkg_t * new_pkg, pkg_t * old_pkg)
      return 0;
  }
  
@@ -243,7 +243,7 @@ index 04c7e93..c4478ad 100644
          else
              root_dir = pkg->dest->root_dir;
      }
-@@ -114,18 +206,79 @@ static int verify_pkg_installable(pkg_t * pkg)
+@@ -113,18 +205,79 @@ static int verify_pkg_installable(pkg_t * pkg)
      if (!root_dir)
          root_dir = opkg_config->default_dest->root_dir;
  
@@ -330,7 +330,7 @@ index 04c7e93..c4478ad 100644
      return 0;
  }
  
-@@ -997,9 +1150,8 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -996,9 +1149,8 @@ int opkg_install_pkg(pkg_t * pkg)
      opkg_msg(INFO, "Installing maintainer scripts.\n");
      err = install_maintainer_scripts(pkg, old_pkg);
      if (err) {
@@ -342,7 +342,7 @@ index 04c7e93..c4478ad 100644
          goto pkg_is_hosed;
      }
  
-@@ -1010,9 +1162,9 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -1009,9 +1161,9 @@ int opkg_install_pkg(pkg_t * pkg)
  
      err = install_data_files(pkg);
      if (err) {
@@ -355,7 +355,7 @@ index 04c7e93..c4478ad 100644
          goto pkg_is_hosed;
      }
  
-@@ -1042,6 +1194,12 @@ int opkg_install_pkg(pkg_t * pkg, int from_upgrade)
+@@ -1041,6 +1193,12 @@ int opkg_install_pkg(pkg_t * pkg)
          ab_pkg->state_status = pkg->state_status;
  
      sigprocmask(SIG_UNBLOCK, &newset, &oldset);
@@ -369,25 +369,25 @@ index 04c7e93..c4478ad 100644
  
   UNWIND_POSTRM_UPGRADE_OLD_PKG:
 diff --git a/libopkg/opkg_install.h b/libopkg/opkg_install.h
-index d1071e1..7bee148 100644
+index 8b17105..ffc878f 100644
 --- a/libopkg/opkg_install.h
 +++ b/libopkg/opkg_install.h
 @@ -27,6 +27,8 @@ extern "C" {
  #endif
  
- int opkg_install_pkg(pkg_t * pkg, int from_upgrading);
+ int opkg_install_pkg(pkg_t * pkg);
 +size_t opkg_get_pkg_size_to_install(pkg_t *pkg);
 +size_t opkg_get_pkg_installed_size(pkg_t *pkg);
  
  #ifdef __cplusplus
  }
 diff --git a/libopkg/pkg.c b/libopkg/pkg.c
-index 2deac0b..5eb1546 100644
+index 9afd824..8a10c29 100644
 --- a/libopkg/pkg.c
 +++ b/libopkg/pkg.c
-@@ -25,7 +25,9 @@
+@@ -24,7 +24,9 @@
+ #include <unistd.h>
  #include <libgen.h>
- #include <malloc.h>
  #include <stdlib.h>
 -#include <sys/stat.h>
 +#include <sys/statvfs.h>
@@ -396,7 +396,7 @@ index 2deac0b..5eb1546 100644
  
  #include "pkg.h"
  
-@@ -120,6 +122,8 @@ static void pkg_init(pkg_t * pkg)
+@@ -119,6 +121,8 @@ static void pkg_init(pkg_t * pkg)
      pkg->sha256sum = NULL;
      pkg->size = 0;
      pkg->installed_size = 0;
@@ -405,7 +405,7 @@ index 2deac0b..5eb1546 100644
      pkg->priority = NULL;
      pkg->source = NULL;
      conffile_list_init(&pkg->conffiles);
-@@ -396,7 +400,10 @@ int pkg_merge(pkg_t * oldpkg, pkg_t * newpkg)
+@@ -395,7 +399,10 @@ int pkg_merge(pkg_t * oldpkg, pkg_t * newpkg)
  #endif
      if (!oldpkg->size)
          oldpkg->size = newpkg->size;
@@ -417,7 +417,7 @@ index 2deac0b..5eb1546 100644
          oldpkg->installed_size = newpkg->installed_size;
      if (!oldpkg->priority)
          oldpkg->priority = xstrdup(newpkg->priority);
-@@ -444,6 +451,165 @@ abstract_pkg_t *abstract_pkg_new(void)
+@@ -443,6 +450,165 @@ abstract_pkg_t *abstract_pkg_new(void)
      return ab_pkg;
  }
  
@@ -611,7 +611,7 @@ index 6ff9cfa..8170b22 100644
  void pkg_free_installed_files(pkg_t * pkg);
  void pkg_remove_installed_files_list(pkg_t * pkg);
 diff --git a/libopkg/pkg_extract.c b/libopkg/pkg_extract.c
-index 796c98b..8e40b9a 100644
+index 001851c..0202d1a 100644
 --- a/libopkg/pkg_extract.c
 +++ b/libopkg/pkg_extract.c
 @@ -123,3 +123,26 @@ int pkg_extract_data_file_names_to_stream(pkg_t * pkg, FILE * stream)
@@ -654,5 +654,5 @@ index 2f5cca6..d690044 100644
  #ifdef __cplusplus
  }
 -- 
-2.13.2
+2.15.1
 
