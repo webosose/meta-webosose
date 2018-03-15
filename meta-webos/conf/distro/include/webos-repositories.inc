@@ -11,9 +11,3 @@ WEBOS_GIT_TAG ?= ";tag=${WEBOS_GIT_PARAM_TAG}"
 
 WEBOSOSE_GIT_REPO ?= "git://github.com/webosose"
 WEBOSOSE_GIT_REPO_COMPLETE ?= "${WEBOSOSE_GIT_REPO}/${WEBOS_REPO_NAME}${WEBOS_GIT_TAG}${WEBOS_GIT_BRANCH}"
-
-ISIS_PROJECT_GIT_REPO ?= "git://github.com/isis-project"
-# isis-project components don't have submissions => treat like any other upstream
-# component whose source is stored in Git and use SRCREV to specify from where to fetch.
-ISIS_PROJECT_GIT_REPO_COMPLETE ?= "${ISIS_PROJECT_GIT_REPO}/${WEBOS_REPO_NAME}"
-ISIS_PROJECT_DOWNLOAD ?= "http://github.com/downloads/isis-project"
