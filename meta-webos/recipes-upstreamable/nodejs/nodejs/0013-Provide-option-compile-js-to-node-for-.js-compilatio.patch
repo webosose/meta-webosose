@@ -1,8 +1,7 @@
-From 0776d79932bc4f1faedf014fbaa6c6a432e43d04 Mon Sep 17 00:00:00 2001
+From 358487a6034690cdd5c2adba212dc684764f3d46 Mon Sep 17 00:00:00 2001
 From: Andrii Koval <andrii.koval@lge.com>
 Date: Fri, 31 Jul 2015 11:48:20 +0300
-Subject: [PATCH] [PATCH 07/10] Provide option "--compile-js" to node for .js
- compilation
+Subject: [PATCH] Provide option "--compile-js" to node for .js compilation
 
 :Release Notes:
 Provide option "--compile-js" to node for .js compilation
@@ -32,6 +31,7 @@ Reviewed-by: Andrii Koval <andrii.koval@lge.com>
 Tested-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Denys Romanchuk <denys.romanchuk@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  node.gyp          |  2 ++
  src/node.cc       | 21 ++++++++++++++
@@ -62,7 +62,7 @@ index 8bf26e2..caaaca5 100644
  
        'defines': [
 diff --git a/src/node.cc b/src/node.cc
-index 30db9e5..77c4406 100644
+index e1c7b25..f527481 100644
 --- a/src/node.cc
 +++ b/src/node.cc
 @@ -7,6 +7,7 @@
@@ -73,7 +73,7 @@ index 30db9e5..77c4406 100644
  
  #if defined HAVE_PERFCTR
  #include "node_counters.h"
-@@ -161,6 +162,7 @@ static int v8_thread_pool_size = v8_default_thread_pool_size;
+@@ -160,6 +161,7 @@ static int v8_thread_pool_size = v8_default_thread_pool_size;
  static bool prof_process = false;
  static bool v8_is_profiling = false;
  static bool node_is_initialized = false;
@@ -81,7 +81,7 @@ index 30db9e5..77c4406 100644
  static node_module* modpending;
  static node_module* modlist_builtin;
  static node_module* modlist_linked;
-@@ -3745,6 +3747,7 @@ static void PrintHelp() {
+@@ -3744,6 +3746,7 @@ static void PrintHelp() {
           "  --preserve-symlinks   preserve symbolic links when resolving\n"
           "                        and caching modules.\n"
  #endif
@@ -89,7 +89,7 @@ index 30db9e5..77c4406 100644
           "\n"
           "Environment variables:\n"
  #ifdef _WIN32
-@@ -3916,6 +3919,8 @@ static void ParseArgs(int* argc,
+@@ -3915,6 +3918,8 @@ static void ParseArgs(int* argc,
      } else if (strcmp(arg, "--expose-internals") == 0 ||
                 strcmp(arg, "--expose_internals") == 0) {
        // consumed in js
@@ -98,7 +98,7 @@ index 30db9e5..77c4406 100644
      } else if (strcmp(arg, "--") == 0) {
        index += 1;
        break;
-@@ -4653,6 +4658,19 @@ Environment* CreateEnvironment(Isolate* isolate,
+@@ -4652,6 +4657,19 @@ Environment* CreateEnvironment(Isolate* isolate,
    return env;
  }
  
@@ -118,7 +118,7 @@ index 30db9e5..77c4406 100644
  
  // Entry point for new node instances, also called directly for the main
  // node instance.
-@@ -4690,6 +4708,9 @@ static void StartNodeInstance(void* arg) {
+@@ -4689,6 +4707,9 @@ static void StartNodeInstance(void* arg) {
      isolate->SetAbortOnUncaughtExceptionCallback(
          ShouldAbortOnUncaughtException);
  
@@ -254,6 +254,3 @@ index 0000000..85e2bc5
 +}  // namespace node
 +
 +#endif  // SRC_PRE_COMPILE_JS_H_
--- 
-1.9.1
-

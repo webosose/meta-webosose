@@ -1,8 +1,7 @@
-From 734b27e1a3fe683e9333dc30e4bb69041fbbfdfe Mon Sep 17 00:00:00 2001
+From b48cf543c8f843e4e44a5512f2245f76bcd56c9a Mon Sep 17 00:00:00 2001
 From: Sergii Babych <sergii.babych@lge.com>
 Date: Thu, 20 Aug 2015 17:24:07 +0300
-Subject: [PATCH 13/17] [PATCH 08/10] Add instanceof check for all 'Timeout'
- methods
+Subject: [PATCH] Add instanceof check for all 'Timeout' methods
 
 :Release Notes:
 Fix timer unref test  and  add  instanceof  check  for  all 'Timeout'
@@ -32,6 +31,7 @@ Reviewed-on: https://gpro.lgsvl.com/117368
 Reviewed-by: Sergii Babych <sergii.babych@lge.com>
 Tested-by: Sergii Babych <sergii.babych@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  lib/timers.js                      | 13 +++++++++++++
  test/parallel/test-timers-unref.js | 12 ++++++++++--
@@ -99,6 +99,3 @@ index 2bde08f..fc51c93 100644
    process.nextTick(t.unref.bind(t));
  }
  
--- 
-1.9.1
-

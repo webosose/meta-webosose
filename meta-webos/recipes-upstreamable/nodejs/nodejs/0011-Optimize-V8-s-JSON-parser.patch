@@ -1,7 +1,7 @@
-From 4a5dde86933f44a648122dacabc31f51b5606f0f Mon Sep 17 00:00:00 2001
+From 654eae805ff4b281861523f3156b1d00e9e1c0a0 Mon Sep 17 00:00:00 2001
 From: Andrii Koval <andrii.koval@lge.com>
 Date: Wed, 29 Jul 2015 11:15:52 +0300
-Subject: [PATCH 10/17] [PATCH 05/10] Optimize V8's JSON parser
+Subject: [PATCH] Optimize V8's JSON parser
 
 :Release Notes:
 Implemented one optimization point to improve memory usage and performance
@@ -29,6 +29,7 @@ Reviewed-on: https://gpro.lgsvl.com/115015
 Reviewed-by: Andrii Koval <andrii.koval@lge.com>
 Tested-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  deps/v8/src/json-parser.h | 36 +++++++++++++++++++++++++++++++++++-
  1 file changed, 35 insertions(+), 1 deletion(-)
@@ -87,6 +88,3 @@ index 1b9829f..fc057ba 100644
    Handle<StringType> seq_string =
        NewRawString<StringType>(factory(), length, pretenure_);
    // Copy prefix into seq_str.
--- 
-1.9.1
-

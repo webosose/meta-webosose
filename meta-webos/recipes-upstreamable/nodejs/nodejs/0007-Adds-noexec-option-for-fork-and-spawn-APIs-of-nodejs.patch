@@ -1,8 +1,7 @@
-From da674e9cba597a4108361201890fb4ccd03d0f88 Mon Sep 17 00:00:00 2001
+From 21c1a33cd7c062c36cf2d68a628b9ac4769ac76a Mon Sep 17 00:00:00 2001
 From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Date: Thu, 28 May 2015 21:12:34 +0300
-Subject: [PATCH 06/17] [PATCH 01/10] Adds noexec option for fork and spawn
- APIs of nodejs
+Subject: [PATCH] Adds noexec option for fork and spawn APIs of nodejs
 
 :Release Notes:
 Adds noexec option, which disables exec() syscall of
@@ -38,6 +37,7 @@ Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Reviewed-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Alexander Pryadka <alexander.pryadka@lge.com>
 Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+
 ---
  deps/uv/include/uv.h          |  7 ++++++-
  deps/uv/src/unix/process.c    | 46 ++++++++++++++++++++++++++++++++++++++-----
@@ -196,6 +196,3 @@ index 3dcde09..f0ff7ce 100644
      // options.args
      Local<Value> argv_v = js_options->Get(env->args_string());
      if (!argv_v.IsEmpty() && argv_v->IsArray()) {
--- 
-1.9.1
-

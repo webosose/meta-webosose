@@ -1,7 +1,7 @@
-From dad0a5d7b83b0bf2b7ebca84cb8b708e5dea28b6 Mon Sep 17 00:00:00 2001
+From 54da96a68990ef24861834aeab21b2a26aa448f7 Mon Sep 17 00:00:00 2001
 From: Oleksandr Ivanov <oleksandr.ivanov@lge.com>
 Date: Thu, 24 Aug 2017 13:24:35 -0700
-Subject: [PATCH 03/17] Patch on Flush function for CPU ARM added
+Subject: [PATCH] Patch on Flush function for CPU ARM added
 
 :Release Notes:
 Switch to nodejs v0.12.2
@@ -21,6 +21,7 @@ Open-webOS-DCO-1.0-Signed-off-by: Oleksandr
 Ivanov<oleksandr.ivanov@lge.com>
 
 Change-Id: I5a5cd137beba13920077a2750acb728c9614b914
+
 ---
  deps/v8/src/arm/cpu-arm.cc | 22 ++++++++++++++++++++++
  1 file changed, 22 insertions(+)
@@ -70,6 +71,3 @@ index f5d2ab1..76aec01 100644
  #endif
  #endif
  #endif  // !USE_SIMULATOR
--- 
-1.9.1
-

@@ -8,8 +8,7 @@ COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
 # COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
 
-INC_PR = "r2"
-PR = "${INC_PR}.1"
+INC_PR = "r3"
 
 PROVIDES = "node"
 RPROVIDES_${PN} = "node"

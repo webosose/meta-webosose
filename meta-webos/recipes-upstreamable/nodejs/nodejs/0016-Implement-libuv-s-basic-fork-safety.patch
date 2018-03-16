@@ -1,7 +1,7 @@
-From 2d1f218825753e17e20ac666965abd2c6b340edc Mon Sep 17 00:00:00 2001
+From 8ad4fd828740b7cc40233e782b0349bdfb420cee Mon Sep 17 00:00:00 2001
 From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Date: Thu, 28 May 2015 22:07:21 +0300
-Subject: [PATCH 15/17] [PATCH 10/10] Implement libuv`s basic fork safety
+Subject: [PATCH] Implement libuv`s basic fork safety
 
 :Release Notes:
 Implement libuv`s basic fork safety
@@ -30,6 +30,7 @@ Reviewed-on: https://gpro.lgsvl.com/111234
 Tested-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  deps/uv/src/unix/core.c     |  2 +-
  deps/uv/src/unix/internal.h |  1 +
@@ -197,6 +198,3 @@ index dbd8f86..d6c5742 100644
  }
  
  
--- 
-1.9.1
-
