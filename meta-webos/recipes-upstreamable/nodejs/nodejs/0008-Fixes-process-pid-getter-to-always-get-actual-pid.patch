@@ -1,8 +1,7 @@
-From ef3deea80dcae4e0cea5afb51a83622234154ab3 Mon Sep 17 00:00:00 2001
+From 06ef1cc8d618c8ee87821af271b1d51f0ea09fa1 Mon Sep 17 00:00:00 2001
 From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Date: Thu, 28 May 2015 21:31:07 +0300
-Subject: [PATCH 07/17] [PATCH 02/10] Fixes process pid getter to always get
- actual pid
+Subject: [PATCH] Fixes process pid getter to always get actual pid
 
 :Release Notes:
 Fixes process pid getter to always get actual pid
@@ -30,15 +29,16 @@ Reviewed-by: Sergii Babych <sergii.babych@lge.com>
 Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Reviewed-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+
 ---
  src/node.cc | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/src/node.cc b/src/node.cc
-index 25f98d0..30db9e5 100644
+index b1dfb81..e1c7b25 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -2832,6 +2832,12 @@ static void EnvSetter(Local<Name> property,
+@@ -2831,6 +2831,12 @@ static void EnvSetter(Local<Name> property,
    info.GetReturnValue().Set(value);
  }
  
@@ -51,7 +51,7 @@ index 25f98d0..30db9e5 100644
  
  static void EnvQuery(Local<Name> property,
                       const PropertyCallbackInfo<Integer>& info) {
-@@ -3299,7 +3305,7 @@ void SetupProcessObject(Environment* env,
+@@ -3298,7 +3304,7 @@ void SetupProcessObject(Environment* env,
        process_env_template->NewInstance(env->context()).ToLocalChecked();
    process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
  
@@ -60,6 +60,3 @@ index 25f98d0..30db9e5 100644
    READONLY_PROPERTY(process, "features", GetFeatures(env));
  
    auto need_immediate_callback_string =
--- 
-1.9.1
-

@@ -1,8 +1,7 @@
-From 5bdee391a8c173d901f2a2187594d32178df5ec5 Mon Sep 17 00:00:00 2001
+From 8c7de1be04e4be5abd01c27b555dd5b2cf9397d3 Mon Sep 17 00:00:00 2001
 From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Date: Mon, 26 Oct 2015 14:46:40 +0200
-Subject: [PATCH 16/17] [PATCH] Fix possible out of resources in init_once
- function
+Subject: [PATCH] Fix possible out of resources in init_once function
 
 :Release Notes:
 Fix possible out of resources in init_once function.
@@ -29,6 +28,7 @@ Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Reviewed-by: Valerii Shevchuk <valerii.shevchuk@lge.com>
 Reviewed-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  deps/uv/src/threadpool.c | 48 ++++++++++++++++++++++++++++++------------------
  1 file changed, 30 insertions(+), 18 deletions(-)
@@ -145,6 +145,3 @@ index 407e800..f36eabe 100644
  
    initialized = 1;
  }
--- 
-1.9.1
-

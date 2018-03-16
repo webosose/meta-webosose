@@ -1,7 +1,7 @@
-From a7874051f89b509385588052402abd4b49edcb60 Mon Sep 17 00:00:00 2001
+From 6c2dacac31670b436fd7bb1b784570d82f930f24 Mon Sep 17 00:00:00 2001
 From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
 Date: Mon, 28 Aug 2017 14:01:48 -0700
-Subject: [PATCH 05/17] [PATCH] implement function chroot in process module
+Subject: [PATCH] implement function chroot in process module
 
 :Release Notes:
 Implement chroot function in nodejs
@@ -28,6 +28,7 @@ Reviewed-by: Anastasia Timoshchuk <anastasia.timoshchuk@lge.com>
 Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+
 ---
  deps/uv/include/uv.h    |  2 ++
  deps/uv/src/unix/core.c |  8 ++++++++
@@ -127,10 +128,10 @@ index 321d9c1..9fea2f9 100644
    static void UnsetEnvironment(const v8::FunctionCallbackInfo<v8::Value>& args);
    static void SetUMask(const v8::FunctionCallbackInfo<v8::Value>& args);
 diff --git a/src/node.cc b/src/node.cc
-index e47c719..25f98d0 100644
+index 73ed460..b1dfb81 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -1887,6 +1887,19 @@ static void Chdir(const FunctionCallbackInfo<Value>& args) {
+@@ -1886,6 +1886,19 @@ static void Chdir(const FunctionCallbackInfo<Value>& args) {
    }
  }
  
@@ -150,7 +151,7 @@ index e47c719..25f98d0 100644
  
  static void Cwd(const FunctionCallbackInfo<Value>& args) {
    Environment* env = Environment::GetCurrent(args);
-@@ -3417,6 +3430,8 @@ void SetupProcessObject(Environment* env,
+@@ -3416,6 +3429,8 @@ void SetupProcessObject(Environment* env,
    env->SetMethod(process, "reallyExit", Exit);
    env->SetMethod(process, "abort", Abort);
    env->SetMethod(process, "chdir", Chdir);
@@ -159,6 +160,3 @@ index e47c719..25f98d0 100644
    env->SetMethod(process, "cwd", Cwd);
  
    env->SetMethod(process, "umask", Umask);
--- 
-1.9.1
-

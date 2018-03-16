@@ -1,7 +1,7 @@
-From ba948c9407645480e903c9a92f53e0d11c021a16 Mon Sep 17 00:00:00 2001
+From 3893e1d69f81fd3e1aca50c9b2dcd8363fa8650a Mon Sep 17 00:00:00 2001
 From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Date: Wed, 23 Dec 2015 13:21:31 +0200
-Subject: [PATCH 17/17] [PATCH] Prevent creating /usr/etc in native sysroot
+Subject: [PATCH] Prevent creating /usr/etc in native sysroot
 
 :Release Notes:
 Prevent creating /usr/etc directory in native sysroot while
@@ -27,6 +27,7 @@ Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Reviewed-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  deps/npm/lib/config/core.js | 10 +++++++++-
  1 file changed, 9 insertions(+), 1 deletion(-)
@@ -59,6 +60,3 @@ index b833b75..171142c 100644
        mkdirp(etc, function () {
          defaults.globalconfig = path.resolve(etc, 'npmrc')
          defaults.globalignorefile = path.resolve(etc, 'npmignore')
--- 
-1.9.1
-

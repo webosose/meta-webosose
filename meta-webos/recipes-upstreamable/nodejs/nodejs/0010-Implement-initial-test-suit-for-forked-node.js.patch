@@ -1,8 +1,7 @@
-From 057c97c265e28aa8bc77ac2d30d2eb76f01757c9 Mon Sep 17 00:00:00 2001
+From 687f407032eebc27cc1f4a8fc6942ce971ab92f4 Mon Sep 17 00:00:00 2001
 From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Date: Fri, 24 Jul 2015 16:04:29 +0300
-Subject: [PATCH 09/17] [PATCH 04/10] Implement initial test suit for forked
- node.js
+Subject: [PATCH] Implement initial test suit for forked node.js
 
 :Release Notes:
 Implement wrapper program for using with standard node.js tests
@@ -28,6 +27,7 @@ Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
 Open-webOS-DCO-1.0-Signed-off-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+
 ---
  tools/fork-test.sh | 124 +++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 124 insertions(+)
@@ -163,6 +163,3 @@ index 0000000..042263a
 +fi
 +exit $EXITCOD
 +
--- 
-1.9.1
-

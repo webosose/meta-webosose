@@ -1,10 +1,20 @@
-diff -Naur node-v6.10.0/deps/npm/lib/cache/caching-client.js node-v6.10.0b/deps/npm/lib/cache/caching-client.js
---- node-v6.10.0/deps/npm/lib/cache/caching-client.js	2017-02-21 18:40:14.000000000 -0600
-+++ node-v6.10.0b/deps/npm/lib/cache/caching-client.js	2017-04-18 14:35:05.725921973 -0500
-@@ -68,6 +68,22 @@
+From a26897456dadae2e267a8341f8bbe7a75da377b7 Mon Sep 17 00:00:00 2001
+From: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+Date: Fri, 8 May 2015 10:35:20 +0000
+
+---
+ deps/npm/lib/cache/caching-client.js  | 21 ++++++++++++++++++++-
+ deps/npm/lib/utils/map-to-registry.js |  1 +
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/deps/npm/lib/cache/caching-client.js b/deps/npm/lib/cache/caching-client.js
+index a6bcee3..12a4c9b 100644
+--- a/deps/npm/lib/cache/caching-client.js
++++ b/deps/npm/lib/cache/caching-client.js
+@@ -68,6 +68,22 @@ function get (uri, params, cb) {
    var cacheBase = cacheFile(npm.config.get('cache'))(uri)
    var cachePath = path.join(cacheBase, '.cache.json')
-
+ 
 +  if (parsed.host === "noregistry") (function() {
 +    var stat = null
 +    var file = npm.config.get("cache") + parsed.pathname + "/.cache.json"
@@ -24,10 +34,10 @@ diff -Naur node-v6.10.0/deps/npm/lib/cache/caching-client.js node-v6.10.0b/deps/
    // If the GET is part of a write operation (PUT or DELETE), then
    // skip past the cache entirely, but still save the results.
    if (uri.match(/\?write=true$/)) {
-@@ -88,7 +104,10 @@
+@@ -88,7 +104,10 @@ function get (uri, params, cb) {
          params.stat = stat
          params.data = data
-
+ 
 -        get_.call(client, uri, cachePath, params, cb)
 +        if (parsed.host === "noregistry")
 +           cb(null, data, JSON.stringify(data), { statusCode : 304 })
@@ -36,14 +46,15 @@ diff -Naur node-v6.10.0/deps/npm/lib/cache/caching-client.js node-v6.10.0b/deps/
        })
      } else {
        get_.call(client, uri, cachePath, params, cb)
-diff -Naur node-v6.10.0/deps/npm/lib/utils/map-to-registry.js node-v6.10.0b/deps/npm/lib/utils/map-to-registry.js
---- node-v6.10.0/deps/npm/lib/utils/map-to-registry.js	2017-02-21 18:40:14.000000000 -0600
-+++ node-v6.10.0b/deps/npm/lib/utils/map-to-registry.js	2017-04-18 14:38:29.640908067 -0500
-@@ -45,6 +45,7 @@
-
+diff --git a/deps/npm/lib/utils/map-to-registry.js b/deps/npm/lib/utils/map-to-registry.js
+index 9e7ce67..0bbf113 100644
+--- a/deps/npm/lib/utils/map-to-registry.js
++++ b/deps/npm/lib/utils/map-to-registry.js
+@@ -44,6 +44,7 @@ function mapToRegistry (name, config, cb) {
+   }
+ 
    log.silly('mapToRegistry', 'registry', registry)
 +   if (!registry) return cb(null, "http://noregistry/" + name, {})
-
+ 
    var auth = config.getCredentialsByURI(registry)
-
-   // normalize registry URL so resolution doesn't drop a piece of registry URL
+ 

@@ -1,7 +1,7 @@
-From 5bacd9ccea3b95807cfd5c39c77e5c0694d229d1 Mon Sep 17 00:00:00 2001
+From bef0bd507573b02cdcefdc6863e693a3dc18fb2a Mon Sep 17 00:00:00 2001
 From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Date: Thu, 28 May 2015 21:50:49 +0300
-Subject: [PATCH 14/17] [PATCH 09/10] Fix threadpool fork safety
+Subject: [PATCH] Fix threadpool fork safety
 
 :Release Notes:
 Fixes libuv`s threadpool fork safety
@@ -34,6 +34,7 @@ Reviewed-on: https://gpro.lgsvl.com/111233
 Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Tested-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+
 ---
  deps/uv/checksparse.sh              |   1 +
  deps/uv/src/threadpool.c            | 119 ++++++++++++++++++++++++++++++++++++
@@ -319,6 +320,3 @@ index 49d5d22..3426297 100644
          'test/test-thread-equal.c',
          'test/test-tmpdir.c',
          'test/test-mutexes.c',
--- 
-1.9.1
-
