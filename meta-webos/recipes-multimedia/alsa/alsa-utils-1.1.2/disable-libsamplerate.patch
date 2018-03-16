@@ -1,18 +1,20 @@
-From 457c3160185d620ae95aa9b07ecf00cabee76e4e Mon Sep 17 00:00:00 2001
+From 4a09d01895f10fd4503ad290208915465e518a3a Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Thu, 18 Feb 2016 12:43:22 +0100
 Subject: [PATCH] configure.ac: add parameters to enable/disable libsamplerate
+
  support
 
 * we don't like the autodetection
 
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+
 ---
  configure.ac | 18 +++++++++++++++---
  1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index bdb133c..c7bef67 100644
+index a263d3b..f61491f 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -38,8 +38,6 @@ AC_CHECK_HEADERS([alsa/use-case.h], [have_ucm="yes"], [have_ucm="no"],
@@ -22,9 +24,9 @@ index bdb133c..c7bef67 100644
 -AC_CHECK_HEADERS([samplerate.h], [have_samplerate="yes"], [have_samplerate="no"],
 -  [#include <samplerate.h>])
  
- AM_CONDITIONAL(HAVE_PCM, test "$have_pcm" = "yes")
- AM_CONDITIONAL(HAVE_MIXER, test "$have_mixer" = "yes")
-@@ -47,7 +45,21 @@ AM_CONDITIONAL(HAVE_RAWMIDI, test "$have_rawmidi" = "yes")
+ AC_CHECK_LIB([asound], [snd_seq_client_info_get_card], [HAVE_SEQ_CLIENT_INFO_GET_CARD="yes"])
+ if test "$HAVE_SEQ_CLIENT_INFO_GET_CARD" = "yes" ; then
+@@ -56,7 +54,21 @@ AM_CONDITIONAL(HAVE_RAWMIDI, test "$have_rawmidi" = "yes")
  AM_CONDITIONAL(HAVE_SEQ, test "$have_seq" = "yes")
  AM_CONDITIONAL(HAVE_UCM, test "$have_ucm" = "yes")
  AM_CONDITIONAL(HAVE_TOPOLOGY, test "$have_topology" = "yes")
@@ -45,8 +47,5 @@ index bdb133c..c7bef67 100644
 +fi
 +AM_CONDITIONAL(HAVE_SAMPLERATE, test $have_samplerate = "yes")
  
- dnl Disable bat
- bat=
--- 
-2.7.1
-
+ dnl Use tinyalsa
+ alsabat_backend_tiny=

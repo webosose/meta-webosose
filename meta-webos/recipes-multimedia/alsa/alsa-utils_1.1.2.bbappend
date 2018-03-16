@@ -1,6 +1,6 @@
-# Copyright (c) 2014-2017 LG Electronics, Inc.
+# Copyright (c) 2014-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BP}:"
 
