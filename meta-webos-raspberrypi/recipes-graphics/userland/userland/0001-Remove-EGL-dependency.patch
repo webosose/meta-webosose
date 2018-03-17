@@ -1,4 +1,4 @@
-From 961b1cec9296b070b7a6f2fc5e9766d2c2e53d4c Mon Sep 17 00:00:00 2001
+From 24b67015c46c2cf6d608628141aa18b47677b8d7 Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Tue, 27 Jun 2017 21:22:05 +0900
 Subject: [PATCH] Remove EGL dependency
@@ -144,11 +144,11 @@ index fde18da..e0cd3ef 100755
  # vchostif needs ilcore as well (vmcs_main pulls it in)
  target_link_libraries(vchostif vchiq_arm vcos vcfiled_check)
 diff --git a/makefiles/cmake/vmcs.cmake b/makefiles/cmake/vmcs.cmake
-index 718cd3b..90a3ec7 100644
+index 7c97463..4a3b348 100644
 --- a/makefiles/cmake/vmcs.cmake
 +++ b/makefiles/cmake/vmcs.cmake
-@@ -73,8 +73,8 @@ install(DIRECTORY ${vmcs_root}/interface/vctypes   DESTINATION ${VMCS_INSTALL_PR
- install(DIRECTORY ${vmcs_root}/vcinclude           DESTINATION ${VMCS_INSTALL_PREFIX}/include           FILES_MATCHING PATTERN "*.h")
+@@ -74,8 +74,8 @@ install(DIRECTORY ${vmcs_root}/vcinclude           DESTINATION ${VMCS_INSTALL_PR
+ install(DIRECTORY ${vmcs_root}/interface/peer      DESTINATION ${VMCS_INSTALL_PREFIX}/include/interface FILES_MATCHING PATTERN "*.h")
  install(DIRECTORY ${vmcs_root}/interface/vmcs_host DESTINATION ${VMCS_INSTALL_PREFIX}/include/interface FILES_MATCHING PATTERN "*.h" PATTERN "${vmcs_root}/interface/vmcs_host/khronos" EXCLUDE)
  
 -install(DIRECTORY ${vmcs_root}/interface/khronos/include       DESTINATION ${VMCS_INSTALL_PREFIX}     FILES_MATCHING PATTERN "*.h")
@@ -185,6 +185,3 @@ index 0000000..8793a61
 +Version: 1
 +Libs: -L${libdir} -lopenmaxil -lvcos -lvchiq_arm -pthread
 +Cflags: -I${includedir} -I${includedir}/IL -I${includedir}/interface/vmcs_host/linux -I${includedir}/interface/vcos/pthreads -DUSE_VCHIQ_ARM
--- 
-1.9.1
-

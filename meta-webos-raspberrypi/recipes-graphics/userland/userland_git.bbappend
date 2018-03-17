@@ -35,7 +35,7 @@ SRC_URI_remove = "\
 # file://0014-GLES2-gl2ext.h-Define-GL_R8_EXT-and-GL_RG8_EXT.patch
 # file://0015-EGL-glplatform.h-define-EGL_CAST.patch
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 SRC_URI_append = " file://0001-Remove-EGL-dependency.patch"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
