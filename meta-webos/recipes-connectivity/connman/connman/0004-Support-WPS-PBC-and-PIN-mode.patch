@@ -1,4 +1,4 @@
-From d5c54345080be6f692be8af851c13edb2ce02a56 Mon Sep 17 00:00:00 2001
+From 1886b233b6c8ab77066b4a58a88c31738c23fff0 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Wed, 21 Feb 2018 16:36:23 +0530
 Subject: [PATCH] Add support for the WPS PBS and PIN mode
@@ -16,6 +16,7 @@ another method to the technology interface which starts the WPS connection
 process without requiring a specific SSID.
 
 Upstream-Status : Inappropriate [webOS specific]
+
 ---
  gsupplicant/gsupplicant.h |   5 +
  gsupplicant/supplicant.c  |  66 ++++++++
@@ -29,10 +30,10 @@ Upstream-Status : Inappropriate [webOS specific]
  9 files changed, 611 insertions(+), 20 deletions(-)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index 26fd2ca..eae1e26 100644
+index db61595..77dfe56 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
-@@ -264,6 +264,10 @@ int g_supplicant_interface_disconnect(GSupplicantInterface *interface,
+@@ -268,6 +268,10 @@ int g_supplicant_interface_disconnect(GSupplicantInterface *interface,
  					GSupplicantInterfaceCallback callback,
  							void *user_data);
  
@@ -43,7 +44,7 @@ index 26fd2ca..eae1e26 100644
  int g_supplicant_interface_set_apscan(GSupplicantInterface *interface,
  							unsigned int ap_scan);
  
-@@ -352,6 +356,7 @@ struct _GSupplicantCallbacks {
+@@ -357,6 +361,7 @@ struct _GSupplicantCallbacks {
  	void (*peer_changed) (GSupplicantPeer *peer,
  					GSupplicantPeerState state);
  	void (*peer_request) (GSupplicantPeer *peer);
@@ -52,10 +53,10 @@ index 26fd2ca..eae1e26 100644
  	void (*disconnect_reasoncode)(GSupplicantInterface *interface,
  				int reasoncode);
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 4cb533d..4161ec4 100644
+index 4f79012..736cee3 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -686,6 +686,17 @@ static void remove_group(gpointer data)
+@@ -699,6 +699,17 @@ static void remove_group(gpointer data)
  	g_free(group);
  }
  
@@ -73,7 +74,7 @@ index 4cb533d..4161ec4 100644
  static void remove_interface(gpointer data)
  {
  	GSupplicantInterface *interface = data;
-@@ -2780,6 +2791,8 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
+@@ -2907,6 +2918,8 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
  	dbus_message_iter_next(iter);
  
  	supplicant_dbus_property_foreach(iter, wps_event_args, interface);
@@ -82,7 +83,7 @@ index 4cb533d..4161ec4 100644
  }
  
  static void create_peer_identifier(GSupplicantPeer *peer)
-@@ -4869,6 +4882,59 @@ int g_supplicant_interface_connect(GSupplicantInterface *interface,
+@@ -5028,6 +5041,59 @@ int g_supplicant_interface_connect(GSupplicantInterface *interface,
  	return -EINPROGRESS;
  }
  
@@ -156,7 +157,7 @@ index 9ac800a..140f9bc 100644
  
  int connman_device_driver_register(struct connman_device_driver *driver);
 diff --git a/include/technology.h b/include/technology.h
-index d7fcdde..240006a 100644
+index 97db660..54f3b4d 100644
 --- a/include/technology.h
 +++ b/include/technology.h
 @@ -46,6 +46,8 @@ bool connman_technology_get_wifi_tethering(const char **ssid,
@@ -169,7 +170,7 @@ index d7fcdde..240006a 100644
  	const char *name;
  	enum connman_service_type type;
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 148131d..2798de3 100644
+index 2b28c50..5d6cbb9 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
 @@ -61,6 +61,7 @@
@@ -189,7 +190,7 @@ index 148131d..2798de3 100644
  enum wifi_ap_capability{
  	WIFI_AP_UNKNOWN 	= 0,
  	WIFI_AP_SUPPORTED 	= 1,
-@@ -149,6 +152,11 @@ struct wifi_data {
+@@ -153,6 +156,11 @@ struct wifi_data {
  	int servicing;
  	int disconnect_code;
  	int assoc_code;
@@ -201,7 +202,7 @@ index 148131d..2798de3 100644
  };
  
  static GList *iface_list = NULL;
-@@ -195,6 +203,17 @@ static bool is_p2p_connecting(void)
+@@ -199,6 +207,17 @@ static bool is_p2p_connecting(void)
  	return false;
  }
  
@@ -219,7 +220,7 @@ index 148131d..2798de3 100644
  static void add_pending_wifi_device(struct wifi_data *wifi)
  {
  	if (g_list_find(pending_wifi_device, wifi))
-@@ -773,6 +792,9 @@ static int wifi_probe(struct connman_device *device)
+@@ -779,6 +798,9 @@ static int wifi_probe(struct connman_device *device)
  
  	wifi->watch = connman_rtnl_add_newlink_watch(wifi->index,
  							wifi_newlink, device);
@@ -229,7 +230,7 @@ index 148131d..2798de3 100644
  	if (is_p2p_connecting())
  		add_pending_wifi_device(wifi);
  	else
-@@ -1932,6 +1954,217 @@ static int wifi_set_regdom(struct connman_device *device, const char *alpha2)
+@@ -1938,6 +1960,217 @@ static int wifi_set_regdom(struct connman_device *device, const char *alpha2)
  	return ret;
  }
  
@@ -447,7 +448,7 @@ index 148131d..2798de3 100644
  static struct connman_device_driver wifi_ng_driver = {
  	.name		= "wifi",
  	.type		= CONNMAN_DEVICE_TYPE_WIFI,
-@@ -1942,6 +2175,8 @@ static struct connman_device_driver wifi_ng_driver = {
+@@ -1948,6 +2181,8 @@ static struct connman_device_driver wifi_ng_driver = {
  	.disable	= wifi_disable,
  	.scan		= wifi_scan,
  	.set_regdom	= wifi_set_regdom,
@@ -456,7 +457,7 @@ index 148131d..2798de3 100644
  };
  
  static void system_ready(void)
-@@ -1966,6 +2201,23 @@ static int network_probe(struct connman_network *network)
+@@ -1972,6 +2207,23 @@ static int network_probe(struct connman_network *network)
  	return 0;
  }
  
@@ -480,7 +481,7 @@ index 148131d..2798de3 100644
  static void network_remove(struct connman_network *network)
  {
  	struct connman_device *device = connman_network_get_device(network);
-@@ -1979,6 +2231,10 @@ static void network_remove(struct connman_network *network)
+@@ -1985,6 +2237,10 @@ static void network_remove(struct connman_network *network)
  
  	if (wifi->network != network)
  		return;
@@ -491,7 +492,7 @@ index 148131d..2798de3 100644
  
  	wifi->network = NULL;
  }
-@@ -2088,6 +2344,9 @@ static int network_connect(struct connman_network *network)
+@@ -2102,6 +2358,9 @@ static int network_connect(struct connman_network *network)
  	if (!wifi)
  		return -ENODEV;
  
@@ -502,8 +503,8 @@ index 148131d..2798de3 100644
  	if (!ssid)
  		return -ENOMEM;
 @@ -2145,12 +2404,10 @@ static void disconnect_callback(int result, GSupplicantInterface *interface,
- 
  	wifi->disconnecting = false;
+ 	wifi->connected = false;
  
 -	if (wifi->pending_network) {
 -		network_connect(wifi->pending_network);
@@ -679,7 +680,7 @@ index 148131d..2798de3 100644
  		break;
  
  	case G_SUPPLICANT_STATE_DISCONNECTED:
-@@ -2451,7 +2792,12 @@ static void interface_state(GSupplicantInterface *interface)
+@@ -2464,7 +2805,12 @@ static void interface_state(GSupplicantInterface *interface)
  		connman_network_set_associating(network, false);
  		wifi->disconnecting = false;
  
@@ -693,7 +694,7 @@ index 148131d..2798de3 100644
  
  		break;
  
-@@ -3021,6 +3367,7 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3076,6 +3422,7 @@ static const GSupplicantCallbacks callbacks = {
  	.peer_lost		= peer_lost,
  	.peer_changed		= peer_changed,
  	.peer_request		= peer_request,
@@ -702,10 +703,10 @@ index 148131d..2798de3 100644
  	.disconnect_reasoncode  = disconnect_reasoncode,
  	.assoc_status_code      = assoc_status_code,
 diff --git a/src/connman.h b/src/connman.h
-index e849ed8..eafafcb 100644
+index da4446a..2622825 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -553,6 +553,8 @@ void __connman_device_list(DBusMessageIter *iter, void *user_data);
+@@ -560,6 +560,8 @@ void __connman_device_list(DBusMessageIter *iter, void *user_data);
  enum connman_service_type __connman_device_get_service_type(struct connman_device *device);
  struct connman_device *__connman_device_find_device(enum connman_service_type type);
  int __connman_device_request_scan(enum connman_service_type type);
@@ -715,10 +716,10 @@ index e849ed8..eafafcb 100644
  				const char *ssid, unsigned int ssid_len,
  				const char *identity, const char *passphrase,
 diff --git a/src/device.c b/src/device.c
-index 742b3c4..2a6f505 100644
+index a563f46..874e21f 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -1112,6 +1112,122 @@ int __connman_device_request_hidden_scan(struct connman_device *device,
+@@ -1108,6 +1108,122 @@ int __connman_device_request_hidden_scan(struct connman_device *device,
  					passphrase, security, user_data);
  }
  
@@ -842,7 +843,7 @@ index 742b3c4..2a6f505 100644
  {
  	struct ifreq ifr;
 diff --git a/src/service.c b/src/service.c
-index 768426b..84ab2e3 100644
+index 02cd51f..13902ba 100644
 --- a/src/service.c
 +++ b/src/service.c
 @@ -49,6 +49,8 @@ static unsigned int vpn_autoconnect_timeout = 0;
@@ -855,10 +856,10 @@ index 768426b..84ab2e3 100644
  	bool valid;
  	bool enabled;
 diff --git a/src/technology.c b/src/technology.c
-index 660af52..5a8c59c 100644
+index d2f0ae2..b735011 100644
 --- a/src/technology.c
 +++ b/src/technology.c
-@@ -1069,6 +1069,50 @@ static DBusMessage *scan(DBusConnection *conn, DBusMessage *msg, void *data)
+@@ -1092,6 +1092,50 @@ static DBusMessage *scan(DBusConnection *conn, DBusMessage *msg, void *data)
  	return NULL;
  }
  
@@ -909,7 +910,7 @@ index 660af52..5a8c59c 100644
  static const GDBusMethodTable technology_methods[] = {
  	{ GDBUS_DEPRECATED_METHOD("GetProperties",
  			NULL, GDBUS_ARGS({ "properties", "a{sv}" }),
-@@ -1077,12 +1121,17 @@ static const GDBusMethodTable technology_methods[] = {
+@@ -1100,12 +1144,17 @@ static const GDBusMethodTable technology_methods[] = {
  			GDBUS_ARGS({ "name", "s" }, { "value", "v" }),
  			NULL, set_property) },
  	{ GDBUS_ASYNC_METHOD("Scan", NULL, NULL, scan) },
@@ -927,6 +928,3 @@ index 660af52..5a8c59c 100644
  	{ },
  };
  
--- 
-1.9.1
-

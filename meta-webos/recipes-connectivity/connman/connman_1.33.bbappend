@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO_append = "webos3"
 
 SRC_URI += " \
     file://0004-Support-WPS-PBC-and-PIN-mode.patch \
