@@ -1,7 +1,7 @@
-# Copyright (c) 2012-2017 LG Electronics, Inc.
+# Copyright (c) 2012-2018 LG Electronics, Inc.
 
 PKGV .= "-0webos3"
-EXTENDPRAUTO_append = "webos11"
+EXTENDPRAUTO_append = "webos13"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -12,4 +12,4 @@ SRC_URI += " \
 "
 
 RPROVIDES_${PN} += "stat"
-RPROVIDES_${PN} += "bash /bin/bash"
+RPROVIDES_${PN} += "bash"
