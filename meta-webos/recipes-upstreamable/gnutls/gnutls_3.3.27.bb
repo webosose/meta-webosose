@@ -5,6 +5,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504 \
 
 FILESEXTRAPATHS_prepend = "${COREBASE}/meta/recipes-support/${BPN}/${BPN}:"
 
+MIRRORS += "ftp://ftp.gnutls.org/gcrypt/gnutls ${GNUPG_MIRROR}/gnutls \n"
+
 SRC_URI += " \
     file://correct_rpl_gettimeofday_signature.patch \
     file://configure.ac-fix-sed-command.patch \
