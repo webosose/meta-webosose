@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504 \
 
 FILESEXTRAPATHS_prepend = "${COREBASE}/meta/recipes-support/${BPN}/${BPN}:"
 
-SRC_URI += " \
+SRC_URI = "https://www.gnupg.org/ftp/gcrypt/gnutls/v${SHRT_VER}/gnutls-${PV}.tar.xz \
     file://correct_rpl_gettimeofday_signature.patch \
     file://configure.ac-fix-sed-command.patch \
     file://use-pkg-config-to-locate-zlib.patch \
