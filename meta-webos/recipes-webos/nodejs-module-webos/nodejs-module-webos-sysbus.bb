@@ -9,8 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
 WEBOS_VERSION = "3.0.1-1_780a3a2ecd33b826d18f22b05bcc9f9dbf27be05"
-PR = "r7"
-
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -22,6 +21,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 do_configure() {
+    export HOME=${WORKDIR}
     export LD="${CXX}"
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     # used by binding.gyp
@@ -30,6 +30,7 @@ do_configure() {
 }
 
 do_compile() {
+    export HOME=${WORKDIR}
     export LD="${CXX}"
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     # used by binding.gyp

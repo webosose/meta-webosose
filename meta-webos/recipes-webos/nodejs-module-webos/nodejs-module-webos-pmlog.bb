@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "pmloglib node-gyp-native"
 
 WEBOS_VERSION = "3.0.1-1_03fc1bc90518390eea0acd7639d6074c16c61195"
-PR = "r4"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo
@@ -21,6 +21,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 do_configure() {
+    export HOME=${WORKDIR}
     export LD="${CXX}"
     cd src
     sh -c "xxd -i pmloglib.js > pmloglib.js.h"
@@ -29,6 +30,7 @@ do_configure() {
 }
 
 do_compile() {
+    export HOME=${WORKDIR}
     export LD="${CXX}"
     node-gyp --arch ${TARGET_ARCH} build
 }
