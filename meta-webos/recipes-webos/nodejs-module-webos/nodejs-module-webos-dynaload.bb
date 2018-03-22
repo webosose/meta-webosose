@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "boost node-gyp-native"
 
 WEBOS_VERSION = "3.0.2-1_33cd720ceba4141a837bbb4e498e2de00695af42"
-PR = "r4"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo
@@ -21,12 +21,14 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 do_configure() {
+    export HOME=${WORKDIR}
     export LD="${CXX}"
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     node-gyp --arch ${TARGET_ARCH} configure
 }
 
 do_compile() {
+    export HOME=${WORKDIR}
     export LD="${CXX}"
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     node-gyp --arch ${TARGET_ARCH} build
