@@ -13,7 +13,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 PV = "3.0.0"
-PR = "r2"
+PR = "r3"
 
 inherit webos_machine_dep
 
@@ -24,9 +24,6 @@ PRODUCT_DEVICE_NAME_SHORT_BRANDED ?= "LGE ${DISTRO_NAME} Device"
 PRODUCT_DEVICE_NAME_PRODUCT_LINE_NAME ?= "${DISTRO_NAME} Device"
 PRODUCT_DEVICE_NAME_PRODUCT_CLASS ?= "${@ '${DISTRO_NAME}'.split()[1] if len('${DISTRO_NAME}'.split()) >= 2 else '${DISTRO_NAME}'}"
 PRODUCT_DEVICE_NAME_PRODUCT_BROWSER_OS_NAME ?= "${DISTRO_NAME}"
-
-# Versions can not be overridden
-PRODUCT_DEVICE_NAME_PRODUCT_BROWSER_OS_VERSION = "${WEBOS_DISTRO_API_VERSION}"
 
 do_install() {
     install -d ${D}${sysconfdir}/prefs/properties
@@ -39,9 +36,5 @@ do_install() {
     echo -n "${PRODUCT_DEVICE_NAME_PRODUCT_LINE_NAME}"       > ${D}${sysconfdir}/prefs/properties/productLineName
     echo -n "${PRODUCT_DEVICE_NAME_PRODUCT_CLASS}"           > ${D}${sysconfdir}/prefs/properties/productClass
     echo -n "${PRODUCT_DEVICE_NAME_PRODUCT_BROWSER_OS_NAME}" > ${D}${sysconfdir}/prefs/properties/browserOsName
-    if [ "webOS" = "${PRODUCT_DEVICE_NAME_PRODUCT_BROWSER_OS_NAME}" ]
-    then
-        echo -n "${PRODUCT_DEVICE_NAME_PRODUCT_BROWSER_OS_VERSION}" > ${D}${sysconfdir}/prefs/properties/browserOsVersion
-    fi
 }
 
