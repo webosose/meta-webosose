@@ -23,10 +23,17 @@ EXTRANATIVEPATH += "chrpath-native"
 
 inherit autotools pkgconfig gettext native
 
-EXTRA_OECONF = "--with-platforms=drm --disable-glx --disable-dri3 --with-dri-drivers=swrast --with-gallium-drivers=virgl"
 
-PACKAGECONFIG ??= "gbm"
+DRIDRIVERS_append_x86-64 = ",radeon,r200,nouveau,i965,i915"
+
+EXTRA_OECONF = "--with-platforms=drm,x11 --disable-dri3 --with-dri-drivers=${DRIDRIVERS} --with-gallium-drivers=virgl"
+
+PACKAGECONFIG ??= "dri gbm glx"
 PACKAGECONFIG[gbm] = "--enable-gbm,--disable-gbm"
+PACKAGECONFIG[glx] = "--enable-glx,--disable-glx,glproto dri2proto libxdamage libxfixes"
+PACKAGECONFIG[dri] = "--enable-dri,--disable-dri, dri2proto libdrm"
+# libdrm_intel"
+PACKAGECONFIG[dri3] = "--enable-dri3, --disable-dri3, dri3proto presentproto libxshmfence"
 
 # because we cannot rely on the fact that all apps will use pkgconfig,
 # make eglplatform.h independent of MESA_EGL_NO_X11_HEADER
