@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos35"
+EXTENDPRAUTO_append = "webos36"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -28,4 +28,5 @@ SRC_URI += " \
     file://0021-Fix-for-Hindi-glyph-break.patch \
     file://0022-Warn-circular-dependency-when-loading-types.patch \
     file://0023-Fix-baseUrl-returning-an-empty-url.patch \
+    file://0024-Rebuild-QQmlData-propertyCache-if-deleted-by-another.patch \
 "
