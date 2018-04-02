@@ -1,0 +1,470 @@
+From 0068f5b145bb93396e6f0c0b0d8651f53165414d Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Mon, 2 Apr 2018 14:00:37 +0900
+Subject: [PATCH] eglfs: Support multiple display
+
+:Release Notes:
+Allow QEglFSIntegration class to have multiple device integrations.
+
+:Detailed Notes:
+Platform resources such as platform screen and window refer to a device
+integration associated. It doesn't have to be the same as the global
+static instance qt_egl_device_integration() any more. They can refer to
+another device integration instance as needed.
+Multiple screen resources can be defined via a JSON config specified by
+QT_QPA_EGLFS_CONFIG environment variable. This config forms an array of
+physical DRM devices usually represented by /dev/dri/cardX.
+It is intended that an element content in this array matches to that of
+JSON config provided by QT_QPA_EGLFS_KMS_CONFIG to utilize the exising
+code as much as possible. If QT_QPA_EGLFS_CONFIG is not set, then
+QT_QPA_EGLFS_KMS_CONFIG will be used as before.
+EGL display resources will be created separately per screen resource as
+defined in this config.
+
+:Testing Performed:
+Tested with a series of patches related.
+Confirmed an application running on top of eglfs can create multiple
+platform screens and windows.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-52726] EGLFS: Support multiple display devices
+
+Change-Id: Iec3840877bf23ea5a9309095bfd718c241a9e1a5
+Upstream-Status : Inappropriate [webOS specific]
+---
+ .../eglfs_kms/qeglfskmsintegration.cpp             |  54 ++++++----
+ .../eglfs_kms/qeglfskmsintegration.h               |   3 +
+ .../platforms/eglfs/qeglfsdeviceintegration.h      |   2 +
+ src/plugins/platforms/eglfs/qeglfshooks.cpp        |  26 ++++-
+ src/plugins/platforms/eglfs/qeglfshooks.h          |   2 +
+ src/plugins/platforms/eglfs/qeglfsintegration.cpp  | 117 +++++++++++++++++++--
+ src/plugins/platforms/eglfs/qeglfsintegration.h    |   4 +
+ 7 files changed, 171 insertions(+), 37 deletions(-)
+
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
+index d1814fb..96d292d 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
+@@ -64,6 +64,11 @@ QEglFSKmsIntegration::QEglFSKmsIntegration()
+     , m_separateScreens(false)
+ {}
+ 
++void QEglFSKmsIntegration::setConfig(const QJsonObject json)
++{
++    m_configJson = json;
++}
++
+ void QEglFSKmsIntegration::platformInit()
+ {
+     loadConfig();
+@@ -217,34 +222,37 @@ QMap<QString, QVariantMap> QEglFSKmsIntegration::outputSettings() const
+ 
+ void QEglFSKmsIntegration::loadConfig()
+ {
+-    static QByteArray json = qgetenv("QT_QPA_EGLFS_KMS_CONFIG");
+-    if (json.isEmpty())
+-        return;
+-
+-    qCDebug(qLcEglfsKmsDebug) << "Loading KMS setup from" << json;
++    if (m_configJson.isEmpty()) {
++        static QByteArray json = qgetenv("QT_QPA_EGLFS_KMS_CONFIG");
++        if (json.isEmpty())
++            return;
++
++        qCDebug(qLcEglfsKmsDebug) << "Loading KMS setup from" << json;
++
++        QFile file(QString::fromUtf8(json));
++        if (!file.open(QFile::ReadOnly)) {
++            qCDebug(qLcEglfsKmsDebug) << "Could not open config file"
++                << json << "for reading";
++            return;
++        }
+ 
+-    QFile file(QString::fromUtf8(json));
+-    if (!file.open(QFile::ReadOnly)) {
+-        qCDebug(qLcEglfsKmsDebug) << "Could not open config file"
+-                                  << json << "for reading";
+-        return;
+-    }
++        const QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
++        file.close();
++        if (!doc.isObject()) {
++            qCDebug(qLcEglfsKmsDebug) << "Invalid config file" << json
++                << "- no top-level JSON object";
++            return;
++        }
+ 
+-    const QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+-    if (!doc.isObject()) {
+-        qCDebug(qLcEglfsKmsDebug) << "Invalid config file" << json
+-                                  << "- no top-level JSON object";
+-        return;
++        m_configJson = doc.object();
+     }
+ 
+-    const QJsonObject object = doc.object();
+-
+-    m_hwCursor = object.value(QStringLiteral("hwcursor")).toBool(m_hwCursor);
+-    m_pbuffers = object.value(QStringLiteral("pbuffers")).toBool(m_pbuffers);
+-    m_devicePath = object.value(QStringLiteral("device")).toString();
+-    m_separateScreens = object.value(QStringLiteral("separateScreens")).toBool(m_separateScreens);
++    m_hwCursor = m_configJson.value(QStringLiteral("hwcursor")).toBool(m_hwCursor);
++    m_pbuffers = m_configJson.value(QStringLiteral("pbuffers")).toBool(m_pbuffers);
++    m_devicePath = m_configJson.value(QStringLiteral("device")).toString();
++    m_separateScreens = m_configJson.value(QStringLiteral("separateScreens")).toBool(m_separateScreens);
+ 
+-    const QJsonArray outputs = object.value(QStringLiteral("outputs")).toArray();
++    const QJsonArray outputs = m_configJson.value(QStringLiteral("outputs")).toArray();
+     for (int i = 0; i < outputs.size(); i++) {
+         const QVariantMap outputSettings = outputs.at(i).toObject().toVariantMap();
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
+index edb6906..0d0f7c5 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
+@@ -38,6 +38,7 @@
+ #include "qeglfsdeviceintegration.h"
+ #include <QtCore/QMap>
+ #include <QtCore/QVariant>
++#include <QtCore/QJsonObject>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -48,6 +49,7 @@ class QEglFSKmsIntegration : public QEGLDeviceIntegration
+ public:
+     QEglFSKmsIntegration();
+ 
++    void setConfig(const QJsonObject config = QJsonObject()) Q_DECL_OVERRIDE;
+     void platformInit() Q_DECL_OVERRIDE;
+     void platformDestroy() Q_DECL_OVERRIDE;
+     EGLNativeDisplayType platformDisplay() const Q_DECL_OVERRIDE;
+@@ -71,6 +73,7 @@ public:
+ 
+ private:
+     void loadConfig();
++    QJsonObject m_configJson;
+ 
+     QEglFSKmsDevice *m_device;
+     bool m_hwCursor;
+diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
+index 9c3cce5..4f8fcfb 100644
+--- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
++++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
+@@ -49,6 +49,7 @@
+ #include <qpa/qplatformintegration.h>
+ #include <qpa/qplatformscreen.h>
+ #include <QtCore/QString>
++#include <QtCore/QJsonObject>
+ #include <QtGui/QSurfaceFormat>
+ #include <QtGui/QImage>
+ 
+@@ -64,6 +65,7 @@ class Q_EGLFS_EXPORT QEGLDeviceIntegration
+ public:
+     virtual ~QEGLDeviceIntegration() { }
+ 
++    virtual void setConfig(const QJsonObject config = QJsonObject()) {}
+     virtual void platformInit();
+     virtual void platformDestroy();
+     virtual EGLNativeDisplayType platformDisplay() const;
+diff --git a/src/plugins/platforms/eglfs/qeglfshooks.cpp b/src/plugins/platforms/eglfs/qeglfshooks.cpp
+index 638960d..51f6055 100644
+--- a/src/plugins/platforms/eglfs/qeglfshooks.cpp
++++ b/src/plugins/platforms/eglfs/qeglfshooks.cpp
+@@ -33,6 +33,7 @@
+ 
+ #include "qeglfshooks.h"
+ #include <QLoggingCategory>
++#include <QList>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -52,10 +53,14 @@ class DeviceIntegration
+ {
+ public:
+     DeviceIntegration();
+-    ~DeviceIntegration() { delete m_integration; }
++    ~DeviceIntegration() { delete m_integration; qDeleteAll(m_extraIntegrations); }
+     QEGLDeviceIntegration *integration() { return m_integration; }
++    QList<QEGLDeviceIntegration *> extraIntegrations() { return m_extraIntegrations; }
++    QString key() { return m_key; }
+ private:
+     QEGLDeviceIntegration *m_integration;
++    QList<QEGLDeviceIntegration *> m_extraIntegrations;
++    QString m_key;
+ };
+ 
+ Q_GLOBAL_STATIC(DeviceIntegration, deviceIntegration)
+@@ -106,9 +111,9 @@ DeviceIntegration::DeviceIntegration()
+             }
+             qCDebug(qLcEglDevDebug) << "EGL device integration plugin keys (sorted):" << pluginKeys;
+             while (!m_integration && !pluginKeys.isEmpty()) {
+-                QString key = pluginKeys.takeFirst();
+-                qCDebug(qLcEglDevDebug) << "Trying to load device EGL integration" << key;
+-                m_integration = QEGLDeviceIntegrationFactory::create(key);
++                m_key = pluginKeys.takeFirst();
++                qCDebug(qLcEglDevDebug) << "Trying to load device EGL integration" << m_key;
++                m_integration = QEGLDeviceIntegrationFactory::create(m_key);
+             }
+         }
+     }
+@@ -126,6 +131,19 @@ QEGLDeviceIntegration *qt_egl_device_integration()
+     return deviceIntegration()->integration();
+ }
+ 
++QList<QEGLDeviceIntegration *> qt_egl_device_extra_integrations()
++{
++    return deviceIntegration()->extraIntegrations();
++}
++
++QEGLDeviceIntegration *qt_egl_device_add_integration()
++{
++    qCDebug(qLcEglDevDebug) << "Trying to load extra device EGL integration" << deviceIntegration()->key();
++    QEGLDeviceIntegration *integration = QEGLDeviceIntegrationFactory::create(deviceIntegration()->key());
++    deviceIntegration()->extraIntegrations().append(integration);
++    return integration;
++}
++
+ #endif // EGLFS_PLATFORM_HOOKS
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/qeglfshooks.h b/src/plugins/platforms/eglfs/qeglfshooks.h
+index 5f19d49..f3425be 100644
+--- a/src/plugins/platforms/eglfs/qeglfshooks.h
++++ b/src/plugins/platforms/eglfs/qeglfshooks.h
+@@ -44,6 +44,8 @@ class QEglFSHooks : public QEGLDeviceIntegration
+ };
+ 
+ Q_EGLFS_EXPORT QEGLDeviceIntegration *qt_egl_device_integration();
++Q_EGLFS_EXPORT QList<QEGLDeviceIntegration *> qt_egl_device_extra_integrations();
++Q_EGLFS_EXPORT QEGLDeviceIntegration *qt_egl_device_add_integration();
+ 
+ QT_END_NAMESPACE
+ 
+diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
+index e75457b..19a9677 100644
+--- a/src/plugins/platforms/eglfs/qeglfsintegration.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
+@@ -32,6 +32,9 @@
+ ****************************************************************************/
+ 
+ #include <QtCore/qtextstream.h>
++#include <QtCore/QJsonDocument>
++#include <QtCore/QJsonObject>
++#include <QtCore/QJsonArray>
+ #include <QtGui/private/qguiapplication_p.h>
+ 
+ #include <qpa/qplatformwindow.h>
+@@ -113,6 +116,30 @@ void QEglFSIntegration::removeScreen(QPlatformScreen *screen)
+ 
+ void QEglFSIntegration::initialize()
+ {
++    static QByteArray json = qgetenv("QT_QPA_EGLFS_CONFIG");
++
++    if (!json.isEmpty()) {
++        QFile file(QString::fromUtf8(json));
++        if (file.open(QFile::ReadOnly)) {
++            QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
++            if (doc.isArray()) {
++                m_configJson = doc;
++                qInfo() << "Using config file" << json;
++            } else {
++                qWarning() << "Invalid config file" << json << "- no top-level JSON object";
++            }
++            file.close();
++        } else {
++            qWarning() << "Could not open config file" << json << "for reading";
++        }
++    } else {
++        qWarning("No config file given");
++    }
++
++    // Primary display
++    if (!m_configJson.isEmpty())
++        qt_egl_device_integration()->setConfig(m_configJson.array().at(0).toObject());
++
+     qt_egl_device_integration()->platformInit();
+ 
+     m_display = qt_egl_device_integration()->createDisplay(nativeDisplay());
+@@ -128,10 +155,40 @@ void QEglFSIntegration::initialize()
+     m_vtHandler.reset(new QFbVtHandler);
+ 
+     if (qt_egl_device_integration()->usesDefaultScreen())
+-        addScreen(new QEglFSScreen(display()));
++        addScreen(new QEglFSScreen(display(), qt_egl_device_integration()));
+     else
+         qt_egl_device_integration()->screenInit();
+ 
++    qInfo() << "EGL initialized for primary display" << m_display << major << minor;
++
++    // Extra displays
++    if (!m_configJson.isEmpty()) {
++        for (int i = 1; i < m_configJson.array().size(); i++) {
++            const QJsonObject object = m_configJson.array().at(i).toObject();
++            QEGLDeviceIntegration *integration = qt_egl_device_add_integration();
++            EGLDisplay display = EGL_NO_DISPLAY;
++
++            integration->setConfig(object);
++            integration->platformInit();
++            display = integration->createDisplay(nativeDisplay(integration));
++            if (display == EGL_NO_DISPLAY) {
++                qWarning("Could not open egl display for extra display");
++            } else {
++                EGLint major, minor;
++                if (!eglInitialize(display, &major, &minor)) {
++                    qWarning() << "Could not initialize egl display for extra display" << display;
++                } else {
++                    qInfo() << "EGL initialized for extra display" << display << major << minor;
++                    if (integration->usesDefaultScreen())
++                        addScreen(new QEglFSScreen(display, integration));
++                    else
++                        integration->screenInit();
++                    m_displays.insert(integration, display);
++                }
++            }
++        }
++    }
++
+     // Input code may rely on the screens, so do it only after the screen init.
+     if (!m_disableInputHandlers)
+         createInputHandlers();
+@@ -148,6 +205,16 @@ void QEglFSIntegration::destroy()
+         eglTerminate(m_display);
+ 
+     qt_egl_device_integration()->platformDestroy();
++
++    QList<QEGLDeviceIntegration *> list = qt_egl_device_extra_integrations();
++    for (int i = 0; i < list.size(); i++) {
++        QEGLDeviceIntegration *integration = list.at(i);
++        EGLDisplay display = m_displays.value(integration);
++        integration->screenDestroy();
++        if (display != EGL_NO_DISPLAY)
++            eglTerminate(display);
++        integration->platformDestroy();
++    }
+ }
+ 
+ QAbstractEventDispatcher *QEglFSIntegration::createEventDispatcher() const
+@@ -177,7 +244,14 @@ QPlatformBackingStore *QEglFSIntegration::createPlatformBackingStore(QWindow *wi
+ QPlatformWindow *QEglFSIntegration::createPlatformWindow(QWindow *window) const
+ {
+     QWindowSystemInterface::flushWindowSystemEvents(QEventLoop::ExcludeUserInputEvents);
+-    QEglFSWindow *w = qt_egl_device_integration()->createWindow(window);
++    QEglFSScreen *s = window->screen() ? static_cast<QEglFSScreen *>(window->screen()->handle()) : NULL;
++    if (s)
++        qInfo() << "Creating platform window for screen" << s->name();
++    else
++        qWarning("No screen bound to this platform window, creating it from default");
++    QEGLDeviceIntegration *i = s ? s->deviceIntegration() : qt_egl_device_integration();
++    QEglFSWindow *w;
++    w = i->createWindow(window, i);
+     w->create();
+     if (window->type() != Qt::ToolTip)
+         w->requestActivateWindow();
+@@ -186,14 +260,20 @@ QPlatformWindow *QEglFSIntegration::createPlatformWindow(QWindow *window) const
+ 
+ QPlatformOpenGLContext *QEglFSIntegration::createPlatformOpenGLContext(QOpenGLContext *context) const
+ {
+-    EGLDisplay dpy = context->screen() ? static_cast<QEglFSScreen *>(context->screen()->handle())->display() : display();
++    QEglFSScreen *s = context->screen() ? static_cast<QEglFSScreen *>(context->screen()->handle()) : NULL;
++    if (s)
++        qInfo() << "Creating platform context for screen" << s->name();
++    else
++        qWarning("No screen bound to this platform context, creating it from default");
++    QEGLDeviceIntegration *i = s ? s->deviceIntegration() : qt_egl_device_integration();
++    EGLDisplay dpy = s ? s->display() : display();
+     QPlatformOpenGLContext *share = context->shareHandle();
+     QVariant nativeHandle = context->nativeHandle();
+ 
+     QEglFSContext *ctx;
+-    QSurfaceFormat adjustedFormat = qt_egl_device_integration()->surfaceFormatFor(context->format());
++    QSurfaceFormat adjustedFormat = i->surfaceFormatFor(context->format());
+     if (nativeHandle.isNull()) {
+-        EGLConfig config = QEglFSIntegration::chooseConfig(dpy, adjustedFormat);
++        EGLConfig config = QEglFSIntegration::chooseConfig(dpy, adjustedFormat, i);
+         ctx = new QEglFSContext(adjustedFormat, share, dpy, &config, QVariant());
+     } else {
+         ctx = new QEglFSContext(adjustedFormat, share, dpy, 0, nativeHandle);
+@@ -206,11 +286,17 @@ QPlatformOpenGLContext *QEglFSIntegration::createPlatformOpenGLContext(QOpenGLCo
+ 
+ QPlatformOffscreenSurface *QEglFSIntegration::createPlatformOffscreenSurface(QOffscreenSurface *surface) const
+ {
+-    EGLDisplay dpy = surface->screen() ? static_cast<QEglFSScreen *>(surface->screen()->handle())->display() : display();
+-    QSurfaceFormat fmt = qt_egl_device_integration()->surfaceFormatFor(surface->requestedFormat());
+-    if (qt_egl_device_integration()->supportsPBuffers()) {
++    QEglFSScreen *s = surface->screen() ? static_cast<QEglFSScreen *>(surface->screen()->handle()) : NULL;
++    if (s)
++        qInfo() << "Creating platform offscreen surface for screen" << s->name();
++    else
++        qWarning("No screen bound to this platform offscreen surface, creating it from default");
++    QEGLDeviceIntegration *i = s ? s->deviceIntegration() : qt_egl_device_integration();
++    EGLDisplay dpy = s ? s->display() : display();
++    QSurfaceFormat fmt = i->surfaceFormatFor(surface->requestedFormat());
++    if (i->supportsPBuffers()) {
+         QEGLPlatformContext::Flags flags = 0;
+-        if (!qt_egl_device_integration()->supportsSurfacelessContexts())
++        if (!i->supportsSurfacelessContexts())
+             flags |= QEGLPlatformContext::NoSurfaceless;
+         return new QEGLPbuffer(dpy, fmt, surface, flags);
+     } else {
+@@ -272,6 +358,9 @@ void *QEglFSIntegration::nativeResourceForIntegration(const QByteArray &resource
+ {
+     void *result = 0;
+ 
++    if (!qt_egl_device_extra_integrations().isEmpty())
++        qWarning("FIXME!! returning resource for the default integration");
++
+     switch (resourceType(resource)) {
+     case EglDisplay:
+         result = display();
+@@ -293,6 +382,9 @@ void *QEglFSIntegration::nativeResourceForScreen(const QByteArray &resource, QSc
+ {
+     void *result = 0;
+ 
++    if (!qt_egl_device_extra_integrations().isEmpty())
++        qWarning("FIXME!! returning resource for the default screen");
++
+     switch (resourceType(resource)) {
+     case XlibDisplay:
+         // Play nice when using the x11 hooks: Be compatible with xcb that allows querying
+@@ -423,7 +515,12 @@ void QEglFSIntegration::createInputHandlers()
+ 
+ EGLNativeDisplayType QEglFSIntegration::nativeDisplay() const
+ {
+-    return qt_egl_device_integration()->platformDisplay();
++    return nativeDisplay(qt_egl_device_integration());
++}
++
++EGLNativeDisplayType QEglFSIntegration::nativeDisplay(QEGLDeviceIntegration *integration) const
++{
++    return integration->platformDisplay();
+ }
+ 
+ EGLConfig QEglFSIntegration::chooseConfig(EGLDisplay display, const QSurfaceFormat &format)
+diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.h b/src/plugins/platforms/eglfs/qeglfsintegration.h
+index 5db178a..d9dfd39 100644
+--- a/src/plugins/platforms/eglfs/qeglfsintegration.h
++++ b/src/plugins/platforms/eglfs/qeglfsintegration.h
+@@ -36,6 +36,7 @@
+ 
+ #include "qeglfsglobal.h"
+ #include <QtCore/QVariant>
++#include <QtCore/QJsonDocument>
+ #include <qpa/qplatformintegration.h>
+ #include <qpa/qplatformnativeinterface.h>
+ #include <qpa/qplatformscreen.h>
+@@ -91,10 +92,13 @@ public:
+ 
+ private:
+     EGLNativeDisplayType nativeDisplay() const;
++    EGLNativeDisplayType nativeDisplay(QEGLDeviceIntegration *integration) const;
+     void createInputHandlers();
+     static void loadKeymapStatic(const QString &filename);
+ 
++    QJsonDocument m_configJson;
+     EGLDisplay m_display;
++    QMap<QEGLDeviceIntegration *, EGLDisplay> m_displays;
+     QPlatformInputContext *m_inputContext;
+     QScopedPointer<QPlatformFontDatabase> m_fontDb;
+     QScopedPointer<QPlatformServices> m_services;

@@ -1,0 +1,487 @@
+From 37233436d36c68b5345c28e8009449d98d05d59f Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Tue, 20 Mar 2018 23:43:13 +0900
+Subject: [PATCH] eglfs: Support multiple device integration
+
+:Release Notes:
+Classes under eglfs that use QEGLDeviceIntegration can refer to an
+arbitrary instance instead of global static qt_egl_device_integration().
+
+:Detailed Notes:
+Any use of qt_egl_device_integration() in QEglFSxxx classes is replaced
+by a member variable that points to a QEGLDeviceIntegration instance
+associated.
+
+:Testing Performed:
+Tested with a series of patches related.
+Confirmed an application running on top of eglfs can create multiple
+platform screens and windows.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-52726] EGLFS: Support multiple display devices
+
+Change-Id: Ie7ee9ae32403be435102f107b61af413da533708
+Upstream-Status : Inappropriate [webOS specific]
+---
+ .../eglfs_kms/qeglfskmsscreen.cpp                  |  2 +-
+ src/plugins/platforms/eglfs/qeglfscontext.cpp      | 23 ++++++++++++-------
+ src/plugins/platforms/eglfs/qeglfscontext.h        |  5 +++++
+ .../platforms/eglfs/qeglfsdeviceintegration.cpp    |  5 +++++
+ .../platforms/eglfs/qeglfsdeviceintegration.h      |  1 +
+ src/plugins/platforms/eglfs/qeglfsintegration.cpp  | 18 ++++++++++-----
+ src/plugins/platforms/eglfs/qeglfsintegration.h    |  2 ++
+ .../platforms/eglfs/qeglfsoffscreenwindow.cpp      | 10 +++++++--
+ .../platforms/eglfs/qeglfsoffscreenwindow.h        |  4 ++++
+ src/plugins/platforms/eglfs/qeglfsscreen.cpp       | 26 +++++++++++++---------
+ src/plugins/platforms/eglfs/qeglfsscreen.h         |  7 ++++++
+ src/plugins/platforms/eglfs/qeglfswindow.cpp       | 14 ++++++++----
+ src/plugins/platforms/eglfs/qeglfswindow.h         |  4 ++++
+ 13 files changed, 91 insertions(+), 30 deletions(-)
+
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
+index 048f543..1e0f166 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsscreen.cpp
+@@ -106,7 +106,7 @@ QEglFSKmsScreen::QEglFSKmsScreen(QEglFSKmsIntegration *integration,
+                                  QEglFSKmsDevice *device,
+                                  QEglFSKmsOutput output,
+                                  QPoint position)
+-    : QEglFSScreen(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(device->device())))
++    : QEglFSScreen(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(device->device())), integration)
+     , m_integration(integration)
+     , m_device(device)
+     , m_gbm_surface(Q_NULLPTR)
+diff --git a/src/plugins/platforms/eglfs/qeglfscontext.cpp b/src/plugins/platforms/eglfs/qeglfscontext.cpp
+index bb63809..0b502fd 100644
+--- a/src/plugins/platforms/eglfs/qeglfscontext.cpp
++++ b/src/plugins/platforms/eglfs/qeglfscontext.cpp
+@@ -45,9 +45,16 @@ QT_BEGIN_NAMESPACE
+ 
+ QEglFSContext::QEglFSContext(const QSurfaceFormat &format, QPlatformOpenGLContext *share, EGLDisplay display,
+                              EGLConfig *config, const QVariant &nativeHandle)
++    : QEglFSContext(format, share, display, config, nativeHandle, qt_egl_device_integration())
++{
++}
++
++QEglFSContext::QEglFSContext(const QSurfaceFormat &format, QPlatformOpenGLContext *share, EGLDisplay display,
++                             EGLConfig *config, const QVariant &nativeHandle, QEGLDeviceIntegration *integration)
+     : QEGLPlatformContext(format, share, display, config, nativeHandle,
+-                          qt_egl_device_integration()->supportsSurfacelessContexts() ? Flags(0) : QEGLPlatformContext::NoSurfaceless),
+-      m_tempWindow(0)
++                          integration->supportsSurfacelessContexts() ? Flags(0) : QEGLPlatformContext::NoSurfaceless)
++    , m_tempWindow(0)
++    , m_integration(integration)
+ {
+ }
+ 
+@@ -61,11 +68,11 @@ EGLSurface QEglFSContext::eglSurfaceForPlatformSurface(QPlatformSurface *surface
+ 
+ EGLSurface QEglFSContext::createTemporaryOffscreenSurface()
+ {
+-    if (qt_egl_device_integration()->supportsPBuffers())
++    if (m_integration->supportsPBuffers())
+         return QEGLPlatformContext::createTemporaryOffscreenSurface();
+ 
+     if (!m_tempWindow) {
+-        m_tempWindow = qt_egl_device_integration()->createNativeOffscreenWindow(format());
++        m_tempWindow = m_integration->createNativeOffscreenWindow(format());
+         if (!m_tempWindow) {
+             qWarning("QEglFSContext: Failed to create temporary native window");
+             return EGL_NO_SURFACE;
+@@ -77,11 +84,11 @@ EGLSurface QEglFSContext::createTemporaryOffscreenSurface()
+ 
+ void QEglFSContext::destroyTemporaryOffscreenSurface(EGLSurface surface)
+ {
+-    if (qt_egl_device_integration()->supportsPBuffers()) {
++    if (m_integration->supportsPBuffers()) {
+         QEGLPlatformContext::destroyTemporaryOffscreenSurface(surface);
+     } else {
+         eglDestroySurface(eglDisplay(), surface);
+-        qt_egl_device_integration()->destroyNativeWindow(m_tempWindow);
++        m_integration->destroyNativeWindow(m_tempWindow);
+         m_tempWindow = 0;
+     }
+ }
+@@ -105,9 +112,9 @@ void QEglFSContext::swapBuffers(QPlatformSurface *surface)
+             cursor->paintOnScreen();
+     }
+ 
+-    qt_egl_device_integration()->waitForVSync(surface);
++    m_integration->waitForVSync(surface);
+     QEGLPlatformContext::swapBuffers(surface);
+-    qt_egl_device_integration()->presentBuffer(surface);
++    m_integration->presentBuffer(surface);
+ }
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/qeglfscontext.h b/src/plugins/platforms/eglfs/qeglfscontext.h
+index 8da4c73..fb58fe7 100644
+--- a/src/plugins/platforms/eglfs/qeglfscontext.h
++++ b/src/plugins/platforms/eglfs/qeglfscontext.h
+@@ -35,6 +35,7 @@
+ #define QEGLFSCONTEXT_H
+ 
+ #include "qeglfsglobal.h"
++#include "qeglfsdeviceintegration.h"
+ #include <QtPlatformSupport/private/qeglplatformcontext_p.h>
+ #include <QtCore/QVariant>
+ 
+@@ -45,6 +46,8 @@ class Q_EGLFS_EXPORT QEglFSContext : public QEGLPlatformContext
+ public:
+     QEglFSContext(const QSurfaceFormat &format, QPlatformOpenGLContext *share, EGLDisplay display,
+                   EGLConfig *config, const QVariant &nativeHandle);
++    QEglFSContext(const QSurfaceFormat &format, QPlatformOpenGLContext *share, EGLDisplay display,
++                  EGLConfig *config, const QVariant &nativeHandle, QEGLDeviceIntegration *integration);
+     EGLSurface eglSurfaceForPlatformSurface(QPlatformSurface *surface) Q_DECL_OVERRIDE;
+     EGLSurface createTemporaryOffscreenSurface() Q_DECL_OVERRIDE;
+     void destroyTemporaryOffscreenSurface(EGLSurface surface) Q_DECL_OVERRIDE;
+@@ -53,6 +56,8 @@ public:
+ 
+ private:
+     EGLNativeWindowType m_tempWindow;
++
++    QEGLDeviceIntegration *m_integration;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
+index 1fb6020..ed67374 100644
+--- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
+@@ -281,6 +281,11 @@ QEglFSWindow *QEGLDeviceIntegration::createWindow(QWindow *window) const
+     return new QEglFSWindow(window);
+ }
+ 
++QEglFSWindow *QEGLDeviceIntegration::createWindow(QWindow *window, QEGLDeviceIntegration *integration) const
++{
++    return new QEglFSWindow(window, integration);
++}
++
+ EGLNativeWindowType QEGLDeviceIntegration::createNativeWindow(QPlatformWindow *platformWindow,
+                                                     const QSize &size,
+                                                     const QSurfaceFormat &format)
+diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
+index 303810e..9c3cce5 100644
+--- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
++++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
+@@ -83,6 +83,7 @@ public:
+     virtual QSurfaceFormat surfaceFormatFor(const QSurfaceFormat &inputFormat) const;
+     virtual EGLint surfaceType() const;
+     virtual QEglFSWindow *createWindow(QWindow *window) const;
++    virtual QEglFSWindow *createWindow(QWindow *window, QEGLDeviceIntegration *integration) const;
+     virtual EGLNativeWindowType createNativeWindow(QPlatformWindow *platformWindow,
+                                                    const QSize &size,
+                                                    const QSurfaceFormat &format);
+diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
+index 2a6f3aa..e75457b 100644
+--- a/src/plugins/platforms/eglfs/qeglfsintegration.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
+@@ -428,18 +428,26 @@ EGLNativeDisplayType QEglFSIntegration::nativeDisplay() const
+ 
+ EGLConfig QEglFSIntegration::chooseConfig(EGLDisplay display, const QSurfaceFormat &format)
+ {
++    return chooseConfig(display, format, qt_egl_device_integration());
++}
++
++EGLConfig QEglFSIntegration::chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEGLDeviceIntegration *integration)
++{
+     class Chooser : public QEglConfigChooser {
+     public:
+-        Chooser(EGLDisplay display)
+-            : QEglConfigChooser(display) { }
++        Chooser(EGLDisplay display, QEGLDeviceIntegration *integration)
++            : QEglConfigChooser(display)
++            , m_integration(integration) { }
+         bool filterConfig(EGLConfig config) const Q_DECL_OVERRIDE {
+-            return qt_egl_device_integration()->filterConfig(display(), config)
++            return m_integration->filterConfig(display(), config)
+                     && QEglConfigChooser::filterConfig(config);
+         }
++    private:
++        QEGLDeviceIntegration *m_integration;
+     };
+ 
+-    Chooser chooser(display);
+-    chooser.setSurfaceType(qt_egl_device_integration()->surfaceType());
++    Chooser chooser(display, integration);
++    chooser.setSurfaceType(integration->surfaceType());
+     chooser.setSurfaceFormat(format);
+     return chooser.chooseConfig();
+ }
+diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.h b/src/plugins/platforms/eglfs/qeglfsintegration.h
+index 2edb287..5db178a 100644
+--- a/src/plugins/platforms/eglfs/qeglfsintegration.h
++++ b/src/plugins/platforms/eglfs/qeglfsintegration.h
+@@ -44,6 +44,7 @@ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSWindow;
+ class QEglFSContext;
++class QEGLDeviceIntegration;
+ class QFbVtHandler;
+ class QEvdevKeyboardManager;
+ 
+@@ -86,6 +87,7 @@ public:
+     void removeScreen(QPlatformScreen *screen);
+ 
+     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format);
++    static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEGLDeviceIntegration *integration);
+ 
+ private:
+     EGLNativeDisplayType nativeDisplay() const;
+diff --git a/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp b/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp
+index 0c07aa6..8ec7843 100644
+--- a/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp
+@@ -49,13 +49,19 @@ QT_BEGIN_NAMESPACE
+ */
+ 
+ QEglFSOffscreenWindow::QEglFSOffscreenWindow(EGLDisplay display, const QSurfaceFormat &format, QOffscreenSurface *offscreenSurface)
++    : QEglFSOffscreenWindow(display, format, offscreenSurface, qt_egl_device_integration())
++{
++}
++
++QEglFSOffscreenWindow::QEglFSOffscreenWindow(EGLDisplay display, const QSurfaceFormat &format, QOffscreenSurface *offscreenSurface, QEGLDeviceIntegration *integration)
+     : QPlatformOffscreenSurface(offscreenSurface)
+     , m_format(format)
+     , m_display(display)
+     , m_surface(EGL_NO_SURFACE)
+     , m_window(0)
++    , m_integration(integration)
+ {
+-    m_window = qt_egl_device_integration()->createNativeOffscreenWindow(format);
++    m_window = m_integration->createNativeOffscreenWindow(format);
+     if (!m_window) {
+         qWarning("QEglFSOffscreenWindow: Failed to create native window");
+         return;
+@@ -71,7 +77,7 @@ QEglFSOffscreenWindow::~QEglFSOffscreenWindow()
+     if (m_surface != EGL_NO_SURFACE)
+         eglDestroySurface(m_display, m_surface);
+     if (m_window)
+-        qt_egl_device_integration()->destroyNativeWindow(m_window);
++        m_integration->destroyNativeWindow(m_window);
+ }
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h b/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h
+index f20055b..2751eed 100644
+--- a/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h
++++ b/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h
+@@ -35,6 +35,7 @@
+ #define QEGLFSOFFSCREENWINDOW_H
+ 
+ #include "qeglfsglobal.h"
++#include "qeglfsdeviceintegration.h"
+ #include <qpa/qplatformoffscreensurface.h>
+ 
+ QT_BEGIN_NAMESPACE
+@@ -43,6 +44,7 @@ class Q_EGLFS_EXPORT QEglFSOffscreenWindow : public QPlatformOffscreenSurface
+ {
+ public:
+     QEglFSOffscreenWindow(EGLDisplay display, const QSurfaceFormat &format, QOffscreenSurface *offscreenSurface);
++    QEglFSOffscreenWindow(EGLDisplay display, const QSurfaceFormat &format, QOffscreenSurface *offscreenSurface, QEGLDeviceIntegration *integration);
+     ~QEglFSOffscreenWindow();
+ 
+     QSurfaceFormat format() const Q_DECL_OVERRIDE { return m_format; }
+@@ -53,6 +55,8 @@ private:
+     EGLDisplay m_display;
+     EGLSurface m_surface;
+     EGLNativeWindowType m_window;
++
++    QEGLDeviceIntegration *m_integration;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/qeglfsscreen.cpp b/src/plugins/platforms/eglfs/qeglfsscreen.cpp
+index a14e68b..a24cd5e 100644
+--- a/src/plugins/platforms/eglfs/qeglfsscreen.cpp
++++ b/src/plugins/platforms/eglfs/qeglfsscreen.cpp
+@@ -44,11 +44,17 @@
+ QT_BEGIN_NAMESPACE
+ 
+ QEglFSScreen::QEglFSScreen(EGLDisplay dpy)
++    : QEglFSScreen(dpy, qt_egl_device_integration())
++{
++}
++
++QEglFSScreen::QEglFSScreen(EGLDisplay dpy, QEGLDeviceIntegration *integration)
+     : m_dpy(dpy),
++      m_integration(integration),
+       m_surface(EGL_NO_SURFACE),
+       m_cursor(0)
+ {
+-    m_cursor = qt_egl_device_integration()->createCursor(this);
++    m_cursor = m_integration->createCursor(this);
+ }
+ 
+ QEglFSScreen::~QEglFSScreen()
+@@ -59,42 +65,42 @@ QEglFSScreen::~QEglFSScreen()
+ 
+ QRect QEglFSScreen::geometry() const
+ {
+-    return QRect(QPoint(0, 0), qt_egl_device_integration()->screenSize());
++    return QRect(QPoint(0, 0), m_integration->screenSize());
+ }
+ 
+ int QEglFSScreen::depth() const
+ {
+-    return qt_egl_device_integration()->screenDepth();
++    return m_integration->screenDepth();
+ }
+ 
+ QImage::Format QEglFSScreen::format() const
+ {
+-    return qt_egl_device_integration()->screenFormat();
++    return m_integration->screenFormat();
+ }
+ 
+ QSizeF QEglFSScreen::physicalSize() const
+ {
+-    return qt_egl_device_integration()->physicalScreenSize();
++    return m_integration->physicalScreenSize();
+ }
+ 
+ QDpi QEglFSScreen::logicalDpi() const
+ {
+-    return qt_egl_device_integration()->logicalDpi();
++    return m_integration->logicalDpi();
+ }
+ 
+ qreal QEglFSScreen::pixelDensity() const
+ {
+-    return qt_egl_device_integration()->pixelDensity();
++    return m_integration->pixelDensity();
+ }
+ 
+ Qt::ScreenOrientation QEglFSScreen::nativeOrientation() const
+ {
+-    return qt_egl_device_integration()->nativeOrientation();
++    return m_integration->nativeOrientation();
+ }
+ 
+ Qt::ScreenOrientation QEglFSScreen::orientation() const
+ {
+-    return qt_egl_device_integration()->orientation();
++    return m_integration->orientation();
+ }
+ 
+ QPlatformCursor *QEglFSScreen::cursor() const
+@@ -104,7 +110,7 @@ QPlatformCursor *QEglFSScreen::cursor() const
+ 
+ qreal QEglFSScreen::refreshRate() const
+ {
+-    return qt_egl_device_integration()->refreshRate();
++    return m_integration->refreshRate();
+ }
+ 
+ void QEglFSScreen::setPrimarySurface(EGLSurface surface)
+diff --git a/src/plugins/platforms/eglfs/qeglfsscreen.h b/src/plugins/platforms/eglfs/qeglfsscreen.h
+index ea669bd..9461e7a 100644
+--- a/src/plugins/platforms/eglfs/qeglfsscreen.h
++++ b/src/plugins/platforms/eglfs/qeglfsscreen.h
+@@ -37,6 +37,8 @@
+ #include "qeglfsglobal.h"
+ #include <QtCore/QPointer>
+ 
++#include "qeglfsdeviceintegration.h"
++
+ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSWindow;
+@@ -46,6 +48,7 @@ class Q_EGLFS_EXPORT QEglFSScreen : public QPlatformScreen
+ {
+ public:
+     QEglFSScreen(EGLDisplay display);
++    QEglFSScreen(EGLDisplay display, QEGLDeviceIntegration *integration);
+     ~QEglFSScreen();
+ 
+     QRect geometry() const Q_DECL_OVERRIDE;
+@@ -70,6 +73,8 @@ public:
+ 
+     void handleCursorMove(const QPoint &pos);
+ 
++    QEGLDeviceIntegration * deviceIntegration() const { return m_integration; }
++
+ private:
+     void setPrimarySurface(EGLSurface surface);
+ 
+@@ -78,6 +83,8 @@ private:
+     EGLSurface m_surface;
+     QPlatformCursor *m_cursor;
+ 
++    QEGLDeviceIntegration *m_integration;
++
+     friend class QEglFSWindow;
+ };
+ 
+diff --git a/src/plugins/platforms/eglfs/qeglfswindow.cpp b/src/plugins/platforms/eglfs/qeglfswindow.cpp
+index 3cc7079..3bbf198 100644
+--- a/src/plugins/platforms/eglfs/qeglfswindow.cpp
++++ b/src/plugins/platforms/eglfs/qeglfswindow.cpp
+@@ -47,7 +47,13 @@
+ QT_BEGIN_NAMESPACE
+ 
+ QEglFSWindow::QEglFSWindow(QWindow *w)
++    : QEglFSWindow(w, qt_egl_device_integration())
++{
++}
++
++QEglFSWindow::QEglFSWindow(QWindow *w, QEGLDeviceIntegration *integration)
+     : QPlatformWindow(w),
++      m_integration(integration),
+       m_backingStore(0),
+       m_raster(false),
+       m_winId(0),
+@@ -173,18 +179,18 @@ void QEglFSWindow::invalidateSurface()
+         eglDestroySurface(screen()->display(), m_surface);
+         m_surface = EGL_NO_SURFACE;
+     }
+-    qt_egl_device_integration()->destroyNativeWindow(m_window);
++    m_integration->destroyNativeWindow(m_window);
+     m_window = 0;
+ }
+ 
+ void QEglFSWindow::resetSurface()
+ {
+     EGLDisplay display = screen()->display();
+-    QSurfaceFormat platformFormat = qt_egl_device_integration()->surfaceFormatFor(window()->requestedFormat());
++    QSurfaceFormat platformFormat = m_integration->surfaceFormatFor(window()->requestedFormat());
+ 
+-    m_config = QEglFSIntegration::chooseConfig(display, platformFormat);
++    m_config = QEglFSIntegration::chooseConfig(display, platformFormat, m_integration);
+     m_format = q_glFormatFromConfig(display, m_config, platformFormat);
+-    m_window = qt_egl_device_integration()->createNativeWindow(this, screen()->geometry().size(), m_format);
++    m_window = m_integration->createNativeWindow(this, screen()->geometry().size(), m_format);
+     m_surface = eglCreateWindowSurface(display, m_config, m_window, NULL);
+ }
+ 
+diff --git a/src/plugins/platforms/eglfs/qeglfswindow.h b/src/plugins/platforms/eglfs/qeglfswindow.h
+index 2c396e8..d4db017 100644
+--- a/src/plugins/platforms/eglfs/qeglfswindow.h
++++ b/src/plugins/platforms/eglfs/qeglfswindow.h
+@@ -36,6 +36,7 @@
+ 
+ #include "qeglfsglobal.h"
+ #include "qeglfsintegration.h"
++#include "qeglfsdeviceintegration.h"
+ #include "qeglfsscreen.h"
+ 
+ #include <qpa/qplatformwindow.h>
+@@ -50,6 +51,7 @@ class Q_EGLFS_EXPORT QEglFSWindow : public QPlatformWindow, public QOpenGLCompos
+ {
+ public:
+     QEglFSWindow(QWindow *w);
++    QEglFSWindow(QWindow *w, QEGLDeviceIntegration *integration);
+     ~QEglFSWindow();
+ 
+     void create();
+@@ -105,6 +107,8 @@ protected:
+     };
+     Q_DECLARE_FLAGS(Flags, Flag)
+     Flags m_flags;
++
++    QEGLDeviceIntegration* m_integration;
+ };
+ 
+ QT_END_NAMESPACE

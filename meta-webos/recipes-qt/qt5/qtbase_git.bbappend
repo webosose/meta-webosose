@@ -1,6 +1,6 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos63"
+EXTENDPRAUTO_append = "webos64"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -109,6 +109,13 @@ SRC_URI_append = " \
     file://0032-Fix-distance-field-rendering-of-very-wide-glyphs.patch \
     file://0033-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
     file://0034-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
+"
+
+SRC_URI_append_hardware = " \
+    file://0035-eglfs-Support-multiple-device-integration.patch \
+    file://0036-eglfs-Support-multiple-display.patch \
+    file://0037-eglfs-Associate-keyboard-device-with-window.patch \
+    file://0038-eglfs-Associate-touch-device-with-window.patch \
 "
 
 # Do not include Qt testability patch for release
