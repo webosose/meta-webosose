@@ -1,0 +1,61 @@
+From 248b00a3b1d7fcac4a75b356922f8cb16711c2a1 Mon Sep 17 00:00:00 2001
+From: Lauren Jeong <jy.jeong@lge.com>
+Date: Thu, 10 May 2018 16:32:05 +0900
+Subject: [PATCH] Add new api for register custom cbor files
+
+---
+ lib/CustomStorageHandler.js | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 lib/CustomStorageHandler.js
+
+diff --git a/lib/CustomStorageHandler.js b/lib/CustomStorageHandler.js
+new file mode 100644
+index 0000000..c7aeda1
+--- /dev/null
++++ b/lib/CustomStorageHandler.js
+@@ -0,0 +1,42 @@
++var path = require("path");
++var fs = require("fs");
++
++module.exports = function( cborfile ) {
++    var ret= {
++        open: function( pFile, mode ) {
++            var fd, absolutePath = path.join( process.cwd(), cborfile );
++            mode = mode.replace( /b/g, "" );
++
++            // If the requested file does not exist, create it
++            try {
++                fd = fs.openSync( absolutePath, "wx" );
++                fs.closeSync( fd );
++            } catch ( theError ) {
++                if ( theError.message.substr( 0, 6 ) !== "EEXIST" ) {
++                    throw theError;
++                }
++            }
++
++            // Open the file in the requested mode
++            if(pFile.indexOf("db")!==-1)
++                fd = fs.openSync( absolutePath, mode );
++            fd = ( fd === undefined ? -1 : fd );
++            return fd;
++        },
++        close: function( fp ) {
++            fs.closeSync( fp );
++            return 0;
++        },
++        read: function( buffer, totalSize, fp ) {
++            return fs.readSync( fp, buffer, 0, totalSize, null );
++        },
++        write: function( buffer, totalSize, fp ) {
++            return fs.writeSync( fp, buffer, 0, totalSize, null );
++        },
++        unlink: function( path ) {
++            fs.unlinkSync( path );
++            return 0;
++        }
++    }
++    return ret;
++}
+-- 
+1.9.1
+
