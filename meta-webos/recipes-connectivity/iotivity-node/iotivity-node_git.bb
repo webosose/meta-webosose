@@ -5,17 +5,18 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://index.js;beginline=1;endline=13;md5=bafd0234b0f43def6ab0bced96530c42"
 
 DEPENDS = "nodejs-native glib-2.0 iotivity"
-RDEPENDS_${PN} += "iotivity-resource"
+RDEPENDS_${PN} += "iotivity-resource iotivity-resource-samples iotivity-node-app"
 
 SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https"
-SRCREV = "63587a0d365fc66ec40dc6d4354329d0c1ff092f"
-PV = "1.2.1+git${SRCPV}"
+SRCREV = "c6aab8e6126c06516090dd13e812fee0d16b8cc7"
+SRC_URI += "file://0001-Add-new-api-for-register-custom-cbor-files.patch"
+PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
-    export OCTBSTACK_CFLAGS="-I${OCTBDIR} -I${OCTBDIR}/stack -I${OCTBDIR}/ocrandom -DROUTING_EP"
+    export OCTBSTACK_CFLAGS="-I${OCTBDIR} -I${OCTBDIR}/stack -I${OCTBDIR}/ocrandom -I${STAGING_INCDIR}/iotivity/c_common -DROUTING_EP -DRD_CLIENT -DRD_SERVER -D__WITH_DTLS__"
     export OCTBSTACK_LIBS="-loctbstack"
     export CFLAGS="$CFLAGS -fPIC"
     export CXXFLAGS="$CXXFLAGS -fPIC"
