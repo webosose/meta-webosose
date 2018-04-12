@@ -2,4 +2,4 @@
 
 EXTENDPRAUTO_append = "webos1"
 
-BBCLASSEXTEND = "native"
+BBCLASSEXTEND += "native"
