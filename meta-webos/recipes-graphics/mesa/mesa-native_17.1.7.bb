@@ -30,7 +30,7 @@ EXTRA_OECONF = "--with-platforms=drm,x11 --disable-dri3 --with-dri-drivers=${DRI
 
 PACKAGECONFIG ??= "dri gbm glx"
 PACKAGECONFIG[gbm] = "--enable-gbm,--disable-gbm"
-PACKAGECONFIG[glx] = "--enable-glx,--disable-glx,glproto dri2proto libxdamage libxfixes"
+PACKAGECONFIG[glx] = "--enable-glx,--disable-glx,glproto dri2proto libxdamage libxfixes xext"
 PACKAGECONFIG[dri] = "--enable-dri,--disable-dri, dri2proto libdrm"
 # libdrm_intel"
 PACKAGECONFIG[dri3] = "--enable-dri3, --disable-dri3, dri3proto presentproto libxshmfence"
