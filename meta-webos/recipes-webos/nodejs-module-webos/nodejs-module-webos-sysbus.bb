@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
 WEBOS_VERSION = "3.0.1-1_780a3a2ecd33b826d18f22b05bcc9f9dbf27be05"
-PR = "r8"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
@@ -17,7 +17,13 @@ inherit webos_enhanced_submissions
 inherit webos_library
 inherit webos_system_bus
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+NODE_VERSION = "6.11.2"
+
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz;name=node \
+    "
+SRC_URI[node.md5sum] = "d560f0d09e54364933f8d179aa5fc5bd"
+SRC_URI[node.sha256sum] = "20146ed51b638404665737ed8a25cc06e96d7d7259eb90a4bdec4730a78002a6"
 S = "${WORKDIR}/git"
 
 do_configure() {
@@ -26,7 +32,7 @@ do_configure() {
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     # used by binding.gyp
     export webos_servicesdir="${webos_servicesdir}" webos_prefix="${webos_prefix}"
-    node-gyp --arch ${TARGET_ARCH} configure
+    node-gyp --arch ${TARGET_ARCH} --nodedir "${WORKDIR}/node-v${NODE_VERSION}" configure
 }
 
 do_compile() {
