@@ -20,5 +20,6 @@ do_install_append() {
     rm -f ${D}${sysconfdir}/lsb-release
     rm -rf ${D}${sysconfdir}/lsb-release.d
 
+    sed -i -e 's/^CHECKFIRST=.*/CHECKFIRST="\${sysconfdir}\/${BUILD_INFO_FILE}"/' ${D}${base_bindir}/lsb_release
     echo "${BUILD_DISTRIB_ID} release ${DISTRO_VERSION}-${WEBOS_DISTRO_BUILD_ID} (${WEBOS_DISTRO_RELEASE_CODENAME})" > ${D}${sysconfdir}/${BUILD_INFO_FILE}
 }
