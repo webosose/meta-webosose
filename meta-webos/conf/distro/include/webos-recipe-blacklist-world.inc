@@ -887,6 +887,9 @@ INSANE_SKIP_libgles1-mesa_append_pn-mesa = " textrel"
 INSANE_SKIP_libgles2-mesa_append_pn-mesa = " textrel"
 INSANE_SKIP_libglapi_append_pn-mesa = " textrel"
 
+# QA Issue: ELF binary 'work/raspberrypi3-webos-linux-gnueabi/mpeg2dec/0.5.1-r0/packages-split/libmpeg2/usr/lib/libmpeg2.so.0.1.0' has relocations in .text
+INSANE_SKIP_libmpeg2_pn-mpeg2dec += "textrel"
+
 # Skip ldflags check for now
 INSANE_SKIP_${PN}_append_pn-alljoyn = " ldflags"
 INSANE_SKIP_${PN}_append_pn-aoetools = " ldflags"
