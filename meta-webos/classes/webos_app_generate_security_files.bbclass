@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2017 LG Electronics, Inc.
+# Copyright (c) 2015-2018 LG Electronics, Inc.
 #
 # webos_app_generate_security_files
 #
@@ -22,6 +22,9 @@ def webos_app_generate_security_files_write_permission_file(d, app_info):
     app_id = app_info["id"]
     key    = app_id + "-*"
     type   = app_info["type"]
+
+    if type == "native":
+        key = app_id
 
     permission = {}
 
@@ -50,6 +53,8 @@ def webos_app_generate_security_files_write_permission_file(d, app_info):
         elif type == "qml":
             prv_bus = True
             pub_bus = True
+        elif type == "native":
+            pub_bus = True
 
         if prv_bus:
             permission[key].append("private")
@@ -76,13 +81,21 @@ def webos_app_generate_security_files_write_role_file(d, app_info):
     import json
 
     app_id = app_info["id"]
+    type = app_info["type"]
 
     role = {}
-
-    role["appId"] = app_id
-    role["type"]  = "regular"
-    role["allowedNames"] = [app_id + "-*"]
-    role["permissions"] = [{"service": app_id + "-*", "outbound": ["*"] }]
+    if type == "native":
+        exe_name = app_info["main"]
+        app_dir = d.getVar("webos_applicationsdir", True)
+        role["exeName"] = app_dir + "/" + d.getVar("PN", True) + "/" + exe_name
+        role["type"]  = "regular"
+        role["allowedNames"] = [app_id + "*"]
+        role["permissions"] = [{"service": app_id, "outbound": ["*"] }]
+    else:
+        role["appId"] = app_id
+        role["type"]  = "regular"
+        role["allowedNames"] = [app_id + "-*"]
+        role["permissions"] = [{"service": app_id + "-*", "outbound": ["*"] }]
 
     dst_dir   = d.getVar("D", True)
     roles_dir = d.getVar("webos_sysbus_rolesdir", True)
@@ -171,7 +184,7 @@ fakeroot python do_configure_security() {
         app_info = webos_app_generate_security_files_read_json(app_info_file)
 
         type = app_info["type"]
-        if type in ["qml", "web"]:
+        if type in ["qml", "web", "native"]:
             role_file       = webos_app_generate_security_files_write_role_file(d, app_info)
             permission_file = webos_app_generate_security_files_write_permission_file(d, app_info)
 }
