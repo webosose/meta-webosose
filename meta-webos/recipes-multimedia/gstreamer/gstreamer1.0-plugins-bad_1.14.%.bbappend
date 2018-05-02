@@ -16,12 +16,6 @@ EXTRA_OECONF_remove = "--disable-dispmanx"
 # This problem doesn't exist with newer Yocto with RSS
 DEPENDS += "lcms"
 
-# Needed only for old Yocto 2.2
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
-SRC_URI += "file://0001-Prepend-PKG_CONFIG_SYSROOT_DIR-to-pkg-config-output.patch"
-EXTRA_OECONF_append = " \
-    "WAYLAND_PROTOCOLS_SYSROOT_DIR=${STAGING_DIR_TARGET}" \
-"
-
 # Needed only for qemux86 build
+FILESEXTRAPATHS_prepend_qemux86 := "${THISDIR}/${BPN}:"
 SRC_URI_append_qemux86 = " file://0002-render-into-wl_surface-without-sub-surface.patch"
