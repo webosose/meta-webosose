@@ -30,10 +30,10 @@ EXTRA_OECONF = "--with-platforms=drm,x11 --disable-dri3 --with-dri-drivers=${DRI
 
 PACKAGECONFIG ??= "dri gbm glx"
 PACKAGECONFIG[gbm] = "--enable-gbm,--disable-gbm"
-PACKAGECONFIG[glx] = "--enable-glx,--disable-glx,glproto dri2proto libxdamage libxfixes xext"
-PACKAGECONFIG[dri] = "--enable-dri,--disable-dri, dri2proto libdrm"
+PACKAGECONFIG[glx] = "--enable-glx,--disable-glx, xorgproto libxdamage libxfixes xext"
+PACKAGECONFIG[dri] = "--enable-dri,--disable-dri, xorgproto libdrm"
 # libdrm_intel"
-PACKAGECONFIG[dri3] = "--enable-dri3, --disable-dri3, dri3proto presentproto libxshmfence"
+PACKAGECONFIG[dri3] = "--enable-dri3, --disable-dri3, xorgproto libxshmfence"
 
 # because we cannot rely on the fact that all apps will use pkgconfig,
 # make eglplatform.h independent of MESA_EGL_NO_X11_HEADER
