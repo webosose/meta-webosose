@@ -8,6 +8,12 @@ DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 WEBOS_VERSION = "5.6.3-5_b0f089aeb9c880409cc1522b7ca576ffb2550fbe"
 EXTENDPRAUTO_append = "webos15"
 
+# Change xproto to xorgproto, because new oe-core doesn't have xproto anymore after:
+# http://git.openembedded.org/openembedded-core/commit/?id=460a2b27af8d023b27703b491331c8cbe7aad0ff
+# this cannot be updated in meta-qt5/krogoth, because xorgproto was introduced in Yocto 2.6 Thud
+# and krogoth branch should stay compatible with Yocto 2.1 Krogoth
+XKB_DEPENDS = "libxkbcommon xorgproto"
+
 # Upstream 5.5.0 recipe updated LIC_FILES_CHKSUM
 LIC_FILES_CHKSUM = " \
     file://LICENSE.LGPLv21;md5=4bfd28363f541b10d9f024181b8df516 \
