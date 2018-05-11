@@ -22,7 +22,18 @@ DEPENDS = "nativesdk-zlib nativesdk-libdrm nativesdk-expat"
 
 inherit autotools pkgconfig gettext nativesdk
 
-EXTRA_OECONF = "--with-platforms=drm --disable-glx --disable-dri3 --with-dri-drivers=swrast --with-gallium-drivers=virgl"
+DRIDRIVERS = "swrast,radeon,r200,nouveau,i965"
+# drop r300, swr and radeonsi, because they need llvm
+# configure: error: --enable-llvm is required when building r300, radeonsi
+# freedreno needs libdrm_freedreno
+# configure: error: Package requirements (libdrm >= 2.4.74 libdrm_freedreno >= 2.4.74) were not met:
+# vc4 needs libdrm_vc4
+# configure: error: Package requirements (libdrm >= 2.4.69 libdrm_vc4 >= 2.4.69) were not met:
+# i915 needs libdrm_intel which isn't enabled in nativesdk-libdrm
+# configure: error: Package requirements (libdrm >= 2.4.75 libdrm_intel >= 2.4.75) were not met:
+GALLIUM_DRIDRIVERS = "nouveau,r600,svga,swrast,virgl,etnaviv,imx"
+
+EXTRA_OECONF = "--with-platforms=drm --disable-glx --disable-dri3 --with-dri-drivers=${DRIDRIVERS} --with-gallium-drivers=${GALLIUM_DRIDRIVERS}"
 
 PACKAGECONFIG ??= "gbm"
 PACKAGECONFIG[gbm] = "--enable-gbm,--disable-gbm"

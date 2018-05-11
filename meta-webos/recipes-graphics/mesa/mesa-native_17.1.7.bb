@@ -23,10 +23,16 @@ EXTRANATIVEPATH += "chrpath-native"
 
 inherit autotools pkgconfig gettext native
 
+DRIDRIVERS = "swrast,radeon,r200,nouveau,i965,i915"
+# drop r300, swr and radeonsi, because they need llvm
+# configure: error: --enable-llvm is required when building r300, radeonsi
+# freedreno needs libdrm_freedreno
+# configure: error: Package requirements (libdrm >= 2.4.74 libdrm_freedreno >= 2.4.74) were not met:
+# vc4 needs libdrm_vc4
+# configure: error: Package requirements (libdrm >= 2.4.69 libdrm_vc4 >= 2.4.69) were not met:
+GALLIUM_DRIDRIVERS = "i915,nouveau,r600,svga,swrast,virgl,etnaviv,imx"
 
-DRIDRIVERS_append_x86-64 = ",radeon,r200,nouveau,i965,i915"
-
-EXTRA_OECONF = "--with-platforms=drm,x11 --disable-dri3 --with-dri-drivers=${DRIDRIVERS} --with-gallium-drivers=virgl"
+EXTRA_OECONF = "--with-platforms=drm,x11 --disable-dri3 --with-dri-drivers=${DRIDRIVERS} --with-gallium-drivers=${GALLIUM_DRIDRIVERS}"
 
 PACKAGECONFIG ??= "dri gbm glx"
 PACKAGECONFIG[gbm] = "--enable-gbm,--disable-gbm"
