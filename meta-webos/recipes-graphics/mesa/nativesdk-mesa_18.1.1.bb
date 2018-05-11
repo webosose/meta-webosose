@@ -13,8 +13,8 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://docs/license.html;md5=725f991a1cc322aa7a0cd3a2016621c4"
 
 SRC_URI = "https://mesa.freedesktop.org/archive/mesa-${PV}.tar.xz"
-SRC_URI[md5sum] = "e40bb428a263bd28cbf6478dae45b207"
-SRC_URI[sha256sum] = "69f472a874b1122404fa0bd13e2d6bf87eb3b9ad9c21d2f39872a96d83d9e5f5"
+SRC_URI[md5sum] = "063468c930ff61d211ece0191874fa95"
+SRC_URI[sha256sum] = "d3312a2ede5aac14a47476b208b8e3a401367838330197c4588ab8ad420d7781"
 
 PROVIDES = "virtual/nativesdk-egl"
 
