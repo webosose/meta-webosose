@@ -1,8 +1,9 @@
-# Copyright (c) 2013-2016 LG Electronics, Inc.
+# Copyright (c) 2013-2018 LG Electronics, Inc.
+
 # webOS system should be ready to have read-only /etc folder
 # thus we move timezone/localtime to other place (in volatile partition)
 
-EXTENDPRAUTO_append = "webos5"
+EXTENDPRAUTO_append = "webos6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -33,23 +34,20 @@ pkg_postinst_${PN}() {
     etc_lt=${LOCALTIME_LOCATION:-${webos_sysmgr_localstatedir}/preferences/localtime}
     src=${TIMEZONE_LOCATION:-${webos_sysmgr_localstatedir}/preferences/timezone}
 
-    if [ -e ${src} ] ; then
-        tz=$(sed -e 's:#.*::' -e 's:[[:space:]]*::g' -e '/^$/d' "${src}")
+    if [ -e $D${src} ] ; then
+        tz=$(sed -e 's:#.*::' -e 's:[[:space:]]*::g' -e '/^$/d' "$D${src}")
     fi
 
     if [ -z ${tz} ] ; then
-        return 0
+        exit 0
     fi
 
     if [ ! -e "$D${datadir}/zoneinfo/${tz}" ] ; then
         echo "You have an invalid TIMEZONE setting in ${src}"
         echo "Your ${etc_lt} has been reset to Universal; enjoy!"
         tz="Universal"
-        echo "Updating ${etc_lt} with $D${datadir}/zoneinfo/${tz}"
-        if [ -L ${etc_lt} ] ; then
-            rm -f "${etc_lt}"
-        fi
-        ln -s "${datadir}/zoneinfo/${tz}" "${etc_lt}"
+        echo "Updating $D${etc_lt} with $D${datadir}/zoneinfo/${tz}"
+        ln -snf "${datadir}/zoneinfo/${tz}" "$D${etc_lt}"
     fi
 }
 
