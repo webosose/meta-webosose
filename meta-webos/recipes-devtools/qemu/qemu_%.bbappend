@@ -2,8 +2,8 @@
 
 EXTENDPRAUTO_append = "webos3"
 
-PACKAGECONFIG_append_class-native = " virglrenderer glx"
-PACKAGECONFIG_append_class-nativesdk = " virglrenderer"
+PACKAGECONFIG_append_class-native = " virglrenderer glx spice libusb usb-redir"
+PACKAGECONFIG_append_class-nativesdk = " virglrenderer glx spice libusb usb-redir"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
