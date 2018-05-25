@@ -17,3 +17,5 @@ PACKAGE_ARCH_pn-glibc-mtrace = "${TUNE_PKGARCH}"
 PACKAGE_ARCH_pn-glibc-scripts = "${TUNE_PKGARCH}"
 PACKAGE_ARCH_pn-linux-libc-headers = "${TUNE_PKGARCH}"
 PACKAGE_ARCH_pn-libgcc-initial = "${TUNE_PKGARCH}"
+
+LIBC_DEPENDENCIES_remove = "libsegfault"
