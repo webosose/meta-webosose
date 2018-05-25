@@ -304,7 +304,7 @@ SYSLINUX_ROOT_qemuall = "root=/dev/vda2"
 # Select at most one of the two choices here for the console:
 #   Redirect console output to keep it from spewing all over the Emulator window
 #   (This is added to qemux86 kernel cmdline by openembedded-core/meta/classes/syslinux.bbclass)
-APPEND_append_qemuall = " console=ttyS0"
+APPEND_append_qemuall = " console=ttyS0 net.ifnames=0 biosdevname=0"
 # - or -
 #   If your build is not using the screen for graphics, and you're running an emulator,
 #   you should be able to use the emulator's on-screen window as the console by
