@@ -20,6 +20,6 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "glib-2.0 pmloglib libpbnjson ls2-helpers avoutput-adaptation-layer-api"
 
-WEBOS_VERSION = "1.0.0-7_48357bd41c836ffc623cf52c8d2f3bf7d6955bd3"
+WEBOS_VERSION = "1.0.0-1_14419deaaa797c7c451047df2f5878577319b12f"
 PR = "r0"
 

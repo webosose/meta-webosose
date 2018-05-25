@@ -8,7 +8,7 @@ DEPENDS_remove = "libatomic-ops"
 DEPENDS += "pmloglib"
 
 WEBOS_VERSION = "9.0-1_e3be9b0f94ce588543f476e0e7eab9d2ca3e8f48"
-PR = "r16"
+PR = "r17"
 
 inherit webos_enhanced_submissions
 
@@ -39,13 +39,14 @@ do_install_prepend() {
 }
 
 do_install_append() {
-   install -v -d ${D}${sysconfdir}/init/
-   install -v -m 644 ${WORKDIR}/pulseaudio.conf ${D}${sysconfdir}/init/pulseaudio.conf
    install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
    install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
 }
 do_install_append_webos() {
    install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
+}
+do_install_append_qemuall() {
+    install -v -m 644 ${S}/palm/qemux86_system.pa ${D}${sysconfdir}/pulse/system.pa
 }
 
 FILES_${PN}-dev += "${libdir}/pulse-9.0/modules/*.la ${datadir}/vala ${libdir}/cmake"
