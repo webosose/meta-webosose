@@ -51,8 +51,8 @@ PNBLACKLIST[libsyncml] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_st
 # use them.
 VIRTUAL-RUNTIME_cpushareholder = "cpushareholder-stub"
 
-# Use Chromium53 Browser by default, except for armv45
-VIRTUAL-RUNTIME_com.webos.app.browser = ""
+# Use Enactbrowser by default, except for armv45
+VIRTUAL-RUNTIME_com.webos.app.browser = "com.webos.app.enactbrowser"
 VIRTUAL-RUNTIME_com.webos.app.browser_armv4 = ""
 VIRTUAL-RUNTIME_com.webos.app.browser_armv5 = ""
 
