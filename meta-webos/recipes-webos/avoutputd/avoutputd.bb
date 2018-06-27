@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 VIRTUAL-RUNTIME_aval-impl ??= "avoutput-adaptation-layer-mock"
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson aval-impl"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_aval-impl}"
-WEBOS_VERSION = "1.0.0-1_d66a27ca57bc523472ab21210bf735c84783bb88"
+WEBOS_VERSION = "1.0.0-2_e299c7b19d80be16126f04934cb93b0d9e1111c4"
 PR = "r0"
 
 inherit webos_component

@@ -309,7 +309,6 @@ PNBLACKLIST[claws-plugin-mailmbox] ?= "depends on blacklisted claws-mail"
 PNBLACKLIST[claws-plugin-rssyl] ?= "depends on blacklisted claws-mail"
 PNBLACKLIST[gupnp-tools] ?= "depends on blacklisted gtk+, gnome-icon-theme, gupnp-av, gtk+3"
 PNBLACKLIST[media-service-upnp] ?= "rdepends on blacklisted python-gst, python-pygtk, gupnp-av, gupnp-dlna, gssdp"
-PNBLACKLIST[gstreamer1.0-plugins-bad] ?= "depends on broken librsvg"
 #PNBLACKLIST[] ?= "depends on blacklisted "
 
 PNBLACKLIST[python-gst] ?= "rdepends on blacklisted python-pygtk"

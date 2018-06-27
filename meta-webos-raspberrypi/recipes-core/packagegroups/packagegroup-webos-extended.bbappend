@@ -5,6 +5,14 @@ EXTENDPRAUTO_append_rpi = "webosrpi1"
 
 MEDIA = " \
     libndl-directmedia2 \
+    gstreamer1.0 \
+    gstreamer1.0-libav \
+    gstreamer1.0-omx \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-ugly \
+    g-media-pipeline \
 "
 # Until build issues caused by PLAT-44962 are fixed in PLAT-45700
 MEDIA_raspberrypi3-64 = ""

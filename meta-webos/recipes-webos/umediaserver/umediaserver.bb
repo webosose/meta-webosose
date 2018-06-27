@@ -10,7 +10,7 @@ DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 python luna-service
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
-WEBOS_VERSION = "1.0.0-1_d2264551d82ebf4c17e7bf6e7952e4cbb5c1c116"
+WEBOS_VERSION = "1.0.0-2_abcf4268d24de728e4ee2fec60252321df1e1860"
 PR = "r9"
 
 inherit webos_component
