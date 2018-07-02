@@ -1,10 +1,10 @@
 # Copyright (c) 2014-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos36"
+EXTENDPRAUTO_append = "webos37"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI += " \
+SRC_URI_append_class-target = " \
     file://0001-Revert-Remove-dead-code.patch \
     file://0002-Update-timezone-info-before-localtime_r.patch \
     file://0003-LTTNG-tracing-support-in-Qt-Quick.patch \
