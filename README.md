@@ -5,21 +5,15 @@ For more information please see the respective READMEs in the layer subdirectori
 
 # Copyright and License Information
 
-Unless otherwise specified, all content, including all source code files and
-documentation files in this repository are:
+Different components of meta-webosose are under different licenses (a mix
+of MIT and GPLv2). Please see:
 
-Copyright (c) 2012-2018 LG Electronics, Inc.
+./COPYING.GPLv2 (GPLv2)
+./COPYING.MIT (MIT)
 
-Unless otherwise specified or set forth in the NOTICE file, all content,
-including all source code files and documentation files in this repository are:
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this content except in compliance with the License.
-You may obtain a copy of the License at
+All metadata is MIT licensed unless otherwise stated. Source code
+included in tree for individual recipes is under the LICENSE stated in
+the associated recipe (.bb file) unless otherwise stated.
 
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+License information for any other files is either explicitly stated
+or defaults to GPL version 2.
