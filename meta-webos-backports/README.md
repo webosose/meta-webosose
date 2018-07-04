@@ -20,18 +20,3 @@ Backports from 2.5 (Sumo) to 2.2 (Morty) are in "meta-webos-backports-2.5" subdi
 Backports from 2.6 (Thud) to 2.2 (Morty) are in "meta-webos-backports-2.6" subdirectory.
 
 See https://wiki.yoctoproject.org/wiki/Releases for complete list of releases.
-
-# Copyright and License Information
-
-Unless otherwise specified, all content, including all source code files and
-documentation files in this repository is imported from oe-core without any
-modification.
-
-This means all metadata is MIT licensed unless otherwise stated. Source code
-included in tree for individual recipes is under the LICENSE stated in the
-.bb file for those software projects unless otherwise stated.
-
-License information for any other files is either explicitly stated
-or defaults to GPL version 2.
-
-Modified files are marked with LG Electronics Copyright
