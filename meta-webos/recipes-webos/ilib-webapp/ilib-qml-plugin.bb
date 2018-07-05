@@ -4,12 +4,12 @@ SUMMARY = "iLib Qml loader"
 AUTHOR = "Goun Lee <goun.lee@lge.com>"
 SECTION = "libs/qtplugin"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=578915003022e6b28128e6696dddbb46"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 DEPENDS = "qtdeclarative"
 
-WEBOS_VERSION = "11.0.0-1_0d849d3ad085b610e66e4a9267190f3a6cf5bf38"
-PR = "r2"
+WEBOS_VERSION = "11.0.0-2_1d8cff6dcb5cd95114f19316be776b02b1bea773"
+PR = "r3"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
