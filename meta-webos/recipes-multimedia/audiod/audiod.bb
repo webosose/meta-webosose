@@ -20,7 +20,7 @@ RDEPENDS_${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-1_7c269448696cd6075f4dab5c06c3e3c4b6450e33"
+WEBOS_VERSION = "1.0.0-5_4bb938d09b8592c06daf0358d360829a8446d554"
 PR = "r25"
 
 inherit webos_component
@@ -45,3 +45,4 @@ EXTRA_OECMAKE += "-DAUDIOD_TEST_API:BOOLEAN=True"
 
 FILES_${PN} += "${datadir}/alsa/"
 FILES_${PN} += "/data"
+FILES_${PN} += "${webos_mediadir}/internal"
