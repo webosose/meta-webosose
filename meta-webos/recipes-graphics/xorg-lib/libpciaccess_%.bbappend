@@ -1,5 +1,5 @@
 # Copyright (c) 2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos2"
 
-BBCLASSEXTEND = "native"
+BBCLASSEXTEND = "native nativesdk"
