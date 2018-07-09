@@ -6,11 +6,11 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS = "luna-service2 cjson sqlite3 glib-2.0 nyx-lib"
+DEPENDS = "luna-service2 json-c sqlite3 glib-2.0 nyx-lib"
 RDEPENDS_${PN} = "luna-prefs-data"
 
-WEBOS_VERSION = "3.0.0-1_0827814ccdc5ebe2b372d90120427043cc6ac94e"
-PR = "r12"
+WEBOS_VERSION = "3.0.0-2_ed7323c02a343f7878fba4743a8a4ae323e9bd31"
+PR = "r13"
 
 #inherit webos_component
 inherit webos_public_repo
