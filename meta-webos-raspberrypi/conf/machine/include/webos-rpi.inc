@@ -24,13 +24,16 @@ PNBLACKLIST[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
 MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
 MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-bcm2835-gpiomem \
-    kernel-module-i2c-bcm2708 \
-    kernel-module-snd-bcm2835 \
+    kernel-module-bcm2835-wdt \
     kernel-module-brcmfmac \
     kernel-module-evdev \
-    kernel-module-bcm2835-gpiomem \
-    kernel-module-bcm2835-wdt \
+    kernel-module-i2c-bcm2708 \
+    kernel-module-media \
+    kernel-module-snd-bcm2835 \
+    kernel-module-snd-usb-audio \
     kernel-module-uinput \
+    kernel-module-uvcvideo \
+    kernel-module-videodev \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " uinput"

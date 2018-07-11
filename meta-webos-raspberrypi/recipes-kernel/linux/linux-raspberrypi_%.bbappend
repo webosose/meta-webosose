@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi15"
+EXTENDPRAUTO_append = "webosrpi16"
 
 CMDLINE_append = " rw"
 
@@ -25,7 +25,13 @@ SRC_URI_append = " \
     file://0015-DRM-forcing-permissions.patch \
 "
 
-KERNEL_MODULE_AUTOLOAD_append = " uinput"
+KERNEL_MODULE_AUTOLOAD_append = " \
+    media \
+    snd-usb-audio \
+    uinput \
+    uvcvideo \
+    videodev \
+"
 
 do_deploy_append() {
     # Remove kernel image link in meta-webos/classes/kernel.bbclass
