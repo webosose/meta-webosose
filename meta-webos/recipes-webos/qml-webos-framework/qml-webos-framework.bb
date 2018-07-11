@@ -13,8 +13,8 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-1_6546141a61ef76a475bde19272fa0155302af307"
-PR = "r23"
+WEBOS_VERSION = "1.0.0-2_0e28790083ffbeb26b78fa85d3fd9bcce081386a"
+PR = "r24"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -32,10 +32,8 @@ OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 # upstart
 do_install_append () {
-    if [ "${DISTRO}" != "webos-wearable" ] && [ "${WEBOS_TARGET_DISTRO_VARIANT}" != "mini" ]; then
-       install -d ${D}${sysconfdir}/init
-       install -m 0644 ${S}/tools/booster/booster.upstart ${D}${sysconfdir}/init/booster.conf
-    fi
+   install -d ${D}${sysconfdir}/init
+   install -m 0644 ${S}/tools/booster/booster.upstart ${D}${sysconfdir}/init/booster.conf
 }
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/Eos/*"

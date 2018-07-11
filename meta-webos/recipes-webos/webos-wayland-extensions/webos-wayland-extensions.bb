@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "wayland wayland-native"
 
-WEBOS_VERSION = "1.0.0-1_e77a753ad662f904a7b0f7830911b95ea4d4093c"
+WEBOS_VERSION = "1.0.0-2_e6d7c1ee518b21fb592588180a6fe444ea3bd636"
 PR = "r2"
 
 inherit webos_component

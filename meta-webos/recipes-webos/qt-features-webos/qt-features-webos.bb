@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-1_67a99fc04d01e3025d137f7d50b0aa15016c4525"
+WEBOS_VERSION = "1.0.0-2_66e3c7ca3ba35414cfc2556fcd009d3a84a814b9"
 PR = "r4"
 
 inherit webos_qmake5

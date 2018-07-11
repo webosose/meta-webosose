@@ -4,7 +4,7 @@ AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/qtwayland-native:"
 
-WEBOS_VERSION = "5.4.2-1_ee4a49f2ab723631174d7f2b8dae2263565c9ece"
+WEBOS_VERSION = "5.4.2-2_966ee3b9374a5925616b497243561031102a5448"
 
 EXTENDPRAUTO_append = "webos2"
 
