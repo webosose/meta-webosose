@@ -20,11 +20,21 @@ PREFERRED_PROVIDER_stat = "busybox"
 VIRTUAL-RUNTIME_stat = "busybox"
 VIRTUAL-RUNTIME_webos-ime = "imemanager"
 
+VIRTUAL-RUNTIME_bluetooth_service = "webos.service.bluetooth2"
+VIRTUAL-RUNTIME_bluetooth_service_emulator = ""
+
 # Options are: bluez4, bluez5. This will only be used if "bluetooth" appears in
 # DISTRO_FEATURES.
 VIRTUAL-RUNTIME_bluetooth_stack = "bluez5"
+BLUETOOTH_SIL_NAME = "bluez5"
+
+BLUEZ = "${VIRTUAL-RUNTIME_bluetooth_stack}"
+BLUEZ_class-native = "bluez5"
+BLUEZ_class-nativesdk = "bluez5"
 PNBLACKLIST[bluez4] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_stack', 'bluez4', '', 'Conflicts with bluez5', d)}"
 PNBLACKLIST[bluez5] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_stack', 'bluez4', 'Conflicts with bluez4', '', d)}"
+PNBLACKLIST[bluetooth-sil-bluez5] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_stack', 'bluez5', '', 'Requires bluez5 to be preferred VIRTUAL-RUNTIME_bluetooth_stack', d)}"
+PNBLACKLIST[webos.service.bluetooth2] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_service', 'webos.service.bluetooth2', '', 'Requires webos.service.bluetooth2 to be preferred VIRTUAL-RUNTIME_bluetooth_service', d)}"
 PNBLACKLIST[bluez5-conf] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_stack', 'bluez4', 'Conflicts with bluez4', '', d)}"
 PNBLACKLIST[qtsystems] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_stack', 'bluez4', '', 'Depends on blacklisted bluez4', d)}"
 PNBLACKLIST[qtconnectivity] ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_bluetooth_stack', 'bluez4', '', 'Depends on blacklisted bluez4', d)}"

@@ -9,6 +9,7 @@ PR = "r28"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
+inherit webos_machine_impl_dep
 
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
@@ -117,6 +118,10 @@ RDEPENDS_${PN} = " \
     ${WEBOS_PACKAGESET_TESTAPPS} \
     ${WEBOS_PACKAGESET_TZDATA} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
+"
+
+RDEPENDS_${PN}_append_hardware = " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${VIRTUAL-RUNTIME_bluetooth_service}', '', d)} \
 "
 
 RDEPENDS_${PN}_append_webos = " node-inspector ${VIRTUAL-RUNTIME_iotivity-node}"
