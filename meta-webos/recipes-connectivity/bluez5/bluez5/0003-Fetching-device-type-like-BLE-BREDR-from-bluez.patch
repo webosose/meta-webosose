@@ -1,0 +1,70 @@
+From 661edfed0b4f3f71b2aa2495372f1ee4349fef7b Mon Sep 17 00:00:00 2001
+From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
+Date: Fri, 1 Jun 2018 11:43:15 +0530
+Subject: [PATCH] Fetching device type like BLE, BREDR from bluez
+
+:Release Notes:
+Fetch device type property BLE, BRE/DR
+
+:Detailed Notes:
+Fetching Device type like ble, bredr to use and display as property
+
+:Testing Performed:
+device/getStatus luna command for device type property as ble, bredr
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-58422] GAP functionality type of device like BLE, BREDR
+             not working, always Unknown
+
+Upstream-Status : Pending
+---
+ src/device.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/src/device.c b/src/device.c
+index 72f18b3..ce2baba 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -197,6 +197,7 @@ struct btd_device {
+ 	char		name[MAX_NAME_LENGTH + 1];
+ 	char		*alias;
+ 	uint32_t	class;
++	uint32_t	devicetype;
+ 	uint16_t	vendor_src;
+ 	uint16_t	vendor;
+ 	uint16_t	product;
+@@ -847,6 +848,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
+ 	return TRUE;
+ }
+ 
++static gboolean property_get_device_type(const GDBusPropertyTable *property,
++					DBusMessageIter *iter, void *data)
++{
++	struct btd_device *device = data;
++
++	if (device->bdaddr_type == BDADDR_BREDR)
++		device->devicetype = BT_MODE_BREDR;
++	else if (device->bdaddr_type == BDADDR_LE_RANDOM || device->bdaddr_type == BDADDR_LE_PUBLIC)
++		device->devicetype = BT_MODE_LE;
++
++	dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT32, &device->devicetype);
++
++	return TRUE;
++}
++
+ static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
+ 							uint16_t *appearance)
+ {
+@@ -2624,6 +2640,7 @@ static const GDBusMethodTable device_methods[] = {
+ static const GDBusPropertyTable device_properties[] = {
+ 	{ "Address", "s", dev_property_get_address },
+ 	{ "AddressType", "s", property_get_address_type },
++	{ "DeviceType", "u", property_get_device_type },
+ 	{ "Name", "s", dev_property_get_name, NULL, dev_property_exists_name },
+ 	{ "Alias", "s", dev_property_get_alias, dev_property_set_alias },
+ 	{ "Class", "u", dev_property_get_class, NULL,
+-- 
+2.7.4
+

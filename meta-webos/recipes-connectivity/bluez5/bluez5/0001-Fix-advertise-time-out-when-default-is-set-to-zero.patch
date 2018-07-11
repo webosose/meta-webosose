@@ -1,0 +1,64 @@
+From 38da39b4877e92d631f96b240510a5ee085b1a5b Mon Sep 17 00:00:00 2001
+From: "sameer.mulla" <sameer.mulla@lge.com>
+Date: Wed, 11 Apr 2018 11:03:20 +0530
+Subject: [PATCH] Fix advertise time out when default is set to zero
+
+:Release Notes:
+Advertising timeout zero is ignored
+
+:Detailed Notes:
+Advertising default value for timeout parameter is zero
+so zero timing out is ignored
+
+:Testing Performed:
+Builded and tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-51859] Implement method ble/startAdvertise
+
+Upstream-Status : Pending
+Change-Id: I60cb0c22991efa61a800b1483e232e42beff2da2
+---
+ src/advertising.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/src/advertising.c b/src/advertising.c
+index 94a8c40..ad2cf07 100755
+--- a/src/advertising.c
++++ b/src/advertising.c
+@@ -459,13 +459,18 @@ static bool parse_local_name(DBusMessageIter *iter,
+ 	if (dbus_message_iter_get_arg_type(iter) != DBUS_TYPE_STRING)
+ 		return false;
+ 
++	dbus_message_iter_get_basic(iter, &name);
++
++	if (name && !strcmp(name, "")) {
++		DBG("It's default prop name ignore");
++		return true;
++	}
++
+ 	if (client->flags & MGMT_ADV_FLAG_LOCAL_NAME) {
+ 		error("Local name already included");
+ 		return false;
+ 	}
+ 
+-	dbus_message_iter_get_basic(iter, &name);
+-
+ 	free(client->name);
+ 	client->name = strdup(name);
+ 
+@@ -524,7 +529,8 @@ static bool parse_timeout(DBusMessageIter *iter,
+ 	if (client->to_id)
+ 		g_source_remove(client->to_id);
+ 
+-	client->to_id = g_timeout_add_seconds(client->timeout, client_timeout,
++	if (client->timeout)
++		client->to_id = g_timeout_add_seconds(client->timeout, client_timeout,
+ 								client);
+ 
+ 	return true;
+-- 
+1.9.1
+

@@ -1,0 +1,79 @@
+From a9579da15be2d5fc1add165cebd9ffcb2f5c5884 Mon Sep 17 00:00:00 2001
+From: "sameer.mulla" <sameer.mulla@lge.com>
+Date: Sun, 22 Jul 2018 18:59:45 +0530
+Subject: [PATCH] Fix Gatt connect when device address type is BDADDR_LE_PUBLIC
+
+:Release Notes:
+Fix Gatt connect when device address type is BDADDR_LE_PUBLIC
+
+:Detailed Notes:
+Gatt connect is failing when device address type is BDADDR_LE_PUBLIC
+added new method for gatt connect,so that connect behavior is kept same
+When remote RPI device configured as peripheral(connectable is true),
+address type is BDADDR_LE_PUBLIC in this case
+select_conn_bearer function retruns BDADDR_BREDR, for this type it tries
+to connect to BR_EDR profiles and fails.
+
+:Testing Performed:
+Builded and Tested gatt connect from RPI to RPI
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-62865] com.webos.bluetooth2 : gatt/connect is unstable
+
+Change-Id: I46a3a5fa56d055c54ed16167d6dc2a14ad473615
+Upstream-Status: Pending
+---
+ src/device.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/src/device.c b/src/device.c
+index 72f18b3..4047fa1 100755
+--- a/src/device.c
++++ b/src/device.c
+@@ -1911,6 +1911,33 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,
+ 	return connect_profiles(dev, bdaddr_type, msg, NULL);
+ }
+ 
++static DBusMessage *dev_connect_gatt(DBusConnection *conn, DBusMessage *msg,
++							void *user_data)
++{
++	struct btd_device *dev = user_data;
++
++	int err;
++
++	if (dev->le_state.connected)
++		return dbus_message_new_method_return(msg);
++
++	btd_device_set_temporary(dev, false);
++
++	if (dev->disable_auto_connect) {
++		dev->disable_auto_connect = FALSE;
++		device_set_auto_connect(dev, TRUE);
++	}
++
++	err = device_connect_le(dev);
++	if (err < 0)
++		return btd_error_failed(msg, strerror(-err));
++
++	dev->connect = dbus_message_ref(msg);
++
++	return NULL;
++
++}
++
+ static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
+ 							void *user_data)
+ {
+@@ -2612,6 +2639,7 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+ static const GDBusMethodTable device_methods[] = {
+ 	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
+ 	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
++	{ GDBUS_ASYNC_METHOD("ConnectGatt", NULL, NULL, dev_connect_gatt) },
+ 	{ GDBUS_ASYNC_METHOD("ConnectProfile", GDBUS_ARGS({ "UUID", "s" }),
+ 						NULL, connect_profile) },
+ 	{ GDBUS_ASYNC_METHOD("DisconnectProfile", GDBUS_ARGS({ "UUID", "s" }),
+-- 
+2.7.4
+

@@ -1,0 +1,52 @@
+From b39c829044e2ca51c9fbd22ef6e3a24d66ead753 Mon Sep 17 00:00:00 2001
+From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
+Date: Thu, 17 May 2018 18:15:48 +0530
+Subject: [PATCH] Send disconnect signal on remote device disconnect
+
+:Release Notes:
+Send disconnect signal on remote device disconnect
+
+:Detailed Notes:
+Disconnect signal not geneated when remote device is disconnected,
+required to cleanup the resources. Changes will generate the
+'RequestDisconnection' for org.bluez.Profile1 interface.
+
+:Testing Performed:
+Builded and tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-49640] Implementation of SPP profile Connect/Disconnect API in
+             Bluez Sil
+
+Upstream-Status : Pending
+---
+ src/profile.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/profile.c b/src/profile.c
+index 7c5318c..cbbb02f 100644
+--- a/src/profile.c
++++ b/src/profile.c
+@@ -695,6 +695,8 @@ static GSList *custom_props = NULL;
+ static GSList *profiles = NULL;
+ static GSList *ext_profiles = NULL;
+ 
++static int send_disconn_req(struct ext_profile *ext, struct ext_io *conn);
++
+ void btd_profile_foreach(void (*func)(struct btd_profile *p, void *data),
+ 								void *data)
+ {
+@@ -811,6 +813,8 @@ drop:
+ 			btd_service_disconnecting_complete(conn->service, 0);
+ 	}
+ 
++	send_disconn_req(ext, conn);
++
+ 	ext->conns = g_slist_remove(ext->conns, conn);
+ 	ext_io_destroy(conn);
+ 	return FALSE;
+-- 
+2.7.4
+

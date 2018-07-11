@@ -25,10 +25,14 @@ MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
 MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-bcm2835-gpiomem \
     kernel-module-bcm2835-wdt \
+    kernel-module-bluetooth \
     kernel-module-brcmfmac \
+    kernel-module-btbcm \
     kernel-module-evdev \
+    kernel-module-hci-uart \
     kernel-module-i2c-bcm2708 \
     kernel-module-media \
+    kernel-module-rfcomm \
     kernel-module-snd-bcm2835 \
     kernel-module-snd-usb-audio \
     kernel-module-uinput \
