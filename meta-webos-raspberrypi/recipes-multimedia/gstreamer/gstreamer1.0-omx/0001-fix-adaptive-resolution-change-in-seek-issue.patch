@@ -1,4 +1,4 @@
-From 2bdbac16d3011d21c051e7c73cd2f9cf3d17df66 Mon Sep 17 00:00:00 2001
+From 3381f78b7482f35695a58843b18a9ef48ffd5b40 Mon Sep 17 00:00:00 2001
 From: Pankaj Maharana <pankaj.maharana@lge.com>
 Date: Wed, 8 Aug 2018 12:01:02 +0530
 Subject: [PATCH] fix adaptive resolution change in seek issue
@@ -22,13 +22,14 @@ correctly without any hang.
 
 Upstream-Status: Inappropriate
     - Only GMP buffer player uses this property to set it FALSE
+
 ---
  omx/gstomxvideodec.c | 42 +++++++++++++++++++++++++++++-------------
  omx/gstomxvideodec.h |  2 ++
  2 files changed, 31 insertions(+), 13 deletions(-)
 
 diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
-index 1b4207f..78613c4 100644
+index 812eb29..9e347b3 100644
 --- a/omx/gstomxvideodec.c
 +++ b/omx/gstomxvideodec.c
 @@ -86,6 +86,7 @@ enum
@@ -121,9 +122,9 @@ index 1b4207f..78613c4 100644
 +    if (gst_omx_port_is_flushing (self->dec_out_port) ||
 +        (!self->allow_flush_in_drain && self->disabled)) {
        if (!gst_omx_video_dec_enable (self, frame->input_buffer))
-         return FALSE;
+         goto enable_error;
      }
-@@ -3037,9 +3046,16 @@ release_error:
+@@ -3052,9 +3061,16 @@ release_error:
  static GstFlowReturn
  gst_omx_video_dec_drain (GstVideoDecoder * decoder)
  {
@@ -155,6 +156,3 @@ index cb70e02..9f69130 100644
  };
  
  struct _GstOMXVideoDecClass
--- 
-2.7.4
-

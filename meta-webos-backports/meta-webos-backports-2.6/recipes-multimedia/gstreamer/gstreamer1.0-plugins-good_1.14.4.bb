@@ -10,8 +10,8 @@ SRC_URI = " \
             file://0001-introspection.m4-prefix-pkgconfig-paths-with-PKG_CON.patch \
             "
 
-SRC_URI[md5sum] = "48584b02e469a314b0e71f1553a2d2a7"
-SRC_URI[sha256sum] = "6afa35747d528d3ab4ed8f5eac13f7235d7d28100d6a24dd78f81ec7c0d04688"
+SRC_URI[md5sum] = "6e3b247097366cf2639f22abfece7113"
+SRC_URI[sha256sum] = "5f8b553260cb0aac56890053d8511db1528d53cae10f0287cfce2cb2acc70979"
 
 S = "${WORKDIR}/gst-plugins-good-${PV}"
 
@@ -28,22 +28,26 @@ inherit gettext
 
 PACKAGECONFIG ??= " \
     ${GSTREAMER_ORC} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '',  d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'pulseaudio', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11', '', d)} \
-    cairo flac gdk-pixbuf gudev jpeg libpng soup speex taglib v4l2 bz2 zlib gtk mpg123 lame \
+    bz2 cairo flac gdk-pixbuf gudev jpeg lame libpng mpg123 soup speex taglib v4l2 zlib \
 "
 
 X11DEPENDS = "virtual/libx11 libsm libxrender libxfixes libxdamage"
 
+PACKAGECONFIG[bz2]        = "--enable-bz2,--disable-bz2,bzip2"
 PACKAGECONFIG[cairo]      = "--enable-cairo,--disable-cairo,cairo"
 PACKAGECONFIG[dv1394]     = "--enable-dv1394,--disable-dv1394,libiec61883 libavc1394 libraw1394"
 PACKAGECONFIG[flac]       = "--enable-flac,--disable-flac,flac"
 PACKAGECONFIG[gdk-pixbuf] = "--enable-gdk_pixbuf,--disable-gdk_pixbuf,gdk-pixbuf"
+PACKAGECONFIG[gtk]        = "--enable-gtk3,--disable-gtk3,gtk+3"
 PACKAGECONFIG[gudev]      = "--with-gudev,--without-gudev,libgudev"
 PACKAGECONFIG[jack]       = "--enable-jack,--disable-jack,jack"
 PACKAGECONFIG[jpeg]       = "--enable-jpeg,--disable-jpeg,jpeg"
+PACKAGECONFIG[lame]       = "--enable-lame,--disable-lame,lame"
 PACKAGECONFIG[libpng]     = "--enable-libpng,--disable-libpng,libpng"
 PACKAGECONFIG[libv4l2]    = "--with-libv4l2,--without-libv4l2,v4l-utils"
+PACKAGECONFIG[mpg123]     = "--enable-mpg123,--disable-mpg123,mpg123"
 PACKAGECONFIG[pulseaudio] = "--enable-pulse,--disable-pulse,pulseaudio"
 PACKAGECONFIG[soup]       = "--enable-soup,--disable-soup,libsoup-2.4"
 PACKAGECONFIG[speex]      = "--enable-speex,--disable-speex,speex"
@@ -52,11 +56,7 @@ PACKAGECONFIG[v4l2]       = "--enable-gst_v4l2 --enable-v4l2-probe,--disable-gst
 PACKAGECONFIG[vpx]        = "--enable-vpx,--disable-vpx,libvpx"
 PACKAGECONFIG[wavpack]    = "--enable-wavpack,--disable-wavpack,wavpack"
 PACKAGECONFIG[x11]        = "--enable-x,--disable-x,${X11DEPENDS}"
-PACKAGECONFIG[bz2]        = "--enable-bz2,--disable-bz2,bzip2"
 PACKAGECONFIG[zlib]       = "--enable-zlib,--disable-zlib,zlib"
-PACKAGECONFIG[lame]       = "--enable-lame,--disable-lame,lame"
-PACKAGECONFIG[mpg123]     = "--enable-mpg123,--disable-mpg123,mpg123"
-PACKAGECONFIG[gtk]        = "--enable-gtk3,--disable-gtk3,gtk+3"
 
 # qt5 support is disabled, because it is not present in OE core, and requires more work than
 # just adding a packageconfig (it requires access to moc, uic, rcc, and qmake paths).
@@ -73,9 +73,10 @@ EXTRA_OECONF += " \
     --disable-oss4 \
     --disable-osx_audio \
     --disable-osx_video \
-    --disable-shout2 \
-    --disable-waveform \
     --disable-qt \
+    --disable-shout2 \
+    --disable-twolame \
+    --disable-waveform \
 "
 
 FILES_${PN}-equalizer += "${datadir}/gstreamer-1.0/presets/*.prs"
