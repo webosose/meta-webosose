@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi14"
+EXTENDPRAUTO_append = "webosrpi15"
 
 CMDLINE_append = " rw"
 
@@ -20,6 +20,9 @@ SRC_URI_append = " \
     file://0010-Add-API-to-set-only-the-source-rectangle.patch \
     file://0011-Implement-page-flipping-changes-in-kernel.patch \
     file://0012-Set-CPU-governor-to-ondemand.patch \
+    file://0013-Fix-kernel-panic-on-10hr-YouTube-playback.patch \
+    file://0014-DRM-custom-prop.patch \
+    file://0015-DRM-forcing-permissions.patch \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " uinput"

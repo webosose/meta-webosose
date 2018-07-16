@@ -1,0 +1,36 @@
+From 72f9fe3f9ca86b9f8d714881c2b894e1c9102adc Mon Sep 17 00:00:00 2001
+From: "ekwang.lee" <ekwang.lee@lge.com>
+Date: Tue, 15 May 2018 14:16:47 +0900
+Subject: [PATCH] Fix buffer object leakage when using webos custom prop for setplane
+
+:Release Notes:
+Fix buffer object leakage when using webos custom prop for setplane
+
+:Detailed Notes:
+If you do destroy bo after set plane through custom prop, there is no
+frame buffer unreference and fb leakage occurs.
+Therefore, we have to handle 0xff01 as well as 0xff05 in the custom
+prop.
+
+:Testing Performed:
+Build Successful. Locally Tested.
+
+:QA Notes:
+None
+
+:Issues Addressed:
+[PLAT-54289] [RPi] Implement multi-instance feature in g-media-pipeline
+
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index ab78d35..44c47e5 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -4966,7 +4966,7 @@ static int __setplane_internal_custom(struct drm_plane *plane,
+ 	if (ret)
+ 		goto out;
+ 
+-	plane->old_fb = (prop_id == 0xff05)? plane->fb : NULL;
++	plane->old_fb = (prop_id == 0xff05 || prop_id == 0xff01)? plane->fb : NULL;
+ 	ret = plane->funcs->update_plane(plane, crtc, fb,
+ 					 crtc_x, crtc_y, crtc_w, crtc_h,
+ 					 src_x, src_y, src_w, src_h);

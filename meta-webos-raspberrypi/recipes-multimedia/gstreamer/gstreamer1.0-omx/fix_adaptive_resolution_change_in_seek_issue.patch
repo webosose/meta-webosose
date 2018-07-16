@@ -1,0 +1,127 @@
+From: Pankaj Maharana <pankaj.maharana@lge.com>
+Subject: [PATCH] Add flush-in-drain [boolean] property
+
+:Release Notes:
+Add "flush-in-drain" property to omxh264dec decoder
+
+:Detailed Notes:
+During user seek, gst_omx_video_dec_flush is called from second
+time since flush already have been called from paused call.
+Making the playback goes to hung state indefinitely.
+By using setting this property to FALSE from GMP (BufferPlayer)
+we disable calling from drain api.
+
+:Testing Performed:
+Checked Seek functionality in youtube test app is working
+correctly without any hang.
+
+Upstream-Status: Inappropriate
+    - Only GMP buffer player uses this property to set it FALSE
+
+diff -Naur a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
+--- a/omx/gstomxvideodec.c	2018-03-09 17:29:19.000000000 +0530
++++ b/omx/gstomxvideodec.c	2018-06-29 13:30:49.440337194 +0530
+@@ -86,6 +86,7 @@
+ {
+   PROP_0,
+   PROP_INTERNAL_ENTROPY_BUFFERS,
++  PROP_EXTERNAL_FLUSH_IN_DRAIN,
+ };
+ 
+ #define GST_OMX_VIDEO_DEC_INTERNAL_ENTROPY_BUFFERS_DEFAULT (5)
+@@ -104,9 +105,7 @@
+ gst_omx_video_dec_set_property (GObject * object, guint prop_id,
+     const GValue * value, GParamSpec * pspec)
+ {
+-#ifdef USE_OMX_TARGET_ZYNQ_USCALE_PLUS
+   GstOMXVideoDec *self = GST_OMX_VIDEO_DEC (object);
+-#endif
+ 
+   switch (prop_id) {
+ #ifdef USE_OMX_TARGET_ZYNQ_USCALE_PLUS
+@@ -114,6 +113,9 @@
+       self->internal_entropy_buffers = g_value_get_uint (value);
+       break;
+ #endif
++    case PROP_EXTERNAL_FLUSH_IN_DRAIN:
++      self->allow_flush_in_drain = g_value_get_boolean (value);
++      break;
+     default:
+       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       break;
+@@ -124,9 +126,7 @@
+ gst_omx_video_dec_get_property (GObject * object, guint prop_id,
+     GValue * value, GParamSpec * pspec)
+ {
+-#ifdef USE_OMX_TARGET_ZYNQ_USCALE_PLUS
+   GstOMXVideoDec *self = GST_OMX_VIDEO_DEC (object);
+-#endif
+ 
+   switch (prop_id) {
+ #ifdef USE_OMX_TARGET_ZYNQ_USCALE_PLUS
+@@ -134,6 +134,9 @@
+       g_value_set_uint (value, self->internal_entropy_buffers);
+       break;
+ #endif
++    case PROP_EXTERNAL_FLUSH_IN_DRAIN:
++      g_value_set_boolean (value, self->allow_flush_in_drain);
++      break;
+     default:
+       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       break;
+@@ -162,6 +165,11 @@
+           GST_PARAM_MUTABLE_READY));
+ #endif
+ 
++  g_object_class_install_property (gobject_class, PROP_EXTERNAL_FLUSH_IN_DRAIN,
++      g_param_spec_boolean ("flush-in-drain", "Control flush call during drain",
++          "Allowing or stop flushing the buffers when decoder drain is called since",
++          TRUE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
++
+   element_class->change_state =
+       GST_DEBUG_FUNCPTR (gst_omx_video_dec_change_state);
+ 
+@@ -2162,6 +2170,7 @@
+   GST_DEBUG_OBJECT (self, "Need to disable and drain decoder");
+ 
+   gst_omx_video_dec_drain (GST_VIDEO_DECODER (self));
++
+   gst_omx_port_set_flushing (out_port, 5 * GST_SECOND, TRUE);
+ 
+   if (klass->cdata.hacks & GST_OMX_HACK_NO_COMPONENT_RECONFIGURE) {
+@@ -2660,6 +2669,7 @@
+   /* 3) Resume components */
+   gst_omx_component_set_state (self->dec, OMX_StateExecuting);
+   gst_omx_component_get_state (self->dec, GST_CLOCK_TIME_NONE);
++
+ #if defined (USE_OMX_TARGET_RPI) && defined (HAVE_GST_GL)
+   if (self->eglimage) {
+     gst_omx_component_set_state (self->egl_render, OMX_StateExecuting);
+@@ -3039,7 +3049,14 @@
+ {
+   gboolean ret;
+   ret = gst_omx_video_dec_finish (decoder);
+-  gst_omx_video_dec_flush (decoder);
++
++  GstOMXVideoDec *self = GST_OMX_VIDEO_DEC (decoder);
++  GST_DEBUG_OBJECT (self, "self->allow_flush_in_drain [ %d ]",
++                           self->allow_flush_in_drain);
++  if (self->allow_flush_in_drain) {
++    gst_omx_video_dec_flush (decoder);
++  }
++
+   return ret;
+ }
+ 
+diff -Naur a/omx/gstomxvideodec.h b/omx/gstomxvideodec.h
+--- a/omx/gstomxvideodec.h	2018-01-30 23:51:09.000000000 +0530
++++ b/omx/gstomxvideodec.h	2018-06-29 13:30:55.856338323 +0530
+@@ -100,6 +100,8 @@
+ #ifdef USE_OMX_TARGET_ZYNQ_USCALE_PLUS
+   guint32 internal_entropy_buffers;
+ #endif
++
++  gboolean allow_flush_in_drain;
+ };
+ 
+ struct _GstOMXVideoDecClass

@@ -8,4 +8,4 @@ PACKAGECONFIG_append_rpi = " kms wayland directfb faad"
 
 WEBOS_REPO_NAME_rpi = "gst-plugins-bad"
 
-WEBOS_VERSION_rpi = "1.14.0-1_953c65fc4393ae9bc079fa926813bf5eabeb31fa"
+WEBOS_VERSION_rpi = "1.14.0-2_850cf2243bf999481b2badc4a939f8fbda8e4e8d"
