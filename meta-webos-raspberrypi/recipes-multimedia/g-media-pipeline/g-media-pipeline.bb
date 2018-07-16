@@ -1,9 +1,10 @@
 # Copyright (c) 2018 LG Electronics, Inc.
 
-SUMMARY = "G media pipeline is a player which uses GStreamer"
+SUMMARY = "G media pipeline is a media pipeline which uses GStreamer"
 AUTHOR = "Jinwoo Ahn <jinwoo.ahn@lge.com>"
 SECTION = "webos/media"
-LICENSE = "CLOSED"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 inherit webos_component
 inherit webos_cmake
@@ -18,8 +19,8 @@ COMPATIBLE_MACHINE = "^rpi$"
 
 DEPENDS = "boost userland gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 
-WEBOS_VERSION = "1.0.0-1_2afe39184c5e3e24d4655691d38d4ad82c89a55d"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-2_d80dcdccfc94b269f4fa486db16ad9ad1265ef46"
+PR = "r1"
 
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

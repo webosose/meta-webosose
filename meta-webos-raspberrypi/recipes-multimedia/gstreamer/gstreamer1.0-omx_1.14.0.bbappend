@@ -1,6 +1,6 @@
 # Copyright (c) 2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi1"
+EXTENDPRAUTO_append_rpi = "webosrpi2"
 
 CPPFLAGS_append_rpi = " -I${STAGING_INCDIR}/IL \
     -I${STAGING_INCDIR}/interface/vcos/pthreads \
@@ -16,3 +16,7 @@ LDFLAGS_append_rpi = " ${EXTRA_LDFLAGS}"
 
 GSTREAMER_1_0_OMX_CORE_NAME_rpi = "${libdir}/libopenmaxil.so"
 GSTREAMER_1_0_OMX_TARGET_rpi = "rpi"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+
+SRC_URI += "file://fix_adaptive_resolution_change_in_seek_issue.patch"

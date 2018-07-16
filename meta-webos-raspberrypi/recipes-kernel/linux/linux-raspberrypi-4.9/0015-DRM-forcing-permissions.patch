@@ -1,0 +1,45 @@
+From: ekwang.lee <ekwang.lee@lge.com>
+Data:  Fri, 6 Jul 2018 19:27:15 +0900 (19:27 +0900)
+Subject: [PATCH] Set forcing permission for all DRM client
+
+:Release Notes:
+DRM forcing permission for unmanaged pipeline ran non-root
+
+:Detailed Notes:
+In WebOS WebAppMgr create pipeline with the privileges of wam rather than root.
+The pipeline opens drm with the privilege of wam, so CAP_SYS_ADMIN is false.
+Therefore, if the pipeline asks for some operations to check CAP_SYS_ADMIN,
+you will get an EPERM error.
+To avoid this, temporarily grant the following authority.
+
+:Testing Performed:
+Checking working correctly Buffer Player that running with wam account.
+
+:QA Notes:
+None
+
+:Issues Addressed:
+[PLAT-62115] [OSE] Display resetting in Videosink during adaptive streaming
+
+Upstream-Status: Inappropriate
+  - Only WebOS's DRM driver has no special meaning about ADMIN/MASTER.
+
+diff --git a/drivers/gpu/drm/drm_fops.c b/drivers/gpu/drm/drm_fops.c
+index 6b5625e..93d30dc 100644
+--- a/drivers/gpu/drm/drm_fops.c
++++ b/drivers/gpu/drm/drm_fops.c
+@@ -215,7 +215,13 @@ static int drm_open_helper(struct file *filp, struct drm_minor *minor)
+ 	priv->minor = minor;
+ 
+ 	/* for compatibility root is always authenticated */
+-	priv->authenticated = capable(CAP_SYS_ADMIN);
++	//priv->authenticated = capable(CAP_SYS_ADMIN);
++
++  /* In WebOS WebAppMgr create pipeline with the privileges of wam rather than root.
++   * The pipeline opens drm with the privilege of wam, so CAP_SYS_ADMIN is false.
++   * Therefore, if the pipeline asks for some operations to check CAP_SYS_ADMIN, you will get an EPERM error.
++   * To avoid this, temporarily grant the following authority. */
++	priv->authenticated = 1;
+ 	priv->lock_count = 0;
+ 
+ 	INIT_LIST_HEAD(&priv->lhead);
