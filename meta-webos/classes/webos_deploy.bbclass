@@ -3,7 +3,7 @@
 inherit deploy
 
 # Always execute do_webos_deploy_fixup so that the
-# WEBOS_IMAGE_NAME_SUFFIX portion of the image filenames, which is formed from
+# IMAGE_VERSION_SUFFIX portion of the image filenames, which is formed from
 # WEBOS_DISTRO_BUILD_ID, always corresponds to its value for this build.
 do_webos_deploy_fixup[nostamp] = "1"
 do_webos_deploy_fixup() {

@@ -61,48 +61,39 @@ WEBOS_IMAGE_BUILD_CODENAME ?= "${@ \
     '-${WEBOS_DISTRO_BUILD_CODENAME}' \
 }"
 
-WEBOS_IMAGE_NAME_SUFFIX = "${WEBOS_IMAGE_BUILD_CODENAME}-${@oe.utils.conditional( \
+IMAGE_VERSION_SUFFIX = "${WEBOS_IMAGE_BUILD_CODENAME}-${@oe.utils.conditional( \
                                   'WEBOS_DISTRO_BUILD_ID', 'unofficial', \
                                   '${DATETIME}', '${WEBOS_DISTRO_BUILD_ID}', d) }"
-# Prevent "Bitbake's cached basehash does not match the one we just generated"
-# errors:
-WEBOS_IMAGE_NAME_SUFFIX[vardepsexclude] = "DATETIME"
 
 # Without this, the shared state is always invalidated
 # during the build which has different WEBOS_DISTRO_BUILD_ID
-WEBOS_IMAGE_NAME_SUFFIX[vardepsexclude] += "WEBOS_DISTRO_BUILD_ID"
+IMAGE_VERSION_SUFFIX[vardepsexclude] += "WEBOS_DISTRO_BUILD_ID"
 
 WEBOS_IMAGE_NAME_PARTITION_SUFFIX ?= ""
 IMAGE_NAME = "${IMAGE_BASENAME}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}"
-IMAGE_LINK_NAME = "${IMAGE_NAME}${WEBOS_IMAGE_NAME_SUFFIX}"
+IMAGE_LINK_NAME = "${IMAGE_NAME}${IMAGE_VERSION_SUFFIX}"
 
-INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}${WEBOS_IMAGE_NAME_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
+INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}${IMAGE_VERSION_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
 
 # Use a different naming scheme for webOS kernel images that uses the component
 # name instead of the name of the image format (KERNEL_IMAGETYPE) and leaves off
 # the version.
-WEBOS_KERNEL_IMAGE_BASE_NAME_PARTITION_SUFFIX ?= ""
-KERNEL_IMAGE_BASE_NAME = "${PREFERRED_PROVIDER_virtual/kernel}-${MACHINE}${WEBOS_KERNEL_IMAGE_BASE_NAME_PARTITION_SUFFIX}"
-KERNEL_IMAGE_SYMLINK_NAME = "${KERNEL_IMAGE_BASE_NAME}${WEBOS_IMAGE_NAME_SUFFIX}"
-# For qemuboot.bbclass to find existing kernel image (we remove ${KERNEL_IMAGETYPE} in kernel.bbclass).
-QB_DEFAULT_KERNEL = "${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin"
-# For live-vm-common.bbclass to find existing kernel image (we remove ${KERNEL_IMAGETYPE} in kernel.bbclass).
-VM_DEFAULT_KERNEL = "${KERNEL_IMAGETYPE}-${KERNEL_IMAGE_BASE_NAME}.bin"
+WEBOS_KERNEL_IMAGE_NAME_PARTITION_SUFFIX ?= ""
+KERNEL_ARTIFACT_NAME ?= "${MACHINE}${WEBOS_KERNEL_IMAGE_NAME_PARTITION_SUFFIX}"
+KERNEL_ARTIFACT_LINK_NAME ?= "${KERNEL_ARTIFACT_NAME}${IMAGE_VERSION_SUFFIX}"
 
 # By default, kernels for webOS don't need module tarballs to be deployed, but
 # still define webOS-style base name for them in case some MACHINE.conf enables
 # their deployment.
 MODULE_TARBALL_DEPLOY ?= "0"
-MODULE_IMAGE_BASE_NAME = "${KERNEL_IMAGE_BASE_NAME}-modules"
-MODULE_IMAGE_SYMLINK_NAME = "${KERNEL_IMAGE_SYMLINK_NAME}-modules"
 
 # webOS doesn't use kernel-image-name, so don't include it, which allows us to
-# vardepsexclude KERNEL_IMAGE_BASE_NAME. This makes it possible to execute the
+# vardepsexclude KERNEL_IMAGE_NAME. This makes it possible to execute the
 # kernel's do_deploy (which is quick) every time the kernel is built without
 # having to also execute its do_install (which is lengthy), and thereby have its
 # image filename match that of the corresponding rootfs image even if its
 # contents are unchanged.
-kernel_do_install[vardepsexclude] += "KERNEL_IMAGE_BASE_NAME"
+kernel_do_install[vardepsexclude] += "KERNEL_IMAGE_NAME"
 kernel_do_install_append() {
 	rm -vf $kerneldir/kernel-image-name
 }

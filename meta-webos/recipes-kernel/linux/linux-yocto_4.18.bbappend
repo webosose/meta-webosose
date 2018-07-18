@@ -2,7 +2,7 @@
 
 EXTENDPRAUTO_append = "webos5"
 
-# Assign to PE, because empty PKGE in KERNEL_IMAGE_BASE_NAME causes two hyphens.
+# Assign to PE, because empty PKGE in KERNEL_IMAGE_NAME causes two hyphens.
 PE = "1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"

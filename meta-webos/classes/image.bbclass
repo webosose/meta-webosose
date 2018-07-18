@@ -70,7 +70,7 @@ do_webos_deploy_fixup_prepend() {
 def setup_debugfs_variables(d):
     d.appendVar('IMAGE_ROOTFS', '-dbg')
     image_name = d.getVar('IMAGE_NAME', True)
-    webos_image_name_suffix = d.getVar('WEBOS_IMAGE_NAME_SUFFIX', True)
+    webos_image_name_suffix = d.getVar('IMAGE_VERSION_SUFFIX', True)
     d.setVar('IMAGE_LINK_NAME', image_name+webos_image_name_suffix+'-dbg')
     d.appendVar('IMAGE_NAME','-dbg')
     d.setVar('IMAGE_BUILDING_DEBUGFS', 'true')

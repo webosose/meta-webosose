@@ -18,5 +18,5 @@ KERNEL_MODULE_AUTOLOAD_append = " \
 do_deploy_append() {
     # Remove kernel image link in meta-webos/classes/kernel.bbclass
     # However the image link is required in raspberrypi
-    ln -sf ${type}-${KERNEL_IMAGE_BASE_NAME}.bin ${DEPLOYDIR}/${type}-${KERNEL_IMAGE_SYMLINK_NAME}.bin
+    ln -sf ${type}-${KERNEL_IMAGE_NAME}.bin ${DEPLOYDIR}/${type}-${KERNEL_IMAGE_LINK_NAME}.bin
 }
