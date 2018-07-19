@@ -25,6 +25,9 @@ PNBLACKLIST[omxplayer] ?= "not compatible with webOS Open components"
 PNBLACKLIST[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 PNBLACKLIST[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
 
+# QA Issue: ELF binary 'work/raspberrypi3-webos-linux-gnueabi/mpeg2dec/0.5.1-r0/packages-split/libmpeg2/usr/lib/libmpeg2.so.0.1.0' has relocations in .text
+INSANE_SKIP_libmpeg2_pn-mpeg2dec += "textrel"
+
 MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
 MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-bcm2835-gpiomem \
