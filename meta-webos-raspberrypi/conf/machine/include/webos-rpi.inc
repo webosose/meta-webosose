@@ -40,4 +40,7 @@ KERNEL_MODULE_AUTOLOAD_append = " uinput"
 # Enable only for raspberrypi3-64
 RPI_USE_U_BOOT_raspberrypi3-64 = "1"
 
+# Always deploy the VFAT partition
+SDIMG_VFAT_DEPLOY = "1"
+
 ENABLE_UART = "1"
