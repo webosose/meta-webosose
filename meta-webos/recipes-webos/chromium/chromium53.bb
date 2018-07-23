@@ -25,7 +25,7 @@ inherit webos_public_repo
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n"
 DEPENDS_append_hardware = " libndl-directmedia2"
 
-PR = "r14"
+PR = "r15"
 WEBOS_VERSION = "53.0.2785.34-1_48a4dd6bb384ce53bd894ca0707e28244a03d9ab"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
@@ -131,8 +131,8 @@ DEPENDS_remove_aarch64 = "umediaserver libndl-directmedia2"
 
 GYP_DEFINES += "use_chromium_cbe=1 use_dynamic_injection_loading=0"
 
-# This variable should be removed.
-GYP_DEFINES_append_rpi = " platform_apollo=1"
+# This variable should be removed or changed. See discussion in PLAT-51087.
+GYP_DEFINES_append_webos = " platform_apollo=1"
 
 CHROMIUM_PLUGINS_PATH = "${libdir}"
 CBE_DATA_PATH = "${libdir}/cbe"
