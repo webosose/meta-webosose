@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2018 LG Electronics, Inc.
 
-SUMMARY = "Event-driven startup scripts for system services"
+SUMMARY = "Systemd service files for system services"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0 & MIT"
@@ -15,7 +15,7 @@ PROVIDES = "initscripts"
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-WEBOS_VERSION = "3.0.0-4_672e536b89cec071a5e4f54c90e2f49126e83880"
+WEBOS_VERSION = "3.0.0-5_f9a91aa89018067eac64af20072da93497b5fbcc"
 PR = "r7"
 
 inherit webos_component
