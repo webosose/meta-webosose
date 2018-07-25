@@ -24,7 +24,7 @@ inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n"
 
-PR = "r18"
+PR = "r19"
 WEBOS_VERSION = "53.0.2785.34-11_9d00a66762617f9dcb8daab0d1aa70128c2bda53"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
@@ -44,6 +44,14 @@ APP_SHELL_RUNTIME_DIR = "${bindir}/${APP_SHELL_RUNTIME}"
 
 CHROMIUM_DEBUG_FLAGS = "-g1"
 DEBUG_FLAGS = ""
+
+PACKAGECONFIG ?= ""
+PACKAGECONFIG_append_hardware = " gstreamer umediaserver webos_media_focus_extension"
+# g-media-pipeline is still broken for aarch64 PLAT-45700 PLAT-45699
+PACKAGECONFIG_remove_aarch64 = "gstreamer umediaserver webos_media_focus_extension"
+PACKAGECONFIG[gstreamer] = "use_gst_media=1,use_gst_media=0,g-media-pipeline"
+PACKAGECONFIG[umediaserver] = "use_umediaserver=1,use_umediaserver=0,umediaserver"
+PACKAGECONFIG[webos_media_focus_extension] = "use_webos_media_focus_extension=1,use_webos_media_focus_extension=0"
 
 GYP_DEFINES = "\
     chromeos=0\
@@ -97,6 +105,7 @@ GYP_DEFINES = "\
     webos=1\
     webos_ewam=0\
     werror=''\
+    ${PACKAGECONFIG_CONFARGS} \
 "
 
 GYP_DEFINES += "${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', ' enable_lttng=1', '', d)}"
@@ -124,14 +133,6 @@ GYP_DEFINES_append_qemux86 = " target_arch=ia32"
 GYP_DEFINES_append_qemux86 = " generate_character_data=0"
 GYP_DEFINES_append_armv7a = " arm_version=7"
 GYP_DEFINES_append_armv7ve = " arm_version=7 arm_override_arch='armv7ve'"
-
-# umediaserver interface for hardware
-GYP_DEFINES_append_hardware = " use_umediaserver=1 use_webos_media_focus_extension=1"
-DEPENDS_append_hardware = " umediaserver"
-
-# still broken for aarch64 PLAT-45700
-GYP_DEFINES_remove_aarch64 = "use_umediaserver=1 use_webos_media_focus_extension=1"
-DEPENDS_remove_aarch64 = "umediaserver"
 
 GYP_DEFINES += "use_chromium_cbe=1 use_dynamic_injection_loading=0"
 
