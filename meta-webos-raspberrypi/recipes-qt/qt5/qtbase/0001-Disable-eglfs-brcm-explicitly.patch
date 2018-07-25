@@ -1,4 +1,4 @@
-From 6251cceeb2e9d6eb35d5fbede4ce9707a5a7b49e Mon Sep 17 00:00:00 2001
+From 46bab70ba402dd6faeae0a9d7aaa7372f1f1f2ab Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Thu, 6 Jul 2017 09:41:31 +0900
 Subject: [PATCH] Disable eglfs-brcm explicitly
@@ -18,26 +18,47 @@ Only build tested.
 
 :Issues Addressed:
 [PLAT-42918] qtbase build failures on apollo-rpi3 no shared state build
+
+Change-Id: I9392e5aec929fe7d1c3dc9f52f94323ede3f86e0
 ---
- configure | 5 -----
- 1 file changed, 5 deletions(-)
+ src/gui/configure.json                                     | 7 +------
+ .../eglfs/deviceintegration/deviceintegration.pro          | 1 -
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/configure b/configure
-index 679da84..015a04d 100755
---- a/configure
-+++ b/configure
-@@ -5882,11 +5882,6 @@ if [ "$CFG_EGLFS" != "no" ]; then
-     if [ "$XPLATFORM_QNX" = "no" ] && [ "$CFG_OPENGL" != "no" ]; then
-         CFG_EGLFS="$CFG_EGL"
-         # Detect eglfs backends.
--        if compileTest qpa/eglfs-brcm "eglfs-brcm"; then
--            CFG_EGLFS_BRCM=yes
--        else
--            CFG_EGLFS_BRCM=no
--        fi
-         if compileTest qpa/eglfs-egldevice "eglfs-egldevice"; then
-             CFG_EGLFS_EGLDEVICE=yes
-         else
--- 
-1.9.1
-
+diff --git a/src/gui/configure.json b/src/gui/configure.json
+index 864603429a..a15e9c4c0a 100644
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -1118,11 +1118,6 @@
+             "condition": "!config.android && !config.darwin && !config.win32 && features.egl",
+             "output": [ "privateFeature" ]
+         },
+-        "eglfs_brcm": {
+-            "label": "EGLFS Raspberry Pi",
+-            "condition": "features.eglfs && tests.egl-brcm",
+-            "output": [ "privateFeature" ]
+-        },
+         "eglfs_egldevice": {
+             "label": "EGLFS EGLDevice",
+             "condition": "features.eglfs && tests.egl-egldevice && features.kms",
+@@ -1636,7 +1631,7 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
+                     "section": "EGLFS details",
+                     "condition": "features.eglfs",
+                     "entries": [
+-                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_mali", "eglfs_brcm", "egl_x11"
++                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_mali", "egl_x11"
+                     ]
+                 },
+                 "linuxfb", "vnc", "mirclient",
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro b/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
+index 92ee83fd8f..7ca4b5378d 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
++++ b/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
+@@ -4,7 +4,6 @@ QT_FOR_CONFIG += gui-private
+ qtConfig(egl_x11): SUBDIRS += eglfs_x11
+ qtConfig(eglfs_gbm): SUBDIRS *= eglfs_kms_support eglfs_kms
+ qtConfig(eglfs_egldevice): SUBDIRS *= eglfs_kms_support eglfs_kms_egldevice
+-qtConfig(eglfs_brcm): SUBDIRS += eglfs_brcm
+ qtConfig(eglfs_mali): SUBDIRS += eglfs_mali
+ qtConfig(eglfs_viv): SUBDIRS += eglfs_viv
+ qtConfig(eglfs_rcar): SUBDIRS += eglfs_rcar

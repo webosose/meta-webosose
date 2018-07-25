@@ -1,4 +1,4 @@
-From ea194c07bc48a06618bd7108b8f57e91edd518b7 Mon Sep 17 00:00:00 2001
+From baa41388a436b8e1669336be192fc99c72f9d22a Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Thu, 5 Jun 2014 02:04:27 +0300
 Subject: [PATCH] Expose new QSystemSemaphore resetOwner API
@@ -13,10 +13,10 @@ Change-Id: I6d4d616d91f0c378c14f9165725cbcb406555d6c
  2 files changed, 18 insertions(+)
 
 diff --git a/src/corelib/kernel/qsystemsemaphore.h b/src/corelib/kernel/qsystemsemaphore.h
-index 10e5c1b..e90f9b8 100644
+index d6a4301df6..d6b433ed58 100644
 --- a/src/corelib/kernel/qsystemsemaphore.h
 +++ b/src/corelib/kernel/qsystemsemaphore.h
-@@ -77,6 +77,10 @@ public:
+@@ -83,6 +83,10 @@ public:
      SystemSemaphoreError error() const;
      QString errorString() const;
  
@@ -28,10 +28,10 @@ index 10e5c1b..e90f9b8 100644
      Q_DISABLE_COPY(QSystemSemaphore)
      QScopedPointer<QSystemSemaphorePrivate> d;
 diff --git a/src/corelib/kernel/qsystemsemaphore_unix.cpp b/src/corelib/kernel/qsystemsemaphore_unix.cpp
-index d1ec39e..cf92bee 100644
+index f12a808891..71f9c7b52a 100644
 --- a/src/corelib/kernel/qsystemsemaphore_unix.cpp
 +++ b/src/corelib/kernel/qsystemsemaphore_unix.cpp
-@@ -92,6 +92,20 @@ void QSystemSemaphorePrivate::setErrorString(const QString &function)
+@@ -98,6 +98,20 @@ void QSystemSemaphorePrivate::setErrorString(const QString &function)
      }
  }
  

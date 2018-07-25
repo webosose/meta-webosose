@@ -1,0 +1,148 @@
+From 140d09ff8108795100ec448832f196129d4e321a Mon Sep 17 00:00:00 2001
+From: Andrey Volykhin <andrey.volykhin@lge.com>
+Date: Fri, 10 Apr 2015 17:10:57 -0700
+Subject: [PATCH] Allow to abort the scene graph rendering of QML
+
+:Release Notes:
+Allow to abort the scene graph rendering of QML
+before it starts rendering
+
+:Detailed Notes:
+Add QQuickWindow "abortBeforeRendering" option to allow abort
+the scene graph rendering (sync, render, swap) after "sync" step
+to make only QSGNodes synchronizing without subsequent drawing
+of changed content to the QQuickWindow (QWindow).
+
+:Testing Performed:
+blink #728 M14b+
+
+:QA Notes:
+Need for https://gpro.lgsvl.com/#/c/87137/
+
+:Conflicts:
+Updated for qt5.4
+
+:Issues Addressed:
+[DRD-2404] Implement graphics resources suspend/resume support
+---
+ src/quick/items/qquickwindow.cpp               | 22 ++++++++++++++++++++++
+ src/quick/items/qquickwindow.h                 |  3 +++
+ src/quick/items/qquickwindow_p.h               |  2 ++
+ src/quick/scenegraph/coreapi/qsgrenderer_p.h   |  3 +++
+ src/quick/scenegraph/qsgrenderloop.cpp         |  3 +++
+ src/quick/scenegraph/qsgthreadedrenderloop.cpp |  7 +++++++
+ 6 files changed, 40 insertions(+)
+
+diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
+index c1fdd5c..c6d18de 100644
+--- a/src/quick/items/qquickwindow.cpp
++++ b/src/quick/items/qquickwindow.cpp
+@@ -527,6 +527,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
+     , customRenderStage(0)
+     , clearColor(Qt::white)
+     , clearBeforeRendering(true)
++    , abortBeforeRendering(false)
+     , persistentGLContext(true)
+     , persistentSceneGraph(true)
+     , lastWheelEventAccepted(false)
+@@ -3850,6 +3851,27 @@ bool QQuickWindow::clearBeforeRendering() const
+ }
+ 
+ /*!
++    Sets whether the scene graph rendering of QML should abort
++    before it starts rendering to \a enabled.
++ */
++
++void QQuickWindow::setAbortBeforeRendering(bool enabled)
++{
++    Q_D(QQuickWindow);
++    d->abortBeforeRendering = enabled;
++}
++
++/*!
++    Returns whether aborting before the scene graph rendering or not.
++ */
++
++bool QQuickWindow::abortBeforeRendering() const
++{
++    Q_D(const QQuickWindow);
++    return d->abortBeforeRendering;
++}
++
++/*!
+     \overload
+  */
+ 
+diff --git a/src/quick/items/qquickwindow.h b/src/quick/items/qquickwindow.h
+index cc88300..a50ba36 100644
+--- a/src/quick/items/qquickwindow.h
++++ b/src/quick/items/qquickwindow.h
+@@ -136,6 +136,9 @@ public:
+     QSGTexture *createTextureFromImage(const QImage &image, CreateTextureOptions options) const;
+     QSGTexture *createTextureFromId(uint id, const QSize &size, CreateTextureOptions options = CreateTextureOption()) const;
+ 
++    void setAbortBeforeRendering(bool enabled);
++    bool abortBeforeRendering() const;
++
+     void setClearBeforeRendering(bool enabled);
+     bool clearBeforeRendering() const;
+ 
+diff --git a/src/quick/items/qquickwindow_p.h b/src/quick/items/qquickwindow_p.h
+index ee30cd7..1601259 100644
+--- a/src/quick/items/qquickwindow_p.h
++++ b/src/quick/items/qquickwindow_p.h
+@@ -261,6 +261,8 @@ public:
+ 
+     uint clearBeforeRendering : 1;
+ 
++    uint abortBeforeRendering : 1;
++
+     uint persistentGLContext : 1;
+     uint persistentSceneGraph : 1;
+ 
+diff --git a/src/quick/scenegraph/coreapi/qsgrenderer_p.h b/src/quick/scenegraph/coreapi/qsgrenderer_p.h
+index d96d893..259f13d 100644
+--- a/src/quick/scenegraph/coreapi/qsgrenderer_p.h
++++ b/src/quick/scenegraph/coreapi/qsgrenderer_p.h
+@@ -97,6 +97,9 @@ public:
+ 
+     void clearChangedFlag() { m_changed_emitted = false; }
+ 
++    void setChangedEmitted(bool emitted) { m_changed_emitted = emitted; }
++    bool changedEmmited() const { return m_changed_emitted; }
++
+ protected:
+     virtual void render() = 0;
+ 
+diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
+index 206fbc4..ac14394 100644
+--- a/src/quick/scenegraph/qsgrenderloop.cpp
++++ b/src/quick/scenegraph/qsgrenderloop.cpp
+@@ -416,6 +416,9 @@ void QSGGuiThreadRenderLoop::renderWindow(QQuickWindow *window)
+ 
+     cd->polishItems();
+ 
++    if (cd->abortBeforeRendering)
++        return;
++
+     if (profileFrames)
+         polishTime = renderTimer.nsecsElapsed();
+     Q_QUICK_SG_PROFILE_SWITCH(QQuickProfiler::SceneGraphPolishFrame,
+diff --git a/src/quick/scenegraph/qsgthreadedrenderloop.cpp b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
+index e0f78a9..0b0bd60 100644
+--- a/src/quick/scenegraph/qsgthreadedrenderloop.cpp
++++ b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
+@@ -608,6 +608,13 @@ void QSGRenderThread::syncAndRender()
+         qCDebug(QSG_LOG_RENDERLOOP) << QSG_RT_PAD << "- updatePending, doing sync";
+         sync(exposeRequested);
+     }
++
++    if (d->abortBeforeRendering) {
++        qCDebug(QSG_LOG_RENDERLOOP) << QSG_RT_PAD << " - force abort, rendering aborted";
++        d->renderer->setChangedEmitted(false);
++        return;
++    }
++
+ #ifndef QSG_NO_RENDER_TIMING
+     if (profileFrames)
+         syncTime = threadTimer.nsecsElapsed();

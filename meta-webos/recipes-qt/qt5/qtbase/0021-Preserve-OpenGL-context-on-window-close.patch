@@ -1,0 +1,52 @@
+From 30052b4a33d8f6706dfce394eaf779cb3173ec91 Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Sun, 29 Mar 2015 22:47:43 +0300
+Subject: [PATCH] Preserve OpenGL context on window close
+
+:Release Notes:
+Preserve OpenGL context on window close
+
+:Detailed Notes:
+WAM needs opengl context to stay current when window is closed.
+Thus do not call QOpenGLContext::doneCurrent() on window close.
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-6157] Stability: WebAppMgr crashes at multiple locations
+
+Change-Id: I882d9c4c62e18f28101529dcb05552f794c07b0e
+---
+ src/gui/kernel/qsurface.cpp | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/gui/kernel/qsurface.cpp b/src/gui/kernel/qsurface.cpp
+index 3cdd11de8c..3fa2481a96 100644
+--- a/src/gui/kernel/qsurface.cpp
++++ b/src/gui/kernel/qsurface.cpp
+@@ -43,6 +43,8 @@
+ QT_BEGIN_NAMESPACE
+ 
+ 
++static bool qsg_preserve_opengl_context = qgetenv("QSG_RENDER_LOOP_PRESERVE_OPENGL_CONTEXT").toInt();
++
+ /*!
+     \class QSurface
+     \inmodule QtGui
+@@ -132,9 +134,11 @@ QSurface::QSurface(SurfaceClass type)
+ QSurface::~QSurface()
+ {
+ #ifndef QT_NO_OPENGL
+-    QOpenGLContext *context = QOpenGLContext::currentContext();
+-    if (context && context->surface() == this)
+-        context->doneCurrent();
++    if (!qsg_preserve_opengl_context) {
++        QOpenGLContext *context = QOpenGLContext::currentContext();
++        if (context && context->surface() == this)
++            context->doneCurrent();
++    }
+ #endif
+ }
+ 

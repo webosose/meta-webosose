@@ -29,3 +29,7 @@ do_install_append() {
     ln -snf . ${D}/${libdir}/qt5
 }
 FILES_${PN} += "${libdir}/qt5"
+
+# until pseudo is completely fixed
+# PLAT-48507 pseudo: random package_qa failures
+INSANE_SKIP_${PN} += "host-user-contaminated"

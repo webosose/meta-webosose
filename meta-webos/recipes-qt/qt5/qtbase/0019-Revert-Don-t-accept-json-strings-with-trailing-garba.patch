@@ -1,4 +1,4 @@
-From ef22809dbd0d159bce61520b5d1fd27a5818f97a Mon Sep 17 00:00:00 2001
+From d4124507b2b65b9bf990113ff1f839d3642e00a1 Mon Sep 17 00:00:00 2001
 From: Jose Dapena Paz <jose.dapena@lge.com>
 Date: Mon, 23 Feb 2015 14:20:58 +0100
 Subject: [PATCH] Revert "Don't accept json strings with trailing garbage"
@@ -41,10 +41,10 @@ Upstream-Status: not upstreamable (local workaround).
  3 files changed, 1 insertion(+), 28 deletions(-)
 
 diff --git a/src/corelib/json/qjsondocument.h b/src/corelib/json/qjsondocument.h
-index d7a88b2..3171a5a 100644
+index 19885a8d56..86de70ce57 100644
 --- a/src/corelib/json/qjsondocument.h
 +++ b/src/corelib/json/qjsondocument.h
-@@ -60,8 +60,7 @@ struct Q_CORE_EXPORT QJsonParseError
+@@ -66,8 +66,7 @@ struct Q_CORE_EXPORT QJsonParseError
          UnterminatedString,
          MissingObject,
          DeepNesting,
@@ -55,10 +55,10 @@ index d7a88b2..3171a5a 100644
  
      QString    errorString() const;
 diff --git a/src/corelib/json/qjsonparser.cpp b/src/corelib/json/qjsonparser.cpp
-index a23741a..6432932 100644
+index 39738b90a8..570dca8076 100644
 --- a/src/corelib/json/qjsonparser.cpp
 +++ b/src/corelib/json/qjsonparser.cpp
-@@ -71,7 +71,6 @@ QT_BEGIN_NAMESPACE
+@@ -77,7 +77,6 @@ QT_BEGIN_NAMESPACE
  #define JSONERR_MISS_OBJ    QT_TRANSLATE_NOOP("QJsonParseError", "object is missing after a comma")
  #define JSONERR_DEEP_NEST   QT_TRANSLATE_NOOP("QJsonParseError", "too deeply nested document")
  #define JSONERR_DOC_LARGE   QT_TRANSLATE_NOOP("QJsonParseError", "too large document")
@@ -66,7 +66,7 @@ index a23741a..6432932 100644
  
  /*!
      \class QJsonParseError
-@@ -105,8 +104,6 @@ QT_BEGIN_NAMESPACE
+@@ -111,8 +110,6 @@ QT_BEGIN_NAMESPACE
      \value MissingObject            An object was expected but couldn't be found
      \value DeepNesting              The JSON document is too deeply nested for the parser to parse it
      \value DocumentTooLarge         The JSON document is too large for the parser to parse it
@@ -75,7 +75,7 @@ index a23741a..6432932 100644
  */
  
  /*!
-@@ -178,9 +175,6 @@ QString QJsonParseError::errorString() const
+@@ -184,9 +181,6 @@ QString QJsonParseError::errorString() const
      case DocumentTooLarge:
          sz = JSONERR_DOC_LARGE;
          break;
@@ -85,7 +85,7 @@ index a23741a..6432932 100644
      }
  #ifndef QT_BOOTSTRAPPED
      return QCoreApplication::translate("QJsonParseError", sz);
-@@ -322,12 +316,6 @@ QJsonDocument Parser::parse(QJsonParseError *error)
+@@ -327,12 +321,6 @@ QJsonDocument Parser::parse(QJsonParseError *error)
          goto error;
      }
  
@@ -99,18 +99,18 @@ index a23741a..6432932 100644
      {
          if (error) {
 diff --git a/tests/auto/corelib/json/tst_qtjson.cpp b/tests/auto/corelib/json/tst_qtjson.cpp
-index f2f9166..877e2a2 100644
+index 824a6188f7..3ad8f82f45 100644
 --- a/tests/auto/corelib/json/tst_qtjson.cpp
 +++ b/tests/auto/corelib/json/tst_qtjson.cpp
-@@ -145,7 +145,6 @@ private Q_SLOTS:
+@@ -137,7 +137,6 @@ private Q_SLOTS:
      void objectInitializerList();
  
      void unicodeKeys();
 -    void garbageAtEnd();
  
      void removeNonLatinKey();
- private:
-@@ -2787,19 +2786,6 @@ void tst_QtJson::unicodeKeys()
+     void documentFromVariant();
+@@ -2811,19 +2810,6 @@ void tst_QtJson::unicodeKeys()
      }
  }
  
@@ -118,12 +118,12 @@ index f2f9166..877e2a2 100644
 -{
 -    QJsonParseError error;
 -    QJsonDocument doc = QJsonDocument::fromJson("{},", &error);
--    QVERIFY(error.error == QJsonParseError::GarbageAtEnd);
--    QVERIFY(error.offset == 2);
+-    QCOMPARE(error.error, QJsonParseError::GarbageAtEnd);
+-    QCOMPARE(error.offset, 2);
 -    QVERIFY(doc.isEmpty());
 -
 -    doc = QJsonDocument::fromJson("{}    ", &error);
--    QVERIFY(error.error == QJsonParseError::NoError);
+-    QCOMPARE(error.error, QJsonParseError::NoError);
 -    QVERIFY(!doc.isEmpty());
 -}
 -

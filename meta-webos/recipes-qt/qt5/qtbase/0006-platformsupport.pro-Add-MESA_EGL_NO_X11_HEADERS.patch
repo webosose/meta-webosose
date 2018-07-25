@@ -1,4 +1,4 @@
-From dd3da1bfb55abb57a06c8bfc7a22bf42859fa6de Mon Sep 17 00:00:00 2001
+From 6c86fc63afc0f212abd7aea52d57999cbdced6a8 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:59:35 +0100
 Subject: [PATCH] platformsupport.pro: Add MESA_EGL_NO_X11_HEADERS
@@ -8,16 +8,16 @@ Subject: [PATCH] platformsupport.pro: Add MESA_EGL_NO_X11_HEADERS
  1 file changed, 3 insertions(+)
 
 diff --git a/src/platformsupport/platformsupport.pro b/src/platformsupport/platformsupport.pro
-index c5894c4..54c1868 100644
+index 7db6de78b4..3faa26b6fe 100644
 --- a/src/platformsupport/platformsupport.pro
 +++ b/src/platformsupport/platformsupport.pro
-@@ -4,6 +4,9 @@ QT         = core-private gui-private
- CONFIG += static internal_module
- mac:LIBS_PRIVATE += -lz
+@@ -10,6 +10,9 @@ SUBDIRS = \
+ qtConfig(freetype)|darwin|win32: \
+     SUBDIRS += fontdatabases
  
 +#Avoid X11 header collision
 +DEFINES += MESA_EGL_NO_X11_HEADERS
 +
- DEFINES += QT_NO_CAST_FROM_ASCII
- PRECOMPILED_HEADER = ../corelib/global/qt_pch.h
- 
+ qtConfig(evdev)|qtConfig(tslib)|qtConfig(libinput)|qtConfig(integrityhid) {
+     SUBDIRS += input
+     input.depends += devicediscovery

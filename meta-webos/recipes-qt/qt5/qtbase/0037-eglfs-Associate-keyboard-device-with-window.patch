@@ -1,4 +1,4 @@
-From c6b302e8a57d36364e5559e4e82be7a8cc9ed10e Mon Sep 17 00:00:00 2001
+From 5c024facd860f773cddd84a9828b37f91ff8c467 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 5 Jul 2018 16:10:46 +0900
 Subject: [PATCH] eglfs: Associate keyboard device with window
@@ -30,25 +30,24 @@ Confirmed keyboard events are delivered to the window associated.
 [PLAT-58591] Associate keyboard and display on static mode
 
 Change-Id: I835721c5d482eaec7220aa435e2f00cdb04f2a68
-Upstream-Status : Inappropriate [webOS specific]
 ---
- .../input/evdevkeyboard/qevdevkeyboardhandler.cpp    | 15 +++++++++++++--
- .../input/evdevkeyboard/qevdevkeyboardhandler_p.h    |  5 +++++
- .../input/evdevkeyboard/qevdevkeyboardmanager.cpp    | 11 +++++++++++
- .../input/evdevkeyboard/qevdevkeyboardmanager_p.h    |  3 +++
- .../eglfs_kms/qeglfskmsintegration.cpp               |  5 +++++
- .../eglfs_kms/qeglfskmsintegration.h                 |  2 ++
- .../platforms/eglfs/qeglfsdeviceintegration.cpp      |  6 ++++++
- .../platforms/eglfs/qeglfsdeviceintegration.h        |  2 ++
- src/plugins/platforms/eglfs/qeglfsintegration.cpp    | 20 ++++++++++++++++++++
- src/plugins/platforms/eglfs/qeglfsintegration.h      |  4 ++++
+ .../evdevkeyboard/qevdevkeyboardhandler.cpp   | 15 ++++++++++++--
+ .../evdevkeyboard/qevdevkeyboardhandler_p.h   |  5 +++++
+ .../evdevkeyboard/qevdevkeyboardmanager.cpp   | 11 ++++++++++
+ .../evdevkeyboard/qevdevkeyboardmanager_p.h   |  3 +++
+ .../eglfs/api/qeglfsdeviceintegration.cpp     |  6 ++++++
+ .../eglfs/api/qeglfsdeviceintegration_p.h     |  2 ++
+ .../platforms/eglfs/api/qeglfsintegration.cpp | 20 +++++++++++++++++++
+ .../platforms/eglfs/api/qeglfsintegration_p.h |  4 ++++
+ .../qeglfskmsintegration.cpp                  |  5 +++++
+ .../eglfs_kms_support/qeglfskmsintegration.h  |  2 ++
  10 files changed, 71 insertions(+), 2 deletions(-)
 
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
-index 3363859..2bce8fc 100644
+index a069a48388..bf75367816 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
-@@ -63,7 +63,8 @@ QEvdevKeyboardHandler::QEvdevKeyboardHandler(const QString &device, QFdContainer
+@@ -77,7 +77,8 @@ QEvdevKeyboardHandler::QEvdevKeyboardHandler(const QString &device, QFdContainer
      : m_device(device), m_fd(fd.release()), m_notify(Q_NULLPTR),
        m_modifiers(0), m_composing(0), m_dead_unicode(0xffff),
        m_no_zap(disableZap), m_do_compose(enableCompose),
@@ -58,10 +57,10 @@ index 3363859..2bce8fc 100644
  {
      qCDebug(qLcEvdevKey) << "Create keyboard handler with for device" << device;
  
-@@ -211,7 +212,9 @@ void QEvdevKeyboardHandler::readKeycode()
- void QEvdevKeyboardHandler::processKeyEvent(int nativecode, int unicode, int qtcode,
-                                             Qt::KeyboardModifiers modifiers, bool isPress, bool autoRepeat)
+@@ -227,7 +228,9 @@ void QEvdevKeyboardHandler::processKeyEvent(int nativecode, int unicode, int qtc
  {
+     QGuiApplicationPrivate::inputDeviceManager()->setKeyboardModifiers(modifiers, qtcode);
+ 
 -    QWindowSystemInterface::handleExtendedKeyEvent(0, (isPress ? QEvent::KeyPress : QEvent::KeyRelease),
 +    if (m_window)
 +        m_window->requestActivate();
@@ -69,7 +68,7 @@ index 3363859..2bce8fc 100644
                                                     qtcode, modifiers, nativecode + 8, 0, int(modifiers),
                                                     (unicode != 0xffff ) ? QString(unicode) : QString(), autoRepeat);
  }
-@@ -551,4 +554,12 @@ bool QEvdevKeyboardHandler::loadKeymap(const QString &file)
+@@ -569,4 +572,12 @@ bool QEvdevKeyboardHandler::loadKeymap(const QString &file)
      return true;
  }
  
@@ -83,10 +82,10 @@ index 3363859..2bce8fc 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
-index b08f30b..5433172 100644
+index 1ec4915855..5b6def8aa1 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
-@@ -48,6 +48,7 @@
+@@ -54,6 +54,7 @@
  #include <qobject.h>
  #include <QTimer>
  #include <QDataStream>
@@ -94,7 +93,7 @@ index b08f30b..5433172 100644
  
  QT_BEGIN_NAMESPACE
  
-@@ -184,6 +185,8 @@ public:
+@@ -190,6 +191,8 @@ public:
      bool loadKeymap(const QString &file);
      void unloadKeymap();
  
@@ -103,7 +102,7 @@ index b08f30b..5433172 100644
  private slots:
      void readKeycode();
      KeycodeAction processKeycode(quint16 keycode, bool pressed, bool autorepeat);
-@@ -211,6 +214,8 @@ private:
+@@ -217,6 +220,8 @@ private:
      const QEvdevKeyboardMap::Composing *m_keycompose;
      int m_keycompose_size;
  
@@ -113,10 +112,10 @@ index b08f30b..5433172 100644
      static const QEvdevKeyboardMap::Composing s_keycompose_default[];
  };
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
-index 437e6a1..e6584f0 100644
+index 94ebae8f42..fbfea6ef13 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
-@@ -145,4 +145,15 @@ void QEvdevKeyboardManager::loadKeymap(const QString &file)
+@@ -151,4 +151,15 @@ void QEvdevKeyboardManager::loadKeymap(const QString &file)
      }
  }
  
@@ -133,10 +132,10 @@ index 437e6a1..e6584f0 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
-index c0d4502..857fe0b 100644
+index d2e34fead3..84beee57e5 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
-@@ -52,6 +52,7 @@
+@@ -58,6 +58,7 @@
  #include <QObject>
  #include <QHash>
  #include <QSocketNotifier>
@@ -144,7 +143,7 @@ index c0d4502..857fe0b 100644
  
  QT_BEGIN_NAMESPACE
  
-@@ -64,6 +65,8 @@ public:
+@@ -70,6 +71,8 @@ public:
  
      void loadKeymap(const QString &file);
  
@@ -153,39 +152,12 @@ index c0d4502..857fe0b 100644
  private slots:
      void addKeyboard(const QString &deviceNode = QString());
      void removeKeyboard(const QString &deviceNode);
-diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
-index 96d292d..06d644d 100644
---- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
-+++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.cpp
-@@ -274,4 +274,9 @@ void QEglFSKmsIntegration::loadConfig()
-                               << "\toutputs:" << m_outputSettings;
- }
- 
-+QString QEglFSKmsIntegration::kbdDeviceName(QString &output) const
-+{
-+    return m_outputSettings.value(output).value(QStringLiteral("keyboardDevice")).toString();
-+}
-+
- QT_END_NAMESPACE
-diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
-index 0d0f7c5..8875d80 100644
---- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
-+++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsintegration.h
-@@ -67,6 +67,8 @@ public:
-     void presentBuffer(QPlatformSurface *surface) Q_DECL_OVERRIDE;
-     bool supportsPBuffers() const Q_DECL_OVERRIDE;
- 
-+    QString kbdDeviceName(QString &output) const Q_DECL_OVERRIDE;
-+
-     bool hwCursor() const;
-     bool separateScreens() const;
-     QMap<QString, QVariantMap> outputSettings() const;
-diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
-index ed67374..dcf9fcc 100644
---- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
-+++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.cpp
-@@ -352,4 +352,10 @@ void *QEGLDeviceIntegration::wlDisplay() const
-     return Q_NULLPTR;
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
+index ffc11d51a4..0873205b4e 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
++++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
+@@ -387,4 +387,10 @@ EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfa
+     return chooser.chooseConfig();
  }
  
 +QString QEGLDeviceIntegration::kbdDeviceName(QString &output) const
@@ -195,34 +167,34 @@ index ed67374..dcf9fcc 100644
 +}
 +
  QT_END_NAMESPACE
-diff --git a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
-index 4f8fcfb..030ba9f 100644
---- a/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
-+++ b/src/plugins/platforms/eglfs/qeglfsdeviceintegration.h
-@@ -102,6 +102,8 @@ public:
-     virtual bool supportsSurfacelessContexts() const;
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
+index 45da73d51b..644ee1f672 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
++++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
+@@ -109,6 +109,8 @@ public:
  
      virtual void *wlDisplay() const;
-+
-+    virtual QString kbdDeviceName(QString &output) const;
- };
  
- class Q_EGLFS_EXPORT QEGLDeviceIntegrationPlugin : public QObject
-diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
-index 19a9677..c7af746 100644
---- a/src/plugins/platforms/eglfs/qeglfsintegration.cpp
-+++ b/src/plugins/platforms/eglfs/qeglfsintegration.cpp
-@@ -255,6 +255,8 @@ QPlatformWindow *QEglFSIntegration::createPlatformWindow(QWindow *window) const
-     w->create();
-     if (window->type() != Qt::ToolTip)
++    virtual QString kbdDeviceName(QString &output) const;
++
+     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format);
+     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration);
+ };
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
+index ac1d18bf93..5f1069307d 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
++++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
+@@ -290,6 +290,8 @@ QPlatformWindow *QEglFSIntegration::createPlatformWindow(QWindow *window) const
+     // Activate only the window for the primary screen to make input work
+     if (window->type() != Qt::ToolTip && window->screen() == QGuiApplication::primaryScreen())
          w->requestActivateWindow();
 +    if (associateInputHandlers(window))
 +        connect(window, SIGNAL(screenChanged(QScreen*)), this, SLOT(handleScreenChange()));
+ 
      return w;
  }
- 
-@@ -549,4 +551,22 @@ EGLConfig QEglFSIntegration::chooseConfig(EGLDisplay display, const QSurfaceForm
-     return chooser.chooseConfig();
+@@ -609,4 +611,22 @@ EGLNativeDisplayType QEglFSIntegration::nativeDisplay(QEglFSDeviceIntegration *i
+     return integration->platformDisplay();
  }
  
 +bool QEglFSIntegration::associateInputHandlers(QWindow *window) const
@@ -230,7 +202,7 @@ index 19a9677..c7af746 100644
 +    bool associated = false;
 +    if (window) {
 +        QEglFSScreen *s = window->screen() ? static_cast<QEglFSScreen *>(window->screen()->handle()) : NULL;
-+        QEGLDeviceIntegration *i = s ? s->deviceIntegration() : qt_egl_device_integration();
++        QEglFSDeviceIntegration *i = s ? s->deviceIntegration() : qt_egl_device_integration();
 +        QString outputName = s ? s->name() : QString();
 +        if (m_kbdMgr && !i->kbdDeviceName(outputName).isEmpty())
 +            associated = m_kbdMgr->setWindow(i->kbdDeviceName(outputName), window);
@@ -244,22 +216,49 @@ index 19a9677..c7af746 100644
 +}
 +
  QT_END_NAMESPACE
-diff --git a/src/plugins/platforms/eglfs/qeglfsintegration.h b/src/plugins/platforms/eglfs/qeglfsintegration.h
-index d9dfd39..087dcf9 100644
---- a/src/plugins/platforms/eglfs/qeglfsintegration.h
-+++ b/src/plugins/platforms/eglfs/qeglfsintegration.h
-@@ -90,10 +90,14 @@ public:
-     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format);
-     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEGLDeviceIntegration *integration);
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
+index 3a68ed968a..b2f66497d0 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
++++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
+@@ -112,10 +112,14 @@ public:
+     void addScreen(QPlatformScreen *screen, bool isPrimary = false);
+     void removeScreen(QPlatformScreen *screen);
  
 +private slots:
 +    void handleScreenChange();
 +
  private:
      EGLNativeDisplayType nativeDisplay() const;
-     EGLNativeDisplayType nativeDisplay(QEGLDeviceIntegration *integration) const;
+     EGLNativeDisplayType nativeDisplay(QEglFSDeviceIntegration *integration) const;
      void createInputHandlers();
 +    bool associateInputHandlers(QWindow *window) const;
      static void loadKeymapStatic(const QString &filename);
  
      QJsonDocument m_configJson;
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+index 73f6309258..12eea4b872 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+@@ -150,4 +150,9 @@ QKmsScreenConfig *QEglFSKmsIntegration::screenConfig() const
+     return m_screenConfig;
+ }
+ 
++QString QEglFSKmsIntegration::kbdDeviceName(QString &output) const
++{
++    return m_screenConfig->outputSettings().value(output).value(QStringLiteral("keyboardDevice")).toString();
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
+index c1752c5423..fc53c68585 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
+@@ -72,6 +72,8 @@ public:
+     void waitForVSync(QPlatformSurface *surface) const override;
+     bool supportsPBuffers() const override;
+ 
++    QString kbdDeviceName(QString &output) const override;
++
+     QKmsDevice *device() const;
+     QKmsScreenConfig *screenConfig() const;
+ 

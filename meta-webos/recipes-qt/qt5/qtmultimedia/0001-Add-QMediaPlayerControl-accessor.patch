@@ -1,0 +1,58 @@
+From d235b8c316df55a120c528fae4708932702fa0ed Mon Sep 17 00:00:00 2001
+From: Anatoliy Klymenko <anatoliy.klimenko@lge.com>
+Date: Tue, 22 Sep 2015 14:36:30 -0700
+Subject: [PATCH] Add QMediaPlayerControl accessor
+
+:Release Notes:
+Add QMediaPlayerControl accessor.
+
+:Detailed Notes:
+Add QMediaPlayerControl accessor needed by media focus
+qml extension.
+
+:Testing Performed:
+qml dual video app.
+
+:Issues Addressed:
+[PLAT-7834] - Implement media focus API for Qt/Qml
+
+Upstream-Status: Inappropriate [platform specific]
+
+Open-webOS-DCO-1.0-Signed-off-by: Anatoliy Klymenko <anatoliy.klimenko@lge.com>
+
+Change-Id: I87fe23cc2cba06936248f7951944018f61d5ffb6
+---
+ src/multimedia/playback/qmediaplayer.cpp | 7 +++++++
+ src/multimedia/playback/qmediaplayer.h   | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/src/multimedia/playback/qmediaplayer.cpp b/src/multimedia/playback/qmediaplayer.cpp
+index 16fdec8..648c8c8 100644
+--- a/src/multimedia/playback/qmediaplayer.cpp
++++ b/src/multimedia/playback/qmediaplayer.cpp
+@@ -695,6 +695,13 @@ QMediaContent QMediaPlayer::currentMedia() const
+     return QMediaContent();
+ }
+ 
++QObject *QMediaPlayer::mediaControl()
++{
++    Q_D(QMediaPlayer);
++
++    return d->control;
++}
++
+ void QMediaPlayer::setPlaylist(QMediaPlaylist *playlist)
+ {
+     QMediaContent m(playlist, QUrl(), false);
+diff --git a/src/multimedia/playback/qmediaplayer.h b/src/multimedia/playback/qmediaplayer.h
+index f23a941..9d89458 100644
+--- a/src/multimedia/playback/qmediaplayer.h
++++ b/src/multimedia/playback/qmediaplayer.h
+@@ -135,6 +135,7 @@ public:
+     const QIODevice *mediaStream() const;
+     QMediaPlaylist *playlist() const;
+     QMediaContent currentMedia() const;
++    QObject *mediaControl();
+ 
+     State state() const;
+     MediaStatus mediaStatus() const;

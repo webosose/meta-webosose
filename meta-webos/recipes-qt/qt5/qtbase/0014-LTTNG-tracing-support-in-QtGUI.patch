@@ -1,4 +1,4 @@
-From b82c51807e5a300b882740aa1ae0c4311e616ae5 Mon Sep 17 00:00:00 2001
+From e83f78d4e66fbd4ceb9182e02aa5ce658c8fdb4e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Fri, 13 Jun 2014 18:48:49 +0200
 Subject: [PATCH] LTTNG tracing support in QtGUI
@@ -26,26 +26,23 @@ Added tracepoints for:
 
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 
-Conflicts:
-	configure
-	src/gui/image/qimage.cpp
-
 Change-Id: I03150d6ff80cbbcd787133d75854715cb81b5571
 ---
- config.tests/unix/lttng/lttng.cpp           |  12 +++
+ config.tests/unix/lttng/lttng.cpp           |  12 ++
  config.tests/unix/lttng/lttng.pro           |   3 +
- configure                                   |  39 +++++++++
- src/gui/gui.pro                             |   7 ++
- src/gui/image/qimage.cpp                    |  14 ++++
+ config_help.txt                             |   2 +
+ src/gui/configure.json                      |  26 +++++
+ src/gui/gui.pro                             |   6 +
+ src/gui/image/qimage.cpp                    |  14 +++
  src/gui/image/qpixmap.cpp                   |   7 ++
- src/gui/kernel/kernel.pri                   |  14 ++++
- src/gui/kernel/qguilttngprovider.c          |  26 ++++++
- src/gui/kernel/qguilttngprovider_p.h        |  92 +++++++++++++++++++++
- src/gui/kernel/qguitracer_p.h               | 120 ++++++++++++++++++++++++++++
+ src/gui/kernel/kernel.pri                   |  13 +++
+ src/gui/kernel/qguilttngprovider.c          |  26 +++++
+ src/gui/kernel/qguilttngprovider_p.h        |  92 +++++++++++++++
+ src/gui/kernel/qguitracer_p.h               | 120 ++++++++++++++++++++
  src/gui/opengl/qopenglframebufferobject.cpp |   2 +
  src/gui/opengl/qopenglpaintengine.cpp       |   3 +
  src/gui/opengl/qopengltexturecache.cpp      |   2 +
- 13 files changed, 341 insertions(+)
+ 14 files changed, 328 insertions(+)
  create mode 100644 config.tests/unix/lttng/lttng.cpp
  create mode 100644 config.tests/unix/lttng/lttng.pro
  create mode 100644 src/gui/kernel/qguilttngprovider.c
@@ -54,7 +51,7 @@ Change-Id: I03150d6ff80cbbcd787133d75854715cb81b5571
 
 diff --git a/config.tests/unix/lttng/lttng.cpp b/config.tests/unix/lttng/lttng.cpp
 new file mode 100644
-index 0000000..02532ad
+index 0000000000..02532adbbb
 --- /dev/null
 +++ b/config.tests/unix/lttng/lttng.cpp
 @@ -0,0 +1,12 @@
@@ -72,128 +69,106 @@ index 0000000..02532ad
 +}
 diff --git a/config.tests/unix/lttng/lttng.pro b/config.tests/unix/lttng/lttng.pro
 new file mode 100644
-index 0000000..0742865
+index 0000000000..0742865de9
 --- /dev/null
 +++ b/config.tests/unix/lttng/lttng.pro
 @@ -0,0 +1,3 @@
 +SOURCES = lttng.cpp
 +CONFIG -= qt
 +LIBS +=
-diff --git a/configure b/configure
-index 224f9f5..5d761b0 100755
---- a/configure
-+++ b/configure
-@@ -663,6 +663,7 @@ CFG_EGL_X=auto
- CFG_FONTCONFIG=auto
- CFG_FREETYPE=auto
- CFG_HARFBUZZ=qt
-+CFG_LTTNG=auto
- CFG_SQL_AVAILABLE=
- QT_ALL_BUILD_PARTS=" libs tools examples tests "
- QT_DEFAULT_BUILD_PARTS="libs tools examples"
-@@ -847,6 +848,10 @@ QT_LIBS_DBUS=
- QT_CFLAGS_GLIB=
- QT_LIBS_GLIB=
+diff --git a/config_help.txt b/config_help.txt
+index 0bb440b556..d96d268b06 100644
+--- a/config_help.txt
++++ b/config_help.txt
+@@ -252,6 +252,8 @@ Gui, printing, widget options:
  
-+# flags for LTTNG
-+QT_CFLAGS_LTTNG=
-+QT_LIBS_LTTNG=
+   -cups ................ Enable CUPS support [auto] (Unix only)
+ 
++  -lttng ............... Enable LTTNG support [auto] (Unix only)
 +
- # default qpa platform
- QT_QPA_DEFAULT_PLATFORM=
- 
-@@ -2101,6 +2106,13 @@ while [ "$#" -gt 0 ]; do
-             fi
-         fi
-         ;;
-+    lttng)
-+        if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
-+            CFG_LTTNG="$VAL"
-+        else
-+            UNKNOWN_OPT=yes
-+        fi
-+        ;;
-     confirm-license)
-         if [ "$VAL" = "yes" ]; then
-             OPT_CONFIRM_LICENSE="$VAL"
-@@ -5272,6 +5284,30 @@ if [ "$CFG_PULSEAUDIO" != "no" ]; then
-     fi
- fi
- 
-+# Auto-detect LTTNG UST support
-+if [ "$CFG_LTTNG" != "no" ]; then
-+    if [ -n "$PKG_CONFIG" ]; then
-+        QT_CFLAGS_LTTNG=`$PKG_CONFIG --cflags lttng-ust 2>/dev/null`
-+        QT_LIBS_LTTNG=`$PKG_CONFIG --libs lttng-ust 2>/dev/null`
-+	EXTRA_LFLAGS="$EXTRA_LFLAGS $QT_LIBS_LTTNG"
-+    fi
-+    if compileTest unix/lttng "LTTNG-UST" $QT_CFLAGS_LTTNG $QT_LIBS_LTTNG; then
-+        CFG_LTTNG=yes
-+        QMakeVar set QT_CFLAGS_LTTNG "$QT_CFLAGS_LTTNG"
-+        QMakeVar set QT_LIBS_LTTNG "$QT_LIBS_LTTNG"
-+    else
-+        if [ "$CFG_LTTNG" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
-+            echo "LTTNG support cannot be enabled due to functionality tests!"
-+            echo " Turn on verbose messaging (-v) to $0 to see the final report."
-+            echo " If you believe this message is in error you may use the continue"
-+            echo " switch (-continue) to $0 to continue."
-+            exit 101
-+        else
-+            CFG_LTTNG=no
-+        fi
-+    fi
-+fi
-+
- # X11/MINGW OpenGL
- if [ "$XPLATFORM_MINGW" = "yes" ]; then
-     # auto-detect OpenGL support (es2 = OpenGL ES 2.0 or higher)
-@@ -6498,6 +6534,7 @@ fi
- [ "$CFG_ICONV" = "sun" ] && QT_CONFIG="$QT_CONFIG sun-libiconv"
- [ "$CFG_ICONV" = "gnu" ] && QT_CONFIG="$QT_CONFIG gnu-libiconv"
- [ "$CFG_GLIB" = "yes" ] && QT_CONFIG="$QT_CONFIG glib"
-+[ "$CFG_LTTNG" = "yes" ] && QT_CONFIG="$QT_CONFIG lttng"
- [ "$CFG_DBUS" != "no" ] && QT_CONFIG="$QT_CONFIG dbus"
- [ "$CFG_DBUS" = "linked" ] && QT_CONFIG="$QT_CONFIG dbus-linked"
- [ "$CFG_OPENSSL" = "yes" ] && QT_CONFIG="$QT_CONFIG openssl"
-@@ -6921,6 +6958,7 @@ QMakeVar set sql-plugins "$SQL_PLUGINS"
- [ "$CFG_OPENSSL" = "linked" ]&& QCONFIG_FLAGS="$QCONFIG_FLAGS QT_LINKED_OPENSSL"
- [ "$CFG_OPENSSL" = "no" ] && [ "$CFG_SECURETRANSPORT" = "no" ] && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_SSL"
- [ "$CFG_SECURETRANSPORT" = "yes" ] && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_SECURETRANSPORT"
-+[ "$CFG_LTTNG" = "no" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_LTTNG"
- 
- [ "$CFG_SM" = "no" ]         && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_SESSIONMANAGER"
- [ "$CFG_TSLIB" = "no" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_TSLIB"
-@@ -7399,6 +7437,7 @@ else
-     report_support "  pkg-config ............. no"
- fi
- report_support "  PulseAudio ............." "$CFG_PULSEAUDIO"
-+report_support "  lttng .................." "$CFG_LTTNG"
- report_support "  QPA backends:"
- report_support "    DirectFB ............." "$CFG_DIRECTFB"
- report_support "    EGLFS ................" "$CFG_EGLFS"
+   -fontconfig .......... Enable Fontconfig support [auto] (Unix only)
+   -freetype ............ Select used FreeType [system/qt/no]
+   -harfbuzz ............ Select used HarfBuzz-NG [system/qt/no]
+diff --git a/src/gui/configure.json b/src/gui/configure.json
+index 1e4e56422f..e91b09c2cf 100644
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -29,6 +29,7 @@
+             "libjpeg": { "type": "enum", "values": [ "no", "qt", "system" ] },
+             "libpng": { "type": "enum", "values": [ "no", "qt", "system" ] },
+             "linuxfb": "boolean",
++            "lttng": "boolean",
+             "mirclient": "boolean",
+             "mtdev": "boolean",
+             "opengl": { "type": "optionalString", "values": [ "no", "yes", "desktop", "es2", "dynamic" ] },
+@@ -295,6 +296,22 @@
+                 { "lib": "zlib", "condition": "features.system-zlib" }
+             ]
+         },
++        "lttng": {
++            "label": "lttng",
++            "test": {
++                "include": [
++                    "lttng/tracepoint.h",
++                    "lttng/tracepoint-event.h",
++                    "lttng/ust-error.h"
++                ],
++                "main": [
++                    "lttng_ust_strerror(LTTNG_UST_OK);"
++                ]
++            },
++            "sources": [
++                { "type": "pkgConfig", "args": "lttng-ust" }
++            ]
++        },
+         "mirclient": {
+             "label": "Mir client libraries",
+             "test": {
+@@ -997,6 +1014,14 @@
+             "condition": "tests.linuxfb && features.regularexpression",
+             "output": [ "privateFeature" ]
+         },
++        "lttng": {
++            "label": "lttng",
++            "condition": "libs.lttng",
++            "output": [
++                "privateFeature",
++                { "type": "define", "negative": true, "name": "QT_NO_LTTNG" }
++            ]
++        },
+         "vnc": {
+             "label": "VNC",
+             "section": "Platform plugins",
+@@ -1539,6 +1564,7 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
+             "section": "Qt Gui",
+             "entries": [
+                 "accessibility",
++                "lttng",
+                 "freetype",
+                 "system-freetype",
+                 "harfbuzz",
 diff --git a/src/gui/gui.pro b/src/gui/gui.pro
-index 2cdb3a7..2d17e03 100644
+index f7d077e656..fd1f412e78 100644
 --- a/src/gui/gui.pro
 +++ b/src/gui/gui.pro
-@@ -50,6 +50,13 @@ include(itemmodels/itemmodels.pri)
+@@ -51,6 +51,12 @@ include(itemmodels/itemmodels.pri)
  QMAKE_LIBS += $$QMAKE_LIBS_GUI
  
  load(qt_module)
 +
-+contains(QT_CONFIG, lttng) {
-+    QMAKE_CXXFLAGS += $$QT_CFLAGS_LTTNG
++qtConfig(lttng) {
++    QMAKE_USE_PRIVATE += lttng
 +    LIBS_PRIVATE +=$$QMAKE_LIBS_DYNLOAD
-+    LIBS_PRIVATE +=$$QT_LIBS_LTTNG
 +}
 +
  load(cmake_functions)
  
  win32: CMAKE_WINDOWS_BUILD = True
 diff --git a/src/gui/image/qimage.cpp b/src/gui/image/qimage.cpp
-index 856ba64..4c8a332 100644
+index bd10012bf6..a12dd2354e 100644
 --- a/src/gui/image/qimage.cpp
 +++ b/src/gui/image/qimage.cpp
-@@ -49,6 +49,7 @@
+@@ -55,6 +55,7 @@
  #include <limits.h>
  #include <qpa/qplatformpixmap.h>
  #include <private/qdrawhelper_p.h>
@@ -201,7 +176,7 @@ index 856ba64..4c8a332 100644
  #include <private/qmemrotate_p.h>
  #include <private/qimagescale_p.h>
  #include <private/qsimd_p.h>
-@@ -110,6 +111,8 @@ QImageData * QImageData::create(const QSize &size, QImage::Format format)
+@@ -120,6 +121,8 @@ QImageData * QImageData::create(const QSize &size, QImage::Format format)
      if (!size.isValid() || format == QImage::Format_Invalid)
          return 0;                                // invalid parameter(s)
  
@@ -210,7 +185,7 @@ index 856ba64..4c8a332 100644
      uint width = size.width();
      uint height = size.height();
      uint depth = qt_depthForFormat(format);
-@@ -1144,6 +1147,7 @@ static void copyMetadata(QImageData *dst, const QImageData *src)
+@@ -1130,6 +1133,7 @@ static void copyMetadata(QImageData *dst, const QImageData *src)
  */
  QImage QImage::copy(const QRect& r) const
  {
@@ -218,7 +193,7 @@ index 856ba64..4c8a332 100644
      if (!d)
          return QImage();
  
-@@ -2656,6 +2660,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
+@@ -2675,6 +2679,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
      if (newSize == size())
          return *this;
  
@@ -227,7 +202,7 @@ index 856ba64..4c8a332 100644
      QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(), (qreal)newSize.height() / height());
      QImage img = transformed(wm, mode);
      return img;
-@@ -2684,6 +2690,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
+@@ -2703,6 +2709,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
      if (w <= 0)
          return QImage();
  
@@ -236,7 +211,7 @@ index 856ba64..4c8a332 100644
      qreal factor = (qreal) w / width();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -2712,6 +2720,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
+@@ -2731,6 +2739,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
      if (h <= 0)
          return QImage();
  
@@ -245,7 +220,7 @@ index 856ba64..4c8a332 100644
      qreal factor = (qreal) h / height();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -3170,6 +3180,8 @@ QImage QImage::rgbSwapped_helper() const
+@@ -3226,6 +3236,8 @@ QImage QImage::rgbSwapped_helper() const
      if (isNull())
          return *this;
  
@@ -254,7 +229,7 @@ index 856ba64..4c8a332 100644
      QImage res;
  
      switch (d->format) {
-@@ -4591,6 +4603,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
+@@ -4576,6 +4588,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
      if (!d)
          return QImage();
  
@@ -264,10 +239,10 @@ index 856ba64..4c8a332 100644
      int ws = width();
      int hs = height();
 diff --git a/src/gui/image/qpixmap.cpp b/src/gui/image/qpixmap.cpp
-index 3726b21..93160d0 100644
+index ccbd9fda53..933e1a80dc 100644
 --- a/src/gui/image/qpixmap.cpp
 +++ b/src/gui/image/qpixmap.cpp
-@@ -43,6 +43,7 @@
+@@ -49,6 +49,7 @@
  #include "qdatastream.h"
  #include "qbuffer.h"
  #include <private/qguiapplication_p.h>
@@ -275,7 +250,7 @@ index 3726b21..93160d0 100644
  #include "qevent.h"
  #include "qfile.h"
  #include "qfileinfo.h"
-@@ -1163,6 +1164,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
+@@ -1161,6 +1162,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
      if (newSize == size())
          return *this;
  
@@ -284,7 +259,7 @@ index 3726b21..93160d0 100644
      QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(),
                                            (qreal)newSize.height() / height());
      QPixmap pix = transformed(wm, mode);
-@@ -1192,6 +1195,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
+@@ -1190,6 +1193,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
      if (w <= 0)
          return QPixmap();
  
@@ -293,7 +268,7 @@ index 3726b21..93160d0 100644
      qreal factor = (qreal) w / width();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -1220,6 +1225,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
+@@ -1218,6 +1223,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
      if (h <= 0)
          return QPixmap();
  
@@ -303,10 +278,10 @@ index 3726b21..93160d0 100644
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
 diff --git a/src/gui/kernel/kernel.pri b/src/gui/kernel/kernel.pri
-index 73a5a7b..a60c56b 100644
+index 792ca9fbaf..172227e631 100644
 --- a/src/gui/kernel/kernel.pri
 +++ b/src/gui/kernel/kernel.pri
-@@ -151,3 +151,17 @@ contains(QT_CONFIG, opengl)|contains(QT_CONFIG, opengles2) {
+@@ -153,3 +153,16 @@ qtConfig(opengl) {
  }
  
  win32:HEADERS+=kernel/qwindowdefs_win.h
@@ -316,17 +291,16 @@ index 73a5a7b..a60c56b 100644
 +	kernel/qguitracer_p.h \
 +	kernel/qguilttngprovider_p.h
 +
-+contains(QT_CONFIG, lttng) {
++qtConfig(lttng) {
 +    SOURCES += \
 +	kernel/qguilttngprovider.c
 +
-+    QMAKE_CXXFLAGS += $$QT_CFLAGS_LTTNG
++    QMAKE_USE_PRIVATE += lttng
 +    LIBS_PRIVATE +=$$QMAKE_LIBS_DYNLOAD
-+    LIBS_PRIVATE +=$$QT_LIBS_LTTNG
 +}
 diff --git a/src/gui/kernel/qguilttngprovider.c b/src/gui/kernel/qguilttngprovider.c
 new file mode 100644
-index 0000000..cfbd0be
+index 0000000000..cfbd0bebc4
 --- /dev/null
 +++ b/src/gui/kernel/qguilttngprovider.c
 @@ -0,0 +1,26 @@
@@ -358,7 +332,7 @@ index 0000000..cfbd0be
 +#endif // QT_NO_LTTNG
 diff --git a/src/gui/kernel/qguilttngprovider_p.h b/src/gui/kernel/qguilttngprovider_p.h
 new file mode 100644
-index 0000000..544cefe
+index 0000000000..544cefe277
 --- /dev/null
 +++ b/src/gui/kernel/qguilttngprovider_p.h
 @@ -0,0 +1,92 @@
@@ -456,7 +430,7 @@ index 0000000..544cefe
 +#endif // QT_NO_LTTNG
 diff --git a/src/gui/kernel/qguitracer_p.h b/src/gui/kernel/qguitracer_p.h
 new file mode 100644
-index 0000000..acef2bc
+index 0000000000..acef2bc58d
 --- /dev/null
 +++ b/src/gui/kernel/qguitracer_p.h
 @@ -0,0 +1,120 @@
@@ -581,18 +555,18 @@ index 0000000..acef2bc
 +
 +#endif // QGUITRACER_P_H
 diff --git a/src/gui/opengl/qopenglframebufferobject.cpp b/src/gui/opengl/qopenglframebufferobject.cpp
-index b5fa6b9..3f230e6 100644
+index b56bcd0866..25e4b18e61 100644
 --- a/src/gui/opengl/qopenglframebufferobject.cpp
 +++ b/src/gui/opengl/qopenglframebufferobject.cpp
-@@ -39,6 +39,7 @@
+@@ -45,6 +45,7 @@
  #include <private/qopenglcontext_p.h>
  #include <private/qopenglextensions_p.h>
  #include <private/qfont_p.h>
 +#include <private/qguitracer_p.h>
  
  #include <qwindow.h>
- #include <qlibrary.h>
-@@ -442,6 +443,7 @@ void QOpenGLFramebufferObjectPrivate::init(QOpenGLFramebufferObject *, const QSi
+ #include <qimage.h>
+@@ -447,6 +448,7 @@ void QOpenGLFramebufferObjectPrivate::init(QOpenGLFramebufferObject *, const QSi
                                             GLenum texture_target, GLenum internal_format,
                                             GLint samples, bool mipmap)
  {
@@ -601,10 +575,10 @@ index b5fa6b9..3f230e6 100644
  
      funcs.initializeOpenGLFunctions();
 diff --git a/src/gui/opengl/qopenglpaintengine.cpp b/src/gui/opengl/qopenglpaintengine.cpp
-index f89c615..5420c74 100644
+index 06f620ef0c..921ae1579a 100644
 --- a/src/gui/opengl/qopenglpaintengine.cpp
 +++ b/src/gui/opengl/qopenglpaintengine.cpp
-@@ -74,6 +74,7 @@
+@@ -80,6 +80,7 @@
  #include <private/qdatabuffer_p.h>
  #include <private/qstatictext_p.h>
  #include <private/qtriangulator_p.h>
@@ -612,7 +586,7 @@ index f89c615..5420c74 100644
  
  #include "qopenglengineshadermanager_p.h"
  #include "qopengl2pexvertexarray_p.h"
-@@ -548,6 +549,8 @@ static inline void setCoords(GLfloat *coords, const QOpenGLRect &rect)
+@@ -560,6 +561,8 @@ static inline void setCoords(GLfloat *coords, const QOpenGLRect &rect)
  
  void QOpenGL2PaintEngineExPrivate::drawTexture(const QOpenGLRect& dest, const QOpenGLRect& src, const QSize &textureSize, bool opaque, bool pattern)
  {
@@ -622,10 +596,10 @@ index f89c615..5420c74 100644
      currentBrush = noBrush;
  
 diff --git a/src/gui/opengl/qopengltexturecache.cpp b/src/gui/opengl/qopengltexturecache.cpp
-index 72df636..f80a55f 100644
+index 27aa8db33a..f89fa9c96e 100644
 --- a/src/gui/opengl/qopengltexturecache.cpp
 +++ b/src/gui/opengl/qopengltexturecache.cpp
-@@ -37,6 +37,7 @@
+@@ -43,6 +43,7 @@
  #include <private/qopenglcontext_p.h>
  #include <private/qopenglextensions_p.h>
  #include <private/qimagepixmapcleanuphooks_p.h>
@@ -633,7 +607,7 @@ index 72df636..f80a55f 100644
  #include <qpa/qplatformpixmap.h>
  
  QT_BEGIN_NAMESPACE
-@@ -184,6 +185,7 @@ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, const QImage &i
+@@ -190,6 +191,7 @@ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, const QImage &i
  
  GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, qint64 key, const QImage &image, BindOptions options)
  {

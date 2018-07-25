@@ -14,6 +14,12 @@ remove_LGPL3() {
 # Disable features we don't use in all webOS products
 PACKAGECONFIG_DEFAULT_remove = "dbus"
 
+# Enable accessibility for qtquickcontrols
+PACKAGECONFIG_append = " accessibility"
+
+# Disable widget features
+PACKAGECONFIG_remove = "widgets"
+
 # Configure qt5 to use platform harfbuzz
 PACKAGECONFIG_append = " harfbuzz"
 PACKAGECONFIG[harfbuzz] = "-system-harfbuzz,-qt-harfbuzz,harfbuzz"
@@ -21,9 +27,9 @@ PACKAGECONFIG[harfbuzz] = "-system-harfbuzz,-qt-harfbuzz,harfbuzz"
 # Configure qt5 to compile with GL ES2 instead of default desktop GL
 PACKAGECONFIG_GL = "gles2"
 # We have alsa in DISTRO_FEATURES so it was enabled before
-PACKAGECONFIG_append = " alsa"
+#PACKAGECONFIG_append = " alsa"
 # We had this enabled in our old gpro/meta-qt5 recipe
-PACKAGECONFIG_append = " iconv"
+#PACKAGECONFIG_append = " iconv"
 # We had this enabled in our old gpro/meta-qt5 recipe
 PACKAGECONFIG_append = " xkb"
 # We had this enabled in our old gpro/meta-qt5 recipe
@@ -34,6 +40,8 @@ PACKAGECONFIG_append = " glib"
 PACKAGECONFIG_append = " fontconfig"
 # We had this enabled in our old gpro/meta-qt5 recipe
 PACKAGECONFIG_append = " sql-sqlite"
+# No longer added automatically
+PACKAGECONFIG_append = " gif"
 
 # XXX Change --linuxfb => -no-linuxfb
 # PACKAGECONFIG_append = " linuxfb"
@@ -74,6 +82,12 @@ PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' 
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/qtbase:"
 
+# Emulator eglfs support with NYX input subsystem
+inherit webos_machine_impl_dep
+PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
+PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
+
+# Patches from 5.9.meta-webos.21 based on 5.9.meta-qt5-shared.8
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-DisableCertificateVerificationCheck.patch \
@@ -95,20 +109,20 @@ SRC_URI_append = " \
     file://0018-QNetworkDiskCache-Disable-disk-cache-if-content-have.patch \
     file://0019-Revert-Don-t-accept-json-strings-with-trailing-garba.patch \
     file://0020-Revert-Make-QElapsedTimer-default-to-invalid-and-now.patch \
-    file://0021-Revert-Fix-rendering-of-fonts-matched-based-on-stret.patch \
-    file://0022-Preserve-OpenGL-context-on-window-close.patch \
-    file://0023-Revert-Remove-QPlatformScreenPageFlipper.patch \
-    file://0024-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
-    file://0025-Fix-HarfBuzz-NG-regression.patch \
-    file://0026-Support-wrapMode-wordWrap-for-QML-Text-type-for-Kore.patch \
-    file://0027-Color-emoji-support.patch \
-    file://0028-Fix-for-deferredDelete-bug-when-calling-the-glib-loo.patch \
-    file://0029-Check-if-combined-glyph-exists-in-font-s-charmap-tab.patch \
-    file://0030-Prevent-rare-segfault-crashes-in-QNetworkConfigurati.patch \
-    file://0031-Add-environment-variable-QT_DISTANCEFIELD.patch \
-    file://0032-Fix-distance-field-rendering-of-very-wide-glyphs.patch \
-    file://0033-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
-    file://0034-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
+    file://0021-Preserve-OpenGL-context-on-window-close.patch \
+    file://0022-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
+    file://0023-Fix-HarfBuzz-NG-regression.patch \
+    file://0024-Support-wrapMode-wordWrap-for-QML-Text-type-for-Kore.patch \
+    file://0025-Check-if-combined-glyph-exists-in-font-s-charmap-tab.patch \
+    file://0026-Prevent-rare-segfault-crashes-in-QNetworkConfigurati.patch \
+    file://0027-Fix-distance-field-rendering-of-very-wide-glyphs.patch \
+    file://0028-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
+    file://0029-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
+    file://0030-Workaround-for-SGX-clipping-bug.patch \
+    file://0031-Workaround-for-RGX-broken-render-to-texture-with-siz.patch \
+    file://0032-Fix-bug-of-calculate-xsize-for-fonts.patch \
+    file://0033-Emulator-NYX-integration-with-eglfs-plugin.patch \
+    file://0034-Fix-unicode-Bidi-Algorithm.patch \
 "
 
 SRC_URI_append_hardware = " \
@@ -125,9 +139,12 @@ SRC_URI_append = "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else ' file://0099
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
-# Emulator eglfs support with NYX input subsystem
-inherit webos_machine_impl_dep
-DEPENDS_append_emulator = " nyx-lib"
-SRC_URI_append_emulator = " file://0098-Emulator-NYX-integration-with-eglfs-plugin.patch"
-PACKAGECONFIG_append_emulator = " kms eglfs"
-EXTRA_QMAKEVARS_PRE_append_emulator = " INCLUDEPATH+=${STAGING_INCDIR}/drm EGLFS_EMULATOR_SUPPORT=QEMU"
+# until pseudo is completely fixed
+# PLAT-48507 pseudo: random package_qa failures
+INSANE_SKIP_${PN} += "host-user-contaminated"
+INSANE_SKIP_${PN}-mkspecs += "host-user-contaminated"
+INSANE_SKIP_${PN}-plugins += "host-user-contaminated"
+# http://caprica.lgsvl.com:8080/Errors/Details/1136384
+INSANE_SKIP_${PN}-tools += "host-user-contaminated"
+# http://caprica.lgsvl.com:8080/Errors/Details/1109556
+INSANE_SKIP_${PN}-dev += "host-user-contaminated"

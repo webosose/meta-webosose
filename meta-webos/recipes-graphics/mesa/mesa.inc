@@ -16,7 +16,7 @@ PE = "2"
 
 DEPENDS = "expat makedepend-native flex-native bison-native libxml2-native zlib chrpath-replacement-native"
 EXTRANATIVEPATH += "chrpath-native"
-PROVIDES = "virtual/libgl virtual/libgles1 virtual/libgles2 virtual/egl virtual/mesa"
+PROVIDES = "virtual/libgl virtual/libgles1 virtual/libgles2 virtual/egl virtual/mesa virtual/libgbm"
 
 inherit autotools pkgconfig gettext distro_features_check
 

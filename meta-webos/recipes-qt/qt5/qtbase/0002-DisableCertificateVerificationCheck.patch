@@ -1,4 +1,4 @@
-From e586cddaa9186d3aa0ed8624aeba445dab3b67d2 Mon Sep 17 00:00:00 2001
+From cdd2cd5d21ba3667830c80be23218208d8183a57 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Tue, 18 Mar 2014 10:54:28 +0200
 Subject: [PATCH] DisableCertificateVerificationCheck
@@ -8,10 +8,10 @@ Subject: [PATCH] DisableCertificateVerificationCheck
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/network/ssl/qsslsocket_openssl.cpp b/src/network/ssl/qsslsocket_openssl.cpp
-index 82644c1..67ed972 100644
+index f5b493897e..107ee50761 100644
 --- a/src/network/ssl/qsslsocket_openssl.cpp
 +++ b/src/network/ssl/qsslsocket_openssl.cpp
-@@ -1695,7 +1695,7 @@ QList<QSslError> QSslSocketBackendPrivate::verify(const QList<QSslCertificate> &
+@@ -1696,7 +1696,7 @@ QList<QSslError> QSslSocketBackendPrivate::verify(const QList<QSslCertificate> &
      QMutexLocker sslErrorListMutexLocker(&_q_sslErrorList()->mutex);
  
      // Register a custom callback to get all verification errors.

@@ -1,0 +1,52 @@
+From ccd364cc37171f3faab62b68ee76ca4831c95d5b Mon Sep 17 00:00:00 2001
+From: Simon Hausmann <simon.hausmann@qt.io>
+Date: Wed, 23 May 2018 16:21:33 +0200
+Subject: [PATCH] Fix crash when modifying list model in worker thread
+
+If we call get() on a model in a worker thread, we may end up creating a
+ModelNodeMetaObject (aka cacheObject). Subsequent mutation of properties
+may make us end up in emitDirectNotifies(). However since we can't have
+bindings in there, we should shortcut/suppress the notify emission, which
+we can do by checking ddata->context via qmlEngine(). The previous code
+crashed when qmlEngine() return a null pointer but
+QQmlEnginePrivate::get(const QQmlEngine *) would attempt to dereference
+the parameter.
+
+Started-by: Slava Monich<slava.monich@jolla.com>
+Change-Id: I880619c686436c053692faafa5dba2c96c2ace96
+Reviewed-by: Robin Burchell <robin.burchell@crimson.no>
+Reviewed-by: Slava Monich <slava.monich@jolla.com>
+
+Upstream-status: [Backported] https://codereview.qt-project.org/#/c/230048/4
+---
+ src/qml/types/qqmllistmodel.cpp                                       | 4 ++--
+ .../qml/qqmllistmodelworkerscript/tst_qqmllistmodelworkerscript.cpp   | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/qml/types/qqmllistmodel.cpp b/src/qml/types/qqmllistmodel.cpp
+index 44cd179..7c7139f 100644
+--- a/src/qml/types/qqmllistmodel.cpp
++++ b/src/qml/types/qqmllistmodel.cpp
+@@ -1326,8 +1326,8 @@ void ModelNodeMetaObject::emitDirectNotifies(const int *changedRoles, int roleCo
+     QQmlData *ddata = QQmlData::get(object(), /*create*/false);
+     if (!ddata)
+         return;
+-    QQmlEnginePrivate *ep = QQmlEnginePrivate::get(qmlEngine(m_model));
+-    if (!ep)
++    // There's nothing to emit if we're a list model in a worker thread.
++    if (!qmlEngine(m_model))
+         return;
+     for (int i = 0; i < roleCount; ++i) {
+         const int changedRole = changedRoles[i];
+diff --git a/tests/auto/qml/qqmllistmodelworkerscript/tst_qqmllistmodelworkerscript.cpp b/tests/auto/qml/qqmllistmodelworkerscript/tst_qqmllistmodelworkerscript.cpp
+index 9564d6a..1ffe3f2 100644
+--- a/tests/auto/qml/qqmllistmodelworkerscript/tst_qqmllistmodelworkerscript.cpp
++++ b/tests/auto/qml/qqmllistmodelworkerscript/tst_qqmllistmodelworkerscript.cpp
+@@ -204,6 +204,7 @@ void tst_qqmllistmodelworkerscript::dynamic_data()
+         QTest::newRow("get4") << "{append({'foo':123});get(0).foo}" << 123 << "" << dr;
+         QTest::newRow("get-modify1") << "{append({'foo':123,'bar':456});get(0).foo = 333;get(0).foo}" << 333 << "" << dr;
+         QTest::newRow("get-modify2") << "{append({'z':1});append({'foo':123,'bar':456});get(1).bar = 999;get(1).bar}" << 999 << "" << dr;
++        QTest::newRow("get-set") << "{append({'foo':123});get(0).foo;setProperty(0, 'foo', 999);get(0).foo}" << 999 << "" << dr;
+ 
+         QTest::newRow("append1") << "{append({'foo':123});count}" << 1 << "" << dr;
+         QTest::newRow("append2") << "{append({'foo':123,'bar':456});count}" << 1 << "" << dr;
