@@ -1,4 +1,4 @@
-From f145c6ef3309d33529ba67978bd6f0e7cee4f9eb Mon Sep 17 00:00:00 2001
+From 629c0238ce17d996f580276ff94b7513c48238bb Mon Sep 17 00:00:00 2001
 From: Jose Dapena Paz <jose.dapena@lge.com>
 Date: Wed, 4 Mar 2015 19:41:45 +0100
 Subject: [PATCH] Revert "Make QElapsedTimer default to invalid (and now
@@ -32,19 +32,20 @@ anymore.
 
 Upstream-Status: not upstreamable (local workaround).
 ---
- src/corelib/tools/qelapsedtimer.cpp                       | 15 ++-------------
- src/corelib/tools/qelapsedtimer.h                         |  7 -------
- .../corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp     | 10 ++++++++--
+ src/corelib/kernel/qelapsedtimer.cpp              | 15 ++-------------
+ src/corelib/kernel/qelapsedtimer.h                |  7 -------
+ .../kernel/qelapsedtimer/tst_qelapsedtimer.cpp    | 10 ++++++++--
  3 files changed, 10 insertions(+), 22 deletions(-)
 
-diff --git a/src/corelib/tools/qelapsedtimer.cpp b/src/corelib/tools/qelapsedtimer.cpp
-index 9336f18..4af8a43 100644
---- a/src/corelib/tools/qelapsedtimer.cpp
-+++ b/src/corelib/tools/qelapsedtimer.cpp
-@@ -194,17 +194,6 @@ QT_BEGIN_NAMESPACE
+diff --git a/src/corelib/kernel/qelapsedtimer.cpp b/src/corelib/kernel/qelapsedtimer.cpp
+index e578b5b8b3..22c40c1b01 100644
+--- a/src/corelib/kernel/qelapsedtimer.cpp
++++ b/src/corelib/kernel/qelapsedtimer.cpp
+@@ -202,17 +202,6 @@ QT_BEGIN_NAMESPACE
+     \sa clockType(), isMonotonic()
  */
  
- /*!
+-/*!
 -    \fn QElapsedTimer::QElapsedTimer()
 -    \since 5.4
 -
@@ -55,11 +56,10 @@ index 9336f18..4af8a43 100644
 -*/
 -
 -
--/*!
+ /*!
      \fn bool QElapsedTimer::operator ==(const QElapsedTimer &other) const
  
-     Returns \c true if this object and \a other contain the same time.
-@@ -233,8 +222,8 @@ void QElapsedTimer::invalidate() Q_DECL_NOTHROW
+@@ -242,8 +231,8 @@ void QElapsedTimer::invalidate() Q_DECL_NOTHROW
  }
  
  /*!
@@ -70,11 +70,11 @@ index 9336f18..4af8a43 100644
  
      \sa invalidate(), start(), restart()
  */
-diff --git a/src/corelib/tools/qelapsedtimer.h b/src/corelib/tools/qelapsedtimer.h
-index 2a73757..8421b57 100644
---- a/src/corelib/tools/qelapsedtimer.h
-+++ b/src/corelib/tools/qelapsedtimer.h
-@@ -49,13 +49,6 @@ public:
+diff --git a/src/corelib/kernel/qelapsedtimer.h b/src/corelib/kernel/qelapsedtimer.h
+index 7954b41bf4..868c1d0ebf 100644
+--- a/src/corelib/kernel/qelapsedtimer.h
++++ b/src/corelib/kernel/qelapsedtimer.h
+@@ -55,13 +55,6 @@ public:
          MachAbsoluteTime,
          PerformanceCounter
      };
@@ -88,11 +88,11 @@ index 2a73757..8421b57 100644
      static ClockType clockType() Q_DECL_NOTHROW;
      static bool isMonotonic() Q_DECL_NOTHROW;
  
-diff --git a/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp b/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp
-index 4d6b5e4..57fa010 100644
---- a/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp
-+++ b/tests/auto/corelib/tools/qelapsedtimer/tst_qelapsedtimer.cpp
-@@ -40,7 +40,12 @@ static const int minResolution = 50; // the minimum resolution for the tests
+diff --git a/tests/auto/corelib/kernel/qelapsedtimer/tst_qelapsedtimer.cpp b/tests/auto/corelib/kernel/qelapsedtimer/tst_qelapsedtimer.cpp
+index 4ee3ca361f..69fc2609b2 100644
+--- a/tests/auto/corelib/kernel/qelapsedtimer/tst_qelapsedtimer.cpp
++++ b/tests/auto/corelib/kernel/qelapsedtimer/tst_qelapsedtimer.cpp
+@@ -35,7 +35,12 @@ static const int minResolution = 100; // the minimum resolution for the tests
  
  QDebug operator<<(QDebug s, const QElapsedTimer &t)
  {
@@ -106,7 +106,7 @@ index 4d6b5e4..57fa010 100644
      return s.space();
  }
  
-@@ -68,7 +73,8 @@ void tst_QElapsedTimer::validity()
+@@ -63,7 +68,8 @@ void tst_QElapsedTimer::validity()
  {
      QElapsedTimer t;
  

@@ -1,0 +1,207 @@
+From ac95d099db83dd6c0bccfde2f6606ad84a4c09cf Mon Sep 17 00:00:00 2001
+From: Jaehoon Lee <jaehoon85.lee@lge.com>
+Date: Wed, 3 Apr 2019 06:20:19 +0000
+Subject: [PATCH] Update eglfs_kms to render on topmost drmplane
+
+:Release Notes:
+Update eglfs_kms to render on topmost drmplane
+
+:Detailed Notes:
+eglfs_kms screens directly write to scanout buffer
+a.k.a crtc plane. This causes graphics to display
+behind video overlays. With this CL graphics will
+use the topmost plane for all crtcs.
+
+:Testing Performed:
+Tested with modetest app to to display patterns on
+lower planes to confirm that LSM displays above all
+the patterns on HDMI output.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-76527] [Qt 5.9][RPi] Youtube playback is not working
+[PLAT-41583] Support output resolution change on webOS RPi
+
+Upstream-Status: Inappropriate [webOS specific]
+
+Change-Id: I65ead5f676bfe9ce3303468f9ea7b5ebc207413b
+---
+ .../kmsconvenience/qkmsdevice.cpp             | 42 ++++++-------
+ .../eglfs_kms/qeglfskmsgbmintegration.cpp     |  2 +-
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp          | 63 +++++--------------
+ 3 files changed, 34 insertions(+), 73 deletions(-)
+
+diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+index 4ae17e34a6..8e86317a10 100644
+--- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
++++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+@@ -345,25 +345,27 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+         false
+     };
+ 
+-    bool ok;
+-    int idx = qEnvironmentVariableIntValue("QT_QPA_EGLFS_KMS_PLANE_INDEX", &ok);
+-    if (ok) {
+-        drmModePlaneRes *planeResources = drmModeGetPlaneResources(m_dri_fd);
+-        if (planeResources) {
+-            if (idx >= 0 && idx < int(planeResources->count_planes)) {
+-                drmModePlane *plane = drmModeGetPlane(m_dri_fd, planeResources->planes[idx]);
+-                if (plane) {
+-                    output.wants_plane = true;
+-                    output.plane_id = plane->plane_id;
+-                    qCDebug(qLcKmsDebug, "Forcing plane index %d, plane id %u (belongs to crtc id %u)",
+-                            idx, plane->plane_id, plane->crtc_id);
+-                    drmModeFreePlane(plane);
+-                }
+-            } else {
+-                qWarning("Invalid plane index %d, must be between 0 and %u", idx, planeResources->count_planes - 1);
+-            }
++    int crtc_index=0;
++    for (int j = 0; j < resources->count_crtcs; j++) {
++        if (output.crtc_id == resources->crtcs[j])
++        {
++            crtc_index=j;
++        }
++    }
++    drmModePlaneResPtr planeRes = drmModeGetPlaneResources(m_dri_fd);
++    std::vector<uint32_t> planes;
++    for(uint32_t i=0; i<planeRes->count_planes; i++)
++    {
++        drmModePlanePtr p = drmModeGetPlane(m_dri_fd,planeRes->planes[i]);
++
++        if (p->possible_crtcs  & (1 << crtc_index))
++        {
++            planes.push_back(planeRes->planes[i]);
+         }
++        drmModeFreePlane(p);
+     }
++    output.wants_plane = true;
++    output.plane_id = planes.back();
+ 
+     m_crtc_allocator |= (1 << output.crtc_id);
+     m_connector_allocator |= (1 << output.connector_id);
+@@ -618,12 +620,6 @@ void QKmsScreenConfig::loadConfig()
+ void QKmsOutput::restoreMode(QKmsDevice *device)
+ {
+     if (mode_set && saved_crtc) {
+-        drmModeSetCrtc(device->fd(),
+-                       saved_crtc->crtc_id,
+-                       saved_crtc->buffer_id,
+-                       0, 0,
+-                       &connector_id, 1,
+-                       &saved_crtc->mode);
+         mode_set = false;
+     }
+ }
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
+index 8cff8ce133..9ab9327093 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
+@@ -95,7 +95,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
+     qCDebug(qLcEglfsKmsDebug) << "Creating native off screen window";
+     gbm_surface *surface = gbm_surface_create(static_cast<QEglFSKmsGbmDevice *>(device())->gbmDevice(),
+                                               1, 1,
+-                                              GBM_FORMAT_XRGB8888,
++                                              GBM_FORMAT_ARGB8888,
+                                               GBM_BO_USE_RENDERING);
+ 
+     return reinterpret_cast<EGLNativeWindowType>(surface);
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+index 274ec0ffc5..845d97c7ba 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+@@ -38,7 +38,7 @@
+ ** $QT_END_LICENSE$
+ **
+ ****************************************************************************/
+-
++#include "drm_fourcc.h"
+ #include "qeglfskmsgbmscreen.h"
+ #include "qeglfskmsgbmdevice.h"
+ #include "qeglfskmsgbmcursor.h"
+@@ -78,13 +78,13 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
+ 
+     uint32_t width = gbm_bo_get_width(bo);
+     uint32_t height = gbm_bo_get_height(bo);
+-    uint32_t stride = gbm_bo_get_stride(bo);
+-    uint32_t handle = gbm_bo_get_handle(bo).u32;
++    uint32_t strides[4] = {0}, handles[4] = {0}, offsets[4] = {0};
+ 
+     QScopedPointer<FrameBuffer> fb(new FrameBuffer);
+-
+-    int ret = drmModeAddFB(device()->fd(), width, height, 24, 32,
+-                           stride, handle, &fb->fb);
++    handles[0] = gbm_bo_get_handle(bo).u32;
++    strides[0] = gbm_bo_get_stride(bo);
++    int ret = drmModeAddFB2(m_device->fd(), width, height, DRM_FORMAT_ARGB8888,
++                    handles, strides, offsets, &fb->fb, 0);
+ 
+     if (ret) {
+         qWarning("Failed to create KMS FB!");
+@@ -142,7 +142,7 @@ gbm_surface *QEglFSKmsGbmScreen::createSurface()
+         m_gbm_surface = gbm_surface_create(static_cast<QEglFSKmsGbmDevice *>(device())->gbmDevice(),
+                                            rawGeometry().width(),
+                                            rawGeometry().height(),
+-                                           GBM_FORMAT_XRGB8888,
++                                           GBM_FORMAT_ARGB8888,
+                                            GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
+     }
+     return m_gbm_surface;
+@@ -192,49 +192,14 @@ void QEglFSKmsGbmScreen::flip()
+ 
+     FrameBuffer *fb = framebufferForBufferObject(m_gbm_bo_next);
+ 
+-    QKmsOutput &op(output());
+-    const int fd = device()->fd();
+-    const uint32_t w = op.modes[op.mode].hdisplay;
+-    const uint32_t h = op.modes[op.mode].vdisplay;
+-
+-    if (!op.mode_set) {
+-        int ret = drmModeSetCrtc(fd,
+-                                 op.crtc_id,
+-                                 fb->fb,
+-                                 0, 0,
+-                                 &op.connector_id, 1,
+-                                 &op.modes[op.mode]);
+-
+-        if (ret == -1) {
+-            qErrnoWarning(errno, "Could not set DRM mode!");
+-        } else {
+-            op.mode_set = true;
+-            setPowerState(PowerStateOn);
+-
+-            if (!op.plane_set) {
+-                op.plane_set = true;
+-                if (op.wants_plane) {
+-                    int ret = drmModeSetPlane(fd, op.plane_id, op.crtc_id,
+-                                              uint32_t(-1), 0,
+-                                              0, 0, w, h,
+-                                              0 << 16, 0 << 16, w << 16, h << 16);
+-                    if (ret == -1)
+-                        qErrnoWarning(errno, "drmModeSetPlane failed");
+-                }
+-            }
+-        }
+-    }
++    uint32_t width = gbm_bo_get_width(m_gbm_bo_next);
++    uint32_t height = gbm_bo_get_height(m_gbm_bo_next);
+ 
+-    int ret = drmModePageFlip(fd,
+-                              op.crtc_id,
+-                              fb->fb,
+-                              DRM_MODE_PAGE_FLIP_EVENT,
+-                              this);
+-    if (ret) {
+-        qErrnoWarning("Could not queue DRM page flip!");
+-        gbm_surface_release_buffer(m_gbm_surface, m_gbm_bo_next);
+-        m_gbm_bo_next = Q_NULLPTR;
+-    }
++    int ret =  drmModeSetPlane(m_device->fd(), m_output.plane_id, m_output.crtc_id, fb->fb,
++                  0, 0, 0, width, height, 0 << 16,
++                  0 << 16, m_output.saved_crtc->width<<16, m_output.saved_crtc->height<<16);
++
++    flipFinished();
+ }
+ 
+ void QEglFSKmsGbmScreen::flipFinished()

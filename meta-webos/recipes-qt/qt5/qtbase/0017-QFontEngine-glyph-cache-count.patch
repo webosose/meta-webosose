@@ -1,4 +1,4 @@
-From bbb87fa7c0beaf334694625cdebdbe5b22566f4d Mon Sep 17 00:00:00 2001
+From e88e84f5bf2a78e7576096ab0fc260defef7a930 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 7 Nov 2014 17:59:03 -0800
 Subject: [PATCH] QFontEngine glyph cache count
@@ -25,12 +25,12 @@ Upstream-Status: Inappropriate [specific to tv]
  2 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/src/gui/text/qfontengine.cpp b/src/gui/text/qfontengine.cpp
-index 790dd0b..92ea8e0 100644
+index 29c48da7be..962537f892 100644
 --- a/src/gui/text/qfontengine.cpp
 +++ b/src/gui/text/qfontengine.cpp
-@@ -243,7 +243,8 @@ QFontEngine::QFontEngine(Type type)
-       font_(0), font_destroy_func(0),
-       face_(0), face_destroy_func(0),
+@@ -249,7 +249,8 @@ QFontEngine::QFontEngine(Type type)
+       font_(),
+       face_(),
        m_minLeftBearing(kBearingNotInitialized),
 -      m_minRightBearing(kBearingNotInitialized)
 +      m_minRightBearing(kBearingNotInitialized),
@@ -38,7 +38,7 @@ index 790dd0b..92ea8e0 100644
  {
      faceData.user_data = this;
      faceData.get_font_table = qt_get_font_table_default;
-@@ -260,6 +261,10 @@ QFontEngine::QFontEngine(Type type)
+@@ -266,6 +267,10 @@ QFontEngine::QFontEngine(Type type)
      if (enginesCollector)
          enginesCollector->append(this);
  #endif
@@ -49,7 +49,7 @@ index 790dd0b..92ea8e0 100644
  }
  
  QFontEngine::~QFontEngine()
-@@ -1062,9 +1067,9 @@ void QFontEngine::setGlyphCache(const void *context, QFontEngineGlyphCache *cach
+@@ -1067,9 +1072,9 @@ void QFontEngine::setGlyphCache(const void *context, QFontEngineGlyphCache *cach
              return;
      }
  
@@ -62,14 +62,14 @@ index 790dd0b..92ea8e0 100644
  
      GlyphCacheEntry entry;
 diff --git a/src/gui/text/qfontengine_p.h b/src/gui/text/qfontengine_p.h
-index 893dfb5..96bd601 100644
+index 514e9424b2..ee36349d2d 100644
 --- a/src/gui/text/qfontengine_p.h
 +++ b/src/gui/text/qfontengine_p.h
-@@ -329,6 +329,7 @@ private:
+@@ -373,6 +373,7 @@ private:
      mutable qreal m_minLeftBearing;
      mutable qreal m_minRightBearing;
  
 +    int m_maxGlyphCacheCount;
  };
+ Q_DECLARE_TYPEINFO(QFontEngine::KernPair, Q_PRIMITIVE_TYPE);
  
- Q_DECLARE_OPERATORS_FOR_FLAGS(QFontEngine::ShaperFlags)

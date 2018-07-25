@@ -1,0 +1,28 @@
+From f40804338f3984a7ca4ff60fe336c73671c7c291 Mon Sep 17 00:00:00 2001
+From: JeongBong Seo <jb.seo@lge.com>
+Date: Tue, 17 Dec 2013 17:33:48 +0900
+Subject: [PATCH] Workaround for SGX clipping bug
+
+---
+ src/gui/opengl/qopengltextureglyphcache.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/gui/opengl/qopengltextureglyphcache.cpp b/src/gui/opengl/qopengltextureglyphcache.cpp
+index af8b8414a9..2d62bb5c1c 100755
+--- a/src/gui/opengl/qopengltextureglyphcache.cpp
++++ b/src/gui/opengl/qopengltextureglyphcache.cpp
+@@ -410,7 +410,14 @@ void QOpenGLTextureGlyphCache::resizeTextureData(int width, int height)
+ 
+     if (pex != 0) {
+         funcs->glViewport(0, 0, pex->width, pex->height);
++#ifndef QT_GL_FORCE_REGENERATE_CLIP
+         pex->updateClipScissorTest();
++#else
++        if (pex->q->state()->clipTestEnabled)
++            pex->regenerateClip();
++        else
++            pex->updateClipScissorTest();
++#endif
+     } else {
+         if (m_vao.isCreated()) {
+             m_vao.release();

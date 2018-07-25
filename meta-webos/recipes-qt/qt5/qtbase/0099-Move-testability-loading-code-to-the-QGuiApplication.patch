@@ -1,4 +1,4 @@
-From 9791a6edf3622f723604a43fe41f2e99d5ed655f Mon Sep 17 00:00:00 2001
+From 41145af0b3234b1b8b06af8a75de1732f43d7cac Mon Sep 17 00:00:00 2001
 From: Tigran Avanesov <tigran.avanesov@lge.com>
 Date: Fri, 25 Jul 2014 11:13:10 +0300
 Subject: [PATCH] Move testability loading code to the QGuiApplication
@@ -10,17 +10,17 @@ be able to use -testability switch.
 Change-Id: Ieb0ace469028f37be868d031946e37715e61b8af
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
- src/gui/kernel/qguiapplication.cpp  | 39 +++++++++++++++++++++++++++++++++++++
+ src/gui/kernel/qguiapplication.cpp  | 39 +++++++++++++++++++++++++++++
  src/gui/kernel/qguiapplication.h    |  3 ++-
  src/gui/kernel/qguiapplication_p.h  |  1 +
  src/widgets/kernel/qapplication.cpp |  1 +
  4 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/src/gui/kernel/qguiapplication.cpp b/src/gui/kernel/qguiapplication.cpp
-index 4214fc4..8011507 100644
+index 9da325f46e..3f9e65b424 100644
 --- a/src/gui/kernel/qguiapplication.cpp
 +++ b/src/gui/kernel/qguiapplication.cpp
-@@ -106,6 +106,10 @@
+@@ -112,6 +112,10 @@
  
  #include <ctype.h>
  
@@ -31,9 +31,9 @@ index 4214fc4..8011507 100644
  QT_BEGIN_NAMESPACE
  
  // Helper macro for static functions to check on the existence of the application class.
-@@ -133,6 +137,12 @@ Qt::ApplicationState QGuiApplicationPrivate::applicationState = Qt::ApplicationI
+@@ -139,6 +143,12 @@ bool QGuiApplicationPrivate::highDpiScalingUpdated = false;
  
- bool QGuiApplicationPrivate::highDpiScalingUpdated = false;
+ QVector<QGuiApplicationPrivate::TabletPointData> QGuiApplicationPrivate::tabletDevicePoints;
  
 +#ifdef QT_DISABLE_TESTABILITY_BY_DEFAULT
 +bool QGuiApplicationPrivate::load_testability = false;
@@ -44,7 +44,7 @@ index 4214fc4..8011507 100644
  QPlatformIntegration *QGuiApplicationPrivate::platform_integration = 0;
  QPlatformTheme *QGuiApplicationPrivate::platform_theme = 0;
  
-@@ -582,6 +592,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+@@ -586,6 +596,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
  {
      d_func()->init();
  
@@ -56,7 +56,7 @@ index 4214fc4..8011507 100644
      QCoreApplicationPrivate::eventDispatcher->startingUp();
  }
  
-@@ -591,6 +606,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+@@ -595,6 +610,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
  QGuiApplication::QGuiApplication(QGuiApplicationPrivate &p)
      : QCoreApplication(p)
  {
@@ -67,7 +67,7 @@ index 4214fc4..8011507 100644
  }
  
  /*!
-@@ -642,6 +661,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
+@@ -660,6 +679,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
      is_session_restored = false;
      is_saving_session = false;
  #endif
@@ -76,7 +76,7 @@ index 4214fc4..8011507 100644
  }
  
  /*!
-@@ -3698,6 +3719,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
+@@ -3839,6 +3860,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
  
      return m_inputDeviceManager;
  }
@@ -102,10 +102,10 @@ index 4214fc4..8011507 100644
  #include "moc_qguiapplication.cpp"
  
 diff --git a/src/gui/kernel/qguiapplication.h b/src/gui/kernel/qguiapplication.h
-index 3f233d4..377f625 100644
+index 6721970222..064254ff86 100644
 --- a/src/gui/kernel/qguiapplication.h
 +++ b/src/gui/kernel/qguiapplication.h
-@@ -179,8 +179,9 @@ protected:
+@@ -191,8 +191,9 @@ protected:
      bool compressEvent(QEvent *, QObject *receiver, QPostEventList *) Q_DECL_OVERRIDE;
  
      QGuiApplication(QGuiApplicationPrivate &p);
@@ -117,22 +117,22 @@ index 3f233d4..377f625 100644
      Q_DECLARE_PRIVATE(QGuiApplication)
  
 diff --git a/src/gui/kernel/qguiapplication_p.h b/src/gui/kernel/qguiapplication_p.h
-index b0d4a36..f2e9b87 100644
+index d67ab61ff8..c1d07c830d 100644
 --- a/src/gui/kernel/qguiapplication_p.h
 +++ b/src/gui/kernel/qguiapplication_p.h
-@@ -206,6 +206,7 @@ public:
+@@ -214,6 +214,7 @@ public:
      static QWindow *currentMousePressWindow;
      static Qt::ApplicationState applicationState;
      static bool highDpiScalingUpdated;
 +    static bool load_testability;
  
- #ifndef QT_NO_CLIPBOARD
-     static QClipboard *qt_clipboard;
+     struct TabletPointData {
+         TabletPointData(qint64 devId = 0) : deviceId(devId), state(Qt::NoButton), target(Q_NULLPTR) {}
 diff --git a/src/widgets/kernel/qapplication.cpp b/src/widgets/kernel/qapplication.cpp
-index 93ee820..7969450 100644
+index 26e9ffbbf0..1f1c4131ba 100644
 --- a/src/widgets/kernel/qapplication.cpp
 +++ b/src/widgets/kernel/qapplication.cpp
-@@ -591,6 +591,7 @@ void QApplicationPrivate::init()
+@@ -589,6 +589,7 @@ void QApplicationPrivate::init()
      extern void qt_gui_eval_init(QCoreApplicationPrivate::Type);
      qt_gui_eval_init(application_type);
  #endif

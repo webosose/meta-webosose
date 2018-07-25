@@ -49,3 +49,17 @@ do_install_append_class-target() {
         ${D}${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/modules/qt_lib_waylandclient.pri \
         || bbwarn "${D}${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/modules/qt_lib_waylandclient.pri is missing or the sed call failed"
 }
+
+# our old version doesn't support extra parameters from PACKAGECONFIGs like:
+# -no-feature-drm-egl-server -no-feature-libhybris-egl-server -no-feature-wayland-brcm -feature-wayland-client -feature-wayland-egl -feature-wayland-server -no-feature-xcomposite-egl -no-feature-xcomposite-glx
+EXTRA_QMAKEVARS_CONFIGURE = ""
+
+# And add CONFIG and DEFINES to EXTRA_QMAKEVARS_PRE
+# because new recipe in meta-qt5 is using PACKAGECONFIG (and EXTRA_QMAKEVARS_CONFIGURE)
+# instead of old QT_WAYLAND_CONFIG and QT_WAYLAND_DEFINES used by meta-webos qtwayland bbappend
+EXTRA_QMAKEVARS_PRE += "CONFIG+=wayland-compositor CONFIG+=wayland_egl"
+EXTRA_QMAKEVARS_PRE += "DEFINES+=QT_COMPOSITOR_QUICK"
+
+# until pseudo is completely fixed
+# PLAT-48507 pseudo: random package_qa failures
+INSANE_SKIP_${PN}-mkspecs += "host-user-contaminated"

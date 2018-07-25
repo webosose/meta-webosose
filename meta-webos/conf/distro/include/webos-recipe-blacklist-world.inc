@@ -19,6 +19,9 @@ PNBLACKLIST[qtwebkit] ?= "Could not find a package configuration file provided b
 PNBLACKLIST[maliit-framework-qt5] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 http://caprica.lgsvl.com:8080/Errors/Details/1509125"
 PNBLACKLIST[maliit-plugins-qt5] ?= "depends on blacklisted maliit-framework-qt5"
 PNBLACKLIST[qt5-creator] ?= "depends on blacklisted qtwebkit"
+PNBLACKLIST[qtopcua] ?= "requires widgets module enabled in qtbase, which was disabled in PLAT-18645 http://caprica.lgsvl.com:8080/Errors/Details/1509148"
+PNBLACKLIST[qtmqtt] ?= "requires widgets module enabled in qtbase, which was disabled in PLAT-18645 http://caprica.lgsvl.com:8080/Errors/Details/1509146"
+PNBLACKLIST[qtsmarthome] ?= "requires widgets module enabled in qtbase, which was disabled in PLAT-18645 http://caprica.lgsvl.com:8080/Errors/Details/1509144"
 
 PNBLACKLIST[kernel-devsrc] ?= "BROKEN for aarch64: make[4]: *** No rule to make target `kernel-devsrc/1.0-r0/image/usr/src/kernel/arch/arm64/boot/dts/broadcom/../overlays/Makefile'.  Stop http://caprica.lgsvl.com:8080/Errors/Details/1509158"
 PNBLACKLIST[glmark2] ?= "broken: we don't build libGL with mesa: cannot find -lGL http://caprica.lgsvl.com:8080/Errors/Details/1509155"

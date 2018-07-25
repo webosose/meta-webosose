@@ -1,21 +1,21 @@
-From eb19b19286995bc7eac086f9baa4b899bc19a78b Mon Sep 17 00:00:00 2001
+From 935288fd271b2369da9ce9f1584b221ca4d7e273 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 11:50:33 +0200
 Subject: [PATCH] network: Send SslHandShakeError more in detail
 
 Change-Id: I435e30476ad30bf4dd5957b2703d72b865d98669
 ---
- src/network/access/qhttpnetworkconnection.cpp        | 15 +++++++++++++--
- src/network/access/qhttpnetworkconnection_p.h        |  2 +-
- src/network/access/qhttpnetworkconnectionchannel.cpp |  3 ++-
- src/network/access/qnetworkreply.h                   |  2 ++
+ src/network/access/qhttpnetworkconnection.cpp     | 15 +++++++++++++--
+ src/network/access/qhttpnetworkconnection_p.h     |  2 +-
+ .../access/qhttpnetworkconnectionchannel.cpp      |  3 ++-
+ src/network/access/qnetworkreply.h                |  2 ++
  4 files changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/src/network/access/qhttpnetworkconnection.cpp b/src/network/access/qhttpnetworkconnection.cpp
-index 452b998..7b5cec5 100644
+index 2301920bdb..b181fb63cd 100644
 --- a/src/network/access/qhttpnetworkconnection.cpp
 +++ b/src/network/access/qhttpnetworkconnection.cpp
-@@ -822,7 +822,7 @@ bool QHttpNetworkConnectionPrivate::fillPipeline(QList<HttpMessagePair> &queue,
+@@ -847,7 +847,7 @@ bool QHttpNetworkConnectionPrivate::fillPipeline(QList<HttpMessagePair> &queue,
  }
  
  
@@ -24,7 +24,7 @@ index 452b998..7b5cec5 100644
  {
      QString errorString;
      switch (errorCode) {
-@@ -854,7 +854,18 @@ QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError e
+@@ -879,7 +879,18 @@ QString QHttpNetworkConnectionPrivate::errorDetail(QNetworkReply::NetworkError e
          errorString = QCoreApplication::translate("QHttp", "Unknown protocol specified");
          break;
      case QNetworkReply::SslHandshakeFailedError:
@@ -45,10 +45,10 @@ index 452b998..7b5cec5 100644
      case QNetworkReply::TooManyRedirectsError:
          errorString = QCoreApplication::translate("QHttp", "Too many redirects");
 diff --git a/src/network/access/qhttpnetworkconnection_p.h b/src/network/access/qhttpnetworkconnection_p.h
-index d63e722..77bce6b 100644
+index 2f185d973c..158d33560e 100644
 --- a/src/network/access/qhttpnetworkconnection_p.h
 +++ b/src/network/access/qhttpnetworkconnection_p.h
-@@ -230,7 +230,7 @@ public:
+@@ -233,7 +233,7 @@ public:
  
      void createAuthorization(QAbstractSocket *socket, QHttpNetworkRequest &request);
  
@@ -58,10 +58,10 @@ index d63e722..77bce6b 100644
  
      void removeReply(QHttpNetworkReply *reply);
 diff --git a/src/network/access/qhttpnetworkconnectionchannel.cpp b/src/network/access/qhttpnetworkconnectionchannel.cpp
-index 946df8d..d68b393 100644
+index d253206508..52e5e422d7 100644
 --- a/src/network/access/qhttpnetworkconnectionchannel.cpp
 +++ b/src/network/access/qhttpnetworkconnectionchannel.cpp
-@@ -252,7 +252,8 @@ void QHttpNetworkConnectionChannel::handleUnexpectedEOF()
+@@ -259,7 +259,8 @@ void QHttpNetworkConnectionChannel::handleUnexpectedEOF()
          // too many errors reading/receiving/parsing the status, close the socket and emit error
          requeueCurrentlyPipelinedRequests();
          close();
@@ -72,10 +72,10 @@ index 946df8d..d68b393 100644
          reply = 0;
          if (protocolHandler)
 diff --git a/src/network/access/qnetworkreply.h b/src/network/access/qnetworkreply.h
-index 254dd3f..08e8f9e 100644
+index d858e07d84..785c628e60 100644
 --- a/src/network/access/qnetworkreply.h
 +++ b/src/network/access/qnetworkreply.h
-@@ -73,6 +73,8 @@ public:
+@@ -80,6 +80,8 @@ public:
          InsecureRedirectError,
          UnknownNetworkError = 99,
  

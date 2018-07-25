@@ -1,0 +1,79 @@
+From 4767c4a307e4bb09bde338d0ea4d4bce40c4eba2 Mon Sep 17 00:00:00 2001
+From: Gleb Manyagin <gleb.manyagin@lge.com>
+Date: Wed, 23 Jan 2019 08:41:08 +0000
+Subject: [PATCH] Add-guard-to-avoid-recursively-text-layout-call
+
+setupTextLayout can be called twice or more times recursively.
+When this function call and do q->setImplicitSize
+function call. This function set implicit width and height
+and after that emit some signals. After that we can to
+enter in setupTextLayout again and full passed it.
+After second setupTextLayout passed - QTextEngine clear self
+data (lines). When we return to first setupTextLayout
+we have incorrect data for text engine and crash occurs in
+
+    QTextLine firstLine = visibleCount == 1 && elideLayout
+            ? elideLayout->lineAt(0)
+            : layout.lineAt(0);
+    Q_ASSERT(firstLine.isValid());
+    *baseline = firstLine.y() <--- HERE + firstLine.ascent();
+
+because firstLine::y try to access to lines which cleared
+previously.
+
+Upstream-Status: Submitted [https://codereview.qt-project.org/#/c/235313/]
+---
+ src/quick/items/qquicktext.cpp   | 6 ++++--
+ src/quick/items/qquicktext_p_p.h | 1 +
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/quick/items/qquicktext.cpp b/src/quick/items/qquicktext.cpp
+index 6d73af8..d7aa5b3 100644
+--- a/src/quick/items/qquicktext.cpp
++++ b/src/quick/items/qquicktext.cpp
+@@ -92,6 +92,7 @@ QQuickTextPrivate::QQuickTextPrivate()
+     , truncated(false), hAlignImplicit(true), rightToLeftText(false)
+     , layoutTextElided(false), textHasChanged(true), needToUpdateLayout(false), formatModifiesFontSize(false)
+     , polishSize(false)
++    , layoutInProgress(false)
+ {
+     implicitAntialiasing = true;
+ }
+@@ -629,7 +630,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+             && q->widthValid()
+             && (q->heightValid() || maximumLineCountValid);
+ 
+-    if ((!requireImplicitSize || (implicitWidthValid && implicitHeightValid))
++    if (layoutInProgress || (!requireImplicitSize || (implicitWidthValid && implicitHeightValid))
+             && ((singlelineElide && availableWidth() <= 0.)
+                 || (multilineElide && q->heightValid() && availableHeight() <= 0.))) {
+         // we are elided and we have a zero width or height
+@@ -655,6 +656,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+         *baseline = fm.ascent();
+         return QRectF(0, 0, 0, height);
+     }
++    layoutInProgress = true;
+ 
+     bool shouldUseDesignMetrics = renderType != QQuickText::NativeRendering;
+     if (extra.isAllocated())
+@@ -1089,7 +1091,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+ 
+     if (!customLayout)
+         br.setHeight(height);
+-
++    layoutInProgress = false;
+     //Update the number of visible lines
+     if (lineCount != visibleCount) {
+         lineCount = visibleCount;
+diff --git a/src/quick/items/qquicktext_p_p.h b/src/quick/items/qquicktext_p_p.h
+index 6456750..4cad657 100644
+--- a/src/quick/items/qquicktext_p_p.h
++++ b/src/quick/items/qquicktext_p_p.h
+@@ -170,6 +170,7 @@ public:
+     bool needToUpdateLayout:1;
+     bool formatModifiesFontSize:1;
+     bool polishSize:1; // Workaround for problem with polish called after updateSize (QTBUG-42636)
++    bool layoutInProgress:1; // Do not do layout again if previous call is not completed
+ 
+     static const QChar elideChar;
+ 

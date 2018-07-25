@@ -1,4 +1,4 @@
-From e5d301914188ef02c1053af950cd6d7c6a813c90 Mon Sep 17 00:00:00 2001
+From 615251a83de866f88e335455fa59d6eb39e4afe5 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Tue, 28 Oct 2014 21:22:59 +0200
 Subject: [PATCH] QOpenGLTextureCache size setting
@@ -22,10 +22,10 @@ Upstream-Status: Inappropriate [specific to tv]
  1 file changed, 3 insertions(+)
 
 diff --git a/src/gui/opengl/qopengltexturecache.cpp b/src/gui/opengl/qopengltexturecache.cpp
-index f80a55f..6c52a73 100644
+index f89fa9c96e..e47e4a9f46 100644
 --- a/src/gui/opengl/qopengltexturecache.cpp
 +++ b/src/gui/opengl/qopengltexturecache.cpp
-@@ -119,6 +119,9 @@ QOpenGLTextureCache::QOpenGLTextureCache(QOpenGLContext *ctx)
+@@ -125,6 +125,9 @@ QOpenGLTextureCache::QOpenGLTextureCache(QOpenGLContext *ctx)
      : QOpenGLSharedResource(ctx->shareGroup())
      , m_cache(64 * 1024) // 64 MB cache
  {

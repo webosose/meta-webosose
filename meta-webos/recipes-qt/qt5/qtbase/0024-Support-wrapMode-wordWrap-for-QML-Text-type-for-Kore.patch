@@ -1,0 +1,65 @@
+From 9810112ff0855242aeab341445afbe763193292e Mon Sep 17 00:00:00 2001
+From: Alexey Turitsyn <alexey.turitsyn@lge.com>
+Date: Fri, 4 Sep 2015 10:17:56 +0300
+Subject: [PATCH] Support wrapMode=wordWrap for QML Text type for Korean
+ language
+
+:Release Notes:
+Text.WordWrap is option of wrapping sentense by word unit.
+Support this option by applying customization in rule 26
+by tailoring class ID to class AL.
+
+:Detailed Notes:
+By default, Qt does line breakings for Korean after each
+syllable (lines can break anywhere, unless prohibited).
+To disable breaking Korean text by syllables, the classes
+in rule LB26, as well as characters of class ID, are often
+tailored to AL.
+Refer to the following document:
+http://www.unicode.org/reports/tr14/tr14-30.html#LB27
+This patch does mentioned above tailoring.
+
+By default, Qt do line breakings for Korean after each
+syllable (lines can break anywhere, unless prohibited).
+To disable breaking Korean syllable, tayloring rule LB26
+should be implemented. Refer to the following document:
+http://www.unicode.org/reports/tr14/tr14-30.html
+
+:Testing Performed:
+master-865
+created test application. text.WordWrap works well
+
+Upstream-Status: Submitted
+[https://codereview.qt-project.org/#/c/122897]
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-4196] wrapMode of QML Component Text doesn't support
+Text.WordWrap for Korean
+---
+ src/corelib/tools/qunicodetools.cpp | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/src/corelib/tools/qunicodetools.cpp b/src/corelib/tools/qunicodetools.cpp
+index ac19d6b6d1..9037d4c5ac 100644
+--- a/src/corelib/tools/qunicodetools.cpp
++++ b/src/corelib/tools/qunicodetools.cpp
+@@ -502,6 +502,17 @@ static void getLineBreaks(const ushort *string, quint32 len, QCharAttributes *at
+         const QUnicodeTables::Properties *prop = QUnicodeTables::properties(ucs4);
+         QUnicodeTables::LineBreakClass ncls = (QUnicodeTables::LineBreakClass) prop->lineBreakClass;
+ 
++        if (Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_H2) ||
++            Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_H3) ||
++            Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_JL) ||
++            Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_JV) ||
++            Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_JT) ) {
++            // use SPACE for line breaking (http://www.unicode.org/reports/tr14/tr14-30.html#LB27)
++            // "When Korean uses SPACE for line breaking, the classes in rule LB26,
++            // as well as characters of class ID, are often tailored to AL; see Section 8, Customization."
++            ncls = QUnicodeTables::LineBreak_AL;
++        }
++
+         if (Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_SA)) {
+             // LB1: resolve SA to AL, except of those that have Category Mn or Mc be resolved to CM
+             static const int test = FLAG(QChar::Mark_NonSpacing) | FLAG(QChar::Mark_SpacingCombining);

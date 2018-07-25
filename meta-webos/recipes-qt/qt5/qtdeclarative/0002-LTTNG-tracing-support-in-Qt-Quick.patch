@@ -1,0 +1,590 @@
+From 7cca89b34a56e64702363e0bd16842f11d219aee Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
+Date: Sat, 14 Jun 2014 00:57:58 +0200
+Subject: [PATCH] LTTNG tracing support in Qt Quick
+
+:Release Notes:
+LTTNG tracing support in Qt Quick, with misc tracepoints.
+
+:Detailed Notes:
+Added LTTNG tracing for QtQuick.
+
+Added tracepoints for:
+* Scenegraph rendering
+* Material shader processing
+* Texture uploads
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[GF-9999] Summary
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+
+Change-Id: Iadb777c9d8d34ad9bccd5e6582313467ef3f4cd6
+---
+ src/quick/items/qquickwindow.cpp                   |   4 +
+ src/quick/quick.pro                                |   5 +
+ .../qsgdefaultdistancefieldglyphcache.cpp          |  14 +++
+ src/quick/scenegraph/qsgdefaultrendercontext.cpp   |   4 +
+ src/quick/scenegraph/util/qsgatlastexture.cpp      |   6 ++
+ src/quick/scenegraph/util/qsgtexture.cpp           |   5 +
+ src/quick/scenegraph/util/qsgtexturematerial.cpp   |   3 +
+ src/quick/util/qquicklttngprovider.c               |  26 +++++
+ src/quick/util/qquicklttngprovider_p.h             |  92 ++++++++++++++++
+ src/quick/util/qquicktracer_p.h                    | 120 +++++++++++++++++++++
+ src/quick/util/util.pri                            |  10 ++
+ tests/auto/quick/quick.pro                         |   2 +-
+ 12 files changed, 290 insertions(+), 1 deletion(-)
+ create mode 100644 src/quick/util/qquicklttngprovider.c
+ create mode 100644 src/quick/util/qquicklttngprovider_p.h
+ create mode 100644 src/quick/util/qquicktracer_p.h
+
+diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
+index 8e9c149..c1fdd5c 100644
+--- a/src/quick/items/qquickwindow.cpp
++++ b/src/quick/items/qquickwindow.cpp
+@@ -81,6 +81,8 @@
+ #include <private/qdebug_p.h>
+ #endif
+ 
++#include <private/qquicktracer_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ Q_LOGGING_CATEGORY(DBG_TOUCH, "qt.quick.touch")
+@@ -428,6 +430,7 @@ void forceUpdate(QQuickItem *item)
+ 
+ void QQuickWindowPrivate::syncSceneGraph()
+ {
++    QTRACE_FUNCTION;
+     QML_MEMORY_SCOPE_STRING("SceneGraph");
+     Q_Q(QQuickWindow);
+ 
+@@ -463,6 +466,7 @@ void QQuickWindowPrivate::syncSceneGraph()
+ 
+ void QQuickWindowPrivate::renderSceneGraph(const QSize &size)
+ {
++    QTRACE_FUNCTION;
+     QML_MEMORY_SCOPE_STRING("SceneGraph");
+     Q_Q(QQuickWindow);
+     if (!renderer)
+diff --git a/src/quick/quick.pro b/src/quick/quick.pro
+index eae9b09..78e2d57 100644
+--- a/src/quick/quick.pro
++++ b/src/quick/quick.pro
+@@ -11,6 +11,11 @@ win32:!winrt: LIBS += -luser32
+ 
+ DEFINES += QT_NO_FOREACH
+ 
++qtConfig(lttng) {
++    QMAKE_USE_PRIVATE += lttng
++    LIBS_PRIVATE +=$$QMAKE_LIBS_DYNLOAD
++}
++
+ exists("qqml_enable_gcov") {
+     QMAKE_CXXFLAGS = -fprofile-arcs -ftest-coverage -fno-elide-constructors
+     LIBS_PRIVATE += -lgcov
+diff --git a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
+index f0a336e..3098b19 100644
+--- a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
++++ b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
+@@ -43,6 +43,7 @@
+ #include <QtGui/private/qopenglcontext_p.h>
+ #include <QtQml/private/qqmlglobal_p.h>
+ #include <QtQuick/private/qsgdistancefieldutil_p.h>
++#include <QtQuick/private/qquicktracer_p.h>
+ #include <qopenglfunctions.h>
+ #include <qopenglframebufferobject.h>
+ #include <qmath.h>
+@@ -157,6 +158,7 @@ void QSGDefaultDistanceFieldGlyphCache::requestGlyphs(const QSet<glyph_t> &glyph
+ 
+ void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField> &glyphs)
+ {
++    QTRACE_FUNCTION;
+     typedef QHash<TextureInfo *, QVector<glyph_t> > GlyphTextureHash;
+     typedef GlyphTextureHash::const_iterator GlyphTextureHashConstIt;
+ 
+@@ -201,16 +203,20 @@ void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField>
+ #endif
+         if (useTextureUploadWorkaround()) {
+             for (int i = 0; i < glyph.height(); ++i) {
++                QTRACE_BEFORE("glTexSubImage2D");
+                 m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                          c.x - padding, c.y + i - padding, glyph.width(),1,
+                                          format, GL_UNSIGNED_BYTE,
+                                          glyph.scanLine(i));
++                QTRACE_AFTER("glTexSubImage2D");
+             }
+         } else {
++            QTRACE_BEFORE("glTexSubImage2D");
+             m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                      c.x - padding, c.y - padding, glyph.width(), glyph.height(),
+                                      format, GL_UNSIGNED_BYTE,
+                                      glyph.constBits());
++            QTRACE_AFTER("glTexSubImage2D");
+         }
+     }
+ 
+@@ -237,6 +243,7 @@ void QSGDefaultDistanceFieldGlyphCache::releaseGlyphs(const QSet<glyph_t> &glyph
+ 
+ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo, int width, int height)
+ {
++    QTRACE_FUNCTION;
+     if (useTextureResizeWorkaround() && texInfo->image.isNull())
+         texInfo->image = QDistanceField(width, height);
+ 
+@@ -260,7 +267,9 @@ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo, int
+ #endif
+ 
+     QByteArray zeroBuf(width * height, 0);
++    QTRACE_BEFORE("glTexImage2D");
+     m_funcs->glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, zeroBuf.constData());
++    QTRACE_AFTER("glTexImage2D");
+ 
+     texInfo->size = QSize(width, height);
+ 
+@@ -280,6 +289,7 @@ static void freeFramebufferFunc(QOpenGLFunctions *funcs, GLuint id)
+ 
+ void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int width, int height)
+ {
++    QTRACE_FUNCTION;
+     QOpenGLContext *ctx = QOpenGLContext::currentContext();
+     Q_ASSERT(ctx);
+ 
+@@ -355,16 +365,20 @@ void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int
+ 
+         if (useTextureUploadWorkaround()) {
+             for (int i = 0; i < texInfo->image.height(); ++i) {
++                QTRACE_BEFORE("glTexSubImage2D");
+                 m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                          0, i, oldWidth, 1,
+                                          format, GL_UNSIGNED_BYTE,
+                                          texInfo->image.scanLine(i));
++                QTRACE_AFTER("glTexSubImage2D");
+             }
+         } else {
++            QTRACE_BEFORE("glTexSubImage2D");
+             m_funcs->glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                      0, 0, oldWidth, oldHeight,
+                                      format, GL_UNSIGNED_BYTE,
+                                      texInfo->image.constBits());
++            QTRACE_AFTER("glTexSubImage2D");
+         }
+ 
+         m_funcs->glPixelStorei(GL_UNPACK_ALIGNMENT, alignment); // restore to previous value
+diff --git a/src/quick/scenegraph/qsgdefaultrendercontext.cpp b/src/quick/scenegraph/qsgdefaultrendercontext.cpp
+index b343f89..82c24f5 100644
+--- a/src/quick/scenegraph/qsgdefaultrendercontext.cpp
++++ b/src/quick/scenegraph/qsgdefaultrendercontext.cpp
+@@ -47,6 +47,8 @@
+ #include <QtQuick/private/qsgdefaultdistancefieldglyphcache_p.h>
+ #include <QtQuick/private/qsgdistancefieldutil_p.h>
+ 
++#include <QtQuick/private/qquicktracer_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ #define QSG_RENDERCONTEXT_PROPERTY "_q_sgrendercontext"
+@@ -175,6 +177,8 @@ static QBasicMutex qsg_framerender_mutex;
+ 
+ void QSGDefaultRenderContext::renderNextFrame(QSGRenderer *renderer, uint fboId)
+ {
++    QTRACE_FUNCTION;
++
+     if (m_serializedRender)
+         qsg_framerender_mutex.lock();
+ 
+diff --git a/src/quick/scenegraph/util/qsgatlastexture.cpp b/src/quick/scenegraph/util/qsgatlastexture.cpp
+index 22f0b13..c20a800 100644
+--- a/src/quick/scenegraph/util/qsgatlastexture.cpp
++++ b/src/quick/scenegraph/util/qsgatlastexture.cpp
+@@ -55,6 +55,8 @@
+ 
+ #include <private/qquickprofiler_p.h>
+ 
++#include <private/qquicktracer_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ #ifndef GL_BGRA
+@@ -223,6 +225,7 @@ int Atlas::textureId() const
+ 
+ static void swizzleBGRAToRGBA(QImage *image)
+ {
++    QTRACE_FUNCTION;
+     const int width = image->width();
+     const int height = image->height();
+     uint *p = (uint *) image->bits();
+@@ -236,6 +239,7 @@ static void swizzleBGRAToRGBA(QImage *image)
+ 
+ void Atlas::upload(Texture *texture)
+ {
++    QTRACE_FUNCTION;
+     const QImage &image = texture->image();
+     const QRect &r = texture->atlasSubRect();
+ 
+@@ -274,6 +278,7 @@ void Atlas::upload(Texture *texture)
+ void Atlas::uploadBgra(Texture *texture)
+ {
+     QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
++    QTRACE_FUNCTION;
+     const QRect &r = texture->atlasSubRect();
+     QImage image = texture->image();
+ 
+@@ -337,6 +342,7 @@ void Atlas::uploadBgra(Texture *texture)
+ void Atlas::bind(QSGTexture::Filtering filtering)
+ {
+     QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
++    QTRACE_FUNCTION;
+     if (!m_allocated) {
+         m_allocated = true;
+ 
+diff --git a/src/quick/scenegraph/util/qsgtexture.cpp b/src/quick/scenegraph/util/qsgtexture.cpp
+index 4abee3d..a7ffd76 100644
+--- a/src/quick/scenegraph/util/qsgtexture.cpp
++++ b/src/quick/scenegraph/util/qsgtexture.cpp
+@@ -43,6 +43,7 @@
+ #include <qmath.h>
+ #include <private/qquickprofiler_p.h>
+ #include <private/qqmlglobal_p.h>
++#include <private/qquicktracer_p.h>
+ #include <QtGui/qguiapplication.h>
+ #include <QtGui/qpa/qplatformnativeinterface.h>
+ #if QT_CONFIG(opengl)
+@@ -645,6 +646,7 @@ QSGPlainTexture::~QSGPlainTexture()
+ 
+ void qsg_swizzleBGRAToRGBA(QImage *image)
+ {
++    QTRACE_FUNCTION;
+     const int width = image->width();
+     const int height = image->height();
+     for (int i = 0; i < height; ++i) {
+@@ -701,6 +703,7 @@ void QSGPlainTexture::bind()
+ #if QT_CONFIG(opengl)
+     QOpenGLContext *context = QOpenGLContext::currentContext();
+     QOpenGLFunctions *funcs = context->functions();
++    QTRACE_FUNCTION;
+     if (!m_dirty_texture) {
+         funcs->glBindTexture(GL_TEXTURE_2D, m_texture_id);
+         if (mipmapFiltering() != QSGTexture::None && !m_mipmaps_generated) {
+@@ -834,7 +837,9 @@ void QSGPlainTexture::bind()
+     Q_QUICK_SG_PROFILE_RECORD(QQuickProfiler::SceneGraphTexturePrepare,
+                               QQuickProfiler::SceneGraphTexturePrepareSwizzle);
+ 
++    QTRACE_BEFORE("glTexImage2D");
+     funcs->glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_texture_size.width(), m_texture_size.height(), 0, externalFormat, GL_UNSIGNED_BYTE, tmp.constBits());
++    QTRACE_AFTER("glTexImage2D");
+ 
+     qint64 uploadTime = 0;
+     if (profileFrames)
+diff --git a/src/quick/scenegraph/util/qsgtexturematerial.cpp b/src/quick/scenegraph/util/qsgtexturematerial.cpp
+index c536445..8f44460 100644
+--- a/src/quick/scenegraph/util/qsgtexturematerial.cpp
++++ b/src/quick/scenegraph/util/qsgtexturematerial.cpp
+@@ -44,6 +44,8 @@
+ # include <QtGui/qopenglfunctions.h>
+ #endif
+ 
++#include <QtQuick/private/qquicktracer_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ #if QT_CONFIG(opengl)
+@@ -81,6 +83,7 @@ void QSGOpaqueTextureMaterialShader::initialize()
+ void QSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+ {
+     Q_ASSERT(oldEffect == 0 || newEffect->type() == oldEffect->type());
++    QTRACE_FUNCTION;
+     QSGOpaqueTextureMaterial *tx = static_cast<QSGOpaqueTextureMaterial *>(newEffect);
+     QSGOpaqueTextureMaterial *oldTx = static_cast<QSGOpaqueTextureMaterial *>(oldEffect);
+ 
+diff --git a/src/quick/util/qquicklttngprovider.c b/src/quick/util/qquicklttngprovider.c
+new file mode 100644
+index 0000000..5b70f73
+--- /dev/null
++++ b/src/quick/util/qquicklttngprovider.c
+@@ -0,0 +1,26 @@
++/*
++ * qquicklttngprovider.c
++ *
++ * Tracepoint provider file for LTTng UST tracing in QT Quick
++ *
++ * For more information on see:
++ *    http://lttng.org/files/doc/man-pages/man3/lttng-ust.3.html
++ *
++ * The application level API to these tracepoints is in qtquicktracer_p.h
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef QT_NO_LTTNG
++/*
++ * These #defines alter the behavior of qquicklttngprovider_p.h to define the tracing
++ * primitives rather than just declaring them.
++ */
++#define TRACEPOINT_CREATE_PROBES
++#define TRACEPOINT_DEFINE
++/*
++ * The header containing our TRACEPOINT_EVENTs.
++ */
++#include "qquicklttngprovider_p.h"
++
++#endif // QT_NO_LTTNG
+diff --git a/src/quick/util/qquicklttngprovider_p.h b/src/quick/util/qquicklttngprovider_p.h
+new file mode 100644
+index 0000000..3bd1887
+--- /dev/null
++++ b/src/quick/util/qquicklttngprovider_p.h
+@@ -0,0 +1,92 @@
++/*
++ * qquicklttngprovider_p.h
++ *
++ * Tracepoint provider file for LTTng UST tracing in QT GUI.
++ *
++ * For more information on see:
++ *    http://lttng.org/files/doc/man-pages/man3/lttng-ust.3.html
++ *
++ * The application level API to these tracepoints is in qquicktracer_p.h
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef QT_NO_LTTNG
++
++#undef TRACEPOINT_PROVIDER
++#define TRACEPOINT_PROVIDER qtquick
++
++#undef TRACEPOINT_INCLUDE_FILE
++#define TRACEPOINT_INCLUDE_FILE ./util/qquicklttngprovider_p.h
++
++#ifdef __cplusplus
++extern "C"{
++#endif /*__cplusplus */
++
++#if !defined(_QQUICKLTTNGPROVIDER_P_H) || defined(TRACEPOINT_HEADER_MULTI_READ)
++#define _QQUICKLTTNGPROVIDER_P_H
++
++#include <lttng/tracepoint.h>
++
++/* "message" tracepoint should be used for single event trace points */
++TRACEPOINT_EVENT(
++    qtquick,
++    message,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "keyValue" tracepoint should be used for event with type and context data */
++TRACEPOINT_EVENT(
++    qtquick,
++    keyValue,
++    TP_ARGS(char*, eventType, char*, contextData),
++    TP_FIELDS(ctf_string(key, eventType) ctf_string(value, contextData)))
++TRACEPOINT_EVENT(
++    qtquick,
++    before,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    qtquick,
++    after,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "scope_entry"/"scope_exit" tracepoints should be used only by
++   PmtraceTraceScope class to measure the duration of a scope within
++   a function in C++ code. In C code these may be used directly for
++   the same purpose, just make sure you trace any early exit from the
++   scope such as break statements or gotos.  */
++TRACEPOINT_EVENT(
++    qtquick,
++    scope_entry,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    qtquick,
++    scope_exit,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++/* "function_entry"/"function_exit" tracepoints should be used only by
++   PmtraceTraceFunction class to measure the duration of a function
++   in C++ code. In C code it may be used directly for the same
++   purpose, just make sure you capture any early exit from the
++   function such as return statements. */
++TRACEPOINT_EVENT(
++    qtquick,
++    function_entry,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++TRACEPOINT_EVENT(
++    qtquick,
++    function_exit,
++    TP_ARGS(char*, text),
++    TP_FIELDS(ctf_string(scope, text)))
++
++#endif /* _QQUICKLTTNGPROVIDER__PH */
++
++#include <lttng/tracepoint-event.h>
++
++#ifdef __cplusplus
++}
++#endif /*__cplusplus */
++
++#endif // QT_NO_LTTNG
+diff --git a/src/quick/util/qquicktracer_p.h b/src/quick/util/qquicktracer_p.h
+new file mode 100644
+index 0000000..2b2442a
+--- /dev/null
++++ b/src/quick/util/qquicktracer_p.h
+@@ -0,0 +1,120 @@
++/*
++ * qquicktracer_p.h
++ *
++ * Tracepoint API for using LTTng UST tracing in QT Quick.
++ *
++ * Copyright (c) 2014 LG Electronics, Inc.
++ */
++
++#ifndef QQUICKTRACER_P_H
++#define QQUICKTRACER_P_H
++
++#ifndef QT_NO_LTTNG
++
++#include "qquicklttngprovider_p.h"
++
++/* QTRACE is for free form tracing. Provide a string
++   which uniquely identifies your trace point. */
++#define QTRACE(label) \
++    tracepoint(qtquick, message, label)
++
++/* QTRACE_KEY_VALUE_LOG tracepoint records a event with type and context data. */
++#define QTRACE_KEY_VALUE_LOG(eventType, contextData) \
++    tracepoint(qtquick, keyValue, eventType, contextData)
++
++/* QTRACE_BEFORE / AFTER is for tracing a time duration
++ * which is not contained within a scope (curly braces) or function,
++ * or in C code where there is no mechanism to automatically detect
++ * exiting a scope or function.
++ */
++#define QTRACE_BEFORE(label) \
++    tracepoint(qtquick, before, label)
++#define QTRACE_AFTER(label) \
++    tracepoint(qtquick, after, label)
++
++/* QTRACE_SCOPE* is for tracing a the duration of a scope.  In
++ * C++ code use QTRACE_SCOPE only, in C code use the
++ * ENTRY/EXIT macros and be careful to catch all exit cases.
++ */
++#define QTRACE_SCOPE_ENTRY(label) \
++    tracepoint(qtquick, scope_entry, label)
++#define QTRACE_SCOPE_EXIT(label) \
++    tracepoint(qtquick, scope_exit, label)
++#define QTRACE_SCOPE(label) \
++    QTraceScope traceScope(label)
++
++/* QTRACE_FUNCTION* is for tracing a the duration of a scope.
++ * In C++ code use QTRACE_FUNCTION only, in C code use the
++ * ENTRY/EXIT macros and be careful to catch all exit cases.
++ */
++#define QTRACE_FUNCTION_ENTRY(label) \
++    tracepoint(qtquick, function_entry, label)
++#define QTRACE_FUNCTION_EXIT(label) \
++    tracepoint(qtquick, function_exit, label)
++#define QTRACE_FUNCTION \
++    QTraceFunction traceFunction(const_cast<char*>(Q_FUNC_INFO))
++
++class QTraceScope {
++public:
++    QTraceScope(char* label)
++        : scopeLabel(label)
++    {
++        QTRACE_SCOPE_ENTRY(scopeLabel);
++    }
++
++    ~QTraceScope()
++    {
++        QTRACE_SCOPE_EXIT(scopeLabel);
++    }
++
++private:
++    char* scopeLabel;
++
++    // Prevent heap allocation
++    void operator delete(void*);
++    void* operator new(size_t);
++    QTraceScope(const QTraceScope&);
++    QTraceScope& operator=(const QTraceScope&);
++};
++
++class QTraceFunction {
++public:
++    QTraceFunction(char* label)
++        : fnLabel(label)
++    {
++        QTRACE_FUNCTION_ENTRY(fnLabel);
++    }
++
++    ~QTraceFunction()
++    {
++        QTRACE_FUNCTION_EXIT(fnLabel);
++    }
++
++private:
++    char* fnLabel;
++
++    // Prevent heap allocation
++    void operator delete(void*);
++    void* operator new(size_t);
++    QTraceFunction(const QTraceFunction&);
++    QTraceFunction& operator=(const QTraceFunction&);
++};
++
++#else // QT_NO_LTTNG
++
++#define QTRACE(label)
++#define QTRACE_KEY_VALUE_LOG(eventType, contextData)
++#define QTRACE_POSITION(label, x, y)
++#define QTRACE_MOUSEEVENT(label, button, x, y)
++#define QTRACE_BEFORE(label)
++#define QTRACE_AFTER(label)
++#define QTRACE_SCOPE_ENTRY(label)
++#define QTRACE_SCOPE_EXIT(label)
++#define QTRACE_SCOPE(label)
++#define QTRACE_FUNCTION_ENTRY(label)
++#define QTRACE_FUNCTION_EXIT(label)
++#define QTRACE_FUNCTION
++
++#endif // QT_NO_LTTNG
++
++#endif // QQUICKTRACER_P_H
+diff --git a/src/quick/util/util.pri b/src/quick/util/util.pri
+index b53b132..e1e6417 100644
+--- a/src/quick/util/util.pri
++++ b/src/quick/util/util.pri
+@@ -80,3 +80,13 @@ qtConfig(quick-path) {
+         $$PWD/qquickpath_p_p.h \
+         $$PWD/qquickpathinterpolator_p.h
+ }
++# lttng-ust
++
++HEADERS += \
++    $$PWD/qquicktracer_p.h \
++    $$PWD/qquicklttngprovider_p.h
++
++qtConfig(lttng) {
++    SOURCES += \
++    $$PWD/qquicklttngprovider.c
++}
+diff --git a/tests/auto/quick/quick.pro b/tests/auto/quick/quick.pro
+index 4c1c667..a9c28a3 100644
+--- a/tests/auto/quick/quick.pro
++++ b/tests/auto/quick/quick.pro
+@@ -44,7 +44,7 @@ PRIVATETESTS += \
+     qquickxmllistmodel
+ 
+ # This test requires the xmlpatterns module
+-!qtHaveModule(xmlpatterns): PRIVATETESTS -= qquickxmllistmodel
++!OE_QTXMLPATTERNS_ENABLED|!qtHaveModule(xmlpatterns): PRIVATETESTS -= qquickxmllistmodel
+ 
+ QUICKTESTS += \
+     qquickaccessible \

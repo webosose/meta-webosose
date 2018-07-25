@@ -1,4 +1,4 @@
-From c06ed2923fee90752636ffd05c790857b81043f2 Mon Sep 17 00:00:00 2001
+From 36df0e25bb029bd490e972b481865c514f7ccfc6 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Mon, 16 Jun 2014 00:32:15 +0300
 Subject: [PATCH] Fix allocateTimerId
@@ -11,10 +11,10 @@ See: https://bugreports.qt-project.org/browse/QTBUG-38957
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/src/corelib/kernel/qabstracteventdispatcher.cpp b/src/corelib/kernel/qabstracteventdispatcher.cpp
-index 0b5898a..5ad3f5b 100644
+index d234949d14..6ce7e4906f 100644
 --- a/src/corelib/kernel/qabstracteventdispatcher.cpp
 +++ b/src/corelib/kernel/qabstracteventdispatcher.cpp
-@@ -84,7 +84,13 @@ Q_GLOBAL_STATIC(QtTimerIdFreeList, timerIdFreeList)
+@@ -90,7 +90,13 @@ Q_GLOBAL_STATIC(QtTimerIdFreeList, timerIdFreeList)
  
  int QAbstractEventDispatcherPrivate::allocateTimerId()
  {

@@ -1,0 +1,117 @@
+From 7d32644de6f2bec2bb04ccded44a1a6b57f47202 Mon Sep 17 00:00:00 2001
+From: Alexey Turitsyn <alexey.turitsyn@lge.com>
+Date: Thu, 4 Aug 2016 15:11:35 +0300
+Subject: [PATCH] Check if decoration allowed for a dialog
+
+:Release Notes:
+Check if decoration allowed for a dialog.
+
+:Detailed Notes:
+In one-window model QML dialogs can be decorated
+in order to look like a window. Such a decoration
+results in non-transparent background. If a part
+of a dialog must be transparent, this decoration
+is redundant. A property added to AbstractDialog
+to indicate whether a decoration is allowed.
+
+:Issues Addressed:
+[PF-2941] Black background instead of transparent
+when SelectDialog is shown.
+---
+ src/dialogs/qquickabstractdialog.cpp | 18 ++++++++++++++++--
+ src/dialogs/qquickabstractdialog_p.h |  5 +++++
+ 2 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/src/dialogs/qquickabstractdialog.cpp b/src/dialogs/qquickabstractdialog.cpp
+index 38245d6..0d7c226 100644
+--- a/src/dialogs/qquickabstractdialog.cpp
++++ b/src/dialogs/qquickabstractdialog.cpp
+@@ -69,6 +69,7 @@ QQuickAbstractDialog::QQuickAbstractDialog(QObject *parent)
+     , m_hasAspiredPosition(false)
+     , m_visibleChangedConnected(false)
+     , m_dialogHelperInUse(false)
++    , m_decorationAllowed(true)
+ {
+ }
+ 
+@@ -172,7 +173,7 @@ void QQuickAbstractDialog::setVisible(bool v)
+             // If the platform does not support multiple windows, but the dialog is
+             // implemented as an Item, then try to decorate it as a fake window and make it visible.
+             if (!m_windowDecoration) {
+-                if (m_decorationComponent) {
++                if (m_decorationComponent && decorationAllowed()) {
+                     if (m_decorationComponent->isLoading())
+                         connect(m_decorationComponent, SIGNAL(statusChanged(QQmlComponent::Status)),
+                                 this, SLOT(decorationLoaded()));
+@@ -197,13 +198,15 @@ void QQuickAbstractDialog::setVisible(bool v)
+     if (m_windowDecoration) {
+         setDecorationDismissBehavior();
+         m_windowDecoration->setVisible(v);
+-    } else if (m_dialogWindow) {
++    } else if (m_dialogWindow && m_hasNativeWindows) {
+         if (v) {
+             m_dialogWindow->setTransientParent(parentWindow());
+             m_dialogWindow->setTitle(title());
+             m_dialogWindow->setModality(m_modality);
+         }
+         m_dialogWindow->setVisible(v);
++    } else if (m_contentItem) {
++        m_contentItem->setVisible(v);
+     }
+ 
+     emit visibilityChanged();
+@@ -365,6 +368,17 @@ int QQuickAbstractDialog::height() const
+     return m_sizeAspiration.height();
+ }
+ 
++bool QQuickAbstractDialog::decorationAllowed() const
++{
++    return m_decorationAllowed;
++}
++
++void QQuickAbstractDialog::setDecorationAllowed(bool value)
++{
++    m_decorationAllowed = value;
++    emit decorationAllowanceChanged();
++}
++
+ /*
+     A non-fullscreen dialog is not allowed to be too large
+     to fit on the screen in either orientation (portrait or landscape).
+diff --git a/src/dialogs/qquickabstractdialog_p.h b/src/dialogs/qquickabstractdialog_p.h
+index 54dbaac..4cd5505 100644
+--- a/src/dialogs/qquickabstractdialog_p.h
++++ b/src/dialogs/qquickabstractdialog_p.h
+@@ -73,6 +73,7 @@ class QQuickAbstractDialog : public QObject
+     Q_PROPERTY(int width READ width WRITE setWidth NOTIFY geometryChanged)
+     Q_PROPERTY(int height READ height WRITE setHeight NOTIFY geometryChanged)
+     Q_PROPERTY(int __maximumDimension READ __maximumDimension NOTIFY __maximumDimensionChanged)
++    Q_PROPERTY(bool decorationAllowed READ decorationAllowed WRITE setDecorationAllowed NOTIFY decorationAllowanceChanged)
+ 
+ public:
+     QQuickAbstractDialog(QObject *parent = 0);
+@@ -94,6 +95,8 @@ public:
+     virtual void setTitle(const QString &t) = 0;
+     void setContentItem(QQuickItem* obj);
+     bool isWindow() const { return m_hasNativeWindows; }
++    bool decorationAllowed() const;
++    void setDecorationAllowed(bool value);
+ 
+     enum StandardButton {
+         NoButton           = QPlatformDialogHelper::NoButton,
+@@ -135,6 +138,7 @@ Q_SIGNALS:
+     void accepted();
+     void rejected();
+     void __maximumDimensionChanged();
++    void decorationAllowanceChanged();
+ 
+ protected Q_SLOTS:
+     void decorationLoaded();
+@@ -166,6 +170,7 @@ protected: // variables and methods for pure-QML implementations only
+     bool m_hasAspiredPosition;
+     bool m_visibleChangedConnected;
+     bool m_dialogHelperInUse;
++    bool m_decorationAllowed;
+ 
+     static QQmlComponent *m_decorationComponent;
+ 

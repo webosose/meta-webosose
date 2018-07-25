@@ -33,3 +33,7 @@ EXTRA_QMAKEVARS_PRE += "${@ 'CONFIG+=lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' e
 EXTRA_QMAKEVARS_PRE += "WEBOS_QT_LOCALIZATION_QM_BASEDIR=${datadir}/qml/locales"
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}"
+
+# until pseudo is completely fixed
+# PLAT-48507 pseudo: random package_qa failures
+INSANE_SKIP_${PN} += "host-user-contaminated"
