@@ -8,6 +8,8 @@
 # - Install ACG configuration files for webOS specific sample services
 # - Inherit webos_enactjs_app to build enact sample application for IoTivity
 # - Do not install resources not built for TARGET_OS=webos
+# - Add app icon for IoTivity Sampler application
+# - Fix bug that IoTivity Sampler is not closed by 'x' button
 
 SUMMARY = "IoTivity framework and SDK sponsored by the Open Connectivity Foundation."
 DESCRIPTION = "IoTivity is an open source software framework enabling seamless device-to-device connectivity to address the emerging needs of the Internet of Things."
@@ -49,7 +51,10 @@ SRC_URI += "${url_rapidjson};name=rapidjson;;nobranch=1;destsuffix=${S}/extlibs/
 SRC_URI += "file://0001-Add-webos-into-the-target-OS-list.patch \
     file://oic_svr_db_server.dat \
     file://oic_svr_db_client.dat \
+    file://icon.png \
 "
+
+PR = "r1"
 
 inherit scons pkgconfig webos_enactjs_app webos_component
 
@@ -270,6 +275,7 @@ do_install_append() {
     # dat files for node samples
     install -v -m 0644 ${WORKDIR}/oic_svr_db_server.dat ${D}${webos_servicesdir}/com.example.service.iotivity.server/
     install -v -m 0644 ${WORKDIR}/oic_svr_db_client.dat ${D}${webos_servicesdir}/com.example.service.iotivity.client/
+    install -v -m 0644 ${WORKDIR}/icon.png ${D}${webos_applicationsdir}/com.example.app.iotivity/
 }
 
 # IOTIVITY packages:
