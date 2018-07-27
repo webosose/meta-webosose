@@ -19,3 +19,9 @@ inherit webos_daemon
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+# http://caprica.lgsvl.com:8080/Errors/Details/1092094
+# Configured/src/PmKLogDaemon.c:293:6: error: format not a string literal and no format arguments [-Werror=format-security]
+#      fprintf(fp, gOutBuff+counter);
+#      ^~~~~~~
+SECURITY_STRINGFORMAT = ""

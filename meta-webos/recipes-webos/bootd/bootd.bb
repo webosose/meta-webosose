@@ -35,3 +35,21 @@ EXTRA_OECMAKE += "-DWEBOS_DISTRO_PRERELEASE:STRING='${WEBOS_DISTRO_PRERELEASE}'"
 # gtest option
 PACKAGES =+ "${PN}-tests"
 FILES_${PN}-tests = "${libexecdir}/tests/*"
+
+# http://caprica.lgsvl.com:8080/Errors/Details/1092091
+# bootd/2.0.0-142-r10/git/src/bootd/util/Logger.cpp:210:40: error: format not a string literal and no format arguments [-Werror=format-security]
+#          PmLogInfo(m_context, msgid, 0, m_msgBuffer);
+#                                         ^~~~~~~~~~~
+# 2.0.0-142-r10/git/src/bootd/util/Logger.cpp:231:31: error: format not a string literal and no format arguments [-Werror=format-security]
+#          PmLogDebug(m_context, m_msgBuffer);
+#                                ^~~~~~~~~~~
+# 2.0.0-142-r10/git/src/bootd/util/Logger.cpp:252:40: error: format not a string literal and no format arguments [-Werror=format-security]
+#          PmLogInfo(m_context, msgid, 0, m_msgBuffer);
+#                                         ^~~~~~~~~~~
+# 2.0.0-142-r10/git/src/bootd/util/Logger.cpp:273:43: error: format not a string literal and no format arguments [-Werror=format-security]
+#          PmLogWarning(m_context, msgid, 0, m_msgBuffer);
+#                                            ^~~~~~~~~~~
+# 2.0.0-142-r10/git/src/bootd/util/Logger.cpp:294:41: error: format not a string literal and no format arguments [-Werror=format-security]
+#          PmLogError(m_context, msgid, 0, m_msgBuffer);
+#                                          ^~~~~~~~~~~
+SECURITY_STRINGFORMAT = ""
