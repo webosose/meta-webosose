@@ -45,3 +45,10 @@ PACKAGECONFIG[com.webos.service.videooutput] = "-DUSE_VIDEOOUTPUTD:BOOL=TRUE,-DU
 PACKAGES =+ "${PN}-python"
 
 FILES_${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${datadir}/${BPN}/python/"
+
+# needs to be fixed first
+# http://caprica.lgsvl.com:8080/Errors/Details/1092075
+# 1.0.0-184.open.10-r10/git/src/logger/Logger_macro.h:186:38: error: format not a string literal and no format arguments [-Werror=format-security]
+#   char message[MAX_FT_SIZE]; snprintf(message, MAX_FT_SIZE, format, args...);
+#                              ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SECURITY_STRINGFORMAT = ""

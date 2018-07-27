@@ -29,3 +29,14 @@ INSTALL_FLAGS = "BINDIR=/usr/bin SBINDIR=/usr/sbin DESTDIR=${D}"
 do_install() {
 	oe_runmake ${INSTALL_FLAGS} install
 }
+
+# http://caprica.lgsvl.com:8080/Errors/Details/1092065
+# fixed in:
+# http://git.yoctoproject.org/cgit/cgit.cgi/meta-ivi/commit/meta-ivi/recipes-support-ivi/keyutils?id=31f05de9c4cd04b3ff9bb6b3030d24be3be837d4
+#
+# don't use fortify here because the Makefile doesn't respect the flags from OE, nor uses any optimalization
+# aarch64-webos-linux-gcc  -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=TOPDIR/BUILD/work/raspberrypi3_64-webos-linux/keyutils/1.5.5-r5/recipe-sysroot -I. -DPKGBUILD="\"2018-07-27\"" -DPKGVERSION="\"keyutils-1.5.5\"" -DAPIVERSION="\"libkeyutils-1.4\"" -g -Wall -Werror -UNO_GLIBC_KEYERR -o keyutils.o -c keyutils.c
+# keyutils/1.5.5-r5/recipe-sysroot/usr/include/features.h:381:4: error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Werror=cpp]
+#  warning _FORTIFY_SOURCE requires compiling with optimization (-O)
+#    ^~~~~~~
+lcl_maybe_fortify = ""
