@@ -26,7 +26,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_append_hardware = " libndl-directmedia2"
 
 PR = "r16"
-WEBOS_VERSION = "53.0.2785.34-2_7d36799ff10ef82f20ce78c44062cc400e9b8555"
+WEBOS_VERSION = "53.0.2785.34-3_5a1ae5cf86570fe7f1691342dd1436c60032543c"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
