@@ -1,0 +1,21 @@
+diff --git a/lib/subscription.js b/lib/subscription.js
+index d10bc8f..6e7277d 100644
+--- a/lib/subscription.js
++++ b/lib/subscription.js
+@@ -29,13 +29,13 @@
+     super(handle, typeClass, qos);
+     this._topic = topic;
+     this._callback = callback;
+-    this._message = new typeClass();
+   }
+ 
+   processResponse(msg) {
+-    this._message.deserialize(msg);
++    let message = new this._typeClass();
++    message.deserialize(msg);
+     debug(`Message of topic ${this._topic} received.`);
+-    this._callback(toPlainObject(this._message));
++    this._callback(toPlainObject(message));
+   }
+ 
+   static createSubscription(nodeHandle, typeClass, topic, callback, qos) {
