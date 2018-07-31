@@ -23,10 +23,9 @@ inherit webos_system_bus
 inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n"
-DEPENDS_append_hardware = " libndl-directmedia2"
 
-PR = "r16"
-WEBOS_VERSION = "53.0.2785.34-3_5a1ae5cf86570fe7f1691342dd1436c60032543c"
+PR = "r17"
+WEBOS_VERSION = "53.0.2785.34-4_a009710a2d775b8fc7c379fc323c9486da943dd7"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -125,15 +124,14 @@ GYP_DEFINES_append_qemux86 = " target_arch=ia32"
 GYP_DEFINES_append_qemux86 = " generate_character_data=0"
 GYP_DEFINES_append_armv7a = " arm_version=7"
 GYP_DEFINES_append_armv7ve = " arm_version=7 arm_override_arch='armv7ve'"
-GYP_DEFINES_append_hardware = " use_directmedia2=1"
 
 # umediaserver interface for hardware
 GYP_DEFINES_append_hardware = " use_umediaserver=1 use_webos_media_focus_extension=1"
 DEPENDS_append_hardware = " umediaserver"
 
-# libndl-directmedia2 is still broken for aarch64 PLAT-45700
-GYP_DEFINES_remove_aarch64 = "use_directmedia2=1 use_umediaserver=1 use_webos_media_focus_extension=1"
-DEPENDS_remove_aarch64 = "umediaserver libndl-directmedia2"
+# still broken for aarch64 PLAT-45700
+GYP_DEFINES_remove_aarch64 = "use_umediaserver=1 use_webos_media_focus_extension=1"
+DEPENDS_remove_aarch64 = "umediaserver"
 
 GYP_DEFINES += "use_chromium_cbe=1 use_dynamic_injection_loading=0"
 
