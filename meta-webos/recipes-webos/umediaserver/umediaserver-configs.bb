@@ -4,9 +4,9 @@ SUMMARY = "umediaserver configs installation"
 AUTHOR = "Peter Nordström <peter.nordstrom@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
 
-WEBOS_VERSION = "1.0.0-2_3a7f15e56f5be43ee96afecd63efee3328790bcd"
+WEBOS_VERSION = "1.0.0-4_e38a439235b656f1e59753f96e7c5725472a2936"
 PR = "r6"
 
 inherit webos_cmake
