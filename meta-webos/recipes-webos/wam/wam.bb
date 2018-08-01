@@ -19,8 +19,8 @@ RDEPENDS_${PN} += "qtdeclarative-plugins qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.0-1_2a11010979e1514eee69c2b8954c42931f76049e"
-PR = "r17"
+WEBOS_VERSION = "1.0.0-2_b2ab134a10cc16818ddc40acf98008645a96046e"
+PR = "r18"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -76,6 +76,8 @@ do_configure_append() {
     cp -f ${S}/files/launch/WebAppMgr.conf ${S}/files/launch/WebAppMgr.conf.upstart
 }
 
+WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
+
 do_install_append() {
     install -d ${D}${sysconfdir}/init
     install -d ${D}${sysconfdir}/pmlog.d
@@ -83,6 +85,17 @@ do_install_append() {
     install -d ${D}${WAM_DATA_DIR}
     install -v -m 644 ${S}/files/launch/WebAppMgr.conf.upstart ${D}${sysconfdir}/init/WebAppMgr.conf
     install -v -m 644 ${S}/files/launch/security_policy.conf ${D}${sysconfdir}/wam/security_policy.conf
+
+    # add loaderror.html and geterror.js to next to resources directory (webos_localization_resources_dir)
+    install -d ${D}${datadir}/localization/${BPN}/
+    cp -vf ${WAM_ERROR_SCRIPTS_PATH}/* ${D}${datadir}/localization/${BPN}/
 }
 
-FILES_${PN} += "${webos_upstartconfdir} ${sysconfdir}/pmlog.d ${sysconfdir}/init ${sysconfdir}/wam ${libdir}/webappmanager/plugins/*.so"
+FILES_${PN} += " \
+    ${webos_upstartconfdir} \
+    ${sysconfdir}/pmlog.d \
+    ${sysconfdir}/init \
+    ${sysconfdir}/wam \
+    ${libdir}/webappmanager/plugins/*.so \
+    ${datadir}/localization/${BPN} \
+"
