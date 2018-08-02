@@ -19,7 +19,7 @@ COMPATIBLE_MACHINE = "^rpi$"
 
 DEPENDS = "boost userland gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 
-WEBOS_VERSION = "1.0.0-3_17cb8045a4880873e41e3d13f7542051094f95aa"
+WEBOS_VERSION = "1.0.0-4_8784ea3f40c5c48658e3bc4c0f9a96299c60cd45"
 PR = "r1"
 
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
