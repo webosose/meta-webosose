@@ -1,0 +1,38 @@
+From 7408cc223cb168da0d426cb6286ec7f0f920915c Mon Sep 17 00:00:00 2001
+From: "krishna.konwar" <krishna.konwar@lge.com>
+Date: Fri, 3 Aug 2018 16:17:00 +0530
+Subject: [PATCH] Set IPv6 state same as IPV4 on disconnect
+
+:Release Notes:
+This sets correct state for IPv6 state on disconnection
+
+:Detailed Notes:
+State is decided based on combined state of ipv4 and ipv6 state.
+During disconnect it was set as ready because IPv6 state is ready.
+Which causes a new profile creation in adapter.
+
+Upstream-Status : Inappropriate [webOS specific]
+
+---
+ src/service.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/service.c b/src/service.c
+index 768426b..9bac0d5 100644
+--- a/src/service.c
++++ b/src/service.c
+@@ -5803,8 +5803,10 @@ int __connman_service_ipconfig_indicate_state(struct connman_service *service,
+ 		if (service->state == CONNMAN_SERVICE_STATE_IDLE)
+ 			return -EINVAL;
+ 
+-		if (type == CONNMAN_IPCONFIG_TYPE_IPV4)
++		if (type == CONNMAN_IPCONFIG_TYPE_IPV4){
+ 			service_rp_filter(service, false);
++                        service->state_ipv6 = new_state;
++                }
+ 
+ 		break;
+ 
+-- 
+2.7.4
+
