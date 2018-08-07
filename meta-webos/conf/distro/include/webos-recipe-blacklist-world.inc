@@ -25,7 +25,6 @@ PACKAGECONFIG_remove_pn-plymouth = "initrd"
 
 PNBLACKLIST[qt4-embedded] ?= "unused in webOS world"
 PNBLACKLIST[webkit-gtk] ?= "unused in webOS world"
-PNBLACKLIST[asio] ?= "unused in webOS world"
 PNBLACKLIST[abiword] ?= "unused in webOS world"
 PNBLACKLIST[mongodb] ?= "unused in webOS world"
 
@@ -202,7 +201,6 @@ PNBLACKLIST[mosh] ?= "depends on blacklisted protobuf"
 PNBLACKLIST[mongodb] ?= "depends on blacklisted gperftools"
 PNBLACKLIST[gst-plugins-gl] ?= "depends on blacklisted glew"
 PNBLACKLIST[openlmi-providers] ?= "sometimes fails with KonkretCMPI failed: 1 error: no such super class: CIM_ATAProtocolEndpoint http://caprica.lgsvl.com:8080/Errors/Details/914383"
-PNBLACKLIST[poco] ?= "provides libCppUnit.so.1 sometimes in poco, sometimes in poco-cppunit package http://lists.openembedded.org/pipermail/openembedded-devel/2018-January/116573.html"
 PNBLACKLIST[tiptop] ?= "Sometimes fails with calc.lex:75: error: undefined reference to 'yylval' http://caprica.lgsvl.com:8080/Errors/Details/909764"
 PNBLACKLIST[paho-mqtt-c] ?= "Sometimes fails with cannot create build/VersionInfo.h: Directory nonexistent http://caprica.lgsvl.com:8080/Errors/Details/915077"
 
