@@ -71,7 +71,7 @@ PNBLACKLIST[qttools] ?= "depends on qtwebkit"
 PNBLACKLIST[qt5-creator] ?= "depends on blacklisted qttools"
 PNBLACKLIST[qt3d] ?= "license of current version does not allow redistribution"
 PNBLACKLIST[qtlocation] ?= "has build dependency on qt3d"
-PNBLACKLIST[packagegroup-qt5-toolchain-target] ?= "rdepends on headers from blacklisted qtwebkit, qttools, qt3d, qtlocation"
+#PNBLACKLIST[packagegroup-qt5-toolchain-target] ?= "rdepends on headers from blacklisted qtwebkit, qttools, qt3d, qtlocation"
 PNBLACKLIST[qt5-creator] ?= "rdepends on blacklisted qttools, packagegroup-qt5-toolchain-target, gcc-symlinks"
 PNBLACKLIST[qtscript] ?= "unused in webOS world"
 # https://anaconda.lgsvl.com/jenkins/job/webos-wearable-jansa-jethro-test-dependencies-qemux86/85/artifact/BUILD-ARTIFACTS/qemux86/2_max/failed/libconnman-qt5.log
