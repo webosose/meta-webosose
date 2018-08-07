@@ -22,18 +22,25 @@ do_compile_prepend() {
     # changing the home directory to the working directory, the .npmrc will be created in this directory
     export HOME=${WORKDIR}
 
-    # configure cache to be in working directory
-    ${ENACT_NPM} set cache ${WORKDIR}/npm_cache
+    # configure cache to be in the cache directory
+    bbnote "BUILD_ARCH = ${BUILD_ARCH}"
+    bbnote "ENACT_NPM = ${ENACT_NPM}"
+    bbnote "Enact do_compile_prepend set npm cache"
+    ${ENACT_NPM} set cache ${TMPDIR}/npm_cache
+
+    # Prefer using offline cached packages
+    bbnote "Enact do_compile_prepend config npm offline"
+    ${ENACT_NPM} config set prefer-offline true
 
     # Fix to prevent NPM from not honoring shrinkwrap; see https://github.com/npm/npm/issues/17960
+    bbnote "Enact do_compile_prepend config npm package-lock"
     ${ENACT_NPM} config set package-lock true
 
     # Tell NPM to run packages using the Node binary that started it
+    bbnote "Enact do_compile_prepend config npm node-path"
     ${ENACT_NPM} config set scripts-prepend-node-path true
 
     # explicity set NPM registry URI
+    bbnote "Enact do_compile_prepend set npm registry"
     ${ENACT_NPM} set registry https://registry.npmjs.org/
-
-    # clean any cache prior to each compile
-    ${ENACT_NPM} cache clean --force
 }

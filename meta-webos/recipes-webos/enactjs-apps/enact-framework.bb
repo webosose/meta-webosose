@@ -19,38 +19,39 @@ SRC_URI = "${ENACTJS_GIT_REPO}/enact.git;nobranch=1;destsuffix=git/enact"
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "1.13.3"
-SRCREV = "bbb55faaf5fd03684f9f8d93596c40113e5836b7"
+PV = "2.0.1"
+SRCREV = "e85dfb9c63ab2979c26887f618b71ec2fd659e3a"
 
 # Ordered dependency list for Enact; provides shrink-wrap style locking in of package versions
 # Generated via https://gecko.lgsvl.com/jenkins/view/Enyo/job/enact-dependency-list/
 WEBOS_ENACT_DEPENDENCIES ??= "\
-    classnames@2.2.5 \
-    js-tokens@3.0.2 \
-    loose-envify@1.3.1 \
-    invariant@2.2.2 \
+    classnames@2.2.6 \
+    js-tokens@4.0.0 \
+    loose-envify@1.4.0 \
+    invariant@2.2.4 \
+    object-assign@4.1.1 \
+    prop-types@15.6.2 \
+    ramda@0.24.1 \
     core-js@1.2.7 \
-    iconv-lite@0.4.19 \
+    safer-buffer@2.1.2 \
+    iconv-lite@0.4.23 \
     encoding@0.1.12 \
     is-stream@1.1.0 \
     node-fetch@1.7.3 \
-    whatwg-fetch@2.0.3 \
+    whatwg-fetch@2.0.4 \
     isomorphic-fetch@2.2.1 \
-    object-assign@4.1.1 \
     asap@2.0.6 \
     promise@7.3.1 \
     setimmediate@1.0.5 \
-    ua-parser-js@0.7.17 \
-    fbjs@0.8.16 \
-    prop-types@15.6.0 \
-    ramda@0.24.1 \
-    create-react-class@15.6.2 \
-    react@15.6.2 \
-    react-dom@15.6.2 \
+    ua-parser-js@0.7.18 \
+    fbjs@0.8.17 \
+    react@16.4.1 \
+    react-dom@16.4.1 \
     change-emitter@0.1.6 \
-    hoist-non-react-statics@1.2.0 \
-    symbol-observable@1.1.0 \
-    recompose@0.23.5 \
+    hoist-non-react-statics@2.5.5 \
+    symbol-observable@1.2.0 \
+    recompose@0.26.0 \
+    direction@1.0.2 \
     warning@3.0.0 \
     eases@1.0.8 \
     dom-walk@0.1.1 \
@@ -58,17 +59,18 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     process@0.5.2 \
     global@4.3.2 \
     is-function@1.0.1 \
-    for-each@0.3.2 \
+    is-callable@1.1.4 \
+    for-each@0.3.3 \
     trim@0.0.1 \
     parse-headers@2.0.1 \
     xtend@4.0.1 \
-    xhr@2.4.1 \
+    xhr@2.5.0 \
 "
 
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r2"
+PR = "r3"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
@@ -77,13 +79,22 @@ do_compile() {
     working=$(pwd)
     cd ${S}
 
-    sed -i -e "s/\(local([^)]*)\)[^;]*;/\1;/" enact/packages/moonstone/styles/fonts.less
-
+    rm -fr node_modules
     mkdir -p node_modules/@enact
-    rm -fr enact/packages/sampler
 
-    ${ENACT_NPM} install --prefix=. --loglevel=error ${WEBOS_ENACT_DEPENDENCIES}
-    cp -fr enact/packages/* node_modules/@enact
+    sed -i -e "s/\(local([^)]*)\)[^;]*;/\1;/" enact/packages/moonstone/styles/fonts.less
+    for LIB in core ui moonstone spotlight i18n webos ; do
+        ${ENACT_NPM} pack --loglevel=error ./enact/packages/${LIB}
+    done
+
+    ${ENACT_NPM} pack --loglevel=error ${WEBOS_ENACT_DEPENDENCIES}
+    for ARCHIVE in $(find . -name "*.tgz") ; do
+        tar --warning=no-unknown-keyword -xzf ${ARCHIVE} package/package.json
+        PKG=$(${ENACT_NODE} -p "require('./package/package.json').name")
+        mkdir -p node_modules/${PKG}
+        mv -f ${ARCHIVE} node_modules/${PKG}/package.tgz
+    done
+    rm -fr package
 
     cd ${working}
 }
