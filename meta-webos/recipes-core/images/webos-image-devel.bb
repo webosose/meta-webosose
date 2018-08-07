@@ -20,5 +20,6 @@ IMAGE_FEATURES += "ptest-pkgs"
 IMAGE_FEATURES += "webos-test"
 
 inherit webos_image
+inherit populate_sdk_qt5
 
 IMAGE_ROOTFS_EXTRA_SPACE = "524288"
