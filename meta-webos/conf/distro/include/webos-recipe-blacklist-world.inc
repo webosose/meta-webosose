@@ -636,7 +636,7 @@ PNBLACKLIST[obex-data-server] ?= "depends on broken gtk+"
 PNBLACKLIST[poppler] ?= "depends on broken gtk+"
 PNBLACKLIST[leafpad] ?= "depends on broken gtk+"
 PNBLACKLIST[matchbox-terminal] ?= "depends on broken gtk+"
-PNBLACKLIST[opencv] ?= "depends on broken gtk+"
+
 PNBLACKLIST[libsexy] ?= "depends on broken gtk+"
 PNBLACKLIST[geany] ?= "depends on broken gtk+"
 PNBLACKLIST[geany-plugins] ?= "depends on broken gtk+, geany"
