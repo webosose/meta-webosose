@@ -3,12 +3,13 @@
 SUMMARY = "webOS ROS2 bridge"
 AUTHOR  = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
-LICENSE = "CLOSED"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "nodejs-native rcl rmw rosidl-generator-c rcutils"
 RDEPENDS_${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service"
 
-WEBOS_VERSION = "1.0.0-3_bd290125286079e5102564203163cad81d26b0a5"
+WEBOS_VERSION = "1.0.0-6_fd45931f2f249aef0ebfaffe9e3d416c9614e0fa"
 PR = "r1"
 
 inherit webos_component
