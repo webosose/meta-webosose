@@ -12,8 +12,8 @@ RDEPENDS_${PN} = "qtdeclarative-plugins qtbase-plugins configd"
 
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
-WEBOS_VERSION = "0.99.0+20-2_ea92c4bff357b8133cff7bd57c37890810064c20"
-PR = "r29"
+WEBOS_VERSION = "0.99.0+20-3_fc3982fa468aeb96e6fa991068f893ee0915a5e9"
+PR = "r30"
 
 inherit webos_daemon
 inherit webos_enhanced_submissions
@@ -42,10 +42,6 @@ do_install_append() {
     install -v -m 644 ${S}/common/maliit/*.h ${D}${includedir}/maliit/
     install -d ${D}${includedir}/maliit/plugins
     install -v -m 644 ${S}/src/maliit/plugins/*.h ${D}${includedir}/maliit/plugins/
-
-    # install Upstart script
-    install -d ${D}${sysconfdir}/init
-    install -v -m 644 upstart/MaliitServer*.conf ${D}${sysconfdir}/init/
 }
 
 FILES_${PN}-dev += "${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs"
