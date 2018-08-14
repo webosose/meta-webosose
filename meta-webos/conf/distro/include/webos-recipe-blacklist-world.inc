@@ -746,6 +746,20 @@ PNBLACKLIST[sysdig] ?= "Depends on unavailable luajit"
 PNBLACKLIST[lsbtest] ?= "rdepends on broken rpm"
 #PNBLACKLIST[] ?= "rdepends on broken "
 
+PNBLACKLIST[libmusicbrainz] ?= "broken on Ubuntu 18.04: xmlParser.cpp:699:26: error: this statement may fall through [-Werror=implicit-fallthrough=] http://caprica.lgsvl.com:8080/Errors/Details/1101727"
+PNBLACKLIST[linuxdoc-tools-native] ?= "broken on Ubuntu 18.04: Unescaped left brace in regex is illegal here in regex http://caprica.lgsvl.com:8080/Errors/Details/1101590"
+PNBLACKLIST[mariadb-native] ?= "broken on Ubuntu 18.04: mariadb-5.5.52/client/mysql.cc:2852:37: error: invalid conversion from ?char? to ?char*? [-fpermissive] http://caprica.lgsvl.com:8080/Errors/Details/1101589"
+PNBLACKLIST[dvb-apps] ?= "broken on Ubuntu 18.04: Can't locate atsc_psip_section.pl in @INC http://caprica.lgsvl.com:8080/Errors/Details/1101593"
+PNBLACKLIST[toybox] ?= "broken on Ubuntu 18.04: lib/help.c:12:32: error: expected ',' or ';' before 'HELP_basename' http://caprica.lgsvl.com:8080/Errors/Details/1101592"
+PNBLACKLIST[python-evdev] ?= "broken on Ubuntu 18.04: evdev/ecodes.c:71:29: error: 'BUS_INTEL_ISHTP' undeclared (first use in this function) http://caprica.lgsvl.com:8080/Errors/Details/1101591"
+PNBLACKLIST[mariadb] ?= "broken on Ubuntu 18.04: depends on blacklisted mariadb-native"
+PNBLACKLIST[mysql-python] ?= "broken on Ubuntu 18.04: depends on blacklisted mariadb, mariadb-native"
+PNBLACKLIST[libdbd-mysql-perl] ?= "broken on Ubuntu 18.04: depends on blacklisted mariadb, mariadb-native"
+PNBLACKLIST[gammu] ?= "broken on Ubuntu 18.04: depends on blacklisted mariadb, mariadb-native"
+PNBLACKLIST[unixodbc] ?= "broken on Ubuntu 18.04: depends on blacklisted mariadb, mariadb-native"
+PNBLACKLIST[psqlodbc] ?= "broken on Ubuntu 18.04: depends on blacklisted unixodbc, mariadb, mariadb-native"
+PNBLACKLIST[libuser] ?= "broken on Ubuntu 18.04: depends on blacklisted linuxdoc-tools-native"
+
 # upstream recipes with known QA issues
 # /usr/bin/luajit-2.0.0, /usr/lib/libluajit-5.1.so.2.0.0
 INSANE_SKIP_${PN}_pn-luajit = "already-stripped"
