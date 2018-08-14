@@ -6,15 +6,15 @@ SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
 
-WEBOS_VERSION = "1.0.0-5_6b1aafc98588b4982289a762c0c23a00c1b4faf3"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-7_5f6499d8e6038048d6b1af83e2daeb32a74a03e7"
+PR = "r1"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
 
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
-WEBOS_ENACTJS_PACK_OPTS = "--isomorphic --production"
+WEBOS_ENACTJS_PACK_OPTS = "--isomorphic --production --snapshot"
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED="0"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
