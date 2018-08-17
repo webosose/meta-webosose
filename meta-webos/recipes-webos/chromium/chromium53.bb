@@ -22,9 +22,9 @@ inherit webos_prerelease_dep
 inherit webos_system_bus
 inherit webos_public_repo
 
-DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n"
+DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native"
 
-PR = "r19"
+PR = "r20"
 WEBOS_VERSION = "53.0.2785.34-11_9d00a66762617f9dcb8daab0d1aa70128c2bda53"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
