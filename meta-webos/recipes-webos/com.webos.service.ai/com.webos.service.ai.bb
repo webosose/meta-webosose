@@ -12,7 +12,7 @@ DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libgoogleassistant"
 COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-2_9c48d4cb0630f83b7228eafc7900f2b9dc2b608f"
+WEBOS_VERSION = "1.0.0-3_2b2b37d8000d5a213ea7fc8f081fdd54b345fec8"
 PR = "r0"
 
 inherit systemd
