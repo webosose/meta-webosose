@@ -24,7 +24,7 @@ inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n"
 
-PR = "r17"
+PR = "r18"
 WEBOS_VERSION = "53.0.2785.34-11_9d00a66762617f9dcb8daab0d1aa70128c2bda53"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
@@ -276,9 +276,7 @@ do_install() {
     install_chromium_browser
     install_app_shell
     install_chromium_manifest
-}
 
-do_install_append() {
     install -d ${D}${libdir}
     install -d ${D}${includedir}/${BPN}
     cd ${SRC_DIR}
