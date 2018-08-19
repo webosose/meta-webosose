@@ -77,3 +77,14 @@ do_install_append() {
 }
 
 FILES_${PN} += "${prefix}"
+
+# COMPATIBLE_MACHINE is set because it doesn't build for armv[45]*
+# executor.hpp:32:38: error: 'std::exception_ptr' has not been declared
+# src/shadow_node.hpp:42:28: error: 'std::exception_ptr' has not been declared
+COMPATIBLE_MACHINE = "(-)"
+COMPATIBLE_MACHINE_aarch64 = "(.*)"
+COMPATIBLE_MACHINE_armv6 = "(.*)"
+COMPATIBLE_MACHINE_armv7a = "(.*)"
+COMPATIBLE_MACHINE_armv7ve = "(.*)"
+COMPATIBLE_MACHINE_x86 = "(.*)"
+COMPATIBLE_MACHINE_x86-64 = "(.*)"
