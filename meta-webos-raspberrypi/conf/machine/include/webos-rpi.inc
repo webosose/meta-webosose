@@ -38,9 +38,10 @@ MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-uinput \
     kernel-module-uvcvideo \
     kernel-module-videodev \
+    kernel-module-xpad \
 "
 
-KERNEL_MODULE_AUTOLOAD_append = " uinput"
+KERNEL_MODULE_AUTOLOAD_append = " uinput xpad"
 
 # Disabling U-Boot until IP address conflict and ALSA issues resolved (PLAT-46515)
 # RPI_USE_U_BOOT = "1"
