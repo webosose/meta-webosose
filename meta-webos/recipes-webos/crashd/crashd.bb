@@ -19,7 +19,7 @@ RPROVIDES_${PNLIBSEGFAULT} = "libsegfault"
 RREPLACES_${PNLIBSEGFAULT} = "libsegfault"
 RCONFLICTS_${PNLIBSEGFAULT} = "libsegfault"
 
-WEBOS_VERSION = "1.2.5-1_57293284661f6048e3fe5296439f488d46568d4d"
+WEBOS_VERSION = "1.2.5-3_2cdb43fdf71c1b10738eaf2e45e909eb4de7c509"
 PR = "r10"
 
 inherit webos_component
