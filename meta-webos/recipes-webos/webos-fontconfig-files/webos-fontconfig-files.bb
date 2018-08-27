@@ -6,7 +6,7 @@ SECTION = "webos/fonts"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-1_81425111b60f301ef924c498339eb4429a04f863"
+WEBOS_VERSION = "1.0.0-2_6a2e029aaac81e4a608d6cca5e9bbcda1bdb3ccf"
 PR = "r2"
 
 inherit webos_enhanced_submissions
