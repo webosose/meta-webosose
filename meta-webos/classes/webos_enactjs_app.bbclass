@@ -164,14 +164,15 @@ do_install() {
     if [ ! -z "${WEBOS_ENACTJS_PACK_OVERRIDE}" ] ; then
         bbnote "Custom App Build for ${WEBOS_ENACTJS_APP_ID}"
         ${WEBOS_ENACTJS_PACK_OVERRIDE}
-        cp -R --no-dereference --preserve=mode,links -v ./dist/* "${appdir}"
+        mv -f -v ./dist/* "${appdir}"
     else
         # Normal App Build
         bbnote "Bundling Enact app to ${appdir}"
         ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
-        if [ -f ${appdir}/snapshot_blob.bin ] ; then
-            chown root:root "${appdir}/snapshot_blob.bin"
-        fi
+    fi
+
+    if [ -f ${appdir}/snapshot_blob.bin ] ; then
+        chown root:root "${appdir}/snapshot_blob.bin"
     fi
 
     cd ${working}
