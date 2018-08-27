@@ -196,14 +196,6 @@ ROS2_DEMO_NODES_CPP = ""
 ROS2_DEMO_NODES_CPP_armv4 = "Broken, depends on blacklisted rclcpp"
 ROS2_DEMO_NODES_CPP_armv5 = "Broken, depends on blacklisted rclcpp"
 PNBLACKLIST[ros2-demo-nodes-cpp] ?= "${ROS2_DEMO_NODES_CPP}"
-PACKAGEGROUP_ROS2_DEMOS = ""
-PACKAGEGROUP_ROS2_DEMOS_armv4 = "Broken, depends on blacklisted ros2-demo-nodes-cpp"
-PACKAGEGROUP_ROS2_DEMOS_armv5 = "Broken, depends on blacklisted ros2-demo-nodes-cpp"
-PNBLACKLIST[packagegroup-ros2-demos] ?= "${PACKAGEGROUP_ROS2_DEMOS}"
-PACKAGEGROUP_ROS2_WORLD = ""
-PACKAGEGROUP_ROS2_WORLD_armv4 = "Broken, depends on blacklisted packagegroup-ros2-demos"
-PACKAGEGROUP_ROS2_WORLD_armv5 = "Broken, depends on blacklisted packagegroup-ros2-demos"
-PNBLACKLIST[packagegroup-ros2-demos] ?= "${PACKAGEGROUP_ROS2_WORLD}"
 
 # This is unfortunate, basically causes all ros1 recipes to be blacklisted
 # alternatively we can remove the gcc gcc-symlinks g++ g++-symlinks runtime
