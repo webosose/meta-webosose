@@ -549,6 +549,10 @@ PNBLACKLIST[zeroconf-avahi] ?= "rdepends on blacklisted catkin"
 PNBLACKLIST[zeroconf-avahi-demos] ?= "rdepends on blacklisted catkin"
 PNBLACKLIST[zeroconf-msgs] ?= "rdepends on blacklisted catkin"
 
+PNBLACKLIST[ros-sdk-test] ?= "rdepends on blacklisted roslaunch"
+PNBLACKLIST[core-image-ros-roscore] ?= "rdepends on blacklisted roslaunch"
+PNBLACKLIST[core-image-ros-world] ?= "rdepends on blacklisted packagegroup-ros-world"
+
 PNBLACKLIST[packagegroup-ros-kobuki] ?= "rdepends on blacklisted rocon-python-wifi"
 PNBLACKLIST[packagegroup-ros-comm] ?= "rdepends on blacklisted genmsg"
 PNBLACKLIST[packagegroup-ros-industrial-core] ?= "rdepends on blacklisted industrial-trajectory-filters"
