@@ -17,6 +17,7 @@ inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_cmake
 inherit pythonnative
+inherit webos_distro_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -29,10 +30,6 @@ do_install_append() {
     fi
     install -d ${D}${webos_sysconfdir}
     install -v -m 644 ${S}/files/conf/locale.txt ${D}${webos_sysconfdir}
-}
-
-do_install_append_webos() {
-    install -v -m 644 ${S}/files/conf/apollo/defaultPreferences.txt ${D}${webos_sysconfdir}
 }
 
 PACKAGES =+ "${PN}-fonts"
