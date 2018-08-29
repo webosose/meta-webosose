@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi16"
+EXTENDPRAUTO_append = "webosrpi17"
 
 CMDLINE_append = " rw"
 
@@ -23,6 +23,7 @@ SRC_URI_append = " \
     file://0013-Fix-kernel-panic-on-10hr-YouTube-playback.patch \
     file://0014-DRM-custom-prop.patch \
     file://0015-DRM-forcing-permissions.patch \
+    file://0016-Enable-ZRAM-feature.patch \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \
