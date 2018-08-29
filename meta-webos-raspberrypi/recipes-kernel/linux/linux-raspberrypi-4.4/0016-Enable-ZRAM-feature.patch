@@ -1,0 +1,46 @@
+From aed2ebc4587e6648d92eb9230f5ac621291ef2c3 Mon Sep 17 00:00:00 2001
+From: "sukil.hong" <sukil.hong@lge.com>
+Date: Fri, 21 Sep 2018 13:21:47 +0900
+Subject: [PATCH] Enable ZRAM feature
+
+:Release Notes:
+Enable ZRAM feature
+
+:Detailed Notes:
+Change zram and zsmalloc configs
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-64894] Find a way to apply swap feature in webOS ose
+---
+ arch/arm/configs/bcm2709_defconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/configs/bcm2709_defconfig b/arch/arm/configs/bcm2709_defconfig
+index 4404f4d..761d542 100644
+--- a/arch/arm/configs/bcm2709_defconfig
++++ b/arch/arm/configs/bcm2709_defconfig
+@@ -50,7 +50,7 @@ CONFIG_OABI_COMPAT=y
+ CONFIG_CLEANCACHE=y
+ CONFIG_FRONTSWAP=y
+ CONFIG_CMA=y
+-CONFIG_ZSMALLOC=m
++CONFIG_ZSMALLOC=y
+ CONFIG_PGTABLE_MAPPING=y
+ CONFIG_UACCESS_WITH_MEMCPY=y
+ CONFIG_SECCOMP=y
+@@ -413,7 +413,7 @@ CONFIG_MTD_NAND=m
+ CONFIG_MTD_SPI_NOR=m
+ CONFIG_MTD_UBI=m
+ CONFIG_OF_CONFIGFS=y
+-CONFIG_ZRAM=m
++CONFIG_ZRAM=y
+ CONFIG_ZRAM_LZ4_COMPRESS=y
+ CONFIG_BLK_DEV_LOOP=y
+ CONFIG_BLK_DEV_CRYPTOLOOP=m
+-- 
+2.7.4
+
