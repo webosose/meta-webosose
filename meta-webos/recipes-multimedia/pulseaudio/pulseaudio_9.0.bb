@@ -38,6 +38,9 @@ EXTRA_OECONF += "--with-access-group=root \
                 --disable-samplerate \
                 "
 
+# Added to oe-core pulseaudio.inc when upgrading to 12.2 version
+# but our old 9.* version doesn't support it
+EXTRA_OECONF_remove = "--disable-gsettings"
 
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
