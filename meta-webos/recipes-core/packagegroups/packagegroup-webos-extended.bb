@@ -70,6 +70,10 @@ VIRTUAL-RUNTIME_iotivity-node_armv4 = ""
 VIRTUAL-RUNTIME_iotivity-node_armv5 = ""
 
 
+VIRTUAL-RUNTIME_contextintentmgr ?= "com.webos.service.contextintentmgr"
+VIRTUAL-RUNTIME_contextintentmgr_armv4 = ""
+VIRTUAL-RUNTIME_contextintentmgr_armv5 = ""
+
 VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
 VIRTUAL-RUNTIME_nodejs-module-node-red_armv4 = ""
 VIRTUAL-RUNTIME_nodejs-module-node-red_armv5 = ""
