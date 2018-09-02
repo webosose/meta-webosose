@@ -25,7 +25,7 @@ inherit webos_public_repo
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native"
 
 PR = "r20"
-WEBOS_VERSION = "53.0.2785.34-13_c39a4b3642102ebf412bfb6f0f6f2ec544b39230"
+WEBOS_VERSION = "53.0.2785.34-14_2a1ef3a9e83598f73b570a55902ae4cc923a057c"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
