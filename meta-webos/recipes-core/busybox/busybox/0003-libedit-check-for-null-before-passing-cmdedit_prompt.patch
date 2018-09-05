@@ -1,29 +1,27 @@
-From a3477153f4c46e9a33cd2fc707c135a03e39ec3c Mon Sep 17 00:00:00 2001
+From d334fb8c0eac44f5fee9833ac7ae74446fbd22ab Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:24:53 +0000
-Subject: [PATCH 3/3] libedit: check for null before passing cmdedit_prompt to
+Subject: [PATCH] libedit: check for null before passing cmdedit_prompt to
  fputs
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+
 ---
  libbb/lineedit.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/libbb/lineedit.c b/libbb/lineedit.c
-index 2a5d4e7..a079caf 100644
+index d5e92e8..090caba 100644
 --- a/libbb/lineedit.c
 +++ b/libbb/lineedit.c
-@@ -439,7 +439,9 @@ static void beep(void)
- 
- static void put_prompt(void)
+@@ -445,7 +445,9 @@ static void beep(void)
+  */
+ static void put_prompt_custom(bool is_full)
  {
--	fputs(cmdedit_prompt, stdout);
-+	if ( NULL != cmdedit_prompt ) {
-+		fputs(cmdedit_prompt, stdout);
+-	fputs((is_full ? cmdedit_prompt : prompt_last_line), stdout);
++	if ( !is_full || NULL != cmdedit_prompt ) {
++		fputs((is_full ? cmdedit_prompt : prompt_last_line), stdout);
 +	}
  	cursor = 0;
  	cmdedit_y = cmdedit_prmt_len / cmdedit_termw; /* new quasireal y */
  	cmdedit_x = cmdedit_prmt_len % cmdedit_termw;
--- 
-2.7.4
-
