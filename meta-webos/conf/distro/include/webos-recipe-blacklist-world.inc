@@ -826,6 +826,18 @@ PNBLACKLIST[librcf] ?= "Depends on blacklisted protobuf"
 PNBLACKLIST[wireguard-module] ?= "linux-rockhopper doesn't have required options enabled, e.g. CONFIG_NETFILTER_XT_MATCH_HASHLIMIT"
 PNBLACKLIST[wireguard-tools] ?= "depends on blacklisted wireguard-module"
 
+PNBLACKLIST[wvstreams] ?= "not compatible with openssl-1.0 since https://github.com/apenwarr/wvstreams/commit/5506a74e1b033776ad441b4554716cdcfa88fe03 which was backported to meta-oe and later reverted in upstream"
+PNBLACKLIST[wvdial] ?= "depends on blacklisted wvstreams"
+
+PNBLACKLIST[python3-m2crypto] ?= "not compatible with openssl-1.0 http://caprica.lgsvl.com:8080/Errors/Details/1432739"
+PNBLACKLIST[python-m2crypto] ?= "not compatible with openssl-1.0 http://caprica.lgsvl.com:8080/Errors/Details/1432734"
+PNBLACKLIST[rtmpdump] ?= "not compatible with openssl-1.0 http://caprica.lgsvl.com:8080/Errors/Details/1432737"
+PNBLACKLIST[libtorrent] ?= "not compatible with openssl-1.0 http://caprica.lgsvl.com:8080/Errors/Details/1432735"
+PNBLACKLIST[freeradius] ?= "not compatible with openssl-1.0 http://caprica.lgsvl.com:8080/Errors/Details/1432738"
+PNBLACKLIST[rtorrent] ?= "depends on blacklisted libtorrent"
+PNBLACKLIST[openlmi-tools] ?= "depends on blacklisted python-m2crypto"
+PNBLACKLIST[python-pywbem] ?= "depends on blacklisted python-m2crypto"
+
 PNBLACKLIST[lsbtest] ?= "rdepends on broken rpm"
 #PNBLACKLIST[] ?= "rdepends on broken "
 
