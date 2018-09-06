@@ -1,0 +1,83 @@
+From c0b8664519808c660d5b010c502e79c54a5503bd Mon Sep 17 00:00:00 2001
+From: Soonwon Hong <soonwon.hong@lge.com>
+Date: Mon, 3 Jun 2019 15:22:07 +0900
+Subject: [PATCH] Add symlink path validity
+
+---
+ libopkg/opkg_archive.c | 3 +++
+ libopkg/opkg_conf.c    | 1 +
+ libopkg/opkg_conf.h    | 1 +
+ src/opkg.c             | 5 +++++
+ 4 files changed, 10 insertions(+)
+
+diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
+index 96aa84b..6a637f4 100644
+--- a/libopkg/opkg_archive.c
++++ b/libopkg/opkg_archive.c
+@@ -860,6 +860,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
+     ar->extract_flags = ARCHIVE_EXTRACT_OWNER | ARCHIVE_EXTRACT_PERM |
+         ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_UNLINK | ARCHIVE_EXTRACT_NO_OVERWRITE;
+ 
++    if (opkg_config->no_install_insecure_symlink)
++        ar->extract_flags |= ARCHIVE_EXTRACT_SECURE_SYMLINKS;
++
+     if (opkg_config->ignore_uid)
+         ar->extract_flags &= ~ARCHIVE_EXTRACT_OWNER;
+ 
+diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
+index 06880a1..2511f71 100644
+--- a/libopkg/opkg_conf.c
++++ b/libopkg/opkg_conf.c
+@@ -75,6 +75,7 @@ static opkg_option_t options[] = {
+     {"download_only", OPKG_OPT_TYPE_BOOL, &_conf.download_only},
+     {"download_first", OPKG_OPT_TYPE_BOOL, &_conf.download_first}, /* Not available on internal solver */
+     {"nodeps", OPKG_OPT_TYPE_BOOL, &_conf.nodeps},
++    {"no_install_insecure_symlink", OPKG_OPT_TYPE_BOOL, &_conf.no_install_insecure_symlink},
+     {"no_install_recommends", OPKG_OPT_TYPE_BOOL, &_conf.no_install_recommends},
+     {"offline_root", OPKG_OPT_TYPE_STRING, &_conf.offline_root},
+     {"overlay_root", OPKG_OPT_TYPE_STRING, &_conf.overlay_root},
+diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
+index 2716e67..baf1572 100644
+--- a/libopkg/opkg_conf.h
++++ b/libopkg/opkg_conf.h
+@@ -105,6 +105,7 @@ typedef struct opkg_conf {
+     char *gpg_trust_level;
+     char *signature_type;
+     int nodeps;             /* do not follow dependencies */
++    int no_install_insecure_symlink;
+     int no_install_recommends;
+     char *offline_root;
+     char *overlay_root;
+diff --git a/src/opkg.c b/src/opkg.c
+index 31a2afe..823cc9d 100644
+--- a/src/opkg.c
++++ b/src/opkg.c
+@@ -57,6 +57,7 @@ enum {
+     ARGS_OPT_AUTOREMOVE,
+     ARGS_OPT_VOLATILE_CACHE,
+     ARGS_OPT_COMBINE,
++    ARGS_OPT_NO_INSTALL_INSECURE_SYMLINK,
+     ARGS_OPT_NO_INSTALL_RECOMMENDS,
+     ARGS_OPT_CACHE_DIR,
+     ARGS_OPT_HOST_CACHE_DIR,
+@@ -103,6 +104,7 @@ static struct option long_options[] = {
+     {"noaction", 0, 0, ARGS_OPT_NOACTION},
+     {"download-only", 0, 0, ARGS_OPT_DOWNLOAD_ONLY},
+     {"nodeps", 0, 0, ARGS_OPT_NODEPS},
++    {"no-install-insecure-symlink", 0, 0, ARGS_OPT_NO_INSTALL_INSECURE_SYMLINK},
+     {"no-install-recommends", 0, 0, ARGS_OPT_NO_INSTALL_RECOMMENDS},
+     {"offline", 1, 0, 'o'},
+     {"offline-root", 1, 0, 'o'},
+@@ -254,6 +256,9 @@ static int args_parse(int argc, char *argv[])
+         case ARGS_OPT_VOLATILE_CACHE:
+             opkg_config->volatile_cache = 1;
+             break;
++        case ARGS_OPT_NO_INSTALL_INSECURE_SYMLINK:
++            opkg_config->no_install_insecure_symlink = 1;
++            break;
+         case ARGS_OPT_NO_INSTALL_RECOMMENDS:
+             opkg_config->no_install_recommends = 1;
+             break;
+-- 
+1.9.1
+

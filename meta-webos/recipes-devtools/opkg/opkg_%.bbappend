@@ -1,12 +1,13 @@
-# Copyright (c) 2017 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos4"
+EXTENDPRAUTO_append = "webos6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
 SRC_URI_append = " \
     file://0001-Load-installed-files-before-update-file-ownership.patch \
     file://0002-Sort-opkg-list-file-content-to-speed-package-removal.patch \
+    file://0005-Add-symlink-path-validity.patch \
 "
 SRC_URI_append_class-target = " \
     file://0004-Mask-S_ISUID-and-S_ISGID-permission-bits.patch \
