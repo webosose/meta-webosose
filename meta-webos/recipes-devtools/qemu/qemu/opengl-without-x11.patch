@@ -1,32 +1,23 @@
-Allow to build with opengl enabled and x11 disabled
+From f16e6f600b6dba5e8aa5e28469fdf58739949c60 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Wed, 25 Apr 2018 18:41:01 +0000
+Subject: [PATCH] Allow to build with opengl enabled and x11 disabled
 
 * otherwise build fails to find Window as shown in:
   http://errors.yoctoproject.org/Errors/Details/156041/
 
 Upstream-Status: Pending
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ include/ui/egl-helpers.h | 2 ++
+ ui/egl-helpers.c         | 2 ++
+ 2 files changed, 4 insertions(+)
 
---- qemu-2.10.0/ui/egl-helpers.c	2017-08-30 18:50:41.000000000 +0200
-+++ qemu-2.10.0.new/ui/egl-helpers.c	2017-09-19 15:33:32.620330065 +0200
-@@ -235,6 +235,7 @@
- 
- /* ---------------------------------------------------------------------- */
- 
-+#ifdef I_REALLY_WANT_X11
- EGLSurface qemu_egl_init_surface_x11(EGLContext ectx, Window win)
- {
-     EGLSurface esurface;
-@@ -256,6 +257,7 @@
- 
-     return esurface;
- }
-+#endif
- 
- /* ---------------------------------------------------------------------- */
- 
---- qemu-2.10.0/include/ui/egl-helpers.h	2017-08-30 18:50:41.000000000 +0200
-+++ qemu-2.10.0.new/include/ui/egl-helpers.h	2017-09-19 15:28:08.145322242 +0200
-@@ -34,7 +34,9 @@
+diff --git a/include/ui/egl-helpers.h b/include/ui/egl-helpers.h
+index 9db7293bdb..0c4a29c539 100644
+--- a/include/ui/egl-helpers.h
++++ b/include/ui/egl-helpers.h
+@@ -43,7 +43,9 @@ void egl_dmabuf_release_texture(QemuDmaBuf *dmabuf);
  
  #endif
  
@@ -34,5 +25,25 @@ Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
  EGLSurface qemu_egl_init_surface_x11(EGLContext ectx, Window win);
 +#endif
  
- int qemu_egl_init_dpy_x11(EGLNativeDisplayType dpy);
- int qemu_egl_init_dpy_mesa(EGLNativeDisplayType dpy);
+ int qemu_egl_init_dpy_x11(EGLNativeDisplayType dpy, DisplayGLMode mode);
+ int qemu_egl_init_dpy_mesa(EGLNativeDisplayType dpy, DisplayGLMode mode);
+diff --git a/ui/egl-helpers.c b/ui/egl-helpers.c
+index 71b6a97bd1..6e8e925f76 100644
+--- a/ui/egl-helpers.c
++++ b/ui/egl-helpers.c
+@@ -320,6 +320,7 @@ void egl_dmabuf_release_texture(QemuDmaBuf *dmabuf)
+ 
+ /* ---------------------------------------------------------------------- */
+ 
++#ifdef I_REALLY_WANT_X11
+ EGLSurface qemu_egl_init_surface_x11(EGLContext ectx, Window win)
+ {
+     EGLSurface esurface;
+@@ -341,6 +342,7 @@ EGLSurface qemu_egl_init_surface_x11(EGLContext ectx, Window win)
+ 
+     return esurface;
+ }
++#endif
+ 
+ /* ---------------------------------------------------------------------- */
+ 
