@@ -20,9 +20,9 @@ inherit webos_enactjs_env
 # Dependencies:
 #   - nodejs-native for node binary (to run enyo-pack)
 #   - ilib-webapp so we can override @enact/i18n/ilib with device submission
-#   - chromium53 to use the mksnapshot binary to build v8 app snapshot blobs
+#   - virtual/webruntime to use the mksnapshot binary to build v8 app snapshot blobs
 #   - enact-framework to use a shared Enact framework libraries
-WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp chromium53 enact-framework"
+WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp virtual/webruntime enact-framework"
 DEPENDS_append = " ${WEBOS_ENACTJS_APP_DEPENDS}"
 
 # chromium doesn't build for armv[45]*
@@ -153,12 +153,13 @@ do_install() {
     # use local on-device ilib locale assets
     export ILIB_BASE_PATH="/usr/share/javascript/ilib"
 
-    gzip -cd ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
-    chmod +x ${B}/${HOST_SYS}-mksnapshot
-    export V8_MKSNAPSHOT="${B}/${HOST_SYS}-mksnapshot"
-
-    # TODO Need to remove this line when PLAT-41192 is resolved
-    export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception"
+    if [ -f ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz ]; then
+        gzip -cd ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
+        chmod +x ${B}/${HOST_SYS}-mksnapshot
+        export V8_MKSNAPSHOT="${B}/${HOST_SYS}-mksnapshot"
+        # TODO Need to remove this line when PLAT-41192 is resolved
+        export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception"
+    fi
 
     # Stage app
     appdir="${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}"
