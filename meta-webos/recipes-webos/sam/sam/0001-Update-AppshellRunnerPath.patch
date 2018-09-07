@@ -1,0 +1,36 @@
+From 5c54fb87a2a0396ca2e0d395378a08faa32442f9 Mon Sep 17 00:00:00 2001
+From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
+Date: Wed, 12 Sep 2018 22:52:19 -0700
+Subject: [PATCH] Update AppshellRunnerPath
+
+:Release Notes:
+
+:Detailed Notes:
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+
+Change-Id: Ia8b6406cb8fbf4594394fd41bf83914a90a971ff
+---
+ files/conf/sam-conf.json.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/files/conf/sam-conf.json.in b/files/conf/sam-conf.json.in
+index 153dfa0..bb47847 100644
+--- a/files/conf/sam-conf.json.in
++++ b/files/conf/sam-conf.json.in
+@@ -38,7 +38,7 @@
+     "JailModePath": "@WEBOS_INSTALL_SYSMGR_LOCALSTATEDIR@/preferences/jailer_disabled",
+     "JailerPath": "@WEBOS_INSTALL_BINDIR@/jailer",
+     "QmlRunnerPath": "@WEBOS_INSTALL_BINDIR@/qml-runner",
+-    "AppShellRunnerPath": "@WEBOS_INSTALL_BINDIR@/app-shell/run_appshell",
++    "AppShellRunnerPath": "@WEBOS_INSTALL_BINDIR@/app-shell/run_app_shell",
+ 
+     "FullscreenWindowType": [
+         "_WEBOS_WINDOW_TYPE_CARD",
+-- 
+1.9.1
+

@@ -13,7 +13,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-2_eb57cb7e68f4f028e23f2369a4a0972efa8c38b8"
-PR = "r17"
+PR = "r18"
 
 inherit webos_component
 inherit webos_cmake
@@ -22,8 +22,15 @@ inherit webos_daemon
 inherit webos_system_bus
 inherit webos_public_repo
 
+SRC_URI[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+CHR68_PATCHES = "\
+  file://0001-Update-AppshellRunnerPath.patch\
+"
+
+SRC_URI_append = " ${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '${CHR68_PATCHES}', '', d)}"
 
 PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY_${PN}-tests = "1"

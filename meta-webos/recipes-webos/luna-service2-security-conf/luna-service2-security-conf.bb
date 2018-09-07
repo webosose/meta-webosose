@@ -7,7 +7,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 WEBOS_VERSION = "1.0.2-3_64214e71eef8469840b8489622141f8d8491924e"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo
@@ -15,8 +15,15 @@ inherit webos_enhanced_submissions
 inherit webos_cmake
 inherit webos_system_bus
 
+SRC_URI[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+CHR68_PATCHES = "\
+  file://0001-Revert-Remove-service-permissions-related-to-wam.patch\
+"
+
+SRC_URI_append = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '${CHR68_PATCHES}', '', d)}"
 
 FILES_${PN} += "${webos_sysbus_datadir}"
 

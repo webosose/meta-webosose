@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS = "chromium53 qtbase luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust"
+DEPENDS = "virtual/webruntime qtbase luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust"
 PROVIDES = "webappmanager-webos"
 
 # webappmgr's upstart conf expects to be able to LD_PRELOAD ptmalloc3
@@ -19,8 +19,9 @@ RDEPENDS_${PN} += "qtdeclarative-plugins qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.0-3_964279e2bf5e1a6b961dc886f5480db787f9587b"
-PR = "r18"
+WEBOS_VERSION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
+WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.1_2678597c65fa34f33eb82e14321ad170b34eeca3', '1.0.0-3_964279e2bf5e1a6b961dc886f5480db787f9587b', d)}"
+PR = "r19"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -35,14 +36,19 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-WEBOS_SYSTEM_BUS_SKIP_DO_TASKS="1"
+
+WEBOS_SYSTEM_BUS_SKIP_DO_TASKS[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
+WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '0', '1', d)}"
+
+WEBOS_SYSTEM_BUS_FILES_LOCATION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
+WEBOS_SYSTEM_BUS_FILES_LOCATION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '${S}/files/sysbus', '', d)}"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 WEBOS_QMAKE_TARGET = "${MACHINE}"
 
 # Set the location of chromium headers
-EXTRA_QMAKEVARS_PRE += "CHROMIUM_SRC_DIR=${STAGING_INCDIR}/chromium53"
+EXTRA_QMAKEVARS_PRE += "CHROMIUM_SRC_DIR=${STAGING_INCDIR}/${PREFERRED_PROVIDER_virtual/webruntime}"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
 EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CONFIG+=lttng', '', d)}"

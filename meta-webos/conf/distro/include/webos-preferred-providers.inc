@@ -6,6 +6,12 @@
 # overridden by higher layers whose distro .inc files are always included after
 # this one) and "MACHINE" appended to their [vardeps] flags.
 
+PREFERRED_PROVIDER_virtual/webruntime ?= "chromium53"
+PNBLACKLIST[chromium53] ?= "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', 'conflicts with webruntime', '', d)}"
+PNBLACKLIST[webruntime] ?= "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'chromium53', 'conflicts with chromium53', '', d)}"
+VIRTUAL-RUNTIME_webruntime[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
+VIRTUAL-RUNTIME_webruntime ?= "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', 'webruntime', 'chromium53', d)}"
+
 PREFERRED_PROVIDER_bash = "busybox"
 VIRTUAL-RUNTIME_bash = "busybox"
 
