@@ -3,11 +3,11 @@
 SUMMARY = "Enact Based Web Browser"
 AUTHOR = "Mikyung Kim <mikyung27.kim@lge.com>"
 SECTION = "webos/apps"
-LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
+LICENSE = "LicenseRef-EnactBrowser-Evaluation"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=6e00eb832d81f89a0f47fac10db717c7"
 
-WEBOS_VERSION = "1.0.0-9_e8dfeb88c106e0e008d5c4b82f4e3f6c25e8a544"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-10_c13a433eda8f4b8f3878b189e08cc5336d4d383a"
+PR = "r2"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
