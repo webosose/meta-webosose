@@ -12,7 +12,6 @@ LIC_FILES_CHKSUM = "\
 "
 
 inherit gettext
-inherit webos_chromium53_browser
 inherit webos_enhanced_submissions
 inherit webos_filesystem_paths
 inherit webos_lttng
@@ -25,7 +24,7 @@ inherit webos_public_repo
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native"
 
 PR = "r20"
-WEBOS_VERSION = "53.0.2785.34-17_0069b956098af1af207bdfe3feeb10978b65640b"
+WEBOS_VERSION = "53.0.2785.34-18_da45a93af40436b948572773d5772d497a81e2e4"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -191,64 +190,20 @@ configure_env() {
     export CC_host CXX_host LD_host AR_host GYP_DEFINES GYP_GENERATOR_FLAGS
 }
 
-WINDOW_SIZE ?= "1920,1080"
-CACHE_DIR ?= "${webos_homedir}/webbrowser"
-
-configure_browser_settings() {
-    echo "${USER_AGENT}" > ${D_DIR}/user_agent_conf
-
-    echo "${CACHE_DIR}" > ${D_DIR}/user_cachedir_conf
-    #We can replace below WINDOW_SIZE values from build configuration if available
-    echo "${WINDOW_SIZE}" > ${D_DIR}/window_size_conf
-}
-
-install_chromium_browser() {
-    D_DIR=${D}${BROWSER_APPLICATION_DIR}
-    install -d ${D_DIR}
-    cp -R --no-dereference --preserve=mode,links -v ${OUT_DIR}/${BUILD_TYPE}/install/* ${D_DIR}/
-
-    #sysbus files *.service
-    install -d ${D}${webos_sysbus_pubservicesdir}
-    install -d ${D}${webos_sysbus_prvservicesdir}
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BROWSER_APPLICATION}.service ${D}${webos_sysbus_pubservicesdir}/${BROWSER_APPLICATION}.service
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BROWSER_APPLICATION}.service ${D}${webos_sysbus_prvservicesdir}/${BROWSER_APPLICATION}.service
-
-    #sysbus files *.json
-    install -d ${D}${webos_sysbus_pubrolesdir}
-    install -d ${D}${webos_sysbus_prvrolesdir}
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BROWSER_APPLICATION}.json ${D}${webos_sysbus_pubrolesdir}/${BROWSER_APPLICATION}.json
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BROWSER_APPLICATION}.json ${D}${webos_sysbus_prvrolesdir}/${BROWSER_APPLICATION}.json
-
-    # To execute chromium in JAILER, Security Part needs permissions change
-    # run_webbrowser: Script file for launching chromium
-    chmod -v 755 ${D_DIR}/chrome
-    chmod -v 755 ${D_DIR}/kill_webbrowser
-    chmod -v 755 ${D_DIR}/run_webbrowser
-
-    # disble remote debugging feature for production
-    if [ "${WEBOS_DISTRO_PRERELEASE}" = "" ]; then
-        sed -i 's/ENABLE_INSPECTOR=1/ENABLE_INSPECTOR=0/' ${D_DIR}/run_webbrowser
-    fi
-
-    configure_browser_settings
-}
-
 install_app_shell() {
     A_DIR=${D}${APP_SHELL_RUNTIME_DIR}
     install -d ${A_DIR}
     cp -R --no-dereference --preserve=mode,links -v ${OUT_DIR}/${BUILD_TYPE}/install_app_shell/* ${A_DIR}/
 
     #sysbus files *.service
-    install -d ${D}${webos_sysbus_pubservicesdir}
-    install -d ${D}${webos_sysbus_prvservicesdir}
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.service ${D}${webos_sysbus_pubservicesdir}/${APP_SHELL_RUNTIME}.service
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.service ${D}${webos_sysbus_prvservicesdir}/${APP_SHELL_RUNTIME}.service
+    install -d ${D}${webos_sysbus_servicedir}
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.service ${D}${webos_sysbus_servicedir}/${APP_SHELL_RUNTIME}.service
 
     #sysbus files *.json
-    install -d ${D}${webos_sysbus_pubrolesdir}
-    install -d ${D}${webos_sysbus_prvrolesdir}
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.json ${D}${webos_sysbus_pubrolesdir}/${APP_SHELL_RUNTIME}.json
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.json ${D}${webos_sysbus_prvrolesdir}/${APP_SHELL_RUNTIME}.json
+    install -d ${D}${webos_sysbus_permissionsdir}
+    install -d ${D}${webos_sysbus_rolesdir}
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.perm.json ${D}${webos_sysbus_permissionsdir}/${APP_SHELL_RUNTIME}.perm.json
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${APP_SHELL_RUNTIME}.role.json ${D}${webos_sysbus_rolesdir}/${APP_SHELL_RUNTIME}.role.json
 
     # To execute chromium in JAILER, Security Part needs permissions change
     # run_appshell: Script file for launching chromium
@@ -256,25 +211,12 @@ install_app_shell() {
     chmod -v 755 ${A_DIR}/run_appshell
 }
 
-DEPLOY_BROWSER[vardeps] += "VIRTUAL-RUNTIME_com.webos.app.browser"
-DEPLOY_BROWSER ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_com.webos.app.browser', 'com.webos.app.browser', 'true', 'false', d)}"
-
 install_chromium_manifest() {
     install -d ${D}${webos_sysbus_manifestsdir}
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.manifest.json
-    if ! ${DEPLOY_BROWSER} ; then
-        # com.webos.app.browser is not shipped in webosose by chromium
-        # drop the role files for com.webos.app.browser from chromium manifest file
-        # else we see errors when ls-hubd starts parsing manifest file
-        manifest_file="${webos_sysbus_manifestsdir}/chromium53.manifest.json"
-        sed -i '/\"\(.*\)com.webos.app.browser/d' ${D}${manifest_file}
-        sed -i -e 's:app-shell\.json\",:app-shell\.json\":g' ${D}${manifest_file}
-        sed -i -e 's:\"${webos_sysbus_prvservicesdir}\/${APP_SHELL_RUNTIME}\.service\",:\"${webos_sysbus_prvservicesdir}\/${APP_SHELL_RUNTIME}\.service\":g' ${D}${manifest_file}
-    fi
 }
 
 do_install() {
-    install_chromium_browser
     install_app_shell
     install_chromium_manifest
 
@@ -299,44 +241,26 @@ do_install() {
     gzip -c ${OUT_DIR}/${BUILD_TYPE}/mksnapshot > ${D}${bindir_cross}/${HOST_SYS}-mksnapshot.gz
 }
 
-WEBOS_SYSTEM_BUS_DIRS_LEGACY_BROWSER_APPLICATION = " \
-    ${webos_sysbus_prvservicesdir}/${BROWSER_APPLICATION}.service \
-    ${webos_sysbus_pubservicesdir}/${BROWSER_APPLICATION}.service \
-    ${webos_sysbus_prvrolesdir}/${BROWSER_APPLICATION}.json \
-    ${webos_sysbus_pubrolesdir}/${BROWSER_APPLICATION}.json \
-"
-
-WEBOS_SYSTEM_BUS_DIRS_LEGACY_APP_SHELL_RUNTIME = " \
-    ${webos_sysbus_prvservicesdir}/${APP_SHELL_RUNTIME}.service \
-    ${webos_sysbus_pubservicesdir}/${APP_SHELL_RUNTIME}.service \
-    ${webos_sysbus_prvrolesdir}/${APP_SHELL_RUNTIME}.json \
-    ${webos_sysbus_pubrolesdir}/${APP_SHELL_RUNTIME}.json \
+WEBOS_SYSTEM_BUS_DIRS_APP_SHELL_RUNTIME = " \
+    ${webos_sysbus_servicedir}/${APP_SHELL_RUNTIME}.service \
+    ${webos_sysbus_permissionsdir}/${APP_SHELL_RUNTIME}.perm.json \
+    ${webos_sysbus_servicedir}/${APP_SHELL_RUNTIME}.role.json \
 "
 
 SYSROOT_DIRS_append = " ${bindir_cross}"
 
 PACKAGES += " \
     ${PN}-cross-mksnapshot \
-    ${BROWSER_APPLICATION} \
     ${APP_SHELL_RUNTIME} \
-"
-
-FILES_${BROWSER_APPLICATION} += " \
-    ${BROWSER_APPLICATION_DIR} \
-    ${WEBOS_SYSTEM_BUS_DIRS_LEGACY_BROWSER_APPLICATION} \
 "
 
 FILES_${APP_SHELL_RUNTIME} += " \
     ${APP_SHELL_RUNTIME_DIR} \
-    ${WEBOS_SYSTEM_BUS_DIRS_LEGACY_APP_SHELL_RUNTIME} \
+    ${WEBOS_SYSTEM_BUS_DIRS_APP_SHELL_RUNTIME} \
 "
-
-RDEPENDS_${BROWSER_APPLICATION} += "${PN}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs} ${APP_SHELL_RUNTIME}"
-
-INSANE_SKIP_${BROWSER_APPLICATION} += "libdir"
 
 FILES_${PN} = " \
     ${libdir}/*.so \
