@@ -19,7 +19,7 @@ RDEPENDS_${PN} += "qtdeclarative-plugins qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.0-2_b2ab134a10cc16818ddc40acf98008645a96046e"
+WEBOS_VERSION = "1.0.0-3_964279e2bf5e1a6b961dc886f5480db787f9587b"
 PR = "r18"
 
 inherit webos_enhanced_submissions
@@ -35,7 +35,7 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
+WEBOS_SYSTEM_BUS_SKIP_DO_TASKS="1"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
@@ -98,4 +98,5 @@ FILES_${PN} += " \
     ${sysconfdir}/wam \
     ${libdir}/webappmanager/plugins/*.so \
     ${datadir}/localization/${BPN} \
+    ${WEBOS_SYSTEM_BUS_DIRS} \
 "
