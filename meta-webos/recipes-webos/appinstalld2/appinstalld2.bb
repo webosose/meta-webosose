@@ -7,10 +7,10 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib pmtrace boost icu"
-RDEPENDS_${PN} = "ecryptfs-utils librolegen"
+RDEPENDS_${PN} = "applicationinstallerutility ecryptfs-utils librolegen"
 
 WEBOS_VERSION = "1.0.0-2_53225020493e53d8714a2a73f0bc56e43a1870c9"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_cmake
