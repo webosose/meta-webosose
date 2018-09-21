@@ -10,6 +10,9 @@
 # Once staged, it relies on standard (inherited) packaging functionality.
 
 # inherit from the generic app .bbclass
+
+WEBOS_SYSTEM_BUS_MANIFEST_TYPE ?= "APPLICATION"
+
 inherit webos_app
 inherit webos_filesystem_paths
 inherit webos_enactjs_env
