@@ -12,4 +12,6 @@ RDEPENDS_${PN} += " \
     nativesdk-qttools-tools \
     nativesdk-qtbase-tools \
     nativesdk-perl-modules \
+    nativesdk-qtwayland \
+    nativesdk-wayland-dev \
 "
