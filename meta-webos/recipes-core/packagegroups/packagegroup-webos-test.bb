@@ -66,7 +66,6 @@ PYTHON = " \
     python-shell \
     python-smtpd \
     python-sqlite3 \
-    python-sqlite3-tests \
     python-stringold \
     python-subprocess \
     python-syslog \
