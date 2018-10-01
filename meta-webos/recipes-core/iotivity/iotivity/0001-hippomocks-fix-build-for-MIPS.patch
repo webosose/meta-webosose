@@ -1,0 +1,23 @@
+From bda7bbc9cd81d95f540cc9f8b605b50e5250f97f Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Sat, 22 Dec 2018 20:12:51 +0000
+Subject: [PATCH] hippomocks: fix build for MIPS
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ HippoMocks/hippomocks.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/HippoMocks/hippomocks.h b/HippoMocks/hippomocks.h
+index 2ce0c3c..841caf4 100644
+--- a/HippoMocks/hippomocks.h
++++ b/HippoMocks/hippomocks.h
+@@ -89,6 +89,8 @@ extern "C" __declspec(dllimport) void WINCALL DebugBreak();
+ #define SOME_X86
+ #elif defined(arm) || defined(__arm__) || defined(ARM) || defined(_ARM_) || defined(__aarch64__)
+ #define SOME_ARM
++#elif defined(mips) || defined(__mips__)
++#define SOME_ARM
+ #endif
+ 
+ #if defined(__x86_64__) || defined(_M_X64)

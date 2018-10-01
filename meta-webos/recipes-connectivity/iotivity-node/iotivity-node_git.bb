@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://index.js;beginline=1;endline=13;md5=bafd0234b0f43def6ab0bced96530c42"
 
 DEPENDS = "nodejs-native glib-2.0 iotivity"
-RDEPENDS_${PN} += "iotivity-resource iotivity-resource-samples iotivity-node-app"
+RDEPENDS_${PN} += "iotivity-resource iotivity-resource-samples iotivity-node-app iotivity-service iotivity-tools"
 
 SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https"
 SRCREV = "c6aab8e6126c06516090dd13e812fee0d16b8cc7"
@@ -17,7 +17,7 @@ PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PR = "r1"
+PR = "r2"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"

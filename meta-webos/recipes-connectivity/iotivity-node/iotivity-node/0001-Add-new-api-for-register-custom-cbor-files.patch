@@ -1,26 +1,41 @@
-From 248b00a3b1d7fcac4a75b356922f8cb16711c2a1 Mon Sep 17 00:00:00 2001
+From c6d717f9dd50520debb5a75973804819544dff90 Mon Sep 17 00:00:00 2001
 From: Lauren Jeong <jy.jeong@lge.com>
 Date: Thu, 10 May 2018 16:32:05 +0900
 Subject: [PATCH] Add new api for register custom cbor files
 
 ---
- lib/CustomStorageHandler.js | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ lib/CustomStorageHandler.js | 57 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
  create mode 100644 lib/CustomStorageHandler.js
 
 diff --git a/lib/CustomStorageHandler.js b/lib/CustomStorageHandler.js
 new file mode 100644
-index 0000000..c7aeda1
+index 0000000..ddf608d
 --- /dev/null
 +++ b/lib/CustomStorageHandler.js
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,57 @@
 +var path = require("path");
 +var fs = require("fs");
 +
-+module.exports = function( cborfile ) {
++module.exports = function( cborFile ) {
++    var appPath = process.cwd();
++    var cborFileName = '';
++    var index = cborFile.lastIndexOf( '/' );
++    if ( index != -1 || index != 0 ){
++        appPath = appPath + '/'  + cborFile.substr( 0, index );
++        cborFileName = cborFile.substr( index + 1, cborFile.length );
++    }
++
 +    var ret= {
 +        open: function( pFile, mode ) {
-+            var fd, absolutePath = path.join( process.cwd(), cborfile );
++            var fileName = cborFileName;
++            if (pFile != 'oic_svr_db.dat'){
++                fileName = pFile;
++            }
++
++            var fd;
++            var absolutePath = path.join( appPath, fileName );
++
 +            mode = mode.replace( /b/g, "" );
 +
 +            // If the requested file does not exist, create it
@@ -34,8 +49,7 @@ index 0000000..c7aeda1
 +            }
 +
 +            // Open the file in the requested mode
-+            if(pFile.indexOf("db")!==-1)
-+                fd = fs.openSync( absolutePath, mode );
++            fd = fs.openSync( absolutePath, mode );
 +            fd = ( fd === undefined ? -1 : fd );
 +            return fd;
 +        },
@@ -56,6 +70,7 @@ index 0000000..c7aeda1
 +    }
 +    return ret;
 +}
++
 -- 
 1.9.1
 
