@@ -49,12 +49,13 @@ SRCREV_rapidjson = "3d5848a7cd3367c5cb451c6493165b7745948308"
 SRC_URI += "${url_rapidjson};name=rapidjson;;nobranch=1;destsuffix=${S}/extlibs/rapidjson/rapidjson;protocol=http"
 
 SRC_URI += "file://0001-Add-webos-into-the-target-OS-list.patch \
+    file://0002-builds-stop-defeating-Variant-dir-Part-1-3.patch \
     file://oic_svr_db_server.dat \
     file://oic_svr_db_client.dat \
     file://icon.png \
 "
 
-PR = "r1"
+PR = "r2"
 
 inherit scons pkgconfig webos_enactjs_app webos_component
 

@@ -9,10 +9,15 @@ RDEPENDS_${PN} += "iotivity-resource iotivity-resource-samples iotivity-node-app
 
 SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https"
 SRCREV = "c6aab8e6126c06516090dd13e812fee0d16b8cc7"
-SRC_URI += "file://0001-Add-new-api-for-register-custom-cbor-files.patch"
+SRC_URI += "file://0001-Add-new-api-for-register-custom-cbor-files.patch \
+    file://0002-Build-Do-not-purge-build-scripts-after-build.patch \
+"
+
 PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
+
+PR = "r1"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
