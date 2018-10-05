@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "jemalloc luna-service2 db8 glibmm boost libsandbox glib-2.0 libsigc++-2.0"
 
-WEBOS_VERSION = "2.0.1-1_2686ae16366c8bf44facf3b0375a3fc9c4dbae31"
+WEBOS_VERSION = "2.0.1-2_4141efc26b8023f133dcfebdb48b659e627474d0"
 PR = "r4"
 
 inherit webos_component
