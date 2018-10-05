@@ -27,8 +27,8 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-1_53c497dee7fd49b6db19eb9f7f95324c1b97fe01"
-PR = "r7"
+WEBOS_VERSION = "68.0.3440.106-2_aacb815ef03ebf37e9c418a9953e0e4516c67f2b"
+PR = "r8"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -58,6 +58,7 @@ WEBRUNTIME_BUILD_TARGET = "webos:weboswebruntime"
 BROWSER_APP_BUILD_TARGET = "${@oe.utils.conditional('DEPLOY_BROWSER', 'true', 'chrome', '', d)}"
 APPSHELL_BUILD_TARGET = "app_shell"
 CHROMEDRIVER_BUILD_TARGET = "${@oe.utils.conditional('DEPLOY_CHROMEDRIVER', 'true', 'chromedriver', '', d)}"
+WAM_DEMO_CONFARGS = "${@oe.utils.conditional('DEPLOY_WAM_DEMO', 'true', 'is_wam_demo_cbe=true', '', d)}"
 WAM_DEMO_BUILD_TARGET = "${@oe.utils.conditional('DEPLOY_WAM_DEMO', 'true', 'wam_demo', '', d)}"
 
 TARGET = "${WEBRUNTIME_BUILD_TARGET} ${BROWSER_APP_BUILD_TARGET} ${APPSHELL_BUILD_TARGET} ${CHROMEDRIVER_BUILD_TARGET} ${WAM_DEMO_BUILD_TARGET}"
@@ -112,9 +113,11 @@ GN_ARGS = "\
     use_xkbcommon=true\
     is_webos=true\
     use_cbe=true\
+    is_app_shell_cbe=true\
     use_pmlog=true\
     use_sysroot=false\
     use_system_debugger_abort=true\
+    ${WAM_DEMO_CONFARGS}\
     ${PACKAGECONFIG_CONFARGS}\
 "
 
@@ -205,10 +208,8 @@ COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 #CHROMIUM_PLUGINS_PATH = "${libdir}"
-# TODO: Fix CBE_DATA_PATH to be in /usr/lib
-CBE_DATA_PATH = "${bindir}"
+CBE_DATA_PATH = "${libdir}/cbe"
 CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/locales"
-#GYP_DEFINES += "cbe_data=${CBE_DATA_PATH}"
 
 # The text relocations are intentional -- see comments in [GF-52468]
 # TODO: check if we need INSANE_SKIP on ldflags
@@ -297,6 +298,7 @@ install_app_shell() {
     if [ -e "${SRC_DIR}/webos/install" ]; then
         cd ${OUT_DIR}/${BUILD_TYPE}
         xargs --arg-file=${SRC_DIR}/webos/install/app_shell/binary.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${A_DIR}
+        xargs --arg-file=${SRC_DIR}/webos/install/app_shell/cbe_data.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
         cd ${SRC_DIR}
         xargs --arg-file=${SRC_DIR}/webos/install/app_shell/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${A_DIR}
     fi
@@ -345,7 +347,6 @@ install_webruntime() {
         cat ${SRC_DIR}/webos/install/weboswebruntime/data_locales.list | xargs -I{} install -m 755 -p {} ${D}${CBE_DATA_LOCALES_PATH}
     fi
 
-    # TODO: Enable after mksnapshot is ready
     # move this to separate mksnapshot-cross recipe once we figure out how to build just cross mksnapshot from chromium repository
     install -d ${D}${bindir_cross}
     gzip -c ${OUT_DIR}/${BUILD_TYPE}/${MKSNAPSHOT_PATH}mksnapshot > ${D}${bindir_cross}/${HOST_SYS}-mksnapshot.gz
@@ -373,6 +374,7 @@ install_wam_demo() {
      if [ -e "${SRC_DIR}/webos/install" ]; then
          cd ${OUT_DIR}/${BUILD_TYPE}
          xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/binary.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
+         xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/cbe_data.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
          cd ${SRC_DIR}
          xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
      fi
