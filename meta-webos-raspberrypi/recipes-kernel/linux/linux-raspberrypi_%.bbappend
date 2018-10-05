@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2018 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi17"
+EXTENDPRAUTO_append = "webosrpi18"
 
 CMDLINE_append = " rw"
 
