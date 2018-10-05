@@ -20,7 +20,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
-WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.1_2678597c65fa34f33eb82e14321ad170b34eeca3', '1.0.0-3_964279e2bf5e1a6b961dc886f5480db787f9587b', d)}"
+WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.2_8543be2375652fac62f63bab99e0f87699506b53', '1.0.0-3_964279e2bf5e1a6b961dc886f5480db787f9587b', d)}"
 PR = "r19"
 
 inherit webos_enhanced_submissions
