@@ -138,7 +138,7 @@ RDEPENDS_${PN}_append_hardware = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${VIRTUAL-RUNTIME_bluetooth_service}', '', d)} \
 "
 
-RDEPENDS_${PN}_append_webos = " node-inspector ${VIRTUAL-RUNTIME_iotivity-node}"
+RDEPENDS_${PN}_append_webos = " ${VIRTUAL-RUNTIME_iotivity-node}"
 
 # XXX These FOSS components must be explicitly added because they are missing
 # from the RDEPENDS lists of the components that expect them to be present at
