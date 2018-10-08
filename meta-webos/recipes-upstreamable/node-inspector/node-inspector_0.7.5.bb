@@ -24,7 +24,7 @@ do_compile() {
     ${STAGING_BINDIR_NATIVE}/npm set cache ${WORKDIR}/npm_cache
 
     # clear local cache prior to each compile
-    ${STAGING_BINDIR_NATIVE}/npm cache clear
+    ${STAGING_BINDIR_NATIVE}/npm cache clear --force
 
     ${STAGING_BINDIR_NATIVE}/npm install --production
     cd ${B}

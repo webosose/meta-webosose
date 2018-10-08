@@ -53,7 +53,7 @@ do_compile () {
     ${STAGING_BINDIR_NATIVE}/npm set cache ${WORKDIR}/npm_cache
 
     # clear local cache prior to each compile
-    ${STAGING_BINDIR_NATIVE}/npm cache clear
+    ${STAGING_BINDIR_NATIVE}/npm cache clear --force
 
     case ${TARGET_ARCH} in
         i?86) targetArch="ia32"

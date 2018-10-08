@@ -49,7 +49,7 @@ do_compile() {
     ${STAGING_BINDIR_NATIVE}/npm set cache ${NPM_CACHE_DIR}
 
     # clear local cache prior to each compile
-    ${STAGING_BINDIR_NATIVE}/npm cache clear
+    ${STAGING_BINDIR_NATIVE}/npm cache clear --force
 
     ${STAGING_BINDIR_NATIVE}/npm --registry=${NPM_REGISTRY} --arch=${NPM_ARCH} --target_arch=${NPM_ARCH} ${NPM_INSTALL_FLAGS} install
 }

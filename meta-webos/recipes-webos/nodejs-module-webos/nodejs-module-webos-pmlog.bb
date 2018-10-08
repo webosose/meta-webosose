@@ -17,13 +17,13 @@ inherit webos_enhanced_submissions
 inherit webos_library
 inherit webos_filesystem_paths
 
-NODE_VERSION = "6.11.2"
+NODE_VERSION = "8.12.0"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz;name=node \
-    "
-SRC_URI[node.md5sum] = "d560f0d09e54364933f8d179aa5fc5bd"
-SRC_URI[node.sha256sum] = "20146ed51b638404665737ed8a25cc06e96d7d7259eb90a4bdec4730a78002a6"
+    https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.xz;name=node \
+"
+SRC_URI[node.md5sum] = "8b3abd033dae96b6fadcb6a872a44d3c"
+SRC_URI[node.sha256sum] = "5a9dff58016c18fb4bf902d963b124ff058a550ebcd9840c677757387bce419a"
 S = "${WORKDIR}/git"
 
 do_configure() {
