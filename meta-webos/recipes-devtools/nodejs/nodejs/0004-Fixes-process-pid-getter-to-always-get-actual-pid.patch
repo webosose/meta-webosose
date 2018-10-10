@@ -1,0 +1,62 @@
+From 4bfe9cbd28c154a447e995c6a861c38b6d610a86 Mon Sep 17 00:00:00 2001
+From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Date: Thu, 28 May 2015 21:31:07 +0300
+Subject: [PATCH] Fixes process pid getter to always get actual pid
+
+:Release Notes:
+Fixes process pid getter to always get actual pid
+
+:Detailed Notes:
+Adaptation of the fix for process pid getter to always get actual
+pid for correct value after fork with noexec:
+https://gpro.lgsvl.com/#/c/100594/17
+
+:Testing Performed:
+Using fork server and patches looked over system logs
+of node_fork_server at /var/log/legacy-log
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-4340] Using fork for loading new node instance
+
+Change-Id: I720eec3130d31709da27b6890bc412e456c66b9a
+Open-webOS-DCO-1.0-Signed-off-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Reviewed-on: https://gpro.lgsvl.com/111237
+Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Tested-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
+Reviewed-by: Sergii Babych <sergii.babych@lge.com>
+Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Reviewed-by: Andrii Koval <andrii.koval@lge.com>
+Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+---
+ src/node.cc | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/node.cc b/src/node.cc
+index a6403d5..fcad018 100644
+--- a/src/node.cc
++++ b/src/node.cc
+@@ -2389,6 +2389,12 @@ static void EnvSetter(Local<Name> property,
+   info.GetReturnValue().Set(value);
+ }
+ 
++static void ProcessPidGetter(Local<String> property,
++                             const PropertyCallbackInfo<Value>& info) {
++  Environment* env = Environment::GetCurrent(info.GetIsolate());
++  HandleScope scope(env->isolate());
++  info.GetReturnValue().Set(getpid());
++}
+ 
+ static void EnvQuery(Local<Name> property,
+                      const PropertyCallbackInfo<Integer>& info) {
+@@ -2807,8 +2813,7 @@ void SetupProcessObject(Environment* env,
+       process_env_template->NewInstance(env->context()).ToLocalChecked();
+   process->Set(FIXED_ONE_BYTE_STRING(env->isolate(), "env"), process_env);
+ 
+-  READONLY_PROPERTY(process, "pid",
+-                    Integer::New(env->isolate(), uv_os_getpid()));
++  process->SetAccessor(env->pid_string(), ProcessPidGetter);
+   READONLY_PROPERTY(process, "features", GetFeatures(env));
+ 
+   CHECK(process->SetAccessor(env->context(),

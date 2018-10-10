@@ -1,0 +1,174 @@
+From b8ba5352588b586c3f0a6579e70400a23181a93d Mon Sep 17 00:00:00 2001
+From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
+Date: Mon, 28 Aug 2017 14:01:48 -0700
+Subject: [PATCH] implement function chroot in process module
+
+:Release Notes:
+Implement chroot function in nodejs
+
+:Detailed Notes:
+Current implementation of fork server does not support jailer mode
+because of lack of native support in nodejs. This change implements
+function `chroot' in `process' module in nodejs. As a result, it
+becomes possible to implement jailer mode in fork server.
+
+:Testing Performed:
+Locally build and tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-10772] Implement jailer support for node fork server and unified services
+
+Change-Id: I1c85be227165a630c48e688163d63ff1be1a8d43
+Open-webOS-DCO-1.0-Signed-off-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Reviewed-on: https://g2g.lgsvl.com/7890
+Reviewed-by: Andrii Koval <andrii.koval@lge.com>
+Reviewed-by: Anastasia Timoshchuk <anastasia.timoshchuk@lge.com>
+Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Tested-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
+Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
+---
+ deps/uv/include/uv.h    |  2 ++
+ deps/uv/src/unix/core.c |  6 ++++++
+ deps/v8/src/d8-posix.cc | 27 +++++++++++++++++++++++++++
+ deps/v8/src/d8.h        |  1 +
+ src/node.cc             |  1 +
+ src/node_internals.h    |  1 +
+ src/node_process.cc     | 12 ++++++++++++
+ 7 files changed, 50 insertions(+)
+
+diff --git a/deps/uv/include/uv.h b/deps/uv/include/uv.h
+index 9794d99..1028363 100644
+--- a/deps/uv/include/uv.h
++++ b/deps/uv/include/uv.h
+@@ -1451,6 +1451,8 @@ UV_EXTERN int uv_cwd(char* buffer, size_t* size);
+ 
+ UV_EXTERN int uv_chdir(const char* dir);
+ 
++UV_EXTERN int uv_chroot(const char* dir);
++
+ UV_EXTERN uint64_t uv_get_free_memory(void);
+ UV_EXTERN uint64_t uv_get_total_memory(void);
+ 
+diff --git a/deps/uv/src/unix/core.c b/deps/uv/src/unix/core.c
+index 3741c1d..96d1937 100644
+--- a/deps/uv/src/unix/core.c
++++ b/deps/uv/src/unix/core.c
+@@ -717,6 +717,12 @@ int uv_chdir(const char* dir) {
+   return 0;
+ }
+ 
++int uv_chroot(const char* dir) {
++  if (chroot(dir))
++    return UV__ERR(errno);
++
++  return 0;
++}
+ 
+ void uv_disable_stdio_inheritance(void) {
+   int fd;
+diff --git a/deps/v8/src/d8-posix.cc b/deps/v8/src/d8-posix.cc
+index 18040c8..b6cef96 100644
+--- a/deps/v8/src/d8-posix.cc
++++ b/deps/v8/src/d8-posix.cc
+@@ -569,6 +569,30 @@ void Shell::ChangeDirectory(const v8::FunctionCallbackInfo<v8::Value>& args) {
+   }
+ }
+ 
++void Shell::ChangeRootDirectory(const v8::FunctionCallbackInfo<v8::Value>& args) {
++  if (args.Length() != 1) {
++    const char* message = "chroot() takes one argument";
++    args.GetIsolate()->ThrowException(
++        String::NewFromUtf8(args.GetIsolate(), message, NewStringType::kNormal)
++            .ToLocalChecked());
++    return;
++  }
++  String::Utf8Value directory(args[0]);
++  if (*directory == NULL) {
++    const char* message = "os.chroot(): String conversion of argument failed.";
++    args.GetIsolate()->ThrowException(
++        String::NewFromUtf8(args.GetIsolate(), message, NewStringType::kNormal)
++            .ToLocalChecked());
++    return;
++  }
++  if (chroot(*directory) != 0) {
++    args.GetIsolate()->ThrowException(
++        String::NewFromUtf8(args.GetIsolate(), strerror(errno), NewStringType::kNormal)
++            .ToLocalChecked());
++    return;
++  }
++}
++
+ 
+ void Shell::SetUMask(const v8::FunctionCallbackInfo<v8::Value>& args) {
+   if (args.Length() != 1) {
+@@ -860,6 +884,9 @@ void Shell::AddOSMethods(Isolate* isolate, Local<ObjectTemplate> os_templ) {
+   os_templ->Set(String::NewFromUtf8(isolate, "chdir", NewStringType::kNormal)
+                     .ToLocalChecked(),
+                 FunctionTemplate::New(isolate, ChangeDirectory));
++  os_templ->Set(String::NewFromUtf8(isolate, "chroot", NewStringType::kNormal)
++                    .ToLocalChecked(),
++                FunctionTemplate::New(isolate, ChangeDirectory));
+   os_templ->Set(String::NewFromUtf8(isolate, "setenv", NewStringType::kNormal)
+                     .ToLocalChecked(),
+                 FunctionTemplate::New(isolate, SetEnvironment));
+diff --git a/deps/v8/src/d8.h b/deps/v8/src/d8.h
+index c0922bc..cf5edbf 100644
+--- a/deps/v8/src/d8.h
++++ b/deps/v8/src/d8.h
+@@ -441,6 +441,7 @@ class Shell : public i::AllStatic {
+   // the "mkdir -p" command.
+   static void System(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void ChangeDirectory(const v8::FunctionCallbackInfo<v8::Value>& args);
++  static void ChangeRootDirectory(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void SetEnvironment(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void UnsetEnvironment(const v8::FunctionCallbackInfo<v8::Value>& args);
+   static void SetUMask(const v8::FunctionCallbackInfo<v8::Value>& args);
+diff --git a/src/node.cc b/src/node.cc
+index f4d2709..a6403d5 100644
+--- a/src/node.cc
++++ b/src/node.cc
+@@ -2967,6 +2967,7 @@ void SetupProcessObject(Environment* env,
+   env->SetMethod(process, "dlopen", DLOpen);
+   env->SetMethod(process, "abort", Abort);
+   env->SetMethod(process, "chdir", Chdir);
++  env->SetMethod(process, "chroot", Chroot);
+   env->SetMethod(process, "cwd", Cwd);
+   env->SetMethod(process, "reallyExit", Exit);
+   env->SetMethod(process, "umask", Umask);
+diff --git a/src/node_internals.h b/src/node_internals.h
+index a891b1b..778205e 100644
+--- a/src/node_internals.h
++++ b/src/node_internals.h
+@@ -422,6 +422,7 @@ void PrintErrorString(const char* format, ...);
+ 
+ void Abort(const v8::FunctionCallbackInfo<v8::Value>& args);
+ void Chdir(const v8::FunctionCallbackInfo<v8::Value>& args);
++void Chroot(const v8::FunctionCallbackInfo<v8::Value>& args);
+ void CPUUsage(const v8::FunctionCallbackInfo<v8::Value>& args);
+ void Cwd(const v8::FunctionCallbackInfo<v8::Value>& args);
+ void Hrtime(const v8::FunctionCallbackInfo<v8::Value>& args);
+diff --git a/src/node_process.cc b/src/node_process.cc
+index f953f5f..80afa84 100644
+--- a/src/node_process.cc
++++ b/src/node_process.cc
+@@ -64,6 +64,18 @@ void Chdir(const FunctionCallbackInfo<Value>& args) {
+     return env->ThrowUVException(err, "uv_chdir");
+ }
+ 
++void Chroot(const FunctionCallbackInfo<Value>& args) {
++  Environment* env = Environment::GetCurrent(args);
++
++  if (args.Length() != 1 || !args[0]->IsString())
++    return env->ThrowTypeError("Bad argument.");
++
++  Utf8Value path(args.GetIsolate(), args[0]);
++  int err = uv_chroot(*path);
++  if (err)
++    return env->ThrowUVException(err, "uv_chroot");
++}
++
+ // CPUUsage use libuv's uv_getrusage() this-process resource usage accessor,
+ // to access ru_utime (user CPU time used) and ru_stime (system CPU time used),
+ // which are uv_timeval_t structs (long tv_sec, long tv_usec).

@@ -1,0 +1,72 @@
+From 11a3e08008899b7fe61c38610416cf52be23948d Mon Sep 17 00:00:00 2001
+From: Oleksandr Ivanov <oleksandr.ivanov@lge.com>
+Date: Thu, 24 Aug 2017 13:24:35 -0700
+Subject: [PATCH] Patch on Flush function for CPU ARM added
+
+:Release Notes:
+Switch to nodejs v0.12.2
+
+:Detailed Notes:
+Switch to nodejs v0.12.2
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[DRD-2007] Switch to nodejs v0.12.2
+[DRD-2008] Use g2g for Node JS
+
+Open-webOS-DCO-1.0-Signed-off-by: Oleksandr
+Ivanov<oleksandr.ivanov@lge.com>
+
+Change-Id: I5a5cd137beba13920077a2750acb728c9614b914
+---
+ deps/v8/src/arm/cpu-arm.cc | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/deps/v8/src/arm/cpu-arm.cc b/deps/v8/src/arm/cpu-arm.cc
+index f5d2ab1..76aec01 100644
+--- a/deps/v8/src/arm/cpu-arm.cc
++++ b/deps/v8/src/arm/cpu-arm.cc
+@@ -20,11 +20,31 @@
+ namespace v8 {
+ namespace internal {
+ 
++namespace {
++  int flushICache(void* start, size_t size);    //forward declaration
++}
++
+ void CpuFeatures::FlushICache(void* start, size_t size) {
+ #if !defined(USE_SIMULATOR)
+ #if V8_OS_QNX
+   msync(start, size, MS_SYNC | MS_INVALIDATE_ICACHE);
+ #else
++  const int N_RETRIES = 100;
++  int err = 0;
++
++  // Wait until flushICache is successful.
++  for (int i = 0; i < N_RETRIES; ++i) {
++      err = flushICache(start, size);
++      if (0 == err)
++          break;
++  }
++#endif
++}
++
++namespace {
++#if !defined(USE_SIMULATOR)
++int flushICache(void* start, size_t size)
++{
+   register uint32_t beg asm("r0") = reinterpret_cast<uint32_t>(start);
+   register uint32_t end asm("r1") = beg + size;
+   register uint32_t flg asm("r2") = 0;
+@@ -57,6 +77,8 @@ void CpuFeatures::FlushICache(void* start, size_t size) {
+     :
+     : "r" (beg), "r" (end), "r" (flg), [scno] "i" (__ARM_NR_cacheflush)
+     : "memory");
++  return (int) (beg);
++}
+ #endif
+ #endif
+ #endif  // !USE_SIMULATOR

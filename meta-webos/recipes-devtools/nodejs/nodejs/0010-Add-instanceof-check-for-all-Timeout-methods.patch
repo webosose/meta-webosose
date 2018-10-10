@@ -1,0 +1,96 @@
+From d1f90b41d25ae64815aa0d04bf75241c6a28c1c9 Mon Sep 17 00:00:00 2001
+From: Sergii Babych <sergii.babych@lge.com>
+Date: Thu, 20 Aug 2015 17:24:07 +0300
+Subject: [PATCH] Add instanceof check for all 'Timeout' methods
+
+:Release Notes:
+Fix timer unref test  and  add  instanceof  check  for  all 'Timeout'
+methods.
+
+:Detailed Notes:
+During the call of 'Timeout' member method, the call context may have
+incorrect values or the  context  itself  can  be  completely  wrong.
+It cause crash  or  hang  or  unknown error. In order to prevent this
+situation  in  future  we  need  to  add  call  context  check.
+
+:Testing Performed:
+Tested on local build on .......
+var t = setInterval(function() {}, 1);
+process.nextTick(t.unref.bind(t));
+process.nextTick(t.unref.bind({}));
+process.nextTick(t.unref);
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-5428] Fix timer unref test and add instanceof check
+            for all methods
+
+Change-Id: I248fd790c45ca8bbfa90bd79ea3a1c4f41f76977
+Reviewed-on: https://gpro.lgsvl.com/117368
+Reviewed-by: Sergii Babych <sergii.babych@lge.com>
+Tested-by: Sergii Babych <sergii.babych@lge.com>
+Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
+---
+ lib/timers.js                      | 13 +++++++++++++
+ test/parallel/test-timers-unref.js | 11 ++++++++++-
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/lib/timers.js b/lib/timers.js
+index e6655c2..da14c4b 100644
+--- a/lib/timers.js
++++ b/lib/timers.js
+@@ -621,6 +621,15 @@ function unrefdHandle() {
+ 
+ 
+ Timeout.prototype.unref = function() {
++  // Prevent call 'Timeout' member method on non 'Timeout' context.
++  // For example this is wrong:
++  //   var t = setInterval(function() {}, 1);
++  //   process.nextTick(t.unref);
++  // But this is ok:
++  //   var t = setInterval(function() {}, 1);
++  //   process.nextTick(t.unref.bind(t));
++  if (!(this instanceof Timeout))
++    throw new Error(Timeout_call_context_error);
+   if (this._handle) {
+     this._handle.unref();
+   } else if (typeof this._onTimeout === 'function') {
+@@ -648,12 +657,16 @@ Timeout.prototype.unref = function() {
+ };
+ 
+ Timeout.prototype.ref = function() {
++  if (!(this instanceof Timeout))
++    throw new Error(Timeout_call_context_error);
+   if (this._handle)
+     this._handle.ref();
+   return this;
+ };
+ 
+ Timeout.prototype.close = function() {
++  if (!(this instanceof Timeout))
++    throw new Error(Timeout_call_context_error);
+   this._onTimeout = null;
+   if (this._handle) {
+     // Fewer checks may be possible, but these cover everything.
+diff --git a/test/parallel/test-timers-unref.js b/test/parallel/test-timers-unref.js
+index 9e5a422..160e768 100644
+--- a/test/parallel/test-timers-unref.js
++++ b/test/parallel/test-timers-unref.js
+@@ -75,6 +75,15 @@ const check_unref = setInterval(() => {
+ // See https://github.com/nodejs/node-v0.x-archive/issues/4261.
+ {
+   const t = setInterval(() => {}, 1);
+-  process.nextTick(t.unref.bind({}));
++  assert.throws(
++    function() {
++      t.unref.bind({})();
++    },
++    function(err) {
++      if ((err instanceof Error) && /Trying to call/.test(err))
++        return true;
++    },
++    "Timeout should throw exception for non timeout context call"
++  );
+   process.nextTick(t.unref.bind(t));
+ }
