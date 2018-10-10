@@ -27,8 +27,8 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-2_aacb815ef03ebf37e9c418a9953e0e4516c67f2b"
-PR = "r8"
+WEBOS_VERSION = "68.0.3440.106-4_cf40011528146fdfba2bc312be7830b62da5c4cb"
+PR = "r9"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -37,9 +37,9 @@ SRC_URI = "\
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-WEBOS_VERSION_V8 = "6.8.275.26-1_23d0446f0d594b4d358e337f42a9c81b97607a39"
+WEBOS_VERSION_V8 = "6.8.275.26-2_a8559356cc7652b77913e47f681ee126b97e8eaf"
 do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_v8 = "47a7e965ceb70ea5ab0e89a69f8aa591be8f4887"
+SRCREV_v8 = "d7b77ff7d9178acc5f6f84d27f56c0e714d28e7a"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
@@ -69,6 +69,7 @@ WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
 PACKAGECONFIG ?= "jumbo neva-media"
+PACKAGECONFIG_append = " libpci"
 PACKAGECONFIG_append_hardware = " gstreamer umediaserver"
 # g-media-pipeline is still broken for aarch64 PLAT-45700 PLAT-45699
 PACKAGECONFIG_remove_aarch64 = "gstreamer umediaserver neva-media"
@@ -78,6 +79,7 @@ PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # By default debug is completely disabled to speed up build
 PACKAGECONFIG[debug] = "is_debug=true remove_webcore_debug_symbols=false symbol_level=1,is_debug=false remove_webcore_debug_symbols=true symbol_level=0"
 PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
+PACKAGECONFIG[libpci] = "use_webos_gpu_info_collector=false,use_webos_gpu_info_collector=true"
 
 # Set a default value for jumbo file merge of 8. This should be good for build
 # servers and workstations with a big number of cores. In case build is
@@ -85,6 +87,9 @@ PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
 # be 50.
 JUMBO_FILE_MERGE_LIMIT="8"
 PACKAGECONFIG[jumbo] = "use_jumbo_build=true jumbo_file_merge_limit=${JUMBO_FILE_MERGE_LIMIT}, use_jumbo_build=false"
+
+PACKAGECONFIG_append = " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', 'lttng', '', d)}"
+PACKAGECONFIG[lttng] = "use_lttng=true,use_lttng=false,lttng-ust,lttng-tools lttng-modules babeltrace"
 
 GN_ARGS = "\
     cros_host_ar=\"${BUILD_AR}\"\
@@ -162,9 +167,6 @@ GN_ARGS += "\
 # CHROMIUM_DEBUG_FLAGS = "-g1"
 # GN_ARGS += “extra_cflags=' ${CHROMIUM_DEBUG_FLAGS} ‘\”
 # DEBUG_FLAGS = ""
-
-# TODO: Enable after adding letting
-# GN_ARGS += "${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', ' enable_lttng=true’, '', d)}"
 
 # Respect ld-is-gold in DISTRO_FEATURES when enabling gold
 # Similar patch applied in meta-browser
@@ -342,7 +344,12 @@ install_webruntime() {
         xargs --arg-file=${SRC_DIR}/webos/install/weboswebruntime/staging_inc.list cp --parents --target-directory=${D}${includedir}/${BPN}
 
         cd ${OUT_DIR}/${BUILD_TYPE}
+
         cp libcbe.so ${D}${libdir}/
+        if [ "${WEBOS_LTTNG_ENABLED}" = "1" ]; then
+          # use bindir if building non-cbe
+          cp libchromium_lttng_provider.so ${D}${libdir}/
+        fi
         xargs --arg-file=${SRC_DIR}/webos/install/weboswebruntime/binary.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
         cat ${SRC_DIR}/webos/install/weboswebruntime/data_locales.list | xargs -I{} install -m 755 -p {} ${D}${CBE_DATA_LOCALES_PATH}
     fi
