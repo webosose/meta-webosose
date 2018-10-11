@@ -18,7 +18,6 @@ inherit webos_filesystem_paths
 inherit webos_enactjs_env
 
 # Dependencies:
-#   - nodejs-native for node binary (to run enyo-pack)
 #   - ilib-webapp so we can override @enact/i18n/ilib with device submission
 #   - virtual/webruntime to use the mksnapshot binary to build v8 app snapshot blobs
 #   - enact-framework to use a shared Enact framework libraries
@@ -54,10 +53,16 @@ WEBOS_ENACTJS_PACK_OPTS ??= "--production --isomorphic --snapshot --locales=tv"
 
 # When true, will override the app's version of Enact, React, etc. with the build-target versions
 # Defaults true. Any apps not compatible will system-wide Enact version standard will need to change this.
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "true"
+WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE ??= "true"
+
+# Path to javascript override of a build submission ilib
+WEBOS_ENACTJS_ILIB_OVERRIDE ??= "${STAGING_DATADIR}/javascript/ilib"
+
+# On-device path to ilib json assets
+WEBOS_ENACTJS_ILIB_ASSETS ??= "/usr/share/javascript/ilib"
 
 # Whether to force transpiling to full ES5, rather than ES6 targetted to webOS Chrome version.
-WEBOS_ENACTJS_FORCE_ES5 = "false"
+WEBOS_ENACTJS_FORCE_ES5 ??= "false"
 
 # May be provided by machine target; ensure the variable exists for allarch filtering
 LIB32_PREFIX ??= ""
@@ -104,6 +109,12 @@ do_compile() {
         fi
     fi
 
+    NPM_OPTS="--arch=${TARGET_ARCH} --loglevel=verbose install"
+    if [ -z "${WEBOS_ENACTJS_PACK_OVERRIDE}" ] ; then
+        # When a standard Enact app, we can safely skip installing any devDependencies
+        NPM_OPTS="${NPM_OPTS} --only=production"
+    fi
+
     # compile and install node modules in source directory
     bbnote "Begin NPM install process"
     ATTEMPTS=0
@@ -125,7 +136,7 @@ do_compile() {
 
         bbnote "NPM install attempt #${ATTEMPTS} (of 5)..." && echo
         STATUS=0
-        ${ENACT_NPM} --arch=${TARGET_ARCH} --loglevel=verbose install || eval "STATUS=\$?"
+        ${ENACT_NPM} ${NPM_OPTS} || eval "STATUS=\$?"
         if [ ${STATUS} -ne 0 ] ; then
             bbwarn "...NPM process failed with status ${STATUS}"
         else
@@ -136,6 +147,28 @@ do_compile() {
             mv -f npm-shrinkwrap.json.orig npm-shrinkwrap.json
         fi
     done
+
+    if [ ! -z "${WEBOS_ENACTJS_ILIB_OVERRIDE}" ] ; then
+        ## only override ilib if using Enact submission via shrinkwrap override
+        if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
+            if [ -d node_modules/@enact/i18n ] ; then
+                # use ilib submission component rather than one bundled within @enact/i18n
+                if [ -d ${WEBOS_ENACTJS_ILIB_OVERRIDE}/lib ] ; then
+                    # override local lib with system-based submission
+                    cp -fr ${WEBOS_ENACTJS_ILIB_OVERRIDE}/lib node_modules/@enact/i18n/ilib
+
+                    if [ -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/package.json ] ; then
+                        cp -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/package.json node_modules/@enact/i18n/ilib
+                    fi
+
+                    # removed unneeded files
+                    rm -f node_modules/@enact/i18n/ilib/lib/ilib-*.js
+                    rm -f node_modules/@enact/i18n/ilib/lib/RhinoLoader.js
+                    rm -f node_modules/@enact/i18n/ilib/lib/ZoneInfo.js
+                fi
+            fi
+        fi
+    fi
 
     cd ${working}
 }
@@ -151,7 +184,9 @@ do_install() {
     export BROWSERSLIST="Chrome 53"
 
     # use local on-device ilib locale assets
-    export ILIB_BASE_PATH="/usr/share/javascript/ilib"
+    if [ ! -z "${WEBOS_ENACTJS_ILIB_ASSETS}" ] ; then
+        export ILIB_BASE_PATH="${WEBOS_ENACTJS_ILIB_ASSETS}"
+    fi
 
     if [ -f ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz ]; then
         gzip -cd ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
