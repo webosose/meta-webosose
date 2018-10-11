@@ -6,10 +6,15 @@ SECTION = "webOS/modules"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d6f37569f5013072e9490d2194d10ae6"
 
-PR = "r0"
+PR = "r1"
 
 DEPENDS += "nodejs-native"
 RDEPENDS_${PN} = "nodejs python"
+
+# The same restrition as nodejs
+COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
+COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
+COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
 
 # If uncomment under 'TODO' on do_install step,
 # this package will provide much more things actually. (e.g. express)

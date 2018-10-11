@@ -12,7 +12,12 @@ COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
 WEBOS_VERSION = "1.0.0-6_cfa4da54851127f44fe2a343716085d5245fda21"
-PR = "r0"
+PR = "r1"
+
+# The same restrition as nodejs (and nodejs-module-node-red)
+COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
+COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
+COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
 
 inherit systemd
 inherit webos_public_repo

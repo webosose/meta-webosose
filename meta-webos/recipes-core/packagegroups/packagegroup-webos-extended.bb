@@ -64,6 +64,14 @@ VIRTUAL-RUNTIME_iotivity-node ?= "iotivity-node"
 VIRTUAL-RUNTIME_iotivity-node_armv4 = ""
 VIRTUAL-RUNTIME_iotivity-node_armv5 = ""
 
+VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
+VIRTUAL-RUNTIME_nodejs-module-node-red_armv4 = ""
+VIRTUAL-RUNTIME_nodejs-module-node-red_armv5 = ""
+
+VIRTUAL-RUNTIME_mojoservicelauncher ?= "mojoservicelauncher"
+VIRTUAL-RUNTIME_mojoservicelauncher_armv4 = ""
+VIRTUAL-RUNTIME_mojoservicelauncher_armv5 = ""
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
@@ -100,8 +108,8 @@ RDEPENDS_${PN} = " \
     luna-downloadmgr \
     luna-init \
     luna-sysservice \
-    mojoservicelauncher \
-    nodejs-module-node-red \
+    ${VIRTUAL-RUNTIME_mojoservicelauncher} \
+    ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
     nodejs-module-webos-service \
     notificationmgr \
     pacrunner \

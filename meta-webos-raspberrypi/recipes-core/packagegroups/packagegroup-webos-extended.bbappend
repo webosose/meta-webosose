@@ -21,6 +21,10 @@ TTSSERVICE = " \
 CIMSERVICE = " \
     com.webos.service.contextintentmgr \
 "
+# The same restrition as nodejs (and nodejs-module-node-red and com.webos.service.contextintentmgr)
+CIMSERVICE_armv4 = ""
+CIMSERVICE_armv5 = ""
+CIMSERVICE_mips64 = ""
 
 PDM = " \
     com.webos.service.pdm \

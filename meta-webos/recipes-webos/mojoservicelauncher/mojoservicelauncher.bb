@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS component responsible for launching the node.js services"
 AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
@@ -10,6 +10,11 @@ DEPENDS = "boost libpbnjson"
 RDEPENDS_${PN} = "nodejs"
 # fork_server.js wants to load these:
 RDEPENDS_${PN} += "nodejs-module-webos-dynaload nodejs-module-webos-pmlog nodejs-module-webos-sysbus mojoloader"
+
+# The same restrition as nodejs
+COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
+COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
+COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
 
 WEBOS_VERSION = "3.0.2-2_e4557c4460fccc0f74bd8f907da0f59ffeac4d5e"
 PR = "r7"
