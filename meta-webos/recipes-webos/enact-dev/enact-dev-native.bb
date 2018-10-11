@@ -26,8 +26,8 @@ do_fetch[vardeps] += "SRCREV"
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "1.0.11"
-SRCREV = "cfb0ba4fea5266c58afdb4c97d4328e83e5440a8"
+PV = "1.0.13"
+SRCREV = "1c426c85f0e61e1e1df1ab6acea2697b95da91f2"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
