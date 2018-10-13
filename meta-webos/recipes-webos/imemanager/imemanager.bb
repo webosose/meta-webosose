@@ -7,11 +7,11 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos"
+DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
 RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge"
 
 WEBOS_VERSION = "1.0.0-6_7eb9b71a92bb9caad027245cb9a3a83afa4f70a0"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
