@@ -57,7 +57,6 @@ webos_pluginsdir = "${prefix}/palm/plugins"
 # This is the location of the trees for JS services; the files for native (dynamic)
 # services are located under sbindir, libdir, etc. as if they were Linux daemons.
 webos_servicesdir = "${prefix}/palm/services"
-webos_smartkeydatadir = "${prefix}/palm/smartkey"
 webos_soundsdir = "${prefix}/palm/sounds"
 webos_sysmgrdir = "${prefix}/palm/sysmgr"
 
