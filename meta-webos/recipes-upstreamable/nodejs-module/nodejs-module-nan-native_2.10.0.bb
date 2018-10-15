@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=e6270b7774528599f2623a4aeb625829"
 
 DEPENDS = "node-gyp-native"
 
-PR = "r0"
+PR = "r1"
 inherit native
 SRC_URI = "https://registry.npmjs.org/nan/-/nan-2.10.0.tgz"
 
@@ -19,10 +19,10 @@ SRC_URI[sha256sum] = "600305681aa0bdebcffc5b89529f39bcf2d56f953b8c50f54226d0ca78
 S = "${WORKDIR}/package"
 
 do_install() {
-    install -d ${STAGING_LIBDIR_NATIVE}/node_modules
-    install -d ${STAGING_LIBDIR_NATIVE}/node_modules/nan
-    install ${S}/*.h ${STAGING_LIBDIR_NATIVE}/node_modules/nan/
+    install -d ${D}${libdir}/node_modules
+    install -d ${D}${libdir}/node_modules/nan
+    install ${S}/*.h ${D}${libdir}/node_modules/nan/
     for SUB in include_dirs.js package.json tools ; do
-        cp -R --no-dereference --preserve=mode,links -v $SUB ${STAGING_LIBDIR_NATIVE}/node_modules/nan
+        cp -R --no-dereference --preserve=mode,links -v $SUB ${D}${libdir}/node_modules/nan
     done
 }
