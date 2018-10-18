@@ -20,7 +20,7 @@ RDEPENDS_${PN} += " \
     python-subprocess \
 "
 
-WEBOS_VERSION = "1.0.0-2_04d9af137bf898b978ebe055ed8ae9b9ffadeef4"
+WEBOS_VERSION = "1.0.0-3_a35008bd52f112fae9663f1f0dd990a50880851d"
 PR = "r8"
 
 inherit webos_component
