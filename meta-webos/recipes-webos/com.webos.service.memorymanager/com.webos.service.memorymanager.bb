@@ -1,15 +1,15 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "Memory Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
 
-WEBOS_VERSION = "1.0.0-7_bbe3775e0b16f8008094759b17ba9014d1e1e4d0"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-10_9dee9c09f400fc2c4b2470c50a053d55ed5e6d6f"
+PR = "r1"
 
 inherit webos_component
 inherit webos_cmake
