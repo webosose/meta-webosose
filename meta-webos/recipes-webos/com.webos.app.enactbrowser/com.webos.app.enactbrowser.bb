@@ -6,7 +6,7 @@ SECTION = "webos/apps"
 LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=6e00eb832d81f89a0f47fac10db717c7"
 
-WEBOS_VERSION = "1.0.0-10_c13a433eda8f4b8f3878b189e08cc5336d4d383a"
+WEBOS_VERSION = "1.0.0-11_97e7e85864b480d6f5b1136f34c302d2ba9048af"
 PR = "r3"
 
 inherit webos_public_repo
