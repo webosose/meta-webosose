@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS ROS2 bridge"
 AUTHOR  = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -10,7 +10,7 @@ DEPENDS = "nodejs-native rcl rmw rosidl-generator-c rcutils"
 RDEPENDS_${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service"
 
 WEBOS_VERSION = "1.0.0-6_fd45931f2f249aef0ebfaffe9e3d416c9614e0fa"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -26,7 +26,7 @@ SERVICE = "com.webos.service.rosbridge"
 
 TARGET_CFLAGS   += "-fpic"
 
-do_install_append() {
+do_configure_append() {
     export HOME=${WORKDIR}
     export AMENT_PREFIX_PATH="${STAGING_EXECPREFIXDIR}"
     export CFLAGS="$CFLAGS -fpermissive"
@@ -37,6 +37,7 @@ do_install_append() {
 
     # clear local cache prior to each compile
     ${STAGING_BINDIR_NATIVE}/npm cache clear
+
     case ${TARGET_ARCH} in
         i?86) targetArch="ia32"
             echo "targetArch = 32"
@@ -70,8 +71,9 @@ do_install_append() {
     rm -fr ${S}/node_modules/rclnodejs/test/
     rm -fr ${S}/node_modules/rclnodejs/scripts/
     rm -fr ${S}/node_modules/rclnodejs/src/
+}
 
-    # Install
+do_install_append() {
     install -d ${D}${webos_servicesdir}/${SERVICE}
     cp -R -v ${S}/node_modules ${D}${webos_servicesdir}/${SERVICE}
 }
