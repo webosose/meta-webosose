@@ -23,12 +23,13 @@ def gn_arch_name(yocto_arch):
         'aarch64': 'arm64',
         'arm': 'arm',
         'i586': 'x86',
+        'i686': 'x86',
         'x86_64': 'x64',
     }
     try:
         return translation_table[yocto_arch]
     except KeyError:
-        bb.msg.fatal('"%s" is not a supported architecture.' % yocto_arch)
+        bb.fatal('"%s" is not a supported architecture.' % yocto_arch)
 
 
 def write_toolchain_file(d, file_path):

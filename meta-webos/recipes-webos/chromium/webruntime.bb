@@ -27,8 +27,8 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-8_992ae522a457d4df18cfc088c4b526b25970f742"
-PR = "r9"
+WEBOS_VERSION = "68.0.3440.106-11_e6c4d99e776aec66fee66dc92c821641b07278fd"
+PR = "r10"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -37,9 +37,9 @@ SRC_URI = "\
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-WEBOS_VERSION_V8 = "6.8.275.26-2_a8559356cc7652b77913e47f681ee126b97e8eaf"
+WEBOS_VERSION_V8 = "6.8.275.26-3_9b0d5ca0322ad5dff840d07995642b3b3bbe1cf4"
 do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_v8 = "d7b77ff7d9178acc5f6f84d27f56c0e714d28e7a"
+SRCREV_v8 = "1764ce1abbe3ffab3eda5801c4760210ab74f5e2"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
@@ -77,7 +77,8 @@ PACKAGECONFIG[gstreamer] = ",,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
 # By default debug is completely disabled to speed up build
-PACKAGECONFIG[debug] = "is_debug=true remove_webcore_debug_symbols=false symbol_level=1,is_debug=false remove_webcore_debug_symbols=true symbol_level=0"
+PACKAGECONFIG[debug] = "is_debug=false is_component_build=false symbol_level=2, is_debug=false symbol_level=0"
+PACKAGECONFIG[debug-webcore] = "remove_webcore_debug_symbols=false,remove_webcore_debug_symbols=true"
 PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
 PACKAGECONFIG[libpci] = "use_webos_gpu_info_collector=false,use_webos_gpu_info_collector=true"
 
@@ -468,10 +469,10 @@ RDEPENDS_${WAM_DEMO_APPLICATION} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
 # The text relocations are intentional -- see comments in [GF-52468]
 # TODO: check if we need INSANE_SKIP on ldflags
-INSANE_SKIP_${BROWSER_APPLICATION} += "libdir ldflags textrel"
-INSANE_SKIP_${APP_SHELL_RUNTIME} += "libdir ldflags textrel"
-INSANE_SKIP_${CHROMEDRIVER_RUNTIME} += "libdir ldflags textrel"
-INSANE_SKIP_${WAM_DEMO_APPLICATION} += "libdir ldflags textrel"
+INSANE_SKIP_${MLPREFIX}${BROWSER_APPLICATION} += "libdir ldflags textrel"
+INSANE_SKIP_${MLPREFIX}${APP_SHELL_RUNTIME} += "libdir ldflags textrel"
+INSANE_SKIP_${MLPREFIX}${CHROMEDRIVER_RUNTIME} += "libdir ldflags textrel"
+INSANE_SKIP_${MLPREFIX}${WAM_DEMO_APPLICATION} += "libdir ldflags textrel"
 
 FILES_${PN} = " \
     ${libdir}/*.so \
