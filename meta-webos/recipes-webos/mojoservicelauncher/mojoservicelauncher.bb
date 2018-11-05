@@ -11,7 +11,7 @@ RDEPENDS_${PN} = "nodejs"
 # fork_server.js wants to load these:
 RDEPENDS_${PN} += "nodejs-module-webos-dynaload nodejs-module-webos-pmlog nodejs-module-webos-sysbus mojoloader"
 
-WEBOS_VERSION = "3.0.2-1_b69ffdb470aa6e6a3a0f974225df2042008d97ca"
+WEBOS_VERSION = "3.0.2-2_e4557c4460fccc0f74bd8f907da0f59ffeac4d5e"
 PR = "r7"
 
 inherit webos_component
