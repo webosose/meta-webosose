@@ -7,11 +7,16 @@ LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=6e00eb832d81f89a0f47fac10db717c7"
 
 WEBOS_VERSION = "1.0.0-11_97e7e85864b480d6f5b1136f34c302d2ba9048af"
-PR = "r3"
+PR = "r4"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
+inherit webos_filesystem_paths
+
+WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
+WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}files/sysbus"
+WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 WEBOS_ENACTJS_PACK_OPTS = "--isomorphic --production --snapshot"
@@ -41,6 +46,20 @@ do_compile_prepend() {
     ${ENACT_NPM} config set prefer-offline true
     ${ENACT_NPM} install
     ${ENACT_NODE} ./scripts/cli.js transpile
+}
+
+install_acg_configuration() {
+    # sysbus files *.json
+    install -d ${D}${webos_sysbus_permissionsdir}
+    install -d ${D}${webos_sysbus_rolesdir}
+    install -d ${D}${webos_sysbus_manifestsdir}
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.perm.json ${D}${webos_sysbus_permissionsdir}/${BPN}.app.json
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.role.json ${D}${webos_sysbus_rolesdir}/${BPN}.app.json
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.json
+}
+
+do_install_append() {
+    install_acg_configuration
 }
 
 FILES_${PN} += "${webos_applicationsdir}"

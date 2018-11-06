@@ -23,8 +23,8 @@ inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native"
 
-PR = "r21"
-WEBOS_VERSION = "53.0.2785.34-19_5757328c85ae52dc90cb5dfe8939acd36dea7957"
+PR = "r22"
+WEBOS_VERSION = "53.0.2785.34-20_4fecf8e6d66e8ede17300c907ba8186c2e6a6862"
 PROVIDES = "virtual/webruntime"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
@@ -245,7 +245,7 @@ do_install() {
 WEBOS_SYSTEM_BUS_DIRS_APP_SHELL_RUNTIME = " \
     ${webos_sysbus_servicedir}/${APP_SHELL_RUNTIME}.service \
     ${webos_sysbus_permissionsdir}/${APP_SHELL_RUNTIME}.perm.json \
-    ${webos_sysbus_servicedir}/${APP_SHELL_RUNTIME}.role.json \
+    ${webos_sysbus_rolesdir}/${APP_SHELL_RUNTIME}.role.json \
 "
 
 SYSROOT_DIRS_append = " ${bindir_cross}"
