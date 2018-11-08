@@ -6,7 +6,7 @@ CPPFLAGS_append_rpi = " -I${STAGING_INCDIR}/IL \
     -I${STAGING_INCDIR}/interface/vcos/pthreads \
     -I${STAGING_INCDIR}/interface/vmcs_host/linux"
 
-DEPENDS_append_rpi = " virtual/egl userland"
+DEPENDS_append_rpi = " virtual/egl virtual/libomxil"
 
 EXTRA_LDFLAGS_raspberrypi3 = "-lEGL -lbcm_host -lvcos -lvchiq_arm -lopenmaxil"
 # raspberrypi3-64 version of userland doesn't provide bcm_host and openmaxil libraries
