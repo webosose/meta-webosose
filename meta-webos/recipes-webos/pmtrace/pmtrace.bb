@@ -3,8 +3,10 @@
 SUMMARY = "lttng-ust tracepoints wrapper library and performance tools"
 AUTHOR = "Andre Rosa <andre.rosa@lge.com>"
 SECTION = "webos/libs"
-LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LICENSE = "LGPLv2.1 & MIT & Apache-2.0"
+LIC_FILES_CHKSUM = "file://LICENSE.LGPL;md5=e2aa4f66375a24019b0ff5e99cec40ad \
+                    file://LICENSE.MIT;md5=19b5d9061141f7ab05cfcfdd4404ed08 \
+                    file://README.md;md5=35108c1521572d2a526926333b233cd7"
 
 DEPENDS = "lttng-ust libpbnjson pmloglib glib-2.0"
 
@@ -20,8 +22,8 @@ RDEPENDS_${PN} += " \
     python-subprocess \
 "
 
-WEBOS_VERSION = "1.0.0-3_a35008bd52f112fae9663f1f0dd990a50880851d"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-7_a8d1f2c481514edfbb62a0ed5ef161c384b555c4"
+PR = "r9"
 
 inherit webos_component
 inherit webos_cmake
