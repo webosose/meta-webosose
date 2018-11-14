@@ -27,8 +27,8 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-11_e6c4d99e776aec66fee66dc92c821641b07278fd"
-PR = "r10"
+WEBOS_VERSION = "68.0.3440.106-15_963104c0b71bbfbdbc33a267365db469eb40b06a"
+PR = "r11"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -37,9 +37,9 @@ SRC_URI = "\
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-WEBOS_VERSION_V8 = "6.8.275.26-3_9b0d5ca0322ad5dff840d07995642b3b3bbe1cf4"
+WEBOS_VERSION_V8 = "6.8.275.26-5_19c08493fbe2e9e0723e27748a139bdc57746233"
 do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_v8 = "1764ce1abbe3ffab3eda5801c4760210ab74f5e2"
+SRCREV_v8 = "f9a5f6866468097293e02fd0fec5fe297ecaecdc"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
@@ -73,7 +73,7 @@ PACKAGECONFIG_append = " libpci"
 PACKAGECONFIG_append_hardware = " gstreamer umediaserver"
 # g-media-pipeline is still broken for aarch64 PLAT-45700 PLAT-45699
 PACKAGECONFIG_remove_aarch64 = "gstreamer umediaserver neva-media"
-PACKAGECONFIG[gstreamer] = ",,g-media-pipeline"
+PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
 # By default debug is completely disabled to speed up build
@@ -103,26 +103,27 @@ GN_ARGS = "\
     enable_memorymanager_webapi=true\
     ffmpeg_branding=\"Chrome\"\
     host_os=\"linux\"\
+    is_app_shell_cbe=true\
     is_clang=false\
     is_cross_linux_build=true\
+    is_webos=true\
     ozone_auto_platforms=false\
     ozone_platform_wayland_external=true\
     proprietary_codecs=true\
     target_os=\"linux\"\
     target_sysroot=\"${STAGING_DIR_HOST}\"\
     treat_warnings_as_errors=false\
+    use_cbe=true\
     use_cups=false\
     use_custom_libcxx=false\
     use_custom_libcxx_for_host=true\
     use_kerberos=false\
     use_ozone=true\
-    use_xkbcommon=true\
-    is_webos=true\
-    use_cbe=true\
-    is_app_shell_cbe=true\
     use_pmlog=true\
     use_sysroot=false\
     use_system_debugger_abort=true\
+    use_webos_v8_snapshot=true\
+    use_xkbcommon=true\
     ${WAM_DEMO_CONFARGS}\
     ${PACKAGECONFIG_CONFARGS}\
 "
@@ -143,10 +144,6 @@ python do_write_toolchain_file () {
 }
 addtask write_toolchain_file after do_patch before do_configure
 # end TODO: drop this after we migrate to ubuntu 16.04 or above
-
-# Disable neva-media for webos
-# TODO: Remove this when gmp integration is complete for new chromium
-PACKAGECONFIG_remove_webos = "neva-media"
 
 # More options to speed up the build
 GN_ARGS += "\
