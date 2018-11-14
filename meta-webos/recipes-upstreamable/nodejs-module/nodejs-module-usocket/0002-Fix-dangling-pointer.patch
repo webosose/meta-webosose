@@ -1,0 +1,128 @@
+From 6440aca4e83b8682b5954be4a330dce0ee1d3e2e Mon Sep 17 00:00:00 2001
+From: Eunsik Lee <eunsik0.lee@lge.com>
+Date: Sun, 16 Sep 2018 01:17:15 +0900
+Subject: [PATCH] Fix crash issue
+
+---
+ src/uwrap.cc | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/src/uwrap.cc b/src/uwrap.cc
+index 3c9b65a..a45c938 100644
+--- a/src/uwrap.cc
++++ b/src/uwrap.cc
+@@ -163,6 +163,7 @@ namespace uwrap {
+ 
+ 		UWrap() {
+ 			handle = -1;
++			uvpoll = NULL;
+ 		}
+ 
+ 		~UWrap() {
+@@ -186,17 +187,27 @@ namespace uwrap {
+ 		}
+ 
+ 		void setupPoll() {
++			if (handle < 0) return;
++
+ 			int events = 0;
+ 			if (!paused)
+ 				events |= UV_READABLE;
+ 			if (static_cast<SubClass*>(this)->pollWrites())
+ 				events |= UV_WRITABLE;
+ 
+-			uvpoll.data = this;
++			if (!uvpoll) {
++				uvpoll = new uv_poll_t;
++				if (uv_poll_init(uv_default_loop(), uvpoll, handle) < 0) {
++					callback("error", Nan::ErrnoException(-errno, "uv_poll_init", "USocket", PATH_LINE()));
++					return ;
++				}
++			}
++
++			uvpoll->data = this;
+ 			if (events == 0)
+-				uv_poll_stop(&uvpoll);
++				uv_poll_stop(uvpoll);
+ 			else
+-				uv_poll_start(&uvpoll, events, UWrap::poll_thunk);
++				uv_poll_start(uvpoll, events, UWrap::poll_thunk);
+ 		}
+ 
+ 		void _pause() {
+@@ -229,13 +240,16 @@ namespace uwrap {
+ 			uv_poll_t* thiz = reinterpret_cast<uv_poll_t*>(poll_handle);
+ 			if (thiz->io_watcher.fd != -1)
+ 				::close(thiz->io_watcher.fd);
++
++			delete thiz;
++			thiz = NULL;
+ 		}
+ 
+ 		void _close() {
+ 			jscallback.Reset();
+ 			if (handle != -1) {
+-				uv_poll_stop(&uvpoll);
+-				uv_close((uv_handle_t*)&uvpoll, close_cb);
++				uv_poll_stop(uvpoll);
++				uv_close((uv_handle_t*)uvpoll, close_cb);
+ 				handle = -1;
+ 			}
+ 		}
+@@ -247,7 +261,7 @@ namespace uwrap {
+ 
+ 		int handle;
+ 		Nan::Persistent<v8::Function> jscallback;
+-		uv_poll_t uvpoll;
++		uv_poll_t* uvpoll;
+ 		bool paused;
+ 	};
+ 
+@@ -328,7 +342,7 @@ namespace uwrap {
+ 
+ 				paused = true;
+ 				handle = result.descriptor;
+-				if (uv_poll_init(uv_default_loop(), &uvpoll, handle) < 0) {
++				if (uv_poll_init(uv_default_loop(), uvpoll, handle) < 0) {
+ 					callback("error", Nan::ErrnoException(-errno, "uv_poll_init", "USocket", PATH_LINE()));
+ 					return;
+ 				}
+@@ -478,10 +492,6 @@ namespace uwrap {
+ 				paused = true;
+ 				corked = false;
+ 				handle = result.descriptor;
+-				if (uv_poll_init(uv_default_loop(), &uvpoll, handle) < 0) {
+-					callback("error", Nan::ErrnoException(-errno, "uv_poll_init", "USocket", PATH_LINE()));
+-					return;
+-				}
+ 
+ 				callback("connect", Nan::New(handle));
+ 			});
+@@ -496,7 +506,7 @@ namespace uwrap {
+ 			handle = fd;
+ 			paused = true;
+ 			corked = false;
+-			if (uv_poll_init(uv_default_loop(), &uvpoll, handle) < 0) {
++			if (uv_poll_init(uv_default_loop(), uvpoll, handle) < 0) {
+ 				callback("error", Nan::ErrnoException(-errno, "uv_poll_init", "USocket", PATH_LINE()));
+ 				return;
+ 			}
+@@ -508,6 +518,7 @@ namespace uwrap {
+ 		}
+ 
+ 		BoolResult _write(char *data, size_t len, vector<int> fds) {
++			if (handle < 0) return BoolResult(false);
+ 
+ 			vector<char> ctrlBuf;
+ 			msghdr message = {};
+@@ -580,6 +591,7 @@ namespace uwrap {
+ 		}
+ 
+ 		void _shutdown() {
++			if (handle < 0) return;
+ 			::shutdown(handle, SHUT_WR);
+ 			corked = false;
+ 			setupPoll();
+-- 
+1.9.1
+

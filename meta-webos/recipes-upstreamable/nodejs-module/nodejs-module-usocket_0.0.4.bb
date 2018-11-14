@@ -8,10 +8,11 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=5717bc308dbc03edd5e758d11c5bab65"
 
 DEPENDS = "node-gyp-native nodejs-module-nan-native"
 
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "https://registry.npmjs.org/usocket/-/usocket-0.0.4.tgz \
     file://0001-Fix-crash-issue.patch \
+    file://0002-Fix-dangling-pointer.patch \
 "
 
 SRC_URI[md5sum] = "a7f97a2da2f55999c91eed8bd3c4e881"
