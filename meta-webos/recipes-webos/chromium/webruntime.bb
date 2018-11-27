@@ -27,7 +27,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-15_963104c0b71bbfbdbc33a267365db469eb40b06a"
+WEBOS_VERSION = "68.0.3440.106-20_52f7d95ad0c40bfdf9b59d06f642a5e0e6a668c9"
 PR = "r11"
 WEBOS_REPO_NAME = "chromium68"
 
@@ -37,9 +37,9 @@ SRC_URI = "\
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-WEBOS_VERSION_V8 = "6.8.275.26-5_19c08493fbe2e9e0723e27748a139bdc57746233"
+WEBOS_VERSION_V8 = "6.8.275.26-6_8c2daceea21a2ec8c9223cbff1c8a4f147dffbc0"
 do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_v8 = "f9a5f6866468097293e02fd0fec5fe297ecaecdc"
+SRCREV_v8 = "1e8c4ed024cc1ba8374a212b5898215d5329fe09"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
@@ -215,6 +215,9 @@ CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/locales"
 # TODO: check if we need INSANE_SKIP on ldflags
 INSANE_SKIP_${PN} = "textrel ldflags"
 
+#ERROR: lib32-webruntime-68.0.3440.106-27-local do_package_qa: QA Issue: /usr/lib/libcbe.so contained in package lib32-webruntime requires libwayland-egl.so, but no providers found in RDEPENDS_lib32-webruntime? [file-rdeps]
+# Temporarily until upgrade to newer Yocto 2.6 and proper fix from http://gpro.lgsvl.com/221697 http://gpro.lgsvl.com/221698
+INSANE_SKIP_${PN} += "file-rdeps"
 
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
 do_compile() {

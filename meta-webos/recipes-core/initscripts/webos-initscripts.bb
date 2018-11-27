@@ -16,7 +16,7 @@ PROVIDES = "initscripts"
 DEPENDS = "systemd"
 
 WEBOS_VERSION = "3.0.0-12_6f4c0fc5f8fa0707e368f5d45d368a408c2792b8"
-PR = "r9"
+PR = "r10"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -33,9 +33,9 @@ WAM_SYSTEMD_SCRIPT_DEST = "${D}${sysconfdir}/systemd/system/scripts/webapp-mgr.s
 do_install_append_webos() {
     if [ -f ${WAM_SYSTEMD_SCRIPT_DEST} ] && [ "${PREFERRED_PROVIDER_virtual/webruntime}" = "webruntime" ]; then
         # TODO: Move these to webapp-mgr.sh.in in source code
-        sed -i '/export ENABLE_LAUNCH_OPTIMIZATION=1/a\\n    # setup 4 Mb lmitation mse audio buffer size\n    export MSE_AUDIO_BUFFER_SIZE_LIMIT=4194304' ${WAM_SYSTEMD_SCRIPT_DEST}
-        sed -i '/export ENABLE_LAUNCH_OPTIMIZATION=1/a\\n    # setup 50 Mb limitation mse video buffer size\n    export MSE_VIDEO_BUFFER_SIZE_LIMIT=5242880' ${WAM_SYSTEMD_SCRIPT_DEST}
         sed -i '/export ENABLE_LAUNCH_OPTIMIZATION=1/a\\n    # setup limit on max gpu memory usage\n    export MAX_GPU_MEM_LIMIT=60' ${WAM_SYSTEMD_SCRIPT_DEST}
+        sed -i '/export ENABLE_LAUNCH_OPTIMIZATION=1/a\\n    # setup 2 Mb limitation mse audio buffer size\n    export MSE_AUDIO_BUFFER_SIZE_LIMIT=2097152' ${WAM_SYSTEMD_SCRIPT_DEST}
+        sed -i '/export ENABLE_LAUNCH_OPTIMIZATION=1/a\\n    # setup 15 Mb limitation mse video buffer size\n    export MSE_VIDEO_BUFFER_SIZE_LIMIT=15728640' ${WAM_SYSTEMD_SCRIPT_DEST}
         sed -i '/export ENABLE_LAUNCH_OPTIMIZATION=1/a\\n    # # Enable blink features\n    export ENABLE_BLINK_FEATURES=AudioFocusExtension,MediaSourceIsSupportedExtension,MediaTimelineOffset,UMSExtension' ${WAM_SYSTEMD_SCRIPT_DEST}
         sed -i '/--enable-aggressive-release-policy \\/a\        --autoplay-policy=no-user-gesture-required \\' ${WAM_SYSTEMD_SCRIPT_DEST}
         sed -i '/--enable-aggressive-release-policy \\/a\        --enable-neva-ime \\' ${WAM_SYSTEMD_SCRIPT_DEST}
