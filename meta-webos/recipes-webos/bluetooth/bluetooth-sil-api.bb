@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0"
 
-WEBOS_VERSION = "1.0.0-3_a53c6b32446079ab7fd3e18d375671cbbf09ccb1"
+WEBOS_VERSION = "1.0.0-4_9f9a74492dd7c3a10323a9a3c88b1647770968fd"
 PR = "r0"
 
 inherit webos_component
