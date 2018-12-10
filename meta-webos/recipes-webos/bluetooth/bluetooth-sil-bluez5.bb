@@ -14,7 +14,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 # Add runtime dependency on bluez5 OBEX service when we have to support FTP
 RDEPENDS_${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
-WEBOS_VERSION = "0.1.0-7_3bde88ff4383a4f408c6f672d3d71b2776756a74"
+WEBOS_VERSION = "0.1.0-8_5b1c6a51ccd818009045ddd7831302dc9194527a"
 PR = "r0"
 
 inherit webos_component
