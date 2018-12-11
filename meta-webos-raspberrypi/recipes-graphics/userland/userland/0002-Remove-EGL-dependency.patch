@@ -1,20 +1,17 @@
-From b812ec3dc55a3f3ec7b42da6120ee517455cc27e Mon Sep 17 00:00:00 2001
+From 9184675aab2372c8d0999f749fc886714f1d288b Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Tue, 27 Jun 2017 21:22:05 +0900
 Subject: [PATCH] Remove EGL dependency
 
 ---
- CMakeLists.txt                         | 28 +++-------------------------
- host_applications/linux/CMakeLists.txt | 20 --------------------
+ CMakeLists.txt                         | 28 +++-----------------------
+ host_applications/linux/CMakeLists.txt | 20 ------------------
  interface/vmcs_host/CMakeLists.txt     |  2 +-
  makefiles/cmake/vmcs.cmake             |  2 +-
- middleware/openmaxil/CMakeLists.txt    |  1 -
- pkgconfig/openmaxil.pc.in              | 10 ++++++++++
- 6 files changed, 15 insertions(+), 48 deletions(-)
- create mode 100644 pkgconfig/openmaxil.pc.in
+ 4 files changed, 5 insertions(+), 47 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 673a5ad..b3f12a4 100644
+index e64e0ad..e36f966 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -8,13 +8,6 @@ SET(PROJECT_VER_PATCH 0)
@@ -97,8 +94,8 @@ index 673a5ad..b3f12a4 100644
  include(FindPkgConfig QUIET)
  if(PKG_CONFIG_FOUND)
  	# Produce a pkg-config file
--	foreach(PCFILE bcm_host.pc egl.pc glesv2.pc vg.pc brcmegl.pc brcmglesv2.pc  brcmvg.pc vcsm.pc mmal.pc )
-+	foreach(PCFILE bcm_host.pc vg.pc brcmvg.pc openmaxil.pc vcsm.pc mmal.pc)
+-	foreach(PCFILE bcm_host.pc egl.pc glesv2.pc vg.pc brcmegl.pc brcmglesv2.pc  brcmvg.pc vcsm.pc mmal.pc openmaxil.pc )
++	foreach(PCFILE bcm_host.pc vg.pc brcmvg.pc vcsm.pc mmal.pc openmaxil.pc)
  		configure_file("pkgconfig/${PCFILE}.in" "${PCFILE}" @ONLY)
  		install(FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PCFILE}"
  			DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
@@ -157,31 +154,3 @@ index 7c97463..4a3b348 100644
 +install(DIRECTORY ${vmcs_root}/interface/khronos/include/VG       DESTINATION ${VMCS_INSTALL_PREFIX}/include     FILES_MATCHING PATTERN "*.h")
  install(DIRECTORY ${vmcs_root}/host_applications/linux/libs/bcm_host/include     DESTINATION ${VMCS_INSTALL_PREFIX}       FILES_MATCHING PATTERN "*.h")
  
-diff --git a/middleware/openmaxil/CMakeLists.txt b/middleware/openmaxil/CMakeLists.txt
-index 3e9c5f9..ae958ed 100644
---- a/middleware/openmaxil/CMakeLists.txt
-+++ b/middleware/openmaxil/CMakeLists.txt
-@@ -21,7 +21,6 @@ if (VIDEOCORE_SIMULATION)
-                 core/ilutil.c)
- 
-    add_subdirectory (components)
--
- else ()
- 
-    # Host build.
-diff --git a/pkgconfig/openmaxil.pc.in b/pkgconfig/openmaxil.pc.in
-new file mode 100644
-index 0000000..8793a61
---- /dev/null
-+++ b/pkgconfig/openmaxil.pc.in
-@@ -0,0 +1,10 @@
-+prefix=@CMAKE_INSTALL_PREFIX@
-+exec_prefix=${prefix}
-+libdir=${exec_prefix}/lib
-+includedir=${prefix}/include
-+
-+Name: openmaxil
-+Description: Broadcom openmaxil library
-+Version: 1
-+Libs: -L${libdir} -lopenmaxil -lvcos -lvchiq_arm -pthread
-+Cflags: -I${includedir} -I${includedir}/IL -I${includedir}/interface/vmcs_host/linux -I${includedir}/interface/vcos/pthreads -DUSE_VCHIQ_ARM
