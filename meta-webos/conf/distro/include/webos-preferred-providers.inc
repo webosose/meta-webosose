@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 # Place distro-wide PREFERRED_PROVIDER settings here. Place MACHINE-specific
 # settings (always with a _<MACHINE> override) in <MACHINE>.conf with a default
@@ -6,11 +6,8 @@
 # overridden by higher layers whose distro .inc files are always included after
 # this one) and "MACHINE" appended to their [vardeps] flags.
 
-PREFERRED_PROVIDER_virtual/webruntime ?= "chromium53"
-PNBLACKLIST[chromium53] ?= "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', 'conflicts with webruntime', '', d)}"
-PNBLACKLIST[webruntime] ?= "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'chromium53', 'conflicts with chromium53', '', d)}"
-VIRTUAL-RUNTIME_webruntime[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
-VIRTUAL-RUNTIME_webruntime ?= "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', 'webruntime', 'chromium53', d)}"
+PREFERRED_PROVIDER_virtual/webruntime = "webruntime"
+VIRTUAL-RUNTIME_webruntime = "webruntime"
 
 PREFERRED_PROVIDER_bash = "busybox"
 VIRTUAL-RUNTIME_bash = "busybox"

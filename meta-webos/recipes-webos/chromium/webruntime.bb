@@ -28,7 +28,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 PROVIDES = "virtual/webruntime"
 
 WEBOS_VERSION = "68.0.3440.106-32_9e77377949fd126f5afb85eebe7b607345dea0fd"
-PR = "r12"
+PR = "r13"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -314,6 +314,10 @@ install_app_shell() {
     chmod -v 755 ${A_DIR}/run_app_shell
 }
 
+install_app_shell_append_qemux86() {
+    # Disable media hardware acceleration
+    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_DIR}/run_app_shell
+}
 
 install_chromium_manifest() {
     install -d ${D}${webos_sysbus_manifestsdir}

@@ -19,9 +19,8 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
-WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.9_39611498f1f7c05eef1a82a095938f7c957a6468', '1.0.0-4_07025b9860e6d8f55d40069548eef3f610780303', d)}"
-PR = "r23"
+WEBOS_VERSION = "1.0.0-2.chromium68.9_39611498f1f7c05eef1a82a095938f7c957a6468"
+PR = "r24"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -40,6 +39,7 @@ S = "${WORKDIR}/git"
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
 WEBOS_SYSTEM_BUS_FILES_LOCATION = ""
+SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
@@ -54,9 +54,6 @@ EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CON
 EXTRA_QMAKEVARS_PRE += "DEFINES+=WAM_DATA_DIR=\"\"${webos_cryptofsdir}/.webappmanager/\"\""
 EXTRA_QMAKEVARS_PRE += "PREFIX=/usr"
 EXTRA_QMAKEVARS_PRE += "PLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '_')}"
-
-# Set number of raster threads for Blink to 2
-WEBAPPMANAGER3_NUM_RASTER_THREADS = "2"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
@@ -82,10 +79,13 @@ do_install_append() {
     install -d ${D}${sysconfdir}/wam
     install -d ${D}${WAM_DATA_DIR}
     install -v -m 644 ${S}/files/launch/security_policy.conf ${D}${sysconfdir}/wam/security_policy.conf
-
     # add loaderror.html and geterror.js to next to resources directory (webos_localization_resources_dir)
     install -d ${D}${datadir}/localization/${BPN}/
+    install -d ${D}${SYSTEMD_INSTALL_PATH}/scripts/
+    install -v -m 644 ${S}/files/launch/systemd/webapp-mgr.service ${D}${SYSTEMD_INSTALL_PATH}/webapp-mgr.service
+    install -v -m 755 ${S}/files/launch/systemd/webapp-mgr.sh.in ${D}${SYSTEMD_INSTALL_PATH}/scripts/webapp-mgr.sh
     cp -vf ${WAM_ERROR_SCRIPTS_PATH}/* ${D}${datadir}/localization/${BPN}/
+    # TODO: Drop this code when chromium68 is ACG complaint
     if [ "${PREFERRED_PROVIDER_virtual/webruntime}" = "webruntime" ]; then
         install -d ${D}${webos_sysbus_pubservicesdir}
         install -d ${D}${webos_sysbus_pubrolesdir}
@@ -99,8 +99,8 @@ do_install_append() {
 }
 
 FILES_${PN} += " \
-    ${webos_upstartconfdir} \
     ${sysconfdir}/pmlog.d \
+    ${SYSTEMD_INSTALL_PATH} \
     ${sysconfdir}/wam \
     ${libdir}/webappmanager/plugins/*.so \
     ${datadir}/localization/${BPN} \
