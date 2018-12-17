@@ -57,10 +57,10 @@ WEBOS_ENACTJS_PACK_OPTS ??= "--production --isomorphic --snapshot --locales=tv"
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE ??= "true"
 
 # Path to javascript override of a build submission ilib
-WEBOS_ENACTJS_ILIB_OVERRIDE ??= "${STAGING_DATADIR}/javascript/ilib"
+WEBOS_ENACTJS_ILIB_OVERRIDE ??= "${@ '${STAGING_DATADIR}/javascript/ilib'.replace('${LIB32_PREFIX}', '')}"
 
 # On-device path to ilib json assets
-WEBOS_ENACTJS_ILIB_ASSETS ??= "/usr/share/javascript/ilib"
+WEBOS_ENACTJS_ILIB_ASSETS ??= "${datadir}/javascript/ilib"
 
 # Whether to force transpiling to full ES5, rather than ES6 targetted to webOS Chrome version.
 WEBOS_ENACTJS_FORCE_ES5 ??= "false"
@@ -196,7 +196,6 @@ do_install() {
         gzip -cd ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
         chmod +x ${B}/${HOST_SYS}-mksnapshot
         export V8_MKSNAPSHOT="${B}/${HOST_SYS}-mksnapshot"
-        # TODO Need to remove this line when PLAT-41192 is resolved
         export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception${V8_SNAPSHOT_EXTRA_ARGS}"
     fi
 
