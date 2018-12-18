@@ -51,3 +51,6 @@ RPI_USE_U_BOOT_raspberrypi3-64 = "1"
 SDIMG_VFAT_DEPLOY = "1"
 
 ENABLE_UART = "1"
+
+# Configure all Bluetooth service classes we want to support
+WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "SPP GATT FTP OPP A2DP"
