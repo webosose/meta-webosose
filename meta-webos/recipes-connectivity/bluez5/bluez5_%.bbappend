@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO_append = "webos3"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -18,6 +18,7 @@ SRC_URI += " \
     file://0006-Fix-obexd-segmentation-fault.patch \
     file://0007-Use-system-bus-instead-of-session-for-obexd.patch \
     file://main.conf \
+    file://brcm43438.service \
 "
 
 do_install_append () {
