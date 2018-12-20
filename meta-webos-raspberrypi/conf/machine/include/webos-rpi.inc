@@ -30,6 +30,7 @@ MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-btbcm \
     kernel-module-evdev \
     kernel-module-hci-uart \
+    kernel-module-btusb \
     kernel-module-i2c-bcm2708 \
     kernel-module-media \
     kernel-module-rfcomm \
