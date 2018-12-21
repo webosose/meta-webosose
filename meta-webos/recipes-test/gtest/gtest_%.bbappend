@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2019 LG Electronics, Inc.
+# Copyright (c) 2015-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos1"
 
@@ -15,8 +15,8 @@ do_install_append() {
     install -v -m 0644 ${B}/fused-src/gtest/* ${D}${prefix}/src/gtest/src
     install -v -m 0644 ${S}/googletest/CMakeLists.txt ${D}${prefix}/src/gtest
     install -v -m 0644 ${S}/googletest/cmake/* ${D}${prefix}/src/gtest/cmake
-    install -v -m 0644 ${S}/googletest/gtest.pc.in ${D}${prefix}/src/gtest
-    
+    install -v -m 0644 ${S}/googletest/cmake/gtest.pc.in ${D}${prefix}/src/gtest
+
     install -d ${D}${bindir}/gtest
     install -v -m 0755 ${S}/googletest/test/*.py ${D}${bindir}/gtest
 }
