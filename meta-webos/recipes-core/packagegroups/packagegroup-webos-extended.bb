@@ -141,6 +141,7 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
+    ${VIRTUAL-RUNTIME_iotivity-node} \
     ${VIRTUAL-RUNTIME_librdx} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
@@ -161,7 +162,6 @@ RDEPENDS_${PN}_append_hardware = " \
 "
 
 RDEPENDS_${PN}_append_webos = " \
-    ${VIRTUAL-RUNTIME_iotivity-node} \
     com.webos.app.mediaviewer \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
 "
