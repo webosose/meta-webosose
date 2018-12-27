@@ -1,0 +1,49 @@
+From 67bf96201168210ae08e04217d46567473f6362d Mon Sep 17 00:00:00 2001
+From: "radhika.s" <radhika.s@lge.com>
+Date: Thu, 27 Dec 2018 09:59:02 +0530
+Subject: [PATCH 2/2] Update CMakelist file to install lib correctly
+
+:Release Notes:
+Make file upadate to install lib correctly
+
+:Detailed Notes:
+Update the CMake file in libbson to fix build failure for aarch64
+and x86_64
+
+:Testing Performed:
+Built successfully
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-70228] libbson fails to build for aarch64 and x86_64
+---
+ CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e537b64..f2db55f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -195,8 +195,8 @@ file(COPY ${SOURCE_DIR}/tests/binary DESTINATION ${PROJECT_BINARY_DIR}/tests)
+ 
+ install(
+   TARGETS bson_shared bson_static
+-  LIBRARY DESTINATION lib
+-  ARCHIVE DESTINATION lib
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   RUNTIME DESTINATION bin
+ )
+ install(
+@@ -214,5 +214,5 @@ configure_file(
+ 
+ install(
+     FILES ${CMAKE_CURRENT_BINARY_DIR}/libbson-1.0.pc
+-    DESTINATION lib/pkgconfig
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+ )
+-- 
+2.7.4
+
