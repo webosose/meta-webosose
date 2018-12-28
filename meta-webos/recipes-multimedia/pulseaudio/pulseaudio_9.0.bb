@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018 LG Electronics, Inc.
+# Copyright (c) 2014-2019 LG Electronics, Inc.
 
 require recipes-multimedia/pulseaudio/pulseaudio.inc
 
@@ -7,7 +7,7 @@ DEPENDS_remove = "libatomic-ops"
 
 DEPENDS += "pmloglib"
 
-WEBOS_VERSION = "9.0-5_9304661ad5a998409c9820be2ed85b2bcee170b3"
+WEBOS_VERSION = "9.0-6_6aabe5586cec4976cd87e10f6ae2697b2382c9f4"
 PR = "r19"
 
 inherit webos_enhanced_submissions
