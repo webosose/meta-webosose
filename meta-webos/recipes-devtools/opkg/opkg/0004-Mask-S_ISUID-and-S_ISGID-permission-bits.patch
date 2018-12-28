@@ -1,7 +1,7 @@
-From 452bea4f7cc17e6f484476f90b239f8d44f48b08 Mon Sep 17 00:00:00 2001
+From 8f86794097052cfb17ab256825b8d21a7070df23 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
-Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
+Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
 
 ---
  libopkg/opkg_archive.c | 9 +++++++++
@@ -10,7 +10,7 @@ Subject: [PATCH 4/5] Mask S_ISUID and S_ISGID permission bits
  3 files changed, 11 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 2a6233d..38cea20 100644
+index 9921f80..e2a63a6 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
 @@ -25,6 +25,7 @@
@@ -21,7 +21,7 @@ index 2a6233d..38cea20 100644
  #include "file_util.h"
  #include "sprintf_alloc.h"
  #include "xfuncs.h"
-@@ -655,6 +656,14 @@ static int find_inner(struct archive *outer, const char *arname)
+@@ -668,6 +669,14 @@ static int find_inner(struct archive *outer, const char *arname)
          if (!entry)
              return -1;
  
@@ -37,22 +37,22 @@ index 2a6233d..38cea20 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 0f65cab..df47f07 100644
+index 0734067..31a8cb9 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -120,6 +120,7 @@ typedef struct opkg_conf {
-     int host_cache_dir;
+@@ -122,6 +122,7 @@ typedef struct opkg_conf {
      int verbose_status_file;
      int compress_list_files;
+     int short_description;
 +    unsigned int webos_offline_root_flag;
  
      /* ssl options: used only when opkg is configured with '--enable-curl',
       * otherwise always NULL or 0.
 diff --git a/src/opkg.c b/src/opkg.c
-index f23467d..31a2afe 100644
+index 650e278..267b2f5 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -154,6 +154,7 @@ static int args_parse(int argc, char *argv[])
+@@ -153,6 +153,7 @@ static int args_parse(int argc, char *argv[])
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
@@ -60,6 +60,3 @@ index f23467d..31a2afe 100644
              break;
          case 't':
              opkg_config->tmp_dir = xstrdup(optarg);
--- 
-2.15.1
-

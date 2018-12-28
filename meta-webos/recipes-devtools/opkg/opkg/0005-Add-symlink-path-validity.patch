@@ -1,6 +1,6 @@
-From c0b8664519808c660d5b010c502e79c54a5503bd Mon Sep 17 00:00:00 2001
+From 699f146acaf40e83450a295b8c866e8426b2113d Mon Sep 17 00:00:00 2001
 From: Soonwon Hong <soonwon.hong@lge.com>
-Date: Mon, 3 Jun 2019 15:22:07 +0900
+Date: Fri, 19 May 2017 09:47:01 +0900
 Subject: [PATCH] Add symlink path validity
 
 ---
@@ -11,10 +11,10 @@ Subject: [PATCH] Add symlink path validity
  4 files changed, 10 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 96aa84b..6a637f4 100644
+index e2a63a6..26f256c 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
-@@ -860,6 +860,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
+@@ -906,6 +906,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
      ar->extract_flags = ARCHIVE_EXTRACT_OWNER | ARCHIVE_EXTRACT_PERM |
          ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_UNLINK | ARCHIVE_EXTRACT_NO_OVERWRITE;
  
@@ -37,7 +37,7 @@ index 06880a1..2511f71 100644
      {"offline_root", OPKG_OPT_TYPE_STRING, &_conf.offline_root},
      {"overlay_root", OPKG_OPT_TYPE_STRING, &_conf.overlay_root},
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 2716e67..baf1572 100644
+index 31a8cb9..56fbef7 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
 @@ -105,6 +105,7 @@ typedef struct opkg_conf {
@@ -49,7 +49,7 @@ index 2716e67..baf1572 100644
      char *offline_root;
      char *overlay_root;
 diff --git a/src/opkg.c b/src/opkg.c
-index 31a2afe..823cc9d 100644
+index 267b2f5..f018f3d 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
 @@ -57,6 +57,7 @@ enum {
@@ -60,7 +60,7 @@ index 31a2afe..823cc9d 100644
      ARGS_OPT_NO_INSTALL_RECOMMENDS,
      ARGS_OPT_CACHE_DIR,
      ARGS_OPT_HOST_CACHE_DIR,
-@@ -103,6 +104,7 @@ static struct option long_options[] = {
+@@ -105,6 +106,7 @@ static struct option long_options[] = {
      {"noaction", 0, 0, ARGS_OPT_NOACTION},
      {"download-only", 0, 0, ARGS_OPT_DOWNLOAD_ONLY},
      {"nodeps", 0, 0, ARGS_OPT_NODEPS},
@@ -68,7 +68,7 @@ index 31a2afe..823cc9d 100644
      {"no-install-recommends", 0, 0, ARGS_OPT_NO_INSTALL_RECOMMENDS},
      {"offline", 1, 0, 'o'},
      {"offline-root", 1, 0, 'o'},
-@@ -254,6 +256,9 @@ static int args_parse(int argc, char *argv[])
+@@ -253,6 +255,9 @@ static int args_parse(int argc, char *argv[])
          case ARGS_OPT_VOLATILE_CACHE:
              opkg_config->volatile_cache = 1;
              break;
@@ -78,6 +78,3 @@ index 31a2afe..823cc9d 100644
          case ARGS_OPT_NO_INSTALL_RECOMMENDS:
              opkg_config->no_install_recommends = 1;
              break;
--- 
-1.9.1
-

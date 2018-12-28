@@ -1,7 +1,7 @@
-From 2c6c79b5f15551c6478fe8b36c02b9a3b0b7859a Mon Sep 17 00:00:00 2001
+From df9c4383b498f0ad6bbe1d272046662c3e9e9e29 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 16:54:15 +0530
-Subject: [PATCH 1/5] Load installed files before update file ownership
+Subject: [PATCH] Load installed files before update file ownership
 
 ---
  libopkg/opkg_install.c | 9 +++++++++
@@ -33,10 +33,10 @@ index 585e7d8..23a5a50 100644
       * between opkg database and filesystem */
  
 diff --git a/libopkg/pkg_hash.c b/libopkg/pkg_hash.c
-index cb7d0c0..de253a0 100644
+index 83155c3..afb8552 100644
 --- a/libopkg/pkg_hash.c
 +++ b/libopkg/pkg_hash.c
-@@ -896,11 +896,12 @@ pkg_t *file_hash_get_file_owner(const char *file_name)
+@@ -900,11 +900,12 @@ pkg_t *file_hash_get_file_owner(const char *file_name)
  void file_hash_set_file_owner(const char *file_name, pkg_t * owning_pkg)
  {
      pkg_t *old_owning_pkg;
@@ -52,6 +52,3 @@ index cb7d0c0..de253a0 100644
  
      if (old_owning_pkg) {
          if (!old_owning_pkg->installed_files)
--- 
-2.15.1
-
