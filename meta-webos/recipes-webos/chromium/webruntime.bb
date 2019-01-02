@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "Chromium webruntime for webOS"
 AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
@@ -27,7 +27,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-21_fa6f794e6e18ce63b816d9e99efa97cd2b6467c1"
+WEBOS_VERSION = "68.0.3440.106-22_6be036862eca66535d1d790191b8edf4e67f2a5d"
 PR = "r11"
 WEBOS_REPO_NAME = "chromium68"
 
