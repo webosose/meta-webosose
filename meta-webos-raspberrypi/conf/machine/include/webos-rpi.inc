@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 # The MACHINE.conf for every MACHINE that has an Raspberry Pi BSP must require this
 # file.
@@ -16,6 +16,10 @@ VIRTUAL-RUNTIME_aval-impl = "avoutput-adaptation-layer-rpi"
 
 VIRTUAL-RUNTIME_alsa-state = "avoutput-adaptation-layer-rpi"
 PNBLACKLIST[avoutput-adaptation-layer-mock] ?= "avoutput-adaptation-layer-rpi is preferred"
+
+PREFERRED_PROVIDER_val-impl = "videooutput-adaptation-layer-rpi"
+VIRTUAL-RUNTIME_val-impl = "videooutput-adaptation-layer-rpi"
+PNBLACKLIST[videooutput-adaptation-layer-mock] ?= "videooutput-adaptation-layer-rpi is preferred"
 
 PNBLACKLIST[omxplayer] ?= "not compatible with webOS Open components"
 PNBLACKLIST[packagegroup-rpi-test] ?= "rdepends on omxplayer"

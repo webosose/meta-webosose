@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS uMediaserver daemon and utilities"
 AUTHOR = "Ian Cain <ian.cain@lge.com>"
@@ -7,11 +7,12 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 python luna-service2 pmloglib boost luna-prefs"
+DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
-WEBOS_VERSION = "1.0.0-8_c90d92f35bfbb36e8426c26880fb0bb39ad1238a"
-PR = "r9"
+WEBOS_VERSION = "1.0.0-10_4747883cb92ba86eb82533e95ce52360441adbe5"
+PR = "r10"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -36,8 +37,8 @@ COMPATIBLE_MACHINE_x86-64 = "(.*)"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-PACKAGECONFIG ??= "avoutputd"
-PACKAGECONFIG[avoutputd] = "-DUSE_AVOUTPUTD:BOOL=TRUE,-DUSE_AVOUTPUTD:BOOL=FALSE,,avoutputd"
+PACKAGECONFIG = "com.webos.service.videooutput"
+PACKAGECONFIG[com.webos.service.videooutput] = "-DUSE_VIDEOOUTPUTD:BOOL=TRUE,-DUSE_VIDEOOUTPUTD:BOOL=FALSE,,com.webos.service.videooutput"
 
 # umediaserver-python contains the Python bindings
 PACKAGES =+ "${PN}-python"

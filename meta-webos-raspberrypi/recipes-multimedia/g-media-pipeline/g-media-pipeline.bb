@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "G media pipeline is a media pipeline which uses GStreamer"
 AUTHOR = "Jinwoo Ahn <jinwoo.ahn@lge.com>"
@@ -19,7 +19,7 @@ COMPATIBLE_MACHINE = "^rpi$"
 
 DEPENDS = "boost userland gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 
-WEBOS_VERSION = "1.0.0-8_4acdae36e684e3e09130ad30bde93241e74b3f3c"
+WEBOS_VERSION = "1.0.0-10_c9b64acc626a1dd71528180035076ffb7bba6aec"
 PR = "r1"
 
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
