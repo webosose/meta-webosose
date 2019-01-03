@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2018 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 
 SUMMARY = "WebAppMgr is responsible for running web applications on webOS"
 AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
@@ -21,7 +21,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
 WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.7_13584de10e4dafc7a4339194536e7971ca0bd096', '1.0.0-4_07025b9860e6d8f55d40069548eef3f610780303', d)}"
-PR = "r20"
+PR = "r21"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -37,11 +37,9 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-WEBOS_SYSTEM_BUS_SKIP_DO_TASKS[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
-WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '0', '1', d)}"
+WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
-WEBOS_SYSTEM_BUS_FILES_LOCATION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
-WEBOS_SYSTEM_BUS_FILES_LOCATION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '${S}/files/sysbus', '', d)}"
+WEBOS_SYSTEM_BUS_FILES_LOCATION = ""
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
@@ -95,6 +93,16 @@ do_install_append() {
     # add loaderror.html and geterror.js to next to resources directory (webos_localization_resources_dir)
     install -d ${D}${datadir}/localization/${BPN}/
     cp -vf ${WAM_ERROR_SCRIPTS_PATH}/* ${D}${datadir}/localization/${BPN}/
+    if [ "${PREFERRED_PROVIDER_virtual/webruntime}" = "webruntime" ]; then
+        install -d ${D}${webos_sysbus_pubservicesdir}
+        install -d ${D}${webos_sysbus_pubrolesdir}
+        install -d ${D}${webos_sysbus_prvservicesdir}
+        install -d ${D}${webos_sysbus_prvrolesdir}
+        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.service.pub ${D}${webos_sysbus_pubservicesdir}/com.palm.webappmgr.service
+        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.service.prv ${D}${webos_sysbus_prvservicesdir}/com.palm.webappmgr.service
+        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.json.prv ${D}${webos_sysbus_prvrolesdir}/com.palm.webappmgr.json
+        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.json.pub ${D}${webos_sysbus_pubrolesdir}/com.palm.webappmgr.json
+    fi
 }
 
 FILES_${PN} += " \
