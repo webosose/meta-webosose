@@ -1,0 +1,255 @@
+From f38de0e65cde49727cf721a95eebe3d8be6d260d Mon Sep 17 00:00:00 2001
+From: "sameer.mulla" <sameer.mulla@lge.com>
+Date: Mon, 7 Jan 2019 16:15:06 +0530
+Subject: [PATCH] Implementation to get connected profiles uuids
+
+:Release Notes:
+Implementation to get connected profiles uuids
+
+:Detailed Notes:
+Modified device.c to get connected profiles uuids
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-69336] Implement AVRCP/Connect Disconnect for blueooth-sil-bluez
+
+Change-Id: I1adda2981f87241360299a42a20b37607a3e7234
+Upstream-Status: Inappropriate[webos specific]
+---
+ src/device.c | 120 +++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 55 insertions(+), 65 deletions(-)
+
+diff --git a/src/device.c b/src/device.c
+index cebc81f..14caba9 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -197,7 +197,6 @@ struct btd_device {
+ 	char		name[MAX_NAME_LENGTH + 1];
+ 	char		*alias;
+ 	uint32_t	class;
+-	uint32_t	devicetype;
+ 	uint16_t	vendor_src;
+ 	uint16_t	vendor;
+ 	uint16_t	product;
+@@ -206,6 +205,7 @@ struct btd_device {
+ 	char		*modalias;
+ 	struct btd_adapter	*adapter;
+ 	GSList		*uuids;
++	GSList		*connected_uuids;
+ 	GSList		*primaries;		/* List of primary services */
+ 	GSList		*services;		/* List of btd_service */
+ 	GSList		*pending;		/* Pending services */
+@@ -848,21 +848,6 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
+ 	return TRUE;
+ }
+ 
+-static gboolean property_get_device_type(const GDBusPropertyTable *property,
+-					DBusMessageIter *iter, void *data)
+-{
+-	struct btd_device *device = data;
+-
+-	if (device->bdaddr_type == BDADDR_BREDR)
+-		device->devicetype = BT_MODE_BREDR;
+-	else if (device->bdaddr_type == BDADDR_LE_RANDOM || device->bdaddr_type == BDADDR_LE_PUBLIC)
+-		device->devicetype = BT_MODE_LE;
+-
+-	dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT32, &device->devicetype);
+-
+-	return TRUE;
+-}
+-
+ static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
+ 							uint16_t *appearance)
+ {
+@@ -1177,6 +1162,28 @@ static gboolean dev_property_get_uuids(const GDBusPropertyTable *property,
+ 	return TRUE;
+ }
+ 
++static gboolean dev_property_get_connected_uuids(const GDBusPropertyTable *property,
++					DBusMessageIter *iter, void *data)
++{
++	struct btd_device *dev = data;
++	DBusMessageIter entry;
++	GSList *l;
++
++	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
++				DBUS_TYPE_STRING_AS_STRING, &entry);
++
++	if (dev->connected_uuids) {
++		l = dev->connected_uuids;
++		for (; l != NULL; l = l->next)
++			dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING,
++								&l->data);
++	}
++
++	dbus_message_iter_close_container(iter, &entry);
++
++	return TRUE;
++}
++
+ static gboolean dev_property_get_modalias(const GDBusPropertyTable *property,
+ 					DBusMessageIter *iter, void *data)
+ {
+@@ -1555,8 +1562,14 @@ static void device_profile_connected(struct btd_device *dev,
+ 
+ 	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
+ 
+-	if (!err)
++	if (!err) {
+ 		btd_device_set_temporary(dev, false);
++		dev->connected_uuids = g_slist_insert_sorted(dev->connected_uuids,
++							g_strdup(profile->remote_uuid),
++							bt_uuid_strcmp);
++		g_dbus_emit_property_changed(dbus_conn, dev->path,
++						DEVICE_INTERFACE, "ConnectedUUIDS");
++	}
+ 
+ 	if (dev->pending == NULL)
+ 		goto done;
+@@ -1927,33 +1940,6 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,
+ 	return connect_profiles(dev, bdaddr_type, msg, NULL);
+ }
+ 
+-static DBusMessage *dev_connect_gatt(DBusConnection *conn, DBusMessage *msg,
+-							void *user_data)
+-{
+-	struct btd_device *dev = user_data;
+-
+-	int err;
+-
+-	if (dev->le_state.connected)
+-		return dbus_message_new_method_return(msg);
+-
+-	btd_device_set_temporary(dev, false);
+-
+-	if (dev->disable_auto_connect) {
+-		dev->disable_auto_connect = FALSE;
+-		device_set_auto_connect(dev, TRUE);
+-	}
+-
+-	err = device_connect_le(dev);
+-	if (err < 0)
+-		return btd_error_failed(msg, strerror(-err));
+-
+-	dev->connect = dbus_message_ref(msg);
+-
+-	return NULL;
+-
+-}
+-
+ static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
+ 							void *user_data)
+ {
+@@ -1976,9 +1962,18 @@ static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
+ static void device_profile_disconnected(struct btd_device *dev,
+ 					struct btd_profile *profile, int err)
+ {
++	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
++	if (!err) {
++		if (dev->connected_uuids)
++		dev->connected_uuids = g_slist_remove (dev->connected_uuids, profile->remote_uuid);
++		g_dbus_emit_property_changed(dbus_conn, dev->path,
++						DEVICE_INTERFACE, "ConnectedUUIDS");
++	}
++
+ 	if (!dev->disconnect)
+ 		return;
+ 
++
+ 	if (err)
+ 		g_dbus_send_message(dbus_conn,
+ 					btd_error_failed(dev->disconnect,
+@@ -2273,7 +2268,6 @@ static void browse_request_complete(struct browse_req *req, uint8_t type,
+ {
+ 	struct btd_device *dev = req->device;
+ 	DBusMessage *reply = NULL;
+-	DBusMessage *msg;
+ 
+ 	if (req->type != type)
+ 		return;
+@@ -2310,31 +2304,19 @@ static void browse_request_complete(struct browse_req *req, uint8_t type,
+ 		goto done;
+ 	}
+ 
+-	/* if successfully resolved services we need to free browsing request
+-	 * before passing message back to connect functions, otherwise
+-	 * device->browse is set and "InProgress" error is returned instead
+-	 * of actually connecting services
+-	 */
+-	msg = dbus_message_ref(req->msg);
+-	browse_request_free(req);
+-	req = NULL;
+-
+-	if (dbus_message_is_method_call(msg, DEVICE_INTERFACE, "Connect"))
+-		reply = dev_connect(dbus_conn, msg, dev);
+-	else if (dbus_message_is_method_call(msg, DEVICE_INTERFACE,
++	if (dbus_message_is_method_call(req->msg, DEVICE_INTERFACE, "Connect"))
++		reply = dev_connect(dbus_conn, req->msg, dev);
++	else if (dbus_message_is_method_call(req->msg, DEVICE_INTERFACE,
+ 							"ConnectProfile"))
+-		reply = connect_profile(dbus_conn, msg, dev);
++		reply = connect_profile(dbus_conn, req->msg, dev);
+ 	else
+-		reply = g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
+-
+-	dbus_message_unref(msg);
++		reply = g_dbus_create_reply(req->msg, DBUS_TYPE_INVALID);
+ 
+ done:
+ 	if (reply)
+ 		g_dbus_send_message(dbus_conn, reply);
+ 
+-	if (req)
+-		browse_request_free(req);
++	browse_request_free(req);
+ }
+ 
+ static void device_set_svc_refreshed(struct btd_device *device, bool value)
+@@ -2668,7 +2650,6 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+ static const GDBusMethodTable device_methods[] = {
+ 	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
+ 	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
+-	{ GDBUS_ASYNC_METHOD("ConnectGatt", NULL, NULL, dev_connect_gatt) },
+ 	{ GDBUS_ASYNC_METHOD("ConnectProfile", GDBUS_ARGS({ "UUID", "s" }),
+ 						NULL, connect_profile) },
+ 	{ GDBUS_ASYNC_METHOD("DisconnectProfile", GDBUS_ARGS({ "UUID", "s" }),
+@@ -2681,7 +2662,6 @@ static const GDBusMethodTable device_methods[] = {
+ static const GDBusPropertyTable device_properties[] = {
+ 	{ "Address", "s", dev_property_get_address },
+ 	{ "AddressType", "s", property_get_address_type },
+-	{ "DeviceType", "u", property_get_device_type },
+ 	{ "Name", "s", dev_property_get_name, NULL, dev_property_exists_name },
+ 	{ "Alias", "s", dev_property_get_alias, dev_property_set_alias },
+ 	{ "Class", "u", dev_property_get_class, NULL,
+@@ -2697,6 +2677,7 @@ static const GDBusPropertyTable device_properties[] = {
+ 	{ "RSSI", "n", dev_property_get_rssi, NULL, dev_property_exists_rssi },
+ 	{ "Connected", "b", dev_property_get_connected },
+ 	{ "UUIDs", "as", dev_property_get_uuids },
++	{ "ConnectedUUIDS", "as", dev_property_get_connected_uuids },
+ 	{ "Modalias", "s", dev_property_get_modalias, NULL,
+ 						dev_property_exists_modalias },
+ 	{ "Adapter", "o", dev_property_get_adapter },
+@@ -2762,7 +2743,16 @@ void device_remove_connection(struct btd_device *device, uint8_t bdaddr_type)
+ 	if (!state->connected)
+ 		return;
+ 
++	DBG("");
+ 	state->connected = false;
++
++	if (device->connected_uuids) {
++		g_slist_free (device->connected_uuids);
++		device->connected_uuids = NULL;
++		g_dbus_emit_property_changed(dbus_conn, device->path,
++						DEVICE_INTERFACE, "ConnectedUUIDS");
++	}
++
+ 	device->general_connect = FALSE;
+ 
+ 	device_set_svc_refreshed(device, false);
+-- 
+2.7.4
+

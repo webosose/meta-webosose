@@ -1,8 +1,8 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO_append = "webos4"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -17,6 +17,8 @@ SRC_URI += " \
     file://0005-Fix-Gatt-connect-when-device-address-type-is-BDADDR_.patch \
     file://0006-Fix-obexd-segmentation-fault.patch \
     file://0007-Use-system-bus-instead-of-session-for-obexd.patch \
+    file://0008-Implementation-to-get-connected-profiles-uuids.patch \
+    file://0009-recievePassThrough-commad-support-required-for-webos.patch \
     file://main.conf \
     file://brcm43438.service \
 "
