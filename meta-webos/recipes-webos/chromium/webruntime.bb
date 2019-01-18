@@ -27,8 +27,8 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-26_0e484ab40813333c250db871130e96f765e05def"
-PR = "r11"
+WEBOS_VERSION = "68.0.3440.106-27_b076444aa50338059939fd295ad0339c5405795f"
+PR = "r12"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -226,7 +226,7 @@ do_compile() {
     fi
 
     export PATH="${S}/depot_tools:$PATH"
-    ${S}/depot_tools/ninja -C ${OUT_DIR}/${BUILD_TYPE} ${TARGET}
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} ${TARGET}
 }
 
 do_configure() {
