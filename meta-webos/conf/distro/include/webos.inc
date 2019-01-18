@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 require conf/distro/include/webos-component-head.inc
 require conf/distro/include/webos-preferred-providers.inc
@@ -8,6 +8,7 @@ require conf/distro/include/webos-features.inc
 require conf/distro/include/webos-toolchain.inc
 require conf/distro/include/webos-sdk.inc
 require conf/distro/include/webos-icecc-components-exclusion.inc
+require conf/distro/include/webos-localization-locales.inc
 
 # Disable building of static libraries
 require conf/distro/include/no-static-libs.inc
