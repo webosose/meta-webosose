@@ -27,7 +27,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-27_b076444aa50338059939fd295ad0339c5405795f"
+WEBOS_VERSION = "68.0.3440.106-28_8fc4b9fef63fc2e51f841379c566b38d1ebee8a5"
 PR = "r12"
 WEBOS_REPO_NAME = "chromium68"
 

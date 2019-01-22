@@ -21,7 +21,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION[vardeps] += "PREFERRED_PROVIDER_virtual/webruntime"
 WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_PROVIDER_virtual/webruntime', 'webruntime', '1.0.0-2.chromium68.7_13584de10e4dafc7a4339194536e7971ca0bd096', '1.0.0-4_07025b9860e6d8f55d40069548eef3f610780303', d)}"
-PR = "r21"
+PR = "r22"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -81,6 +81,14 @@ do_configure_append() {
 }
 
 WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
+
+do_configure_append_qemux86() {
+    # Remove this condition once webos wam is synchronized to get systemd initscripts
+    if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
+        # Disable media hardware acceleration
+        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${S}/files/launch/systemd/webapp-mgr.sh.in
+    fi
+}
 
 do_install_append() {
     install -d ${D}${sysconfdir}/init
