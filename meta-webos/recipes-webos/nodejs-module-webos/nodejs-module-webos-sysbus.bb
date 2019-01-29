@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "A module for nodejs that allows Javascript access to the webOS system bus"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
-WEBOS_VERSION = "3.0.1-1_780a3a2ecd33b826d18f22b05bcc9f9dbf27be05"
-PR = "r9"
+WEBOS_VERSION = "3.0.1-2_0f31cdf26ad9a4ea97a35643acb3abcbe0ac16c5"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
@@ -56,10 +56,8 @@ do_install_append() {
     install -d ${D}${webos_prefix}/nodejs
     ln -svnf ${libdir}/nodejs/palmbus.js ${D}${webos_prefix}/nodejs/
     # The CMake build did this with macros
-    install -d ${D}${webos_sysbus_prvrolesdir}
-    sed "s|@WEBOS_INSTALL_BINDIR@|$bindir|" < ${S}/files/sysbus/com.webos.nodejs.json.prv.in > ${D}${webos_sysbus_prvrolesdir}/com.webos.nodejs.json
-    install -d ${D}${webos_sysbus_pubrolesdir}
-    sed "s|@WEBOS_INSTALL_BINDIR@|$bindir|" < ${S}/files/sysbus/com.webos.nodejs.json.pub.in > ${D}${webos_sysbus_pubrolesdir}/com.webos.nodejs.json
+    install -d ${D}${webos_sysbus_rolesdir}
+    sed "s|@WEBOS_INSTALL_BINDIR@|$bindir|" < ${S}/files/sysbus/com.webos.nodejs.role.json.in > ${D}${webos_sysbus_rolesdir}/com.webos.nodejs.role.json
 }
 
 FILES_${PN} += "${libdir}/nodejs"
