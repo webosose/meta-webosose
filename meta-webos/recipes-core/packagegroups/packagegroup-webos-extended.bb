@@ -89,6 +89,7 @@ RDEPENDS_${PN} = " \
     luna-init \
     luna-sysservice \
     mojoservicelauncher \
+    nodejs-module-node-red \
     nodejs-module-webos-service \
     notificationmgr \
     pacrunner \

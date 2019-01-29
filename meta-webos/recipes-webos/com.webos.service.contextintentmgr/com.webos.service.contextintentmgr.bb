@@ -1,0 +1,34 @@
+# Copyright (c) 2019 LG Electronics, Inc.
+
+SUMMARY = "Node-red based context intent manager (CIM)"
+AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
+SECTION = "webos/extended-service"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+
+DEPENDS = "nodejs-module-node-red"
+
+COMPATIBLE_MACHINE = "^raspberrypi3$"
+COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
+
+WEBOS_VERSION = "1.0.0-5_3652fd61e3898856b5de45fad5f6d99da6d6bf39"
+PR = "r0"
+
+inherit systemd
+inherit webos_public_repo
+inherit webos_component
+inherit webos_enhanced_submissions
+inherit webos_cmake
+inherit webos_system_bus
+inherit webos_machine_impl_dep
+
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+S = "${WORKDIR}/git"
+
+do_install_append() {
+    install -d ${D}${sysconfdir}/systemd/system/scripts
+    install -v -m 744 ${S}/files/systemd/scripts/contextintentmgr.sh ${D}${sysconfdir}/systemd/system/scripts/
+}
+
+FILES_${PN} += "${webos_servicesdir} ${webos_sysconfdir}"
+SYSTEMD_SERVICE_${PN} = "contextintentmgr.service"

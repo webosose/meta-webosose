@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS_${PN} variable.
-EXTENDPRAUTO_append_rpi = "webosrpi4"
+EXTENDPRAUTO_append_rpi = "webosrpi5"
 
 MEDIA = " \
     gstreamer1.0 \
@@ -24,6 +24,10 @@ TTSSERVICE = " \
     com.webos.service.tts \
 "
 
+CIMSERVICE = " \
+    com.webos.service.contextintentmgr \
+"
+
 PDM = " \
     com.webos.service.pdm \
 "
@@ -41,6 +45,9 @@ AISERVICE_raspberrypi3-64 = ""
 # TTS service functionality cannot be verified on webOS rpi64 which cannot boot yet
 TTSSERVICE_raspberrypi3-64 = ""
 
+# CIM service functionality not been verified on webOS rpi64 which cannot boot yet
+CIMSERVICE_raspberrypi3-64 = ""
+
 # PDM service functionality cannot be verified on webOS rpi64 which cannot boot yet
 PDM_raspberrypi3-64 = ""
 
@@ -53,5 +60,6 @@ RDEPENDS_${PN}_append_rpi = " \
     ${AISERVICE} \
     ${CAMERASERVICE} \
     ${TTSSERVICE} \
+    ${CIMSERVICE} \
     ${PDM} \
 "
