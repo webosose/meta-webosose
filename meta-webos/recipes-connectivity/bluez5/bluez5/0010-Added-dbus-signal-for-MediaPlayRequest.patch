@@ -1,0 +1,126 @@
+From e338e1e4debdec1a30d79ca7634c58154db557d3 Mon Sep 17 00:00:00 2001
+From: "sameer.mulla" <sameer.mulla@lge.com>
+Date: Wed, 30 Jan 2019 15:17:11 +0530
+Subject: [PATCH] Added dbus signal for MediaPlayRequest
+
+:Release Notes:
+Added dbus signal for MediaPlayRequest and MediaMetaRequest
+
+:Detailed Notes:
+SIL needs information about MediaPlayRequest and MediaMetaRequest
+so added above signals to inform about request to SIL
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-73147] Implement avrcp/awaitMediaMetaDataRequest
+
+Upstream-Status: Inappropriate[webos specific]
+
+Change-Id: Ib225395809a3b53f1c494ac4e21beabc47f7f906
+---
+ profiles/audio/avrcp.c |  2 ++
+ profiles/audio/media.c |  2 +-
+ src/device.c           | 24 +++++++++++++++++++++++-
+ src/device.h           |  3 +++
+ 4 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
+index d5eba39..dff9941 100644
+--- a/profiles/audio/avrcp.c
++++ b/profiles/audio/avrcp.c
+@@ -1144,6 +1144,7 @@ static uint8_t avrcp_handle_get_element_attributes(struct avrcp *session,
+ 		 */
+ 		attr_ids = player_list_metadata(player);
+ 		len = g_list_length(attr_ids);
++		media_metadata_request(session->dev);
+ 	} else {
+ 		unsigned int i;
+ 		for (i = 0, len = 0, attr_ids = NULL; i < nattr; i++) {
+@@ -1410,6 +1411,7 @@ static uint8_t avrcp_handle_get_play_status(struct avrcp *session,
+ 
+ 	pdu->params_len = htons(9);
+ 
++	media_play_request(session->dev);
+ 	return AVC_CTYPE_STABLE;
+ }
+ 
+diff --git a/profiles/audio/media.c b/profiles/audio/media.c
+index 23d1561..1859bc1 100644
+--- a/profiles/audio/media.c
++++ b/profiles/audio/media.c
+@@ -1162,7 +1162,7 @@ static uint32_t get_position(void *user_data)
+ 	sec = (uint32_t) timedelta;
+ 	msec = (uint32_t) ((timedelta - sec) * 1000);
+ 
+-	return mp->position + sec * 1000 + msec;
++	return mp->position;
+ }
+ 
+ static uint32_t get_duration(void *user_data)
+diff --git a/src/device.c b/src/device.c
+index b6e9a03..a584d78 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -1743,6 +1743,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+ 					DEVICE_INTERFACE, "KeyCode");
+ }
+ 
++void media_play_request(struct btd_device *dev)
++{
++	DBG("");
++	g_dbus_emit_signal(dbus_conn, dev->path,
++				DEVICE_INTERFACE, "MediaPlayRequest",
++				DBUS_TYPE_INVALID);
++}
++
++void media_metadata_request(struct btd_device *dev)
++{
++	DBG("");
++	g_dbus_emit_signal(dbus_conn, dev->path,
++			DEVICE_INTERFACE, "MediaMetaRequest",
++			DBUS_TYPE_INVALID);
++}
++
+ static void add_service_data(void *data, void *user_data)
+ {
+ 	struct eir_sd *sd = data;
+@@ -2751,6 +2767,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+ 	return dbus_message_new_method_return(msg);
+ }
+ 
++static const GDBusSignalTable device_avrcp_media_request_signal[] = {
++	{ GDBUS_SIGNAL("MediaPlayRequest", NULL) },
++	{ GDBUS_SIGNAL("MediaMetaRequest", NULL) },
++	{ }
++};
++
+ static const GDBusMethodTable device_methods[] = {
+ 	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
+ 	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
+@@ -3858,7 +3880,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+ 
+ 	if (g_dbus_register_interface(dbus_conn,
+ 					device->path, DEVICE_INTERFACE,
+-					device_methods, NULL,
++					device_methods, device_avrcp_media_request_signal,
+ 					device_properties, device,
+ 					device_free) == FALSE) {
+ 		error("Unable to register device interface for %s", address);
+diff --git a/src/device.h b/src/device.h
+index e85be02..6b1d791 100644
+--- a/src/device.h
++++ b/src/device.h
+@@ -171,3 +171,6 @@ void btd_device_init(void);
+ void btd_device_cleanup(void);
+ 
+ void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);
++
++void media_play_request(struct btd_device *dev);
++void media_metadata_request(struct btd_device *dev);
+-- 
+2.7.4
+

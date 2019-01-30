@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos5"
+EXTENDPRAUTO_append = "webos6"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -19,6 +19,7 @@ SRC_URI += " \
     file://0007-Use-system-bus-instead-of-session-for-obexd.patch \
     file://0008-Implementation-to-get-connected-profiles-uuids.patch \
     file://0009-recievePassThrough-commad-support-required-for-webos.patch \
+    file://0010-Added-dbus-signal-for-MediaPlayRequest.patch \
     file://main.conf \
     file://brcm43438.service \
 "
