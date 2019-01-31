@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 SUMMARY = "Remote diagnostics daemon and utilities"
 AUTHOR = "Gayathri Srinivasan <gayathri.srinivasan@lge.com>"
@@ -10,7 +10,7 @@ DEPENDS = "glib-2.0 libpbnjson luna-prefs luna-service2 pmloglib"
 #Add tar dependency since --absolute-names support is missing in busybox tar
 RDEPENDS_${PN} = "nyx-utils tar"
 
-WEBOS_VERSION = "4.0.2-2_7fc55fd1f8d6072ea46660e67fcb8e27c0834571"
+WEBOS_VERSION = "4.0.2-3_238e72811df44f3984b7796232e21619871cb0b7"
 PR = "r8"
 
 PROVIDES = "librdx rdx-utils"

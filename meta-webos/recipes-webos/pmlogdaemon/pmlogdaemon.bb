@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS logging daemon"
 AUTHOR = "Gayathri Srinivasan <gayathri.srinivasan@lge.com>"
@@ -11,7 +11,7 @@ DEPENDS = "pmloglib zlib glib-2.0 librdx libpbnjson pmloglib-private luna-servic
 # provided by busybox.
 RDEPENDS_${PN} = "busybox"
 
-WEBOS_VERSION = "3.1.0-2_3f4e91b95e503b8cd7d5d4207da22fdba026e0c4"
+WEBOS_VERSION = "3.1.0-3_06d0d8004e3cdd492b8178831cb0ae8985353a4f"
 PR = "r9"
 
 inherit webos_component
