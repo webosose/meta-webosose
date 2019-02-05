@@ -1,0 +1,211 @@
+From 58caa76113de20541e61e5f3b8db0d6de7cec6af Mon Sep 17 00:00:00 2001
+From: "sameer.mulla" <sameer.mulla@lge.com>
+Date: Tue, 5 Feb 2019 18:10:55 +0530
+Subject: [PATCH] avrcp getting remote device features list
+
+:Release Notes:
+avrcp getting remote device features list
+
+:Detailed Notes:
+bluetooth-sil-bluez5 needs information on avrcp device feature list
+So added properties for controller features and target features
+to device interface
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-73148] Implement avrcp/internal/getRemoteFeatures
+
+Upstream-Status: Inappropriate[webos specific]
+
+Change-Id: I93393e5955c745c4df3eaddf6661177410ad3a7d
+---
+ profiles/audio/avrcp.c | 15 +++++++++++
+ src/device.c           | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/device.h           |  5 ++++
+ 3 files changed, 88 insertions(+)
+
+diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
+index dff9941..21e3366 100644
+--- a/profiles/audio/avrcp.c
++++ b/profiles/audio/avrcp.c
+@@ -3965,9 +3965,16 @@ static void target_init(struct avrcp *session)
+ 				(1 << AVRCP_EVENT_TRACK_REACHED_END) |
+ 				(1 << AVRCP_EVENT_SETTINGS_CHANGED);
+ 
++	if (target->version < 0x0103)
++		return;
++
++	set_avrcp_feature(session->dev, REMOTE_DEVICE_AVRCP_FEATURE_METADATA, false);
++
+ 	if (target->version < 0x0104)
+ 		return;
+ 
++	set_avrcp_feature(session->dev, REMOTE_DEVICE_AVRCP_FEATURE_ABSOLUTE_VOLUME, false);
++
+ 	session->supported_events |=
+ 				(1 << AVRCP_EVENT_ADDRESSED_PLAYER_CHANGED) |
+ 				(1 << AVRCP_EVENT_AVAILABLE_PLAYERS_CHANGED) |
+@@ -3980,6 +3987,8 @@ static void target_init(struct avrcp *session)
+ 	if (!(target->features & AVRCP_FEATURE_BROWSING))
+ 		return;
+ 
++	set_avrcp_feature(session->dev, REMOTE_DEVICE_AVRCP_FEATURE_BROWSE, false);
++
+ 	avrcp_connect_browsing(session);
+ }
+ 
+@@ -4010,14 +4019,20 @@ static void controller_init(struct avrcp *session)
+ 	if (controller->version < 0x0103)
+ 		return;
+ 
++	set_avrcp_feature(session->dev, REMOTE_DEVICE_AVRCP_FEATURE_METADATA, true);
++
+ 	avrcp_get_capabilities(session);
+ 
+ 	if (controller->version < 0x0104)
+ 		return;
+ 
++	set_avrcp_feature(session->dev, REMOTE_DEVICE_AVRCP_FEATURE_ABSOLUTE_VOLUME, true);
++
+ 	if (!(controller->features & AVRCP_FEATURE_BROWSING))
+ 		return;
+ 
++	set_avrcp_feature(session->dev, REMOTE_DEVICE_AVRCP_FEATURE_BROWSE, true);
++
+ 	avrcp_connect_browsing(session);
+ }
+ 
+diff --git a/src/device.c b/src/device.c
+index a584d78..fa19146 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -269,6 +269,8 @@ struct btd_device {
+ 	GIOChannel	*att_io;
+ 	guint		store_id;
+ 	struct key_code passththough_key;
++	uint8_t		avrcp_ct_features;
++	uint8_t		avrcp_tg_features;
+ };
+ 
+ static const uint16_t uuid_list[] = {
+@@ -1345,6 +1347,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+ 	return TRUE;
+ }
+ 
++static gboolean dev_property_get_avrcp_ct_feature(const GDBusPropertyTable *property,
++					DBusMessageIter *iter, void *data)
++{
++	struct btd_device *device = data;
++	uint8_t features = device->avrcp_ct_features;
++
++	dbus_message_iter_append_basic(iter, DBUS_TYPE_BYTE, &features);
++	DBG("features %d", features);
++	return TRUE;
++}
++
++static gboolean dev_property_get_avrcp_tg_feature(const GDBusPropertyTable *property,
++					DBusMessageIter *iter, void *data)
++{
++	struct btd_device *device = data;
++	uint8_t features = device->avrcp_tg_features;
++
++	dbus_message_iter_append_basic(iter, DBUS_TYPE_BYTE, &features);
++	DBG("features %d", features);
++	return TRUE;
++}
++
++static gboolean
++dev_property_avrcp_ct_feature_exist(const GDBusPropertyTable *property,
++								void *data)
++{
++	struct btd_device *device = data;
++
++	return device->avrcp_ct_features;
++}
++
++static gboolean
++dev_property_avrcp_tg_feature_exist(const GDBusPropertyTable *property,
++								void *data)
++{
++	struct btd_device *device = data;
++
++	return device->avrcp_tg_features;
++}
++
+ static gboolean
+ dev_property_service_data_exist(const GDBusPropertyTable *property,
+ 								void *data)
+@@ -1759,6 +1801,25 @@ void media_metadata_request(struct btd_device *dev)
+ 			DBUS_TYPE_INVALID);
+ }
+ 
++void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controller)
++{
++	DBG("setting feature %x", feature);
++	if (is_controller)
++	{
++		dev->avrcp_ct_features |= feature;
++		DBG("avrcp_features controller %x", dev->avrcp_ct_features);
++		g_dbus_emit_property_changed(dbus_conn, dev->path,
++					DEVICE_INTERFACE, "AvrcpCTFeatures");
++	}
++	else
++	{
++		dev->avrcp_tg_features |= feature;
++		DBG("avrcp_features target %x", dev->avrcp_tg_features);
++		g_dbus_emit_property_changed(dbus_conn, dev->path,
++					DEVICE_INTERFACE, "AvrcpTGFeatures");
++	}
++}
++
+ static void add_service_data(void *data, void *user_data)
+ {
+ 	struct eir_sd *sd = data;
+@@ -2813,6 +2874,10 @@ static const GDBusPropertyTable device_properties[] = {
+ 				NULL, dev_property_manufacturer_data_exist },
+ 	{ "KeyCode", "a{sv}", dev_property_get_key_code,
+ 				NULL, dev_property_key_code_exist},
++	{ "AvrcpCTFeatures", "y", dev_property_get_avrcp_ct_feature,
++				NULL, dev_property_avrcp_ct_feature_exist},
++	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
++				NULL, dev_property_avrcp_tg_feature_exist},
+ 	{ "ServiceData", "a{sv}", dev_property_get_service_data,
+ 				NULL, dev_property_service_data_exist },
+ 	{ "TxPower", "n", dev_property_get_tx_power, NULL,
+@@ -3894,6 +3959,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+ 	device->passththough_key.state = NULL;
+ 	device->passththough_key.key = NULL;
+ 
++	device->avrcp_ct_features = 0;
++	device->avrcp_tg_features = 0;
++
+ 	device->db_id = gatt_db_register(device->db, gatt_service_added,
+ 					gatt_service_removed, device, NULL);
+ 
+diff --git a/src/device.h b/src/device.h
+index 6b1d791..d7968f6 100644
+--- a/src/device.h
++++ b/src/device.h
+@@ -23,6 +23,10 @@
+  */
+ 
+ #define DEVICE_INTERFACE	"org.bluez.Device1"
++#define REMOTE_DEVICE_AVRCP_FEATURE_NONE			0x00
++#define REMOTE_DEVICE_AVRCP_FEATURE_METADATA		0x01
++#define REMOTE_DEVICE_AVRCP_FEATURE_ABSOLUTE_VOLUME	0x02
++#define REMOTE_DEVICE_AVRCP_FEATURE_BROWSE		0x04
+ 
+ struct btd_device;
+ 
+@@ -174,3 +178,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+ 
+ void media_play_request(struct btd_device *dev);
+ void media_metadata_request(struct btd_device *dev);
++void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controller);
+-- 
+2.7.4
+
