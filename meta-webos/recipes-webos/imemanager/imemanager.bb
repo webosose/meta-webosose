@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "Maliit Input Method Plugins"
 DESCRIPTION = "Mallit-based virtual keyboard and input method engine for open webOS"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos"
 RDEPENDS_${PN} += "libhangul qml-webos-bridge"
 
-WEBOS_VERSION = "1.0.0-4_efdc3fe58df8e17ed0972aa123a7d7d283b12ed6"
+WEBOS_VERSION = "1.0.0-5_8f57b24afc5b58019426b1fda5e9ee823aaf9e4e"
 PR = "r0"
 
 inherit webos_component
