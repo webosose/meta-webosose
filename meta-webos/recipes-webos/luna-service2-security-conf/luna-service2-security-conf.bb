@@ -7,7 +7,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 WEBOS_VERSION = "1.0.2-7_ce29f1fe77d1c140e5e3cf2b6bf21fcb91b07375"
-PR = "r4"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo
@@ -17,12 +17,6 @@ inherit webos_system_bus
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-# TODO: Drop this patch after chromium68 ACG work is complete
-# JIRA Ticket: PLAT-73337
-SRC_URI_append = "\
-  file://0001-Revert-Remove-service-permissions-related-to-wam.patch\
-"
 
 FILES_${PN} += "${webos_sysbus_datadir}"
 

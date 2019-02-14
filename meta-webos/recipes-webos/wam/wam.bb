@@ -19,8 +19,8 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.1-5_415bf77bdcba289a967af16a1bffd7d424fb17b7"
-PR = "r24"
+WEBOS_VERSION = "1.0.1-6_9ed7da671117330afa2fdd5efc216c0c335f242f"
+PR = "r25"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -39,6 +39,7 @@ S = "${WORKDIR}/git"
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
 WEBOS_SYSTEM_BUS_FILES_LOCATION = ""
+
 SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
@@ -85,17 +86,6 @@ do_install_append() {
     install -v -m 644 ${S}/files/launch/systemd/webapp-mgr.service ${D}${SYSTEMD_INSTALL_PATH}/webapp-mgr.service
     install -v -m 755 ${S}/files/launch/systemd/webapp-mgr.sh.in ${D}${SYSTEMD_INSTALL_PATH}/scripts/webapp-mgr.sh
     cp -vf ${WAM_ERROR_SCRIPTS_PATH}/* ${D}${datadir}/localization/${BPN}/
-    # TODO: Drop this code when chromium68 is ACG complaint
-    if [ "${PREFERRED_PROVIDER_virtual/webruntime}" = "webruntime" ]; then
-        install -d ${D}${webos_sysbus_pubservicesdir}
-        install -d ${D}${webos_sysbus_pubrolesdir}
-        install -d ${D}${webos_sysbus_prvservicesdir}
-        install -d ${D}${webos_sysbus_prvrolesdir}
-        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.service.pub ${D}${webos_sysbus_pubservicesdir}/com.palm.webappmgr.service
-        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.service.prv ${D}${webos_sysbus_prvservicesdir}/com.palm.webappmgr.service
-        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.json.prv ${D}${webos_sysbus_prvrolesdir}/com.palm.webappmgr.json
-        install -v -m 0644 ${S}/files/sysbus/com.palm.webappmgr.json.pub ${D}${webos_sysbus_pubrolesdir}/com.palm.webappmgr.json
-    fi
 }
 
 FILES_${PN} += " \

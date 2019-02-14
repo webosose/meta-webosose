@@ -27,8 +27,8 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-36_15646efb7bc39f04e3d0792e3fd2a91320b8576d"
-PR = "r13"
+WEBOS_VERSION = "68.0.3440.106-39_8bc32ac4c99ae457ea5c3eeac9392a8c29e283af"
+PR = "r14"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
@@ -37,9 +37,9 @@ SRC_URI = "\
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-WEBOS_VERSION_V8 = "6.8.275.26-8_a0b2eba2ccd74b711f9055c2afca6a58292ebae7"
+WEBOS_VERSION_V8 = "6.8.275.26-10_69b79174f1066787a93fbe83368a1b565737b7de"
 do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_v8 = "1f622ec0f0d90174c3099a40a03ffe999b9843e0"
+SRCREV_v8 = "1e3af71f1ff3735e8a5b639c48dfca63a7b8a647"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
@@ -293,6 +293,18 @@ install_chromium_browser() {
     configure_browser_settings
 }
 
+install_ls2_roles_acg() {
+    #sysbus files *.service
+    install -d ${D}${webos_sysbus_servicedir}
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.service ${D}${webos_sysbus_servicedir}/$1.service
+
+    #sysbus files *.json
+    install -d ${D}${webos_sysbus_permissionsdir}
+    install -d ${D}${webos_sysbus_rolesdir}
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.perm.json ${D}${webos_sysbus_permissionsdir}/$1.perm.json
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.role.json ${D}${webos_sysbus_rolesdir}/$1.role.json
+}
+
 install_app_shell() {
     A_DIR=${D}${APP_SHELL_RUNTIME_DIR}
     install -d ${A_DIR}
@@ -306,12 +318,14 @@ install_app_shell() {
         xargs --arg-file=${SRC_DIR}/webos/install/app_shell/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${A_DIR}
     fi
 
-    install_ls2_roles ${APP_SHELL_RUNTIME}
-
     # To execute chromium in JAILER, Security Part needs permissions change
     # run_appshell: Script file for launching chromium
     chmod -v 755 ${A_DIR}/app_shell
     chmod -v 755 ${A_DIR}/run_app_shell
+}
+
+install_app_shell_append_webos() {
+    install_ls2_roles_acg ${APP_SHELL_RUNTIME}
 }
 
 install_app_shell_append_qemux86() {
@@ -322,15 +336,6 @@ install_app_shell_append_qemux86() {
 install_chromium_manifest() {
     install -d ${D}${webos_sysbus_manifestsdir}
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.manifest.json
-    if ! ${DEPLOY_BROWSER} ; then
-        # com.webos.app.browser is not shipped in webosose by chromium
-        # drop the role files for com.webos.app.browser from chromium manifest file
-        # else we see errors when ls-hubd starts parsing manifest file
-        manifest_file="${webos_sysbus_manifestsdir}/${BPN}.manifest.json"
-        sed -i '/\"\(.*\)com.webos.app.browser/d' ${D}${manifest_file}
-        sed -i -e 's:app-shell\.json\",:app-shell\.json\":g' ${D}${manifest_file}
-        sed -i -e 's:\"${webos_sysbus_prvservicesdir}\/${APP_SHELL_RUNTIME}\.service\",:\"${webos_sysbus_prvservicesdir}\/${APP_SHELL_RUNTIME}\.service\":g' ${D}${manifest_file}
-    fi
 }
 
 MKSNAPSHOT_PATH = ""
@@ -428,6 +433,12 @@ WEBOS_SYSTEM_BUS_DIRS_LEGACY_APP_SHELL_RUNTIME = " \
     ${webos_sysbus_pubrolesdir}/${APP_SHELL_RUNTIME}.json \
 "
 
+WEBOS_SYSTEM_BUS_DIRS_ACG_APP_SHELL_RUNTIME = " \
+    ${webos_sysbus_servicedir}/${APP_SHELL_RUNTIME}.service \
+    ${webos_sysbus_permissionsdir}/${APP_SHELL_RUNTIME}.perm.json \
+    ${webos_sysbus_rolesdir}/${APP_SHELL_RUNTIME}.role.json \
+"
+
 WEBOS_SYSTEM_BUS_DIRS_LEGACY_WAM_DEMO_APPLICATION = " \
     ${webos_sysbus_prvservicesdir}/${WAM_DEMO_APPLICATION}.service \
     ${webos_sysbus_pubservicesdir}/${WAM_DEMO_APPLICATION}.service \
@@ -452,6 +463,7 @@ FILES_${BROWSER_APPLICATION} += " \
 
 FILES_${APP_SHELL_RUNTIME} += " \
     ${APP_SHELL_RUNTIME_DIR} \
+    ${WEBOS_SYSTEM_BUS_DIRS_ACG_APP_SHELL_RUNTIME} \
     ${WEBOS_SYSTEM_BUS_DIRS_LEGACY_APP_SHELL_RUNTIME} \
 "
 
