@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - library"
 AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
@@ -19,7 +19,7 @@ SECTION = "webos/libs"
 
 DEPENDS = "glib-2.0 pmloglib"
 
-WEBOS_VERSION = "7.3.0-1_fa1ed2c0365ece68282e8d26951de1f043874a6c"
+WEBOS_VERSION = "7.3.0-2_531d0f0d41564b83a06d95043fb9e9a525d8d4e8"
 PR = "r7"
 
 inherit webos_component
