@@ -132,6 +132,10 @@ webos_persistentstoragedir = "${webos_cryptofsdir}/data"
 # about media files. Potentially this db can be big
 webos_db8mediadir = "${webos_persistentstoragedir}/db8/mediadb"
 
+
+# Enhanced ACG - IPK verifier keys
+webos_eacg_certificates = "${sysconfdir}/eacgcertificates"
+
 # On devices that support it, this tree is externally mountable as (USB) mass
 # storage. Applications that want their data to be visible in this manner should
 # store them here instead of under webos_persistentstoragedir. This tree is
