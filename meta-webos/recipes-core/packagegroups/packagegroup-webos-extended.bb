@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r28"
+PR = "r29"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -19,7 +19,6 @@ VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_librdx ?= "rdxd"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
 VIRTUAL-RUNTIME_webos-ime ?= ""
-VIRTUAL-RUNTIME_novacomd ?= "novacomd"
 VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
     nyx-modules \
     nyx-modules-qemux86 \
@@ -108,7 +107,6 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_librdx} \
     ${VIRTUAL-RUNTIME_memorymanager} \
-    ${VIRTUAL-RUNTIME_novacomd} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_settingsapp} \
     ${VIRTUAL-RUNTIME_surface-manager} \
