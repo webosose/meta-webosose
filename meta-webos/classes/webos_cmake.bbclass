@@ -183,3 +183,6 @@ export webos_persistentstoragedir
 export webos_db8mediadir
 export webos_mountablestoragedir
 export webos_mountablestoragedir
+export webos_trust_level
+export webos_key_dir
+export webos_eacg_certificates
