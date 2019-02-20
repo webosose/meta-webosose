@@ -32,7 +32,7 @@ SRC_URI = " \
     git://github.com/dthaler/libcoap.git;destsuffix=git/extlibs/libcoap/libcoap;protocol=http;branch=develop;name=libcoap \
     file://0001-hippomocks-fix-build-for-MIPS.patch;patchdir=extlibs/hippomocks/hippomocks \
 "
-SRCREV_main = "179f1820ffc20493cdd98a23b93a0cd6cd51f84c"
+SRCREV_main = "255060695e4de0e8f357aeab6e3e2c46e3c68bac"
 SRCREV_tinycbor = "ae64a3d9da39f3bf310b9a7b38427c096d8bcd43"
 SRCREV_gtest = "c99458533a9b4c743ed51537e25989ea55944908"
 SRCREV_hippomocks = "dca4725496abb0e41f8b582dec21d124f830a8e5"
@@ -41,10 +41,11 @@ SRCREV_rapidjson = "9dfc437477e2b9a351634e8249a9c18bfc81f136"
 SRCREV_libcoap = "fa8b2b9d2c8215c8579bc05132a6eae1123ae4fd"
 
 SRCREV_FORMAT = "main"
+do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks SRCREV_mbedtls SRCREV_rapidjson SRCREV_libcoap"
 
 S = "${WORKDIR}/git"
 
-PR = "r1"
+PR = "r2"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_enactjs_app webos_component
@@ -131,30 +132,6 @@ do_install_append() {
     copy_file ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/libocsrm.a ${D}${libdir}
     copy_file ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/libroutingmanager.a ${D}${libdir}
 
-    #Resource CSDK Apps
-    if ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', 'true', 'false', d)}; then
-        make_dir ${D}${webos_servicesdir}/org.ocf.webossample.ocserver
-        make_dir ${D}${webos_servicesdir}/org.ocf.webossample.occlient
-        copy_exec ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/unsecure/ocserver/ocserver ${D}${webos_servicesdir}/org.ocf.webossample.ocserver
-        copy_exec ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/unsecure/occlient/occlient ${D}${webos_servicesdir}/org.ocf.webossample.occlient
-    fi
-
-    if ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', 'false', 'true', d)}; then
-        make_dir ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-        make_dir ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
-        copy_exec ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/ocserverbasicops ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-        copy_exec ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
-
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/server_introspection.dat ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/oic_svr_db_server.dat ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/oic_svr_db_server_rfnop.dat ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/oic_svr_db_server_rfotm.dat ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/occlientbasicops/introspection_swagger.dat ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/occlientbasicops/oic_svr_db_client.dat ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/occlientbasicops/oic_svr_db_client_rfnop.dat ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
-        install -v -m 0666 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/occlientbasicops/oic_svr_db_client_rfotm.dat ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
-    fi
-
     #Resource Tests
     make_dir ${IOTIVITY_BIN_DIR_D}/tests/resource
     make_dir ${D}${sbindir}
@@ -219,65 +196,12 @@ do_install_append() {
 
     find "${D}" -type f -perm /u+x -exec chrpath -d "{}" \;
     find "${D}" -type f -iname "lib*.so" -exec chrpath -d "{}" \;
-
-    # ACG configuration files
-    install -d ${D}${datadir}/luna-service2/roles.d
-    install -d ${D}${datadir}/luna-service2/services.d
-    install -d ${D}${datadir}/luna-service2/client-permissions.d
-    install -d ${D}${datadir}/luna-service2/api-permissions.d
-    install -d ${D}${datadir}/luna-service2/manifests.d
-
-    # ACG configuration for secured native samples
-    if ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', 'false', 'true', d)}; then
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.service ${D}${datadir}/luna-service2/services.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.role.json ${D}${datadir}/luna-service2/roles.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.service ${D}${datadir}/luna-service2/services.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.role.json ${D}${datadir}/luna-service2/roles.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json ${D}${datadir}/luna-service2/client-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json ${D}${datadir}/luna-service2/client-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.api.json ${D}${datadir}/luna-service2/api-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.api.json ${D}${datadir}/luna-service2/api-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.manifest.json ${D}${datadir}/luna-service2/manifests.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.manifest.json ${D}${datadir}/luna-service2/manifests.d
-    fi
-
-    # ACG configuration for unsecured native samples
-    if ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', 'true', 'false', d)}; then
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/ocserver.service ${D}${datadir}/luna-service2/services.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/ocserver.role.json ${D}${datadir}/luna-service2/roles.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/occlient.service ${D}${datadir}/luna-service2/services.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/occlient.role.json ${D}${datadir}/luna-service2/roles.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/ocserver.perm.json ${D}${datadir}/luna-service2/client-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/occlient.perm.json ${D}${datadir}/luna-service2/client-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/ocserver.api.json ${D}${datadir}/luna-service2/api-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/occlient.api.json ${D}${datadir}/luna-service2/api-permissions.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/ocserver.manifest.json ${D}${datadir}/luna-service2/manifests.d
-        install -c -m 555 ${S}/resource/csdk/stack/samples/webos/unsecure/files/sysbus/occlient.manifest.json ${D}${datadir}/luna-service2/manifests.d
-    fi
-
-    # ACG configuration for node samples
-    install -d ${D}${webos_servicesdir}/com.example.service.iotivity.server
-    install -v -m 0755 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/*.* ${D}${webos_servicesdir}/com.example.service.iotivity.server/
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.service ${D}${datadir}/luna-service2/services.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.role.json ${D}${datadir}/luna-service2/roles.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.perm.json ${D}${datadir}/luna-service2/client-permissions.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.api.json ${D}${datadir}/luna-service2/api-permissions.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.manifest.json ${D}${datadir}/luna-service2/manifests.d
-
-    install -d ${D}${webos_servicesdir}/com.example.service.iotivity.client
-    install -v -m 0755 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/*.* ${D}${webos_servicesdir}/com.example.service.iotivity.client/
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.service ${D}${datadir}/luna-service2/services.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.role.json ${D}${datadir}/luna-service2/roles.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.perm.json ${D}${datadir}/luna-service2/client-permissions.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.api.json ${D}${datadir}/luna-service2/api-permissions.d
-    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.manifest.json ${D}${datadir}/luna-service2/manifests.d
 }
 
 # IOTIVITY packages:
-# Resource: iotivity-resource, iotivity-resource-samples
+# Resource: iotivity-resource
 # Service: iotivity-service, iotivity-service-samples
 # Plugins: iotivity-plugins-samples
-# Node app: iotivity-node-ap
 # Tests: iotivity-tests
 # Misc: iotivity-tools
 
@@ -292,11 +216,6 @@ FILES_${PN}-resource = "\
     ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', '', '${libdir}/libocprovision.so', d)} \
     ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', '', '${libdir}/libocpmapi.so', d)} \
     ${libdir}/libresource_directory.so \
-"
-
-FILES_${PN}-resource-samples = "\
-    ${webos_servicesdir}/org.ocf.webossample.* \
-    ${datadir}/luna-service2 \
 "
 
 FILES_${PN}-plugins-samples = "\
@@ -331,16 +250,10 @@ FILES_${PN}-tools = "\
     ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', '', '${sbindir}/json2cbor', d)} \
 "
 
-FILES_${PN}-node-app = "\
-    ${webos_applicationsdir} \
-    ${webos_servicesdir} \
-"
-
-PACKAGE_BEFORE_PN += "${PN}-tests ${PN}-plugins-samples ${PN}-resource ${PN}-resource-samples ${PN}-service ${PN}-service-samples ${PN}-tools ${PN}-node-app"
+PACKAGE_BEFORE_PN += "${PN}-tests ${PN}-plugins-samples ${PN}-resource ${PN}-service ${PN}-service-samples ${PN}-tools"
 ALLOW_EMPTY_${PN} = "1"
 RRECOMMENDS_${PN} += "${PN}-resource ${PN}-service"
 RDEPENDS_${PN}-plugins-samples += "${PN}-resource"
-RDEPENDS_${PN}-resource-samples += "${PN}-resource"
 RDEPENDS_${PN}-tests += "${PN}-resource ${PN}-service"
 RDEPENDS_${PN}-service-samples += "${PN}-service ${PN}-resource"
 RDEPENDS_${PN}-service += "${PN}-resource"
