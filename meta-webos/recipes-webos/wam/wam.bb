@@ -20,7 +20,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.1-6_9ed7da671117330afa2fdd5efc216c0c335f242f"
-PR = "r25"
+PR = "r26"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -67,11 +67,18 @@ COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 
+do_configure_prepend() {
+    if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
+      cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
+    fi
+    cp ${S}/files/launch/systemd/webapp-mgr.service ${B}/webapp-mgr.service
+}
+
 do_configure_append_qemux86() {
     # Remove this condition once webos wam is synchronized to get systemd initscripts
-    if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
+    if [ -f "${B}/webapp-mgr.sh" ]; then
         # Disable media hardware acceleration
-        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${S}/files/launch/systemd/webapp-mgr.sh.in
+        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
     fi
 }
 
@@ -83,8 +90,8 @@ do_install_append() {
     # add loaderror.html and geterror.js to next to resources directory (webos_localization_resources_dir)
     install -d ${D}${datadir}/localization/${BPN}/
     install -d ${D}${SYSTEMD_INSTALL_PATH}/scripts/
-    install -v -m 644 ${S}/files/launch/systemd/webapp-mgr.service ${D}${SYSTEMD_INSTALL_PATH}/webapp-mgr.service
-    install -v -m 755 ${S}/files/launch/systemd/webapp-mgr.sh.in ${D}${SYSTEMD_INSTALL_PATH}/scripts/webapp-mgr.sh
+    install -v -m 644 ${B}/webapp-mgr.service ${D}${SYSTEMD_INSTALL_PATH}/webapp-mgr.service
+    install -v -m 755 ${B}/webapp-mgr.sh ${D}${SYSTEMD_INSTALL_PATH}/scripts/webapp-mgr.sh
     cp -vf ${WAM_ERROR_SCRIPTS_PATH}/* ${D}${datadir}/localization/${BPN}/
 }
 
