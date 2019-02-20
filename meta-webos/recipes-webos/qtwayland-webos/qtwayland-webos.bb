@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2018 LG Electronics, Inc.
+# Copyright (c) 2016-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS extension for Qtwayland"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
-WEBOS_VERSION = "1.0.0-3_6f602ba8272cdd753ef56ed6ad90fda7478efd5a"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-4_ea2099a58ffe7f930af2a0bea98719ae82fa64ee"
+PR = "r8"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -29,6 +29,11 @@ EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CON
 
 # we don't provide cmake tests
 EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"
+
+PACKAGECONFIG ??= ""
+PACKAGECONFIG[criu] = "CONFIG+=criu,,criu-webos"
+
+EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 
 FILES_${PN} += " \
     ${OE_QMAKE_PATH_PLUGINS}/*/*${SOLIBSDEV} \

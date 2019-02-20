@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 SUMMARY = "The core of the Luna Surface Manager (compositor)"
 AUTHOR  = "Anupam Kaul <anupam.kaul@lge.com>"
@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions"
 
-WEBOS_VERSION = "1.1.0-3_28131e554f5e569ad27a96955251869bb1921f45"
-PR = "r42"
+WEBOS_VERSION = "1.1.0-4_0edac5e7e491500500e39f44a0bf82e331922636"
+PR = "r43"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -46,8 +46,6 @@ do_install_append() {
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
-PROVIDES += "${@bb.utils.contains('PACKAGECONFIG', 'compositor', 'surface-manager', '', d)}"
-
 inherit webos_system_bus
 inherit webos_qmllint
 
@@ -62,7 +60,7 @@ PACKAGECONFIG[cursor-theme] = "CONFIG+=cursor_theme,,"
 
 PACKAGECONFIG_webos = "compositor cursor-theme"
 
-PACKAGES =+ "${PN}-base"
+PACKAGES =+ "${PN}-base ${PN}-conf"
 
 FILES_${PN}-base += " \
     ${OE_QMAKE_PATH_QML}/WebOSCompositorBase/ \
@@ -70,6 +68,10 @@ FILES_${PN}-base += " \
     ${OE_QMAKE_PATH_BINS}/ \
     ${datadir}/icons/ \
     ${datadir}/webos-keymap/webos-keymap.qmap \
+"
+
+FILES_${PN}-conf += " \
+    ${sysconfdir}/surface-manager.d/ \
     ${WEBOS_SYSTEM_BUS_DIRS} \
 "
 RDEPENDS_${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components"

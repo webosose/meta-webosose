@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018 LG Electronics, Inc.
+# Copyright (c) 2014-2019 LG Electronics, Inc.
 
 SUMMARY = "QML widgets and runtime framework for webOS apps"
 AUTHOR = "Mikko Levonmaa <mikko.levonmaa@lge.com>"
@@ -13,7 +13,7 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-2_0e28790083ffbeb26b78fa85d3fd9bcce081386a"
+WEBOS_VERSION = "1.0.0-3_e55911e80562872e77c033f8187c9fccd0aac77e"
 PR = "r24"
 
 inherit webos_qmake5

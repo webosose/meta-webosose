@@ -18,6 +18,8 @@ VIRTUAL-RUNTIME_webappmanager ?= ""
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_librdx ?= "rdxd"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
+VIRTUAL-RUNTIME_surface-manager-conf ?= "luna-surfacemanager-conf"
+VIRTUAL-RUNTIME_surface-manager-extension ?= ""
 VIRTUAL-RUNTIME_webos-ime ?= ""
 VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
     nyx-modules \
@@ -111,6 +113,8 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_settingsapp} \
     ${VIRTUAL-RUNTIME_surface-manager} \
+    ${VIRTUAL-RUNTIME_surface-manager-conf} \
+    ${VIRTUAL-RUNTIME_surface-manager-extension} \
     ${VIRTUAL-RUNTIME_umediaserver} \
     ${VIRTUAL-RUNTIME_webappmanager} \
     ${VIRTUAL-RUNTIME_webos-ime} \
