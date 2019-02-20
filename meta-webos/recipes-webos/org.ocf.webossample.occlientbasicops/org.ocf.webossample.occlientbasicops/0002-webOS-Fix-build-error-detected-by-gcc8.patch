@@ -1,0 +1,47 @@
+From 36a209f71523cefebabcb5f64c5fbe4c8d0ae894 Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Mon, 20 May 2019 15:29:19 +0900
+Subject: [PATCH] webOS: Fix build error detected by gcc8
+
+:Release Notes:
+Fix build error detected by gcc8
+
+:Detailed Notes:
+Build error was detected by gcc8 on sample application for webOS
+regarding "format not a string literal and no format arguments".
+Detail error message can be observed in IOT-3287. This commit
+fixes the missing format argument.
+
+:Testing Performed:
+Verified that occlientbasicops works as expected
+
+:Issues Addressed:
+[IOT-3287] webOS: Fix build error detected by gcc8
+
+Change-Id: I70726da0c03013123d9900b31ec921163833e27d
+Signed-off-by: sungmok.shin <sungmok.shin@lge.com>
+---
+ .../stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp b/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp
+index 564f062..4462949 100644
+--- a/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp
++++ b/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp
+@@ -969,11 +969,11 @@ static gboolean userInputCb(GIOChannel *channel, GIOCondition cond, gpointer dat
+ 
+     if (g_io_channel_read_line (channel, &str_return, &length, &terminator_pos, &error) == G_IO_STATUS_ERROR)
+     {
+-        printf("Something went wrong");
++        printf("Error occurred while reading input from command line\n");
+     }
+     if (error != NULL)
+     {
+-        printf (error->message);
++        printf ("Error code: %s\n", error->message);
+         exit(1);
+     }
+ 
+-- 
+1.9.1
+

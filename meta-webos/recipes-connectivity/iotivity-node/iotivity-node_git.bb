@@ -1,3 +1,9 @@
+# Imported from https://github.com/intel/iot-web-layers/blob/master/meta-iot-web/recipes-web/iotivity-node/iotivity-node_1.2.1-1.bb
+# Modification for webOS
+# - SRCREV was updated to c6aab8e6126c06516090dd13e812fee0d16b8cc7 (iotivity-node 1.3.1)
+# - Secured build option is added
+# - Let the recipe do not purge the build scripts when rebuild
+
 SUMMARY = "This project provides iotivity node.js bindings."
 HOMEPAGE = "https://github.com/otcshare/iotivity-node"
 LICENSE = "Apache-2.0"
@@ -5,7 +11,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://index.js;beginline=1;endline=13;md5=bafd0234b0f43def6ab0bced96530c42"
 
 DEPENDS = "nodejs-native glib-2.0 iotivity"
-RDEPENDS_${PN} += "iotivity-resource iotivity-resource-samples iotivity-node-app iotivity-service iotivity-tools"
+RDEPENDS_${PN} += "iotivity-resource iotivity-tools"
 
 SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https"
 SRCREV = "c6aab8e6126c06516090dd13e812fee0d16b8cc7"
@@ -17,12 +23,12 @@ PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PR = "r2"
+PR = "r3"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
     export OCTBSTACK_CFLAGS="-I${OCTBDIR} -I${OCTBDIR}/stack -I${OCTBDIR}/ocrandom -I${STAGING_INCDIR}/iotivity/c_common -DROUTING_EP -DRD_CLIENT -DRD_SERVER -D__WITH_DTLS__"
-    export OCTBSTACK_LIBS="-loctbstack"
+    export OCTBSTACK_LIBS="-loctbstack -lresource_directory"
     export CFLAGS="$CFLAGS -fPIC"
     export CXXFLAGS="$CXXFLAGS -fPIC"
 }
