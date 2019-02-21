@@ -1,0 +1,32 @@
+From f3aaa00523fccfb2b3b8e46acb35331b571890b9 Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Wed, 25 Jul 2018 14:54:48 +0530
+Subject: [PATCH] Change "edit_end_byte" position
+
+Changed the "edit_end_byte" position to
+fix convertion text
+
+Upstream-status: Inappropriate [webos specific change, not indented to be upstreamed]
+---
+ src/BopomofoContext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/BopomofoContext.cc b/src/BopomofoContext.cc
+index b19db46..9b1a8b2 100644
+--- a/src/BopomofoContext.cc
++++ b/src/BopomofoContext.cc
+@@ -411,10 +411,10 @@ BopomofoContext::updatePreeditText (void)
+             }
+         }
+         else {
+-            edit_end_byte = m_buffer.size ();
+             for (const char *p=m_text.c_str () + m_pinyin_len; *p ; ++p) {
+                 m_buffer.appendUnichar (bopomofo_char[keyvalToBopomofo (*p)]);
+             }
++            edit_end_byte = m_buffer.size ();
+         }
+     }
+ 
+-- 
+1.9.0
+

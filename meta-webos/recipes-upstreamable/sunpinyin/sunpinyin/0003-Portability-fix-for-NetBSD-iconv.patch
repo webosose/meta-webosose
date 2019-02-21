@@ -1,0 +1,30 @@
+From e8fa74aaa73af6913be7037edb31ce8f30730097 Mon Sep 17 00:00:00 2001
+From: OBATA Akio <obache@users.noreply.github.com>
+Date: Wed, 8 Feb 2017 16:22:45 +0900
+Subject: [PATCH] Portability fix for NetBSD iconv
+
+Author:    OBATA Akio <obache@users.noreply.github.com>
+
+The patch was imported from the github git server
+(git@github.com:sunpinyin/sunpinyin) as of commit id
+3694d0558fca2df5e91df3de3d84c551d8a34a05
+---
+ src/portability.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/portability.h b/src/portability.h
+index 60dd727..314128f 100644
+--- a/src/portability.h
++++ b/src/portability.h
+@@ -72,7 +72,7 @@
+ inline double log2(double x) { return log(x) / M_LN2; }
+ #endif
+ 
+-#if defined(sun) // Solaris/HP-UX 's iconv is const char**
++#if defined(sun) || defined(__NetBSD__) // Solaris/HP-UX/NetBSD 's iconv is const char**
+ typedef const char* TIConvSrcPtr;
+ #else
+ typedef char* TIConvSrcPtr;
+-- 
+1.9.0
+

@@ -1,0 +1,158 @@
+From e21d2e8aa97569f7744c796593357900576099a7 Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Thu, 24 May 2018 11:57:48 +0530
+Subject: [PATCH] Add pyzy wrapper for webOS
+
+Upstream-status: Inappropriate[webos specific patch, not indented to be upstreamed]
+---
+ src/Makefile.am    |   1 +
+ src/PhraseEditor.h |   2 +-
+ src/pyzyWarpper.cc | 111 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 113 insertions(+), 1 deletion(-)
+ create mode 100644 src/pyzyWarpper.cc
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index f01a057..1bc77a3 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -72,6 +72,7 @@ libpyzy_c_sources = \
+ 	SimpTradConverter.cc \
+ 	SpecialPhraseTable.cc \
+ 	Variant.cc \
++    pyzyWarpper.cc \
+ 	$(NULL)
+ libpyzy_h_sources = \
+ 	Bopomofo.h \
+diff --git a/src/PhraseEditor.h b/src/PhraseEditor.h
+index 3f970eb..b4fe3b7 100644
+--- a/src/PhraseEditor.h
++++ b/src/PhraseEditor.h
+@@ -27,7 +27,7 @@
+ #include "String.h"
+ #include "Util.h"
+ 
+-#define FILL_GRAN (12)
++#define FILL_GRAN (200)
+ 
+ namespace PyZy {
+ 
+diff --git a/src/pyzyWarpper.cc b/src/pyzyWarpper.cc
+new file mode 100644
+index 0000000..96e4da1
+--- /dev/null
++++ b/src/pyzyWarpper.cc
+@@ -0,0 +1,111 @@
++#include "InputContext.h"
++#include "Variant.h"
++#include <iostream>
++
++using namespace std;
++
++class PyZyObserver : public PyZy::InputContext::Observer {
++public:
++    void commitText (PyZy::InputContext *context, const string &commit_text) {
++        m_commited_text = commit_text;
++    }
++
++    void inputTextChanged (PyZy::InputContext *context) {}
++    void preeditTextChanged (PyZy::InputContext *context) {}
++    void auxiliaryTextChanged (PyZy::InputContext *context) {}
++    void cursorChanged (PyZy::InputContext *context) {}
++    void candidatesChanged (PyZy::InputContext *context) {}
++
++    const string& commitedText () { return m_commited_text; }
++
++    void clear () {
++        m_commited_text.clear ();
++    }
++
++private:
++    string m_commited_text;
++};
++
++PyZyObserver observer;
++PyZy::Candidate candidate;
++
++extern "C"
++{
++    void* initContext(const string & user_cache_dir,
++                    const string & user_config_dir) {
++	PyZy::InputContext::init(user_cache_dir,user_config_dir);
++        PyZy::InputContext *context = PyZy::InputContext::create(PyZy::InputContext::BOPOMOFO, &observer);
++	context->setProperty (PyZy::InputContext::PROPERTY_SPECIAL_PHRASE,PyZy::Variant::fromBool (false));
++        context->setProperty (PyZy::InputContext::PROPERTY_BOPOMOFO_SCHEMA,PyZy::Variant::fromUnsignedInt (0));
++        context->setProperty (PyZy::InputContext::PROPERTY_MODE_SIMP,PyZy::Variant::fromBool (false));
++	return context;
++    }
++
++    bool insertChar(void* obj, char ch) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        return context->insert(ch);
++    }
++
++    bool removeChar(void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        return context->removeCharBefore();
++    }
++
++    bool hasCandidate(void* obj, int i) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        return context->hasCandidate(i);
++    }
++
++    bool selectCandidate(void* obj, int i) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        observer.clear();
++        return context->selectCandidate(i);
++    }
++
++    int getCandidatesSize(void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        return context->getPreparedCandidatesSize();
++    }
++
++    const string& getCandidate(void* obj, int i) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        context->getCandidate(i, candidate);
++        return candidate.text;
++    }
++
++    const string& restText (void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++	return context->restText();
++    }
++
++    const string& auxiliaryText (void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++	return context->auxiliaryText();
++    }
++
++    const string& conversionText (void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        return context->conversionText();
++    }
++
++    const string& selectedText(void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        return context->selectedText();
++    }
++
++    const string& commitText (void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++	return observer.commitedText();
++    }
++
++    void resetContext(void* obj) {
++        PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        context->reset();
++    }
++
++    void close (void* obj) {
++	PyZy::InputContext *context = reinterpret_cast<PyZy::InputContext*>(obj);
++        PyZy::InputContext::finalize();
++	delete context;
++    }
++}
+-- 
+1.9.0
+

@@ -1,0 +1,47 @@
+From ae328e4348bbc8b3000650082c25fd83382c133b Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Wed, 23 May 2018 12:33:54 +0530
+Subject: [PATCH] Remove Cursor line | from auxiliary text
+
+Cursor line "|" is addeded to the auxilary text.
+it is inappropriate for webos, so it is removed.
+
+Upstream-Status: Inappropriate [This is webos specific change, not indented to be submitted to upstream]
+---
+ src/BopomofoContext.cc | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/src/BopomofoContext.cc b/src/BopomofoContext.cc
+index 1313ed2..b19db46 100644
+--- a/src/BopomofoContext.cc
++++ b/src/BopomofoContext.cc
+@@ -276,8 +276,6 @@ BopomofoContext::updateAuxiliaryText (void)
+         size_t si = 0;
+         size_t m_text_len = m_text.length();
+         for (size_t i = m_phrase_editor.cursor (); i < m_pinyin.size (); ++i) {
+-            if (G_LIKELY (i != m_phrase_editor.cursor ()))
+-                m_buffer << ',';
+             m_buffer << (unichar *)m_pinyin[i]->bopomofo;
+             for (size_t sj = 0; m_pinyin[i]->bopomofo[sj] == bopomofo_char[keyvalToBopomofo(m_text.c_str()[si])] ; si++,sj++);
+ 
+@@ -291,16 +289,12 @@ BopomofoContext::updateAuxiliaryText (void)
+         }
+ 
+         for (String::iterator i = m_text.begin () + m_pinyin_len; i != m_text.end (); i++) {
+-            if (m_cursor == (size_t)(i - m_text.begin ()))
+-                m_buffer << '|';
+             m_buffer.appendUnichar (bopomofo_char[keyvalToBopomofo (*i)]);
+         }
+-        if (m_cursor == m_text.length ())
+-            m_buffer << '|';
+     }
+     else {
+         if (m_cursor < m_text.size ()) {
+-            m_buffer << '|' << textAfterCursor ();
++            m_buffer << textAfterCursor ();
+         }
+     }
+ 
+-- 
+1.9.0
+

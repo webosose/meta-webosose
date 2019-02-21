@@ -1,0 +1,30 @@
+From 3b9d06649511c60275923f9c96434b71ffd6b20d Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Mon, 14 May 2018 16:57:21 +0530
+Subject: [PATCH] Fix-Narrowing-conversion-from-int-to-char-bug
+
+"PINYIN_ID_VOID" is being assigned to unsigned char datatype.
+unsigned char data type will not accept negative numbers.
+So changed the definition to 99 instead of -1.
+
+Upstream-Status: Pending
+---
+ src/Types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Types.h b/src/Types.h
+index fa62a4c..b6d20b1 100644
+--- a/src/Types.h
++++ b/src/Types.h
+@@ -26,7 +26,7 @@
+ 
+ namespace PyZy {
+ 
+-#define PINYIN_ID_VOID  (-1)
++#define PINYIN_ID_VOID  (99)
+ #define PINYIN_ID_ZERO  (0)
+ #define PINYIN_ID_B     (1)
+ #define PINYIN_ID_C     (2)
+-- 
+1.9.0
+

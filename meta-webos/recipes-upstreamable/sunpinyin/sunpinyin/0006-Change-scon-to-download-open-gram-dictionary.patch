@@ -1,0 +1,89 @@
+From d2e99e17b60c3ed7b7e1df164c46dff9fba5f20f Mon Sep 17 00:00:00 2001
+From: guruprasadkn <guruprasad.kn@lge.com>
+Date: Wed, 15 Nov 2017 13:41:16 +0530
+Subject: [PATCH] Change scon to download open gram dictionary
+
+Author:    guruprasadkn <guruprasad.kn@lge.com>
+
+Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
+---
+ SConstruct | 43 +++++++++++++++----------------------------
+ 1 file changed, 15 insertions(+), 28 deletions(-)
+
+diff --git a/SConstruct b/SConstruct
+index 412d0d4..19e319d 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -138,6 +138,11 @@ bins = [
+     'src/sunpinyin-dictgen',
+     ]
+ 
++dict = [
++      '../dict.utf8',
++      '../lm_sc.3gm.arpa'
++    ]
++
+ man1s = [
+     'man/mmseg.1',
+     'man/slmseg.1',
+@@ -227,7 +232,6 @@ def CreateEnvironment():
+ def PassVariables(envvar, env):
+     for (x, y) in envvar:
+         if x in os.environ:
+-            print 'Warning: you\'ve set %s in the environmental variable!' % x
+             env[y] = os.environ[x]
+ 
+ env = CreateEnvironment()
+@@ -448,39 +452,22 @@ else:
+ 
+ 
+ def DoInstall():
+-    lib_target = None
+-    if GetOS() == 'Darwin':
+-        lib_target = env.Install(libdir, lib)
+-    else:
+-        lib_target_bin = env.Install(libdir, lib)
+-        # where does it goes
+-        install_path = os.path.dirname(str(lib_target_bin[0]))
+-        lib_target = [
+-            lib_target_bin,
+-            env.InstallAsSymlink(os.path.join(install_path, libname_soname),
+-                                 lib_target_bin),
+-            env.InstallAsSymlink(os.path.join(install_path, libname_link),
+-                                 lib_target_bin),
+-            ]
+-
+-    lib_pkgconfig_target = env.Install(os.path.join(libdir, 'pkgconfig'),
+-                                       ['sunpinyin-2.0.pc'])
+-    bin_target = env.Install(bindir, bins)
+-    man1_target = env.Install(man1dir, man1s)
+-    doc_target = env.Install(docdir, docs)
++    Mkdir('./Dictionary')
++    doc_target = env.Install('./Dictionary', docs)
++    bin_target = env.Install('./Dictionary', bins)
++    dict_target = env.Install('./Dictionary', dict)
++    make_target = env.InstallAs('./Dictionary/Makefile','./Dictionary/SLM-inst.mk')
+     header_targets = []
+     for header in headers:
+         header_targets.append(env.InstallAs(headersdir + header[3:], header))
+-    env.Alias('install-bin', bin_target)
+-    env.Alias('install-man1', man1_target)
+     env.Alias('install-doc', doc_target)
+-    env.Alias('install-headers', header_targets)
+-    env.Alias('install-lib', lib_target + [lib_pkgconfig_target])
+-    Mkdir(datadir)
+-
++    env.Alias('install-bin', bin_target)
++    env.Alias('install-dict', dict_target)
++    env.Alias('install-make', make_target)
++    os.system('cd Dictionary;make')
+ DoInstall()
+ env.Alias('install', [
+-    'install-bin', 'install-man1', 'install-doc', 'install-headers', 'install-lib'
++    'install-bin','install-doc','install-dict','install-make'
+ ])
+ 
+ # -*- indent-tabs-mode: nil -*- vim:et:ts=4
+-- 
+1.9.0
+

@@ -1,0 +1,71 @@
+From 06593666e5cddf0dda21a360a89d7142559139fc Mon Sep 17 00:00:00 2001
+From: "Casper Ti. Vector" <CasperVector@gmail.com>
+Date: Thu, 5 Oct 2017 22:36:23 +0800
+Subject: [PATCH] sunpinyin-dictgen.mk.in: use HTTPS mirrors to avoid MITM
+ attacks.
+
+Author:    Casper Ti. Vector <CasperVector@gmail.com>
+
+The patch was imported from the github git server
+(git@github.com:sunpinyin/sunpinyin) as of commit id
+28159e8968ca6a82de149a0c6bcddf1034b47b0a
+---
+ src/sunpinyin-dictgen.mk.in | 35 ++++++-----------------------------
+ 1 file changed, 6 insertions(+), 29 deletions(-)
+
+diff --git a/src/sunpinyin-dictgen.mk.in b/src/sunpinyin-dictgen.mk.in
+index e3e47fb..8572f1f 100644
+--- a/src/sunpinyin-dictgen.mk.in
++++ b/src/sunpinyin-dictgen.mk.in
+@@ -1,34 +1,11 @@
+ #!/usr/bin/@MAKE@ -f
+ # -*- mode: makefile; indent-tabs-mode: t -*- vim:noet:ts=4
+ 
+-# In case of problems, also try the following ${DL_HOST} values:
+-# (copied from Gentoo's `thirdpartymirrors' file)
+-# http://aarnet.dl.sourceforge.net
+-# http://colocrossing.dl.sourceforge.net
+-# http://cznic.dl.sourceforge.net
+-# http://dfn.dl.sourceforge.net
+-# http://freefr.dl.sourceforge.net
+-# http://garr.dl.sourceforge.net
+-# http://heanet.dl.sourceforge.net
+-# http://hivelocity.dl.sourceforge.net
+-# http://ignum.dl.sourceforge.net
+-# http://internode.dl.sourceforge.net
+-# http://iweb.dl.sourceforge.net
+-# http://jaist.dl.sourceforge.net
+-# http://kaz.dl.sourceforge.net
+-# http://kent.dl.sourceforge.net
+-# http://nchc.dl.sourceforge.net
+-# http://ncu.dl.sourceforge.net
+-# http://netcologne.dl.sourceforge.net
+-# http://optimate.dl.sourceforge.net
+-# http://softlayer.dl.sourceforge.net
+-# http://sunet.dl.sourceforge.net
+-# http://surfnet.dl.sourceforge.net
+-# http://switch.dl.sourceforge.net
+-# http://tcpdiag.dl.sourceforge.net
+-# http://ufpr.dl.sourceforge.net
+-# http://waia.dl.sourceforge.net
+-# http://waix.dl.sourceforge.net
++# In case of problems, try replacing `jaist' in ${DL_HOST} with one of these
++# (copied from <https://sourceforge.net/p/forge/documentation/Mirrors/>):
++#   astuteinternet ayera cfhcable cytranet excellmedia freefr gigenet
++#   iweb jaist kent liquidtelecom nchc netcologne netix newcontinuum
++#   phoenixnap razaoinfo superb-dca2 superb-sea2 svwh ufpr versaweb
+ 
+ WGET = @WGET@
+ TAR = @TAR@
+@@ -37,7 +14,7 @@ ENDIANNESS = @ENDIANNESS@
+ DATA_DIR = @DATADIR@/sunpinyin
+ 
+ DL_LIST = https://sourceforge.net/projects/open-gram/files/
+-DL_HOST = http://heanet.dl.sourceforge.net
++DL_HOST = https://jaist.dl.sourceforge.net
+ DL_ROOT = ${DL_HOST}/open-gram
+ DICT_PAT = 'dict\.utf8-[0-9]\+.tar.bz2'
+ SLM_PAT = 'lm_sc\.3gm\.arpa-[0-9]\+.tar.bz2'
+-- 
+1.9.0
+

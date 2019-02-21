@@ -1,0 +1,39 @@
+From fde75b66de7216d2cb4fbefff513f2c296eaba7e Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Tue, 29 May 2018 15:46:28 +0530
+Subject: [PATCH] Change static path to user path
+
+Upstream-status: Inappropriate [webos specific change, not indented to be upstreamed]
+---
+ src/Database.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/Database.cc b/src/Database.cc
+index 9a8930a..0653d3c 100644
+--- a/src/Database.cc
++++ b/src/Database.cc
+@@ -28,7 +28,7 @@
+ #include "Config.h"
+ #include "PinyinArray.h"
+ #include "Util.h"
+-
++#include <string.h>
+ 
+ namespace PyZy {
+ 
+@@ -245,9 +245,9 @@ Database::open (void)
+         sqlite3_initialize ();
+ #endif
+         static const char * maindb [] = {
+-            PKGDATADIR"/db/local.db",
+-            PKGDATADIR"/db/open-phrase.db",
+-            PKGDATADIR"/db/android.db",
++            g_build_filename (m_user_data_dir.c_str(), "/db/local.db", NULL),
++            g_build_filename (m_user_data_dir.c_str(), "/db/open-phrase.db", NULL),
++            g_build_filename (m_user_data_dir.c_str(), "/db/android.db", NULL),
+             "main.db",
+         };
+ 
+-- 
+1.9.0
+

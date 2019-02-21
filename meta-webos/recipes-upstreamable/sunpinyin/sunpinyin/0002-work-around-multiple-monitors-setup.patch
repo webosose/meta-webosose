@@ -1,0 +1,41 @@
+From ced39186c182925de20fdb3020839c39ee85de6d Mon Sep 17 00:00:00 2001
+From: phi <crispyfrog@163.com>
+Date: Mon, 2 May 2016 23:56:00 +0800
+Subject: [PATCH] work around multiple-monitors setup
+
+Author:    phi <crispyfrog@163.com>
+
+The patch was imported from the github git server
+(git@github.com:sunpinyin/sunpinyin) as of commit id
+c87d61724796f290959554a734fe063af2588865
+---
+ wrapper/xim/xmisc.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/wrapper/xim/xmisc.c b/wrapper/xim/xmisc.c
+index 8da9989..245c9a3 100644
+--- a/wrapper/xim/xmisc.c
++++ b/wrapper/xim/xmisc.c
+@@ -93,10 +93,15 @@ in_range(int x, int min, int max)
+ void
+ adjust_position(int* x, int* y, int width, int height)
+ {
+-    int screen_width, screen_height;
+-    get_screen_size(&screen_width, &screen_height);
+-    *x = in_range(*x, 0, screen_width - width);
+-    *y = in_range(*y, 0, screen_height - height);
++    GdkScreen *screen; 
++    gint mon;
++    GdkRectangle srect;
++    screen = gdk_screen_get_default();
++    mon = gdk_screen_get_monitor_at_point(screen, *x, *y);
++    gdk_screen_get_monitor_geometry(screen, mon, &srect);
++    LOG("srect: %dx%d+%d+%d", srect.width, srect.height, srect.x, srect.y);
++    *x = in_range(*x, srect.x, srect.x + srect.width - width);
++    *y = in_range(*y, srect.y, srect.y + srect.height - height);
+ }
+ 
+ // -*- indent-tabs-mode: nil -*- vim:et:ts=4
+-- 
+1.9.0
+

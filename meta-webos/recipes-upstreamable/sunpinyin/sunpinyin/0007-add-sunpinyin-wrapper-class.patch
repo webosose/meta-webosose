@@ -1,0 +1,208 @@
+From 770c74f7f5ac4ec7f00d95726f420d09d3143834 Mon Sep 17 00:00:00 2001
+From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+Date: Wed, 6 Dec 2017 17:24:58 +0530
+Subject: [PATCH] add sunpinyin wrapper class
+
+Sunpinyin wrapper class to help integrating subpinyin
+library to webos imemanager.
+
+Author:    pugalendhi ganesan <pugalendhi.ganesan@lge.com>
+
+Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
+---
+ SConstruct          |   1 +
+ src/sun_wrapper.cpp | 167 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 168 insertions(+)
+ mode change 100644 => 100755 SConstruct
+ create mode 100755 src/sun_wrapper.cpp
+
+diff --git a/SConstruct b/SConstruct
+old mode 100644
+new mode 100755
+index 19e319d..48e0028
+--- a/SConstruct
++++ b/SConstruct
+@@ -61,6 +61,7 @@ imesource = [
+     'src/ime-core/imi_options.cpp',
+     'src/ime-core/imi_option_event.cpp',
+     'src/ime-core/userdict.cpp',
++    'src/sun_wrapper.cpp',
+     ]
+ 
+ headers = [
+diff --git a/src/sun_wrapper.cpp b/src/sun_wrapper.cpp
+new file mode 100755
+index 0000000..b463dcd
+--- /dev/null
++++ b/src/sun_wrapper.cpp
+@@ -0,0 +1,167 @@
++#include "imi_options.h"
++#include <stdio.h>
++#include <vector>
++#include <iostream>
++#include <fstream>
++#include <string>
++
++
++using namespace std;
++
++std::string _commit;
++std::string _preedit;
++std::vector<string> candList;
++int m_total;
++int m_first;
++int m_size;
++int throwBack[3];
++
++string convertChar(const TWCHAR* wstr)
++{
++    char buf[512];
++
++#ifdef HAVE_ICONV_H
++    iconv_t icv = iconv_open("UTF-8", TWCHAR_ICONV_NAME);
++    TIConvSrcPtr src = (TIConvSrcPtr)wstr;
++    size_t srclen = (WCSLEN(wstr) + 1) * sizeof(TWCHAR);
++    char *dst = buf;
++    size_t dstlen = 1024;
++    iconv(icv, &src, &srclen, &dst, &dstlen);
++    iconv_close(icv);
++#else // !HAVE_ICONV_H
++    memset(&buf[0], 0, sizeof(buf));
++    WCSTOMBS(&buf[0], wstr, sizeof(buf) - 1);
++#endif // HAVE_ICONV_H
++
++   return std::string(buf);
++}
++
++class myHandler : public CIMIWinHandler {
++    void commit(const TWCHAR* wstr)
++    {
++        if (wstr) {
++            _commit = convertChar(wstr);
++        }
++    }
++
++    void updatePreedit(const IPreeditString* ppd)
++    {
++        if (ppd) {
++            _preedit = convertChar(ppd->string());
++        }
++    }
++
++    void updateCandidates(const ICandidateList* pcl)
++    {
++        if (pcl) {
++            candList.clear();
++            m_first = pcl->first();
++            m_size  = pcl->size();
++            m_total = pcl->total();
++
++            for (int i = 0; i < m_size; ++i) {
++                const TWCHAR* pcand = pcl->candiString(i);
++                if (pcand == NULL) break;
++                candList.push_back(convertChar(pcand));
++            }
++        }
++    }
++
++    void throwBackKey(unsigned keycode,
++                                 unsigned keyvalue,
++                                 unsigned modifier)
++    {
++        throwBack[0] = keycode;
++        throwBack[1] = keyvalue;
++        throwBack[2] = modifier;
++    }
++
++public:
++    myHandler(CIMIView* pv){}
++};
++
++extern "C"
++{
++    void* initFactory(char* cpath) {
++        CSunpinyinSessionFactory* factory = &CSunpinyinSessionFactory::getFactory ();
++        string path = string(cpath);
++        ASimplifiedChinesePolicy::instance().setDataDir(path);
++        string_pairs fuzzy_pairs;
++        fuzzy_pairs.push_back(make_pair("s", "sh"));
++        fuzzy_pairs.push_back(make_pair("z", "zh"));
++        fuzzy_pairs.push_back(make_pair("c", "ch"));
++        AQuanpinSchemePolicy::instance().setFuzzyForwarding(false, true);
++        AQuanpinSchemePolicy::instance().setFuzzyPinyinPairs(fuzzy_pairs, true);
++        AQuanpinSchemePolicy::instance().setFuzzySegmentation(true);
++        AQuanpinSchemePolicy::instance().setInnerFuzzySegmentation(true);
++        factory->setPinyinScheme (CSunpinyinSessionFactory::QUANPIN);
++        return reinterpret_cast<void*>(factory);
++    }
++
++    void* initCIMIView(void* obj) {
++        CSunpinyinSessionFactory* factory = reinterpret_cast<CSunpinyinSessionFactory*>(obj);
++        CIMIView *pv = factory->createSession ();
++        pv->setCandiWindowSize(8);
++        myHandler *pwh = new myHandler(pv);
++        pv->attachWinHandler(pwh);
++        return reinterpret_cast<void*>(pv);
++    }
++
++    void onKeyEvent(void* obj, unsigned kc, unsigned kv, unsigned m) {
++        CIMIView *pv = reinterpret_cast<CIMIView*>(obj);
++        CKeyEvent key_event (kc, kv, m);
++
++        if (pv) {
++            pv->onKeyEvent(key_event);
++        }
++    }
++
++    const char* getPredit() {
++        return _preedit.c_str();
++    }
++
++    const char* getCommit() {
++        return _commit.c_str();
++    }
++
++    std::vector<string>* getCandidateList() {
++        return &candList;
++    }
++
++    int total() {
++        return m_total;
++    }
++
++    int size() {
++        return m_size;
++    }
++
++    int first() {
++        return m_first;
++    }
++
++    int* throwBackKey() {
++        return throwBack;
++    }
++
++    void closeSession(void* fact, void* view) {
++        if (fact && view) {
++            CSunpinyinSessionFactory* factory = reinterpret_cast<CSunpinyinSessionFactory*>(fact);
++            CIMIView *pv = reinterpret_cast<CIMIView*>(view);
++            CIMIWinHandler *pwh = pv->getWinHandler();
++            factory->destroySession (pv);
++            delete pwh;
++        }
++    }
++
++    void resetSession(void* view) {
++	m_total = 0;
++	m_first = 0;
++	m_size = 0;
++	_commit.clear();
++	_preedit.clear();
++	candList.clear();
++	CIMIView *pv = reinterpret_cast<CIMIView*>(view);
++	pv->updateWindows(pv->clearIC());
++    }
++}
+-- 
+1.9.0
+
