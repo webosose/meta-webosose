@@ -23,12 +23,12 @@ inherit webos_prerelease_dep
 inherit webos_system_bus
 inherit webos_public_repo
 
-DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xproto nss nspr curl nspr-native nss-native pmloglib"
+DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native"
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-57_9e880881b2b3c847e40d139e3a3f38b2140b7fdf"
-PR = "r16"
+WEBOS_VERSION = "68.0.3440.106-58_c34419140142d213187db79da0e66a5cf8076009"
+PR = "r17"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
