@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2018 LG Electronics, Inc.
+# Copyright (c) 2016-2019 LG Electronics, Inc.
 #
 # webos_enactjs_app
 #
@@ -180,8 +180,8 @@ do_install() {
     # Support optional transpiling to full ES5 if needed
     export ES5="${WEBOS_ENACTJS_FORCE_ES5}"
 
-    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 53
-    export BROWSERSLIST="Chrome 53"
+    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 68
+    export BROWSERSLIST="Chrome 68"
 
     # use local on-device ilib locale assets
     if [ ! -z "${WEBOS_ENACTJS_ILIB_ASSETS}" ] ; then
