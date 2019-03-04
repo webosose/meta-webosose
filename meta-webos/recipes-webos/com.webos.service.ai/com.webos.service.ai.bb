@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "Ai service for voice/face/gesture recognition"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -12,7 +12,7 @@ DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libgoogleassistant"
 COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-3_2b2b37d8000d5a213ea7fc8f081fdd54b345fec8"
+WEBOS_VERSION = "1.0.0-4_625e5d8c8e4b7dc6b927fb24ba210120d5a822a8"
 PR = "r0"
 
 inherit systemd
