@@ -176,17 +176,22 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
 "
 
 # These packages that are installed in the qemux86 image only.
+RRECOMMENDS_${PN}_append_qemux86 = " \
+    kernel-module-uvcvideo \
+    kernel-module-videobuf2-core \
+    kernel-module-media \
+    kernel-module-videodev \
+    kernel-module-videobuf2-v4l2 \
+    kernel-module-v4l2-common \
+    kernel-module-videobuf2-vmalloc \
+    kernel-module-videobuf2-memops \
+    kernel-module-snd-usb-audio \
+    kernel-module-snd-usbmidi-lib \
+"
+
 RDEPENDS_${PN}_append_qemux86 = " \
-   kernel-module-uvcvideo \
-   kernel-module-videobuf2-core \
-   kernel-module-media \
-   kernel-module-videodev \
-   kernel-module-videobuf2-v4l2 \
-   kernel-module-v4l2-common \
-   kernel-module-videobuf2-vmalloc \
-   kernel-module-videobuf2-memops \
-   v4l-utils \
-   dhcp-client \
+    v4l-utils \
+    dhcp-client \
 "
 
 RDEPENDS_${PN} += "${MACHINE_EXTRA_RDEPENDS}"
