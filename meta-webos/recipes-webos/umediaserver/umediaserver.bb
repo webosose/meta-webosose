@@ -11,7 +11,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
-WEBOS_VERSION = "1.0.0-13_f1146d458103792d2a4b6ac3c9bc22d737d4d2fe"
+WEBOS_VERSION = "1.0.0-15_27882b5f4661678dd6117f49c37fc9d3c30b9c4d"
 PR = "r10"
 
 inherit webos_component
