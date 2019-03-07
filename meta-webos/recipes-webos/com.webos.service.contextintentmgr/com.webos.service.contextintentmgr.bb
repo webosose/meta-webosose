@@ -11,7 +11,7 @@ DEPENDS = "nodejs-module-node-red"
 COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-5_3652fd61e3898856b5de45fad5f6d99da6d6bf39"
+WEBOS_VERSION = "1.0.0-6_cfa4da54851127f44fe2a343716085d5245fda21"
 PR = "r0"
 
 inherit systemd
