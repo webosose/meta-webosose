@@ -27,13 +27,13 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 
 PROVIDES = "virtual/webruntime"
 
-WEBOS_VERSION = "68.0.3440.106-43_7f01aab92a90f30cdfa7db041dd0fce99db2dd49"
-PR = "r14"
+WEBOS_VERSION = "68.0.3440.106-44_436f2d67ad866eee604cac852851041213b6631a"
+PR = "r15"
 WEBOS_REPO_NAME = "chromium68"
 
 SRC_URI = "\
     ${WEBOSOSE_GIT_REPO_COMPLETE};name=main \
-    ${WEBOSOSE_GIT_REPO}/v8;destsuffix=git/src/v8;protocol=ssh;name=v8 \
+    ${WEBOSOSE_GIT_REPO}/v8;destsuffix=git/src/v8;protocol=git;name=v8 \
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
