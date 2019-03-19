@@ -149,6 +149,7 @@ RDEPENDS_${PN} = " \
     configd \
     configurator \
     com.palm.service.devmode \
+    com.webos.service.intent \
     event-monitor \
     filecache \
     fontconfig-utils \
