@@ -1,22 +1,28 @@
-Upstream-Status: Pending
+From 789ed39d01a0dd928c6d525ce403eb449f624f7c Mon Sep 17 00:00:00 2001
+From: Minjae Kim <nate.kim@lge.com>
+Date: Mon, 25 Mar 2019 15:35:19 +0900
+Subject: [PATCH] Don't always define LONG64 for AMD64
 
-Don't always define LONG64 for AMD64
-    
 X32 defines __amd64__/amd64 with 32bit long.  We should simply check
 __LP64__ before defining LONG64 without checking __amd64__/amd64.
 
 This fixes compilation with x32 toolchain.
+---
+ Xmd.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Received this patch from H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Nitin A Kamble <nitin.a.kamble@intel.com> 2011/12/1
-
---- xproto-7.0.22/Xmd.h.x32	2009-07-11 04:19:50.000000000 -0700
-+++ xproto-7.0.22/Xmd.h	2011-11-30 17:14:19.290395893 -0800
+diff --git a/Xmd.h b/Xmd.h
+index 492465e..c7cc6e3 100644
+--- a/Xmd.h
++++ b/Xmd.h
 @@ -62,7 +62,6 @@ SOFTWARE.
       defined(__ia64__) || defined(ia64) || \
       defined(__sparc64__) || \
       defined(__s390x__) || \
 -     defined(__amd64__) || defined(amd64) || \
       defined(__powerpc64__)
- #  define LONG64				/* 32/64-bit architecture */
- # endif
+ #  if !defined(__ILP32__) /* amd64-x32 is 32bit */
+ #   define LONG64				/* 32/64-bit architecture */
+-- 
+2.17.1
+
