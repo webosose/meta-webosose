@@ -16,6 +16,6 @@ inherit webos_public_repo
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-WEBOS_VERSION ="1.0.0-2_54bf815da38476038675d3c2d53ef9ccadbc84a0"
+WEBOS_VERSION ="1.0.0-3_e38d2c27869aa148e52de3280de10a1a8a26e59a"
 PR = "r0"
 

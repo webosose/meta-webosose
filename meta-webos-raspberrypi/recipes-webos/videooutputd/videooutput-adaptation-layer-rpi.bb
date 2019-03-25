@@ -19,9 +19,9 @@ inherit webos_public_repo
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-DEPENDS = "udev glib-2.0 pmloglib libpbnjson ls2-helpers libdrm videooutput-adaptation-layer-api"
+DEPENDS = "udev glib-2.0 pmloglib libpbnjson libdrm videooutput-adaptation-layer-api"
 
-WEBOS_VERSION = "1.0.0-3_d4b8506be41dbadf9d428e05fbb68d7ade8a443e"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-4_ad7aaa8fb5c02496830c4cb6fd8ff321ab910f10"
+PR = "r1"
 
 COMPATIBLE_MACHINE = "^rpi$"

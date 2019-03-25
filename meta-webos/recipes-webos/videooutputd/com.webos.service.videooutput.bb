@@ -7,10 +7,10 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
 
 VIRTUAL-RUNTIME_val-impl ??= "videooutput-adaptation-layer-mock"
-DEPENDS = "glib-2.0 luna-service2 ls2-helpers pmloglib libpbnjson val-impl"
+DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson val-impl"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_val-impl}"
-WEBOS_VERSION = "1.0.0-4_87abc3a1cb5bb43abb2edb3ed46c8408a34c15ee"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-6_042684981598631cae608bebc72c9decd0d4eef1"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions

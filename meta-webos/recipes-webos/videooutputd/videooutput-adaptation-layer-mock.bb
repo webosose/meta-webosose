@@ -18,8 +18,8 @@ inherit webos_public_repo
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-DEPENDS = "glib-2.0 ls2-helpers pmloglib libpbnjson videooutput-adaptation-layer-api"
+DEPENDS = "glib-2.0 pmloglib libpbnjson videooutput-adaptation-layer-api"
 
-WEBOS_VERSION = "1.0.0-2_176a7cc7010bcf8bbcb9f2449db16f95e71cfe45"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-3_730d28b116759f4d28c2ac4dbc56b29c13d5452e"
+PR = "r1"
 
