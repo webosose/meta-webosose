@@ -1,17 +1,11 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS_${PN} variable.
-EXTENDPRAUTO_append_rpi = "webosrpi5"
+EXTENDPRAUTO_append_rpi = "webosrpi6"
 
-MEDIA = " \
-    gstreamer1.0 \
-    gstreamer1.0-libav \
+# gst omx is used only for raspberrypi3 builds
+MEDIA_append_rpi = " \
     gstreamer1.0-omx \
-    gstreamer1.0-plugins-bad \
-    gstreamer1.0-plugins-base \
-    gstreamer1.0-plugins-good \
-    gstreamer1.0-plugins-ugly \
-    g-media-pipeline \
 "
 # Until build issues caused by PLAT-44962 are fixed in PLAT-45700
 MEDIA_raspberrypi3-64 = ""
@@ -56,7 +50,6 @@ CAMERASERVICE_raspberrypi3-64 = ""
 
 RDEPENDS_${PN}_append_rpi = " \
     com.webos.service.audiooutput \
-    ${MEDIA} \
     ${AISERVICE} \
     ${CAMERASERVICE} \
     ${TTSSERVICE} \

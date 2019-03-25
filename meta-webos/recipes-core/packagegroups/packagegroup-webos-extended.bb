@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r29"
+PR = "r30"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -37,6 +37,16 @@ WEBOS_PACKAGESET_TESTAPPS = " \
     com.webos.app.test.enact \
     com.webos.app.test.webosose \
     com.webos.app.test.youtube \
+"
+
+MEDIA = " \
+    gstreamer1.0 \
+    gstreamer1.0-libav \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-ugly \
+    g-media-pipeline \
 "
 
 # Fonts used by the browser
@@ -103,6 +113,7 @@ RDEPENDS_${PN} = " \
     sleepd \
     webos-connman-adapter \
     webos-fontconfig-files \
+    ${MEDIA} \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_browser_fonts} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \

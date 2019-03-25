@@ -15,12 +15,20 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-COMPATIBLE_MACHINE = "^rpi$"
+# Doesn't build for armv[45]*
+COMPATIBLE_MACHINE = "(-)"
+COMPATIBLE_MACHINE_aarch64 = "(.*)"
+COMPATIBLE_MACHINE_armv6 = "(.*)"
+COMPATIBLE_MACHINE_armv7a = "(.*)"
+COMPATIBLE_MACHINE_armv7ve = "(.*)"
+COMPATIBLE_MACHINE_x86 = "(.*)"
+COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
-DEPENDS = "boost userland gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
+DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
+DEPENDS_append_rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-11_08d843e9c583e267229b3bd708b377daf44cebe0"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-12_7329f1f5b15fb5a8c14bb2ee1b15c066bab781d3"
+PR = "r2"
 
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
