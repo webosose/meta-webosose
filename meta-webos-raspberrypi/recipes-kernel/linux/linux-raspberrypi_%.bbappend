@@ -1,6 +1,6 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi18"
+EXTENDPRAUTO_append = "webosrpi19"
 
 CMDLINE_append = " rw"
 
@@ -24,6 +24,7 @@ SRC_URI_append = " \
     file://0014-DRM-custom-prop.patch \
     file://0015-DRM-forcing-permissions.patch \
     file://0016-Enable-ZRAM-feature.patch \
+    file://0017-Enable-NTFS-file-system-support.patch \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \
