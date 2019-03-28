@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS Luna System Bus library, daemon, and utilities"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -12,7 +12,7 @@ VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_rdx-utils} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-2_74202d0f43d4a45756c9b561a42aba55a39b9136"
+WEBOS_VERSION = "3.21.2-3_1d26c95ddf2cdf846b7066f049fa28c20f29101e"
 PR = "r23"
 
 WEBOS_DISTRO_PRERELEASE ??= ""
