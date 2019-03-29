@@ -72,6 +72,10 @@ VIRTUAL-RUNTIME_mojoservicelauncher ?= "mojoservicelauncher"
 VIRTUAL-RUNTIME_mojoservicelauncher_armv4 = ""
 VIRTUAL-RUNTIME_mojoservicelauncher_armv5 = ""
 
+VIRTUAL-RUNTIME_com.webos.service.flowmanager ?= "com.webos.service.flowmanager"
+VIRTUAL-RUNTIME_com.webos.service.flowmanager_armv4 = ""
+VIRTUAL-RUNTIME_com.webos.service.flowmanager_armv5 = ""
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
@@ -100,6 +104,8 @@ RDEPENDS_${PN} = " \
     configd \
     configurator \
     com.palm.service.devmode \
+    com.webos.app.mediaviewer \
+    ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     event-monitor \
     filecache \
     fontconfig-utils \
