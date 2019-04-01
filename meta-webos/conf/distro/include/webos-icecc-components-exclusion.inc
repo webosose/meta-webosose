@@ -4,12 +4,10 @@
 
 ICECC_USER_PACKAGE_BL_append = " \
     busybox \
-    webruntime \
     gmp-native \
     linux-libc-headers \
     llvm3.3 \
     nss \
-    wam \
 "
 
 ICECC_USER_PACKAGE_BL_append_arm = " \
