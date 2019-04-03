@@ -5,7 +5,7 @@ AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
 
 DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 
-WEBOS_VERSION = "5.6.3-4_21bcc61d4a3da2873d9650b19771ffddf31d6bc0"
+WEBOS_VERSION = "5.6.3-5_b0f089aeb9c880409cc1522b7ca576ffb2550fbe"
 EXTENDPRAUTO_append = "webos15"
 
 # Upstream 5.5.0 recipe updated LIC_FILES_CHKSUM
