@@ -18,5 +18,7 @@ If you're looking for backports from pyro to morty, check morty branch.
 If you're looking for backports from rocko to pyro, check pyro branch.
 If you're looking for backports from sumo to rocko, check rocko branch.
 If you're looking for backports from thud to sumo, check sumo branch.
+Backports from 2.7 (Warrior) to 2.6 (Thud) are in "meta-webos-backports-2.7" subdirectory.
+Backports from 2.8 (Zeus) to 2.6 (Thud) are in "meta-webos-backports-2.8" subdirectory.
 
 See https://wiki.yoctoproject.org/wiki/Releases for complete list of releases.
