@@ -1,10 +1,10 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 require gstreamer1.0-webos-common.inc
 
-EXTENDPRAUTO_append_rpi = "webosrpi1"
+EXTENDPRAUTO_append_rpi = "webosrpi2"
 
-PACKAGECONFIG_append_rpi = " kms wayland directfb faad"
+PACKAGECONFIG_append_rpi = " kms wayland faad"
 
 WEBOS_REPO_NAME_rpi = "gst-plugins-bad"
 
