@@ -1,4 +1,4 @@
-From 687d151b479f0c1123dfe6836447d1af9d5dde5f Mon Sep 17 00:00:00 2001
+From 79e05e580da18a8f575bddae44aff85896f645e8 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Thu, 5 Jun 2014 02:04:27 +0300
 Subject: [PATCH] Expose new QSystemSemaphore resetOwner API

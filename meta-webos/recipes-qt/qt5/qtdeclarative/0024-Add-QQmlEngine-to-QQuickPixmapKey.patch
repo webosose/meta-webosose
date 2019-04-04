@@ -1,4 +1,4 @@
-From be0f4a0d230392fa38415ce692b9957212e46140 Mon Sep 17 00:00:00 2001
+From 57d51274a6067966626c11549974e0818f0e3cf0 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 1 Jul 2019 12:18:11 +0900
 Subject: [PATCH] Add QQmlEngine to QQuickPixmapKey
@@ -13,12 +13,12 @@ Change-Id: I2074c79bb148c53cc5efb638b9218df412b9d70f
 Upstream-Status: Pending
 ---
  src/quick/items/qquickanimatedimage.cpp |  2 +-
- src/quick/util/qquickpixmapcache.cpp    | 54 +++++++++++++------------
+ src/quick/util/qquickpixmapcache.cpp    | 54 +++++++++++++++++----------------
  src/quick/util/qquickpixmapcache_p.h    |  2 +-
  3 files changed, 30 insertions(+), 28 deletions(-)
 
 diff --git a/src/quick/items/qquickanimatedimage.cpp b/src/quick/items/qquickanimatedimage.cpp
-index fe445425e..aca67e8a7 100644
+index fe44542..aca67e8 100644
 --- a/src/quick/items/qquickanimatedimage.cpp
 +++ b/src/quick/items/qquickanimatedimage.cpp
 @@ -67,7 +67,7 @@ QQuickPixmap* QQuickAnimatedImagePrivate::infoForCurrentFrame(QQmlEngine *engine
@@ -31,10 +31,10 @@ index fe445425e..aca67e8a7 100644
              else
                  pixmap = new QQuickPixmap(requestedUrl, movie->currentImage());
 diff --git a/src/quick/util/qquickpixmapcache.cpp b/src/quick/util/qquickpixmapcache.cpp
-index 129b09f4c..6980001b4 100644
+index b9a6a18..d4d8371 100644
 --- a/src/quick/util/qquickpixmapcache.cpp
 +++ b/src/quick/util/qquickpixmapcache.cpp
-@@ -240,8 +240,8 @@ public:
+@@ -243,8 +243,8 @@ public:
  class QQuickPixmapData
  {
  public:
@@ -45,7 +45,7 @@ index 129b09f4c..6980001b4 100644
        url(u), errorString(e), requestSize(s),
        providerOptions(po), appliedTransform(QQuickImageProviderOptions::UsePluginDefaultTransform),
        textureFactory(nullptr), reply(nullptr), prevUnreferenced(nullptr),
-@@ -250,8 +250,8 @@ public:
+@@ -253,8 +253,8 @@ public:
          declarativePixmaps.insert(pixmap);
      }
  
@@ -56,7 +56,7 @@ index 129b09f4c..6980001b4 100644
        url(u), requestSize(r),
        providerOptions(po), appliedTransform(aTransform),
        textureFactory(nullptr), reply(nullptr), prevUnreferenced(nullptr), prevUnreferencedPtr(nullptr),
-@@ -260,9 +260,9 @@ public:
+@@ -263,9 +263,9 @@ public:
          declarativePixmaps.insert(pixmap);
      }
  
@@ -68,7 +68,7 @@ index 129b09f4c..6980001b4 100644
        url(u), implicitSize(s), requestSize(r),
        providerOptions(po), appliedTransform(aTransform),
        textureFactory(texture), reply(nullptr), prevUnreferenced(nullptr),
-@@ -271,8 +271,8 @@ public:
+@@ -274,8 +274,8 @@ public:
          declarativePixmaps.insert(pixmap);
      }
  
@@ -79,7 +79,7 @@ index 129b09f4c..6980001b4 100644
        appliedTransform(QQuickImageProviderOptions::UsePluginDefaultTransform),
        textureFactory(texture), reply(nullptr), prevUnreferenced(nullptr),
        prevUnreferencedPtr(nullptr), nextUnreferenced(nullptr), storeToCache(true)
-@@ -309,6 +309,7 @@ public:
+@@ -312,6 +312,7 @@ public:
      QSize requestSize;
      QQuickImageProviderOptions providerOptions;
      QQuickImageProviderOptions::AutoTransform appliedTransform;
@@ -87,7 +87,7 @@ index 129b09f4c..6980001b4 100644
  
      QQuickTextureFactory *textureFactory;
  
-@@ -944,16 +945,17 @@ public:
+@@ -966,16 +967,17 @@ public:
      const QUrl *url;
      const QSize *size;
      QQuickImageProviderOptions options;
@@ -107,7 +107,7 @@ index 129b09f4c..6980001b4 100644
  }
  
  class QQuickPixmapStore : public QObject
-@@ -1214,7 +1216,7 @@ void QQuickPixmapData::release()
+@@ -1237,7 +1239,7 @@ void QQuickPixmapData::release()
  void QQuickPixmapData::addToCache()
  {
      if (!inCache) {
@@ -116,7 +116,7 @@ index 129b09f4c..6980001b4 100644
          pixmapStore()->m_cache.insert(key, this);
          inCache = true;
          PIXMAP_PROFILE(pixmapCountChanged<QQuickProfiler::PixmapCacheCountChanged>(
-@@ -1225,7 +1227,7 @@ void QQuickPixmapData::addToCache()
+@@ -1248,7 +1250,7 @@ void QQuickPixmapData::addToCache()
  void QQuickPixmapData::removeFromCache()
  {
      if (inCache) {
@@ -125,7 +125,7 @@ index 129b09f4c..6980001b4 100644
          pixmapStore()->m_cache.remove(key);
          inCache = false;
          PIXMAP_PROFILE(pixmapCountChanged<QQuickProfiler::PixmapCacheCountChanged>(
-@@ -1246,7 +1248,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1269,7 +1271,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
  
          switch (imageType) {
              case QQuickImageProvider::Invalid:
@@ -134,7 +134,7 @@ index 129b09f4c..6980001b4 100644
                      QQuickPixmap::tr("Invalid image provider: %1").arg(url.toString()));
              case QQuickImageProvider::Texture:
              {
-@@ -1254,7 +1256,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1277,7 +1279,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
                                                             : provider->requestTexture(imageId(url), &readSize, requestSize);
                  if (texture) {
                      *ok = true;
@@ -143,7 +143,7 @@ index 129b09f4c..6980001b4 100644
                  }
                  break;
              }
-@@ -1265,7 +1267,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1288,7 +1290,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
                                            : provider->requestImage(imageId(url), &readSize, requestSize);
                  if (!image.isNull()) {
                      *ok = true;
@@ -152,7 +152,7 @@ index 129b09f4c..6980001b4 100644
                  }
                  break;
              }
-@@ -1275,7 +1277,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1298,7 +1300,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
                                              : provider->requestPixmap(imageId(url), &readSize, requestSize);
                  if (!pixmap.isNull()) {
                      *ok = true;
@@ -161,7 +161,7 @@ index 129b09f4c..6980001b4 100644
                  }
                  break;
              }
-@@ -1287,7 +1289,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1310,7 +1312,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
          }
  
          // provider has bad image type, or provider returned null image
@@ -170,7 +170,7 @@ index 129b09f4c..6980001b4 100644
              QQuickPixmap::tr("Failed to get image from provider: %1").arg(url.toString()));
      }
  
-@@ -1305,7 +1307,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1328,7 +1330,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
              QQuickTextureFactory *factory = texReader.read();
              if (factory) {
                  *ok = true;
@@ -179,7 +179,7 @@ index 129b09f4c..6980001b4 100644
              } else {
                  errorString = QQuickPixmap::tr("Error decoding: %1").arg(url.toString());
                  if (f.fileName() != localFile)
-@@ -1316,7 +1318,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1339,7 +1341,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
              QQuickImageProviderOptions::AutoTransform appliedTransform = providerOptions.autoTransform();
              if (readImage(url, &f, &image, &errorString, &readSize, requestSize, providerOptions, &appliedTransform)) {
                  *ok = true;
@@ -188,7 +188,7 @@ index 129b09f4c..6980001b4 100644
              } else if (f.fileName() != localFile) {
                  errorString += QString::fromLatin1(" (%1)").arg(f.fileName());
              }
-@@ -1324,7 +1326,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
+@@ -1347,7 +1349,7 @@ static QQuickPixmapData* createPixmapDataSync(QQuickPixmap *declarativePixmap, Q
      } else {
          errorString = QQuickPixmap::tr("Cannot open: %1").arg(url.toString());
      }
@@ -197,7 +197,7 @@ index 129b09f4c..6980001b4 100644
  }
  
  
-@@ -1353,7 +1355,7 @@ QQuickPixmap::QQuickPixmap(QQmlEngine *engine, const QUrl &url, const QSize &siz
+@@ -1376,7 +1378,7 @@ QQuickPixmap::QQuickPixmap(QQmlEngine *engine, const QUrl &url, const QSize &siz
  
  QQuickPixmap::QQuickPixmap(const QUrl &url, const QImage &image)
  {
@@ -206,7 +206,7 @@ index 129b09f4c..6980001b4 100644
      d->addToCache();
  }
  
-@@ -1454,7 +1456,7 @@ void QQuickPixmap::setImage(const QImage &p)
+@@ -1477,7 +1479,7 @@ void QQuickPixmap::setImage(const QImage &p)
      clear();
  
      if (!p.isNull())
@@ -215,7 +215,7 @@ index 129b09f4c..6980001b4 100644
  }
  
  void QQuickPixmap::setPixmap(const QQuickPixmap &other)
-@@ -1520,7 +1522,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1543,7 +1545,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
          d = nullptr;
      }
  
@@ -224,7 +224,7 @@ index 129b09f4c..6980001b4 100644
      QQuickPixmapStore *store = pixmapStore();
  
      QHash<QQuickPixmapKey, QQuickPixmapData *>::Iterator iter = store->m_cache.end();
-@@ -1576,7 +1578,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
+@@ -1599,7 +1601,7 @@ void QQuickPixmap::load(QQmlEngine *engine, const QUrl &url, const QSize &reques
              return;
  
  
@@ -233,7 +233,7 @@ index 129b09f4c..6980001b4 100644
          if (options & QQuickPixmap::Cache)
              d->addToCache();
          d->storeToCache = orgOptions & QQuickPixmap::Cache;
-@@ -1611,9 +1613,9 @@ void QQuickPixmap::clear(QObject *obj)
+@@ -1634,9 +1636,9 @@ void QQuickPixmap::clear(QObject *obj)
      }
  }
  
@@ -246,7 +246,7 @@ index 129b09f4c..6980001b4 100644
  
      return store->m_cache.contains(key);
 diff --git a/src/quick/util/qquickpixmapcache_p.h b/src/quick/util/qquickpixmapcache_p.h
-index 91fb1ed3b..15b4e7423 100644
+index 91fb1ed..15b4e74 100644
 --- a/src/quick/util/qquickpixmapcache_p.h
 +++ b/src/quick/util/qquickpixmapcache_p.h
 @@ -175,7 +175,7 @@ public:

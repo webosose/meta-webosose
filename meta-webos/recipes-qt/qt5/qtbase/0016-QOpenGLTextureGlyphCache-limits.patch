@@ -1,4 +1,4 @@
-From 258aaf1b34143fe771e5abaa4bab17cfafbc674a Mon Sep 17 00:00:00 2001
+From 2f7b7d3e9a444ca96ec2754437217c25c365f17a Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Wed, 29 Oct 2014 00:21:30 +0200
 Subject: [PATCH] QOpenGLTextureGlyphCache limits
@@ -18,7 +18,7 @@ Upstream-Status: Inappropriate [specific to tv]
 diff --git a/src/gui/opengl/qopengltextureglyphcache.cpp b/src/gui/opengl/qopengltextureglyphcache.cpp
 old mode 100644
 new mode 100755
-index 556d52ef99..af8b8414a9
+index e3cbba955d..7be012679b
 --- a/src/gui/opengl/qopengltextureglyphcache.cpp
 +++ b/src/gui/opengl/qopengltextureglyphcache.cpp
 @@ -61,6 +61,8 @@ QOpenGLTextureGlyphCache::QOpenGLTextureGlyphCache(QFontEngine::GlyphFormat form
@@ -45,7 +45,7 @@ index 556d52ef99..af8b8414a9
  }
  
  QOpenGLTextureGlyphCache::~QOpenGLTextureGlyphCache()
-@@ -436,6 +446,9 @@ int QOpenGLTextureGlyphCache::glyphPadding() const
+@@ -446,6 +456,9 @@ int QOpenGLTextureGlyphCache::glyphPadding() const
  
  int QOpenGLTextureGlyphCache::maxTextureWidth() const
  {
@@ -55,7 +55,7 @@ index 556d52ef99..af8b8414a9
      QOpenGLContext *ctx = const_cast<QOpenGLContext *>(QOpenGLContext::currentContext());
      if (ctx == 0)
          return QImageTextureGlyphCache::maxTextureWidth();
-@@ -445,6 +458,9 @@ int QOpenGLTextureGlyphCache::maxTextureWidth() const
+@@ -455,6 +468,9 @@ int QOpenGLTextureGlyphCache::maxTextureWidth() const
  
  int QOpenGLTextureGlyphCache::maxTextureHeight() const
  {
@@ -80,7 +80,7 @@ index 598cb00ee5..fa17d888fc 100644
      QOpenGLVertexArrayObject m_vao;
  };
 diff --git a/src/gui/painting/qtextureglyphcache.cpp b/src/gui/painting/qtextureglyphcache.cpp
-index 2a7e0eaa0c..374f290896 100644
+index 99b04aaba6..8da111254d 100644
 --- a/src/gui/painting/qtextureglyphcache.cpp
 +++ b/src/gui/painting/qtextureglyphcache.cpp
 @@ -176,8 +176,8 @@ bool QTextureGlyphCache::populate(QFontEngine *fontEngine, int numGlyphs, const

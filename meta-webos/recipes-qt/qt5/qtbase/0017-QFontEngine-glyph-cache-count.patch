@@ -1,4 +1,4 @@
-From f085e06a52c796cc3fd24109b9a467c2072d2202 Mon Sep 17 00:00:00 2001
+From fe1625d1499554161aae1b5b932bccf71d96382c Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 7 Nov 2014 17:59:03 -0800
 Subject: [PATCH] QFontEngine glyph cache count
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [specific to tv]
  2 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/src/gui/text/qfontengine.cpp b/src/gui/text/qfontengine.cpp
-index 80fd288c04..bc077cd1e5 100644
+index eb7e416dd1..3471e6c290 100644
 --- a/src/gui/text/qfontengine.cpp
 +++ b/src/gui/text/qfontengine.cpp
 @@ -249,7 +249,8 @@ QFontEngine::QFontEngine(Type type)
@@ -62,7 +62,7 @@ index 80fd288c04..bc077cd1e5 100644
  
      GlyphCacheEntry entry;
 diff --git a/src/gui/text/qfontengine_p.h b/src/gui/text/qfontengine_p.h
-index a411e9ce4c..67853c103a 100644
+index 708c79c2ae..c7e90134ae 100644
 --- a/src/gui/text/qfontengine_p.h
 +++ b/src/gui/text/qfontengine_p.h
 @@ -379,6 +379,7 @@ private:

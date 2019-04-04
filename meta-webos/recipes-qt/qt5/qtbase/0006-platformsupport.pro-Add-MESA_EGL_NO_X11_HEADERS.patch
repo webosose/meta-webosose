@@ -1,4 +1,4 @@
-From 6cd37e2e0be12bf264b9f88d5773c48a7493cf3e Mon Sep 17 00:00:00 2001
+From 5fe7f1715da1c9bf1e596fc15b204e73a39657ce Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:59:35 +0100
 Subject: [PATCH] platformsupport.pro: Add MESA_EGL_NO_X11_HEADERS

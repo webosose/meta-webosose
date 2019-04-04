@@ -1,4 +1,4 @@
-From 6ea7a38e931596d387228c2f33f09fa83971d804 Mon Sep 17 00:00:00 2001
+From 0bff588cbe4466c4aa9a7ead19483897f513d704 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:56:00 +0100
 Subject: [PATCH] ChangeTheGlyphCacheSize

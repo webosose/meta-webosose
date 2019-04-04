@@ -1,4 +1,4 @@
-From 1ea27807d2ce9c1dc420d82161b26466d0535f97 Mon Sep 17 00:00:00 2001
+From 12616a9fcc23252ba4aa47bbd492b2a400c407c0 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:57:06 +0100
 Subject: [PATCH] QOpenGL2PaintEngineEx must makeCurrent own context
@@ -8,10 +8,10 @@ Subject: [PATCH] QOpenGL2PaintEngineEx must makeCurrent own context
  1 file changed, 10 insertions(+)
 
 diff --git a/src/gui/opengl/qopenglpaintengine.cpp b/src/gui/opengl/qopenglpaintengine.cpp
-index 6a89089f18..b01d46ddc8 100644
+index 001cb839fa..7efea45382 100644
 --- a/src/gui/opengl/qopenglpaintengine.cpp
 +++ b/src/gui/opengl/qopenglpaintengine.cpp
-@@ -2187,6 +2187,10 @@ bool QOpenGL2PaintEngineEx::end()
+@@ -2263,6 +2263,10 @@ bool QOpenGL2PaintEngineEx::end()
      QOpenGLPaintDevicePrivate::get(d->device)->endPaint();
  
      QOpenGLContext *ctx = d->ctx;
@@ -22,7 +22,7 @@ index 6a89089f18..b01d46ddc8 100644
      d->funcs.glUseProgram(0);
      d->transferMode(BrushDrawingMode);
  
-@@ -2220,6 +2224,12 @@ void QOpenGL2PaintEngineEx::ensureActive()
+@@ -2296,6 +2300,12 @@ void QOpenGL2PaintEngineEx::ensureActive()
      if (d->vao.isCreated())
          d->vao.bind();
  

@@ -1,4 +1,4 @@
-From 82d600055f5722f33c3994b1e4e6869fc94f5937 Mon Sep 17 00:00:00 2001
+From 47e15fd0e766bf3f2a0fec94f3a1f7822339f060 Mon Sep 17 00:00:00 2001
 From: Dong-Heon Jung <dongheon.jung@lge.com>
 Date: Tue, 11 Nov 2014 16:37:00 +0900
 Subject: [PATCH] QNetworkDiskCache: Disable disk cache if content have cookie
@@ -15,11 +15,11 @@ Upstream-Status: unknown
  1 file changed, 5 insertions(+)
 
 diff --git a/src/network/access/qnetworkreplyhttpimpl.cpp b/src/network/access/qnetworkreplyhttpimpl.cpp
-index a0c2214a50..dd86015215 100644
+index 226a490807..2427c9af78 100644
 --- a/src/network/access/qnetworkreplyhttpimpl.cpp
 +++ b/src/network/access/qnetworkreplyhttpimpl.cpp
-@@ -1744,6 +1744,11 @@ QNetworkCacheMetaData QNetworkReplyHttpImplPrivate::fetchCacheMetaData(const QNe
-         else if (cacheControl.contains("no-store"))
+@@ -1736,6 +1736,11 @@ QNetworkCacheMetaData QNetworkReplyHttpImplPrivate::fetchCacheMetaData(const QNe
+         if (cacheControl.contains("no-store"))
              canDiskCache = false;
  
 +        // Disable disk cache for contents which has set-cookie

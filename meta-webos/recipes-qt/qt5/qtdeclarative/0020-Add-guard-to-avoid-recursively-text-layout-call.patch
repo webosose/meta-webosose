@@ -1,4 +1,4 @@
-From 30d8297541f57c1a4e2a23dd4f83ac9233197f94 Mon Sep 17 00:00:00 2001
+From d3550c578b4d4bfad241fc99a812e718f1049baa Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Thu, 26 Jul 2018 13:01:20 +0900
 Subject: [PATCH] Add guard to avoid recursively text layout call
@@ -28,18 +28,18 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/#/c/235313/]
  2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquicktext.cpp b/src/quick/items/qquicktext.cpp
-index 76720e5c5..05f72e0a9 100644
+index 97cc33b95..2944c6b36 100644
 --- a/src/quick/items/qquicktext.cpp
 +++ b/src/quick/items/qquicktext.cpp
-@@ -88,6 +88,7 @@ QQuickTextPrivate::QQuickTextPrivate()
-     , truncated(false), hAlignImplicit(true), rightToLeftText(false)
+@@ -89,6 +89,7 @@ QQuickTextPrivate::QQuickTextPrivate()
      , layoutTextElided(false), textHasChanged(true), needToUpdateLayout(false), formatModifiesFontSize(false)
      , polishSize(false)
+     , updateSizeRecursionGuard(false)
 +    , layoutInProgress(false)
  {
      implicitAntialiasing = true;
  }
-@@ -648,7 +649,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+@@ -673,7 +674,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
              && q->widthValid()
              && (q->heightValid() || maximumLineCountValid);
  
@@ -48,7 +48,7 @@ index 76720e5c5..05f72e0a9 100644
              && ((singlelineElide && availableWidth() <= 0.)
                  || (multilineElide && q->heightValid() && availableHeight() <= 0.))) {
          // we are elided and we have a zero width or height
-@@ -674,6 +675,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+@@ -699,6 +700,7 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
          *baseline = fm.ascent();
          return QRectF(0, 0, 0, height);
      }
@@ -56,7 +56,7 @@ index 76720e5c5..05f72e0a9 100644
  
      bool shouldUseDesignMetrics = renderType != QQuickText::NativeRendering;
      if (extra.isAllocated())
-@@ -1131,6 +1133,8 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+@@ -1156,6 +1158,8 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
      if (truncated != wasTruncated)
          emit q->truncatedChanged();
  
@@ -66,13 +66,13 @@ index 76720e5c5..05f72e0a9 100644
  }
  
 diff --git a/src/quick/items/qquicktext_p_p.h b/src/quick/items/qquicktext_p_p.h
-index b0b1492d5..cc21d7948 100644
+index efa45e095..72b84c991 100644
 --- a/src/quick/items/qquicktext_p_p.h
 +++ b/src/quick/items/qquicktext_p_p.h
-@@ -174,6 +174,7 @@ public:
-     bool needToUpdateLayout:1;
+@@ -176,6 +176,7 @@ public:
      bool formatModifiesFontSize:1;
      bool polishSize:1; // Workaround for problem with polish called after updateSize (QTBUG-42636)
+     bool updateSizeRecursionGuard:1;
 +    bool layoutInProgress:1; // Do not do layout again if previous call is not completed
  
      static const QChar elideChar;

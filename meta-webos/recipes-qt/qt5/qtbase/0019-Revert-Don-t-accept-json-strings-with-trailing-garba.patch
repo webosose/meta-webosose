@@ -1,4 +1,4 @@
-From 5891e9f5147e508e1bb966c5ce79b68d67192921 Mon Sep 17 00:00:00 2001
+From e276cf1b69d325461efed6f10c089577fbcb938e Mon Sep 17 00:00:00 2001
 From: Jose Dapena Paz <jose.dapena@lge.com>
 Date: Mon, 23 Feb 2015 14:20:58 +0100
 Subject: [PATCH] Revert "Don't accept json strings with trailing garbage"
@@ -55,7 +55,7 @@ index b784890c54..4c4ae3070f 100644
  
      QString    errorString() const;
 diff --git a/src/corelib/serialization/qjsonparser.cpp b/src/corelib/serialization/qjsonparser.cpp
-index 39738b90a8..570dca8076 100644
+index bfba95520e..efd9a6d423 100644
 --- a/src/corelib/serialization/qjsonparser.cpp
 +++ b/src/corelib/serialization/qjsonparser.cpp
 @@ -77,7 +77,6 @@ QT_BEGIN_NAMESPACE
@@ -85,7 +85,7 @@ index 39738b90a8..570dca8076 100644
      }
  #ifndef QT_BOOTSTRAPPED
      return QCoreApplication::translate("QJsonParseError", sz);
-@@ -327,12 +321,6 @@ QJsonDocument Parser::parse(QJsonParseError *error)
+@@ -328,12 +322,6 @@ QJsonDocument Parser::parse(QJsonParseError *error)
          goto error;
      }
  

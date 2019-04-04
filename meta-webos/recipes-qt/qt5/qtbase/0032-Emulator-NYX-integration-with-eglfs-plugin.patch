@@ -1,4 +1,4 @@
-From 01fd6df23ae713456823dc1819443303d4148383 Mon Sep 17 00:00:00 2001
+From 2eebb88f96a600b235413251a4fc67e79db0e5d3 Mon Sep 17 00:00:00 2001
 From: "krishna.jha" <krishna.jha@lge.com>
 Date: Thu, 10 Aug 2017 14:40:15 +0530
 Subject: [PATCH] Emulator NYX integration with eglfs plugin
@@ -36,7 +36,7 @@ Change-Id: I1e932ba47f217198fb03eff1bcdb00527598fc38
  .../platforms/eglfs/api/NyxInputControl.h     |  39 ++
  src/plugins/platforms/eglfs/api/api.pri       |  22 +
  .../platforms/eglfs/api/input_keycode.h       |  51 ++
- .../platforms/eglfs/api/qeglfsintegration.cpp |  31 +
+ .../platforms/eglfs/api/qeglfsintegration.cpp |  32 +
  .../platforms/eglfs/api/qeglfsintegration_p.h |   7 +
  .../api/qemulatorkeyboard_defaultmap_p.h      | 640 ++++++++++++++++++
  .../eglfs/api/qemulatorkeyboardhandler.cpp    | 156 +++++
@@ -49,7 +49,7 @@ Change-Id: I1e932ba47f217198fb03eff1bcdb00527598fc38
  src/plugins/platforms/eglfs/api/qlinuxmouse.h |  54 ++
  .../deviceintegration/eglfs_kms/eglfs_kms.pro |   2 +
  .../eglfs_kms/qeglfskmsgbmintegration.cpp     |   8 +
- 22 files changed, 1953 insertions(+), 1 deletion(-)
+ 22 files changed, 1954 insertions(+), 1 deletion(-)
  create mode 100644 src/plugins/platforms/eglfs/api/InputControl.h
  create mode 100644 src/plugins/platforms/eglfs/api/NyxInputControl.cpp
  create mode 100644 src/plugins/platforms/eglfs/api/NyxInputControl.h
@@ -65,19 +65,19 @@ Change-Id: I1e932ba47f217198fb03eff1bcdb00527598fc38
  create mode 100644 src/plugins/platforms/eglfs/api/qlinuxmouse.h
 
 diff --git a/config_help.txt b/config_help.txt
-index f90d4439cd..06d8eb9d20 100644
+index fb37cbaed9..d626cb06f2 100644
 --- a/config_help.txt
 +++ b/config_help.txt
-@@ -290,6 +290,7 @@ Gui, printing, widget options:
+@@ -295,6 +295,7 @@ Gui, printing, widget options:
      -mirclient ......... Enable Mir client support [no] (Linux only)
-     -xcb ............... Select used xcb-* libraries [system/qt/no]
+     -xcb ............... Enable X11 support. Select used xcb-* libraries [system/qt/no]
                           (-qt-xcb still uses system version of libxcb itself)
 +    -webos-emulator..... Enable webOS QEMU emulator support [auto]
  
    Input backends:
      -libudev............ Enable udev support [auto]
 diff --git a/src/gui/configure.json b/src/gui/configure.json
-index 219385a108..24a7e66663 100644
+index 6fdcd562a7..8fbc24b0dd 100644
 --- a/src/gui/configure.json
 +++ b/src/gui/configure.json
 @@ -41,6 +41,7 @@
@@ -88,7 +88,7 @@ index 219385a108..24a7e66663 100644
              "xcb": { "type": "enum", "values": [ "no", "yes", "qt", "system" ] },
              "xcb-native-painting": "boolean",
              "xcb-xlib": "boolean",
-@@ -422,6 +423,12 @@
+@@ -545,6 +546,12 @@
                  { "type": "makeSpec", "spec": "VULKAN" }
              ]
          },
@@ -101,7 +101,7 @@ index 219385a108..24a7e66663 100644
          "wayland_server": {
              "label": "Wayland Server",
              "test": {
-@@ -1264,6 +1271,10 @@
+@@ -1514,6 +1521,10 @@
              "condition": "features.network && features.udpsocket",
              "output": [ "privateFeature" ]
          },
@@ -112,12 +112,12 @@ index 219385a108..24a7e66663 100644
          "xcb": {
              "label": "XCB",
              "section": "Platform plugins",
-@@ -1670,7 +1681,8 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
-                 "integrityhid",
-                 "mtdev",
-                 "tslib",
--                "xkbcommon-evdev"
-+                "xkbcommon-evdev",
+@@ -1924,7 +1935,8 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
+                         "xcb-xlib",
+                         "egl_x11"
+                     ]
+-                }
++                },
 +                "webos-emulator"
              ]
          },
@@ -136,7 +136,7 @@ index 5ea2e3f208..b65fd4330e 100644
      qkmsdevice_p.h
  
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index a5895559e6..ee2367d535 100644
+index ef81f6162d..45cef10d68 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 @@ -183,8 +183,13 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
@@ -408,7 +408,7 @@ index 0000000000..3ecef96961
 +
 +
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 33878a5f50..54372eb9ae 100644
+index 48469b0f8c..76ace138fd 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -98,6 +98,11 @@
@@ -423,7 +423,7 @@ index 33878a5f50..54372eb9ae 100644
  static void initResources()
  {
  #ifndef QT_NO_CURSOR
-@@ -447,6 +452,31 @@ void QEglFSIntegration::loadKeymapStatic(const QString &filename)
+@@ -450,6 +455,32 @@ void QEglFSIntegration::switchLangStatic()
  #endif
  }
  
@@ -452,10 +452,11 @@ index 33878a5f50..54372eb9ae 100644
 +    new QEmulatorKeyboardManager(QLatin1String("EvdevKeyboard"), keyboardDevices, this);
 +}
 +#else
++
  void QEglFSIntegration::createInputHandlers()
  {
  #if QT_CONFIG(libinput)
-@@ -475,6 +505,7 @@ void QEglFSIntegration::createInputHandlers()
+@@ -478,6 +509,7 @@ void QEglFSIntegration::createInputHandlers()
     new QIntegrityHIDManager("HID", "", this);
  #endif
  }
@@ -464,7 +465,7 @@ index 33878a5f50..54372eb9ae 100644
  EGLNativeDisplayType QEglFSIntegration::nativeDisplay() const
  {
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index c288876678..8043c3a230 100644
+index 898b322834..69ddfbd70c 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 @@ -57,6 +57,10 @@
@@ -478,7 +479,7 @@ index c288876678..8043c3a230 100644
  QT_BEGIN_NAMESPACE
  
  class QEglFSWindow;
-@@ -118,6 +122,9 @@ private:
+@@ -116,6 +120,9 @@ private:
      QScopedPointer<QFbVtHandler> m_vtHandler;
      QEvdevKeyboardManager *m_kbdMgr;
      bool m_disableInputHandlers;
@@ -2206,7 +2207,7 @@ index 0000000000..678f19337a
 +
 +#endif /* QLINUX_MOUSE_H */
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
-index 43170a3875..4a2a7784f9 100644
+index f5c2c0ed89..88b7a4fc48 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
 @@ -11,6 +11,8 @@ INCLUDEPATH += $$PWD/../../api $$PWD/../eglfs_kms_support
@@ -2217,9 +2218,9 @@ index 43170a3875..4a2a7784f9 100644
 +
  QMAKE_USE += gbm drm
  CONFIG += egl
- QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
+ 
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 402338197d..5ed2e0e96f 100644
+index f154520669..4a7587b76b 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 @@ -52,6 +52,10 @@
@@ -2233,7 +2234,7 @@ index 402338197d..5ed2e0e96f 100644
  QT_BEGIN_NAMESPACE
  
  QMutex QEglFSKmsGbmScreen::m_waitForFlipMutex;
-@@ -131,7 +135,11 @@ void QEglFSKmsGbmIntegration::presentBuffer(QPlatformSurface *surface)
+@@ -132,7 +136,11 @@ void QEglFSKmsGbmIntegration::presentBuffer(QPlatformSurface *surface)
  
  QKmsDevice *QEglFSKmsGbmIntegration::createDevice()
  {

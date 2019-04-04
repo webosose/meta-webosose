@@ -1,4 +1,4 @@
-From 315842247392bca401925f1395def8c0421f1cb5 Mon Sep 17 00:00:00 2001
+From 6d9ceed8ce17734ebce96703bd33a7fe99c367de Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 14 Feb 2014 14:58:58 +0200
 Subject: [PATCH] Revert "Remove dead code."
@@ -10,10 +10,10 @@ This reverts commit 909d3a57dfc279d8a8dee0751bf7635551d6ee3b.
  2 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 53c0231f8..7b2664ab0 100644
+index fa9aa88fa..3329bef76 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -321,6 +321,29 @@ void QQuickWindowPrivate::polishItems()
+@@ -326,6 +326,29 @@ void QQuickWindowPrivate::polishItems()
  #endif
  }
  
@@ -43,7 +43,7 @@ index 53c0231f8..7b2664ab0 100644
  /*!
   * Schedules the window to render another frame.
   *
-@@ -496,6 +519,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
+@@ -501,6 +524,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
      , touchMouseId(-1)
      , touchMouseDevice(nullptr)
      , touchMousePressTimestamp(0)
@@ -51,7 +51,7 @@ index 53c0231f8..7b2664ab0 100644
      , dirtyItemList(nullptr)
      , devicePixelRatio(0)
      , context(nullptr)
-@@ -3034,7 +3058,8 @@ void QQuickWindowPrivate::data_clear(QQmlListProperty<QObject> *property)
+@@ -3096,7 +3120,8 @@ void QQuickWindowPrivate::data_clear(QQmlListProperty<QObject> *property)
  bool QQuickWindowPrivate::isRenderable() const
  {
      Q_Q(const QQuickWindow);
@@ -62,10 +62,10 @@ index 53c0231f8..7b2664ab0 100644
  
  void QQuickWindowPrivate::contextCreationFailureMessage(const QSurfaceFormat &format,
 diff --git a/src/quick/items/qquickwindow_p.h b/src/quick/items/qquickwindow_p.h
-index b5e3a2c1e..10be7c1f2 100644
+index 5a3807b24..c2266763e 100644
 --- a/src/quick/items/qquickwindow_p.h
 +++ b/src/quick/items/qquickwindow_p.h
-@@ -223,6 +223,8 @@ public:
+@@ -219,6 +219,8 @@ public:
      bool isRenderable() const;
  
      bool emitError(QQuickWindow::SceneGraphError error, const QString &msg);

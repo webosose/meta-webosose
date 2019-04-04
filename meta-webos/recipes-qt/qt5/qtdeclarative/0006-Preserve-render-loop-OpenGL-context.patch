@@ -1,4 +1,4 @@
-From 5e4c42f7d39043f88046bfce63a39ee03d965116 Mon Sep 17 00:00:00 2001
+From dab964c4cf2d318515d1814a4eb9de8381383faf Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Sat, 28 Mar 2015 16:03:14 +0200
 Subject: [PATCH] Preserve render loop OpenGL context
@@ -30,7 +30,7 @@ Change-Id: Ic38ef5b759e2a678a6003b450c44a15ce411c6af
  1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index 05f635cf1..597c29e48 100644
+index 2e91bafa7..fa2eed2b6 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
 @@ -88,6 +88,9 @@ extern Q_GUI_EXPORT QImage qt_gl_read_framebuffer(const QSize &size, bool alpha_
@@ -43,7 +43,7 @@ index 05f635cf1..597c29e48 100644
  QSGRenderLoop *QSGRenderLoop::s_instance = nullptr;
  
  QSGRenderLoop::~QSGRenderLoop()
-@@ -283,6 +286,9 @@ QSGGuiThreadRenderLoop::QSGGuiThreadRenderLoop()
+@@ -285,6 +288,9 @@ QSGGuiThreadRenderLoop::QSGGuiThreadRenderLoop()
      }
      sg = QSGContext::createDefaultContext();
      rc = sg->createRenderContext();
@@ -53,7 +53,7 @@ index 05f635cf1..597c29e48 100644
  }
  
  QSGGuiThreadRenderLoop::~QSGGuiThreadRenderLoop()
-@@ -338,9 +344,11 @@ void QSGGuiThreadRenderLoop::windowDestroyed(QQuickWindow *window)
+@@ -341,9 +347,11 @@ void QSGGuiThreadRenderLoop::windowDestroyed(QQuickWindow *window)
      d->cleanupNodesOnShutdown();
      if (m_windows.size() == 0) {
          rc->invalidate();

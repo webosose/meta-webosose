@@ -1,7 +1,7 @@
-From 7dc3cc1b8c2211a683af8b6473acb8d9f10396e4 Mon Sep 17 00:00:00 2001
+From d130237c08d25c314a3cc99d3d24b922c544912e Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Wed, 20 May 2015 14:05:45 +0300
-Subject: [PATCH] Fix-HarfBuzz-NG-regression
+Subject: [PATCH] Fix HarfBuzz-NG regression
 
 :Release Notes:
 Patch defines list of explicit Unicode scripts and assign
@@ -14,23 +14,24 @@ This patch defines list of explicit Unicode scripts (being copied from old Harfb
 "Common" script property to other values that are not in that list
 
 :Testing Performed:
-webos-pro/master/816
+Build tested
 
 :QA Notes:
 
 :Issues Addressed:
 [DRD-7977] Re-enable use of harfbuzz-ng
 
+Change-Id: I961f7f37efb521d786f238ffc043ab1bac643ca8
 Upstream-Status: Inappropriate[bugfix for DRD-6125]
 ---
  src/gui/text/qtextengine.cpp | 39 ++++++++++++++++++++++++++++--------
  1 file changed, 31 insertions(+), 8 deletions(-)
 
 diff --git a/src/gui/text/qtextengine.cpp b/src/gui/text/qtextengine.cpp
-index 87dc63d59c..baa9cd744d 100644
+index 22c93d7ec2..c9c40a89ca 100644
 --- a/src/gui/text/qtextengine.cpp
 +++ b/src/gui/text/qtextengine.cpp
-@@ -2099,16 +2099,39 @@ void QTextEngine::itemize() const
+@@ -2127,16 +2127,39 @@ void QTextEngine::itemize() const
          // ### pretend HB-old behavior for now
          for (int i = 0; i < length; ++i) {
              switch (analysis[i].script) {

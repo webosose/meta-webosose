@@ -1,4 +1,4 @@
-From 44c642fefc117761510580287b29fef80aff51f0 Mon Sep 17 00:00:00 2001
+From ddc8179cba796ed3c1b529361ae8884d52bdc117 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 11:59:11 +0200
 Subject: [PATCH] network: SSL Handle Multiple Client Certificates
@@ -21,10 +21,10 @@ Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
  12 files changed, 86 insertions(+), 1 deletion(-)
 
 diff --git a/src/network/ssl/qsslcertificate_openssl.cpp b/src/network/ssl/qsslcertificate_openssl.cpp
-index fce150d79d..f36c09ea37 100644
+index fa87cfeaaf..1e170152da 100644
 --- a/src/network/ssl/qsslcertificate_openssl.cpp
 +++ b/src/network/ssl/qsslcertificate_openssl.cpp
-@@ -597,6 +597,16 @@ QByteArray QSslCertificatePrivate::asn1ObjectName(ASN1_OBJECT *object)
+@@ -615,6 +615,16 @@ QByteArray QSslCertificatePrivate::asn1ObjectName(ASN1_OBJECT *object)
      return asn1ObjectId(object);
  }
  
@@ -42,10 +42,10 @@ index fce150d79d..f36c09ea37 100644
  {
      QMap<QByteArray, QString> info;
 diff --git a/src/network/ssl/qsslcertificate_p.h b/src/network/ssl/qsslcertificate_p.h
-index 0397845f8d..a2c2faa861 100644
+index dfdceab502..54e71da504 100644
 --- a/src/network/ssl/qsslcertificate_p.h
 +++ b/src/network/ssl/qsslcertificate_p.h
-@@ -129,6 +129,7 @@ public:
+@@ -133,6 +133,7 @@ public:
      static bool isBlacklisted(const QSslCertificate &certificate);
      static QSslCertificateExtension convertExtension(X509_EXTENSION *ext);
      static QByteArray subjectInfoToString(QSslCertificate::SubjectInfo info);
@@ -54,7 +54,7 @@ index 0397845f8d..a2c2faa861 100644
      friend class QSslSocketBackendPrivate;
  
 diff --git a/src/network/ssl/qsslconfiguration.cpp b/src/network/ssl/qsslconfiguration.cpp
-index 52ddf8bb88..952c72a10b 100644
+index 3f732b4646..16e51a5350 100644
 --- a/src/network/ssl/qsslconfiguration.cpp
 +++ b/src/network/ssl/qsslconfiguration.cpp
 @@ -208,6 +208,7 @@ bool QSslConfiguration::operator==(const QSslConfiguration &other) const
@@ -65,7 +65,7 @@ index 52ddf8bb88..952c72a10b 100644
          d->privateKey == other.d->privateKey &&
          d->sessionCipher == other.d->sessionCipher &&
          d->sessionProtocol == other.d->sessionProtocol &&
-@@ -261,6 +262,7 @@ bool QSslConfiguration::isNull() const
+@@ -262,6 +263,7 @@ bool QSslConfiguration::isNull() const
              d->ephemeralServerKey.isNull() &&
              d->dhParams == QSslDiffieHellmanParameters::defaultParameters() &&
              d->localCertificateChain.isEmpty() &&
@@ -73,7 +73,7 @@ index 52ddf8bb88..952c72a10b 100644
              d->privateKey.isNull() &&
              d->peerCertificate.isNull() &&
              d->peerCertificateChain.count() == 0 &&
-@@ -442,6 +444,16 @@ void QSslConfiguration::setLocalCertificate(const QSslCertificate &certificate)
+@@ -443,6 +445,16 @@ void QSslConfiguration::setLocalCertificate(const QSslCertificate &certificate)
      d->localCertificateChain += certificate;
  }
  
@@ -91,10 +91,10 @@ index 52ddf8bb88..952c72a10b 100644
      Returns the peer's digital certificate (i.e., the immediate
      certificate of the host you are connected to), or a null
 diff --git a/src/network/ssl/qsslconfiguration.h b/src/network/ssl/qsslconfiguration.h
-index fe4181d755..82f431570f 100644
+index 454ac0cee3..5899b69416 100644
 --- a/src/network/ssl/qsslconfiguration.h
 +++ b/src/network/ssl/qsslconfiguration.h
-@@ -111,6 +111,9 @@ public:
+@@ -116,6 +116,9 @@ public:
      QSslCertificate localCertificate() const;
      void setLocalCertificate(const QSslCertificate &certificate);
  
@@ -105,7 +105,7 @@ index fe4181d755..82f431570f 100644
      QList<QSslCertificate> peerCertificateChain() const;
      QSslCipher sessionCipher() const;
 diff --git a/src/network/ssl/qsslconfiguration_p.h b/src/network/ssl/qsslconfiguration_p.h
-index 38a98239db..9b513dc22d 100644
+index 6c23165c6a..c038a7c831 100644
 --- a/src/network/ssl/qsslconfiguration_p.h
 +++ b/src/network/ssl/qsslconfiguration_p.h
 @@ -102,6 +102,7 @@ public:
@@ -137,10 +137,10 @@ index 48beebf134..6a1bfeed19 100644
      SSL_SESSION *session;
      QByteArray m_sessionASN1;
 diff --git a/src/network/ssl/qsslsocket.cpp b/src/network/ssl/qsslsocket.cpp
-index ee157082ea..dfc0711a1d 100644
+index 4f49a71e8a..b413f9da8d 100644
 --- a/src/network/ssl/qsslsocket.cpp
 +++ b/src/network/ssl/qsslsocket.cpp
-@@ -2250,6 +2250,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
+@@ -2310,6 +2310,7 @@ void QSslConfigurationPrivate::deepCopyDefaultConfiguration(QSslConfigurationPri
      ptr->peerCertificate = global->peerCertificate;
      ptr->peerCertificateChain = global->peerCertificateChain;
      ptr->localCertificateChain = global->localCertificateChain;
@@ -149,10 +149,10 @@ index ee157082ea..dfc0711a1d 100644
      ptr->sessionCipher = global->sessionCipher;
      ptr->sessionProtocol = global->sessionProtocol;
 diff --git a/src/network/ssl/qsslsocket_openssl.cpp b/src/network/ssl/qsslsocket_openssl.cpp
-index 1067b8af80..ab556b58ae 100644
+index e07fc7da20..c395824e6c 100644
 --- a/src/network/ssl/qsslsocket_openssl.cpp
 +++ b/src/network/ssl/qsslsocket_openssl.cpp
-@@ -91,6 +91,7 @@ QT_BEGIN_NAMESPACE
+@@ -96,6 +96,7 @@ QT_BEGIN_NAMESPACE
  bool QSslSocketPrivate::s_libraryLoaded = false;
  bool QSslSocketPrivate::s_loadedCiphersAndCerts = false;
  bool QSslSocketPrivate::s_loadRootCertsOnDemand = false;
@@ -160,7 +160,7 @@ index 1067b8af80..ab556b58ae 100644
  
  #if OPENSSL_VERSION_NUMBER >= 0x10001000L
  int QSslSocketBackendPrivate::s_indexForSSLExtraData = -1;
-@@ -292,6 +293,48 @@ long QSslSocketBackendPrivate::setupOpenSslOptions(QSsl::SslProtocol protocol, Q
+@@ -328,6 +329,48 @@ long QSslSocketBackendPrivate::setupOpenSslOptions(QSsl::SslProtocol protocol, Q
      return options;
  }
  
@@ -209,7 +209,7 @@ index 1067b8af80..ab556b58ae 100644
  bool QSslSocketBackendPrivate::initSslContext()
  {
      Q_Q(QSslSocket);
-@@ -318,6 +361,9 @@ bool QSslSocketBackendPrivate::initSslContext()
+@@ -354,6 +397,9 @@ bool QSslSocketBackendPrivate::initSslContext()
          return false;
      }
  
@@ -220,32 +220,32 @@ index 1067b8af80..ab556b58ae 100644
          configuration.protocol != QSsl::SslV3 &&
          configuration.protocol != QSsl::UnknownProtocol &&
 diff --git a/src/network/ssl/qsslsocket_openssl_p.h b/src/network/ssl/qsslsocket_openssl_p.h
-index 2a800cdc34..be0c620d02 100644
+index c16b9d5f76..c8ae120b97 100644
 --- a/src/network/ssl/qsslsocket_openssl_p.h
 +++ b/src/network/ssl/qsslsocket_openssl_p.h
-@@ -159,6 +159,8 @@ public:
+@@ -161,6 +161,8 @@ public:
                               QSslKey *key, QSslCertificate *cert,
                               QList<QSslCertificate> *caCertificates,
                               const QByteArray &passPhrase);
 +    static int clientCertCb(SSL *ssl, X509 **x509, EVP_PKEY **pkey);
 +    int clientCert(SSL *ssl, X509 **x509, EVP_PKEY **pkey);
- };
  
- #ifdef Q_OS_WIN
+     static QString msgErrorsDuringHandshake();
+ };
 diff --git a/src/network/ssl/qsslsocket_openssl_symbols.cpp b/src/network/ssl/qsslsocket_openssl_symbols.cpp
-index 59c93677dd..a053932d28 100644
+index 299df6b685..fe1729cb8f 100644
 --- a/src/network/ssl/qsslsocket_openssl_symbols.cpp
 +++ b/src/network/ssl/qsslsocket_openssl_symbols.cpp
-@@ -496,6 +496,8 @@ DEFINEFUNC(int, X509_STORE_CTX_get_error_depth, X509_STORE_CTX *a, a, return -1,
- DEFINEFUNC(X509 *, X509_STORE_CTX_get_current_cert, X509_STORE_CTX *a, a, return 0, return)
- DEFINEFUNC(X509_STORE_CTX *, X509_STORE_CTX_new, DUMMYARG, DUMMYARG, return 0, return)
+@@ -536,6 +536,8 @@ DEFINEFUNC(X509_STORE_CTX *, X509_STORE_CTX_new, DUMMYARG, DUMMYARG, return null
+ DEFINEFUNC2(void *, X509_STORE_CTX_get_ex_data, X509_STORE_CTX *ctx, ctx, int idx, idx, return nullptr, return)
+ DEFINEFUNC(int, SSL_get_ex_data_X509_STORE_CTX_idx, DUMMYARG, DUMMYARG, return -1, return)
  DEFINEFUNC3(int, SSL_CTX_load_verify_locations, SSL_CTX *ctx, ctx, const char *CAfile, CAfile, const char *CApath, CApath, return 0, return)
 +DEFINEFUNC2(void, SSL_CTX_set_client_cert_cb, SSL_CTX *ctx, ctx, int (*client_cert_cb)(SSL *ssl, X509 **x509, EVP_PKEY **pkey), client_cert_cb, return, DUMMYARG)
 +DEFINEFUNC(STACK_OF(X509_NAME) *, SSL_get_client_CA_list, const SSL *s, s, return 0, return)
  DEFINEFUNC2(int, i2d_SSL_SESSION, SSL_SESSION *in, in, unsigned char **pp, pp, return 0, return)
- DEFINEFUNC3(SSL_SESSION *, d2i_SSL_SESSION, SSL_SESSION **a, a, const unsigned char **pp, pp, long length, length, return 0, return)
+ DEFINEFUNC3(SSL_SESSION *, d2i_SSL_SESSION, SSL_SESSION **a, a, const unsigned char **pp, pp, long length, length, return nullptr, return)
  #if OPENSSL_VERSION_NUMBER >= 0x1000100fL && !defined(OPENSSL_NO_NEXTPROTONEG)
-@@ -1227,6 +1229,8 @@ bool q_resolveOpenSslSymbols()
+@@ -1332,6 +1334,8 @@ bool q_resolveOpenSslSymbols()
      RESOLVEFUNC(d2i_X509)
      RESOLVEFUNC(i2d_X509)
      RESOLVEFUNC(SSL_CTX_load_verify_locations)
@@ -255,10 +255,10 @@ index 59c93677dd..a053932d28 100644
      RESOLVEFUNC(d2i_SSL_SESSION)
  #if OPENSSL_VERSION_NUMBER >= 0x1000100fL && !defined(OPENSSL_NO_NEXTPROTONEG)
 diff --git a/src/network/ssl/qsslsocket_openssl_symbols_p.h b/src/network/ssl/qsslsocket_openssl_symbols_p.h
-index 68b519d74e..8df91c7804 100644
+index bfdfbf0efc..49ec821738 100644
 --- a/src/network/ssl/qsslsocket_openssl_symbols_p.h
 +++ b/src/network/ssl/qsslsocket_openssl_symbols_p.h
-@@ -489,6 +489,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
+@@ -493,6 +493,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
  
  #define q_sk_X509_num(st) q_SKM_sk_num(X509, (st))
  #define q_sk_X509_value(st, i) q_SKM_sk_value(X509, (st), (i))
@@ -267,7 +267,7 @@ index 68b519d74e..8df91c7804 100644
  #define q_sk_SSL_CIPHER_num(st) q_SKM_sk_num(SSL_CIPHER, (st))
  #define q_sk_SSL_CIPHER_value(st, i) q_SKM_sk_value(SSL_CIPHER, (st), (i))
  #define q_SSL_CTX_add_extra_chain_cert(ctx,x509) \
-@@ -499,6 +501,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
+@@ -503,6 +505,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
                                          (char *)(dsa))
  #define q_OpenSSL_add_all_algorithms() q_OPENSSL_add_all_algorithms_conf()
  int q_SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile, const char *CApath);

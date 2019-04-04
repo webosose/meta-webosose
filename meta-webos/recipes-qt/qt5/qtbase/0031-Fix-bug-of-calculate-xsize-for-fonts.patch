@@ -1,4 +1,4 @@
-From 54b477ce007045fbc64b14aca52dc7561d44bc0c Mon Sep 17 00:00:00 2001
+From 2b1e7cee60aaf87fced18c86e55a4f450fdffd87 Mon Sep 17 00:00:00 2001
 From: Gleb Manyagin <gleb.manyagin@lge.com>
 Date: Tue, 27 Feb 2018 12:12:59 +0300
 Subject: [PATCH] Fix bug of calculate xsize for fonts
@@ -16,10 +16,10 @@ Change-Id: I9e4e2a93c8d8b10d9895a9b72164855b0f22642d
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-index e87404f60d..0b812e3d50 100644
+index 43174cb4e0..4d401fef3f 100644
 --- a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
 +++ b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-@@ -351,7 +351,7 @@ void QFreetypeFace::release(const QFontEngine::FaceId &face_id)
+@@ -342,7 +342,7 @@ void QFreetypeFace::release(const QFontEngine::FaceId &face_id)
  void QFreetypeFace::computeSize(const QFontDef &fontDef, int *xsize, int *ysize, bool *outline_drawing, QFixed *scalableBitmapScaleFactor)
  {
      *ysize = qRound(fontDef.pixelSize * 64);
