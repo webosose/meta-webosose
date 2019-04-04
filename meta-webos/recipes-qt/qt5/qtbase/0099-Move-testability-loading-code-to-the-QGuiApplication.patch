@@ -1,4 +1,4 @@
-From a7f7410b54b419dbb7a54a6efe6702299c02ca7b Mon Sep 17 00:00:00 2001
+From 93bfe4227bc10e98177b91e08155d35f6b824248 Mon Sep 17 00:00:00 2001
 From: Tigran Avanesov <tigran.avanesov@lge.com>
 Date: Fri, 25 Jul 2014 11:13:10 +0300
 Subject: [PATCH] Move testability loading code to the QGuiApplication
@@ -17,10 +17,10 @@ Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
  4 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/src/gui/kernel/qguiapplication.cpp b/src/gui/kernel/qguiapplication.cpp
-index 06d1fcae53..164190db7c 100644
+index fd01f8bb7b..a8c41dda82 100644
 --- a/src/gui/kernel/qguiapplication.cpp
 +++ b/src/gui/kernel/qguiapplication.cpp
-@@ -118,6 +118,10 @@
+@@ -123,6 +123,10 @@
  
  #include <ctype.h>
  
@@ -31,7 +31,7 @@ index 06d1fcae53..164190db7c 100644
  QT_BEGIN_NAMESPACE
  
  // Helper macro for static functions to check on the existence of the application class.
-@@ -145,6 +149,12 @@ bool QGuiApplicationPrivate::highDpiScalingUpdated = false;
+@@ -152,6 +156,12 @@ QPointer<QWindow> QGuiApplicationPrivate::currentDragWindow;
  
  QVector<QGuiApplicationPrivate::TabletPointData> QGuiApplicationPrivate::tabletDevicePoints;
  
@@ -44,7 +44,7 @@ index 06d1fcae53..164190db7c 100644
  QPlatformIntegration *QGuiApplicationPrivate::platform_integration = 0;
  QPlatformTheme *QGuiApplicationPrivate::platform_theme = 0;
  
-@@ -614,6 +624,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+@@ -624,6 +634,11 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
  {
      d_func()->init();
  
@@ -56,7 +56,7 @@ index 06d1fcae53..164190db7c 100644
      QCoreApplicationPrivate::eventDispatcher->startingUp();
  }
  
-@@ -623,6 +638,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
+@@ -633,6 +648,10 @@ QGuiApplication::QGuiApplication(int &argc, char **argv, int flags)
  QGuiApplication::QGuiApplication(QGuiApplicationPrivate &p)
      : QCoreApplication(p)
  {
@@ -67,7 +67,7 @@ index 06d1fcae53..164190db7c 100644
  }
  
  /*!
-@@ -688,6 +707,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
+@@ -699,6 +718,8 @@ QGuiApplicationPrivate::QGuiApplicationPrivate(int &argc, char **argv, int flags
      is_session_restored = false;
      is_saving_session = false;
  #endif
@@ -76,7 +76,7 @@ index 06d1fcae53..164190db7c 100644
  }
  
  /*!
-@@ -4047,6 +4068,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
+@@ -4117,6 +4138,24 @@ QInputDeviceManager *QGuiApplicationPrivate::inputDeviceManager()
  
      return m_inputDeviceManager;
  }
@@ -117,22 +117,22 @@ index 02dffef0fe..1cd784d4ab 100644
      Q_DECLARE_PRIVATE(QGuiApplication)
  
 diff --git a/src/gui/kernel/qguiapplication_p.h b/src/gui/kernel/qguiapplication_p.h
-index f6f7aa7f8c..d4081b6832 100644
+index 042a36c31f..0090b0d434 100644
 --- a/src/gui/kernel/qguiapplication_p.h
 +++ b/src/gui/kernel/qguiapplication_p.h
-@@ -213,6 +213,7 @@ public:
-     static QWindow *currentMousePressWindow;
+@@ -218,6 +218,7 @@ public:
      static Qt::ApplicationState applicationState;
      static bool highDpiScalingUpdated;
+     static QPointer<QWindow> currentDragWindow;
 +    static bool load_testability;
  
      struct TabletPointData {
          TabletPointData(qint64 devId = 0) : deviceId(devId), state(Qt::NoButton), target(nullptr) {}
 diff --git a/src/widgets/kernel/qapplication.cpp b/src/widgets/kernel/qapplication.cpp
-index b71efabcc9..bc6f990476 100644
+index ebab87b193..fed5409b03 100644
 --- a/src/widgets/kernel/qapplication.cpp
 +++ b/src/widgets/kernel/qapplication.cpp
-@@ -577,6 +577,7 @@ void QApplicationPrivate::init()
+@@ -579,6 +579,7 @@ void QApplicationPrivate::init()
      extern void qt_gui_eval_init(QCoreApplicationPrivate::Type);
      qt_gui_eval_init(application_type);
  #endif

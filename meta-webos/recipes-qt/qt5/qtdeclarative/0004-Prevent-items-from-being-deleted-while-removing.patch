@@ -1,4 +1,4 @@
-From 0ef729ec1b6e84d79c1eed0aa7d77a4842181c1b Mon Sep 17 00:00:00 2001
+From e950c8782e89a78fe96e350d8cceaf11e8c83183 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 10 Dec 2014 15:28:17 +0900
 Subject: [PATCH] Prevent items from being deleted while removing
@@ -10,10 +10,10 @@ That may cause to crash. ObjectReference keep the items from being deleted.
  1 file changed, 11 insertions(+)
 
 diff --git a/src/qml/types/qqmldelegatemodel.cpp b/src/qml/types/qqmldelegatemodel.cpp
-index 7a12813f0..14136d5d0 100644
+index 572f58339..79ff1486a 100644
 --- a/src/qml/types/qqmldelegatemodel.cpp
 +++ b/src/qml/types/qqmldelegatemodel.cpp
-@@ -1401,6 +1401,12 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
+@@ -1483,6 +1483,12 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
  
      d->m_count -= count;
      const QList<QQmlDelegateModelItem *> cache = d->m_cache;
@@ -26,9 +26,9 @@ index 7a12813f0..14136d5d0 100644
      for (int i = 0, c = cache.count();  i < c; ++i) {
          QQmlDelegateModelItem *item = cache.at(i);
          // layout change triggered by removal of a previous item might have
-@@ -1413,6 +1419,11 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
-         else  if (item->modelIndex() >= index)
-             item->setModelIndex(-1);
+@@ -1499,6 +1505,11 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
+             item->setModelIndex(-1, -1, -1);
+         }
      }
 +    //Release items which are referenced before the loop
 +    for (int i = 0; i < cache.count(); ++i) {

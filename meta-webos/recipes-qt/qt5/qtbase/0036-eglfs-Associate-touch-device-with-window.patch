@@ -1,4 +1,4 @@
-From 901ac331353659ee1b233af400fb835ae24d6876 Mon Sep 17 00:00:00 2001
+From 9be896be8204e8416d8f4be23a2c16272f850c96 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 28 Mar 2019 02:09:30 +0900
 Subject: [PATCH] eglfs: Associate touch device with window
@@ -23,11 +23,6 @@ Confirmed touch events are delivered to the window associated.
 [PLAT-54519] Handle touch events for dual displays
 
 Change-Id: Ib7a8b7afd5a525cdc2a059e790badc7f8c098714
-
-Conflicts:
-	src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
-	src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
-	src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
 ---
  .../input/evdevtouch/qevdevtouchhandler.cpp   | 39 ++++++++++++++++---
  .../input/evdevtouch/qevdevtouchhandler_p.h   | 12 ++++++
@@ -244,7 +239,7 @@ index e524c516f1..3ca991d104 100644
      void removeDevice(const QString &deviceNode);
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-index 4aa5f5c15b..6b9d17ba30 100644
+index cc103d8862..a0d3650037 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 @@ -412,4 +412,10 @@ QString QEglFSDeviceIntegration::kbdDeviceName(QString &output) const
@@ -271,7 +266,7 @@ index e38a69c1a1..acf9250496 100644
      static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format);
      static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration);
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index bdce75478c..75f0f39e03 100644
+index f9b6439384..da6f808c9c 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -120,7 +120,7 @@ QEglFSIntegration::QEglFSIntegration()
@@ -283,7 +278,7 @@ index bdce75478c..75f0f39e03 100644
        m_disableInputHandlers(false)
  {
      m_disableInputHandlers = qEnvironmentVariableIntValue("QT_QPA_EGLFS_DISABLE_INPUT");
-@@ -592,7 +592,7 @@ void QEglFSIntegration::createInputHandlers()
+@@ -596,7 +596,7 @@ void QEglFSIntegration::createInputHandlers()
  #if QT_CONFIG(tslib)
      if (!useTslib)
  #endif
@@ -292,7 +287,7 @@ index bdce75478c..75f0f39e03 100644
  #endif
  
  #if QT_CONFIG(integrityhid)
-@@ -620,6 +620,8 @@ bool QEglFSIntegration::associateInputHandlers(QWindow *window) const
+@@ -624,6 +624,8 @@ bool QEglFSIntegration::associateInputHandlers(QWindow *window) const
          QString outputName = s ? s->name() : QString();
          if (m_kbdMgr && !i->kbdDeviceName(outputName).isEmpty())
              associated = m_kbdMgr->setWindow(i->kbdDeviceName(outputName), window);
@@ -302,7 +297,7 @@ index bdce75478c..75f0f39e03 100644
      return associated;
  }
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index b2f66497d0..27be60fc72 100644
+index e92b07b589..75b4b28f5d 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 @@ -69,6 +69,7 @@ class QEglFSContext;
@@ -313,7 +308,7 @@ index b2f66497d0..27be60fc72 100644
  
  class Q_EGLFS_EXPORT QEglFSIntegration : public QPlatformIntegration, public QPlatformNativeInterface
  {
-@@ -130,6 +131,7 @@ private:
+@@ -128,6 +129,7 @@ private:
      QScopedPointer<QPlatformServices> m_services;
      QScopedPointer<QFbVtHandler> m_vtHandler;
      QEvdevKeyboardManager *m_kbdMgr;
@@ -322,10 +317,10 @@ index b2f66497d0..27be60fc72 100644
  #if defined(WEBOS_EMULATOR)
  	QList<QLinuxMouseHandler *> m_mouses;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index 6481e49b3c..aeb3b79803 100644
+index 7b5f4e6e8d..b2a13504d5 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-@@ -173,4 +173,9 @@ QString QEglFSKmsIntegration::kbdDeviceName(QString &output) const
+@@ -179,4 +179,9 @@ QString QEglFSKmsIntegration::kbdDeviceName(QString &output) const
      return m_screenConfig->outputSettings().value(output).value(QStringLiteral("keyboardDevice")).toString();
  }
  

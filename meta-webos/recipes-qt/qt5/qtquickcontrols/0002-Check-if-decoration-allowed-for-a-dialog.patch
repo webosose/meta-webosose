@@ -1,4 +1,4 @@
-From 88b734d07e1824af3da5763aae426d2b36985ac0 Mon Sep 17 00:00:00 2001
+From 3eaef5b2db3bbdafe1a9bd28ecb25a6ca20c3d14 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Thu, 4 Aug 2016 15:11:35 +0300
 Subject: [PATCH] Check if decoration allowed for a dialog

@@ -1,0 +1,61 @@
+From 27db9eb7bf699f6c37ad452ff7e59f0c7863c802 Mon Sep 17 00:00:00 2001
+From: Pavel Tumakaev <p.tumakaev@lgepartner.com>
+Date: Wed, 22 May 2019 17:32:25 +0300
+Subject: [PATCH] Fix crashes in QQmlXMLHttpRequest
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ExecutionEngine::callingQmlContext() in some cases returns a null pointer.
+According to ISO/IEC 14882 §9.3.1/1 "If a nonstatic member function of a
+class X is called for an object that is not of type X, or of a type
+derived from X, the behavior is undefined". Thus, invoking a
+QQmlContextData::resolvedUrl() member function on a null instance results
+in undefined behavior, and leads to a crash in some cases.
+
+ExecutionEngine::qmlEngine() in some cases returns a null pointer. The
+QQmlEnginePrivate::get() method must return a pointer to a QQmlEngine
+private internal class. Call QQmlEnginePrivate::get() with passed null
+pointer leads to application crash. If the QQmlEngine pointer is null,
+the QQmlEnginePrivate pointer should also be null. Thus, if the pointer
+to QQmlEngine is null pointer, the null pointer to the private class
+should be passed to the QQmlEnginePrivate::warning().
+
+Task-number: QTBUG-75983
+Change-Id: Iad240bb6db0be58e9087b7a86f8d400b07623865
+
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/262616]
+---
+ src/qml/qml/qqmlxmlhttprequest.cpp | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/src/qml/qml/qqmlxmlhttprequest.cpp b/src/qml/qml/qqmlxmlhttprequest.cpp
+index 9f629f974..9877cc027 100644
+--- a/src/qml/qml/qqmlxmlhttprequest.cpp
++++ b/src/qml/qml/qqmlxmlhttprequest.cpp
+@@ -1574,7 +1574,8 @@ void QQmlXMLHttpRequest::dispatchCallbackNow(Object *thisObj, bool done, bool er
+ 
+         if (scope.engine->hasException) {
+             QQmlError error = scope.engine->catchExceptionAsQmlError();
+-            QQmlEnginePrivate::warning(QQmlEnginePrivate::get(scope.engine->qmlEngine()), error);
++            QQmlEnginePrivate *qmlEnginePrivate = scope.engine->qmlEngine() ? QQmlEnginePrivate::get(scope.engine->qmlEngine()) : nullptr;
++            QQmlEnginePrivate::warning(qmlEnginePrivate, error);
+         }
+     };
+ 
+@@ -1765,8 +1766,13 @@ ReturnedValue QQmlXMLHttpRequestCtor::method_open(const FunctionObject *b, const
+     // Argument 1 - URL
+     QUrl url = QUrl(argv[1].toQStringNoThrow());
+ 
+-    if (url.isRelative())
+-        url = scope.engine->callingQmlContext()->resolvedUrl(url);
++    if (url.isRelative()) {
++        QQmlContextData *qmlContextData = scope.engine->callingQmlContext();
++        if (qmlContextData)
++            url = qmlContextData->resolvedUrl(url);
++        else
++            url = scope.engine->resolvedUrl(url.url());
++    }
+ 
+     bool async = true;
+     // Argument 2 - async (optional)

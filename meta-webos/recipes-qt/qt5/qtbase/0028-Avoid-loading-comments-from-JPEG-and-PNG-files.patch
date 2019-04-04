@@ -1,4 +1,4 @@
-From 0a59ef16b00f95fceb8d26ac5a58d73496bc4b38 Mon Sep 17 00:00:00 2001
+From 45c9a2204c293e479d87a502dcc83d7d60ccaeb9 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 26 Apr 2017 12:29:24 +0900
 Subject: [PATCH] Avoid loading comments from JPEG and PNG files
@@ -34,10 +34,10 @@ Change-Id: I3744312f69aa3201d5188776cbd99fe690b75d32
  2 files changed, 4 insertions(+)
 
 diff --git a/src/gui/image/qpnghandler.cpp b/src/gui/image/qpnghandler.cpp
-index 53d9a8a49a..8c3616ef10 100644
+index 808037f434..58213e0e6e 100644
 --- a/src/gui/image/qpnghandler.cpp
 +++ b/src/gui/image/qpnghandler.cpp
-@@ -486,6 +486,7 @@ static void qt_png_warning(png_structp /*png_ptr*/, png_const_charp message)
+@@ -508,6 +508,7 @@ static void qt_png_warning(png_structp /*png_ptr*/, png_const_charp message)
  
  void QPngHandlerPrivate::readPngTexts(png_info *info)
  {
@@ -45,7 +45,7 @@ index 53d9a8a49a..8c3616ef10 100644
      png_textp text_ptr;
      int num_text=0;
      png_get_text(png_ptr, info, &text_ptr, &num_text);
-@@ -508,6 +509,7 @@ void QPngHandlerPrivate::readPngTexts(png_info *info)
+@@ -530,6 +531,7 @@ void QPngHandlerPrivate::readPngTexts(png_info *info)
          readTexts.append(value);
          text_ptr++;
      }
@@ -54,18 +54,18 @@ index 53d9a8a49a..8c3616ef10 100644
  
  
 diff --git a/src/plugins/imageformats/jpeg/qjpeghandler.cpp b/src/plugins/imageformats/jpeg/qjpeghandler.cpp
-index 1cdc28c077..405e975a1a 100644
+index 54fe857908..76e7916b7f 100644
 --- a/src/plugins/imageformats/jpeg/qjpeghandler.cpp
 +++ b/src/plugins/imageformats/jpeg/qjpeghandler.cpp
-@@ -903,6 +903,7 @@ bool QJpegHandlerPrivate::readJpegHeader(QIODevice *device)
+@@ -902,6 +902,7 @@ bool QJpegHandlerPrivate::readJpegHeader(QIODevice *device)
  
              for (jpeg_saved_marker_ptr marker = info.marker_list; marker != NULL; marker = marker->next) {
                  if (marker->marker == JPEG_COM) {
 +#ifdef WEBOS_SUPPORT_IMAGE_TEXT
                      QString key, value;
-                     QString s = QString::fromLatin1((const char *)marker->data, marker->data_length);
+                     QString s = QString::fromUtf8((const char *)marker->data, marker->data_length);
                      int index = s.indexOf(QLatin1String(": "));
-@@ -918,6 +919,7 @@ bool QJpegHandlerPrivate::readJpegHeader(QIODevice *device)
+@@ -917,6 +918,7 @@ bool QJpegHandlerPrivate::readJpegHeader(QIODevice *device)
                      description += key + QLatin1String(": ") + value.simplified();
                      readTexts.append(key);
                      readTexts.append(value);

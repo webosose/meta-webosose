@@ -1,4 +1,4 @@
-From 72a50c9a1db96e0990b28da9d3e51fa0579adf79 Mon Sep 17 00:00:00 2001
+From 8a4c991691dc6268fb9323ea15563e2ded0f6a4f Mon Sep 17 00:00:00 2001
 From: Andrey Volykhin <andrey.volykhin@lge.com>
 Date: Fri, 10 Apr 2015 17:10:57 -0700
 Subject: [PATCH] Allow to abort the scene graph rendering of QML
@@ -34,10 +34,10 @@ Updated for qt5.4
  6 files changed, 40 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 4117b36b4..ca4cf480b 100644
+index b6d9866ac..90a73a866 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -534,6 +534,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
+@@ -539,6 +539,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
      , customRenderStage(nullptr)
      , clearColor(Qt::white)
      , clearBeforeRendering(true)
@@ -45,7 +45,7 @@ index 4117b36b4..ca4cf480b 100644
      , persistentGLContext(true)
      , persistentSceneGraph(true)
      , lastWheelEventAccepted(false)
-@@ -4132,6 +4133,27 @@ bool QQuickWindow::clearBeforeRendering() const
+@@ -4194,6 +4195,27 @@ bool QQuickWindow::clearBeforeRendering() const
      return d->clearBeforeRendering;
  }
  
@@ -74,10 +74,10 @@ index 4117b36b4..ca4cf480b 100644
      \overload
   */
 diff --git a/src/quick/items/qquickwindow.h b/src/quick/items/qquickwindow.h
-index 817178fda..f7918e5e7 100644
+index 79e8a11aa..35efb1bb8 100644
 --- a/src/quick/items/qquickwindow.h
 +++ b/src/quick/items/qquickwindow.h
-@@ -145,6 +145,9 @@ public:
+@@ -146,6 +146,9 @@ public:
      QSGTexture *createTextureFromImage(const QImage &image, CreateTextureOptions options) const;
      QSGTexture *createTextureFromId(uint id, const QSize &size, CreateTextureOptions options = CreateTextureOption()) const;
  
@@ -88,10 +88,10 @@ index 817178fda..f7918e5e7 100644
      bool clearBeforeRendering() const;
  
 diff --git a/src/quick/items/qquickwindow_p.h b/src/quick/items/qquickwindow_p.h
-index 10be7c1f2..f88de0d43 100644
+index c2266763e..eba40edc6 100644
 --- a/src/quick/items/qquickwindow_p.h
 +++ b/src/quick/items/qquickwindow_p.h
-@@ -265,6 +265,8 @@ public:
+@@ -261,6 +261,8 @@ public:
  
      uint clearBeforeRendering : 1;
  
@@ -115,10 +115,10 @@ index d4ff6ea9f..f1839605d 100644
      virtual void render() = 0;
  
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index 7c0285f00..e4a0b1e17 100644
+index 4962b1106..f707dc1de 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
-@@ -420,6 +420,9 @@ void QSGGuiThreadRenderLoop::renderWindow(QQuickWindow *window)
+@@ -423,6 +423,9 @@ void QSGGuiThreadRenderLoop::renderWindow(QQuickWindow *window)
  
      cd->polishItems();
  
@@ -129,10 +129,10 @@ index 7c0285f00..e4a0b1e17 100644
          polishTime = renderTimer.nsecsElapsed();
      Q_QUICK_SG_PROFILE_SWITCH(QQuickProfiler::SceneGraphPolishFrame,
 diff --git a/src/quick/scenegraph/qsgthreadedrenderloop.cpp b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
-index 826270832..64067efe0 100644
+index c18ba4226..c6f61e8f9 100644
 --- a/src/quick/scenegraph/qsgthreadedrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
-@@ -608,6 +608,13 @@ void QSGRenderThread::syncAndRender()
+@@ -609,6 +609,13 @@ void QSGRenderThread::syncAndRender()
          qCDebug(QSG_LOG_RENDERLOOP, QSG_RT_PAD, "- updatePending, doing sync");
          sync(exposeRequested);
      }

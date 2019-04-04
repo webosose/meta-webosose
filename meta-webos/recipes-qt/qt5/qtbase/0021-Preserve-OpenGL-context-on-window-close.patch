@@ -1,4 +1,4 @@
-From ce802cb283ec95a7739606016ba478eba01c8410 Mon Sep 17 00:00:00 2001
+From 9fe9aeb0fa78171ca3b972209d07d57520a17edd Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Sun, 29 Mar 2015 22:47:43 +0300
 Subject: [PATCH] Preserve OpenGL context on window close
@@ -23,7 +23,7 @@ Change-Id: I882d9c4c62e18f28101529dcb05552f794c07b0e
  1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/src/gui/kernel/qsurface.cpp b/src/gui/kernel/qsurface.cpp
-index 63651ee822..ff6cc0ecc0 100644
+index 415e64b39c..78acf55f82 100644
 --- a/src/gui/kernel/qsurface.cpp
 +++ b/src/gui/kernel/qsurface.cpp
 @@ -43,6 +43,8 @@
@@ -35,7 +35,7 @@ index 63651ee822..ff6cc0ecc0 100644
  /*!
      \class QSurface
      \inmodule QtGui
-@@ -134,9 +136,11 @@ QSurface::QSurface(SurfaceClass type)
+@@ -138,9 +140,11 @@ QSurface::QSurface(SurfaceClass type)
  QSurface::~QSurface()
  {
  #ifndef QT_NO_OPENGL

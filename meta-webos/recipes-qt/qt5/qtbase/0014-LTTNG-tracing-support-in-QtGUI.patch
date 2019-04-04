@@ -1,4 +1,4 @@
-From 5f1f7d5385e2f342c450c4134b900bb46d48afbf Mon Sep 17 00:00:00 2001
+From 80d598c8ca5449a37167a859aa85707260669335 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Fri, 13 Jun 2014 18:48:49 +0200
 Subject: [PATCH] LTTNG tracing support in QtGUI
@@ -36,7 +36,7 @@ Change-Id: I03150d6ff80cbbcd787133d75854715cb81b5571
  5 files changed, 33 insertions(+)
 
 diff --git a/src/gui/image/qimage.cpp b/src/gui/image/qimage.cpp
-index 7fcae12cbd..585e06ee70 100644
+index 3e18ca6528..db0e40dd91 100644
 --- a/src/gui/image/qimage.cpp
 +++ b/src/gui/image/qimage.cpp
 @@ -66,6 +66,8 @@
@@ -50,13 +50,13 @@ index 7fcae12cbd..585e06ee70 100644
  static inline bool isLocked(QImageData *data)
 @@ -120,6 +122,8 @@ QImageData * QImageData::create(const QSize &size, QImage::Format format)
      if (!size.isValid() || format == QImage::Format_Invalid)
-         return 0;                                // invalid parameter(s)
+         return nullptr;                             // invalid parameter(s)
  
 +    Q_TRACE(qimagedata_create_entry);
 +
-     uint width = size.width();
-     uint height = size.height();
-     uint depth = qt_depthForFormat(format);
+     int width = size.width();
+     int height = size.height();
+     int depth = qt_depthForFormat(format);
 @@ -1130,6 +1134,7 @@ static void copyMetadata(QImageData *dst, const QImageData *src)
  */
  QImage QImage::copy(const QRect& r) const
@@ -65,7 +65,7 @@ index 7fcae12cbd..585e06ee70 100644
      if (!d)
          return QImage();
  
-@@ -2693,6 +2698,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
+@@ -2787,6 +2792,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
      if (newSize == size())
          return *this;
  
@@ -74,7 +74,7 @@ index 7fcae12cbd..585e06ee70 100644
      QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(), (qreal)newSize.height() / height());
      QImage img = transformed(wm, mode);
      return img;
-@@ -2721,6 +2728,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
+@@ -2815,6 +2822,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
      if (w <= 0)
          return QImage();
  
@@ -83,7 +83,7 @@ index 7fcae12cbd..585e06ee70 100644
      qreal factor = (qreal) w / width();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -2749,6 +2758,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
+@@ -2843,6 +2852,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
      if (h <= 0)
          return QImage();
  
@@ -92,7 +92,7 @@ index 7fcae12cbd..585e06ee70 100644
      qreal factor = (qreal) h / height();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -3248,6 +3259,8 @@ QImage QImage::rgbSwapped_helper() const
+@@ -3339,6 +3350,8 @@ QImage QImage::rgbSwapped_helper() const
      if (isNull())
          return *this;
  
@@ -101,7 +101,7 @@ index 7fcae12cbd..585e06ee70 100644
      QImage res;
  
      switch (d->format) {
-@@ -4628,6 +4641,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
+@@ -4748,6 +4761,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
      if (!d)
          return QImage();
  
@@ -111,7 +111,7 @@ index 7fcae12cbd..585e06ee70 100644
      int ws = width();
      int hs = height();
 diff --git a/src/gui/image/qpixmap.cpp b/src/gui/image/qpixmap.cpp
-index 1ea503a268..1a1bbdfa9b 100644
+index 7e862e9826..0ad4e2280e 100644
 --- a/src/gui/image/qpixmap.cpp
 +++ b/src/gui/image/qpixmap.cpp
 @@ -66,6 +66,8 @@
@@ -123,7 +123,7 @@ index 1ea503a268..1a1bbdfa9b 100644
  QT_BEGIN_NAMESPACE
  
  static bool qt_pixmap_thread_test()
-@@ -1124,6 +1126,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
+@@ -1126,6 +1128,8 @@ QPixmap QPixmap::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Tran
      if (newSize == size())
          return *this;
  
@@ -132,7 +132,7 @@ index 1ea503a268..1a1bbdfa9b 100644
      QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(),
                                            (qreal)newSize.height() / height());
      QPixmap pix = transformed(wm, mode);
-@@ -1153,6 +1157,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
+@@ -1155,6 +1159,8 @@ QPixmap QPixmap::scaledToWidth(int w, Qt::TransformationMode mode) const
      if (w <= 0)
          return QPixmap();
  
@@ -141,7 +141,7 @@ index 1ea503a268..1a1bbdfa9b 100644
      qreal factor = (qreal) w / width();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -1181,6 +1187,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
+@@ -1183,6 +1189,8 @@ QPixmap QPixmap::scaledToHeight(int h, Qt::TransformationMode mode) const
      if (h <= 0)
          return QPixmap();
  
@@ -151,7 +151,7 @@ index 1ea503a268..1a1bbdfa9b 100644
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
 diff --git a/src/gui/opengl/qopenglframebufferobject.cpp b/src/gui/opengl/qopenglframebufferobject.cpp
-index 83bc568ba7..06e04132da 100644
+index cae3d516c4..439c9224ab 100644
 --- a/src/gui/opengl/qopenglframebufferobject.cpp
 +++ b/src/gui/opengl/qopenglframebufferobject.cpp
 @@ -50,6 +50,8 @@
@@ -163,7 +163,7 @@ index 83bc568ba7..06e04132da 100644
  QT_BEGIN_NAMESPACE
  
  #ifndef QT_NO_DEBUG
-@@ -455,6 +457,7 @@ void QOpenGLFramebufferObjectPrivate::init(QOpenGLFramebufferObject *, const QSi
+@@ -472,6 +474,7 @@ void QOpenGLFramebufferObjectPrivate::init(QOpenGLFramebufferObject *, const QSi
                                             GLenum texture_target, GLenum internal_format,
                                             GLint samples, bool mipmap)
  {
@@ -172,7 +172,7 @@ index 83bc568ba7..06e04132da 100644
  
      funcs.initializeOpenGLFunctions();
 diff --git a/src/gui/opengl/qopenglpaintengine.cpp b/src/gui/opengl/qopenglpaintengine.cpp
-index 192fec2789..5796901ecd 100644
+index dc1619a7bc..ae78266abb 100644
 --- a/src/gui/opengl/qopenglpaintengine.cpp
 +++ b/src/gui/opengl/qopenglpaintengine.cpp
 @@ -87,6 +87,8 @@
@@ -181,10 +181,10 @@ index 192fec2789..5796901ecd 100644
  
 +#include <qtgui_tracepoints_p.h>
 +
- QT_BEGIN_NAMESPACE
- 
- 
-@@ -560,6 +562,8 @@ static inline void setCoords(GLfloat *coords, const QOpenGLRect &rect)
+ #ifndef GL_KHR_blend_equation_advanced
+ #define GL_KHR_blend_equation_advanced 1
+ #define GL_MULTIPLY_KHR                   0x9294
+@@ -635,6 +637,8 @@ static inline void setCoords(GLfloat *coords, const QOpenGLRect &rect)
  
  void QOpenGL2PaintEngineExPrivate::drawTexture(const QOpenGLRect& dest, const QOpenGLRect& src, const QSize &textureSize, bool opaque, bool pattern)
  {
@@ -194,10 +194,10 @@ index 192fec2789..5796901ecd 100644
      currentBrush = noBrush;
  
 diff --git a/src/gui/opengl/qopengltexturecache.cpp b/src/gui/opengl/qopengltexturecache.cpp
-index 27aa8db33a..36efd4642b 100644
+index ef07dbe109..bdae5956d9 100644
 --- a/src/gui/opengl/qopengltexturecache.cpp
 +++ b/src/gui/opengl/qopengltexturecache.cpp
-@@ -45,6 +45,8 @@
+@@ -44,6 +44,8 @@
  #include <private/qimagepixmapcleanuphooks_p.h>
  #include <qpa/qplatformpixmap.h>
  
@@ -205,10 +205,10 @@ index 27aa8db33a..36efd4642b 100644
 +
  QT_BEGIN_NAMESPACE
  
- #ifndef GL_RED
-@@ -190,6 +192,7 @@ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, const QImage &i
+ class QOpenGLTextureCacheWrapper
+@@ -157,6 +159,7 @@ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, const QImage &i
  
- GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, qint64 key, const QImage &image, BindOptions options)
+ GLuint QOpenGLTextureCache::bindTexture(QOpenGLContext *context, qint64 key, const QImage &image, QOpenGLTextureUploader::BindOptions options)
  {
 +    Q_TRACE(qopengltexturecache_bindtexture_entry);
      GLuint id;

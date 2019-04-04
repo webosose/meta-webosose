@@ -8,7 +8,7 @@ python do_patch_append() {
 }
 
 remove_LGPL3() {
-    rm -vf ${S}/src/plugins/platforms/android/extract.cpp
+    rm -vf ${S}/src/plugins/platforms/andr*oid/extract.cpp
 }
 
 # Disable features we don't use in all webOS products
@@ -87,7 +87,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.11.meta-webos.14 based on 5.11.meta-qt5-shared.14
+# Patches from 5.12.meta-webos.5 based on 5.12.meta-qt5-shared.8
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-DisableCertificateVerificationCheck.patch \

@@ -1,4 +1,4 @@
-From b3b5ae98ad3561b3a18faded9db5b66e2410dfbf Mon Sep 17 00:00:00 2001
+From 04271eb2d7fcc5cf8565187b06c7d601134bb955 Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Thu, 6 Jul 2017 09:41:31 +0900
 Subject: [PATCH] Disable eglfs-brcm explicitly
@@ -17,21 +17,21 @@ Only build tested.
 :QA Notes:
 
 :Issues Addressed:
-[PLAT-42918] qtbase build failures on apollo-rpi3 no shared state build
+[PLAT-42918] qtbase build failures on rpi3 no shared state build
 
 Change-Id: I9392e5aec929fe7d1c3dc9f52f94323ede3f86e0
 ---
- src/gui/configure.json                                   | 16 +---------------
- .../eglfs/deviceintegration/deviceintegration.pro        |  1 -
+ src/gui/configure.json                           | 16 +---------------
+ .../deviceintegration/deviceintegration.pro      |  1 -
  2 files changed, 1 insertion(+), 16 deletions(-)
 
 diff --git a/src/gui/configure.json b/src/gui/configure.json
-index bb90970..42c6c4b 100644
+index 8fbc24b0dd..64d1786f8d 100644
 --- a/src/gui/configure.json
 +++ b/src/gui/configure.json
-@@ -708,15 +708,6 @@
+@@ -864,15 +864,6 @@
              },
-             "use": "egl xcb_xlib"
+             "use": "egl xlib"
          },
 -        "egl-brcm": {
 -            "label": "Broadcom EGL (Raspberry Pi)",
@@ -45,7 +45,7 @@ index bb90970..42c6c4b 100644
          "egl-egldevice": {
              "label": "EGLDevice",
              "type": "compile",
-@@ -1180,11 +1171,6 @@
+@@ -1400,11 +1391,6 @@
              "condition": "!config.android && !config.darwin && !config.win32 && features.egl",
              "output": [ "privateFeature" ]
          },
@@ -57,20 +57,20 @@ index bb90970..42c6c4b 100644
          "eglfs_egldevice": {
              "label": "EGLFS EGLDevice",
              "condition": "features.eglfs && tests.egl-egldevice && features.kms",
-@@ -1719,7 +1705,7 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
+@@ -1947,7 +1933,7 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
                      "section": "EGLFS details",
                      "condition": "features.eglfs",
                      "entries": [
--                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_vsp2", "eglfs_mali", "eglfs_brcm", "egl_x11"
-+                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_vsp2", "eglfs_mali", "egl_x11"
+-                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_vsp2", "eglfs_mali", "eglfs_brcm", "eglfs_x11"
++                        "eglfs_openwfd", "eglfs_viv", "eglfs_viv_wl", "eglfs_rcar", "eglfs_egldevice", "eglfs_gbm", "eglfs_vsp2", "eglfs_mali", "eglfs_x11"
                      ]
                  },
                  "linuxfb", "vnc", "mirclient",
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro b/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
-index 919ecd0..788a641 100644
+index 360536d22f..3c9fcce7da 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
 +++ b/src/plugins/platforms/eglfs/deviceintegration/deviceintegration.pro
-@@ -5,7 +5,6 @@ qtConfig(egl_x11): SUBDIRS += eglfs_x11
+@@ -5,7 +5,6 @@ qtConfig(eglfs_x11): SUBDIRS += eglfs_x11
  qtConfig(eglfs_gbm): SUBDIRS *= eglfs_kms_support eglfs_kms
  qtConfig(eglfs_egldevice): SUBDIRS *= eglfs_kms_support eglfs_kms_egldevice
  qtConfig(eglfs_vsp2): SUBDIRS += eglfs_kms_vsp2

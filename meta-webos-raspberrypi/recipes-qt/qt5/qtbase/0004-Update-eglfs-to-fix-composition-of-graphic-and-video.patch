@@ -1,0 +1,98 @@
+From afe59f5bc1fb71beb42549f88d6cfc10fba0a0b7 Mon Sep 17 00:00:00 2001
+From: Jaehoon Lee <jaehoon85.lee@lge.com>
+Date: Wed, 12 Jun 2019 04:46:36 +0000
+Subject: [PATCH] Update eglfs to fix composition of graphic and video plane in
+ Qt 5.12.3
+
+:Release Notes:
+Update eglfs to fix composition of graphic and video plane in Qt 5.12.3
+
+:Detailed Notes:
+In Qt 5.12.3, eglfs is different from previous verions
+in that it sets primary plane to render graphics.
+Since this settings causes composition problem
+between graphics and video in webOS,
+the configuration is changed to set overlay plane
+for rendering graphics.
+
+:Testing Performed:
+HTML5 video and Youtube playback has been tested
+in Rpi3.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-79909] [Qt 5.12][RPi] Youtube playback is not working
+
+Upstream-Status: Inappropriate [webOS specific]
+
+Change-Id: Iecfd351a37c630b1ea766e388400caccd3ab483e
+---
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp     | 11 ++++-------
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp                  |  9 ++++-----
+ 2 files changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+index 663c8cbf34..c16cb696a4 100644
+--- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
++++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+@@ -339,7 +339,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+     }
+     qCDebug(qLcKmsDebug) << "Physical size is" << physSize << "mm" << "for output" << connectorName;
+ 
+-    const QByteArray formatStr = userConnectorConfig.value(QStringLiteral("format"), QStringLiteral("xrgb8888"))
++    const QByteArray formatStr = userConnectorConfig.value(QStringLiteral("format"), QStringLiteral("argb8888"))
+             .toByteArray().toLower();
+     uint32_t drmFormat;
+     if (formatStr == "xrgb8888") {
+@@ -427,7 +427,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+             output.available_planes.append(plane);
+             planeListStr.append(QString::number(plane.id));
+             planeListStr.append(QLatin1Char(' '));
+-            if (plane.type == QKmsPlane::PrimaryPlane)
++            if (plane.type == QKmsPlane::OverlayPlane)
+                 output.eglfs_plane = (QKmsPlane*)&plane;
+         }
+     }
+@@ -464,14 +464,11 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+         }
+     }
+ 
+-    output.wants_forced_plane = true;
++
+     if (output.eglfs_plane) {
+         qCDebug(qLcKmsDebug, "Output eglfs plane is: %d", output.eglfs_plane->id);
+-        
+-    } else {
+-        output.eglfs_plane = &(output.available_planes.back());
+     }
+-    output.forced_plane_id = output.eglfs_plane->id;
++
+ 
+     m_crtc_allocator |= (1 << output.crtc_index);
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+index df965b9bee..1d71cbf031 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+@@ -91,16 +91,15 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
+ 
+     uint32_t width = gbm_bo_get_width(bo);
+     uint32_t height = gbm_bo_get_height(bo);
+-    uint32_t bo_handle = gbm_bo_get_handle(bo).u32;
+-    uint32_t pitch = gbm_bo_get_stride(bo);
++    uint32_t handles[4] = { gbm_bo_get_handle(bo).u32 };
++    uint32_t strides[4] = { gbm_bo_get_stride(bo) };
++    uint32_t offsets[4] = { 0 };
+     uint32_t pixelFormat = gbmFormatToDrmFormat(gbm_bo_get_format(bo));
+-    uint8_t depth = 24;
+-    uint8_t bpp = 32;
+ 
+     QScopedPointer<FrameBuffer> fb(new FrameBuffer);
+     qCDebug(qLcEglfsKmsDebug, "Adding FB, size %ux%u, DRM format 0x%x", width, height, pixelFormat);
+ 
+-    int ret = drmModeAddFB(device()->fd(), width, height, depth, bpp, pitch, bo_handle, &fb->fb);
++    int ret = drmModeAddFB2(device()->fd(), width, height, pixelFormat, handles, strides, offsets, &fb->fb, 0);
+ 
+     if (ret) {
+         qWarning("Failed to create KMS FB!");

@@ -1,4 +1,4 @@
-From 236ab5369b8927d9415bdb5ae2f4c04fe702df27 Mon Sep 17 00:00:00 2001
+From 646c578f74d36e9b617f264cfaa586823e88d357 Mon Sep 17 00:00:00 2001
 From: Aram So <aram.so@lge.com>
 Date: Tue, 10 Mar 2015 17:51:05 +0900
 Subject: [PATCH] Revert Make QQuickKeyNavigationAttached respect user set
@@ -24,10 +24,10 @@ Change-Id: If01145c73497141bf0e12f425c0fb13f5a58d4cd
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/src/quick/items/qquickitem.cpp b/src/quick/items/qquickitem.cpp
-index 154e3241b..0339ad2c3 100644
+index 9e32ccfee..34a56f1e9 100644
 --- a/src/quick/items/qquickitem.cpp
 +++ b/src/quick/items/qquickitem.cpp
-@@ -460,7 +460,7 @@ QQuickItem *QQuickKeyNavigationAttached::left() const
+@@ -462,7 +462,7 @@ QQuickItem *QQuickKeyNavigationAttached::left() const
  void QQuickKeyNavigationAttached::setLeft(QQuickItem *i)
  {
      Q_D(QQuickKeyNavigationAttached);
@@ -36,7 +36,7 @@ index 154e3241b..0339ad2c3 100644
          return;
      d->left = i;
      d->leftSet = true;
-@@ -482,7 +482,7 @@ QQuickItem *QQuickKeyNavigationAttached::right() const
+@@ -484,7 +484,7 @@ QQuickItem *QQuickKeyNavigationAttached::right() const
  void QQuickKeyNavigationAttached::setRight(QQuickItem *i)
  {
      Q_D(QQuickKeyNavigationAttached);
@@ -45,7 +45,7 @@ index 154e3241b..0339ad2c3 100644
          return;
      d->right = i;
      d->rightSet = true;
-@@ -504,7 +504,7 @@ QQuickItem *QQuickKeyNavigationAttached::up() const
+@@ -506,7 +506,7 @@ QQuickItem *QQuickKeyNavigationAttached::up() const
  void QQuickKeyNavigationAttached::setUp(QQuickItem *i)
  {
      Q_D(QQuickKeyNavigationAttached);
@@ -54,7 +54,7 @@ index 154e3241b..0339ad2c3 100644
          return;
      d->up = i;
      d->upSet = true;
-@@ -526,7 +526,7 @@ QQuickItem *QQuickKeyNavigationAttached::down() const
+@@ -528,7 +528,7 @@ QQuickItem *QQuickKeyNavigationAttached::down() const
  void QQuickKeyNavigationAttached::setDown(QQuickItem *i)
  {
      Q_D(QQuickKeyNavigationAttached);
@@ -63,7 +63,7 @@ index 154e3241b..0339ad2c3 100644
          return;
      d->down = i;
      d->downSet = true;
-@@ -548,7 +548,7 @@ QQuickItem *QQuickKeyNavigationAttached::tab() const
+@@ -550,7 +550,7 @@ QQuickItem *QQuickKeyNavigationAttached::tab() const
  void QQuickKeyNavigationAttached::setTab(QQuickItem *i)
  {
      Q_D(QQuickKeyNavigationAttached);
@@ -72,7 +72,7 @@ index 154e3241b..0339ad2c3 100644
          return;
      d->tab = i;
      d->tabSet = true;
-@@ -570,7 +570,7 @@ QQuickItem *QQuickKeyNavigationAttached::backtab() const
+@@ -572,7 +572,7 @@ QQuickItem *QQuickKeyNavigationAttached::backtab() const
  void QQuickKeyNavigationAttached::setBacktab(QQuickItem *i)
  {
      Q_D(QQuickKeyNavigationAttached);

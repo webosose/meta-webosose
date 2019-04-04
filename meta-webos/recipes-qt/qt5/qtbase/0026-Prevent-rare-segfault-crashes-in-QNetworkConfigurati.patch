@@ -1,4 +1,4 @@
-From 95fdabecafa1e0fcbc6e065ce209ca1a19c238a8 Mon Sep 17 00:00:00 2001
+From 4decdb8cd996799664f4fa3d1a66ad2819afa101 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Mon, 25 Apr 2016 14:47:21 +0300
 Subject: [PATCH] Prevent rare segfault crashes in QNetworkConfigurationManager

@@ -1,4 +1,4 @@
-From e397e7777a33a9a811c9bb2e5c7ed8d239abdd81 Mon Sep 17 00:00:00 2001
+From 65c1eda3bb3d2652293a8f58ba69237ead95c686 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:59:01 +0100
 Subject: [PATCH] Workaround for RGX broken render to texture with size over
@@ -9,10 +9,10 @@ Subject: [PATCH] Workaround for RGX broken render to texture with size over
  1 file changed, 8 insertions(+)
 
 diff --git a/src/gui/opengl/qopengltextureglyphcache.cpp b/src/gui/opengl/qopengltextureglyphcache.cpp
-index 2d62bb5c1c..ab344a51bd 100755
+index 728d23f61e..aba98e1425 100755
 --- a/src/gui/opengl/qopengltextureglyphcache.cpp
 +++ b/src/gui/opengl/qopengltextureglyphcache.cpp
-@@ -460,7 +460,11 @@ int QOpenGLTextureGlyphCache::maxTextureWidth() const
+@@ -470,7 +470,11 @@ int QOpenGLTextureGlyphCache::maxTextureWidth() const
      if (ctx == 0)
          return QImageTextureGlyphCache::maxTextureWidth();
      else
@@ -24,7 +24,7 @@ index 2d62bb5c1c..ab344a51bd 100755
  }
  
  int QOpenGLTextureGlyphCache::maxTextureHeight() const
-@@ -475,7 +479,11 @@ int QOpenGLTextureGlyphCache::maxTextureHeight() const
+@@ -485,7 +489,11 @@ int QOpenGLTextureGlyphCache::maxTextureHeight() const
      if (ctx->d_func()->workaround_brokenTexSubImage)
          return qMin(1024, ctx->d_func()->maxTextureSize());
      else

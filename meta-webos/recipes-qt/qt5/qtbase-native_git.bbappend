@@ -2,5 +2,5 @@
 
 EXTENDPRAUTO_append = "webos2"
 
-PACKAGECONFIG_CONFARGS_remove = "-no-gui -no-libpng"
-PACKAGECONFIG_CONFARGS_append = " -no-widgets -evdev"
+QT_CONFIG_FLAGS_remove = "-no-gui -no-libpng"
+QT_CONFIG_FLAGS_append = " -no-widgets -evdev"

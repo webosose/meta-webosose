@@ -1,4 +1,4 @@
-From 0ab559934b568d5f637b9373065ca9454e01bbb6 Mon Sep 17 00:00:00 2001
+From 93b9f2dd2ec9d217dfae39a1228f225f1b46e955 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:58:14 +0100
 Subject: [PATCH] Decrease the size of QFontCache
@@ -8,7 +8,7 @@ Subject: [PATCH] Decrease the size of QFontCache
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/gui/text/qfont.cpp b/src/gui/text/qfont.cpp
-index f7462b65c8..a8618723fd 100644
+index 69255fd59d..ae9bd5a5ef 100644
 --- a/src/gui/text/qfont.cpp
 +++ b/src/gui/text/qfont.cpp
 @@ -2701,7 +2701,9 @@ static const int fast_timeout =  10000; // 10s
@@ -20,5 +20,5 @@ index f7462b65c8..a8618723fd 100644
 +//const uint QFontCache::min_cost = 4*1024; // 4mb
 +const uint QFontCache::min_cost = 512; // 512Kb
  
- #ifdef QT_NO_THREAD
- Q_GLOBAL_STATIC(QFontCache, theFontCache)
+ Q_GLOBAL_STATIC(QThreadStorage<QFontCache *>, theFontCache)
+ 

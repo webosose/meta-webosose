@@ -1,4 +1,4 @@
-From 7b5ff0ae2995697eff8e775aa4b2bc8098ccaa69 Mon Sep 17 00:00:00 2001
+From c33b672dee109ee6cdb7f3262e8c2112c99d0c68 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Fri, 17 Apr 2015 14:26:22 +0900
 Subject: [PATCH] Revert "Make SmoothedAnimation and SpringAnimation smoothly
@@ -23,11 +23,11 @@ Upstream-Status: do not apply, we may consider right fix for this.
  src/qml/animations/qabstractanimationjob.cpp  |  10 +-
  src/qml/animations/qabstractanimationjob_p.h  |   3 +
  .../qcontinuinganimationgroupjob.cpp          | 129 ------------------
- .../qcontinuinganimationgroupjob_p.h          |  77 -----------
+ .../qcontinuinganimationgroupjob_p.h          |  79 -----------
  src/quick/util/qquicksmoothedanimation.cpp    |  18 +--
  src/quick/util/qquicksmoothedanimation_p_p.h  |   4 +-
  src/quick/util/qquickspringanimation.cpp      |  24 ++--
- 8 files changed, 31 insertions(+), 236 deletions(-)
+ 8 files changed, 31 insertions(+), 238 deletions(-)
  delete mode 100644 src/qml/animations/qcontinuinganimationgroupjob.cpp
  delete mode 100644 src/qml/animations/qcontinuinganimationgroupjob_p.h
 
@@ -50,7 +50,7 @@ index a37969256..01ac25af4 100644
 -        $$PWD/qcontinuinganimationgroupjob.cpp \
          $$PWD/qpauseanimationjob.cpp
 diff --git a/src/qml/animations/qabstractanimationjob.cpp b/src/qml/animations/qabstractanimationjob.cpp
-index 3f33e7e81..3b167f404 100644
+index ece2f0d69..e2949df43 100644
 --- a/src/qml/animations/qabstractanimationjob.cpp
 +++ b/src/qml/animations/qabstractanimationjob.cpp
 @@ -60,7 +60,7 @@ QAnimationJobChangeListener::~QAnimationJobChangeListener()
@@ -62,7 +62,7 @@ index 3f33e7e81..3b167f404 100644
      currentAnimationIdx(0), insideTick(false),
      startAnimationPending(false), stopTimerPending(false),
      runningLeafAnimations(0)
-@@ -103,6 +103,7 @@ void QQmlAnimationTimer::updateAnimationsTime(qint64 delta)
+@@ -98,6 +98,7 @@ void QQmlAnimationTimer::updateAnimationsTime(qint64 delta)
          return;
  
      lastTick += delta;
@@ -70,7 +70,7 @@ index 3f33e7e81..3b167f404 100644
  
      //we make sure we only call update time if the time has actually changed
      //it might happen in some cases that the time doesn't change because events are delayed
-@@ -146,7 +147,8 @@ void QQmlAnimationTimer::startAnimations()
+@@ -141,7 +142,8 @@ void QQmlAnimationTimer::startAnimations()
          return;
      startAnimationPending = false;
      //force timer to update, which prevents large deltas for our newly added animations
@@ -80,7 +80,7 @@ index 3f33e7e81..3b167f404 100644
  
      //we transfer the waiting animations into the "really running" state
      animations += animationsToStart;
-@@ -158,12 +160,12 @@ void QQmlAnimationTimer::startAnimations()
+@@ -153,12 +155,12 @@ void QQmlAnimationTimer::startAnimations()
  void QQmlAnimationTimer::stopTimer()
  {
      stopTimerPending = false;
@@ -96,10 +96,10 @@ index 3f33e7e81..3b167f404 100644
  }
  
 diff --git a/src/qml/animations/qabstractanimationjob_p.h b/src/qml/animations/qabstractanimationjob_p.h
-index 63fd4b0da..4c7fd27d4 100644
+index 0be6ca96e..b5ab78529 100644
 --- a/src/qml/animations/qabstractanimationjob_p.h
 +++ b/src/qml/animations/qabstractanimationjob_p.h
-@@ -224,6 +224,8 @@ public:
+@@ -226,6 +226,8 @@ public:
      void restartAnimationTimer() override;
      void updateAnimationsTime(qint64 timeStep) override;
  
@@ -108,7 +108,7 @@ index 63fd4b0da..4c7fd27d4 100644
      //useful for profiling/debugging
      int runningAnimationCount() override { return animations.count(); }
  
-@@ -235,6 +237,7 @@ public Q_SLOTS:
+@@ -237,6 +239,7 @@ public Q_SLOTS:
  
  private:
      qint64 lastTick;
@@ -253,10 +253,10 @@ index 10096bf19..000000000
 -
 diff --git a/src/qml/animations/qcontinuinganimationgroupjob_p.h b/src/qml/animations/qcontinuinganimationgroupjob_p.h
 deleted file mode 100644
-index baf4ff1ae..000000000
+index c67b8d39a..000000000
 --- a/src/qml/animations/qcontinuinganimationgroupjob_p.h
 +++ /dev/null
-@@ -1,77 +0,0 @@
+@@ -1,79 +0,0 @@
 -/****************************************************************************
 -**
 -** Copyright (C) 2016 Jolla Ltd.
@@ -311,6 +311,8 @@ index baf4ff1ae..000000000
 -//
 -
 -#include "private/qanimationgroupjob_p.h"
+-
+-QT_REQUIRE_CONFIG(qml_animation);
 -
 -QT_BEGIN_NAMESPACE
 -

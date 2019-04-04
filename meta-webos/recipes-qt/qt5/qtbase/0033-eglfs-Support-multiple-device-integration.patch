@@ -1,4 +1,4 @@
-From 5490458c6bad3e719475667832095f4e51fe081a Mon Sep 17 00:00:00 2001
+From 128fd6a4b067dbeba099eceacdffe88e9629011f Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Wed, 27 Mar 2019 22:36:41 +0900
 Subject: [PATCH] eglfs: Support multiple device integration
@@ -21,13 +21,6 @@ platform screens and windows.
 
 :Issues Addressed:
 [PLAT-52726] EGLFS: Support multiple display devices
-
-Conflicts:
-	src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
-	src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-	src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h
-	src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
-	src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h
 
 Change-Id: Ifb4976ac62aff563771876493c108608d4b87253
 ---
@@ -148,7 +141,7 @@ index af8725b6b3..b4f55861e5 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-index f151713400..f851c9b05b 100644
+index 81bad45cd2..8e71a491c1 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 @@ -285,6 +285,11 @@ QEglFSWindow *QEglFSDeviceIntegration::createWindow(QWindow *window) const
@@ -280,7 +273,7 @@ index 9fdb81efdd..ce38d6495a 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp b/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp
-index d5c22b3d37..eeb1e7e849 100644
+index 11b68c0589..a5fd864328 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp
 @@ -52,11 +52,17 @@
@@ -303,7 +296,7 @@ index d5c22b3d37..eeb1e7e849 100644
  }
  
  QEglFSScreen::~QEglFSScreen()
-@@ -94,42 +100,42 @@ QRect QEglFSScreen::geometry() const
+@@ -91,42 +97,42 @@ QRect QEglFSScreen::geometry() const
  
  QRect QEglFSScreen::rawGeometry() const
  {
@@ -354,7 +347,7 @@ index d5c22b3d37..eeb1e7e849 100644
  }
  
  QPlatformCursor *QEglFSScreen::cursor() const
-@@ -139,7 +145,7 @@ QPlatformCursor *QEglFSScreen::cursor() const
+@@ -136,7 +142,7 @@ QPlatformCursor *QEglFSScreen::cursor() const
  
  qreal QEglFSScreen::refreshRate() const
  {
@@ -402,7 +395,7 @@ index bea7b4c8ef..3f07ab08ef 100644
  };
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfswindow.cpp b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp
-index 29cfd4ea79..e40bae13e8 100644
+index 98e9ee4728..efe4e40b82 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfswindow.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp
 @@ -59,6 +59,11 @@
@@ -417,7 +410,7 @@ index 29cfd4ea79..e40bae13e8 100644
      : QPlatformWindow(w),
  #ifndef QT_NO_OPENGL
        m_backingStore(0),
-@@ -67,7 +72,8 @@ QEglFSWindow::QEglFSWindow(QWindow *w)
+@@ -68,7 +73,8 @@ QEglFSWindow::QEglFSWindow(QWindow *w)
        m_winId(0),
        m_surface(EGL_NO_SURFACE),
        m_window(0),
@@ -427,7 +420,7 @@ index 29cfd4ea79..e40bae13e8 100644
  {
  }
  
-@@ -191,19 +197,19 @@ void QEglFSWindow::invalidateSurface()
+@@ -198,19 +204,19 @@ void QEglFSWindow::invalidateSurface()
          eglDestroySurface(screen()->display(), m_surface);
          m_surface = EGL_NO_SURFACE;
      }
@@ -451,7 +444,7 @@ index 29cfd4ea79..e40bae13e8 100644
  }
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfswindow_p.h b/src/plugins/platforms/eglfs/api/qeglfswindow_p.h
-index c61f04f569..d4332829a2 100644
+index b0091e2a62..3c25f8a902 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfswindow_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfswindow_p.h
 @@ -54,6 +54,7 @@
@@ -470,7 +463,7 @@ index c61f04f569..d4332829a2 100644
      ~QEglFSWindow();
  
      void create();
-@@ -132,6 +134,8 @@ protected:
+@@ -133,6 +135,8 @@ protected:
      };
      Q_DECLARE_FLAGS(Flags, Flag)
      Flags m_flags;
@@ -535,10 +528,10 @@ index 518e2ce58b..bcb0bbe8f8 100644
      bool open() override;
      void close() override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 5ed2e0e96f..cb28d5893c 100644
+index 4a7587b76b..1619509cda 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-@@ -155,12 +155,17 @@ QKmsDevice *QEglFSKmsGbmIntegration::createDevice()
+@@ -156,12 +156,17 @@ QKmsDevice *QEglFSKmsGbmIntegration::createDevice()
          qCDebug(qLcEglfsKmsDebug) << "Using" << path;
      }
  
@@ -571,7 +564,7 @@ index 71f232abf9..a64471be3f 100644
  protected:
      QKmsDevice *createDevice() override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 1b52bdf3ec..b66e61139b 100644
+index 24f82e7843..7e34e982e5 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -43,6 +43,7 @@
@@ -582,7 +575,7 @@ index 1b52bdf3ec..b66e61139b 100644
  
  #include <QtCore/QLoggingCategory>
  
-@@ -110,7 +111,12 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
+@@ -111,7 +112,12 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
  }
  
  QEglFSKmsGbmScreen::QEglFSKmsGbmScreen(QKmsDevice *device, const QKmsOutput &output, bool headless)
@@ -642,7 +635,7 @@ index a19cf7e8bc..d8170417b4 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
-index b073577797..c5009e5699 100644
+index 4f0b0d7725..188c271f07 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
 @@ -41,12 +41,20 @@
@@ -697,7 +690,7 @@ index fc83a620d9..0328dee5e5 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
-index 5e45b42abe..ee3c59bcd6 100644
+index e5354d97bd..c0ffc910e4 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
 @@ -41,6 +41,7 @@
