@@ -1,4 +1,4 @@
-# Copyright (c) 2014 LG Electronics, Inc.
+# Copyright (c) 2014-2019 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just the RDEPENDS_${PN} variable.
 EXTENDPRAUTO_append = "webos2"
