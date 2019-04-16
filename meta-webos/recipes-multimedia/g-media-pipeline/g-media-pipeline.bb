@@ -15,20 +15,17 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-# Doesn't build for armv[45]*
-COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+# media-resource-calculator since submissions 47 isn't usable for any other MACHINE than
+# raspberrypi3
+# raspberrypi3-64
+# qemux86
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi3-64$|^qemux86$"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS_append_rpi = " userland"
 
 WEBOS_VERSION = "1.0.0-12_7329f1f5b15fb5a8c14bb2ee1b15c066bab781d3"
-PR = "r2"
+PR = "r3"
 
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

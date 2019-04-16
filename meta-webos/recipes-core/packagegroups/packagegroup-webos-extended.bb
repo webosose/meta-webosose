@@ -27,6 +27,11 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
 "
 VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.browser"
 
+VIRTUAL-RUNTIME_g-media-pipeline ?= ""
+VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_qemux86 = "g-media-pipeline"
+
 # We're not using VIRTUAL-RUNTIME because VIRTUAL-RUNTIME is usually used for only
 # one item and changing that in <distro>-preferred-providers.inc would require
 # .bbappend in meta-<distro> to do PR/PRINC/PR_append bump anyway so it's easier
@@ -46,7 +51,7 @@ MEDIA = " \
     gstreamer1.0-plugins-base \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-ugly \
-    g-media-pipeline \
+    ${VIRTUAL-RUNTIME_g-media-pipeline} \
 "
 
 # Fonts used by the browser
