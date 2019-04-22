@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS = "virtual/webruntime qtbase luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust"
+DEPENDS = "virtual/webruntime qtbase luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust qt-features-webos"
 PROVIDES = "webappmanager-webos"
 
 # webappmgr's upstart conf expects to be able to LD_PRELOAD ptmalloc3
@@ -20,7 +20,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.1-9_00811c304197711587dbd7a6587737e5dced64dd"
-PR = "r26"
+PR = "r27"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -37,8 +37,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
-
-WEBOS_SYSTEM_BUS_FILES_LOCATION = ""
 
 SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
 
