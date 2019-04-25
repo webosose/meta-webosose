@@ -24,7 +24,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "^raspberrypi3$"
-COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
 FILES_${PN} += "${libdir}/*.so"
 FILES_SOLIBSDEV = ""
