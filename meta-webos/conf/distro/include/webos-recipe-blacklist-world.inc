@@ -756,6 +756,10 @@ PNBLACKLIST[unixodbc] ?= "broken on Ubuntu 18.04: depends on blacklisted mariadb
 PNBLACKLIST[psqlodbc] ?= "broken on Ubuntu 18.04: depends on blacklisted unixodbc, mariadb, mariadb-native"
 PNBLACKLIST[libuser] ?= "broken on Ubuntu 18.04: depends on blacklisted linuxdoc-tools-native"
 
+PNBLACKLIST[geoip] ?= "Old legacy geoip database cannot be fetched anymore"
+PNBLACKLIST[geoip-perl] ?= "depends on blacklisted geoip"
+PNBLACKLIST[ntop] ?= "depends on blacklisted geoip"
+
 # upstream recipes with known QA issues
 # /usr/bin/luajit-2.0.0, /usr/lib/libluajit-5.1.so.2.0.0
 INSANE_SKIP_${PN}_pn-luajit = "already-stripped"
