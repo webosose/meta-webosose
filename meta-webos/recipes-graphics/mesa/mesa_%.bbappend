@@ -4,6 +4,10 @@ EXTENDPRAUTO_append = "webos1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
+SRC_URI_append_qemuall = " \
+          file://0001-Preventing-a-zero-data-length-command-case.patch \
+          "
+
 # Add gallium, gallium-llvmpipe, opengl and enable wayland even without wayland in DISTRO_FEATURES
 PACKAGECONFIG_qemuall = "opengl gbm egl gles dri wayland gallium"
 

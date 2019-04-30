@@ -1,0 +1,25 @@
+From be27e07c6883b0aa23c39d375bf4da15e82869eb Mon Sep 17 00:00:00 2001
+From: Junil Kim <jjunil79.kim@lge.com>
+Date: Tue, 30 Apr 2019 09:17:06 +0900
+Subject: [PATCH] Preventing a zero data length command case
+
+---
+ src/gallium/drivers/virgl/virgl_encode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gallium/drivers/virgl/virgl_encode.c b/src/gallium/drivers/virgl/virgl_encode.c
+index cbe8d19..733da94 100644
+--- a/src/gallium/drivers/virgl/virgl_encode.c
++++ b/src/gallium/drivers/virgl/virgl_encode.c
+@@ -510,7 +510,7 @@ int virgl_encoder_inline_write(struct virgl_context *ctx,
+ 
+    left_bytes = size;
+    while (left_bytes) {
+-      if (ctx->cbuf->cdw + 12 > VIRGL_MAX_CMDBUF_DWORDS)
++      if (ctx->cbuf->cdw + 12 >= VIRGL_MAX_CMDBUF_DWORDS)
+          ctx->base.flush(&ctx->base, NULL, 0);
+ 
+       thispass = (VIRGL_MAX_CMDBUF_DWORDS - ctx->cbuf->cdw - 12) * 4;
+-- 
+2.17.1
+
