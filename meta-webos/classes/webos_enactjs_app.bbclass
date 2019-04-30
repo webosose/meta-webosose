@@ -21,7 +21,8 @@ inherit webos_enactjs_env
 #   - ilib-webapp so we can override @enact/i18n/ilib with device submission
 #   - virtual/webruntime to use the mksnapshot binary to build v8 app snapshot blobs
 #   - enact-framework to use a shared Enact framework libraries
-WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp virtual/webruntime enact-framework"
+#   - coreutils-native to use timeout utility to prevent frozen NPM processes
+WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp virtual/webruntime enact-framework coreutils-native"
 DEPENDS_append = " ${WEBOS_ENACTJS_APP_DEPENDS}"
 
 # chromium doesn't build for armv[45]*
@@ -136,7 +137,7 @@ do_compile() {
 
         bbnote "NPM install attempt #${ATTEMPTS} (of 5)..." && echo
         STATUS=0
-        ${ENACT_NPM} ${NPM_OPTS} || eval "STATUS=\$?"
+        timeout --kill-after=5m 15m ${ENACT_NPM} ${NPM_OPTS} || eval "STATUS=\$?"
         if [ ${STATUS} -ne 0 ] ; then
             bbwarn "...NPM process failed with status ${STATUS}"
         else
