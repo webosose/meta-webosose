@@ -1,4 +1,4 @@
-From c9da8f0c0fc91389ff832c54ca8f77296a8468cc Mon Sep 17 00:00:00 2001
+From ef1c7df2b181903a9ab70a738567980fe2be21fd Mon Sep 17 00:00:00 2001
 From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
 Date: Mon, 28 Aug 2017 14:01:48 -0700
 Subject: [PATCH] implement function chroot in process module
@@ -39,10 +39,10 @@ Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
  7 files changed, 51 insertions(+), 1 deletion(-)
 
 diff --git a/deps/uv/include/uv.h b/deps/uv/include/uv.h
-index 9794d99..1028363 100644
+index 717c2e5..ca138e4 100644
 --- a/deps/uv/include/uv.h
 +++ b/deps/uv/include/uv.h
-@@ -1451,6 +1451,8 @@ UV_EXTERN int uv_cwd(char* buffer, size_t* size);
+@@ -1492,6 +1492,8 @@ UV_EXTERN int uv_cwd(char* buffer, size_t* size);
  
  UV_EXTERN int uv_chdir(const char* dir);
  
@@ -52,10 +52,10 @@ index 9794d99..1028363 100644
  UV_EXTERN uint64_t uv_get_total_memory(void);
  
 diff --git a/deps/uv/src/unix/core.c b/deps/uv/src/unix/core.c
-index 3741c1d..96d1937 100644
+index f92446f..c5e3399 100644
 --- a/deps/uv/src/unix/core.c
 +++ b/deps/uv/src/unix/core.c
-@@ -717,6 +717,12 @@ int uv_chdir(const char* dir) {
+@@ -719,6 +719,12 @@ int uv_chdir(const char* dir) {
    return 0;
  }
  
@@ -69,10 +69,10 @@ index 3741c1d..96d1937 100644
  void uv_disable_stdio_inheritance(void) {
    int fd;
 diff --git a/deps/v8/src/d8-posix.cc b/deps/v8/src/d8-posix.cc
-index 18040c8..b6cef96 100644
+index 1172bf8..f0c1d86 100644
 --- a/deps/v8/src/d8-posix.cc
 +++ b/deps/v8/src/d8-posix.cc
-@@ -569,6 +569,30 @@ void Shell::ChangeDirectory(const v8::FunctionCallbackInfo<v8::Value>& args) {
+@@ -566,6 +566,30 @@ void Shell::ChangeDirectory(const v8::FunctionCallbackInfo<v8::Value>& args) {
    }
  }
  
@@ -103,7 +103,7 @@ index 18040c8..b6cef96 100644
  
  void Shell::SetUMask(const v8::FunctionCallbackInfo<v8::Value>& args) {
    if (args.Length() != 1) {
-@@ -860,6 +884,9 @@ void Shell::AddOSMethods(Isolate* isolate, Local<ObjectTemplate> os_templ) {
+@@ -857,6 +881,9 @@ void Shell::AddOSMethods(Isolate* isolate, Local<ObjectTemplate> os_templ) {
    os_templ->Set(String::NewFromUtf8(isolate, "chdir", NewStringType::kNormal)
                      .ToLocalChecked(),
                  FunctionTemplate::New(isolate, ChangeDirectory));
@@ -114,10 +114,10 @@ index 18040c8..b6cef96 100644
                      .ToLocalChecked(),
                  FunctionTemplate::New(isolate, SetEnvironment));
 diff --git a/deps/v8/src/d8.h b/deps/v8/src/d8.h
-index c0922bc..cf5edbf 100644
+index e4a5870..bd0e111 100644
 --- a/deps/v8/src/d8.h
 +++ b/deps/v8/src/d8.h
-@@ -441,6 +441,7 @@ class Shell : public i::AllStatic {
+@@ -445,6 +445,7 @@ class Shell : public i::AllStatic {
    // the "mkdir -p" command.
    static void System(const v8::FunctionCallbackInfo<v8::Value>& args);
    static void ChangeDirectory(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -126,35 +126,35 @@ index c0922bc..cf5edbf 100644
    static void UnsetEnvironment(const v8::FunctionCallbackInfo<v8::Value>& args);
    static void SetUMask(const v8::FunctionCallbackInfo<v8::Value>& args);
 diff --git a/src/node.cc b/src/node.cc
-index f4d2709..a6403d5 100644
+index 9fb5ab3..9327f5e 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -2967,6 +2967,7 @@ void SetupProcessObject(Environment* env,
+@@ -2008,6 +2008,7 @@ void SetupProcessObject(Environment* env,
+ 
+   env->SetMethodNoSideEffect(process, "cwd", Cwd);
    env->SetMethod(process, "dlopen", DLOpen);
-   env->SetMethod(process, "abort", Abort);
-   env->SetMethod(process, "chdir", Chdir);
 +  env->SetMethod(process, "chroot", Chroot);
-   env->SetMethod(process, "cwd", Cwd);
    env->SetMethod(process, "reallyExit", Exit);
-   env->SetMethod(process, "umask", Umask);
+   env->SetMethodNoSideEffect(process, "uptime", Uptime);
+ 
 diff --git a/src/node_internals.h b/src/node_internals.h
-index a891b1b..778205e 100644
+index 12089bc..4f6ef254 100644
 --- a/src/node_internals.h
 +++ b/src/node_internals.h
-@@ -422,6 +422,7 @@ void PrintErrorString(const char* format, ...);
+@@ -883,6 +883,7 @@ void PrintErrorString(const char* format, ...);
  
  void Abort(const v8::FunctionCallbackInfo<v8::Value>& args);
  void Chdir(const v8::FunctionCallbackInfo<v8::Value>& args);
 +void Chroot(const v8::FunctionCallbackInfo<v8::Value>& args);
  void CPUUsage(const v8::FunctionCallbackInfo<v8::Value>& args);
  void Cwd(const v8::FunctionCallbackInfo<v8::Value>& args);
- void Hrtime(const v8::FunctionCallbackInfo<v8::Value>& args);
+ void GetActiveHandles(const v8::FunctionCallbackInfo<v8::Value>& args);
 diff --git a/src/node_process.cc b/src/node_process.cc
-index f953f5f..6355148 100644
+index 58f446a..2e973e9 100644
 --- a/src/node_process.cc
 +++ b/src/node_process.cc
-@@ -64,9 +64,21 @@ void Chdir(const FunctionCallbackInfo<Value>& args) {
-     return env->ThrowUVException(err, "uv_chdir");
+@@ -85,6 +85,18 @@ void Chdir(const FunctionCallbackInfo<Value>& args) {
+     return env->ThrowUVException(err, "chdir", nullptr, *path, nullptr);
  }
  
 +void Chroot(const FunctionCallbackInfo<Value>& args) {
