@@ -1,4 +1,4 @@
-From 661edfed0b4f3f71b2aa2495372f1ee4349fef7b Mon Sep 17 00:00:00 2001
+From b0ef78a75ffe1a44ccd467b82c47ef8cc33db026 Mon Sep 17 00:00:00 2001
 From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
 Date: Fri, 1 Jun 2018 11:43:15 +0530
 Subject: [PATCH] Fetching device type like BLE, BREDR from bluez
@@ -19,12 +19,13 @@ device/getStatus luna command for device type property as ble, bredr
              not working, always Unknown
 
 Upstream-Status : Pending
+
 ---
  src/device.c | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index 72f18b3..ce2baba 100644
+index 4f1af70..c95bab6 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -197,6 +197,7 @@ struct btd_device {
@@ -57,7 +58,7 @@ index 72f18b3..ce2baba 100644
  static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
  							uint16_t *appearance)
  {
-@@ -2624,6 +2640,7 @@ static const GDBusMethodTable device_methods[] = {
+@@ -2708,6 +2724,7 @@ static const GDBusMethodTable device_methods[] = {
  static const GDBusPropertyTable device_properties[] = {
  	{ "Address", "s", dev_property_get_address },
  	{ "AddressType", "s", property_get_address_type },
@@ -65,6 +66,3 @@ index 72f18b3..ce2baba 100644
  	{ "Name", "s", dev_property_get_name, NULL, dev_property_exists_name },
  	{ "Alias", "s", dev_property_get_alias, dev_property_set_alias },
  	{ "Class", "u", dev_property_get_class, NULL,
--- 
-2.7.4
-

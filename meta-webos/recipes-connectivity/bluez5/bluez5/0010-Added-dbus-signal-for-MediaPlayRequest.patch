@@ -1,4 +1,4 @@
-From e338e1e4debdec1a30d79ca7634c58154db557d3 Mon Sep 17 00:00:00 2001
+From 8ee58ca7c0c586554622c3033e3dad816df9cd92 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 30 Jan 2019 15:17:11 +0530
 Subject: [PATCH] Added dbus signal for MediaPlayRequest
@@ -21,6 +21,7 @@ Builded and Tested
 Upstream-Status: Inappropriate[webos specific]
 
 Change-Id: Ib225395809a3b53f1c494ac4e21beabc47f7f906
+
 ---
  profiles/audio/avrcp.c |  2 ++
  profiles/audio/media.c |  2 +-
@@ -62,10 +63,10 @@ index 23d1561..1859bc1 100644
  
  static uint32_t get_duration(void *user_data)
 diff --git a/src/device.c b/src/device.c
-index b6e9a03..a584d78 100644
+index 3ddb016..41335c0 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -1743,6 +1743,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -1790,6 +1790,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  					DEVICE_INTERFACE, "KeyCode");
  }
  
@@ -88,7 +89,7 @@ index b6e9a03..a584d78 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -2751,6 +2767,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -2822,6 +2838,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  	return dbus_message_new_method_return(msg);
  }
  
@@ -101,7 +102,7 @@ index b6e9a03..a584d78 100644
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
-@@ -3858,7 +3880,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -3940,7 +3962,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  
  	if (g_dbus_register_interface(dbus_conn,
  					device->path, DEVICE_INTERFACE,
@@ -111,16 +112,13 @@ index b6e9a03..a584d78 100644
  					device_free) == FALSE) {
  		error("Unable to register device interface for %s", address);
 diff --git a/src/device.h b/src/device.h
-index e85be02..6b1d791 100644
+index 9c2178b..863ecc7 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -171,3 +171,6 @@ void btd_device_init(void);
+@@ -180,3 +180,6 @@ void btd_device_init(void);
  void btd_device_cleanup(void);
  
  void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);
 +
 +void media_play_request(struct btd_device *dev);
 +void media_metadata_request(struct btd_device *dev);
--- 
-2.7.4
-

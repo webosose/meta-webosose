@@ -1,4 +1,4 @@
-From d2e706b5c52a7ccc2123e4ebcc5f7f0c219f9c93 Mon Sep 17 00:00:00 2001
+From 0bdf3119f1610a6cdc3f53545810d965eb0490ea Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Mon, 1 Oct 2018 10:49:38 +0530
 Subject: [PATCH] Fix obexd segmentation fault
@@ -32,9 +32,8 @@ Tested all obexctl commands
 [PLAT-66851] Fix segmentation fault in bluez while cancelling
              of opp transfer
 
-Upstream-status: Pending
-
 Change-Id: Ic3fbb37fc52cb84ee32286dc5edb88a20eba3d67
+
 ---
  gobex/gobex-transfer.c | 7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
@@ -58,6 +57,3 @@ index bc99306..36d4a1c 100644
  
  	transfer_free(transfer);
  }
--- 
-2.7.4
-

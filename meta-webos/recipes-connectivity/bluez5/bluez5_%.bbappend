@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos7"
+EXTENDPRAUTO_append = "webos10"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \

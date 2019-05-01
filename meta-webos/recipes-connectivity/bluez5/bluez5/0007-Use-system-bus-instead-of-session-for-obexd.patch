@@ -1,4 +1,4 @@
-From 93c7c837323a7d0d9198aabbd52cfc6802b1d608 Mon Sep 17 00:00:00 2001
+From b654351d0451848ee88d88c34dbad42b0bb203eb Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd
@@ -20,6 +20,7 @@ Tested with obexctl command line tool, all commands are working fine
 [PLAT-66305] Modify bluez to use system bus instead of session bus
              for obexd
 Upstream-Status: Inappropriate[webos specific]
+
 ---
  obexd/client/ftp.c      |  3 ++-
  obexd/client/map.c      |  2 +-
@@ -34,10 +35,10 @@ Upstream-Status: Inappropriate[webos specific]
  10 files changed, 22 insertions(+), 9 deletions(-)
 
 diff --git a/obexd/client/ftp.c b/obexd/client/ftp.c
-index 3628657..c2249dc 100644
+index d799821..894e402 100644
 --- a/obexd/client/ftp.c
 +++ b/obexd/client/ftp.c
-@@ -476,7 +476,8 @@ int ftp_init(void)
+@@ -475,7 +475,8 @@ int ftp_init(void)
  
  	DBG("");
  
@@ -48,7 +49,7 @@ index 3628657..c2249dc 100644
  		return -EIO;
  
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 4c6d676..f4ab8f4 100644
+index 3e581c8..386ae8b 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
 @@ -2074,7 +2074,7 @@ int map_init(void)
@@ -87,10 +88,10 @@ index 1ab34a7..793408b 100644
  		return -EIO;
  
 diff --git a/obexd/client/session.c b/obexd/client/session.c
-index 5f981bf..ab54824 100644
+index 5bd2d26..cf4cb2c 100644
 --- a/obexd/client/session.c
 +++ b/obexd/client/session.c
-@@ -593,7 +593,7 @@ struct obc_session *obc_session_create(const char *source,
+@@ -596,7 +596,7 @@ struct obc_session *obc_session_create(const char *source,
  	if (driver == NULL)
  		return NULL;
  
@@ -126,10 +127,10 @@ index 43ab409..3ea5963 100644
  	if (conn == NULL)
  		return FALSE;
 diff --git a/obexd/src/manager.c b/obexd/src/manager.c
-index 78b138c..4825cba 100644
+index a4af627..61f3417 100644
 --- a/obexd/src/manager.c
 +++ b/obexd/src/manager.c
-@@ -497,7 +497,7 @@ gboolean manager_init(void)
+@@ -499,7 +499,7 @@ gboolean manager_init(void)
  
  	dbus_error_init(&err);
  
@@ -166,18 +167,15 @@ index 0c0b221..48ba45e 100644
  
    <!-- allow users of lp group (printing subsystem) to 
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index c4c7686..0953bdb 100644
+index f839ab0..a190834 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -2158,7 +2158,7 @@ int main(int argc, char *argv[])
+@@ -2151,7 +2151,7 @@ int main(int argc, char *argv[])
+ 	bt_shell_set_menu(&main_menu);
  	bt_shell_set_prompt(PROMPT_OFF);
- 	bt_shell_attach(fileno(stdin));
  
 -	dbus_conn = g_dbus_setup_bus(DBUS_BUS_SESSION, NULL, NULL);
 +	dbus_conn = g_dbus_setup_bus(DBUS_BUS_SYSTEM, NULL, NULL);
  
  	client = g_dbus_client_new(dbus_conn, "org.bluez.obex",
  							"/org/bluez/obex");
--- 
-2.14.1
-

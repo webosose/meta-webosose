@@ -1,4 +1,4 @@
-From b39c829044e2ca51c9fbd22ef6e3a24d66ead753 Mon Sep 17 00:00:00 2001
+From 58ded007a048bf811f33266ca93e25234e80b5c9 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Thu, 17 May 2018 18:15:48 +0530
 Subject: [PATCH] Send disconnect signal on remote device disconnect
@@ -21,12 +21,13 @@ Builded and tested
              Bluez Sil
 
 Upstream-Status : Pending
+
 ---
  src/profile.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/src/profile.c b/src/profile.c
-index 7c5318c..cbbb02f 100644
+index 1e9c585..178441e 100644
 --- a/src/profile.c
 +++ b/src/profile.c
 @@ -695,6 +695,8 @@ static GSList *custom_props = NULL;
@@ -47,6 +48,3 @@ index 7c5318c..cbbb02f 100644
  	ext->conns = g_slist_remove(ext->conns, conn);
  	ext_io_destroy(conn);
  	return FALSE;
--- 
-2.7.4
-
