@@ -1,0 +1,120 @@
+From aa527f7875267843ca6a8d79d415df86d7eca47f Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Wed, 1 May 2019 21:44:11 +0000
+Subject: [PATCH] CMakeLists.txt: don't check for signals Boost library
+
+deprecated signals library was dropped in 1.69.0 release:
+https://www.boost.org/users/history/version_1_69_0.html
+
+Signals (v1) is now removed. Its removal was announced in 1.68 and its deprecation was announced in 1.54. Boost 1.68 is the last release that provides this library. Users are encouraged to use Signals2 instead. The Boost community thanks Douglas Gregor for his work on Signals which served its users well and which also inspired Signals2.
+
+This component is already using Signals2 in most cases
+fix few left-overs of Signals(1) and drop the check for
+old unused component.
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ CMakeLists.txt                               | 2 +-
+ src/core/base/lsutils.cpp                    | 4 ++--
+ src/core/base/lsutils.h                      | 8 ++++----
+ src/core/launch_point/launch_point_manager.h | 8 ++++----
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f6b36b4d..4cab939c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -71,7 +71,7 @@ pkg_check_modules(PMLOG REQUIRED PmLogLib)
+ include_directories(${PMLOG_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${PMLOG_CFLAGS_OTHER})
+ 
+-find_package(Boost REQUIRED COMPONENTS signals regex system filesystem)
++find_package(Boost REQUIRED COMPONENTS regex system filesystem)
+ include_directories(${Boost_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${Boost_CFLAGS_OTHER})
+ 
+diff --git a/src/core/base/lsutils.cpp b/src/core/base/lsutils.cpp
+index 72168bcd..ed45c5fd 100644
+--- a/src/core/base/lsutils.cpp
++++ b/src/core/base/lsutils.cpp
+@@ -36,12 +36,12 @@ LSDelayedMessage::~LSDelayedMessage() {
+   LSMessageUnref(m_message);
+ }
+ 
+-void LSDelayedMessage::setCondition(boost::signal<void()> &condition) {
++void LSDelayedMessage::setCondition(boost::signals2::signal<void()> &condition) {
+   m_connection = condition.connect(
+       std::bind(static_cast<void(LSDelayedMessage::*)()>(&LSDelayedMessage::onCondition), this));
+ }
+ 
+-void LSDelayedMessage::setCondition(boost::signal<void(bool)> &condition) {
++void LSDelayedMessage::setCondition(boost::signals2::signal<void(bool)> &condition) {
+   m_connection = condition.connect(
+       std::bind(static_cast<void (LSDelayedMessage::*)(bool)>(&LSDelayedMessage::onCondition), this, std::placeholders::_1));
+ }
+diff --git a/src/core/base/lsutils.h b/src/core/base/lsutils.h
+index c8627372..93ddf67b 100644
+--- a/src/core/base/lsutils.h
++++ b/src/core/base/lsutils.h
+@@ -21,7 +21,7 @@
+ #include <vector>
+ 
+ #include <luna-service2/lunaservice.h>
+-#include <boost/signal.hpp>
++#include <boost/signals2.hpp>
+ 
+ class LSErrorSafe:
+         public LSError
+@@ -41,8 +41,8 @@ public:
+     static LSDelayedMessage& acquire(LSMessage *message);
+ 
+     // TODO : support multi condition & action if it needs
+-    void setCondition(boost::signal<void ()> &condition);
+-    void setCondition(boost::signal<void (bool)> &condition);
++    void setCondition(boost::signals2::signal<void ()> &condition);
++    void setCondition(boost::signals2::signal<void (bool)> &condition);
+     void setAction(std::function<bool (LSMessage*)> action);
+ 
+ private:
+@@ -57,7 +57,7 @@ private:
+ private:
+     LSMessage *m_message;
+     std::function<bool (LSMessage*)> m_action;
+-    boost::signals::scoped_connection m_connection;
++    boost::signals2::scoped_connection m_connection;
+ };
+ 
+ std::string GetCallerFromMessage(LSMessage* message);
+diff --git a/src/core/launch_point/launch_point_manager.h b/src/core/launch_point/launch_point_manager.h
+index 53971bc6..52cf621c 100644
+--- a/src/core/launch_point/launch_point_manager.h
++++ b/src/core/launch_point/launch_point_manager.h
+@@ -18,7 +18,7 @@
+ #define LAUNCH_POINT_MANAGER_H
+ 
+ #include <boost/bind.hpp>
+-#include <boost/signals.hpp>
++#include <boost/signals2.hpp>
+ #include <glib.h>
+ #include <luna-service2/lunaservice.h>
+ 
+@@ -69,7 +69,7 @@ class LaunchPointManager : public Singleton<LaunchPointManager>
+   void SetLaunchPointFactory(LaunchPointFactoryInterface& lp_factory);
+ 
+   bool Ready() const { return lpm_ready_; }
+-  boost::signal<void ()> signal_on_launch_point_ready_;
++  boost::signals2::signal<void ()> signal_on_launch_point_ready_;
+   void SubscribeListChange(boost::function<void(const pbnjson::JValue&)> func) {
+       notify_launch_point_list_changed.connect(func); }
+   void SubscribeLaunchPointChange(boost::function<void(const std::string& change,const pbnjson::JValue&)> func) {
+@@ -102,8 +102,8 @@ class LaunchPointManager : public Singleton<LaunchPointManager>
+ 
+   void ReplyLpListToSubscribers();
+   void ReplyLpChangeToSubscribers(LaunchPointPtr lp, const std::string& change, int position = -1);
+-  boost::signal<void (const pbnjson::JValue&)> notify_launch_point_list_changed;
+-  boost::signal<void (const std::string&, const pbnjson::JValue&)> notify_launch_point_changed;
++  boost::signals2::signal<void (const pbnjson::JValue&)> notify_launch_point_list_changed;
++  boost::signals2::signal<void (const std::string&, const pbnjson::JValue&)> notify_launch_point_changed;
+ 
+   bool IsLastVisibleLp(LaunchPointPtr lp);
+   LaunchPointPtr GetDefaultLpByAppId(const std::string& app_id);
