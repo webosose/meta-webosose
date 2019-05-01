@@ -42,6 +42,10 @@ EXTRA_OECONF += "--with-access-group=root \
 # but our old 9.* version doesn't support it
 EXTRA_OECONF_remove = "--disable-gsettings"
 
+# Added to oe-core pulseaudio.inc to improve build reproducibility with 12.2 version
+# but our old 9.* version doesn't support it
+EXTRA_OECONF_remove = "--disable-running-from-build-tree"
+
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11', '', d)} \
