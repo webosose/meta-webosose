@@ -1,0 +1,31 @@
+From e93348970da86733bf1b8914287386c6e2f1e122 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Wed, 1 May 2019 21:44:11 +0000
+Subject: [PATCH] CMakeLists.txt: don't check for signals Boost library
+
+deprecated signals library was dropped in 1.69.0 release:
+https://www.boost.org/users/history/version_1_69_0.html
+
+Signals (v1) is now removed. Its removal was announced in 1.68 and its deprecation was announced in 1.54. Boost 1.68 is the last release that provides this library. Users are encouraged to use Signals2 instead. The Boost community thanks Douglas Gregor for his work on Signals which served its users well and which also inspired Signals2.
+
+This component is already using Signals2 so just drop the check for old
+unused component.
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a926cf3..5596a2b 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -44,7 +44,7 @@ pkg_check_modules(PMLOG REQUIRED PmLogLib)
+ include_directories(${PMLOG_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${PMLOG_CFLAGS_OTHER})
+ 
+-find_package(Boost REQUIRED COMPONENTS signals)
++find_package(Boost REQUIRED)
+ include_directories(${Boost_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${Boost_CFLAGS_OTHER})
+ add_definitions(-DBOOST_BIND_NO_PLACEHOLDERS)
