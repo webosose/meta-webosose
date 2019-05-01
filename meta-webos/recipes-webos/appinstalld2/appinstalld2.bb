@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "Application Install Service"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -10,7 +10,7 @@ DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib pmtrace boost icu"
 RDEPENDS_${PN} = "ecryptfs-utils librolegen"
 
 WEBOS_VERSION = "1.0.0-2_53225020493e53d8714a2a73f0bc56e43a1870c9"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_cmake
@@ -21,3 +21,5 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+SRC_URI += "file://0001-CMakeLists.txt-don-t-check-for-signals-Boost-library.patch"
