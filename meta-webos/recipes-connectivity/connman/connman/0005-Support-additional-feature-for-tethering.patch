@@ -1,4 +1,4 @@
-From 1570cd449f62128bcdcdac0f0fade3ef804d7738 Mon Sep 17 00:00:00 2001
+From 2f2b63a0b51a553c0b8ea382bdaeab1b31b7e860 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 25 Jun 2019 13:11:11 +0900
 Subject: [PATCH] Support additional feature for tethering
@@ -28,11 +28,11 @@ index 85405f19..2a400692 100644
  		if (lease)
  			continue;
 diff --git a/include/technology.h b/include/technology.h
-index 54f3b4da..d24d7655 100644
+index a3095fb7..1d78649c 100644
 --- a/include/technology.h
 +++ b/include/technology.h
-@@ -44,6 +44,7 @@ void connman_technology_regdom_notify(struct connman_technology *technology,
- 
+@@ -46,6 +46,7 @@ enum connman_service_type connman_technology_get_type
+ 				(struct connman_technology *technology);
  bool connman_technology_get_wifi_tethering(const char **ssid,
  							const char **psk);
 +unsigned int connman_technology_get_wifi_tethering_channel(void);
@@ -40,10 +40,10 @@ index 54f3b4da..d24d7655 100644
  
  void connman_technology_wps_failed_notify(struct connman_technology *technology);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index d335f583..ffda170d 100644
+index bd9d2eaf..76ae1df7 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3583,16 +3583,25 @@ static void tech_remove(struct connman_technology *technology)
+@@ -3604,16 +3604,25 @@ static void tech_remove(struct connman_technology *technology)
  static GSupplicantSSID *ssid_ap_init(const char *ssid, const char *passphrase)
  {
  	GSupplicantSSID *ap;
@@ -71,19 +71,19 @@ index d335f583..ffda170d 100644
  	if (!passphrase || strlen(passphrase) == 0) {
  		ap->security = G_SUPPLICANT_SECURITY_NONE;
 diff --git a/src/connman.h b/src/connman.h
-index 9dd22157..e23fc288 100644
+index 02c509fd..cc32d065 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -635,6 +635,7 @@ void __connman_tethering_cleanup(void);
- const char *__connman_tethering_get_bridge(void);
+@@ -642,6 +642,7 @@ const char *__connman_tethering_get_bridge(void);
  int __connman_tethering_set_enabled(void);
  void __connman_tethering_set_disabled(void);
+ void __connman_tethering_list_clients(DBusMessageIter *array);
 +int __connman_tethering_set_enabled_with_ip(const char *ip);
  
  int __connman_private_network_request(DBusMessage *msg, const char *owner);
  int __connman_private_network_release(const char *path);
 diff --git a/src/technology.c b/src/technology.c
-index a92bc43f..27386dd6 100644
+index 0119c2d5..ae494c00 100644
 --- a/src/technology.c
 +++ b/src/technology.c
 @@ -66,6 +66,8 @@ struct connman_technology {
@@ -112,7 +112,7 @@ index a92bc43f..27386dd6 100644
  done:
  	g_free(identifier);
  
-@@ -215,14 +227,21 @@ int connman_technology_tethering_notify(struct connman_technology *technology,
+@@ -213,14 +225,21 @@ int connman_technology_tethering_notify(struct connman_technology *technology,
  							bool enabled)
  {
  	int err;
@@ -135,7 +135,7 @@ index a92bc43f..27386dd6 100644
  		if (err < 0)
  			return err;
  	} else
-@@ -253,8 +272,7 @@ static int set_tethering(struct connman_technology *technology,
+@@ -251,8 +270,7 @@ static int set_tethering(struct connman_technology *technology,
  	if (!bridge)
  		return -EOPNOTSUPP;
  
@@ -145,7 +145,7 @@ index a92bc43f..27386dd6 100644
  		return -EINVAL;
  
  	for (tech_drivers = technology->driver_list; tech_drivers;
-@@ -370,6 +388,17 @@ bool connman_technology_get_wifi_tethering(const char **ssid,
+@@ -377,6 +395,17 @@ bool connman_technology_get_wifi_tethering(const char **ssid,
  	return true;
  }
  
@@ -163,7 +163,7 @@ index a92bc43f..27386dd6 100644
  static void free_rfkill(gpointer data)
  {
  	struct connman_rfkill *rfkill = data;
-@@ -431,6 +460,13 @@ static void technology_load(struct connman_technology *technology)
+@@ -438,6 +467,13 @@ static void technology_load(struct connman_technology *technology)
  
  	technology->tethering_passphrase = g_key_file_get_string(keyfile,
  				identifier, "Tethering.Passphrase", NULL);
@@ -177,7 +177,7 @@ index a92bc43f..27386dd6 100644
  done:
  	g_free(identifier);
  
-@@ -546,6 +582,16 @@ static void append_properties(DBusMessageIter *iter,
+@@ -549,6 +585,16 @@ static void append_properties(DBusMessageIter *iter,
  					DBUS_TYPE_STRING,
  					&technology->tethering_passphrase);
  
@@ -194,7 +194,7 @@ index a92bc43f..27386dd6 100644
  	connman_dbus_dict_close(iter, &dict);
  }
  
-@@ -943,10 +989,19 @@ static DBusMessage *set_property(DBusConnection *conn,
+@@ -947,10 +993,19 @@ static DBusMessage *set_property(DBusConnection *conn,
  		if (technology->type != CONNMAN_SERVICE_TYPE_WIFI)
  			return __connman_error_not_supported(msg);
  
@@ -218,7 +218,7 @@ index a92bc43f..27386dd6 100644
  
  		if (g_strcmp0(technology->tethering_passphrase, str) != 0) {
  			g_free(technology->tethering_passphrase);
-@@ -959,6 +1014,55 @@ static DBusMessage *set_property(DBusConnection *conn,
+@@ -963,6 +1018,55 @@ static DBusMessage *set_property(DBusConnection *conn,
  					DBUS_TYPE_STRING,
  					&technology->tethering_passphrase);
  		}
@@ -274,7 +274,7 @@ index a92bc43f..27386dd6 100644
  	} else if (g_str_equal(name, "Powered")) {
  		dbus_bool_t enable;
  
-@@ -1228,6 +1332,7 @@ static void technology_put(struct connman_technology *technology)
+@@ -1232,6 +1336,7 @@ static void technology_put(struct connman_technology *technology)
  	g_free(technology->regdom);
  	g_free(technology->tethering_ident);
  	g_free(technology->tethering_passphrase);
@@ -283,10 +283,10 @@ index a92bc43f..27386dd6 100644
  }
  
 diff --git a/src/tethering.c b/src/tethering.c
-index f3cb36f4..69fb7a17 100644
+index e04756ff..99abf46c 100644
 --- a/src/tethering.c
 +++ b/src/tethering.c
-@@ -47,6 +47,7 @@
+@@ -49,6 +49,7 @@
  #endif
  
  #define BRIDGE_NAME "tether"
@@ -294,8 +294,8 @@ index f3cb36f4..69fb7a17 100644
  
  #define DEFAULT_MTU	1500
  
-@@ -321,6 +322,130 @@ void __connman_tethering_set_disabled(void)
- 	DBG("tethering stopped");
+@@ -363,6 +364,130 @@ void __connman_tethering_list_clients(DBusMessageIter *array)
+ 	g_hash_table_foreach(clients_table, append_client, array);
  }
  
 +static char *get_ip(uint32_t ip)
@@ -355,7 +355,7 @@ index f3cb36f4..69fb7a17 100644
 +			connman_ipaddress_calc_netmask_len(subnet_mask),
 +			broadcast);
 +	if (err < 0 && err != -EALREADY) {
-+		__connman_ippool_unref(dhcp_ippool);
++		__connman_ippool_free(dhcp_ippool);
 +		__connman_ippool_deladdr(index, ip, 24);
 +		__connman_bridge_remove(BRIDGE_NAME);
 +		__sync_fetch_and_sub(&tethering_enabled, 1);
@@ -392,7 +392,7 @@ index f3cb36f4..69fb7a17 100644
 +						24 * 3600, dns);
 +	if (!tethering_dhcp_server) {
 +		__connman_bridge_disable(BRIDGE_NAME);
-+		__connman_ippool_unref(dhcp_ippool);
++		__connman_ippool_free(dhcp_ippool);
 +		__connman_ippool_deladdr(index, ip, 24);
 +		__connman_bridge_remove(BRIDGE_NAME);
 +		__sync_fetch_and_sub(&tethering_enabled, 1);
@@ -405,7 +405,7 @@ index f3cb36f4..69fb7a17 100644
 +		connman_error("Cannot enable NAT %d/%s", err, strerror(-err));
 +		dhcp_server_stop(tethering_dhcp_server);
 +		__connman_bridge_disable(BRIDGE_NAME);
-+		__connman_ippool_unref(dhcp_ippool);
++		__connman_ippool_free(dhcp_ippool);
 +		__connman_ippool_deladdr(index, ip, 24);
 +		__connman_bridge_remove(BRIDGE_NAME);
 +		__sync_fetch_and_sub(&tethering_enabled, 1);
