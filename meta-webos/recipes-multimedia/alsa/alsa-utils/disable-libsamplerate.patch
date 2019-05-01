@@ -1,4 +1,4 @@
-From 4a09d01895f10fd4503ad290208915465e518a3a Mon Sep 17 00:00:00 2001
+From 02d0e5bf0bce17014318180f63a79d8eb93504cf Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Thu, 18 Feb 2016 12:43:22 +0100
 Subject: [PATCH] configure.ac: add parameters to enable/disable libsamplerate
@@ -8,13 +8,12 @@ Subject: [PATCH] configure.ac: add parameters to enable/disable libsamplerate
 * we don't like the autodetection
 
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
-
 ---
  configure.ac | 18 +++++++++++++++---
  1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index a263d3b..f61491f 100644
+index 7938996..dd83749 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -38,8 +38,6 @@ AC_CHECK_HEADERS([alsa/use-case.h], [have_ucm="yes"], [have_ucm="no"],
@@ -26,12 +25,13 @@ index a263d3b..f61491f 100644
  
  AC_CHECK_LIB([asound], [snd_seq_client_info_get_card], [HAVE_SEQ_CLIENT_INFO_GET_CARD="yes"])
  if test "$HAVE_SEQ_CLIENT_INFO_GET_CARD" = "yes" ; then
-@@ -56,7 +54,21 @@ AM_CONDITIONAL(HAVE_RAWMIDI, test "$have_rawmidi" = "yes")
+@@ -67,9 +65,23 @@ AM_CONDITIONAL(HAVE_RAWMIDI, test "$have_rawmidi" = "yes")
  AM_CONDITIONAL(HAVE_SEQ, test "$have_seq" = "yes")
  AM_CONDITIONAL(HAVE_UCM, test "$have_ucm" = "yes")
  AM_CONDITIONAL(HAVE_TOPOLOGY, test "$have_topology" = "yes")
 -AM_CONDITIONAL(HAVE_SAMPLERATE, test "$have_samplerate" = "yes")
-+
+ AM_CONDITIONAL(HAVE_FFADO, test "$have_ffado" = "yes")
+ 
 +libsamplerate=
 +AC_ARG_ENABLE(libsamplerate,
 +     AS_HELP_STRING([--disable-libsamplerate], [Disable libsamplerate usage]),
@@ -46,6 +46,7 @@ index a263d3b..f61491f 100644
 +  [#include <samplerate.h>])
 +fi
 +AM_CONDITIONAL(HAVE_SAMPLERATE, test $have_samplerate = "yes")
- 
++
  dnl Use tinyalsa
  alsabat_backend_tiny=
+ AC_ARG_ENABLE(alsabat_backend_tiny,
