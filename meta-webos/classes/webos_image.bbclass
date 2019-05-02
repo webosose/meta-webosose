@@ -84,4 +84,6 @@ ROOTFS_POSTPROCESS_COMMAND += '${@bb.utils.contains("IMAGE_FEATURES", "read-only
 inherit core-image
 inherit webos_machine_impl_dep
 inherit webos_filesystem_paths
+QTSDKCLASS ?= '${@bb.utils.contains("SDK_OS", "linux", "populate_sdk_qt5", "", d)}'
+inherit ${QTSDKCLASS}
 do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
