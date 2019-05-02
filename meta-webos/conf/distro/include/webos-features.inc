@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 # Keep in sync with setting in oe-core/meta/conf/distro/include/default-distrovars.inc
 # TODO: Maybe change this to use "_remove" when it's introduced in bitbake
@@ -38,4 +38,5 @@ DISTRO_FEATURES = "\
   ${WEBOS_DISTRO_FEATURES_INIT} \
   ${WEBOS_DISTRO_FEATURES_TEST} \
   ld-is-gold \
+  virtualization \
 "
