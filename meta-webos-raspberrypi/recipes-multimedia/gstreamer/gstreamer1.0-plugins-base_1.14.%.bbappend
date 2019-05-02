@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 require gstreamer1.0-webos-common.inc
 
@@ -10,4 +10,4 @@ PACKAGECONFIG_GL_rpi = "${@bb.utils.contains('DISTRO_FEATURES', 'opengl', ' egl'
 
 WEBOS_REPO_NAME_rpi = "gst-plugins-base"
 
-WEBOS_VERSION_rpi = "1.14.0-1_5e2338e701af08c9493f32426a5f712ae973ebbf"
+WEBOS_VERSION_rpi = "1.14.4-3_dba68182527f24b313951383ddbb701ddde340d1"

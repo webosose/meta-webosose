@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 inherit ${@'webos_public_repo webos_enhanced_submissions' if '${MACHINE}'.startswith('raspberrypi3') else ''}
 

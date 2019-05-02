@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 require gstreamer1.0-webos-common.inc
 
@@ -6,7 +6,7 @@ EXTENDPRAUTO_append_rpi = "webosrpi1"
 
 WEBOS_REPO_NAME_rpi = "gst-libav"
 
-WEBOS_VERSION_rpi = "1.14.0-1_d30724abcc248fdfd9e22638aafb54e52c68242d"
+WEBOS_VERSION_rpi = "1.14.4-2_6910361bc5b2fd4b98bd3af8f1674918d755f60c"
 
 SRC_URI_append_rpi = " \
     git://source.ffmpeg.org/ffmpeg;destsuffix=git/gst-libs/ext/libav;name=ffmpeg;branch=release/3.4 \
