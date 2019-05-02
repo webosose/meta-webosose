@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 # The MACHINE.conf for every MACHINE that has an Raspberry Pi BSP must require this
 # file.
@@ -10,6 +10,11 @@ WEBOS_TARGET_MACHINE_IMPL = "hardware"
 # Wen use default setting (64M), we got the below error
 # [EXIT]: EGL Error : Could not create the egl surface: error = 0x3003
 GPU_MEM = "128"
+
+# Backport from:
+# https://github.com/agherzan/meta-raspberrypi/commit/aaa0d0b708437a396f194dcc2953c8e6b533f4fd
+# can be dropped when upgrading to Yocto 2.7 Warrior
+PREFERRED_VERSION_linux-raspberrypi = "4.19.%"
 
 PREFERRED_PROVIDER_aval-impl = "avoutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_aval-impl = "avoutput-adaptation-layer-rpi"
@@ -42,12 +47,12 @@ MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-snd-usb-audio \
     kernel-module-uinput \
     kernel-module-uvcvideo \
+    kernel-module-vc4 \
     kernel-module-videodev \
     kernel-module-bridge \
 "
 
-KERNEL_MODULE_AUTOLOAD_append = " uinput"
-KERNEL_MODULE_AUTOLOAD_append += " bridge"
+KERNEL_MODULE_AUTOLOAD_append = " uinput bridge vc4"
 
 # Disabling U-Boot until IP address conflict and ALSA issues resolved (PLAT-46515)
 # RPI_USE_U_BOOT = "1"
