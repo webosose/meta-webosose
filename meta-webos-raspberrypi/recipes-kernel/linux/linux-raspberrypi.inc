@@ -1,3 +1,8 @@
+# Backported from warrior with following 3 changes to support raspberrypi4:
+# a4a3f95 linux-raspberrypi: Build dtbs with dtbs make target for all 64bit targets
+# d108982 linux-raspberrypi.inc: Explicitly set defconfig for raspberrypi4-64
+# 16f465b linux-raspberrypi: Include configuration for RaspberryPi3 defconfig
+
 DESCRIPTION = "Linux Kernel for Raspberry Pi"
 SECTION = "kernel"
 LICENSE = "GPLv2"
