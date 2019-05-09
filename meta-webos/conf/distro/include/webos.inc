@@ -269,9 +269,6 @@ BB_DISKMON_DIRS = "\
     ABORT,/tmp,100M,10K \
 "
 
-# QEMU(x86/arm) based vmdk emulator need root as vda2 in place of hda2 used in VirtualBox
-SYSLINUX_ROOT_qemuall = "root=/dev/vda2"
-
 # Select at most one of the two choices here for the console:
 #   Redirect console output to keep it from spewing all over the Emulator window
 #   (This is added to qemux86 kernel cmdline by openembedded-core/meta/classes/syslinux.bbclass)

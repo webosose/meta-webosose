@@ -197,6 +197,8 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
 RDEPENDS_${PN}_append_qemux86 = " \
     v4l-utils \
     dhcp-client \
+    vmwgfx-layout \
+    kernel-module-vboxguest \
 "
 
 RDEPENDS_${PN} += "${MACHINE_EXTRA_RDEPENDS}"

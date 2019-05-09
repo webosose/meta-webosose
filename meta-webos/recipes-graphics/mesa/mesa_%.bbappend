@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO_append = "webos4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -13,8 +13,8 @@ SRC_URI += " \
 PACKAGECONFIG_qemuall = "opengl gbm egl gles dri wayland gallium gallium-llvm"
 
 # Add virgl gallium driver
-GALLIUMDRIVERS_qemuall = "virgl"
-GALLIUMDRIVERS_LLVM_qemuall = "virgl"
+GALLIUMDRIVERS_qemuall = "virgl,svga"
+GALLIUMDRIVERS_LLVM_qemuall = "virgl,svga"
 DRIDRIVERS_qemuall = "swrast"
 
 # Enable wayland even without wayland in DISTRO_FEATURES
