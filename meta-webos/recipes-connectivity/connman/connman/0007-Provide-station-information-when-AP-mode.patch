@@ -1,10 +1,9 @@
-From ec697c7db8030ea825915e24c81e849d4849df59 Mon Sep 17 00:00:00 2001
+From 883d68ced06559f820532eb192abeb578b74ec04 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Sat, 31 Aug 2019 14:41:49 +0900
 Subject: [PATCH] Provide station information when AP mode
 
 Provide station information when AP mode
-
 ---
  gsupplicant/gsupplicant.h |  2 +
  gsupplicant/supplicant.c  | 53 ++++++++++++++++++++++
@@ -17,7 +16,7 @@ Provide station information when AP mode
  8 files changed, 239 insertions(+)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index 3520ee7..a3e5d51 100644
+index 3520ee73..a3e5d517 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
 @@ -375,6 +375,8 @@ struct _GSupplicantCallbacks {
@@ -30,10 +29,10 @@ index 3520ee7..a3e5d51 100644
  	void (*peer_lost) (GSupplicantPeer *peer);
  	void (*peer_changed) (GSupplicantPeer *peer,
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index fc6074c..a4d8257 100644
+index 5f92182a..059e187a 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -3031,6 +3031,56 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
+@@ -3069,6 +3069,56 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
  	callback_wps_state(interface);
  }
  
@@ -48,7 +47,7 @@ index fc6074c..a4d8257 100644
 +		return;
 +
 +	if (g_strcmp0(path, "/") == 0)
-+		return ;
++		return;
 +
 +	interface = g_hash_table_lookup(interface_table, path);
 +	if (interface == NULL)
@@ -90,7 +89,7 @@ index fc6074c..a4d8257 100644
  static void create_peer_identifier(GSupplicantPeer *peer)
  {
  	const unsigned char test[ETH_ALEN] = {};
-@@ -3591,6 +3641,9 @@ static struct {
+@@ -3629,6 +3679,9 @@ static struct {
  	{ SUPPLICANT_INTERFACE ".Interface", "NetworkAdded",      signal_network_added     },
  	{ SUPPLICANT_INTERFACE ".Interface", "NetworkRemoved",    signal_network_removed   },
  
@@ -101,7 +100,7 @@ index fc6074c..a4d8257 100644
  
  	{ SUPPLICANT_INTERFACE ".Interface.WPS", "Credentials", signal_wps_credentials },
 diff --git a/include/technology.h b/include/technology.h
-index d24d765..d5c08e4 100644
+index d24d7655..d5c08e4f 100644
 --- a/include/technology.h
 +++ b/include/technology.h
 @@ -38,6 +38,8 @@ struct connman_technology;
@@ -114,10 +113,10 @@ index d24d765..d5c08e4 100644
  void connman_technology_regdom_notify(struct connman_technology *technology,
  							const char *alpha2);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 39c47b0..c41356d 100644
+index 47694bc2..5bb211c8 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3286,6 +3286,25 @@ static void network_associated(GSupplicantNetwork *network)
+@@ -3425,6 +3425,25 @@ static void network_associated(GSupplicantNetwork *network)
  	interface_state(interface);
  }
  
@@ -143,7 +142,7 @@ index 39c47b0..c41356d 100644
  static void apply_peer_services(GSupplicantPeer *peer,
  				struct connman_peer *connman_peer)
  {
-@@ -3506,6 +3525,8 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3645,6 +3664,8 @@ static const GSupplicantCallbacks callbacks = {
  	.network_removed	= network_removed,
  	.network_changed	= network_changed,
  	.network_associated	= network_associated,
@@ -153,10 +152,10 @@ index 39c47b0..c41356d 100644
  	.peer_lost		= peer_lost,
  	.peer_changed		= peer_changed,
 diff --git a/src/connman.h b/src/connman.h
-index f617425..8d7aeb0 100644
+index e23fc288..2fffe40d 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -625,10 +625,21 @@ bool __connman_config_get_bool(GKeyFile *key_file,
+@@ -629,10 +629,21 @@ bool __connman_config_get_bool(GKeyFile *key_file,
  bool __connman_config_address_provisioned(const char *address,
  					const char *netmask);
  
@@ -179,7 +178,7 @@ index f617425..8d7aeb0 100644
  void __connman_tethering_set_disabled(void);
  int __connman_tethering_set_enabled_with_ip(const char *ip);
 diff --git a/src/manager.c b/src/manager.c
-index d15ce20..758ac70 100644
+index d15ce203..758ac709 100644
 --- a/src/manager.c
 +++ b/src/manager.c
 @@ -138,6 +138,24 @@ static DBusMessage *get_technologies(DBusConnection *conn,
@@ -218,10 +217,10 @@ index d15ce20..758ac70 100644
  			GDBUS_ARGS({ "provider", "o" }), NULL,
  			remove_provider) },
 diff --git a/src/technology.c b/src/technology.c
-index 13c64fe..292a533 100644
+index 3c51f92c..d5454673 100644
 --- a/src/technology.c
 +++ b/src/technology.c
-@@ -2074,3 +2074,39 @@ void __connman_technology_cleanup(void)
+@@ -2072,3 +2072,39 @@ void __connman_technology_cleanup(void)
  
  	dbus_connection_unref(connection);
  }
@@ -262,7 +261,7 @@ index 13c64fe..292a533 100644
 +					DBUS_TYPE_STRING, append_station_mac, NULL);
 +}
 diff --git a/src/tethering.c b/src/tethering.c
-index 69fb7a1..26d71b4 100644
+index 69fb7a17..26d71b45 100644
 --- a/src/tethering.c
 +++ b/src/tethering.c
 @@ -29,6 +29,7 @@

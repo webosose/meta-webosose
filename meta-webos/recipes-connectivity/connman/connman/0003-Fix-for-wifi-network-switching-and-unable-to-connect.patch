@@ -1,4 +1,4 @@
-From 527001e9f890be303c8f6426d201571893ee0789 Mon Sep 17 00:00:00 2001
+From b50fce91f038453863675c2c4790ba2c2e54bee5 Mon Sep 17 00:00:00 2001
 From: Vasu Kantubukta <vasu.kantubukta@lge.com>
 Date: Wed, 19 Dec 2018 21:02:59 +0530
 Subject: [PATCH] Fix for wifi network switching and unable to connect to open
@@ -27,17 +27,16 @@ Verified the image.
              appears instead of Password prompt.
 
 Upstream-Status: Inappropriate [webOS specific]
-
 ---
  plugins/wifi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 5d6cbb9..bf22a5d 100644
+index 06b01ee6..d335f583 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -2805,7 +2805,7 @@ static void interface_state(GSupplicantInterface *interface)
- 		connman_network_set_associating(network, false);
+@@ -2906,7 +2906,7 @@ static void interface_state(GSupplicantInterface *interface)
+ 		}
  		wifi->disconnecting = false;
  
 -		if (perform_deferred_connect_after_disconnect(wifi) == FALSE)
