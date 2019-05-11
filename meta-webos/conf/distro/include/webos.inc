@@ -199,24 +199,21 @@ WARN_QA_append = " version-going-backwards webos-enh-sub-warning"
 WEBOS_ERROR_QA_AUTOREV ?= "webos-enh-sub-autorev-error"
 ERROR_QA_append = " webos-enh-sub-error acg-dirty acg-json ${WEBOS_ERROR_QA_AUTOREV} acg-api acg-perm ls2-role ls2-schema"
 ERROR_QA_remove = " version-going-backwards"
-# Move most test from WARN_QA to ERROR_QA to prevent silently re-introducing these issues
-ERROR_QA_append = " ldflags useless-rpaths rpaths staticdev libdir xorg-driver-abi textrel already-stripped incompatible-license files-invalid installed-vs-shipped compile-host-path install-host-path pn-overrides infodir build-deps file-rdeps unknown-configure-option symlink-to-sysroot multilib invalid-packageconfig host-user-contaminated"
-WARN_QA_remove = " ldflags useless-rpaths rpaths staticdev libdir xorg-driver-abi textrel already-stripped incompatible-license files-invalid installed-vs-shipped compile-host-path install-host-path pn-overrides infodir build-deps file-rdeps unknown-configure-option symlink-to-sysroot multilib invalid-packageconfig host-user-contaminated"
-
-# Be more strict about warnings which currently aren't triggered by our builds
-# to make sure that it stays that way
-ERROR_QA_append = " \
-    already-stripped \
-    installed-vs-shipped \
-    ldflags \
-    libdir \
-    rpaths \
-    staticdev \
-    textrel \
-    unknown-configure-option \
-    useless-rpaths \
-    xorg-driver-abi \
+# Move all default WARN_QA from insane.bbclass to ERROR_QA to prevent silently re-introducing these issues
+DEFAULT_WARN_QA = "\
+    ldflags useless-rpaths rpaths staticdev libdir xorg-driver-abi \
+    textrel already-stripped incompatible-license files-invalid \
+    installed-vs-shipped compile-host-path install-host-path \
+    pn-overrides infodir build-deps src-uri-bad \
+    unknown-configure-option symlink-to-sysroot multilib \
+    invalid-packageconfig host-user-contaminated uppercase-pn patch-fuzz \
 "
+ERROR_QA_append = " ${DEFAULT_WARN_QA}"
+WARN_QA_remove = "${DEFAULT_WARN_QA}"
+
+# Temporary until pseudo issues are completely resolved
+# [PLAT-48507] pseudo: random package_qa failures
+ERROR_QA_remove = "host-user-contaminated"
 
 # Default WEBOS_TARGET_* values (see webos_cmake.bbclass)
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
