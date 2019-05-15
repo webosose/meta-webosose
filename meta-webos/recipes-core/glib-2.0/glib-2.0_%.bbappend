@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 PKGV .= "-0webos4"
 EXTENDPRAUTO_append = "webos4"
@@ -17,6 +17,7 @@ SRC_URI += " \
 # it doesn't work when GLIBC_GENERATE_LOCALES are restricted like they are in our builds:
 # meta-webos/conf/distro/include/webos-toolchain.inc:GLIBC_GENERATE_LOCALES = "en_US.UTF-8"
 RDEPENDS_${PN}-ptest_remove_libc-glibc = " \
+    locale-base-pl-pl.iso-8859-2 \
     locale-base-tr-tr \
     locale-base-lt-lt \
     locale-base-ja-jp.euc-jp \
