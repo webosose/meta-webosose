@@ -231,7 +231,7 @@ def errorreport_get_top_20_tasks(e, jsondata):
     bsdir = e.data.expand("${BUILDSTATS_BASE}/${BUILDNAME}")
     # it can be empty (with only build_stat file), so check that there are at least 2 entries before calling grep
     if len(os.listdir(bsdir)) > 1:
-        top20 = subprocess.check_output("grep -R --no-filename '^.*do_.*Elapsed time' %s/ | sed 's/^\([^:]*\): \(.*\): Elapsed time: \([^ ]*\) .*$/\\3 \\2:\\1/g' | sort -n | tail -n 20" % bsdir, shell=True).decode("utf-8")
+        top20 = subprocess.check_output("grep -R '^.*Elapsed time' %s/ | sed 's/^\(.*\)\/\([^\/]*\/[^\/]*\):Elapsed time: \([^ ]*\) .*$/\\3 \\2/g' | sort -n | tail -n 20" % bsdir, shell=True).decode("utf-8")
         for line in top20.splitlines():
             bsdata={}
             (time, task) = line.split()
