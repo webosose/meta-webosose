@@ -86,3 +86,5 @@ inherit webos_machine_impl_dep
 inherit webos_filesystem_paths
 inherit webos_prerelease_dep
 do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
+
+WKS_FILE = "webos-qemux86-directdisk.wks"
