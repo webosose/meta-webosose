@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 DESCRIPTION = "Notification Manager"
 AUTHOR = "Suresh Arumugam <suresh.arumugam@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib boost libxml++"
 
-WEBOS_VERSION = "1.0.0-3_d7697ede381111236dbe4fbf8d18bcf5853e2e82"
+WEBOS_VERSION = "1.0.0-4_f749cc35707ebf07c8956ddbb1baa66b28169b64"
 PR = "r6"
 
 inherit webos_component
