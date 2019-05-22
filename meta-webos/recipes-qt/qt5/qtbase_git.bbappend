@@ -118,6 +118,7 @@ SRC_URI_append_hardware = " \
     file://0038-eglfs-Associate-touch-device-with-window.patch \
 "
 
+WEBOS_DISTRO_PRERELEASE ??= ""
 # Do not include Qt testability patch for release
 SRC_URI_append = "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else ' file://0099-Move-testability-loading-code-to-the-QGuiApplication.patch'}"
 

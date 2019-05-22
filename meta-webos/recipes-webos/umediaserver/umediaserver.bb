@@ -6,6 +6,8 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
+WEBOS_DISTRO_PRERELEASE ??= ""
+
 DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 python luna-service2 pmloglib boost luna-prefs"
 DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
