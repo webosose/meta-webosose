@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2018 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 
 SUMMARY = "Event Monitoring Service for generic notifications"
 AUTHOR = "Viesturs Zarins <viesturs.zarins@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson libwebosi18n"
 
-WEBOS_VERSION = "1.1.0-1_5b1caf279229d75c80ee33a7e0736dc3a986131f"
+WEBOS_VERSION = "1.1.0-2_462bdc1f068c9f2c57ed8bcbef2466a0ecbb67ab"
 PR = "r2"
 
 inherit webos_component
