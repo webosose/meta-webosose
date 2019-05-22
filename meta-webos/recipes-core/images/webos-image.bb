@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 DESCRIPTION = "webOS OSE image"
 LICENSE = "Apache-2.0"
@@ -8,6 +8,7 @@ PR = "r3"
 
 IMAGE_FEATURES += "${WEBOS_IMAGE_DEFAULT_FEATURES}"
 
+WEBOS_DISTRO_PRERELEASE ??= ""
 IMAGE_FEATURES += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'debug-tweaks'}"
 
 inherit webos_image

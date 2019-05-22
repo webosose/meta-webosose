@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2018 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 
 AUTHOR  = "Viesturs Zarins <viesturs.zarins@lge.com>"
 EXTENDPRAUTO_append = "webos1"
@@ -11,6 +11,8 @@ CRASHD_armv5 = ""
 RDEPENDS_${PN} += "${CRASHD}"
 
 inherit webos_machine_impl_dep
+
+WEBOS_DISTRO_PRERELEASE ??= ""
 
 do_install_append_hardware() {
 

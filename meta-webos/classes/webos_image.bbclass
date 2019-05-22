@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 # IMAGE_FEATURES controls the contents of webOS OSE images
 #
@@ -16,6 +16,8 @@
 FEATURE_PACKAGES_webos-extended = "packagegroup-webos-extended"
 FEATURE_PACKAGES_webos-devel = "packagegroup-webos-devel"
 FEATURE_PACKAGES_webos-test = "packagegroup-webos-test"
+
+WEBOS_DISTRO_PRERELEASE ??= ""
 
 WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE = "ssh-server-dropbear"
 WEBOS_IMAGE_DEFAULT_FEATURES = "package-management"
