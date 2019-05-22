@@ -1,4 +1,4 @@
-# Copyright (c) 2015 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 
 # WARNING: This recipe appears in the SIGGEN_EXCLUDERECIPES_ABISAFE list in
 # conf/layer.conf which means that changes to it will not be used in the generation
@@ -13,16 +13,16 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 PV = "3.0.0"
-PR = "r1"
+PR = "r2"
 
 inherit webos_machine_dep
 
 PRODUCT_DEVICE_NAME ?= "${DISTRO_NAME} Device"
 PRODUCT_DEVICE_NAME_BRANDED ?= "LGE ${DISTRO_NAME} Device"
-PRODUCT_DEVICE_NAME_SHORT ?= "${@ '${DISTRO_NAME}'.split()[1]} Device"
+PRODUCT_DEVICE_NAME_SHORT ?= "${@ '${DISTRO_NAME}'.split()[1] if len('${DISTRO_NAME}'.split()) >= 2 else '${DISTRO_NAME}'} Device"
 PRODUCT_DEVICE_NAME_SHORT_BRANDED ?= "LGE ${DISTRO_NAME} Device"
 PRODUCT_DEVICE_NAME_PRODUCT_LINE_NAME ?= "${DISTRO_NAME} Device"
-PRODUCT_DEVICE_NAME_PRODUCT_CLASS ?= "${@ '${DISTRO_NAME}'.split()[1]}"
+PRODUCT_DEVICE_NAME_PRODUCT_CLASS ?= "${@ '${DISTRO_NAME}'.split()[1] if len('${DISTRO_NAME}'.split()) >= 2 else '${DISTRO_NAME}'}"
 PRODUCT_DEVICE_NAME_PRODUCT_BROWSER_OS_NAME ?= "${DISTRO_NAME}"
 
 # Versions can not be overridden
