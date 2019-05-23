@@ -17,15 +17,22 @@ inherit webos_pkgconfig
 
 
 WEBOS_VERSION = "1.0.0-6_e35ae76c0386ab5f897330d8a5b60e5c751dcc80"
-PR = "r0"
+PR = "r1"
 
-DEPENDS = "boost userland gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
+DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
+DEPENDS_append_rpi = " userland"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git/"
 
+# See the restrictions in CMakeLists.txt
+COMPATIBLE_MACHINE_aarch64 = "(.*)"
+COMPATIBLE_MACHINE_armv6 = "(.*)"
+COMPATIBLE_MACHINE_armv7a = "(.*)"
+COMPATIBLE_MACHINE_armv7ve = "(.*)"
+COMPATIBLE_MACHINE_x86 = "(.*)"
+COMPATIBLE_MACHINE_x86-64 = "(.*)"
 COMPATIBLE_MACHINE = "^raspberrypi3$"
-COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/*.so"
