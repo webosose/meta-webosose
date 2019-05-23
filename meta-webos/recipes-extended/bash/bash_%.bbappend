@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2017 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos2"
 
@@ -24,4 +24,4 @@ ALTERNATIVE_PRIORITY[bash] = "40"
 # http://lists.openembedded.org/pipermail/openembedded-commits/2017-November/215520.html
 # it doesn't work when GLIBC_GENERATE_LOCALES are restricted like they are in our builds:
 # meta-webos/conf/distro/include/webos-toolchain.inc:GLIBC_GENERATE_LOCALES = "en_US.UTF-8"
-RDEPENDS_${PN}-ptest_remove_libc-glibc = "locale-base-fr-fr locale-base-de-de"
+RDEPENDS_${PN}-ptest_remove_libc-glibc = "locale-base-fr-fr locale-base-de-de locale-base-fr-fr.iso-8859-1 locale-base-zh-hk.big5-hkscs"
