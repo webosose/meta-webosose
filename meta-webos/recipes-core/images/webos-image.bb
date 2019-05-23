@@ -8,9 +8,9 @@ PR = "r3"
 
 IMAGE_FEATURES += "${WEBOS_IMAGE_DEFAULT_FEATURES}"
 
-WEBOS_DISTRO_PRERELEASE ??= ""
 IMAGE_FEATURES += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'debug-tweaks'}"
 
 inherit webos_image
+inherit webos_prerelease_dep
 
 IMAGE_ROOTFS_EXTRA_SPACE = "524288"

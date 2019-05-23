@@ -22,6 +22,7 @@ inherit webos_machine_dep
 inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
+inherit webos_prerelease_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -29,7 +30,6 @@ S = "${WORKDIR}/git"
 # LTTNG option
 # WEBOS_LTTNG_ENABLED = "0"
 EXTRA_OECMAKE += " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
-WEBOS_DISTRO_PRERELEASE ??= ""
 EXTRA_OECMAKE += "-DWEBOS_DISTRO_PRERELEASE:STRING='${WEBOS_DISTRO_PRERELEASE}'"
 
 # gtest option

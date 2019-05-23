@@ -15,7 +15,6 @@ RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} 
 WEBOS_VERSION = "3.21.2-3_1d26c95ddf2cdf846b7066f049fa28c20f29101e"
 PR = "r23"
 
-WEBOS_DISTRO_PRERELEASE ??= ""
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
 

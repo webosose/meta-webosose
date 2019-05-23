@@ -39,8 +39,6 @@ WEBOS_DISTRO_RELEASE_CODENAME ?= "${WEBOS_DISTRO_PLATFORM_CODENAME}${WEBOS_DISTR
 # override this based on their codename schemes.
 WEBOS_DISTRO_BUILD_CODENAME ?= "${@base_get_metadata_git_branch('.', None).strip().translate(str.maketrans('','','()/'))}"
 
-WEBOS_DISTRO_PRERELEASE ?= "devel"
-
 #
 # All of the types of official build jobs should override WEBOS_DISTRO_BUILD_ID
 # in the following format: "[[<prefix>.]<site>-]<build-number>", where the
@@ -235,8 +233,6 @@ ERROR_QA_append = " \
 
 # Default WEBOS_TARGET_* values (see webos_cmake.bbclass)
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
-WEBOS_TARGET_MACHINE_IMPL ?= "emulator"
-WEBOS_TARGET_MACHINE_VARIANT ?= "none"
 
 # Change default PACKAGE_ARCH to MACHINE_ARCH, one of important goals for OE
 # is to share binary feed and sstate between MACHINEs with the same architecture

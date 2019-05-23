@@ -11,8 +11,7 @@ CRASHD_armv5 = ""
 RDEPENDS_${PN} += "${CRASHD}"
 
 inherit webos_machine_impl_dep
-
-WEBOS_DISTRO_PRERELEASE ??= ""
+inherit webos_prerelease_dep
 
 do_install_append_hardware() {
 

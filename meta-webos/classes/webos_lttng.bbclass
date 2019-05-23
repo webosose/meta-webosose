@@ -1,4 +1,4 @@
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 #
 # webos_lttng
 #
@@ -11,6 +11,10 @@
 # LTTng is disabled by default. To enable, add:
 #    WEBOS_LTTNG_ENABLED = "1"
 # to your webos-local.conf or the location of your choice.
+
+# inherit webos_prerelease_dep
+# WEBOS_LTTNG_ENABLED ?= "${@ '0' if '${WEBOS_DISTRO_PRERELEASE}' == '' else '1' }"
+
 WEBOS_LTTNG_ENABLED ??= "0"
 # Only enable LTTng for target components
 WEBOS_LTTNG_ENABLED_class-native = "0"

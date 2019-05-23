@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS logging library"
 AUTHOR = "Gayathri Srinivasan <gayathri.srinivasan@lge.com>"
@@ -12,7 +12,6 @@ WEBOS_VERSION = "3.3.0-2_75eef528791b73b8bc4f84cf522c6a1c533edc32"
 PR = "r9"
 
 LEAD_SONAME = "libPmLogLib.so"
-WEBOS_DISTRO_PRERELEASE ??= ""
 EXTRA_OECMAKE += "-DWEBOS_DISTRO_PRERELEASE:STRING='${WEBOS_DISTRO_PRERELEASE}'"
 
 inherit webos_component

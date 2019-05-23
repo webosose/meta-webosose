@@ -17,8 +17,6 @@ FEATURE_PACKAGES_webos-extended = "packagegroup-webos-extended"
 FEATURE_PACKAGES_webos-devel = "packagegroup-webos-devel"
 FEATURE_PACKAGES_webos-test = "packagegroup-webos-test"
 
-WEBOS_DISTRO_PRERELEASE ??= ""
-
 WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE = "ssh-server-dropbear"
 WEBOS_IMAGE_DEFAULT_FEATURES = "package-management"
 
@@ -86,4 +84,5 @@ ROOTFS_POSTPROCESS_COMMAND += '${@bb.utils.contains("IMAGE_FEATURES", "read-only
 inherit core-image
 inherit webos_machine_impl_dep
 inherit webos_filesystem_paths
+inherit webos_prerelease_dep
 do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"

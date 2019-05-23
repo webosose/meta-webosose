@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 SUMMARY = "Crash reporting daemon"
 AUTHOR = "Ed Chejlava <ed.chejlava@lge.com>"
@@ -28,6 +28,7 @@ inherit webos_cmake
 inherit webos_daemon
 inherit webos_filesystem_paths
 inherit webos_public_repo
+inherit webos_prerelease_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -35,7 +36,6 @@ S = "${WORKDIR}/git"
 EXTRA_OECMAKE += "-DWEBOS_INSTALL_CRASHDDIR:STRING=${webos_crashddir}"
 
 # Generate core dumps on non-production builds.
-WEBOS_DISTRO_PRERELEASE ??= ""
 EXTRA_OECMAKE += "-DENABLE_CORE_DUMP:STRING=${@bb.utils.contains('WEBOS_DISTRO_PRERELEASE', 'devel', '1', '0', d)}"
 
 # webos_build_library() from cmake-modules-webos 1.0.0 RC4 doesn't support

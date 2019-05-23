@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2017 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 #
 # webos_machine_variant_dep
 #
@@ -11,6 +11,8 @@
 # The default value of WEBOS_TARGET_MACHINE_VARIANT is "none" and MACHINE which defines
 # the value of it is the secondary MACHINE which has WEBOS_TARGET_MACHINE_ALIAS.
 inherit webos_machine_dep
+
+WEBOS_TARGET_MACHINE_VARIANT ?= "none"
 
 WEBOS_EXTRA_MACHINEOVERRIDES_VARIANT = "${@ \
     '${WEBOS_TARGET_MACHINE_VARIANT}:' \

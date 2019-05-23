@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2013 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 #
 # webos_machine_impl_dep
 #
@@ -9,6 +9,8 @@
 # same TUNE_PKGARCH, they will have the same package name unless PACKAGE_ARCH
 # is set to MACHINE_ARCH. XXX Is there a better way to handle this?
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+
+WEBOS_TARGET_MACHINE_IMPL ?= "emulator"
 
 # Allow the use of WEBOS_TARGET_MACHINE_IMPL overrides. It's checked after
 # what's set by the machine architecture .inc file, which is checked after

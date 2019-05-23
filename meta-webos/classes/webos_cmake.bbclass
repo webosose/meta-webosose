@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2015 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 #
 # webos_cmake
 #
@@ -21,7 +21,9 @@ WEBOS_PKGCONFIG_BUILDDIR = "${B}"
 
 EXTRA_OECMAKE += "-DWEBOS_INSTALL_ROOT:PATH=/"
 
-WEBOS_TARGET_MACHINE_IMPL ?= "emulator"
+WEBOS_TARGET_DISTRO_VARIANT ??= "bitbake-conf-in-meta-webos-wasn't-parsed"
+WEBOS_TARGET_MACHINE_IMPL ??= "invalid-missing-inherit-webos_machine_impl_dep"
+WEBOS_TARGET_MACHINE_VARIANT ??= "invalid-missing-inherit-webos_machine_variant_dep"
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
 
 # XXX Should error if WEBOS_COMPONENT_VERSION is unset
