@@ -12,7 +12,7 @@ SECTION = "x11"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://docs/license.html;md5=725f991a1cc322aa7a0cd3a2016621c4"
 
-SRC_URI = "https://mesa.freedesktop.org/archive/mesa-${PV}.tar.xz"
+SRC_URI = "https://mesa.freedesktop.org/archive/older-versions/17.x/mesa-${PV}.tar.xz"
 SRC_URI[md5sum] = "e40bb428a263bd28cbf6478dae45b207"
 SRC_URI[sha256sum] = "69f472a874b1122404fa0bd13e2d6bf87eb3b9ad9c21d2f39872a96d83d9e5f5"
 
