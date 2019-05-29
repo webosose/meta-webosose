@@ -1,4 +1,4 @@
-From 0532a1b0d045115521a93acf28f1270df89ad806 Mon Sep 17 00:00:00 2001
+From 55ef2944b71777a331defd2a5bb3cdaf75779c61 Mon Sep 17 00:00:00 2001
 From: Hans de Goede <hdegoede@redhat.com>
 Date: Fri, 22 Mar 2019 09:19:34 +0100
 Subject: [PATCH] virt: vbox: Implement passing requestor info to the host for
@@ -687,6 +687,3 @@ index 0e68024f36c7..26f39816af14 100644
  /** HGCM service location types. */
  enum vmmdev_hgcm_service_location_type {
  	VMMDEV_HGCM_LOC_INVALID    = 0,
--- 
-2.17.1
-
