@@ -1,16 +1,14 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi1"
+require gstreamer1.0-webos-common.inc
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
-
-DEPENDS_append_rpi = " webos-wayland-extensions"
+EXTENDPRAUTO_append_rpi = "webosrpi2"
 
 PACKAGECONFIG_append_rpi = " kms wayland"
 
+#removed for license, see https://gpro.lgsvl.com/#/c/213604/7/meta-webos-raspberrypi/recipes-multimedia/g-media-pipeline/g-media-pipeline.bb
 PACKAGECONFIG_remove_rpi = "faad"
 
-SRC_URI_append_rpi = " \
-    file://0001-waylandsink-remove-unsupported-subcompositor.patch \
-    file://0002-waylandsink-zero-copy-using-wl-drm-protocol.patch \
-"
+WEBOS_REPO_NAME_rpi = "gst-plugins-bad"
+
+WEBOS_VERSION_rpi = "1.14.4-3_9c24b4b7e54d11eedd7c80b1a3e33313a9583e60"

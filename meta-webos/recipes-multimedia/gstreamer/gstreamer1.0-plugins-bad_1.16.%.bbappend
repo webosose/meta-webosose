@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos2"
 
@@ -17,5 +17,5 @@ EXTRA_OECONF_remove = "--disable-dispmanx"
 DEPENDS += "lcms"
 
 # Needed only for qemux86 build
-FILESEXTRAPATHS_prepend_qemux86 := "${THISDIR}/${BPN}:"
-SRC_URI_append_qemux86 = " file://0002-render-into-wl_surface-without-sub-surface.patch"
+# FILESEXTRAPATHS_prepend_qemux86 := "${THISDIR}/${BPN}:"
+# SRC_URI_append_qemux86 = " file://0002-render-into-wl_surface-without-sub-surface.patch"
