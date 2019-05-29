@@ -13,7 +13,7 @@ SRC_URI_append_qemux86 = " file://crypto.cfg \
                            file://sound.cfg \
                            file://enable_uinput.cfg \
                            file://network_testing.cfg \
-                           file://0000-change-keymax-value.patch \
+                           file://0001-change-keymax-value.patch \
                            file://0002-virt-vbox-Mark-expected-switch-fall-through.patch \
                            file://0003-virt-vbox-Implement-passing-requestor-info-to-the-ho.patch \
                            file://file_system.cfg \
