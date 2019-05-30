@@ -20,3 +20,9 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+do_install_append() {
+    # temporary work around until it's fixed properly in the component repo CMakeLists.txt
+    mv ${D}${sysconfdir}/systemd/system/webos-cbd.target.wants/memorymanager.service ${D}${sysconfdir}/systemd/system/
+    ln -snf ../memorymanager.service ${D}${sysconfdir}/systemd/system/webos-cbd.target.wants/
+}
