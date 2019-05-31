@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
 
-WEBOS_VERSION = "1.0.0-10_9dee9c09f400fc2c4b2470c50a053d55ed5e6d6f"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-11_2634980310cbd2393f23ba1976fa01d714813e09"
+PR = "r2"
 
 inherit webos_component
 inherit webos_cmake
@@ -20,9 +20,3 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-do_install_append() {
-    # temporary work around until it's fixed properly in the component repo CMakeLists.txt
-    mv ${D}${sysconfdir}/systemd/system/webos-cbd.target.wants/memorymanager.service ${D}${sysconfdir}/systemd/system/
-    ln -snf ../memorymanager.service ${D}${sysconfdir}/systemd/system/webos-cbd.target.wants/
-}
