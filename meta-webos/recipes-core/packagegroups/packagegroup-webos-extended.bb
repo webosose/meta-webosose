@@ -208,7 +208,12 @@ RDEPENDS_${PN}_append_qemux86 = " \
     v4l-utils \
     dhcp-client \
     vmwgfx-layout \
+    com.webos.service.audiooutput \
     kernel-module-vboxguest \
+    kernel-module-snd-pcm \
+    kernel-module-ac97-bus \
+    kernel-module-snd-ac97-codec \
+    kernel-module-snd-intel8x0 \
 "
 
 RDEPENDS_${PN} += "${MACHINE_EXTRA_RDEPENDS}"
