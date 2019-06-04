@@ -15,8 +15,10 @@ inherit webos_public_repo
 
 DEPENDS = "glib-2.0 pmloglib libpbnjson alsa-lib"
 
-WEBOS_VERSION = "1.0.0-2_e21e230f96b52c8c36ff879ce219bab681491dc3"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-3_a049c45e75579884086aadd3e98c0d20f33c22bd"
+PR = "r2"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+EXTRA_OECMAKE_append_qemux86 = " -DWEBOS_SOC:STRING=qemux86"
