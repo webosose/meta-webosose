@@ -1,0 +1,10 @@
+--- a/makedevs.c	2019-06-07 22:40:28.262021833 +0900
++++ b/makedevs.c	2019-06-07 22:41:25.326020735 +0900
+@@ -213,6 +213,7 @@
+ 		}
+ 		error_msg_and_die("No entry for %s in search list", id_buf);
+ 	}
++	return 0;
+ }
+ 
+ static void free_list(struct name_id *list)

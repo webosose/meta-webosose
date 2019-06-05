@@ -1,0 +1,11 @@
+--- a/src/util.c	2019-06-07 23:16:15.349994212 +0900
++++ a/src/util.c	2019-06-07 23:17:13.365994081 +0900
+@@ -768,7 +768,7 @@
+   return e;
+ }
+ 
+-static ino_t
++static void
+ get_inode_and_dev (struct cpio_file_stat *hdr, struct stat *st)
+ {
+   if (renumber_inodes_option)
