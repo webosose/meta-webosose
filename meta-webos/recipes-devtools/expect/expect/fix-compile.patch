@@ -1,0 +1,52 @@
+--- a/exp_win.c	2019-06-07 22:56:32.638009326 +0900
++++ b/exp_win.c	2019-06-07 22:57:28.618009157 +0900
+@@ -78,7 +78,7 @@
+ static exp_winsize winsize = {0, 0};
+ static exp_winsize win2size = {0, 0};
+ 
+-int exp_window_size_set(fd)
++void exp_window_size_set(fd)
+ int fd;
+ {
+ #ifdef TIOCSWINSZ
+@@ -89,7 +89,7 @@
+ #endif
+ }
+ 
+-int exp_window_size_get(fd)
++void exp_window_size_get(fd)
+ int fd;
+ {
+ #ifdef TIOCGWINSZ
+@@ -142,7 +142,7 @@
+  * separate copy of everything above - used for handling user stty requests
+  */
+ 
+-int exp_win2_size_set(fd)
++void exp_win2_size_set(fd)
+ int fd;
+ {
+ #ifdef TIOCSWINSZ
+@@ -153,7 +153,7 @@
+ #endif
+ }
+ 
+-int exp_win2_size_get(fd)
++void exp_win2_size_get(fd)
+ int fd;
+ {
+ #ifdef TIOCGWINSZ
+
+--- a/exp_win.h	2019-06-07 23:03:33.714003978 +0900
++++ b/exp_win.h	2019-06-07 23:04:30.842004057 +0900
+@@ -8,8 +8,8 @@
+ 
+ #include <tcl.h> /* For _ANSI_ARGS_ */
+ 
+-int exp_window_size_set();
+-int exp_window_size_get();
++void exp_window_size_set();
++void exp_window_size_get();
+ 
+ void  exp_win_rows_set    _ANSI_ARGS_ ((char* rows));
+ char* exp_win_rows_get    _ANSI_ARGS_ ((void));

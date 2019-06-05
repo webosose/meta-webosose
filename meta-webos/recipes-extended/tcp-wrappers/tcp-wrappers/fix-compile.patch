@@ -1,0 +1,49 @@
+--- a/fakelog.c	2019-06-07 23:35:45.501979633 +0900
++++ b/fakelog.c	2019-06-07 23:35:49.361980317 +0900
+@@ -17,7 +17,7 @@
+ 
+ /* ARGSUSED */
+ 
+-openlog(name, logopt, facility)
++void openlog(name, logopt, facility)
+ char   *name;
+ int     logopt;
+ int     facility;
+@@ -27,7 +27,7 @@
+ 
+ /* vsyslog - format one record */
+ 
+-vsyslog(severity, fmt, ap)
++void vsyslog(severity, fmt, ap)
+ int     severity;
+ char   *fmt;
+ va_list ap;
+@@ -43,7 +43,7 @@
+ 
+ /* VARARGS */
+ 
+-VARARGS(syslog, int, severity)
++void VARARGS(syslog, int, severity)
+ {
+     va_list ap;
+     char   *fmt;
+@@ -56,7 +56,7 @@
+ 
+ /* closelog - dummy */
+ 
+-closelog()
++void closelog()
+ {
+     /* void */
+ }
+
+--- a/options.c	2019-06-09 22:24:55.419803338 +0900
++++ b/options.c	2019-06-09 22:29:13.323799980 +0900
+@@ -541,6 +541,7 @@
+ 	    return (t->value);
+     tcpd_jump("bad syslog facility or severity: \"%s\"", name);
+     /* NOTREACHED */
++    return 0;
+ }
+ 
+ /* severity_option - change logging severity for this event (Dave Mitchell) */
