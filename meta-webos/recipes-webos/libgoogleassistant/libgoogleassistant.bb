@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "Google assistant engine library"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -11,7 +11,7 @@ DEPENDS = "glib-2.0 googleapis grpc json-c pmloglib pulseaudio"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target = "${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "1.0.0-3_c54ab579689ebbe60d7fb21397aff609f1bdc3b4"
+WEBOS_VERSION = "1.0.0-4_72f471d5e617210b62fba191982f3fe0d95bdf1a"
 PR = "r0"
 
 inherit webos_library
