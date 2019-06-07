@@ -100,6 +100,12 @@ PNBLACKLIST[packagegroup-core-sdk] ?= "depends on blacklisted gcc"
 # Depends on recipe with incompatible LICENSE
 PNBLACKLIST[libsdl-mixer] ?= "depends on blacklisted libmad"
 PNBLACKLIST[libsdl2-ttf] ?= "fails to build http://caprica.lgsvl.com:8080/Errors/Details/887452"
+PNBLACKLIST[libsdl2] ?= "not compatible with downgraded wayland http://caprica.lgsvl.com:8080/Errors/Details/1432817"
+PNBLACKLIST[libsdl2-mixer] ?= "depends on blacklisted virtual/libsdl2"
+PNBLACKLIST[libsdl2-net] ?= "depends on blacklisted virtual/libsdl2"
+PNBLACKLIST[libsdl2-image] ?= "depends on blacklisted virtual/libsdl2"
+PNBLACKLIST[qemu] ?= "depends on blacklisted virtual/libsdl2"
+
 PNBLACKLIST[streamripper] ?= "depends on blacklisted libmad"
 
 # Depends on failing recipe:

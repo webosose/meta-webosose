@@ -1,0 +1,37 @@
+From 9bb9e44eaa74da21e6f4aed397664fbaf3017141 Mon Sep 17 00:00:00 2001
+From: Minjae Kim <nate.kim@lge.com>
+Date: Thu, 28 Mar 2019 10:21:38 +0900
+Subject: [PATCH 8/8] mesa: do not leak ctx->Shader.ReferencedProgram
+ references
+
+When glUseProgram is used, references to the included shaders are
+added in ctx->Shader.ReferencedProgram. But those references are not
+decreased when the shader data is deallocated. Thus, those shaders
+are leaked.
+
+Explicitely remove the pending references to these shaders.
+
+Upstream-Status: Accepted
+
+https://cgit.freedesktop.org/mesa/mesa/commit/?id=6c61c31dc2fe52ad8a56ebe0b3aa10c223b635ba
+---
+ src/mesa/main/shaderapi.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/mesa/main/shaderapi.c b/src/mesa/main/shaderapi.c
+index 187475f..ce2d8f6 100644
+--- a/src/mesa/main/shaderapi.c
++++ b/src/mesa/main/shaderapi.c
+@@ -156,6 +156,9 @@ _mesa_free_shader_state(struct gl_context *ctx)
+ {
+    for (int i = 0; i < MESA_SHADER_STAGES; i++) {
+       _mesa_reference_program(ctx, &ctx->Shader.CurrentProgram[i], NULL);
++      _mesa_reference_shader_program(ctx,
++                                     &ctx->Shader.ReferencedPrograms[i],
++                                     NULL);
+    }
+    _mesa_reference_program(ctx, &ctx->Shader._CurrentFragmentProgram, NULL);
+    _mesa_reference_shader_program(ctx, &ctx->Shader.ActiveProgram, NULL);
+-- 
+2.17.1
+
