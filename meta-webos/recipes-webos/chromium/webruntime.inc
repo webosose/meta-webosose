@@ -25,21 +25,18 @@ inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native"
 
-PROVIDES = "virtual/webruntime"
-
-WEBOS_VERSION = "68.0.3440.106-64_a2135a42b628c86df8acac6a193026c68830fd3f"
-PR = "r18"
-WEBOS_REPO_NAME = "chromium68"
+INC_PR = "r19"
+WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
+WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
+WEBOS_REPO_NAME_V8 ?= "v8"
 
 SRC_URI = "\
     ${WEBOSOSE_GIT_REPO_COMPLETE};name=main \
-    ${WEBOSOSE_GIT_REPO}/v8;destsuffix=git/src/v8;name=v8${WEBOSOSE_GIT_PROTOCOL} \
+    ${WEBOSOSE_GIT_REPO}/${WEBOS_REPO_NAME_V8};destsuffix=git/src/v8${WEBOS_GIT_BRANCH_V8};name=v8${WEBOSOSE_GIT_PROTOCOL} \
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-WEBOS_VERSION_V8 = "6.8.275.26-10_69b79174f1066787a93fbe83368a1b565737b7de"
 do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_v8 = "1e3af71f1ff3735e8a5b639c48dfca63a7b8a647"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
@@ -342,6 +339,7 @@ install_chromium_manifest() {
 MKSNAPSHOT_PATH = ""
 MKSNAPSHOT_PATH_arm = "clang_x86_v8_arm/"
 MKSNAPSHOT_PATH_aarch64 = "clang_x64_v8_arm64/"
+LTTNG_PROVIDER = "libchromium_lttng_provider.so"
 
 install_webruntime() {
     install -d ${D}${libdir}
@@ -359,7 +357,7 @@ install_webruntime() {
         cp libcbe.so ${D}${libdir}/
         if [ "${WEBOS_LTTNG_ENABLED}" = "1" ]; then
           # use bindir if building non-cbe
-          cp libchromium_lttng_provider.so ${D}${libdir}/
+          cp ${LTTNG_PROVIDER} ${D}${libdir}/
         fi
         xargs --arg-file=${SRC_DIR}/webos/install/weboswebruntime/binary.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
         cat ${SRC_DIR}/webos/install/weboswebruntime/data_locales.list | xargs -I{} install -m 755 -p {} ${D}${CBE_DATA_LOCALES_PATH}
@@ -392,7 +390,6 @@ install_wam_demo() {
      if [ -e "${SRC_DIR}/webos/install" ]; then
          cd ${OUT_DIR}/${BUILD_TYPE}
          xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/binary.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
-         xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/cbe_data.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
          cd ${SRC_DIR}
          xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
      fi
