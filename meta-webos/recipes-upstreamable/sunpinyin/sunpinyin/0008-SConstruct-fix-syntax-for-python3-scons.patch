@@ -1,0 +1,49 @@
+From 24c225e489d882dce3cb6ea95ab9eb499e21592d Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Sun, 9 Jun 2019 01:48:36 +0000
+Subject: [PATCH] SConstruct: fix syntax for python3 scons
+
+Import reduce before trying to use that:
+  Checking for C header file wchar.h... yes
+  NameError: name 'reduce' is not defined:
+    File "/jenkins/mjansa/build-webos-pro-master/BUILD/work/x86_64-linux/sunpinyin-native/2.99+3.0.0-rc1+gitAUTOINC+e3c122ed3b-r2/git/SConstruct", line 435:
+      '@CFLAGS@': reduce(lambda a, b: a + ' ' + b,
+  ERROR: scons build execution failed.
+
+Fix 0755 literal to fix:
+  Checking for C header file wchar.h... yes
+    File "/jenkins/mjansa/build-webos-pro-master/BUILD/work/x86_64-linux/sunpinyin-native/2.99+3.0.0-rc1+gitAUTOINC+e3c122ed3b-r2/git/src/SConscript", line 56
+      Chmod("$TARGET", 0755),
+                          ^
+  SyntaxError: invalid token
+  ERROR: scons build execution failed.
+---
+ SConstruct     | 1 +
+ src/SConscript | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/SConstruct b/SConstruct
+index 01b5cca..fe15258 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -1,6 +1,7 @@
+ import platform
+ import os
+ import sys
++from functools import reduce
+ 
+ 
+ version = "2.0.4"
+diff --git a/src/SConscript b/src/SConscript
+index 0731162..82e1a5e 100644
+--- a/src/SConscript
++++ b/src/SConscript
+@@ -53,7 +53,7 @@ env.Substfile('sunpinyin-dictgen.mk.in', SUBST_DICT={
+ })
+ env.Command('sunpinyin-dictgen', 'sunpinyin-dictgen.mk', [
+     Copy("$TARGET", "$SOURCE"),
+-    Chmod("$TARGET", 0755),
++    Chmod("$TARGET", 0o0755),
+ ])
+ 
+ # -*- indent-tabs-mode: nil -*- vim:et:ts=4

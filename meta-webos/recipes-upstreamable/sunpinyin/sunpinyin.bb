@@ -16,7 +16,7 @@ BBCLASSEXTEND = "native"
 
 SRCREV = "e3c122ed3bf6274fc73042843243e1fb168dfc7e"
 PV = "2.99+3.0.0-rc1+git${SRCPV}"
-PR = "r0"
+PR = "r1"
 
 SRC_URI[arpa.md5sum] = "20cdc36b3bd7ec28f7e39c2ebb810421"
 SRC_URI[arpa.sha256sum] = "751bab7c55ea93a2cedfb0fbb7eb09f67d4da9c2c55496e5f31eb8580f1d1e2f"
@@ -31,6 +31,7 @@ SRC_URI =  "git://github.com/sunpinyin/sunpinyin.git;protocol=https \
     file://0005-sunpinyin-dictgen.mk.in-use-HTTPS-mirrors-to-avoid-M.patch \
     file://0006-Change-scon-to-download-open-gram-dictionary.patch \
     file://0007-add-sunpinyin-wrapper-class.patch \
+    file://0008-SConstruct-fix-syntax-for-python3-scons.patch \
     https://downloads.sourceforge.net/project/open-gram/lm_sc.3gm.arpa-20140820.tar.bz2;name=arpa \
     https://downloads.sourceforge.net/project/open-gram/dict.utf8-20131214.tar.bz2;name=dict \
 "
