@@ -15,7 +15,7 @@ SUMMARY = "IoTivity framework and SDK sponsored by the Open Connectivity Foundat
 DESCRIPTION = "IoTivity is an open source software framework enabling seamless device-to-device connectivity to address the emerging needs of the Internet of Things."
 HOMEPAGE = "https://www.iotivity.org/"
 DEPENDS = "boost virtual/gettext chrpath-replacement-native expat openssl util-linux curl glib-2.0 glib-2.0-native"
-DEPENDS += "sqlite3 luna-service2 libpbnjson python-scons-native"
+DEPENDS += "sqlite3 luna-service2 libpbnjson"
 
 EXTRANATIVEPATH += "chrpath-native"
 SECTION = "libs"
