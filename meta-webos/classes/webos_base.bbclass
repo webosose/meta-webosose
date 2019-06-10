@@ -1,22 +1,10 @@
-# Copyright (c) 2013-2017 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 #
 # webos_base
 #
-# This class adds two useful tasks analogous to fetchall in
-# openembedded-core/meta/classes/utility-tasks.bbclass.
-# Patchall is used to prepare the sources for OpenGrok.
-
-addtask unpackall after do_unpack
-do_unpackall[recrdeptask] = "do_unpackall do_unpack"
-do_unpackall() {
-    :
-}
-
-addtask patchall after do_patch
-do_patchall[recrdeptask] = "do_patchall do_patch"
-do_patchall() {
-    :
-}
+# This class adds write_bom_data and write_abi_xml_data,
+# Each of them can be run by bitake --runall option.
+# They are useful to verify build output specification.
 
 do_write_bom_data[nostamp] = "1"
 addtask write_bom_data
@@ -75,14 +63,6 @@ python do_write_bom_data() {
     bb.utils.unlockfile(lock)
 }
 
-do_write_bom[nostamp] = "1"
-addtask do_write_bom after write_bom_data
-do_write_bom[recrdeptask] = "do_write_bom do_write_bom_data"
-do_write_bom[recdeptask] = "do_write_bom do_write_bom_data"
-do_write_bom() {
-    :
-}
-
 do_write_abi_xml_data[nostamp] = "1"
 addtask write_abi_xml_data
 python do_write_abi_xml_data() {
@@ -120,14 +100,6 @@ python do_write_abi_xml_data() {
                     f.write(line)
         f.write("</libs>\n")
     bb.utils.unlockfile(lock)
-}
-
-do_write_abi_xml[nostamp] = "1"
-addtask do_write_abi_xml after write_abi_xml_data
-do_write_abi_xml[recrdeptask] = "do_write_abi_xml do_write_abi_xml_data do_populate_sysroot"
-do_write_abi_xml[recdeptask] = "do_write_abi_xml do_write_abi_xml_data do_populate_sysroot"
-do_write_abi_xml() {
-    :
 }
 
 # analogous to base_get_metadata_git_branch from metadata_scm.bbclass
