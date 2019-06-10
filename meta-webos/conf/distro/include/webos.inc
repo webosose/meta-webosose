@@ -18,6 +18,10 @@ require conf/distro/include/no-static-libs.inc
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-July/153408.html
 require conf/distro/include/security_flags.inc
 
+# Enable -Werror=return-type flag
+TARGET_CFLAGS += "-Werror=return-type"
+TARGET_CXXFLAGS += "-Werror=return-type"
+
 #
 # Form the codename of a release (WEBOS_DISTRO_RELEASE_CODENAME) from a codename
 # that represents the major set of features of the platform
