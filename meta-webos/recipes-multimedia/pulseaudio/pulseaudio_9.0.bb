@@ -23,7 +23,7 @@ DEPENDS_remove = "libatomic-ops"
 
 DEPENDS += "pmloglib"
 
-WEBOS_VERSION = "9.0-9_0ac2d8b74ee42f083eff34d9dfa3caa0d2535bc9"
+WEBOS_VERSION = "9.0-10_abfb6f42b7c23e118abf63ad18d03f6b14599791"
 PR = "r19"
 
 inherit webos_enhanced_submissions
