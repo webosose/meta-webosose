@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos64"
+EXTENDPRAUTO_append = "webos65"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -16,6 +16,9 @@ PACKAGECONFIG_DEFAULT_remove = "dbus"
 
 # Enable accessibility for qtquickcontrols
 PACKAGECONFIG_append = " accessibility"
+
+# Enable qml-debug for qtdeclarative (added with Qt 5.8 upgrade and moved to qtdeclarative with 5.10 upgrade)
+PACKAGECONFIG_append = " qml-debug"
 
 # Disable widget features
 PACKAGECONFIG_remove = "widgets"
