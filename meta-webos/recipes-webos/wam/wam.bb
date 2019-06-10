@@ -20,7 +20,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.1-10_f420bf52eaba89d4ba1f6feea22ce27462e1498f"
-PR = "r27"
+PR = "r29"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -35,6 +35,8 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+SRC_URI_append_webos = " ${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', 'file://0001-fixup-ose-acg-error_page-Register-com.webos.settings.patch', '', d)}"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
@@ -70,6 +72,15 @@ do_configure_prepend() {
       cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
     fi
     cp ${S}/files/launch/systemd/webapp-mgr.service ${B}/webapp-mgr.service
+}
+
+do_configure_append() {
+    if [ "${PREFERRED_VERSION_webruntime}" = "72.%" ]; then
+        sed -i -e "s/NETWORK_STABLE_TIMEOUT/NETWORK_QUIET_TIMEOUT/gI" -e "s/network-stable-timeout/network-quiet-timeout/gI" ${B}/webapp-mgr.sh
+        sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-in-process-stack-traces \\' ${B}/webapp-mgr.sh
+        sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
+        sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" ${B}/webapp-mgr.sh
+    fi
 }
 
 do_configure_append_qemux86() {

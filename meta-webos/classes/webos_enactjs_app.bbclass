@@ -174,6 +174,7 @@ do_compile() {
     cd ${working}
 }
 
+V8_SNAPSHOT_EXTRA_ARGS = "${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', ' --turbo_instruction_scheduling', '', d)}"
 do_install() {
     working=$(pwd)
     cd ${WEBOS_ENACTJS_PROJECT_PATH}
@@ -194,7 +195,7 @@ do_install() {
         chmod +x ${B}/${HOST_SYS}-mksnapshot
         export V8_MKSNAPSHOT="${B}/${HOST_SYS}-mksnapshot"
         # TODO Need to remove this line when PLAT-41192 is resolved
-        export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception"
+        export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception${V8_SNAPSHOT_EXTRA_ARGS}"
     fi
 
     # Stage app
