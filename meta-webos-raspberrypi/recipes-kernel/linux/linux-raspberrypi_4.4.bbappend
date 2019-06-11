@@ -10,10 +10,10 @@ SRC_URI_append = " \
     file://0009-Fix-scaling-not-working-for-specific-display-windows.patch \
     file://0010-Add-API-to-set-only-the-source-rectangle.patch \
     file://0011-Implement-page-flipping-changes-in-kernel.patch \
-    file://0012-Set-CPU-governor-to-ondemand.patch \
     file://0013-Fix-kernel-panic-on-10hr-YouTube-playback.patch \
     file://0014-DRM-custom-prop.patch \
     file://0015-DRM-forcing-permissions.patch \
-    file://0016-Enable-ZRAM-feature.patch \
-    file://0017-Enable-NTFS-file-system-support.patch \
+    file://governor.cfg \
+    file://ntfs.cfg \
+    file://zram.cfg \
 "

@@ -13,7 +13,6 @@ GPU_MEM = "128"
 
 PREFERRED_PROVIDER_aval-impl = "avoutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_aval-impl = "avoutput-adaptation-layer-rpi"
-
 VIRTUAL-RUNTIME_alsa-state = "avoutput-adaptation-layer-rpi"
 PNBLACKLIST[avoutput-adaptation-layer-mock] ?= "avoutput-adaptation-layer-rpi is preferred"
 
@@ -24,9 +23,6 @@ PNBLACKLIST[videooutput-adaptation-layer-mock] ?= "videooutput-adaptation-layer-
 PNBLACKLIST[omxplayer] ?= "not compatible with webOS Open components"
 PNBLACKLIST[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 PNBLACKLIST[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
-
-# QA Issue: ELF binary 'work/raspberrypi3-webos-linux-gnueabi/mpeg2dec/0.5.1-r0/packages-split/libmpeg2/usr/lib/libmpeg2.so.0.1.0' has relocations in .text
-INSANE_SKIP_libmpeg2_pn-mpeg2dec += "textrel"
 
 MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
 MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
@@ -39,6 +35,7 @@ MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-hci-uart \
     kernel-module-btusb \
     kernel-module-i2c-bcm2708 \
+    kernel-module-configs \
     kernel-module-media \
     kernel-module-rfcomm \
     kernel-module-snd-bcm2835 \
