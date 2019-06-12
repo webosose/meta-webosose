@@ -54,6 +54,7 @@ CAMERASERVICE_raspberrypi3-64 = ""
 
 RDEPENDS_${PN}_append_rpi = " \
     com.webos.service.audiooutput \
+    resize-rootfs \
     ${AISERVICE} \
     ${CAMERASERVICE} \
     ${TTSSERVICE} \

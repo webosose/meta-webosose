@@ -1,0 +1,24 @@
+# @@@LICENSE
+#
+# Copyright (c) 2019 LG Electronics, Inc.
+#
+# LICENSE@@@
+
+[Unit]
+Description=webos - "%n"
+DefaultDependencies=no
+Conflicts=shutdown.target
+Before=sysinit.target
+After=systemd-remount-fs.service local-fs.target
+Requires=local-fs.target
+ConditionPathExists=!/var/luna/preferences/rootfs_resized
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/systemd/system/scripts/resize-rootfs.sh
+StandardOutput=tty
+StandardError=tty
+
+[Install]
+WantedBy=local-fs.target
