@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos10"
+EXTENDPRAUTO_append = "webos11"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -20,6 +20,7 @@ SRC_URI += " \
     file://0009-recievePassThrough-commad-support-required-for-webos.patch \
     file://0010-Added-dbus-signal-for-MediaPlayRequest.patch \
     file://0011-avrcp-getting-remote-device-features-list.patch \
+    file://0012-Fix-add-service-failure.patch \
     file://main.conf \
     file://brcm43438.service \
 "
