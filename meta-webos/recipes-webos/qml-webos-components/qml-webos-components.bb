@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtdeclarative pmloglib librdx qt-features-webos"
 
-WEBOS_VERSION = "1.0.0-3_4bff4e09289cbb77c96cdf88a4e994d9d34f682d"
+WEBOS_VERSION = "1.0.0-4_c5763d3b7a4f0cd257ef87072431670aa4a7b25d"
 PR = "r11"
 
 inherit webos_qmake5
