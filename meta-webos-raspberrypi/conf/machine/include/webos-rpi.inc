@@ -59,3 +59,7 @@ ENABLE_UART = "1"
 
 # Configure all Bluetooth service classes we want to support
 WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "SPP GATT FTP OPP A2DP"
+
+# Use ext4 as a uSD rootfs type and don't build ext3
+SDIMG_ROOTFS_TYPE = "ext4"
+IMAGE_FSTYPES_remove = "ext3"
