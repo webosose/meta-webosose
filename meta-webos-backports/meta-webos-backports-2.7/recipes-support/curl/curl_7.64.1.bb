@@ -1,4 +1,4 @@
-# Imported as-is from oe-core/41c3ee4fe87a181786c47da044da700e8f605540
+# Imported as-is from oe-core/61433a177c curl: update to 7.64.1
 
 SUMMARY = "Command line tool and library for client-side URL transfers"
 HOMEPAGE = "http://curl.haxx.se/"
@@ -11,8 +11,8 @@ SRC_URI = "http://curl.haxx.se/download/curl-${PV}.tar.bz2 \
            file://0001-replace-krb5-config-with-pkg-config.patch \
 "
 
-SRC_URI[md5sum] = "d0bcc586873cfef08b4b9594e5395a33"
-SRC_URI[sha256sum] = "d573ba1c2d1cf9d8533fadcce480d778417964e8d04ccddcc76e591d544cf2eb"
+SRC_URI[md5sum] = "790c101927845208a9d7e8c429ddd1b2"
+SRC_URI[sha256sum] = "4cc7c738b35250d0680f29e93e0820c4cb40035f43514ea3ec8d60322d41a45d"
 
 CVE_PRODUCT = "curl libcurl"
 inherit autotools pkgconfig binconfig multilib_header
