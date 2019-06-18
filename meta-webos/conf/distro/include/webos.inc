@@ -185,7 +185,7 @@ PTEST_ENABLED_pn-valgrind = "0"
 PTEST_ENABLED_pn-parted = "0"
 PTEST_ENABLED_pn-apr = "0"
 
-INHERIT_DISTRO ?= "debian devshell sstate license buildstats-summary webos_base webos_no_static_libraries remove-libtool"
+INHERIT_DISTRO ?= "debian devshell sstate license buildstats-summary webos_base webos_no_static_libraries remove-libtool image-buildinfo"
 
 # Inherit icecc here, so that all builders have the same sstate signatures
 INHERIT_DISTRO += "icecc"
