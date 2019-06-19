@@ -2,8 +2,9 @@
 
 SUMMARY = "webOS Flow manager"
 AUTHOR  = "Namsu Kim <namsu81.kim@lge.com>"
-SECTION = "webos/base"
-LICENSE = "CLOSED"
+SECTION = "webos/extended-service"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 RDEPENDS_${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service nodejs-module-node-red"
 
@@ -13,6 +14,7 @@ inherit webos_system_bus
 inherit webos_enhanced_submissions
 
 require flowmanager.inc
+PR = "r1"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
