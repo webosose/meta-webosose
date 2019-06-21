@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos11"
+EXTENDPRAUTO_append = "webos12"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -21,6 +21,7 @@ SRC_URI += " \
     file://0010-Added-dbus-signal-for-MediaPlayRequest.patch \
     file://0011-avrcp-getting-remote-device-features-list.patch \
     file://0012-Fix-add-service-failure.patch \
+    file://0013-Fix-device-discovery-for-broadcast-role.patch \
     file://main.conf \
     file://brcm43438.service \
 "
