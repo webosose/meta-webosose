@@ -292,7 +292,8 @@ https://.*/.*    http://downloads.yoctoproject.org/mirror/sources/ \n"
 CONNECTIVITY_CHECK_URIS ?= " \
     git://git.yoctoproject.org/yocto-firewall-test;protocol=git;rev=master \
     https://eula-downloads.yoctoproject.org/index.php \
-    http://bugzilla.yoctoproject.org/report.cgi"
+    http://bugzilla.yoctoproject.org/report.cgi \
+"
 
 SANITY_TESTED_DISTROS ?= " \
     ubuntu-14.04 \n \
