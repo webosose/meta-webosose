@@ -292,11 +292,8 @@ https://.*/.*    http://downloads.yoctoproject.org/mirror/sources/ \n"
 CONNECTIVITY_CHECK_URIS ?= " \
     git://git.yoctoproject.org/yocto-firewall-test;protocol=git;rev=master \
     https://eula-downloads.yoctoproject.org/index.php \
-    http://bugzilla.yoctoproject.org/report.cgi"
-
-# Cannot use this now with latest Yocto 2.4 because of ssh removed from HOSTTOOLS, see:
-# http://lists.openembedded.org/pipermail/openembedded-core/2017-October/143279.html
-#    git://gpro.lgsvl.com/webos-pro/meta-lg-webos;protocol=ssh;rev=master
+    http://bugzilla.yoctoproject.org/report.cgi \
+"
 
 SANITY_TESTED_DISTROS ?= " \
     ubuntu-14.04 \n \
