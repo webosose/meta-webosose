@@ -122,13 +122,6 @@ SRC_URI_append_hardware = " \
 inherit webos_prerelease_dep
 SRC_URI_append = "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else ' file://0099-Move-testability-loading-code-to-the-QGuiApplication.patch'}"
 
-# Needed to build libwayland_common_webos.a in qtwayland
-WEBOS_NO_STATIC_LIBRARIES_WHITELIST = "libQt5PlatformSupport.a"
-
-# Needed to build Qt5QmlDevTools in qtdeclarative
-# | make[2]: *** No rule to make target `usr/lib/libQt5Bootstrap.a', needed by `../../lib/libQt5QmlDevTools.a'.  Stop.
-WEBOS_NO_STATIC_LIBRARIES_WHITELIST += "libQt5Bootstrap.a"
-
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
 

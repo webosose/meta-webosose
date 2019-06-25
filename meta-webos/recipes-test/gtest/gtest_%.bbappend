@@ -1,8 +1,6 @@
-# Copyright (c) 2015-2017 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos1"
-
-WEBOS_NO_STATIC_LIBRARIES_WHITELIST = "libgtest.a libgtest_main.a"
 
 # GTest developers recommend to use source code instead of linking
 # against a prebuilt library.
