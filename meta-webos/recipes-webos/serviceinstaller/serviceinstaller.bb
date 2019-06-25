@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "An extensible object oriented component used to add service components to webOS"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -18,7 +18,5 @@ inherit webos_cmake
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-WEBOS_NO_STATIC_LIBRARIES_WHITELIST = "libserviceinstaller.a"
 
 ALLOW_EMPTY_${PN} = "1"
