@@ -1,10 +1,10 @@
 # Copyright (c) 2014-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos40"
+EXTENDPRAUTO_append = "webos41"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.9 based on 5.12.meta-qt5.2
+# Patches from 5.12.meta-webos.10 based on 5.12.meta-qt5.2
 SRC_URI_append_class-target = " \
     file://0001-Revert-Remove-dead-code.patch \
     file://0002-LTTNG-tracing-support-in-Qt-Quick.patch \
@@ -30,4 +30,5 @@ SRC_URI_append_class-target = " \
     file://0022-Remove-null-pointer-checks-for-this-from-QQmlContext.patch \
     file://0023-Fix-crashes-in-QQmlXMLHttpRequest.patch \
     file://0024-Add-QQmlEngine-to-QQuickPixmapKey.patch \
+    file://0025-Fix-thisObject-when-calling-scope-and-context-properties-through-lookups.patch \
 "
