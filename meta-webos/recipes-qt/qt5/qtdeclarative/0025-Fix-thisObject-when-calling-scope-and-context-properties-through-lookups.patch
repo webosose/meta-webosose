@@ -1,0 +1,159 @@
+From 5eceb1801ec881947f80f70f32ea46e00926194f Mon Sep 17 00:00:00 2001
+From: Ulf Hermann <ulf.hermann@qt.io>
+Date: Wed, 26 Jun 2019 14:37:36 +0200
+Subject: [PATCH] Fix thisObject when calling scope and context properties
+ through lookups
+
+Just like resolving the lookup initially, we need to set the base also
+when hitting the cached lookup code path. The base is then used as this
+object.
+
+Fixes: QTBUG-76656
+Change-Id: I6f6be05bc9875ddccc6e112e91176a0fa24a8fa1
+Reviewed-by: Michael Brasser <michael.brasser@live.com>
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/266407 (5.12/5.12.5)]
+---
+ src/qml/jsruntime/qv4qmlcontext.cpp           | 10 +++-
+ .../auto/qml/qqmlecmascript/data/getThis.qml  | 60 +++++++++++++++++++
+ .../qml/qqmlecmascript/tst_qqmlecmascript.cpp | 12 ++++
+ 3 files changed, 80 insertions(+), 2 deletions(-)
+ create mode 100644 tests/auto/qml/qqmlecmascript/data/getThis.qml
+
+diff --git a/src/qml/jsruntime/qv4qmlcontext.cpp b/src/qml/jsruntime/qv4qmlcontext.cpp
+index 12ada7ee7..b53194fcd 100644
+--- a/src/qml/jsruntime/qv4qmlcontext.cpp
++++ b/src/qml/jsruntime/qv4qmlcontext.cpp
+@@ -535,7 +535,6 @@ ReturnedValue QQmlContextWrapper::lookupIdObject(Lookup *l, ExecutionEngine *eng
+ 
+ ReturnedValue QQmlContextWrapper::lookupScopeObjectProperty(Lookup *l, ExecutionEngine *engine, Value *base)
+ {
+-    Q_UNUSED(base)
+     Scope scope(engine);
+     Scoped<QmlContext> qmlContext(scope, engine->qmlContext());
+     if (!qmlContext)
+@@ -556,12 +555,15 @@ ReturnedValue QQmlContextWrapper::lookupScopeObjectProperty(Lookup *l, Execution
+     };
+ 
+     ScopedValue obj(scope, QV4::QObjectWrapper::wrap(engine, scopeObject));
++
++    if (base)
++        *base = obj;
++
+     return QObjectWrapper::lookupGetterImpl(l, engine, obj, /*useOriginalProperty*/ true, revertLookup);
+ }
+ 
+ ReturnedValue QQmlContextWrapper::lookupContextObjectProperty(Lookup *l, ExecutionEngine *engine, Value *base)
+ {
+-    Q_UNUSED(base)
+     Scope scope(engine);
+     Scoped<QmlContext> qmlContext(scope, engine->qmlContext());
+     if (!qmlContext)
+@@ -586,6 +588,10 @@ ReturnedValue QQmlContextWrapper::lookupContextObjectProperty(Lookup *l, Executi
+     };
+ 
+     ScopedValue obj(scope, QV4::QObjectWrapper::wrap(engine, contextObject));
++
++    if (base)
++        *base = obj;
++
+     return QObjectWrapper::lookupGetterImpl(l, engine, obj, /*useOriginalProperty*/ true, revertLookup);
+ }
+ 
+diff --git a/tests/auto/qml/qqmlecmascript/data/getThis.qml b/tests/auto/qml/qqmlecmascript/data/getThis.qml
+new file mode 100644
+index 000000000..cd617ee3c
+--- /dev/null
++++ b/tests/auto/qml/qqmlecmascript/data/getThis.qml
+@@ -0,0 +1,60 @@
++/****************************************************************************
++**
++** Copyright (C) 2019 The Qt Company Ltd.
++** Contact: http://www.qt.io/licensing/
++**
++** This file is part of the test suite of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL3$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see http://www.qt.io/terms-conditions. For further
++** information use the contact form at http://www.qt.io/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 3 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPLv3 included in the
++** packaging of this file. Please review the following information to
++** ensure the GNU Lesser General Public License version 3 requirements
++** will be met: https://www.gnu.org/licenses/lgpl.html.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 2.0 or later as published by the Free
++** Software Foundation and appearing in the file LICENSE.GPL included in
++** the packaging of this file. Please review the following information to
++** ensure the GNU General Public License version 2.0 requirements will be
++** met: http://www.gnu.org/licenses/gpl-2.0.html.
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++import QtQml 2.12
++
++QtObject {
++    id: root
++    property QtObject self;
++
++    property Timer timer: Timer {
++        running: true
++        interval: 1
++        onTriggered: {
++            root.assignThis();
++            root.self = null;
++            root.assignThis();
++        }
++    }
++
++    function getThis() {
++        return this;
++    }
++
++    function assignThis() {
++        self = getThis();
++    }
++}
+diff --git a/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp b/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp
+index d8784f485..a741ce146 100644
+--- a/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp
++++ b/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp
+@@ -366,6 +366,7 @@ private slots:
+     void tailCallWithArguments();
+     void deleteSparseInIteration();
+     void saveAccumulatorBeforeToInt32();
++    void getThisObject();
+ 
+ private:
+ //    static void propertyVarWeakRefCallback(v8::Persistent<v8::Value> object, void* parameter);
+@@ -8941,6 +8942,17 @@ void tst_qqmlecmascript::saveAccumulatorBeforeToInt32()
+     QCOMPARE(value.toString(), QLatin1String("RangeError: Maximum call stack size exceeded."));
+ }
+ 
++void tst_qqmlecmascript::getThisObject()
++{
++    QQmlEngine engine;
++    QQmlComponent component(&engine, testFileUrl("getThis.qml"));
++    QVERIFY(component.isReady());
++    QScopedPointer<QObject> test(component.create());
++    QVERIFY(!test.isNull());
++
++    QTRY_COMPARE(qvariant_cast<QObject *>(test->property("self")), test.data());
++}
++
+ QTEST_MAIN(tst_qqmlecmascript)
+ 
+ #include "tst_qqmlecmascript.moc"
