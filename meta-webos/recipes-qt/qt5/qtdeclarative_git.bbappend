@@ -1,6 +1,6 @@
-# Copyright (c) 2014-2018 LG Electronics, Inc.
+# Copyright (c) 2014-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos37"
+EXTENDPRAUTO_append = "webos38"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -29,4 +29,5 @@ SRC_URI_append_class-target = " \
     file://0022-Warn-circular-dependency-when-loading-types.patch \
     file://0023-Fix-baseUrl-returning-an-empty-url.patch \
     file://0024-Rebuild-QQmlData-propertyCache-if-deleted-by-another.patch \
+    file://0025-Add-QQmlEngine-to-QQuickPixmapKey.patch \
 "
