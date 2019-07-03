@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 libpbnjson"
 
-WEBOS_VERSION = "3.3.0-2_75eef528791b73b8bc4f84cf522c6a1c533edc32"
+WEBOS_VERSION = "3.3.0-3_f733a6d22c4729ebc395b4666b32c4b472db2cbf"
 PR = "r9"
 
 LEAD_SONAME = "libPmLogLib.so"
