@@ -1,4 +1,4 @@
-From effad6f69140099f1d410932125efd9a0f398160 Mon Sep 17 00:00:00 2001
+From 663e93dc712c58f28d88e71b94608e5c243cbf24 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 5 Jul 2018 16:10:46 +0900
 Subject: [PATCH] eglfs: Associate keyboard device with window
@@ -31,20 +31,20 @@ Confirmed keyboard events are delivered to the window associated.
 
 Change-Id: I835721c5d482eaec7220aa435e2f00cdb04f2a68
 ---
- .../evdevkeyboard/qevdevkeyboardhandler.cpp   | 15 ++++++++++++--
- .../evdevkeyboard/qevdevkeyboardhandler_p.h   |  5 +++++
- .../evdevkeyboard/qevdevkeyboardmanager.cpp   | 11 ++++++++++
- .../evdevkeyboard/qevdevkeyboardmanager_p.h   |  3 +++
- .../eglfs/api/qeglfsdeviceintegration.cpp     |  6 ++++++
- .../eglfs/api/qeglfsdeviceintegration_p.h     |  2 ++
- .../platforms/eglfs/api/qeglfsintegration.cpp | 20 +++++++++++++++++++
- .../platforms/eglfs/api/qeglfsintegration_p.h |  4 ++++
- .../qeglfskmsintegration.cpp                  |  5 +++++
- .../eglfs_kms_support/qeglfskmsintegration.h  |  2 ++
+ .../input/evdevkeyboard/qevdevkeyboardhandler.cpp    | 15 +++++++++++++--
+ .../input/evdevkeyboard/qevdevkeyboardhandler_p.h    |  5 +++++
+ .../input/evdevkeyboard/qevdevkeyboardmanager.cpp    | 11 +++++++++++
+ .../input/evdevkeyboard/qevdevkeyboardmanager_p.h    |  3 +++
+ .../platforms/eglfs/api/qeglfsdeviceintegration.cpp  |  6 ++++++
+ .../platforms/eglfs/api/qeglfsdeviceintegration_p.h  |  2 ++
+ .../platforms/eglfs/api/qeglfsintegration.cpp        | 20 ++++++++++++++++++++
+ .../platforms/eglfs/api/qeglfsintegration_p.h        |  4 ++++
+ .../eglfs_kms_support/qeglfskmsintegration.cpp       |  5 +++++
+ .../eglfs_kms_support/qeglfskmsintegration.h         |  2 ++
  10 files changed, 71 insertions(+), 2 deletions(-)
 
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
-index ad134a825f..e4586b30fc 100644
+index ad134a8..e4586b3 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
 @@ -77,7 +77,8 @@ QEvdevKeyboardHandler::QEvdevKeyboardHandler(const QString &device, QFdContainer
@@ -82,7 +82,7 @@ index ad134a825f..e4586b30fc 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
-index 5498a3e4f0..baf772ed3d 100644
+index 5498a3e..baf772e 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
 @@ -54,6 +54,7 @@
@@ -112,7 +112,7 @@ index 5498a3e4f0..baf772ed3d 100644
      static const QEvdevKeyboardMap::Composing s_keycompose_default[];
  };
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
-index e1659bc0d9..3dccf08df6 100644
+index e1659bc..3dccf08 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
 @@ -159,4 +159,15 @@ void QEvdevKeyboardManager::switchLang()
@@ -132,7 +132,7 @@ index e1659bc0d9..3dccf08df6 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
-index 326e438a7c..d26590e0c1 100644
+index 326e438..d26590e 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
 @@ -58,6 +58,7 @@
@@ -153,7 +153,7 @@ index 326e438a7c..d26590e0c1 100644
      QString m_spec;
      QHash<QString,QEvdevKeyboardHandler*> m_keyboards;
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-index 8e71a491c1..cc103d8862 100644
+index 8e71a49..cc103d8 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 @@ -406,4 +406,10 @@ EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfa
@@ -168,7 +168,7 @@ index 8e71a491c1..cc103d8862 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
-index a22d197d3d..e38a69c1a1 100644
+index a22d197..e38a69c 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 @@ -111,6 +111,8 @@ public:
@@ -181,7 +181,7 @@ index a22d197d3d..e38a69c1a1 100644
      static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration);
  };
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 93710b573a..f9b6439384 100644
+index 93710b5..8880da1 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -281,6 +281,8 @@ QPlatformWindow *QEglFSIntegration::createPlatformWindow(QWindow *window) const
@@ -189,7 +189,7 @@ index 93710b573a..f9b6439384 100644
      if (window->type() != Qt::ToolTip && window->screen() == QGuiApplication::primaryScreen())
          w->requestActivateWindow();
 +    if (associateInputHandlers(window))
-+        connect(window, SIGNAL(screenChanged(QScreen*)), this, SLOT(handleScreenChange()));
++        connect(window, &QWindow::screenChanged, this, &QEglFSIntegration::handleScreenChange);
  
      return w;
  }
@@ -210,14 +210,14 @@ index 93710b573a..f9b6439384 100644
 +    return associated;
 +}
 +
-+void QEglFSIntegration::handleScreenChange()
++void QEglFSIntegration::handleScreenChange(QScreen *screen)
 +{
 +    associateInputHandlers(qobject_cast<QWindow *>(sender()));
 +}
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index 2bf5ed01b0..e92b07b589 100644
+index 2bf5ed0..9d018f3 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 @@ -109,10 +109,14 @@ public:
@@ -225,7 +225,7 @@ index 2bf5ed01b0..e92b07b589 100644
      QFbVtHandler *vtHandler() { return m_vtHandler.data(); }
  
 +private slots:
-+    void handleScreenChange();
++    void handleScreenChange(QScreen *screen);
 +
  private:
      EGLNativeDisplayType nativeDisplay() const;
@@ -236,7 +236,7 @@ index 2bf5ed01b0..e92b07b589 100644
      static void switchLangStatic();
  
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index 38736181d3..7b5f4e6e8d 100644
+index 3873618..7b5f4e6 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -174,4 +174,9 @@ QKmsScreenConfig *QEglFSKmsIntegration::screenConfig() const
@@ -250,7 +250,7 @@ index 38736181d3..7b5f4e6e8d 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
-index 3fa6a0a0d8..09567d50b6 100644
+index 3fa6a0a..09567d5 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
 @@ -74,6 +74,8 @@ public:

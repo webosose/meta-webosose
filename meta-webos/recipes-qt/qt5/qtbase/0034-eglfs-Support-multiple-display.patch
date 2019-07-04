@@ -1,4 +1,4 @@
-From 60ec8ec5d6ecb847bb2826046c4d14d8d4b6b92a Mon Sep 17 00:00:00 2001
+From 35d03d7a9308e15561cb3d9d7f92d3914e73ad80 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 2 Apr 2018 14:00:37 +0900
 Subject: [PATCH] eglfs: Support multiple display
@@ -33,22 +33,22 @@ platform screens and windows.
 
 Change-Id: Iec3840877bf23ea5a9309095bfd718c241a9e1a5
 ---
- .../kmsconvenience/qkmsdevice.cpp             |  80 ++++++------
- .../kmsconvenience/qkmsdevice_p.h             |   4 +-
- .../eglfs/api/qeglfsdeviceintegration_p.h     |   2 +
- .../platforms/eglfs/api/qeglfshooks.cpp       |  26 +++-
- .../platforms/eglfs/api/qeglfshooks_p.h       |   2 +
- .../platforms/eglfs/api/qeglfsintegration.cpp | 117 ++++++++++++++++--
- .../platforms/eglfs/api/qeglfsintegration_p.h |   5 +
- .../qeglfskmsintegration.cpp                  |  13 +-
- .../eglfs_kms_support/qeglfskmsintegration.h  |   3 +
- 9 files changed, 196 insertions(+), 56 deletions(-)
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp  |  60 ++++++-----
+ src/platformsupport/kmsconvenience/qkmsdevice_p.h  |   4 +-
+ .../eglfs/api/qeglfsdeviceintegration_p.h          |   2 +
+ src/plugins/platforms/eglfs/api/qeglfshooks.cpp    |  26 ++++-
+ src/plugins/platforms/eglfs/api/qeglfshooks_p.h    |   2 +
+ .../platforms/eglfs/api/qeglfsintegration.cpp      | 117 +++++++++++++++++++--
+ .../platforms/eglfs/api/qeglfsintegration_p.h      |   5 +
+ .../eglfs_kms_support/qeglfskmsintegration.cpp     |  13 ++-
+ .../eglfs_kms_support/qeglfskmsintegration.h       |   3 +
+ 9 files changed, 186 insertions(+), 46 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index 45cef10d68..db37acf535 100644
+index 45cef10..7f6e732 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -942,59 +942,63 @@ QKmsScreenConfig *QKmsDevice::screenConfig() const
+@@ -942,44 +942,48 @@ QKmsScreenConfig *QKmsDevice::screenConfig() const
      return m_screenConfig;
  }
  
@@ -72,8 +72,6 @@ index 45cef10d68..db37acf535 100644
 -        if (json.isEmpty())
 -            return;
 -    }
--
--    qCDebug(qLcKmsDebug) << "Loading KMS setup from" << json;
 +    if (m_configJson.isEmpty()) {
 +        QByteArray json = qgetenv("QT_QPA_EGLFS_KMS_CONFIG");
 +        if (json.isEmpty()) {
@@ -82,18 +80,13 @@ index 45cef10d68..db37acf535 100644
 +                return;
 +        }
  
+-    qCDebug(qLcKmsDebug) << "Loading KMS setup from" << json;
++        qCDebug(qLcKmsDebug) << "Loading KMS setup from" << json;
+ 
 -    QFile file(QString::fromUtf8(json));
 -    if (!file.open(QFile::ReadOnly)) {
 -        qCWarning(qLcKmsDebug) << "Could not open config file"
 -                               << json << "for reading";
--        return;
--    }
-+        qCDebug(qLcKmsDebug) << "Loading KMS setup from" << json;
- 
--    const QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
--    if (!doc.isObject()) {
--        qCWarning(qLcKmsDebug) << "Invalid config file" << json
--                              << "- no top-level JSON object";
 -        return;
 -    }
 +        QFile file(QString::fromUtf8(json));
@@ -103,7 +96,12 @@ index 45cef10d68..db37acf535 100644
 +            return;
 +        }
  
--    const QJsonObject object = doc.object();
+-    const QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+-    if (!doc.isObject()) {
+-        qCWarning(qLcKmsDebug) << "Invalid config file" << json
+-                              << "- no top-level JSON object";
+-        return;
+-    }
 +        const QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
 +        file.close();
 +        if (!doc.isObject()) {
@@ -112,39 +110,29 @@ index 45cef10d68..db37acf535 100644
 +            return;
 +        }
  
--    const QString headlessStr = object.value(QLatin1String("headless")).toString();
--    const QByteArray headless = headlessStr.toUtf8();
--    QSize headlessSize;
--    if (sscanf(headless.constData(), "%dx%d", &headlessSize.rwidth(), &headlessSize.rheight()) == 2) {
--        m_headless = true;
--        m_headlessSize = headlessSize;
--    } else {
--        m_headless = false;
+-    const QJsonObject object = doc.object();
 +        m_configJson = doc.object();
++    }
+ 
+-    const QString headlessStr = object.value(QLatin1String("headless")).toString();
++    const QString headlessStr = m_configJson.value(QLatin1String("headless")).toString();
+     const QByteArray headless = headlessStr.toUtf8();
+     QSize headlessSize;
+     if (sscanf(headless.constData(), "%dx%d", &headlessSize.rwidth(), &headlessSize.rheight()) == 2) {
+@@ -989,12 +993,12 @@ void QKmsScreenConfig::loadConfig()
+         m_headless = false;
      }
--
+ 
 -    m_hwCursor = object.value(QLatin1String("hwcursor")).toBool(m_hwCursor);
 -    m_pbuffers = object.value(QLatin1String("pbuffers")).toBool(m_pbuffers);
 -    m_devicePath = object.value(QLatin1String("device")).toString();
 -    m_separateScreens = object.value(QLatin1String("separateScreens")).toBool(m_separateScreens);
--
--    const QString vdOriString = object.value(QLatin1String("virtualDesktopLayout")).toString();
-+    // TODO: m_headless from m_configJson
-+    // const QString headlessStr = object.value(QLatin1String("headless")).toString();
-+    // const QByteArray headless = headlessStr.toUtf8();
-+    // QSize headlessSize;
-+    // if (sscanf(headless.constData(), "%dx%d", &headlessSize.rwidth(), &headlessSize.rheight()) == 2) {
-+    //     m_headless = true;
-+    //     m_headlessSize = headlessSize;
-+    // } else {
-+    //     m_headless = false;
-+    // }
-+    m_headless = false;
 +    m_hwCursor = m_configJson.value(QLatin1String("hwcursor")).toBool(m_hwCursor);
 +    m_pbuffers = m_configJson.value(QLatin1String("pbuffers")).toBool(m_pbuffers);
 +    m_devicePath = m_configJson.value(QLatin1String("device")).toString();
 +    m_separateScreens = m_configJson.value(QLatin1String("separateScreens")).toBool(m_separateScreens);
-+
+ 
+-    const QString vdOriString = object.value(QLatin1String("virtualDesktopLayout")).toString();
 +    const QString vdOriString = m_configJson.value(QLatin1String("virtualDesktopLayout")).toString();
      if (!vdOriString.isEmpty()) {
          if (vdOriString == QLatin1String("horizontal"))
@@ -159,7 +147,7 @@ index 45cef10d68..db37acf535 100644
          const QVariantMap outputSettings = outputs.at(i).toObject().toVariantMap();
  
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-index 403972fbb8..499d7236c4 100644
+index 403972f..499d723 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 @@ -57,6 +57,7 @@
@@ -188,7 +176,7 @@ index 403972fbb8..499d7236c4 100644
      bool m_headless;
      QSize m_headlessSize;
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
-index 4859011048..a22d197d3d 100644
+index 4859011..a22d197 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 @@ -55,6 +55,7 @@
@@ -208,7 +196,7 @@ index 4859011048..a22d197d3d 100644
      virtual void platformDestroy();
      virtual EGLNativeDisplayType platformDisplay() const;
 diff --git a/src/plugins/platforms/eglfs/api/qeglfshooks.cpp b/src/plugins/platforms/eglfs/api/qeglfshooks.cpp
-index ff5c5deee4..dbb7677b4e 100644
+index ff5c5de..dbb7677 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfshooks.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfshooks.cpp
 @@ -39,6 +39,7 @@
@@ -269,7 +257,7 @@ index ff5c5deee4..dbb7677b4e 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfshooks_p.h b/src/plugins/platforms/eglfs/api/qeglfshooks_p.h
-index 4c3149c7c9..d3ac31892a 100644
+index 4c3149c..d3ac318 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfshooks_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfshooks_p.h
 @@ -61,6 +61,8 @@ class QEglFSHooks : public QEglFSDeviceIntegration
@@ -282,7 +270,7 @@ index 4c3149c7c9..d3ac31892a 100644
  QT_END_NAMESPACE
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 76ace138fd..93710b573a 100644
+index 76ace13..93710b5 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -38,6 +38,9 @@
@@ -482,7 +470,7 @@ index 76ace138fd..93710b573a 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index 69ddfbd70c..2bf5ed01b0 100644
+index 69ddfbd..2bf5ed0 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 @@ -53,6 +53,7 @@
@@ -517,7 +505,7 @@ index 69ddfbd70c..2bf5ed01b0 100644
      QScopedPointer<QPlatformFontDatabase> m_fontDb;
      QScopedPointer<QPlatformServices> m_services;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index a6aac61506..38736181d3 100644
+index a6aac61..3873618 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -55,18 +55,23 @@ QT_BEGIN_NAMESPACE
@@ -557,7 +545,7 @@ index a6aac61506..38736181d3 100644
  
  EGLNativeDisplayType QEglFSKmsIntegration::platformDisplay() const
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
-index e2c37f60fc..3fa6a0a0d8 100644
+index e2c37f6..3fa6a0a 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
 @@ -46,6 +46,7 @@

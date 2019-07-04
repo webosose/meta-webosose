@@ -1,4 +1,4 @@
-From 9be896be8204e8416d8f4be23a2c16272f850c96 Mon Sep 17 00:00:00 2001
+From a049c3e824f35b4bbe03eadfd7adf9880096b49e Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 28 Mar 2019 02:09:30 +0900
 Subject: [PATCH] eglfs: Associate touch device with window
@@ -24,20 +24,20 @@ Confirmed touch events are delivered to the window associated.
 
 Change-Id: Ib7a8b7afd5a525cdc2a059e790badc7f8c098714
 ---
- .../input/evdevtouch/qevdevtouchhandler.cpp   | 39 ++++++++++++++++---
- .../input/evdevtouch/qevdevtouchhandler_p.h   | 12 ++++++
- .../input/evdevtouch/qevdevtouchmanager.cpp   | 11 ++++++
- .../input/evdevtouch/qevdevtouchmanager_p.h   |  4 ++
- .../eglfs/api/qeglfsdeviceintegration.cpp     |  6 +++
- .../eglfs/api/qeglfsdeviceintegration_p.h     |  1 +
- .../platforms/eglfs/api/qeglfsintegration.cpp |  6 ++-
- .../platforms/eglfs/api/qeglfsintegration_p.h |  2 +
- .../qeglfskmsintegration.cpp                  |  5 +++
- .../eglfs_kms_support/qeglfskmsintegration.h  |  1 +
- 10 files changed, 79 insertions(+), 8 deletions(-)
+ .../input/evdevtouch/qevdevtouchhandler.cpp        | 39 ++++++++++++++++++----
+ .../input/evdevtouch/qevdevtouchhandler_p.h        | 11 ++++++
+ .../input/evdevtouch/qevdevtouchmanager.cpp        | 11 ++++++
+ .../input/evdevtouch/qevdevtouchmanager_p.h        |  3 ++
+ .../eglfs/api/qeglfsdeviceintegration.cpp          |  6 ++++
+ .../eglfs/api/qeglfsdeviceintegration_p.h          |  1 +
+ .../platforms/eglfs/api/qeglfsintegration.cpp      |  6 ++--
+ .../platforms/eglfs/api/qeglfsintegration_p.h      |  2 ++
+ .../eglfs_kms_support/qeglfskmsintegration.cpp     |  5 +++
+ .../eglfs_kms_support/qeglfskmsintegration.h       |  1 +
+ 10 files changed, 77 insertions(+), 8 deletions(-)
 
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
-index f3cc160b3e..4baa4b31e9 100644
+index f3cc160..4baa4b3 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
 @@ -192,7 +192,7 @@ static inline bool testBit(long bit, const long *array)
@@ -139,7 +139,7 @@ index f3cc160b3e..4baa4b31e9 100644
  
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h b/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
-index 56308d0352..32fe6c5991 100644
+index 56308d0..22de69f 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
 @@ -57,6 +57,7 @@
@@ -158,17 +158,16 @@ index 56308d0352..32fe6c5991 100644
  
  class QEvdevTouchScreenHandler : public QObject
  {
-@@ -82,6 +84,9 @@ public:
+@@ -82,6 +84,8 @@ public:
  
      bool isFiltered() const;
  
 +    QWindow *window() const;
 +
-+private slots:
      void readData();
  
  signals:
-@@ -101,6 +106,8 @@ private:
+@@ -101,6 +105,8 @@ private:
  #if QT_CONFIG(mtdev)
      mtdev *m_mtdev;
  #endif
@@ -177,7 +176,7 @@ index 56308d0352..32fe6c5991 100644
  };
  
  class QEvdevTouchScreenHandlerThread : public QDaemonThread
-@@ -117,6 +124,9 @@ public:
+@@ -117,6 +123,9 @@ public:
  
      void scheduleTouchPointUpdate();
  
@@ -187,7 +186,7 @@ index 56308d0352..32fe6c5991 100644
  signals:
      void touchDeviceRegistered();
  
-@@ -142,6 +152,8 @@ private:
+@@ -142,6 +151,8 @@ private:
      QHash<int, FilteredTouchPoint> m_filteredPoints;
  
      float m_touchRate;
@@ -197,7 +196,7 @@ index 56308d0352..32fe6c5991 100644
  
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
-index 4cacbf03e5..eb4279f191 100644
+index 4cacbf0..eb4279f 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
 @@ -142,4 +142,15 @@ void QEvdevTouchManager::updateInputDeviceCount()
@@ -217,7 +216,7 @@ index 4cacbf03e5..eb4279f191 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h b/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
-index e524c516f1..3ca991d104 100644
+index e524c51..ca3d53f 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
 @@ -54,6 +54,7 @@
@@ -228,18 +227,17 @@ index e524c516f1..3ca991d104 100644
  
  QT_BEGIN_NAMESPACE
  
-@@ -66,6 +67,9 @@ public:
+@@ -66,6 +67,8 @@ public:
      QEvdevTouchManager(const QString &key, const QString &spec, QObject *parent = 0);
      ~QEvdevTouchManager();
  
 +    bool setWindow(const QString &deviceNode, QWindow *window);
 +
-+private slots:
      void addDevice(const QString &deviceNode);
      void removeDevice(const QString &deviceNode);
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-index cc103d8862..a0d3650037 100644
+index cc103d8..a0d3650 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 @@ -412,4 +412,10 @@ QString QEglFSDeviceIntegration::kbdDeviceName(QString &output) const
@@ -254,7 +252,7 @@ index cc103d8862..a0d3650037 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
-index e38a69c1a1..acf9250496 100644
+index e38a69c..acf9250 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 @@ -112,6 +112,7 @@ public:
@@ -266,7 +264,7 @@ index e38a69c1a1..acf9250496 100644
      static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format);
      static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration);
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index f9b6439384..da6f808c9c 100644
+index 8880da1..e4091bc 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -120,7 +120,7 @@ QEglFSIntegration::QEglFSIntegration()
@@ -297,7 +295,7 @@ index f9b6439384..da6f808c9c 100644
      return associated;
  }
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index e92b07b589..75b4b28f5d 100644
+index 9d018f3..2b1d8d9 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 @@ -69,6 +69,7 @@ class QEglFSContext;
@@ -317,7 +315,7 @@ index e92b07b589..75b4b28f5d 100644
  #if defined(WEBOS_EMULATOR)
  	QList<QLinuxMouseHandler *> m_mouses;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index 7b5f4e6e8d..b2a13504d5 100644
+index 7b5f4e6..b2a1350 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -179,4 +179,9 @@ QString QEglFSKmsIntegration::kbdDeviceName(QString &output) const
@@ -331,7 +329,7 @@ index 7b5f4e6e8d..b2a13504d5 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
-index 09567d50b6..e8ececa392 100644
+index 09567d5..e8ececa 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
 @@ -75,6 +75,7 @@ public:

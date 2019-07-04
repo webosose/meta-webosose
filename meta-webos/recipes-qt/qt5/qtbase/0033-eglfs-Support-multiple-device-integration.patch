@@ -1,4 +1,4 @@
-From 128fd6a4b067dbeba099eceacdffe88e9629011f Mon Sep 17 00:00:00 2001
+From d1c91d78dbfb0f91e928ea7f3d95e0dc25612ddb Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Wed, 27 Mar 2019 22:36:41 +0900
 Subject: [PATCH] eglfs: Support multiple device integration
@@ -24,31 +24,31 @@ platform screens and windows.
 
 Change-Id: Ifb4976ac62aff563771876493c108608d4b87253
 ---
- .../platforms/eglfs/api/qeglfscontext.cpp     | 23 +++++++++------
- .../platforms/eglfs/api/qeglfscontext_p.h     |  5 ++++
- .../eglfs/api/qeglfsdeviceintegration.cpp     | 23 +++++++++++----
- .../eglfs/api/qeglfsdeviceintegration_p.h     |  2 ++
- .../eglfs/api/qeglfsoffscreenwindow.cpp       | 10 +++++--
- .../eglfs/api/qeglfsoffscreenwindow_p.h       |  4 +++
- .../platforms/eglfs/api/qeglfsscreen.cpp      | 28 +++++++++++--------
- .../platforms/eglfs/api/qeglfsscreen_p.h      |  6 ++++
- .../platforms/eglfs/api/qeglfswindow.cpp      | 14 +++++++---
- .../platforms/eglfs/api/qeglfswindow_p.h      |  4 +++
- .../eglfs_kms/qeglfskmsgbmdevice.cpp          | 10 +++++--
- .../eglfs_kms/qeglfskmsgbmdevice.h            |  2 ++
- .../eglfs_kms/qeglfskmsgbmintegration.cpp     |  9 ++++--
- .../eglfs_kms/qeglfskmsgbmintegration.h       |  1 +
- .../eglfs_kms/qeglfskmsgbmscreen.cpp          |  8 +++++-
- .../eglfs_kms/qeglfskmsgbmscreen.h            |  2 ++
- .../eglfs_kms/qeglfskmsgbmwindow.h            | 11 ++++----
- .../eglfs_kms_support/qeglfskmsdevice.cpp     |  8 ++++++
- .../eglfs_kms_support/qeglfskmsdevice.h       |  7 +++++
- .../eglfs_kms_support/qeglfskmsscreen.cpp     |  8 +++++-
- .../eglfs_kms_support/qeglfskmsscreen.h       |  2 ++
+ src/plugins/platforms/eglfs/api/qeglfscontext.cpp  | 23 +++++++++++-------
+ src/plugins/platforms/eglfs/api/qeglfscontext_p.h  |  5 ++++
+ .../eglfs/api/qeglfsdeviceintegration.cpp          | 23 ++++++++++++++----
+ .../eglfs/api/qeglfsdeviceintegration_p.h          |  2 ++
+ .../platforms/eglfs/api/qeglfsoffscreenwindow.cpp  | 10 ++++++--
+ .../platforms/eglfs/api/qeglfsoffscreenwindow_p.h  |  4 ++++
+ src/plugins/platforms/eglfs/api/qeglfsscreen.cpp   | 28 +++++++++++++---------
+ src/plugins/platforms/eglfs/api/qeglfsscreen_p.h   |  6 +++++
+ src/plugins/platforms/eglfs/api/qeglfswindow.cpp   | 14 +++++++----
+ src/plugins/platforms/eglfs/api/qeglfswindow_p.h   |  4 ++++
+ .../eglfs_kms/qeglfskmsgbmdevice.cpp               | 10 ++++++--
+ .../eglfs_kms/qeglfskmsgbmdevice.h                 |  2 ++
+ .../eglfs_kms/qeglfskmsgbmintegration.cpp          |  9 +++++--
+ .../eglfs_kms/qeglfskmsgbmintegration.h            |  1 +
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp               |  8 ++++++-
+ .../eglfs_kms/qeglfskmsgbmscreen.h                 |  2 ++
+ .../eglfs_kms/qeglfskmsgbmwindow.h                 | 11 ++++-----
+ .../eglfs_kms_support/qeglfskmsdevice.cpp          |  8 +++++++
+ .../eglfs_kms_support/qeglfskmsdevice.h            |  7 ++++++
+ .../eglfs_kms_support/qeglfskmsscreen.cpp          |  8 ++++++-
+ .../eglfs_kms_support/qeglfskmsscreen.h            |  2 ++
  21 files changed, 145 insertions(+), 42 deletions(-)
 
 diff --git a/src/plugins/platforms/eglfs/api/qeglfscontext.cpp b/src/plugins/platforms/eglfs/api/qeglfscontext.cpp
-index c5cef34d8e..3cb852eb1b 100644
+index c5cef34..3cb852e 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfscontext.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfscontext.cpp
 @@ -51,9 +51,16 @@ QT_BEGIN_NAMESPACE
@@ -111,7 +111,7 @@ index c5cef34d8e..3cb852eb1b 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfscontext_p.h b/src/plugins/platforms/eglfs/api/qeglfscontext_p.h
-index af8725b6b3..b4f55861e5 100644
+index af8725b..b4f5586 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfscontext_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfscontext_p.h
 @@ -53,6 +53,7 @@
@@ -141,7 +141,7 @@ index af8725b6b3..b4f55861e5 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-index 81bad45cd2..8e71a491c1 100644
+index 81bad45..8e71a49 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 @@ -285,6 +285,11 @@ QEglFSWindow *QEglFSDeviceIntegration::createWindow(QWindow *window) const
@@ -156,16 +156,15 @@ index 81bad45cd2..8e71a491c1 100644
  EGLNativeWindowType QEglFSDeviceIntegration::createNativeWindow(QPlatformWindow *platformWindow,
                                                      const QSize &size,
                                                      const QSurfaceFormat &format)
-@@ -376,19 +381,27 @@ void *QEglFSDeviceIntegration::wlDisplay() const
- }
+@@ -377,18 +382,26 @@ void *QEglFSDeviceIntegration::wlDisplay() const
  
  EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfaceFormat &format)
-+{
+ {
 +    return chooseConfig(display, format, qt_egl_device_integration());
 +}
 +
 +EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration)
- {
++{
      class Chooser : public QEglConfigChooser {
      public:
 -        Chooser(EGLDisplay display)
@@ -190,7 +189,7 @@ index 81bad45cd2..8e71a491c1 100644
      return chooser.chooseConfig();
  }
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
-index 71ffb4c69a..4859011048 100644
+index 71ffb4c..4859011 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
 @@ -89,6 +89,7 @@ public:
@@ -210,7 +209,7 @@ index 71ffb4c69a..4859011048 100644
  
  class Q_EGLFS_EXPORT QEglFSDeviceIntegrationPlugin : public QObject
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow.cpp b/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow.cpp
-index 864271cd3a..555a80fdea 100644
+index 864271c..555a80f 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow.cpp
 @@ -55,13 +55,19 @@ QT_BEGIN_NAMESPACE
@@ -244,7 +243,7 @@ index 864271cd3a..555a80fdea 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow_p.h b/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow_p.h
-index 9fdb81efdd..ce38d6495a 100644
+index 9fdb81e..ce38d64 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsoffscreenwindow_p.h
 @@ -52,6 +52,7 @@
@@ -273,7 +272,7 @@ index 9fdb81efdd..ce38d6495a 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp b/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp
-index 11b68c0589..a5fd864328 100644
+index 11b68c0..a5fd864 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsscreen.cpp
 @@ -52,11 +52,17 @@
@@ -357,7 +356,7 @@ index 11b68c0589..a5fd864328 100644
  
  void QEglFSScreen::setPrimarySurface(EGLSurface surface)
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsscreen_p.h b/src/plugins/platforms/eglfs/api/qeglfsscreen_p.h
-index bea7b4c8ef..3f07ab08ef 100644
+index bea7b4c..3f07ab0 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsscreen_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsscreen_p.h
 @@ -52,6 +52,7 @@
@@ -395,7 +394,7 @@ index bea7b4c8ef..3f07ab08ef 100644
  };
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfswindow.cpp b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp
-index 98e9ee4728..efe4e40b82 100644
+index 98e9ee4..efe4e40 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfswindow.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfswindow.cpp
 @@ -59,6 +59,11 @@
@@ -444,7 +443,7 @@ index 98e9ee4728..efe4e40b82 100644
  }
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfswindow_p.h b/src/plugins/platforms/eglfs/api/qeglfswindow_p.h
-index b0091e2a62..3c25f8a902 100644
+index b0091e2..3c25f8a 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfswindow_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfswindow_p.h
 @@ -54,6 +54,7 @@
@@ -473,7 +472,7 @@ index b0091e2a62..3c25f8a902 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
-index 20127ae7f7..ef05c39693 100644
+index 20127ae..ef05c39 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
 @@ -43,6 +43,7 @@
@@ -508,7 +507,7 @@ index 20127ae7f7..ef05c39693 100644
      if (!m_globalCursor && screenConfig()->hwCursor()) {
          qCDebug(qLcEglfsKmsDebug, "Creating new global GBM mouse cursor");
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h
-index 518e2ce58b..bcb0bbe8f8 100644
+index 518e2ce..bcb0bbe 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h
 @@ -44,6 +44,7 @@
@@ -528,7 +527,7 @@ index 518e2ce58b..bcb0bbe8f8 100644
      bool open() override;
      void close() override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 4a7587b76b..1619509cda 100644
+index 4a7587b..1619509 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 @@ -156,12 +156,17 @@ QKmsDevice *QEglFSKmsGbmIntegration::createDevice()
@@ -552,7 +551,7 @@ index 4a7587b76b..1619509cda 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h
-index 71f232abf9..a64471be3f 100644
+index 71f232a..a64471b 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h
 @@ -62,6 +62,7 @@ public:
@@ -564,7 +563,7 @@ index 71f232abf9..a64471be3f 100644
  protected:
      QKmsDevice *createDevice() override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 24f82e7843..7e34e982e5 100644
+index 24f82e7..9565f07 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -43,6 +43,7 @@
@@ -580,7 +579,7 @@ index 24f82e7843..7e34e982e5 100644
  
  QEglFSKmsGbmScreen::QEglFSKmsGbmScreen(QKmsDevice *device, const QKmsOutput &output, bool headless)
 -    : QEglFSKmsScreen(device, output, headless)
-+    : QEglFSKmsScreen(device, output, headless, qt_egl_device_integration())
++    : QEglFSKmsGbmScreen(device, output, headless, qt_egl_device_integration())
 +{
 +}
 +
@@ -590,7 +589,7 @@ index 24f82e7843..7e34e982e5 100644
      , m_gbm_bo_current(nullptr)
      , m_gbm_bo_next(nullptr)
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h
-index b94f44b7b1..2988f960d3 100644
+index b94f44b..2988f96 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h
 @@ -43,6 +43,7 @@
@@ -610,7 +609,7 @@ index b94f44b7b1..2988f960d3 100644
  
      QPlatformCursor *cursor() const override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h
-index a19cf7e8bc..d8170417b4 100644
+index a19cf7e..d817041 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h
 @@ -51,15 +51,14 @@ class QEglFSKmsGbmIntegration;
@@ -635,7 +634,7 @@ index a19cf7e8bc..d8170417b4 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
-index 4f0b0d7725..188c271f07 100644
+index 4f0b0d7..188c271 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
 @@ -41,12 +41,20 @@
@@ -660,7 +659,7 @@ index 4f0b0d7725..188c271f07 100644
  }
  
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h
-index fc83a620d9..0328dee5e5 100644
+index fc83a62..0328dee 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h
 @@ -43,6 +43,7 @@
@@ -690,7 +689,7 @@ index fc83a620d9..0328dee5e5 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
-index e5354d97bd..c0ffc910e4 100644
+index e5354d9..11b6858 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
 @@ -41,6 +41,7 @@
@@ -711,12 +710,12 @@ index e5354d97bd..c0ffc910e4 100644
 +}
 +
 +QEglFSKmsScreen::QEglFSKmsScreen(QKmsDevice *device, const QKmsOutput &output, bool headless, QEglFSDeviceIntegration *integration)
-+    : QEglFSScreen(static_cast<QEglFSIntegration *>(QGuiApplicationPrivate::platformIntegration())->display(), integration)
++    : QEglFSScreen(eglGetDisplay((EGLNativeDisplayType) device->nativeDisplay()), integration)
      , m_device(device)
      , m_output(output)
      , m_powerState(PowerStateOn)
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h
-index 7f395aacb7..338a2687a2 100644
+index 7f395aa..338a268 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h
 @@ -43,6 +43,7 @@
