@@ -1,4 +1,4 @@
-From 93bfe4227bc10e98177b91e08155d35f6b824248 Mon Sep 17 00:00:00 2001
+From e20b9dce4fe369df4a29a6712a4b87db815da88e Mon Sep 17 00:00:00 2001
 From: Tigran Avanesov <tigran.avanesov@lge.com>
 Date: Fri, 25 Jul 2014 11:13:10 +0300
 Subject: [PATCH] Move testability loading code to the QGuiApplication
@@ -10,14 +10,14 @@ be able to use -testability switch.
 Change-Id: Ieb0ace469028f37be868d031946e37715e61b8af
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
- src/gui/kernel/qguiapplication.cpp  | 39 +++++++++++++++++++++++++++++
+ src/gui/kernel/qguiapplication.cpp  | 39 +++++++++++++++++++++++++++++++++++++
  src/gui/kernel/qguiapplication.h    |  3 ++-
  src/gui/kernel/qguiapplication_p.h  |  1 +
  src/widgets/kernel/qapplication.cpp |  1 +
  4 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/src/gui/kernel/qguiapplication.cpp b/src/gui/kernel/qguiapplication.cpp
-index fd01f8bb7b..a8c41dda82 100644
+index fd01f8b..a8c41dd 100644
 --- a/src/gui/kernel/qguiapplication.cpp
 +++ b/src/gui/kernel/qguiapplication.cpp
 @@ -123,6 +123,10 @@
@@ -102,7 +102,7 @@ index fd01f8bb7b..a8c41dda82 100644
  #include "moc_qguiapplication.cpp"
  
 diff --git a/src/gui/kernel/qguiapplication.h b/src/gui/kernel/qguiapplication.h
-index 02dffef0fe..1cd784d4ab 100644
+index 02dffef..1cd784d 100644
 --- a/src/gui/kernel/qguiapplication.h
 +++ b/src/gui/kernel/qguiapplication.h
 @@ -194,8 +194,9 @@ protected:
@@ -117,7 +117,7 @@ index 02dffef0fe..1cd784d4ab 100644
      Q_DECLARE_PRIVATE(QGuiApplication)
  
 diff --git a/src/gui/kernel/qguiapplication_p.h b/src/gui/kernel/qguiapplication_p.h
-index 042a36c31f..0090b0d434 100644
+index 042a36c..0090b0d 100644
 --- a/src/gui/kernel/qguiapplication_p.h
 +++ b/src/gui/kernel/qguiapplication_p.h
 @@ -218,6 +218,7 @@ public:
@@ -129,7 +129,7 @@ index 042a36c31f..0090b0d434 100644
      struct TabletPointData {
          TabletPointData(qint64 devId = 0) : deviceId(devId), state(Qt::NoButton), target(nullptr) {}
 diff --git a/src/widgets/kernel/qapplication.cpp b/src/widgets/kernel/qapplication.cpp
-index ebab87b193..fed5409b03 100644
+index ebab87b..fed5409 100644
 --- a/src/widgets/kernel/qapplication.cpp
 +++ b/src/widgets/kernel/qapplication.cpp
 @@ -579,6 +579,7 @@ void QApplicationPrivate::init()
