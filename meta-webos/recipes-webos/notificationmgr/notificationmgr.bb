@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib boost libxml++"
 
-WEBOS_VERSION = "1.0.0-4_f749cc35707ebf07c8956ddbb1baa66b28169b64"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-5_9446f34754927064c8a2d6a4ea2918f1bcffd0d5"
+PR = "r8"
 
 inherit webos_component
 inherit webos_cmake
@@ -22,5 +22,3 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES_${PN} += "${webos_prefix}"
-
-SRC_URI += "file://0001-CMakeLists.txt-don-t-check-for-signals-Boost-library.patch"
