@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 inherit qmake5
 inherit webos_filesystem_paths
@@ -34,6 +34,7 @@ EXTRA_QMAKEVARS_PRE += "\
     WEBOS_INSTALL_SYSCONFDIR=${sysconfdir} \
     WEBOS_INSTALL_SYSBUS_DATADIR=${sysbus_datadir} \
     WEBOS_INSTALL_UPSTARTCONFDIR=${webos_upstartconfdir} \
+    WEBOS_INSTALL_WEBOS_SDKDIR=${webos_sdkdir} \
 "
 # webos-variables.prf is using default value of webos_sysbus_servicesdir
 # but the rest of the system is using singular servicedir
