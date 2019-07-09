@@ -26,3 +26,5 @@ inherit webos_machine_impl_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+PNBLACKLIST[com.webos.service.ai] ?= "Depends on libgoogleassistant which needs to be updated for new protobuf"

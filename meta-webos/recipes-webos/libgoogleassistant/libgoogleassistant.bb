@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "Google assistant engine library"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -67,3 +67,5 @@ FILES_${PN}-dev += "${libdir}/libgoogleassistant.so"
 
 # From http://gpro.lge.com/254812
 SRC_URI += "file://0001-CMakeLists.txt-install-libtatlas.so-in-regular-libdi.patch"
+
+PNBLACKLIST[libgoogleassistant] ?= "Needs to be updated for new protobuf"
