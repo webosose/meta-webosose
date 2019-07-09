@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 #
 # Variables invented by webOS for standard locations
@@ -161,6 +161,9 @@ webos_firstusesentinelfile = "${webos_sysmgr_localstatedir}/preferences/ran-firs
 
 # Note that everything under localstatedir is erased by a NYX_SYSTEM_ERASE_VAR erasure.
 webos_crashddir = "${webos_logdir}/crashd"
+
+# SDK tools
+webos_sdkdir = "/opt/webos/sdk"
 
 # Path to file which indicate failure to init settingsservice
 webos_settingsservice_errorsentinelfile = "${webos_localstatedir}/settingsservice_critical_error"

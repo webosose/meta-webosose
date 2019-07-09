@@ -13,8 +13,8 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-5_be5689d6fc9d8185342be0521ddd3800962925b7"
-PR = "r24"
+WEBOS_VERSION = "1.0.0-6_efe82a6e1bc1d2f079a57e1f61a0bcd028d585bc"
+PR = "r25"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -44,6 +44,10 @@ FILES_${PN}-examples += "${webos_applicationsdir}/*"
 # unit-tests
 PACKAGES =+ "${PN}-tests"
 FILES_${PN}-tests += "${datadir}/booster/tests/*"
+
+# SDK tools
+PACKAGES += "${PN}-tools"
+FILES_${PN}-tools += "${webos_sdkdir}/*"
 
 # we don't provide cmake tests
 EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"
