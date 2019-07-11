@@ -1,5 +1,5 @@
-# Imported from meta-raspberrypi, the only difference is dependency on
-# do_webos_deploy_fixup instead of just do_deploy for kernel
+# Imported from meta-raspberrypi
+# kernel dependency changed to do_webos_deploy_fixup task
 
 inherit image_types
 

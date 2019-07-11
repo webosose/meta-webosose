@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2016 LG Electronics, Inc.
+# Copyright (c) 2015-2019 LG Electronics, Inc.
 #
 # allarch
 #
@@ -15,4 +15,5 @@ python () {
         # dependency and MACHINEs with and without minsize in TUNE_FEATURE have different sstate signature for allarch recipes
         d.setVar("SELECTED_OPTIMIZATION", "none")
         d.setVar("FULL_OPTIMIZATION", "none")
+ 
 }
