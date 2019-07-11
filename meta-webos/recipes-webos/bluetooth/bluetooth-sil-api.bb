@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "glib-2.0"
 
 WEBOS_VERSION = "1.0.0-5_b452717d2e91d44bcbebd614523c6b8e027701e0"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_public_repo
@@ -23,3 +23,5 @@ EXTRA_OECMAKE += "-DWEBOS_CONFIG_BUILD_TESTS:BOOL=TRUE"
 
 PACKAGES =. "${PN}-tests "
 FILES_${PN}-tests = "${bindir}/bluetooth-sil-tester"
+
+ALLOW_EMPTY_${PN} = "1"
