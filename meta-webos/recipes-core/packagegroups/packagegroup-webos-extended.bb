@@ -192,6 +192,9 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
     kernel-module-videobuf2-memops \
     kernel-module-snd-usb-audio \
     kernel-module-snd-usbmidi-lib \
+    kernel-module-fuse \
+    fuse-utils \
+    ntfs-3g \
 "
 
 RDEPENDS_${PN}_append_qemux86 = " \
