@@ -8,14 +8,13 @@
 # Each recipe is responsible for setting a compilation flag to enable
 # its own LTTng tracepoints based on the value of WEBOS_LTTNG_ENABLED.
 
-# LTTng is disabled by default. To enable, add:
+# LTTng is disabled by default for production builds. To enable, add:
 #    WEBOS_LTTNG_ENABLED = "1"
 # to your webos-local.conf or the location of your choice.
 
-# inherit webos_prerelease_dep
-# WEBOS_LTTNG_ENABLED ?= "${@ '0' if '${WEBOS_DISTRO_PRERELEASE}' == '' else '1' }"
-
+inherit webos_prerelease_dep
 WEBOS_LTTNG_ENABLED ??= "0"
+WEBOS_LTTNG_ENABLED ?= "${@ '0' if '${WEBOS_DISTRO_PRERELEASE}' == '' else '1' }"
 # Only enable LTTng for target components
 WEBOS_LTTNG_ENABLED_class-native = "0"
 WEBOS_LTTNG_ENABLED_class-nativesdk = "0"
