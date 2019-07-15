@@ -1,0 +1,31 @@
+From 13cd6d025cb5375a7c4ae78d7e8b55843f917623 Mon Sep 17 00:00:00 2001
+From: Eunmin Lim <eunmin.lim@lge.com>
+Date: Thu, 11 Jul 2019 14:51:20 +0900
+Subject: [PATCH] Remove prerequisite for sam initialize
+
+---
+ src/core/main_service.cpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/core/main_service.cpp b/src/core/main_service.cpp
+index d4f5335..959fb8f 100644
+--- a/src/core/main_service.cpp
++++ b/src/core/main_service.cpp
+@@ -168,10 +168,10 @@ bool MainService::initialize() {
+ 
+     PrerequisiteMonitor& service_prerequisite_monitor = PrerequisiteMonitor::Create(CorePrerequisites::OnReady);
+ 
+-    PrerequisiteItemPtr core_ready_condition1 = std::make_shared<CorePrerequisites::ConfigInfo>();
+-    PrerequisiteItemPtr core_ready_condition2 = std::make_shared<CorePrerequisites::BootStatus>();
+-    service_prerequisite_monitor.AddItem(core_ready_condition1);
+-    service_prerequisite_monitor.AddItem(core_ready_condition2);
++    //PrerequisiteItemPtr core_ready_condition1 = std::make_shared<CorePrerequisites::ConfigInfo>();
++    //PrerequisiteItemPtr core_ready_condition2 = std::make_shared<CorePrerequisites::BootStatus>();
++    //service_prerequisite_monitor.AddItem(core_ready_condition1);
++    //service_prerequisite_monitor.AddItem(core_ready_condition2);
+ 
+     // TODO: reorgarnize all instances according to their characteristics (core/extension)
+     //       then, put product recipes codes into each extension main
+-- 
+2.17.1
+
