@@ -13,7 +13,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-7_264ac4b81112bc67a8ab10b44aa531c15f1919c8"
-PR = "r21"
+PR = "r22"
 
 inherit webos_component
 inherit webos_cmake
@@ -29,4 +29,5 @@ PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY_${PN}-tests = "1"
 FILES_${PN}-tests = "${libexecdir}/tests/*"
 
-SRC_URI += "file://0001-CMakeLists.txt-don-t-check-for-signals-Boost-library.patch"
+SRC_URI += "file://0001-CMakeLists.txt-don-t-check-for-signals-Boost-library.patch \
+            file://0002-Remove-prerequisite-for-sam-initialize.patch"
