@@ -1,4 +1,7 @@
-# Imported from meta-oe in Yocto 2.7 Warrior with these extra commits:
+# Imported from meta-oe in Yocto 2.8 Zeus with these extra commits:
+# 27ea5e7059 libvncserver: update to latest commit 1354f7f
+# 04ff199cb9 libvncserver: set PV in the recip
+# and few more already in Yocto 2.7 Warrior:
 # 44725208af libvncserver: enable split client/server packages
 # bd6803523c libvncserver: make PACKAGECONFIG flags explicit
 # 12351cdd21 libvncserver: Update to latest commit post 0.9.12
@@ -39,7 +42,9 @@ FILES_libvncclient = "${libdir}/libvncclient.*"
 inherit cmake
 
 SRC_URI = "git://github.com/LibVNC/libvncserver"
-SRCREV = "c0a23857a5c42b45b6d22ccf7218becd1fa69402"
-
+SRCREV = "1354f7f1bb6962dab209eddb9d6aac1f03408110"
+PV .= "+git${SRCPV}"
 
 S = "${WORKDIR}/git"
+
+EXTRA_OECMAKE = "-DMAKE_INSTALL_LIBDIR=${libdir}"
