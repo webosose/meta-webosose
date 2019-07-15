@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos2"
 
@@ -12,3 +12,15 @@ PACKAGECONFIG[vm] = ",,libcap,libgcc ${VIRTUAL-RUNTIME_bash}"
 # cannot use bpf for kernels older than 4.10
 # WARNING: lib32-kernel-selftest-1.0-r0 do_compile: clang >= 6.0  with bpf support is needed with kernel 4.18+ so either install it and add it to HOSTTOOLS, or add clang-native from meta-clang to dependency
 PACKAGECONFIG_remove = "bpf"
+
+# http://caprica.lgsvl.com:8080/Errors/Details/1534060
+# userfaultfd.c:126:2: error: format not a string literal and no format arguments [-Werror=format-security]
+#  fprintf(stderr, examples);
+#  ^~~~~~~
+SECURITY_STRINGFORMAT = ""
+
+# http://caprica.lgsvl.com:8080/Errors/Details/1534060
+# kernel-selftest/1.0-r0/recipe-sysroot/usr/include/bits/fcntl2.h:50:4: error: call to '__open_missing_mode' declared with attribute error: open with O_CREAT or O_TMPFILE in second argument needs 3 arguments
+#     __open_missing_mode ();
+#     ^~~~~~~~~~~~~~~~~~~~~~
+lcl_maybe_fortify = ""
