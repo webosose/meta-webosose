@@ -47,3 +47,8 @@ RDEPENDS_${PN}_append_rpi = " \
     ${TTSSERVICE} \
     ${CIMSERVICE} \
 "
+
+# TODO move this part to webOS FOTA service (not yet developped) later
+RDEPENDS_${PN}_append_sota = " \
+    u-boot-fw-utils \
+"

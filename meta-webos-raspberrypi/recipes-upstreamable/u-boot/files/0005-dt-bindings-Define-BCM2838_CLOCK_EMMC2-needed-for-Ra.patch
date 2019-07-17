@@ -1,0 +1,25 @@
+From 3164cc8929701db885e58085d759e3ad4df7f41c Mon Sep 17 00:00:00 2001
+From: Andrei Gherzan <andrei@balena.io>
+Date: Wed, 17 Jul 2019 15:34:28 +0100
+Subject: dt-bindings: Define BCM2838_CLOCK_EMMC2 needed for RaspberryPi 4
+
+On BCM2838 there is an additional clock. This clock was added in the
+same bcm2835-cprman driver and is used by the emmc2 dt node.
+
+Signed-off-by: Andrei Gherzan <andrei@balena.io>
+---
+ include/dt-bindings/clock/bcm2835.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index a0c812b0fa..170cbc26f0 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -66,3 +66,4 @@
+ #define BCM2835_CLOCK_DSI1E		48
+ #define BCM2835_CLOCK_DSI0P		49
+ #define BCM2835_CLOCK_DSI1P		50
++#define BCM2838_CLOCK_EMMC2		51
+-- 
+2.17.1
+

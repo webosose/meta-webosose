@@ -20,7 +20,7 @@ RREPLACES_${PNLIBSEGFAULT} = "libsegfault"
 RCONFLICTS_${PNLIBSEGFAULT} = "libsegfault"
 
 WEBOS_VERSION = "1.2.5-3_2cdb43fdf71c1b10738eaf2e45e909eb4de7c509"
-PR = "r10"
+PR = "r11"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -43,13 +43,14 @@ EXTRA_OECMAKE += "-DENABLE_CORE_DUMP:STRING=${@bb.utils.contains('WEBOS_DISTRO_P
 # libraries, which libSegFault.so should be. Fix up the filename name so that it
 # doesn't look like it's versioned, even though its SONAME is (benignly).
 do_install_append() {
-    mv -v ${D}${libdir} ${D}${base_prefix}
     # If a versioned library has been built, libSegFault.so will always be a symlink
-    if [ -L ${D}${base_libdir}/libSegFault.so ]; then
-        rm -vf ${D}${base_libdir}/libSegFault.so
-        mv -v ${D}${base_libdir}/libSegFault.so.*.*.* ${D}${base_libdir}/libSegFault.so
-        rm -vf ${D}${base_libdir}/libSegFault.so.*
+    if [ -L ${D}${libdir}/libSegFault.so ]; then
+        rm -vf ${D}${libdir}/libSegFault.so
+        mv -v ${D}${libdir}/libSegFault.so.*.*.* ${D}${libdir}/libSegFault.so
+        rm -vf ${D}${libdir}/libSegFault.so.*
     fi
+    # don't report fail (when using 'usrmerge' DISTRO_FEATURE, lib dir is already on root_prefix)
+    mv -v ${D}${libdir} ${D}${root_prefix} 2> /dev/null || true
 }
 
 # Process PNLIBSEGFAULT first

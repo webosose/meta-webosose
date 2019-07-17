@@ -93,3 +93,23 @@ WKS_FILE = "webos-qemux86-directdisk.wks"
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
 IMAGE_FSTYPES_qemux86 = "wic.vmdk"
 IMAGE_FSTYPES_qemux86-64 = "wic.vmdk"
+
+# A workaround for controlling '/media' policy of meta-updater
+IMAGE_CMD_ostree_prepend_sota() {
+    mv ${IMAGE_ROOTFS}/media ${IMAGE_ROOTFS}/.media || true
+}
+IMAGE_CMD_ostree_append_sota() {
+    mv ${IMAGE_ROOTFS}/.media ${IMAGE_ROOTFS}/media
+    mkdir media
+}
+IMAGE_CMD_ota_append_sota() {
+    # Copy /var, /media that was ignored by ostree
+    cp -a ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
+    cp -a ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
+    cp -a ${IMAGE_ROOTFS}/media ${OTA_SYSROOT} || true
+
+    # make ostree hotfix mode as default (set /usr to R/W mode)
+    echo "unlocked=hotfix" >> ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0.origin
+    mkdir -v -m 0755 -p ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0/.usr-ovl-upper
+    mkdir -v -m 0755 -p ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0/.usr-ovl-work
+}

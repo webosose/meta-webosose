@@ -1,0 +1,52 @@
+From 85f49aee53e29a7a0f6a28321c7e87ab7a7381b6 Mon Sep 17 00:00:00 2001
+From: JeongBong Seo <jb.seo@lge.com>
+Date: Wed, 17 Jul 2019 11:30:34 +0900
+Subject: Speed up boot by disable usb and enable bootcount
+
+---
+ configs/rpi_3_32b_defconfig | 5 +++++
+ include/configs/rpi.h       | 8 ++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/configs/rpi_3_32b_defconfig b/configs/rpi_3_32b_defconfig
+index 9e142cae63..faf5f34386 100644
+--- a/configs/rpi_3_32b_defconfig
++++ b/configs/rpi_3_32b_defconfig
+@@ -39,3 +39,8 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+ CONFIG_CONSOLE_SCROLL_LINES=10
+ CONFIG_PHYS_TO_BUS=y
+ CONFIG_OF_LIBFDT_OVERLAY=y
++
++CONFIG_BOOTCOUNT_LIMIT=y
++CONFIG_BOOTCOUNT_ENV=y
++
++CONFIG_BOOTDELAY=0
+diff --git a/include/configs/rpi.h b/include/configs/rpi.h
+index a97550b732..0dac822125 100644
+--- a/include/configs/rpi.h
++++ b/include/configs/rpi.h
+@@ -75,7 +75,7 @@
+ /* Environment */
+ #define CONFIG_ENV_SIZE			SZ_16K
+ #define CONFIG_SYS_LOAD_ADDR		0x1000000
+-#define CONFIG_PREBOOT			"usb start"
++#define CONFIG_PREBOOT			""
+ 
+ /* Shell */
+ 
+@@ -86,9 +86,9 @@
+ 
+ /* Environment */
+ #define ENV_DEVICE_SETTINGS \
+-	"stdin=serial,usbkbd\0" \
+-	"stdout=serial,vidconsole\0" \
+-	"stderr=serial,vidconsole\0"
++	"stdin=serial\0" \
++	"stdout=serial\0" \
++	"stderr=serial\0"
+ 
+ #ifdef CONFIG_ARM64
+ #define FDT_HIGH "ffffffffffffffff"
+-- 
+2.17.1
+

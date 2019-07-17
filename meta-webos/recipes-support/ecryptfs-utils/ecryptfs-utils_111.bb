@@ -15,6 +15,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=8ca43cbc842c2336e835926c2166c28b"
 
 DEPENDS = "keyutils libgcrypt intltool-native glib-2.0-native"
 
+PR = "r1"
+
 SRC_URI = "\
     https://launchpad.net/ecryptfs/trunk/${PV}/+download/${BPN}_${PV}.orig.tar.gz \
     file://ecryptfs-utils-CVE-2016-6224.patch \
@@ -50,9 +52,15 @@ do_configure_prepend() {
 }
 
 do_install_append() {
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'usrmerge', 'true', 'false', d)}; then
+        install -d ${D}${base_sbindir}
+        mv ${D}/sbin/* ${D}${base_sbindir}
+        rmdir ${D}/sbin
+    else
+        mkdir -p ${D}/${libdir}
+        mv ${D}/${base_libdir}/pkgconfig ${D}/${libdir}
+    fi
     chmod 4755 ${D}${base_sbindir}/mount.ecryptfs_private
-    mkdir -p ${D}/${libdir}
-    mv ${D}/${base_libdir}/pkgconfig ${D}/${libdir}
     sed -i -e 's:-I${STAGING_INCDIR}::' \
            -e 's:-L${STAGING_LIBDIR}::' ${D}/${libdir}/pkgconfig/libecryptfs.pc
     sed -i -e "s: ${base_sbindir}/cryptsetup: ${sbindir}/cryptsetup:" ${D}${bindir}/ecryptfs-setup-swap

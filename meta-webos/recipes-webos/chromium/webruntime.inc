@@ -30,7 +30,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r21"
+INC_PR = "r22"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -371,8 +371,8 @@ install_webruntime() {
     fi
 
     # move this to separate mksnapshot-cross recipe once we figure out how to build just cross mksnapshot from chromium repository
-    install -d ${D}${bindir_cross}
-    gzip -c ${OUT_DIR}/${BUILD_TYPE}/${MKSNAPSHOT_PATH}mksnapshot > ${D}${bindir_cross}/${HOST_SYS}-mksnapshot.gz
+    install -d ${D}${base_bindir}
+    gzip -c ${OUT_DIR}/${BUILD_TYPE}/${MKSNAPSHOT_PATH}mksnapshot > ${D}${base_bindir}/${HOST_SYS}-mksnapshot.gz
 }
 
 install_chromedriver() {
@@ -451,7 +451,7 @@ WEBOS_SYSTEM_BUS_DIRS_LEGACY_WAM_DEMO_APPLICATION = " \
     ${webos_sysbus_pubrolesdir}/${WAM_DEMO_APPLICATION}.json \
 "
 
-SYSROOT_DIRS_append = " ${bindir_cross}"
+SYSROOT_DIRS_append = " ${base_bindir}"
 
 PACKAGES_prepend = " \
     ${PN}-cross-mksnapshot \
@@ -506,4 +506,4 @@ FILES_${PN}-dev = " \
     ${includedir} \
 "
 
-FILES_${PN}-cross-mksnapshot = "${bindir_cross}/${HOST_SYS}-mksnapshot.gz"
+FILES_${PN}-cross-mksnapshot = "${base_bindir}/${HOST_SYS}-mksnapshot.gz"
