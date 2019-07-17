@@ -109,8 +109,6 @@ RDEPENDS_${PN} = " \
     configd \
     configurator \
     com.palm.service.devmode \
-    com.webos.app.mediaviewer \
-    ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     event-monitor \
     filecache \
     fontconfig-utils \
@@ -157,7 +155,11 @@ RDEPENDS_${PN}_append_hardware = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${VIRTUAL-RUNTIME_bluetooth_service}', '', d)} \
 "
 
-RDEPENDS_${PN}_append_webos = " ${VIRTUAL-RUNTIME_iotivity-node}"
+RDEPENDS_${PN}_append_webos = " \
+    ${VIRTUAL-RUNTIME_iotivity-node} \
+    com.webos.app.mediaviewer \
+    ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
+"
 
 # XXX These FOSS components must be explicitly added because they are missing
 # from the RDEPENDS lists of the components that expect them to be present at

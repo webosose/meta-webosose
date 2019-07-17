@@ -17,7 +17,7 @@ S = "${WORKDIR}/git/apps"
 
 do_install() {
     install -d ${D}${webos_applicationsdir}/${PN}
-    cp -rv ${S}/${PN}/* ${D}${webos_applicationsdir}/${PN}
+    cp -rv ${S}/${BPN}/* ${D}${webos_applicationsdir}/${PN}
 }
 
 FILES_${PN} += "${webos_applicationsdir}"
