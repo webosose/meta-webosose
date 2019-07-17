@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 #
 # Intercept the upstream image.bbclass so that when there's
 # a webos_deploy_fixup task.
@@ -13,6 +13,8 @@ do_build[depends] += "virtual/kernel:do_webos_deploy_fixup"
 do_bootdirectdisk[depends] += "virtual/kernel:do_webos_deploy_fixup"
 # similarly for WIC, which also uses bzImage
 do_image_wic[depends] += "virtual/kernel:do_webos_deploy_fixup"
+# for ostree
+do_image_ostree_sota[depends] += " virtual/kernel:do_webos_deploy_fixup"
 
 do_webos_deploy_fixup_prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ext3 ] && \

@@ -1,11 +1,16 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi21"
+EXTENDPRAUTO_append = "webosrpi22"
 
 CMDLINE_append = " rw"
+CMDLINE_remove_sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
 
 SHRT_VER = "${@oe.utils.trim_version('${PV}', 2)}"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}-${SHRT_VER}:${THISDIR}/${BPN}:"
+
+SRC_URI += "\
+    file://ostree.cfg \
+"
 
 KERNEL_MODULE_AUTOLOAD_append = " \
     media \

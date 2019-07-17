@@ -23,7 +23,7 @@ PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PR = "r3"
+PR = "r4"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
@@ -93,7 +93,7 @@ do_install () {
     install -m 0644 ${S}/README.md ${D}${libdir}/node_modules/iotivity-node/README.md
     install -m 0644 ${S}/package.json ${D}${libdir}/node_modules/iotivity-node/package.json
 
-    cp -r ${S}${base_libdir} ${D}${libdir}/node_modules/iotivity-node/
+    cp -r ${S}/lib ${D}${libdir}/node_modules/iotivity-node/
     cp -r ${S}/node_modules/ ${D}${libdir}/node_modules/iotivity-node/
 
     install -d ${D}${libdir}/node_modules/iotivity-node/build/Release/

@@ -192,8 +192,8 @@ do_install() {
         export ILIB_BASE_PATH="${WEBOS_ENACTJS_ILIB_ASSETS}"
     fi
 
-    if [ -f ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz ]; then
-        gzip -cd ${STAGING_DIR_HOST}${bindir_cross}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
+    if [ -f ${STAGING_DIR_HOST}${base_bindir}/${HOST_SYS}-mksnapshot.gz ]; then
+        gzip -cd ${STAGING_DIR_HOST}${base_bindir}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
         chmod +x ${B}/${HOST_SYS}-mksnapshot
         export V8_MKSNAPSHOT="${B}/${HOST_SYS}-mksnapshot"
         export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception${V8_SNAPSHOT_EXTRA_ARGS}"

@@ -63,3 +63,6 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "SPP GATT FTP OPP A2DP"
 # Use ext4 as a uSD rootfs type and don't build ext3
 SDIMG_ROOTFS_TYPE = "ext4"
 IMAGE_FSTYPES_remove = "ext3"
+
+# OSTree target
+SOTA_MACHINE_rpi = "webos-rpi"
