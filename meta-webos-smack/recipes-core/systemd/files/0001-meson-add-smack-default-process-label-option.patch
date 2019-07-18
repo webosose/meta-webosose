@@ -1,0 +1,42 @@
+From 468c2dc9ba429dd1cff17975aeb52c9b31217fb4 Mon Sep 17 00:00:00 2001
+From: "eugene.todoruk" <eugene.todoruk@lge.com>
+Date: Wed, 29 May 2019 12:32:32 +0300
+Subject: [PATCH]     meson: add smack-default-process-label option
+
+---
+ meson.build       | 5 +++++
+ meson_options.txt | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/meson.build b/meson.build
+index 04331dd41a..6acff3ad39 100644
+--- a/meson.build
++++ b/meson.build
+@@ -835,6 +835,11 @@ if smack_run_label != ''
+         conf.set_quoted('SMACK_RUN_LABEL', smack_run_label)
+ endif
+ 
++smack_default_process_label = get_option('smack-default-process-label')
++if smack_default_process_label != ''
++        conf.set_quoted('SMACK_DEFAULT_PROCESS_LABEL', smack_default_process_label)
++endif
++
+ want_polkit = get_option('polkit')
+ install_polkit = false
+ install_polkit_pkla = false
+diff --git a/meson_options.txt b/meson_options.txt
+index 16c1f2b2fa..596a7f3e65 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -220,6 +220,8 @@ option('smack', type : 'boolean',
+        description : 'SMACK support')
+ option('smack-run-label', type : 'string',
+        description : 'run systemd --system itself with a specific SMACK label')
++option('smack-default-process-label', type : 'string',
++       description : 'run systemd services with a specific SMACK label')
+ option('polkit', type : 'combo', choices : ['auto', 'true', 'false'],
+        description : 'PolicyKit support')
+ option('ima', type : 'boolean',
+-- 
+2.11.0
+

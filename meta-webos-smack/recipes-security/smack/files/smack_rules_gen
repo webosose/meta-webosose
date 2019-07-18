@@ -1,0 +1,223 @@
+#!/usr/bin/python3
+#
+# Copyright (c) 2019 LG Electronics, Inc.
+#
+# Confidential computer software. Valid license from LG required for
+# possession, use or copying.
+
+"""
+There are two usage scenarios:
+
+1. Parse the SMACK audit and bringup infromation to modify access
+rules. It adds missing access rules and creates new ones. If some
+rules match with bringup label, unused access modes will
+be removed.
+
+2. Turn on/off permissive mode for provided labels. For these labels
+new rules with full access for all other labels will be created.
+"""
+
+script_version = "1.2"
+
+import sys
+import argparse
+import re
+import string
+
+# Initialization
+rules_dict = {}      # Dictionary of actual rules without bringUp modes
+rules_dict_bU = {}   # Dictionary of actual rules with bringUp modes
+mod_rules_dict = {}  # Dictionary of modified rules
+perm_rules_dict = {} # Dictionary of rules for permissive mode
+obj_label_list = []  # List of object labels for enable/disable permissive mode
+subj_label_list = [] # List of subject labels for enable/disable permissive mode
+sys_labels = "_^*?@"
+
+def add_rule(rule_name, rule_acc):
+    """
+    Add missing access rule to the dictionary or create a new one.
+    """
+    if rule_name in mod_rules_dict:
+        mod_rules_dict[rule_name].update(rule_acc)
+    elif rule_name in rules_dict:
+        mod_rules_dict[rule_name] = rules_dict[rule_name]
+        mod_rules_dict[rule_name].update(rule_acc)
+    else:
+        mod_rules_dict[rule_name] = rule_acc
+
+
+def create_labels_alphabet():
+    """
+    Create SMACK labels in alphabet order
+    It includes ASCII printable characters except
+    whitespaces and ", ', / and \\.
+
+    _, ^ and * (floor domain) labels will go first.
+    """
+    alph = string.printable.replace(string.whitespace, '')
+    invalid_characters = '^_*\'\\/"'
+    return '_^* ' + ''.join(
+        ch if ch not in invalid_characters else '' for ch in alph)
+
+
+def output_rules(output_dict, f_rules_out):
+    """
+    Output modified rules to the console or write to the file
+    """
+    # Sorting dictionary keys
+    alphabet = create_labels_alphabet()
+    sorted_keys_list = sorted(
+        output_dict, key=lambda word: [alphabet.index(c) for c in word])
+
+    for key in sorted_keys_list:
+        output_param = key + ' ' + ''.join(sorted(
+                        output_dict[key]))
+        if args.rules_out:
+            f_rules_out.write(output_param + '\n')
+        else:
+            print(output_param)
+
+
+def parse_arguments():
+    """
+    Command line arguments parsing
+    """
+    parser = argparse.ArgumentParser(
+                        description='Modify and create SMACK access rules or enable/disable permissive mode')
+    parser.add_argument('-l', '--log', dest='logfile',
+                        type=argparse.FileType(mode='r'), default=False,
+                        help='path to the log file')
+    parser.add_argument('-i', '--input', dest='rules_orig',
+                        type=argparse.FileType(mode='r'), default=False,
+                        help='input the original rules from RULES_ORIG file')
+    parser.add_argument('-o', '--output', dest='rules_out', default=False,
+                        help='output modified rules to RULES_OUT file')
+    parser.add_argument('-oc', '--onlycap', dest='onlycap', type=str, nargs='+',
+                        help='generator won\'t create rules with these labels')
+    parser.add_argument('-p', '--permit', dest='perm_mode', type=str, nargs='+',
+                        help='turn on permissive mode for provided labels')
+    parser.add_argument('-P', '--permit-off', dest='perm_mode_off', type=str, nargs='+',
+                        help='turn off permissive mode for provided labels')
+    parser.add_argument('-v', '--version', action='version', version=script_version)
+
+    args = parser.parse_args(sys.argv[1:])
+
+    # Check for invalid combination of arguments
+    if not (args.perm_mode or args.perm_mode_off or args.logfile) or \
+                            (args.perm_mode and args.logfile) or \
+                            (args.perm_mode_off and args.logfile) or \
+                            (args.perm_mode and args.perm_mode_off):
+        raise argparse.ArgumentTypeError("Choose parsing logfile or enable permissive mode")
+    if (args.perm_mode or args.perm_mode_off) and not args.rules_orig:
+        raise argparse.ArgumentTypeError("File with original rules is required")
+
+    return args
+
+def main(args):
+    """
+    Main function. It processes input files and print the result.
+    """
+
+    # Read original rules
+    if args.rules_orig:
+        with open(args.rules_orig.name, 'r') as rule_file:
+            for line in rule_file:
+                if line.split():
+                    # Remove '\n' symbol and split to key:value
+                    subj_obj, acc = (line.rsplit('\n')[0]).rsplit(' ', 1)
+                    acc = set(acc.lower())
+
+                    # Create full access rules for labels provided in permissive mode
+                    if args.perm_mode:
+                        subj_label = subj_obj.split(' ', 1)[0]
+                        obj_label = subj_obj.rsplit(' ', 1)[1]
+                        if (obj_label not in obj_label_list) and \
+                           (obj_label not in sys_labels):
+                            obj_label_list.append(obj_label)
+                            for label in args.perm_mode:
+                                perm_rules_dict[label + ' ' + obj_label] = 'rwxaltb'
+                        if (subj_label not in subj_label_list) and \
+                           (subj_label not in sys_labels):
+                            subj_label_list.append(subj_obj)
+                            for label in args.perm_mode:
+                                perm_rules_dict[subj_label + ' ' + label] = 'rwxaltb'
+
+                    # Find pairs of subject and object labels in which subject is on of
+                    # labels specified in disabled permissive mode
+                    if args.perm_mode_off:
+                        subj_label = subj_obj.split(' ', 1)[0]
+                        obj_label = subj_obj.rsplit(' ', 1)[1]
+                        if (subj_label in args.perm_mode_off) or \
+                           (obj_label in args.perm_mode_off):
+                            subj_label_list.append(subj_obj)
+
+                    # Remove '-' symbol from access specifications
+                    if '-' in acc:
+                        acc.remove('-')
+
+                    if 'b' in acc:
+                        rules_dict_bU[subj_obj] = acc
+                    else:
+                        rules_dict[subj_obj] = acc
+
+    if args.onlycap:
+        onlycap_labels = args.onlycap
+    else:
+        onlycap_labels = ""
+
+    """
+    Read log and find matches with patterns and split line to key (labels: subject and object)
+    and value (rules).
+    Example: user1 user2 rwx => 'user1 user2' is a key, 'rwx' is a value.
+    """
+    if args.logfile:
+        pattern_access_denied = re.compile(r'action=denied subject="(?P<subj>.*)" '
+            'object="(?P<obj>.*)" requested=(?P<acc>.*) pid')
+        pattern_bU_unconfined = re.compile(r'Smack (Unconfined.*|Bringup): '
+            '\((?P<subj>.*) (?P<obj>.*) (?P<acc>.*)\) (file|inode)')
+
+        with open(args.logfile.name, 'r') as log_file:
+            for line in log_file:
+                rule = pattern_access_denied.search(line)
+                if rule is None:
+                    rule = pattern_bU_unconfined.search(line)
+                if rule:
+                    if rule.group('subj') not in onlycap_labels and \
+                        rule.group('obj') not in onlycap_labels:
+                        rule_name = rule.group('subj') + ' ' + rule.group('obj')
+                        rule_acc = set(rule.group('acc'))
+                        add_rule(rule_name, rule_acc)
+        re.purge()
+    else:
+        # Writing not modified (actual) rules with bringUp modes
+        mod_rules_dict.update(dict(
+            (k, v) for k, v in rules_dict_bU.items() if k not in mod_rules_dict))
+
+    # Writing modified rules
+    mod_rules_dict.update(dict(
+        (k, v) for k, v in rules_dict.items() if k not in mod_rules_dict))
+
+    # Remove full access rules for labels provided in disabled permissive mode
+    if args.perm_mode_off:
+        for key in subj_label_list:
+            try:
+                del mod_rules_dict[key]
+            except:
+                continue
+
+    if args.rules_out:
+        f_rules_out = open(args.rules_out, 'w')
+    else:
+        f_rules_out = None
+
+    output_rules(mod_rules_dict, f_rules_out)
+    if args.perm_mode:
+        output_rules(perm_rules_dict, f_rules_out)
+
+    if args.rules_out:
+        f_rules_out.close()
+
+
+if __name__ == '__main__':
+    args = parse_arguments()
+    main(args)

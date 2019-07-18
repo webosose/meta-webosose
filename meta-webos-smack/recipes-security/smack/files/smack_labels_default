@@ -1,0 +1,15 @@
+# System access label for systemd executables
+${base_libdir}/systemd -a System -mask *
+
+# System::Shared access for /etc
+${sysconfdir} -a System::Shared -t
+
+# System::Run access&exec for executables
+${base_bindir} -a System::Run -e System::Run -r -t
+${base_sbindir} -a System::Run -e System::Run -r -t
+${bindir} -a System::Run -e System::Run -r -t
+${sbindir} -a System::Run -e System::Run -r -t
+
+# System::Lib access&mmap acces for shared libraries
+${libdir} -a System::Lib -m System::Lib -r -mask *.so,*.so.*,.chk
+${base_libdir} -a System::Lib -m System::Lib -r -mask *.so,*.so.*,.chk
