@@ -1,0 +1,15 @@
+_ System rwx
+_ System::Lib r
+_ System::Run r
+_ System::Shared rx
+System _ w
+System System::Lib x
+System System::Run w
+System::Lib _ rwx
+System::Lib System rwx
+System::Lib System::Run rwx
+System::Lib System::Shared rx
+System::Run _ rwx
+System::Run System rwx
+System::Run System::Lib rx
+System::Run System::Shared rx

@@ -1,0 +1,88 @@
+From b1ea9128df06f43864defe8aa3d7293c6eef2de8 Mon Sep 17 00:00:00 2001
+From: "eugene.todoruk" <eugene.todoruk@lge.com>
+Date: Thu, 28 Mar 2019 17:35:24 +0300
+Subject: [PATCH] SMACK: add loading unconfined label
+
+---
+ src/core/smack-setup.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+
+diff --git a/src/core/smack-setup.c b/src/core/smack-setup.c
+index 50115c0..2ac11d5 100644
+--- a/src/core/smack-setup.c
++++ b/src/core/smack-setup.c
+@@ -25,6 +25,50 @@
+ 
+ #if ENABLE_SMACK
+ 
++static int write_unconfined(void) {
++        _cleanup_close_ int unconfined_fd = -1;
++        _cleanup_fclose_ FILE *f = NULL;
++        char unconfined[NAME_MAX];
++        size_t len = 0;
++        int r;
++
++        f = fopen("/etc/smack/unconfined", "re");
++        if (!f) {
++                if (errno != ENOENT)
++                        log_warning_errno(errno, "Failed to read '/etc/smack/unconfined': %m");
++
++                return errno == ENOENT ? ENOENT : -errno;
++        }
++
++        FOREACH_LINE(unconfined, f,
++                     log_error_errno(errno, "Failed to read line from '%s': %m",
++                                     "/etc/smack/unconfined")) {
++
++                if (isempty(truncate_nl(unconfined)))
++                        continue;
++
++                len = strlen(unconfined);
++
++                break;
++        }
++
++        if (len == 0)
++                return 0;
++
++        unconfined_fd = open("/sys/fs/smackfs/unconfined", O_WRONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
++        if (unconfined_fd < 0) {
++                if (errno != ENOENT)
++                        log_warning_errno(errno, "Failed to open '/sys/fs/smackfs/unconfined': %m");
++                return -errno; /* negative error */
++        }
++
++        r = write(unconfined_fd, unconfined, len);
++        if (r < 0)
++                return log_error_errno(errno, "Failed to write unconfined label(%s) to '/sys/fs/smackfs/unconfined': %m", unconfined);
++
++        return 0;
++}
++
+ static int write_access2_rules(const char* srcdir) {
+         _cleanup_close_ int load2_fd = -1, change_fd = -1;
+         _cleanup_closedir_ DIR *dir = NULL;
+@@ -394,6 +438,23 @@ int mac_smack_setup(bool *loaded_policy) {
+                 return r;
+         }
+ 
++        r = write_unconfined();
++        switch(r) {
++        case -ENOENT:
++                log_debug("Smack is not enabled in the kernel.");
++                break;
++        case ENOENT:
++                log_debug("Smack unconfined file '/etc/smack/unconfined' not found");
++                break;
++        case 0:
++                log_info("Successfully wrote Smack unconfined label.");
++                break;
++        default:
++                log_emergency_errno(r, "Failed to write Smack unconfined label: %m");
++                return r;
++        }
++
++
+         *loaded_policy = true;
+ 
+ #endif
