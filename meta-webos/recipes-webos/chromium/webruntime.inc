@@ -25,7 +25,7 @@ inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native"
 
-INC_PR = "r19"
+INC_PR = "r20"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -74,7 +74,7 @@ PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,us
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
 # By default debug is completely disabled to speed up build
-PACKAGECONFIG[debug] = "is_debug=false is_component_build=false symbol_level=2, is_debug=false symbol_level=0"
+PACKAGECONFIG[debug] = "symbol_level=2,symbol_level=1"
 PACKAGECONFIG[debug-webcore] = "remove_webcore_debug_symbols=false,remove_webcore_debug_symbols=true"
 PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
 PACKAGECONFIG[libpci] = "use_webos_gpu_info_collector=false,use_webos_gpu_info_collector=true"
@@ -104,6 +104,8 @@ GN_ARGS = "\
     is_clang=false\
     is_cross_linux_build=true\
     is_webos=true\
+    is_debug=false\
+    is_component_build=false\
     ozone_auto_platforms=false\
     ozone_platform_wayland_external=true\
     proprietary_codecs=true\
