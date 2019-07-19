@@ -1,6 +1,6 @@
-# Copyright (c) 2012-2017 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos6"
+EXTENDPRAUTO_append = "webos10"
 
 # Enable c-ares for DNS lookup
 PACKAGECONFIG[c-ares] = "--enable-ares,--disable-ares,c-ares"

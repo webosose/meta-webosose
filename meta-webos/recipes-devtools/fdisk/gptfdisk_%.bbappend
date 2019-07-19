@@ -7,3 +7,4 @@ FILES_${PN}-gdisk += "${sbindir}/gdisk"
 FILES_${PN}-cgdisk += "${sbindir}/cgdisk"
 FILES_${PN}-sgdisk += "${sbindir}/sgdisk"
 FILES_${PN}-fixparts += "${sbindir}/fixparts"
+

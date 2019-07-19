@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "Node-red based context intent manager (CIM)"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"

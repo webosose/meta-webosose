@@ -1,6 +1,6 @@
 # Copyright (c) 2015-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos7"
+EXTENDPRAUTO_append = "webos8"
 
 # Assign to PE, because empty PKGE in KERNEL_IMAGE_NAME causes two hyphens.
 PE = "1"

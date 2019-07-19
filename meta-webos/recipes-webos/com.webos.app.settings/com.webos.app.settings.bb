@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "General Settings application"
 AUTHOR = "Anish TD <anish.td@lge.com>"

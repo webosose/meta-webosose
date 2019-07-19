@@ -27,6 +27,4 @@ do_install_append() {
     # CFISH-930: remove "other" perms granted by pmmakefiles (aka palmmake):
     chmod o-rwx ${D}${bindir}/luna-prefs-service
     chmod o-rwx ${D}${bindir}/lunaprop
-
 }
-

@@ -26,7 +26,7 @@ S = "${WORKDIR}/git"
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 EXTRA_QMAKEVARS_PRE += "CONFIG+=disable-tests"
-EXTRA_QMAKEVARS_PRE += " CONFIG+=enable-maliit-plugin-chinese"
+EXTRA_QMAKEVARS_PRE += "CONFIG+=enable-maliit-plugin-chinese"
 
 EXTRA_QMAKEVARS_PRE += "LIBDIR=${STAGING_LIBDIR}"
 EXTRA_QMAKEVARS_PRE += "WEBOS_INSTALL_BINS=${sbindir}"

@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "VAL API implementation library mock"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"
@@ -22,4 +22,3 @@ DEPENDS = "glib-2.0 pmloglib libpbnjson videooutput-adaptation-layer-api"
 
 WEBOS_VERSION = "1.0.0-3_730d28b116759f4d28c2ac4dbc56b29c13d5452e"
 PR = "r1"
-
