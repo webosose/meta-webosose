@@ -1,6 +1,6 @@
-# Copyright (c) 2014-2017 LG Electronics, Inc.
+# Copyright (c) 2014-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO_append = "webos5"
 
 LICENSE += "& BSD"
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "Vidououtputd Adaptation Layer (VAL) API definition and test harness"
 SECTION = "webos/libs"
@@ -18,4 +18,3 @@ S = "${WORKDIR}/git"
 
 WEBOS_VERSION ="1.0.0-3_e38d2c27869aa148e52de3280de10a1a8a26e59a"
 PR = "r0"
-

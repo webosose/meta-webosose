@@ -1,9 +1,9 @@
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 AUTHOR = "Herb Kuta <herb.kuta@lge.com>"
 
 inherit webos_filesystem_paths
-EXTENDPRAUTO_append = "webos9"
+EXTENDPRAUTO_append = "webos10"
 
 dirs700 = " \
     ${webos_db8datadir} \

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "Creates the database schema for webOS apps"
 AUTHOR = "Ludovic Legrand <ludovic.legrand@lge.com>"

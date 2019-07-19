@@ -39,7 +39,7 @@ SRC_URI =  "git://github.com/sunpinyin/sunpinyin.git;protocol=https \
 S = "${WORKDIR}/git"
 
 do_install_append_class-target() {
-    install -d  ${D}${libdir}/maliit/plugins/dict
+    install -d ${D}${libdir}/maliit/plugins/dict
     install -m 755 ${S}/libsunpinyin.so.3.0 ${D}${libdir}/maliit/plugins
     install -m 755 ${S}/Dictionary/pydict_sc.bin ${D}${libdir}/maliit/plugins/dict
     install -m 755 ${S}/Dictionary/lm_sc.t3g ${D}${libdir}/maliit/plugins/dict

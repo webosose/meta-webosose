@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2018-2019 LG Electronics, Inc.
 
 SUMMARY = "Loadable node-red module for nodejs services"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS of the open-source FreeBSD memory allocation library"
 AUTHOR = "Rama Krishna <rama.krishna@lge.com>"
