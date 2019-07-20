@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "tzdata python-tz-native"
 
 WEBOS_VERSION = "2.0.1-1_701ec4b373b776fba829c882b05ae19de9a476ed"
-PR = "r14"
+PR = "r15"
 
 #inherit webos_component TODO
 inherit webos_arch_indep
@@ -35,8 +35,3 @@ do_install_append() {
 PACKAGES =+ "${PN}-fonts"
 FILES_${PN} += "${webos_prefix} ${webos_sysconfdir}"
 FILES_${PN}-fonts += "${datadir}/fonts/"
-
-# until pseudo is completely fixed
-# PLAT-48507 pseudo: random package_qa failures
-# This issue seems to be triggered only in luna-init-fonts packages
-INSANE_SKIP_${PN}-fonts += "host-user-contaminated"
