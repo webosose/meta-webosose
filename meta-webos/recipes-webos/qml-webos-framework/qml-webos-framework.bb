@@ -14,7 +14,7 @@ RPROVIDES_${PN}-examples = " \
 "
 
 WEBOS_VERSION = "1.0.0-6_efe82a6e1bc1d2f079a57e1f61a0bcd028d585bc"
-PR = "r25"
+PR = "r26"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -29,12 +29,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
-
-# upstart
-do_install_append () {
-   install -d ${D}${sysconfdir}/init
-   install -m 0644 ${S}/tools/booster/booster.upstart ${D}${sysconfdir}/init/booster.conf
-}
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/Eos/*"
 
