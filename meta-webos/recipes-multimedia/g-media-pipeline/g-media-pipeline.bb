@@ -24,7 +24,7 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi3-64$|^qemux86$"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS_append_rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-16_f7b8d122be3d5180e2cf623923c0ef0c78ba10fa"
+WEBOS_VERSION = "1.0.0-17_4241e1bd0124a8990b60240b6017ca7cf1aa093b"
 PR = "r3"
 
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
