@@ -162,9 +162,11 @@ do_compile() {
                         cp -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/package.json node_modules/@enact/i18n/ilib
                     fi
 
+                    if [ -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/index.js ] ; then
+                        cp -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/index.js node_modules/@enact/i18n/ilib
+                    fi
+
                     # removed unneeded files
-                    rm -f node_modules/@enact/i18n/ilib/lib/ilib-*.js
-                    rm -f node_modules/@enact/i18n/ilib/lib/RhinoLoader.js
                     rm -f node_modules/@enact/i18n/ilib/lib/ZoneInfo.js
                 fi
             fi
