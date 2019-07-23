@@ -21,8 +21,6 @@ inherit webos_enhanced_submissions
 inherit webos_qmake5
 inherit webos_lttng
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-
 # Assume we're using the same Qt version to this component has.
 QT_VERSION = "${WEBOS_COMPONENT_VERSION}"
 
