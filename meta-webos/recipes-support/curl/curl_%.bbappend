@@ -16,3 +16,5 @@ PACKAGECONFIG_remove = "gnutls"
 PACKAGECONFIG_append = " ssl"
 
 PACKAGECONFIG_append = " rtsp"
+
+PACKAGECONFIG_append = " dict gopher imap pop3 smtp telnet tftp"
