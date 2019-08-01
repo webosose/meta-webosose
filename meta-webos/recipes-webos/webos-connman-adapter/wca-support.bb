@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "webOS connman adapter support library"
 AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-1_2d5de65529b4358ee2e9f491d57657e012fe3eb6"
+WEBOS_VERSION = "1.0.0-2_ea5b172d2490da0acd115175aee8ca70bb799a7e"
 PR = "r1"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib luna-prefs wca-support-api"
