@@ -69,6 +69,14 @@ VIRTUAL-RUNTIME_iotivity-node ?= "iotivity-node"
 VIRTUAL-RUNTIME_iotivity-node_armv4 = ""
 VIRTUAL-RUNTIME_iotivity-node_armv5 = ""
 
+VIRTUAL-RUNTIME_com.example.app.iotivity ?= "com.example.app.iotivity"
+VIRTUAL-RUNTIME_com.example.app.iotivity_armv4 = ""
+VIRTUAL-RUNTIME_com.example.app.iotivity_armv5 = ""
+
+VIRTUAL-RUNTIME_org.ocf.webossample ?= "org.ocf.webossample.occlientbasicops org.ocf.webossample.ocserverbasicops"
+VIRTUAL-RUNTIME_org.ocf.webossample_armv4 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample_armv5 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample_x86-64 = ""
 
 VIRTUAL-RUNTIME_contextintentmgr ?= "com.webos.service.contextintentmgr"
 VIRTUAL-RUNTIME_contextintentmgr_armv4 = ""
@@ -138,6 +146,7 @@ RDEPENDS_${PN} = " \
     ${MEDIA} \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_browser_fonts} \
+    ${VIRTUAL-RUNTIME_com.example.app.iotivity} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
@@ -145,6 +154,7 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_librdx} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
+    ${VIRTUAL-RUNTIME_org.ocf.webossample} \
     ${VIRTUAL-RUNTIME_settingsapp} \
     ${VIRTUAL-RUNTIME_surface-manager} \
     ${VIRTUAL-RUNTIME_surface-manager-conf} \
