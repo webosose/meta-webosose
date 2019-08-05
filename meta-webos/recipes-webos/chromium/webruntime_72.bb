@@ -8,12 +8,12 @@ PR = "${INC_PR}.1"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium72"
 
-WEBOS_VERSION = "72.0.3626.121-5_b0dc18ab5ca140dccf147424110e694b9ffa2556"
+WEBOS_VERSION = "72.0.3626.121-6_8ac63575d268dd4e013e5f6680de9ff814a00b13"
 WEBOS_REPO_NAME = "chromium72"
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 
-WEBOS_VERSION_V8 = "7.2.502.28-chromium72.5_ef34b058ea773b0e757b5e09c90bed6ed6bc89e9"
-SRCREV_v8 = "9f8ca8dd12c61f0b31ccf08188db2ba68bef22c3"
+WEBOS_VERSION_V8 = "7.2.502.28-chromium72.6_8b05179bac60f6136fe4c957c10af0b4ede4c5a8"
+SRCREV_v8 = "776ae15b6ba2f394be9e8bf8c4f7c6e908ed1848"
 
 # In Neva we don't need the toolchain hack as we are allowing to use cros toolchain
 # directly, and we also have changes to pass host extra flags
