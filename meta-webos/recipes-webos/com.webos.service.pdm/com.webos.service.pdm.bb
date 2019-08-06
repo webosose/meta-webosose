@@ -15,7 +15,7 @@ RDEPENDS_${PN} = "fuse-utils gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
 WEBOS_VERSION = "1.0.0-5_1a9cd37dcd0dd402ebd23a96c66f0f2bd3af5126"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -40,5 +40,4 @@ COMPATIBLE_MACHINE_armv7ve = "(.*)"
 COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 # PDM service functionality cannot be verified on webOS rpi64 which cannot boot yet
-COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
