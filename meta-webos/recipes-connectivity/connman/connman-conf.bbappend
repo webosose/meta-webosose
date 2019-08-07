@@ -1,16 +1,30 @@
-# Copyright (c) 2017 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos2"
 
 SRC_URI += " \
+    file://connman.service \
+    file://connman.sh.in \
     file://main.conf \
 "
+do_configure_append () {
+    sed -e 's/@WEBOS_CONNMAN_PREACTIVATE_INTERFACE_LIST@/${WEBOS_CONNMAN_PREACTIVATE_INTERFACE_LIST}/g; s%@DATADIR@%${datadir}%g' \
+    ${WORKDIR}/connman.sh.in > ${WORKDIR}/connman.sh
+}
 
 do_install_append() {
     install -d ${D}${sysconfdir}/connman
     install -m 0644 ${WORKDIR}/main.conf ${D}${sysconfdir}/connman/
+
+    install -d ${D}${sysconfdir}/systemd/system
+    install -v -m 644 ${WORKDIR}/connman.service ${D}${sysconfdir}/systemd/system/
+    install -d ${D}${sysconfdir}/systemd/system/scripts
+    install -v -m 755 ${WORKDIR}/connman.sh ${D}${sysconfdir}/systemd/system/scripts/
 }
 
-FILES_${PN} += "${sysconfdir}/connman"
+FILES_${PN} += " \
+    ${sysconfdir}/connman \
+    ${sysconfdir} \
+"

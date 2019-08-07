@@ -1,0 +1,25 @@
+# @@@LICENSE
+#
+# Copyright (c) 2019 LG Electronics, Inc.
+#
+# Confidential computer software. Valid license from LG required for
+# possession, use or copying. Consistent with FAR 12.211 and 12.212,
+# Commercial Computer Software, Computer Software Documentation, and
+# Technical Data for Commercial Items are licensed to the U.S. Government
+# under vendor's standard commercial license.
+#
+# LICENSE@@@
+
+[Unit]
+Description=webos - "%n"
+Requires=bluetooth.service
+After=bluetooth.service
+
+[Service]
+Type=dbus
+BusName=org.bluez.obex
+ExecStart=/usr/libexec/bluetooth/obexd -r /media/internal
+Restart=on-failure
+
+[Install]
+Alias=dbus-org.bluez.obex.service

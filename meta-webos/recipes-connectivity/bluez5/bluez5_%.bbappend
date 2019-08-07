@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos12"
+EXTENDPRAUTO_append = "webos13"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -24,8 +24,11 @@ SRC_URI += " \
     file://0013-Fix-device-discovery-for-broadcast-role.patch \
     file://main.conf \
     file://brcm43438.service \
+    file://obex.service \
 "
 
 do_install_append () {
+    install -d ${D}${sysconfdir}/systemd/system
     install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
+    install -v -m 0644  ${WORKDIR}/obex.service ${D}${sysconfdir}/systemd/system/
 }

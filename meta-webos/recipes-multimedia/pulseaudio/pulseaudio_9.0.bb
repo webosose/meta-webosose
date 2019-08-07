@@ -24,16 +24,20 @@ DEPENDS_remove = "libatomic-ops"
 DEPENDS += "pmloglib"
 
 WEBOS_VERSION = "9.0-11_e73367abc33cccc0d3a40f7546de4d22d46899a9"
-PR = "r19"
+PR = "r20"
 
 inherit webos_enhanced_submissions
 
 inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+          file://pulseaudio.service \
+"
+
 S = "${WORKDIR}/git"
 
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 EXTRA_OECONF += "--with-access-group=root \
                 --disable-samplerate \
                 "
@@ -60,6 +64,8 @@ do_install_prepend() {
 }
 
 do_install_append() {
+   install -v -d ${D}${sysconfdir}/systemd/system
+   install -v -m 644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system/
    install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
    install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
 }
