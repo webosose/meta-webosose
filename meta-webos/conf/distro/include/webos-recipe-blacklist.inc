@@ -54,17 +54,6 @@ PNBLACKLIST[packagegroup-meta-multimedia] ?= "rdepends on blacklisted oscam"
 
 PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted ndctl, android-tools, .."
 
-# Caused by old mesa, wayland
-PNBLACKLIST[libsdl2] ?= "not compatible with downgraded wayland http://caprica.lgsvl.com:8080/Errors/Details/1532125"
-PNBLACKLIST[weston] ?= "not compatible with downgraded wayland http://caprica.lgsvl.com:8080/Errors/Details/1532129"
-PNBLACKLIST[weston-init] ?= "rdepends on blacklisted weston"
-PNBLACKLIST[libvncserver] ?= "depends on blacklisted libsdl2"
-PNBLACKLIST[qtgamepad] ?= "depends on blacklisted libsdl2"
-PNBLACKLIST[qemu] ?= "depends on blacklisted libsdl2"
-PNBLACKLIST[libsdl2-mixer] ?= "depends on blacklisted virtual/libsdl2"
-PNBLACKLIST[libsdl2-image] ?= "depends on blacklisted virtual/libsdl2"
-PNBLACKLIST[libsdl2-net] ?= "depends on blacklisted virtual/libsdl2"
-
 # ERROR: QA Issue: ELF binary 'TOPDIR/BUILD/work/qemux86-webos-linux/x264/r2854+gitAUTOINC+e9a5903edf-r0/packages-split/x264/usr/lib/libx264.so.152' has relocations in .text [textrel] http://caprica.lgsvl.com:8080/Errors/Details/1509766
 INSANE_SKIP_${PN}_pn-x264 = "textrel"
 # ERROR: QA Issue: ELF binary 'TOPDIR/BUILD/work/qemux86-webos-linux/x264/r2854+gitAUTOINC+e9a5903edf-r0/packages-split/x264-bin/usr/bin/x264' has relocations in .text [textrel] http://caprica.lgsvl.com:8080/Errors/Details/1530991
