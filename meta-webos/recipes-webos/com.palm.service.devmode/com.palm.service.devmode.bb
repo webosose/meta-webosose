@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
 SUMMARY = "JS service for Developer Mode"
 AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-2_feb738d91e6b6f82908d53d00419cb396f031080"
+WEBOS_VERSION = "1.0.0-3_c38baa352a814e6902007fe7d0e177bdb4219897"
 PR = "r6"
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
