@@ -23,7 +23,7 @@ inherit webos_prerelease_dep
 inherit webos_system_bus
 inherit webos_public_repo
 
-DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native"
+DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native"
 
 INC_PR = "r20"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
