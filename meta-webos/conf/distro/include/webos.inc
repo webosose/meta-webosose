@@ -19,8 +19,46 @@ require conf/distro/include/no-static-libs.inc
 require conf/distro/include/security_flags.inc
 
 # Enable -Werror=return-type flag
-TARGET_CFLAGS += "-Werror=return-type"
-TARGET_CXXFLAGS += "-Werror=return-type"
+EXTRA_WEBOS_WERROR = "-Werror=return-type"
+# http://caprica.lgsvl.com:8080/Errors/Details/1564610
+EXTRA_WEBOS_WERROR_pn-openipmi = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564608
+EXTRA_WEBOS_WERROR_pn-indent = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564607
+EXTRA_WEBOS_WERROR_pn-acpitool = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564606
+EXTRA_WEBOS_WERROR_pn-libdbus-c++ = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564605
+EXTRA_WEBOS_WERROR_pn-strongswan = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564604
+EXTRA_WEBOS_WERROR_pn-joe = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564603
+EXTRA_WEBOS_WERROR_pn-inotify-tools = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564602
+EXTRA_WEBOS_WERROR_pn-smem = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564601
+EXTRA_WEBOS_WERROR_pn-ckermit = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564600
+EXTRA_WEBOS_WERROR_pn-mbuffer = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564599
+EXTRA_WEBOS_WERROR_pn-dhrystone = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564598
+EXTRA_WEBOS_WERROR_pn-cscope = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564597
+EXTRA_WEBOS_WERROR_pn-python3-twofish = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564596
+EXTRA_WEBOS_WERROR_pn-gtk+3 = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1564595
+EXTRA_WEBOS_WERROR_pn-gst-plugins-base = ""
+# http://caprica.lgsvl.com:8080/Builds/Details/5772400
+EXTRA_WEBOS_WERROR_pn-gst-plugins-good = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1574051
+EXTRA_WEBOS_WERROR_pn-read-edid = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1573211
+EXTRA_WEBOS_WERROR_pn-redis = ""
+
+TARGET_CFLAGS += "${EXTRA_WEBOS_WERROR}"
+TARGET_CXXFLAGS += "${EXTRA_WEBOS_WERROR}"
 
 #
 # Form the codename of a release (WEBOS_DISTRO_RELEASE_CODENAME) from a codename
