@@ -1,0 +1,80 @@
+From 3513988baec06b501301daf0f25b197e2bca2ee9 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 8 Aug 2019 18:22:20 +0000
+Subject: [PATCH] CMakeLists.txt: fix systemd service file installation and
+ drop upstart file
+
+:Release Notes:
+With multilib it installs the service file in wrong location causing:
+ERROR: com.webos.service.flowmanager-1.0.0-5-r1 do_package: SYSTEMD_SERVICE_com.webos.service.flowmanager value flowmgr.service does not exist
+ERROR: com.webos.service.flowmanager-1.0.0-5-r1 do_package: Function failed: systemd_populate_packages
+ERROR: Logfile of failure stored in: com.webos.service.flowmanager/1.0.0-5-r1/temp/log.do_package.40884
+ERROR: Task (meta-webos/recipes-webos/com.webos.service.flowmanager/com.webos.service.flowmanager.bb:do_package) failed with exit code '1'
+
+:Detailed Notes:
+The file is in:
+com.webos.service.flowmanager/1.0.0-5-r1/image/lib64/systemd/system/flowmgr.service
+use sysconfdir like all other recipes do.
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+
+Change-Id: I8e96b18eb2a30d6bb2d2cf635badd6220ff5729d
+---
+ CMakeLists.txt               |  5 ++---
+ files/launch/flowmgr.conf.in | 20 --------------------
+ 2 files changed, 2 insertions(+), 23 deletions(-)
+ delete mode 100644 files/launch/flowmgr.conf.in
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b04a6d1..33bab4d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -34,12 +34,11 @@ set(WEBOS_INSTALL_DESTDIR ${WEBOS_INSTALL_WEBOS_SERVICESDIR}/com.webos.service.f
+ webos_build_configured_file(files/flow/flows.json DESTDIR flow)
+ 
+ # launch
+-webos_build_configured_file(files/launch/flowmgr.conf SYSCONFDIR init)
+-webos_build_configured_file(files/systemd/flowmgr.service BASE_LIBDIR systemd/system)
++webos_build_configured_file(files/systemd/flowmgr.service SYSCONFDIR systemd/system)
+ webos_configure_source_files(launch_scripts files/systemd/flowmgr.sh)
+ 
+ # install
+ install(DIRECTORY nodes DESTINATION ${WEBOS_INSTALL_DESTDIR})
+ install(FILES dist/index.js DESTINATION ${WEBOS_INSTALL_DESTDIR})
+ install(FILES dist/package.json DESTINATION ${WEBOS_INSTALL_DESTDIR})
+-install(PROGRAMS ${launch_scripts} DESTINATION ${WEBOS_INSTALL_SYSCONFDIR}/systemd/system/scripts)
+\ No newline at end of file
++install(PROGRAMS ${launch_scripts} DESTINATION ${WEBOS_INSTALL_SYSCONFDIR}/systemd/system/scripts)
+diff --git a/files/launch/flowmgr.conf.in b/files/launch/flowmgr.conf.in
+deleted file mode 100644
+index 7f5ea9f..0000000
+--- a/files/launch/flowmgr.conf.in
++++ /dev/null
+@@ -1,20 +0,0 @@
+-# Copyright (c) 2018 LG Electronics, Inc.
+-
+-description "A manager of the flow control"
+-
+-start on boot-done
+-
+-respawn
+-
+-script
+-    export SERVICE_DIR="@WEBOS_INSTALL_WEBOS_SERVICESDIR@/com.webos.service.flowmanager"
+-    export FLOW_DIR="@WEBOS_INSTALL_LOCALSTORAGEDIR@/flow"
+-
+-    # if the flow file doesn't exist, copy default flow file (first use)
+-    if [ ! -f "${FLOW_DIR}/flows.json" ]; then
+-        mkdir -p ${FLOW_DIR}
+-        cp "${SERVICE_DIR}/flow/flows.json" ${FLOW_DIR}
+-    fi
+-
+-    exec run-js-service -a -u -g -k -w -t ${SERVICE_DIR} 2>> /var/log/flowmgr.err
+-end script
+-- 
+2.17.1
+
