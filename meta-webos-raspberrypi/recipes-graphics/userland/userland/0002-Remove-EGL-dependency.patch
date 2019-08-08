@@ -1,4 +1,4 @@
-From 9184675aab2372c8d0999f749fc886714f1d288b Mon Sep 17 00:00:00 2001
+From 0cb359754d73f5fff8d353431ec3efd220217a42 Mon Sep 17 00:00:00 2001
 From: Changhyeok Bae <changhyeok.bae@gmail.com>
 Date: Tue, 27 Jun 2017 21:22:05 +0900
 Subject: [PATCH] Remove EGL dependency
@@ -128,10 +128,10 @@ index 928b637..f00a112 100644
 -endif()
 -
 diff --git a/interface/vmcs_host/CMakeLists.txt b/interface/vmcs_host/CMakeLists.txt
-index d0cca1a..441e1e2 100755
+index 369758b..e678b20 100755
 --- a/interface/vmcs_host/CMakeLists.txt
 +++ b/interface/vmcs_host/CMakeLists.txt
-@@ -26,7 +26,7 @@ add_library(vcilcs
+@@ -24,7 +24,7 @@ add_library(vcilcs
              vcilcs.c vcilcs_in.c vcilcs_out.c vcilcs_common.c)
  
  # ILCS pulls in EGL for the ILCS/EGL surface API support
@@ -139,7 +139,7 @@ index d0cca1a..441e1e2 100755
 +target_link_libraries(vcilcs vchiq_arm vcos)
  
  # vchostif needs ilcore as well (vmcs_main pulls it in)
- target_link_libraries(vchostif vchiq_arm vcos vcfiled_check)
+ target_link_libraries(vchostif vchiq_arm vcos)
 diff --git a/makefiles/cmake/vmcs.cmake b/makefiles/cmake/vmcs.cmake
 index 7c97463..4a3b348 100644
 --- a/makefiles/cmake/vmcs.cmake
