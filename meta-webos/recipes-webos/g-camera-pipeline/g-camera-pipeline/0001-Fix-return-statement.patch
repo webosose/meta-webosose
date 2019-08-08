@@ -1,0 +1,42 @@
+From 1c12fa16b62048a65567054e7de203420102f7ab Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 8 Aug 2019 18:42:58 +0000
+Subject: [PATCH] Fix return statement
+
+:Release Notes:
+Don't try to return values from void functions.
+
+:Detailed Notes:
+fix:
+g-camera-pipeline/1.0.0-8-r1/git/camsrc/gstcamsrc.c:197:14: error:
+  'return' with a value, in function returning void [-Werror=return-type]
+
+:Testing Performed:
+Build tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-79213] Missing return statements from non-void functions
+
+Change-Id: Ia472dccbefa4e6f75d3a55d96863f5c41ec30f11
+---
+ camsrc/gstcamsrc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/camsrc/gstcamsrc.c b/camsrc/gstcamsrc.c
+index 81654d4..8548d84 100644
+--- a/camsrc/gstcamsrc.c
++++ b/camsrc/gstcamsrc.c
+@@ -194,7 +194,7 @@ gst_camsrc_set_property (GObject * object, guint prop_id,
+ 
+   if (NULL == filter)
+   {
+-      return 0;
++      return;
+   }
+   switch (prop_id) {
+       case PROP_DEVICE:
+-- 
+2.17.1
+
