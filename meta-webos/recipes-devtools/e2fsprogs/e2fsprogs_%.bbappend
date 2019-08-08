@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos11"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
@@ -17,3 +17,5 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_e2fsprogs_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-ptest_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-ptest_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+RDEPENDS_e2fsprogs-e2scrub_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS_e2fsprogs-e2scrub_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
