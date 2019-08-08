@@ -1,4 +1,4 @@
-From c588447c34f2955b015df9a2111010ff34d1d32f Mon Sep 17 00:00:00 2001
+From 09c7ac4c09d91651b8e98780ec6f2e834e94ece6 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Wed, 13 Jun 2018 18:22:22 +0000
 Subject: [PATCH] openmaxil: add pkg-config file
