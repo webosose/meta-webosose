@@ -131,6 +131,7 @@ WEBOS_PACKAGESET_TZDATA ?= " \
 RDEPENDS_${PN} = " \
     activitymanager \
     audiod \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${VIRTUAL-RUNTIME_bluetooth_service}', '', d)} \
     bootd \
     configd \
     configurator \
@@ -182,10 +183,6 @@ RDEPENDS_${PN} = " \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
 
-RDEPENDS_${PN}_append_hardware = " \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${VIRTUAL-RUNTIME_bluetooth_service}', '', d)} \
-"
-
 RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
@@ -214,18 +211,28 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
 
 # These packages that are installed in the qemux86 image only.
 RRECOMMENDS_${PN}_append_qemux86 = " \
-    kernel-module-uvcvideo \
-    kernel-module-videobuf2-core \
+    bluez5 \
+    bluez5-obex \
+    fuse-utils \
+    kernel-module-bluetooth \
+    kernel-module-btbcm \
+    kernel-module-btusb \
+    kernel-module-configs \
+    kernel-module-evdev \
+    kernel-module-fuse \
+    kernel-module-hci-uart \
     kernel-module-media \
-    kernel-module-videodev \
-    kernel-module-videobuf2-v4l2 \
-    kernel-module-v4l2-common \
-    kernel-module-videobuf2-vmalloc \
-    kernel-module-videobuf2-memops \
+    kernel-module-rfcomm \
     kernel-module-snd-usb-audio \
     kernel-module-snd-usbmidi-lib \
-    kernel-module-fuse \
-    fuse-utils \
+    kernel-module-uinput \
+    kernel-module-uvcvideo \
+    kernel-module-v4l2-common \
+    kernel-module-videobuf2-core \
+    kernel-module-videobuf2-memops \
+    kernel-module-videobuf2-v4l2 \
+    kernel-module-videobuf2-vmalloc \
+    kernel-module-videodev \
     ntfs-3g \
 "
 

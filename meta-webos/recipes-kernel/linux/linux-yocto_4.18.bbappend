@@ -17,7 +17,10 @@ SRC_URI_append_qemux86 = " file://crypto.cfg \
                            file://0002-virt-vbox-Mark-expected-switch-fall-through.patch \
                            file://0003-virt-vbox-Implement-passing-requestor-info-to-the-ho.patch \
                            file://file_system.cfg \
+                           file://bluetooth_ext.cfg \
 "
+
+KERNEL_FEATURES_append_qemux86 = " features/bluetooth/bluetooth-usb.scc"
 
 KERNEL_MODULE_AUTOLOAD_append_qemux86 = "\
         vboxguest \
