@@ -39,6 +39,8 @@ VIRTUAL-RUNTIME_ai_raspberrypi3 = "com.webos.service.ai"
 # but it has not been verified on webOS rpi64 which cannot boot yet.
 VIRTUAL-RUNTIME_ai_raspberrypi3-64 = ""
 
+VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
+
 # We're not using VIRTUAL-RUNTIME because VIRTUAL-RUNTIME is usually used for only
 # one item and changing that in <distro>-preferred-providers.inc would require
 # .bbappend in meta-<distro> to do PR/PRINC/PR_append bump anyway so it's easier
@@ -163,6 +165,7 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_org.ocf.webossample} \
+    ${VIRTUAL-RUNTIME_pdm} \
     ${VIRTUAL-RUNTIME_settingsapp} \
     ${VIRTUAL-RUNTIME_surface-manager} \
     ${VIRTUAL-RUNTIME_surface-manager-conf} \
@@ -227,7 +230,6 @@ RDEPENDS_${PN}_append_qemux86 = " \
     dhcp-client \
     vmwgfx-layout \
     com.webos.service.audiooutput \
-    com.webos.service.pdm \
     kernel-module-vboxguest \
     kernel-module-snd-pcm \
     kernel-module-ac97-bus \
