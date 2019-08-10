@@ -22,10 +22,6 @@ CIMSERVICE_armv4 = ""
 CIMSERVICE_armv5 = ""
 CIMSERVICE_mips64 = ""
 
-PDM = " \
-    com.webos.service.pdm \
-"
-
 CAMERASERVICE = " \
     com.webos.service.camera \
     g-camera-pipeline \
@@ -37,9 +33,6 @@ TTSSERVICE_raspberrypi3-64 = ""
 # CIM service functionality not been verified on webOS rpi64 which cannot boot yet
 CIMSERVICE_raspberrypi3-64 = ""
 
-# PDM service functionality cannot be verified on webOS rpi64 which cannot boot yet
-PDM_raspberrypi3-64 = ""
-
 # camera service functionality cannot be verified on webOS rpi64 which cannot boot yet
 CAMERASERVICE_raspberrypi3-64 = ""
 
@@ -49,5 +42,4 @@ RDEPENDS_${PN}_append_rpi = " \
     ${CAMERASERVICE} \
     ${TTSSERVICE} \
     ${CIMSERVICE} \
-    ${PDM} \
 "
