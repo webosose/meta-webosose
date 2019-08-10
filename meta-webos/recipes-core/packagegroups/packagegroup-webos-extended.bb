@@ -32,6 +32,13 @@ VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_qemux86 = "g-media-pipeline"
 
+VIRTUAL-RUNTIME_ai ?= ""
+VIRTUAL-RUNTIME_ai_raspberrypi3 = "com.webos.service.ai"
+# There is only rpi-32bit keyword detection library available.(https://github.com/Kitt-AI/snowboy/tree/master/lib)
+# It seems to be a library for arm-64bit(https://github.com/Kitt-AI/snowboy/tree/master/lib/aarch64-ubuntu1604),
+# but it has not been verified on webOS rpi64 which cannot boot yet.
+VIRTUAL-RUNTIME_ai_raspberrypi3-64 = ""
+
 # We're not using VIRTUAL-RUNTIME because VIRTUAL-RUNTIME is usually used for only
 # one item and changing that in <distro>-preferred-providers.inc would require
 # .bbappend in meta-<distro> to do PR/PRINC/PR_append bump anyway so it's easier
@@ -144,6 +151,7 @@ RDEPENDS_${PN} = " \
     webos-connman-adapter \
     webos-fontconfig-files \
     ${MEDIA} \
+    ${VIRTUAL-RUNTIME_ai} \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_browser_fonts} \
     ${VIRTUAL-RUNTIME_com.example.app.iotivity} \
