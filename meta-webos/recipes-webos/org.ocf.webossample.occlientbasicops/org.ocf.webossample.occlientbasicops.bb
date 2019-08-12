@@ -23,7 +23,7 @@ SRCREV_FORMAT = "main"
 do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/iotivity"
-PR = "r0"
+PR = "r1"
 
 inherit scons pkgconfig webos_component webos_filesystem_paths
 
@@ -82,3 +82,5 @@ COMPATIBLE_MACHINE_armv6 = "(.*)"
 COMPATIBLE_MACHINE_armv7a = "(.*)"
 COMPATIBLE_MACHINE_armv7ve = "(.*)"
 COMPATIBLE_MACHINE_x86 = "(.*)"
+
+SRC_URI += "file://0001-Fix-missing-return-statement.patch"
