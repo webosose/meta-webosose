@@ -10,6 +10,7 @@
 # - Do not install resources not built for TARGET_OS=webos
 # - Add app icon for IoTivity Sampler application
 # - Fix bug that IoTivity Sampler is not closed by 'x' button
+# - Add a fix for missing return statements
 
 SUMMARY = "IoTivity framework and SDK sponsored by the Open Connectivity Foundation."
 DESCRIPTION = "IoTivity is an open source software framework enabling seamless device-to-device connectivity to address the emerging needs of the Internet of Things."
@@ -45,7 +46,7 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r2"
+PR = "r3"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_enactjs_app webos_component
@@ -282,3 +283,5 @@ lcl_maybe_fortify = ""
 #         printf (error->message);
 #                               ^
 SECURITY_STRINGFORMAT = ""
+
+SRC_URI += "file://0001-Fix-missing-return-statement.patch"
