@@ -53,6 +53,12 @@ EXTRA_WEBOS_WERROR_pn-gst-plugins-base = ""
 EXTRA_WEBOS_WERROR_pn-gst-plugins-good = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1574051
 EXTRA_WEBOS_WERROR_pn-read-edid = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1584264
+EXTRA_WEBOS_WERROR_pn-testfloat = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1584263
+EXTRA_WEBOS_WERROR_pn-libc-bench = ""
+# http://caprica.lgsvl.com:8080/Errors/Details/1584262
+EXTRA_WEBOS_WERROR_pn-qtwebengine = ""
 # Temporarily until patches from PLAT-84533 are integrated
 EXTRA_WEBOS_WERROR_pn-webruntime = ""
 
