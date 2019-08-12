@@ -1,0 +1,61 @@
+From de421cb42126d1a950ef0deea1217dc52ad158a6 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Mon, 12 Aug 2019 17:32:39 +0000
+Subject: [PATCH] Fix missing return statement
+
+:Release Notes:
+Add a return statement where missed.
+
+:Detailed Notes:
+Fixes:
+http://caprica.lgsvl.com:8080/Errors/Details/1581267
+
+resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp:578:1: error: control reaches end of non-void function [-Werror=return-type]
+resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp:585:1: error: no return statement in function returning non-void [-Werror=return-type]
+resource/csdk/stack/samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp:591:1: error: no return statement in function returning non-void [-Werror=return-type]
+
+:Testing Performed:
+Build tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-79213] Missing return statements from non-void functions
+---
+ .../samples/webos/secure/occlientbasicops/occlientbasicops.cpp  | 2 ++
+ .../samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp  | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp b/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp
+index 564f062b5..3f31b7e84 100644
+--- a/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp
++++ b/resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp
+@@ -575,6 +575,7 @@ void *clientStarter(gpointer user_data)
+         }
+         nanosleep(&timeout, NULL);
+     }
++    return NULL;
+ }
+ 
+ static gboolean getInput(gpointer user_data)
+@@ -582,6 +583,7 @@ static gboolean getInput(gpointer user_data)
+     OCSAMPLE_LOG_INFO(TAG, 0, "getInput....");
+     char input[10] = {0};
+     //char * ret = fgets(input, sizeof(input), stdin);
++    return TRUE;
+ }
+ 
+ static void
+diff --git a/resource/csdk/stack/samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp b/resource/csdk/stack/samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp
+index bd8b2c434..067adb6b2 100644
+--- a/resource/csdk/stack/samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp
++++ b/resource/csdk/stack/samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp
+@@ -588,6 +588,8 @@ void *serverStarter(gpointer user_data)
+         }
+     }
+     OCSAMPLE_LOG_INFO(TAG, 0, "Stopping serverStarter loop...");
++
++    return NULL;
+ }
+ 
+ int main(int /*argc*/, char* /*argv*/[])
