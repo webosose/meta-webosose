@@ -45,8 +45,6 @@ EXTRA_WEBOS_WERROR_pn-dhrystone = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564598
 EXTRA_WEBOS_WERROR_pn-cscope = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564597
-EXTRA_WEBOS_WERROR_pn-python3-twofish = ""
-# http://caprica.lgsvl.com:8080/Errors/Details/1564596
 EXTRA_WEBOS_WERROR_pn-gtk+3 = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564595
 EXTRA_WEBOS_WERROR_pn-gst-plugins-base = ""
@@ -54,11 +52,10 @@ EXTRA_WEBOS_WERROR_pn-gst-plugins-base = ""
 EXTRA_WEBOS_WERROR_pn-gst-plugins-good = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1574051
 EXTRA_WEBOS_WERROR_pn-read-edid = ""
-# http://caprica.lgsvl.com:8080/Errors/Details/1573211
-EXTRA_WEBOS_WERROR_pn-redis = ""
+# Temporarily until patches from PLAT-84533 are integrated
+EXTRA_WEBOS_WERROR_pn-webruntime = ""
 
-TARGET_CFLAGS += "${EXTRA_WEBOS_WERROR}"
-TARGET_CXXFLAGS += "${EXTRA_WEBOS_WERROR}"
+TARGET_CC_ARCH_append = " ${EXTRA_WEBOS_WERROR}"
 
 #
 # Form the codename of a release (WEBOS_DISTRO_RELEASE_CODENAME) from a codename
