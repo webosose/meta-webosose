@@ -12,7 +12,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target = "${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "1.0.0-4_72f471d5e617210b62fba191982f3fe0d95bdf1a"
-PR = "r0"
+PR = "r1"
 
 inherit webos_library
 inherit webos_cmake
@@ -25,6 +25,10 @@ inherit webos_prebuilt_binaries
 # for hardfp arm only which in our builds is only the raspberrypi3 MACHINE
 WEBOS_PREBUILT_BINARIES_FOR = "raspberrypi3"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
+
+# Build for raspberrypi4
+WEBOS_PREBUILT_BINARIES_FOR_append = " raspberrypi4"
+COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

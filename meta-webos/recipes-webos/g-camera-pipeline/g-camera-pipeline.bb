@@ -16,7 +16,7 @@ inherit webos_machine_dep
 inherit webos_pkgconfig
 
 WEBOS_VERSION = "1.0.0-8_e11abbece30e44c64bae375a4bc01104f8b3fef6"
-PR = "r2"
+PR = "r3"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
 DEPENDS_append_rpi = " userland"
@@ -26,6 +26,11 @@ S = "${WORKDIR}/git/"
 
 # See the restrictions in CMakeLists.txt
 COMPATIBLE_MACHINE = "^raspberrypi3$"
+
+# Build for raspberrypi4
+COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
+# From http://gpro.lge.com/251819
+SRC_URI += "file://0001-Add-raspberrypi4-and-raspberrypi4-64-targets.patch"
 
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/*.so"

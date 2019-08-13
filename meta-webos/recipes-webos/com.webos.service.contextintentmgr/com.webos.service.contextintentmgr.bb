@@ -11,8 +11,12 @@ DEPENDS = "nodejs-module-node-red"
 COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
+# Build for raspberrypi4
+COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
+COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
+
 WEBOS_VERSION = "1.0.0-6_cfa4da54851127f44fe2a343716085d5245fda21"
-PR = "r1"
+PR = "r2"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"

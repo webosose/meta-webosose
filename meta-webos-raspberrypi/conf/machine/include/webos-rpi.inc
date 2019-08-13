@@ -24,7 +24,7 @@ PNBLACKLIST[omxplayer] ?= "not compatible with webOS Open components"
 PNBLACKLIST[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 PNBLACKLIST[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
 
-MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
+MACHINE_EXTRA_RRECOMMENDS_remove_raspberrypi3 = "kernel-modules"
 MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-bcm2835-gpiomem \
     kernel-module-bcm2835-wdt \

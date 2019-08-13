@@ -9,6 +9,7 @@ MEDIA_append_rpi = " \
 "
 # Until build issues caused by PLAT-44962 are fixed in PLAT-45700
 MEDIA_raspberrypi3-64 = ""
+MEDIA_raspberrypi4-64 = ""
 
 TTSSERVICE = " \
     com.webos.service.tts \
@@ -29,12 +30,15 @@ CAMERASERVICE = " \
 
 # TTS service functionality cannot be verified on webOS rpi64 which cannot boot yet
 TTSSERVICE_raspberrypi3-64 = ""
+TTSSERVICE_raspberrypi4-64 = ""
 
 # CIM service functionality not been verified on webOS rpi64 which cannot boot yet
 CIMSERVICE_raspberrypi3-64 = ""
+CIMSERVICE_raspberrypi4-64 = ""
 
 # camera service functionality cannot be verified on webOS rpi64 which cannot boot yet
 CAMERASERVICE_raspberrypi3-64 = ""
+CAMERASERVICE_raspberrypi4-64 = ""
 
 RDEPENDS_${PN}_append_rpi = " \
     com.webos.service.audiooutput \
