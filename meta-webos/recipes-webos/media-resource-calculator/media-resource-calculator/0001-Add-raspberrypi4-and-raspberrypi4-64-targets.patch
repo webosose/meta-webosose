@@ -1,0 +1,46 @@
+From 9f440ed31b05e8b3f60e3b665ccc3b10d26c3f5d Mon Sep 17 00:00:00 2001
+From: Youngjin Kim <youngjin78.kim@lge.com>
+Date: Fri, 16 Aug 2019 20:52:58 +0900
+Subject: [PATCH] Add raspberrypi4 and raspberrypi4-64 targets
+
+:Release Notes:
+Add raspberrypi4 and raspberrypi4-64 targets with the same configuration
+of raspberrypi3 to make it build.
+
+:Detailed Notes:
+
+:Testing Performed:
+Build tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-83214] Enable LSM
+[PLAT-83215] Update webOS layers
+
+Change-Id: If680d2e8c08817a5993291ad59bd45344b90c67e
+---
+ calculator/CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/calculator/CMakeLists.txt b/calculator/CMakeLists.txt
+index 7365fc0..9db6095 100644
+--- a/calculator/CMakeLists.txt
++++ b/calculator/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2008-2018 LG Electronics, Inc.
++# Copyright (c) 2008-2019 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -39,8 +39,8 @@ set(MEDIA-RESOURCE-CALCULATOR_HEADER
+ set(LIBS
+     ${LIBPBNJSON_LDFLAGS})
+ 
+-if(${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3-64")
+-  message("Build resource calculator for raspberrypi3")
++if(${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3-64" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi4" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi4-64")
++  message("Build resource calculator for raspberrypi3 or raspberrypi4")
+ 
+   add_definitions(-DPLATFORM_RASPBERRYPI3)
+ 

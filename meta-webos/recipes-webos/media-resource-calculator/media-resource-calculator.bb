@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 DESCRIPTION = "Media Resource Calculator for webOS"
 AUTHOR = "Bhooshan Supe <bhooshan.supe@lge.com>"
@@ -11,7 +11,7 @@ DEPENDS = "libpbnjson"
 EXTRA_OECMAKE += "-DNO_TEST=1"
 
 WEBOS_VERSION = "1.0.0-2_19a4a264d827226c075bc63e12c1e41407d205bd"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,4 +27,9 @@ S = "${WORKDIR}/git"
 # raspberrypi3
 # raspberrypi3-64
 # qemux86
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi3-64$|^qemux86$"
+COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$"
+
+# Build for raspberrypi4
+COMPATIBLE_MACHINE_append = "|^raspberrypi4$|^raspberrypi4-64$"
+# From http://gpro.lge.com/251816
+SRC_URI += "file://0001-Add-raspberrypi4-and-raspberrypi4-64-targets.patch"

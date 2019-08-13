@@ -11,8 +11,12 @@ DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleap
 COMPATIBLE_MACHINE = "^raspberrypi3$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 
+# Build for raspberrypi4
+COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
+COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
+
 WEBOS_VERSION = "1.0.0-5_0cb3d7d304cf5427532942c307d15a57fd36b3da"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_public_repo

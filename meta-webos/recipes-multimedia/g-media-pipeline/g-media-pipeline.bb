@@ -19,16 +19,21 @@ inherit webos_pkgconfig
 # raspberrypi3
 # raspberrypi3-64
 # qemux86
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi3-64$|^qemux86$"
+COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS_append_rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-18_4eb9384207c24051a89cb84512c8ca543f837644"
-PR = "r3"
+PR = "r4"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+# Build for raspberrypi4
+COMPATIBLE_MACHINE_append = "|^raspberrypi4$|^raspberrypi4-64$"
+# From http://gpro.lge.com/251820
+SRC_URI += "file://0001-Add-raspberrypi4-and-raspberrypi4-64-targets.patch"
 
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/*.so"

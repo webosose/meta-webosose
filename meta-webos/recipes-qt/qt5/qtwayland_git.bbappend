@@ -5,8 +5,13 @@ AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
 
 DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 
-WEBOS_VERSION = "5.6.3-133_1b0ddfa24f2027411ee337883672f047c1b54acf"
-EXTENDPRAUTO_append = "webos15"
+# Build for raspberrypi4
+# Mesa 19.1.1 uses xorgproto instead of xproto series.
+DEPENDS_remove_raspberrypi4 = " xproto"
+DEPENDS_append_raspberrypi4 = " xorgproto"
+
+WEBOS_VERSION = "5.6.3-7_d996339e7c72746304c152586e50850396b4ae79"
+EXTENDPRAUTO_append = "webos16"
 
 # Upstream 5.5.0 recipe updated LIC_FILES_CHKSUM
 LIC_FILES_CHKSUM = " \

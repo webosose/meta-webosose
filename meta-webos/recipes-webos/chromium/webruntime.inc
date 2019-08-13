@@ -25,7 +25,12 @@ inherit webos_public_repo
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native"
 
-INC_PR = "r20"
+# Build for raspberrypi4
+# Mesa 19.1.1 uses xorgproto instead of xproto series.
+DEPENDS_remove_raspberrypi4 = " xproto"
+DEPENDS_append_raspberrypi4 = " xorgproto"
+
+INC_PR = "r21"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"

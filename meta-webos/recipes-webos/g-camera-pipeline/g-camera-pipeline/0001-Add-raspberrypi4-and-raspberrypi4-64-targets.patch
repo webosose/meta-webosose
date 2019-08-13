@@ -1,0 +1,40 @@
+From 7ca22ab37d0d41859ae1292a1055731e14d29604 Mon Sep 17 00:00:00 2001
+From: Youngjin Kim <youngjin78.kim@lge.com>
+Date: Fri, 16 Aug 2019 20:56:35 +0900
+Subject: [PATCH] Add raspberrypi4 and raspberrypi4-64 targets
+
+:Release Notes:
+Add raspberrypi4 and raspberrypi4-64 targets with the same configuration
+of raspberrypi3 to make it build.
+
+:Detailed Notes:
+
+:Testing Performed:
+Build tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-83214] Enable LSM
+[PLAT-83215] Update webOS layers
+
+Change-Id: If680d2e8c08817a5993291ad59bd45344b90c67e
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index eb0c2d6..e6fa14e 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -34,8 +34,8 @@ if (NOT DEFINED ENV{PKG_CONFIG_PATH})
+   set(ENV{PKG_CONFIG_PATH} ${WEBOS_INSTALL_ROOT}usr/share/pkgconfig)
+ endif()
+ 
+-if(${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3-64")
+-  message(STATUS "Build g-camera-pipeline for raspberrypi3")
++if(${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi3-64" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi4" OR ${WEBOS_TARGET_MACHINE} STREQUAL "raspberrypi4-64")
++  message(STATUS "Build g-camera-pipeline for raspberrypi3 or raspberrypi4")
+   add_definitions(-DPLATFORM_RASPBERRYPI3)
+   add_definitions(-DMAX_NUM_DISPLAY=1)
+ elseif(${WEBOS_TARGET_MACHINE} STREQUAL "intel-corei7-64")
