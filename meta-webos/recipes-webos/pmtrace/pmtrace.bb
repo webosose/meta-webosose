@@ -14,6 +14,7 @@ RDEPENDS_${PN} += " \
     babeltrace \
     lttng-tools \
     lttng-modules \
+    python-core \
     python-argparse \
     python-compression \
     python-json \
@@ -23,7 +24,7 @@ RDEPENDS_${PN} += " \
 "
 
 WEBOS_VERSION = "1.0.0-7_a8d1f2c481514edfbb62a0ed5ef161c384b555c4"
-PR = "r9"
+PR = "r10"
 
 inherit webos_component
 inherit webos_cmake
