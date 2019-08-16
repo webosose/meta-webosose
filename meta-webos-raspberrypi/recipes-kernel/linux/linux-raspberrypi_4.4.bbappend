@@ -15,5 +15,6 @@ SRC_URI_append = " \
     file://0015-DRM-forcing-permissions.patch \
     file://governor.cfg \
     file://ntfs.cfg \
+    file://security.cfg \
     file://zram.cfg \
 "
