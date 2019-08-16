@@ -30,7 +30,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r24"
+INC_PR = "r25"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -80,6 +80,7 @@ PACKAGECONFIG[umediaserver] = ",,umediaserver"
 PACKAGECONFIG[debug] = "symbol_level=2,symbol_level=1"
 PACKAGECONFIG[debug-blink] = "blink_symbol_level=1,blink_symbol_level=0"
 PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
+PACKAGECONFIG[av1-codec] = "enable_av1_decoder=true, enable_av1_decoder=false"
 PACKAGECONFIG[libpci] = "use_webos_gpu_info_collector=false,use_webos_gpu_info_collector=true"
 
 # Set a default value for jumbo file merge of 8. This should be good for build
