@@ -7,14 +7,15 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2"
+RDEPENDS_${PN} = "qtgraphicaleffects-qmlplugins"
 
 RPROVIDES_${PN}-examples = " \
     eos.bare \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-6_efe82a6e1bc1d2f079a57e1f61a0bcd028d585bc"
-PR = "r26"
+WEBOS_VERSION = "1.0.0-140_f8936c24a4dd594f57dfeca7f10aa1f178a1bf94"
+PR = "r27"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
