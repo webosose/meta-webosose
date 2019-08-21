@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO_append = "webos4"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}-kernel-install_remove_class-target = "bash"
@@ -16,3 +16,8 @@ PACKAGECONFIG_remove = " \
     timedated   \
     timesyncd   \
 "
+# By default systemd's Predictable Network Interface Names policy configured for qemu
+# Currently we don't support this policy in qemu, so removing from systemd's configuration
+do_install_append_qemuall() {
+    rm -rf ${D}/${base_libdir}/systemd/network/99-default.link
+}
