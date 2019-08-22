@@ -46,15 +46,7 @@ PNBLACKLIST[netkit-rusers] ?= "BROKEN: fails to build rup.c:57:45: error: unknow
 PNBLACKLIST[android-tools] ?= "Fails to build with thumb enabled http://caprica.lgsvl.com:8080/Errors/Details/1532133"
 PNBLACKLIST[paho-mqtt-c] ?= "Sometimes fails with cannot create build/VersionInfo.h: Directory nonexistent http://caprica.lgsvl.com:8080/Errors/Details/1530992"
 
-# Caused by openssl10
-PNBLACKLIST[openssl10] ?= "conflicts with openssl when both versions are pulled into the same RSS"
-PNBLACKLIST[openssl10-native] ?= "conflicts with openssl when both versions are pulled into the same RSS"
-PNBLACKLIST[nativesdk-openssl10] ?= "conflicts with openssl when both versions are pulled into the same RSS"
-PNBLACKLIST[android-tools] ?= "depends on blacklisted openssl10 - fixed in Yocto 2.7 Warrior with meta-oe commit 335bb5297def5804fee657eaa3c386eba984be91"
-PNBLACKLIST[oscam] ?= "depends on blacklisted openssl10 - fixed in Yocto 2.7 Warrior with meta-oe commit ace62392d15b0e500f9af1774ffcfc752d441a98"
-PNBLACKLIST[packagegroup-meta-multimedia] ?= "rdepends on blacklisted oscam"
-
-PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted ndctl, android-tools, .."
+PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted ndctl, .."
 
 # ERROR: QA Issue: ELF binary 'TOPDIR/BUILD/work/qemux86-webos-linux/x264/r2854+gitAUTOINC+e9a5903edf-r0/packages-split/x264/usr/lib/libx264.so.152' has relocations in .text [textrel] http://caprica.lgsvl.com:8080/Errors/Details/1509766
 INSANE_SKIP_${PN}_pn-x264 = "textrel"
@@ -197,16 +189,6 @@ PNBLACKLIST[wmiconfig] ?= "svn://svn.openmoko.org is automatically redirected to
 # meta-openembedded/meta-oe/recipes-support/usbpath/usbpath_svn.bb:do_patch
 PNBLACKLIST[usbpath] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
 
-# It's no longer available, see
-# http://wiringpi.com/wiringpi-deprecated/
-# and removed already in meta-raspberrypi/zeus in:
-# commit e050601d868df6f7b38812ca930e30a6a4cff135
-# Author: Khem Raj <raj.khem@gmail.com>
-# Date:   Thu Oct 10 07:51:33 2019 -0700
-#
-#     wiringpi: Delete
-PNBLACKLIST[wiringpi] ?= "It is no longer available, see http://wiringpi.com/wiringpi-deprecated/ and do_fetch is failing with: git.drogon.net[0: 188.246.205.22]: errno=Connection refused"
-
 # Few more failing in warrior:
 # meta-virtualization/recipes-networking/netns/netns_git.bb:do_compile_ptest_base
 PNBLACKLIST[netns] ?= "ERROR: netns-0.5.3-r0 do_compile_ptest_base: Function failed: do_compile_ptest_base: | bridge.go:10:2: cannot find package "github.com/genuinetools/netns/netutils""
@@ -230,3 +212,14 @@ PNBLACKLIST[xmlsec1] ?= "ERROR: xmlsec1-1.2.28-r0 do_configure: configure failed
 PNBLACKLIST[remmina] ?= "Depends on blacklisted avahi-ui"
 PNBLACKLIST[telepathy-idle] ?= "Depends on blacklisted telepathy-glib"
 PNBLACKLIST[packagegroup-meta-multimedia] ?= "Depends on blacklisted gstd, gerbera, rygel"
+
+ERROR_QA_remove_pn-uthash = " src-uri-bad"
+ERROR_QA_remove_pn-libuv = " src-uri-bad"
+ERROR_QA_remove_pn-opencv = " src-uri-bad"
+ERROR_QA_remove_pn-uhubctl = " src-uri-bad"
+ERROR_QA_remove_pn-firewalld = " src-uri-bad"
+ERROR_QA_remove_pn-python-matplotlib = " src-uri-bad"
+ERROR_QA_remove_pn-arno-iptables-firewall = " src-uri-bad"
+ERROR_QA_remove_pn-nana = " src-uri-bad"
+ERROR_QA_remove_pn-dumb-init = " src-uri-bad"
+ERROR_QA_remove_pn-crash = " src-uri-bad"
