@@ -40,6 +40,7 @@ PNBLACKLIST[man-db] ?= "BROKEN: without --disable-cache-owner: chown: invalid us
 PNBLACKLIST[hplip] ?= "BROKEN: configure: error: could not force soft-float and chgrp: invalid group: ‘lp’ http://caprica.lgsvl.com:8080/Errors/Details/1509153"
 PNBLACKLIST[gst-plugins-gl] ?= "GL/glew.h:1205:14: fatal error: GL/glu.h: No such file or directory http://caprica.lgsvl.com:8080/Errors/Details/1509152"
 PNBLACKLIST[poppler] ?= "fails to generate GIR http://caprica.lgsvl.com:8080/Errors/Details/1509140"
+PNBLACKLIST[cups-filters] ?= "depends on blacklisted poppler"
 PNBLACKLIST[s-suite] ?= "rdepends on blacklisted sysstat"
 PNBLACKLIST[mongodb] ?= "src/mongo/util/net/ssl_manager.cpp:557:70: error: invalid conversion from 'size_t*' {aka 'unsigned int*'} to 'long unsigned int*' [-fpermissive] http://caprica.lgsvl.com:8080/Errors/Details/1509767"
 PNBLACKLIST[netkit-rusers] ?= "BROKEN: fails to build rup.c:57:45: error: unknown type name 'statstime'; did you mean 'si_stime'? http://caprica.lgsvl.com:8080/Errors/Details/1530992"
@@ -172,23 +173,6 @@ PNBLACKLIST[python-snimpy] ?= "Depends on blacklisted libsmi"
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
 PNBLACKLIST[usb-modeswitch-data] ?= "Depends on blacklisted usb-modeswitch"
 
-# Recipes failing because of svn fetcher issue
-# http://lists.openembedded.org/pipermail/openembedded-devel/2020-February/205012.html
-# it was fixed in dunfell:
-# https://github.com/openembedded/meta-openembedded/commit/6902dcd2edc3a08f6929e19e9a9c18493883f9d2
-# and then all of these were removed:
-# https://github.com/openembedded/meta-openembedded/commit/7449a3e08389a0c50cdf17bc16995ef1678dc2d2
-# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c24xx-gpio_svn.bb:do_populate_lic
-# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c24xx-gpio_svn.bb:do_compile
-PNBLACKLIST[s3c24xx-gpio] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
-# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c64xx-gpio_svn.bb:do_populate_lic
-# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c64xx-gpio_svn.bb:do_compile
-PNBLACKLIST[s3c64xx-gpio] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
-# meta-openembedded/meta-oe/recipes-support/wmiconfig/wmiconfig_svn.bb:do_patch
-PNBLACKLIST[wmiconfig] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
-# meta-openembedded/meta-oe/recipes-support/usbpath/usbpath_svn.bb:do_patch
-PNBLACKLIST[usbpath] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
-
 # Few more failing in warrior:
 # meta-virtualization/recipes-networking/netns/netns_git.bb:do_compile_ptest_base
 PNBLACKLIST[netns] ?= "ERROR: netns-0.5.3-r0 do_compile_ptest_base: Function failed: do_compile_ptest_base: | bridge.go:10:2: cannot find package "github.com/genuinetools/netns/netutils""
@@ -213,12 +197,20 @@ PNBLACKLIST[remmina] ?= "Depends on blacklisted avahi-ui"
 PNBLACKLIST[telepathy-idle] ?= "Depends on blacklisted telepathy-glib"
 PNBLACKLIST[packagegroup-meta-multimedia] ?= "Depends on blacklisted gstd, gerbera, rygel"
 
-ERROR_QA_remove_pn-uthash = " src-uri-bad"
-ERROR_QA_remove_pn-libuv = " src-uri-bad"
-ERROR_QA_remove_pn-uhubctl = " src-uri-bad"
-ERROR_QA_remove_pn-firewalld = " src-uri-bad"
-ERROR_QA_remove_pn-python-matplotlib = " src-uri-bad"
-ERROR_QA_remove_pn-arno-iptables-firewall = " src-uri-bad"
-ERROR_QA_remove_pn-nana = " src-uri-bad"
-ERROR_QA_remove_pn-dumb-init = " src-uri-bad"
-ERROR_QA_remove_pn-crash = " src-uri-bad"
+# And few more in dunfell
+# meta-openembedded/meta-oe/recipes-extended/dlt-daemon/dlt-daemon_2.18.4.bb:do_package
+PNBLACKLIST[dlt-daemon] ?= "ERROR: dlt-daemon-2.18.4-r0 do_package: SYSTEMD_SERVICE_dlt-daemon value dlt.service does not exist"
+# meta-openembedded/meta-oe/recipes-support/libgusb/libgusb_git.bb:do_configure
+PNBLACKLIST[libgusb] ?= "ERROR: libgusb-0.3.0+gitAUTOINC+636efc0624-r0 do_configure: meson failed: gusb/meson.build:128:6: ERROR: Unknown variable libgusb_girtarget."
+# meta-openembedded/meta-oe/recipes-gnome/libpeas/libpeas_1.25.3.bb:do_configure
+PNBLACKLIST[libpeas] ?= "ERROR: libpeas-1.25.3-r0 do_configure: meson failed: tests/libpeas/introspection/meson.build:52:0: ERROR: Unknown variable libpeas_gir."
+# meta-openembedded/meta-networking/recipes-connectivity/netplan/netplan_0.98.bb:do_compile
+PNBLACKLIST[netplan] ?= "ERROR: netplan-0.98+gitAUTOINC+5d22e9d22c-r0 do_compile: oe_runmake failed: src/generate.c:24:10: fatal error: glib.h: No such file or directory"
+# meta-webosose/meta-webos/recipes-upstreamable/nodejs-module/nodejs-module-usocket_0.0.4.bb:do_compile
+PNBLACKLIST[nodejs-module-usocket] ?= "ERROR: nodejs-module-usocket-0.0.4-r2 do_compile: nan/nan_implementation_12_inl.h:103:42: error: cannot convert 'v8::Isolate*' to 'v8::Local<v8::Context>'"
+# meta-virtualization/recipes-extended/xen/xen-tools_git.bb
+PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, details in https://lists.yoctoproject.org/g/meta-virtualization/message/5202', '', d)}"
+
+# meta-virtualization/recipes-extended/xen/xen-python2.bb
+PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
+PNBLACKLIST[mosquitto] ?= "Depends on blacklisted dlt-daemon"
