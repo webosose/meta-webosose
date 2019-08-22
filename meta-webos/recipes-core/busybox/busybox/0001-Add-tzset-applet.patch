@@ -1,12 +1,11 @@
-From c38d806dcd8e88bf04a38a5e5a01dad899ecd8e5 Mon Sep 17 00:00:00 2001
+From 0cd0c2db378f419157cd4f57d7c947d8ff37dd52 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:22:45 +0000
 Subject: [PATCH] Add tzset applet
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
-
 ---
- coreutils/tzset.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++
+ coreutils/tzset.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 57 insertions(+)
  create mode 100644 coreutils/tzset.c
 

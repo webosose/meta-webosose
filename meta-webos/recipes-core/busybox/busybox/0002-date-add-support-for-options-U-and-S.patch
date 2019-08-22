@@ -1,16 +1,15 @@
-From 657f7f027f38e41dcce66a51b1f9332d543e76be Mon Sep 17 00:00:00 2001
+From d969ace32a396b1c6f395c56ba3c815126b74c3a Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:24:12 +0000
 Subject: [PATCH] date: add support for options -U and -S
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
-
 ---
  coreutils/date.c | 28 ++++++++++++++++++++++------
  1 file changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/coreutils/date.c b/coreutils/date.c
-index 87dc3bb..d552481 100644
+index 9cbc730..2b86098 100644
 --- a/coreutils/date.c
 +++ b/coreutils/date.c
 @@ -100,10 +100,13 @@

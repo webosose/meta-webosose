@@ -1,17 +1,16 @@
-From d334fb8c0eac44f5fee9833ac7ae74446fbd22ab Mon Sep 17 00:00:00 2001
+From f588379e3465c56083fa91174044eea429334105 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:24:53 +0000
 Subject: [PATCH] libedit: check for null before passing cmdedit_prompt to
  fputs
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
-
 ---
  libbb/lineedit.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/libbb/lineedit.c b/libbb/lineedit.c
-index d5e92e8..090caba 100644
+index 1d5fef5..70328e2 100644
 --- a/libbb/lineedit.c
 +++ b/libbb/lineedit.c
 @@ -445,7 +445,9 @@ static void beep(void)
