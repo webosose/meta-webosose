@@ -9,7 +9,7 @@
 # doesn't, then the only way to guarantee that the first recipe will never be
 # used is to blacklist it.
 
-PNBLACKLIST[vboxguestdrivers] ?= "unused in webOS world"
+PNBLACKLIST[vboxguestdrivers] ?= "BROKEN: fails to build with newer kernels and not used anymore: error: macro 'access_ok' passed 3 arguments, but takes just 2 http://caprica.lgsvl.com:8080/Errors/Details/1451808"
 
 # Use webOS qt5 configuration
 PNBLACKLIST[qwt-qt5] ?= "ERROR: Unknown module(s) in QT: printsupport opengl http://caprica.lgsvl.com:8080/Errors/Details/1509145"
