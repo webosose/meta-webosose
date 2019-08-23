@@ -1,3 +1,6 @@
+# Backported from meta-raspberrypi Yocto 2.7 Warrior
+# e9388ca linux-firmware-rpidistro: Fix WiFi on RaspberryPi 4
+
 SUMMARY = "Linux kernel firmware files from Raspbian distribution"
 DESCRIPTION = "Updated firmware files for RaspberryPi hardware. \
 RPi-Distro obtains these directly from Cypress; they are not submitted \
@@ -38,9 +41,7 @@ SRC_URI = " \
     file://0001-brcmfmac43455-sdio.txt-Follow-raspbian-change-for-bo.patch \
     "
 SRCREV = "b518de45ced519e8f7a499f4778100173402ae43"
-
-# Support for Raspberry Pi 4, modified from 0.0 to 0.1 to identify PV
-PV = "0.1+git${SRCPV}"
+PV = "0.0+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 

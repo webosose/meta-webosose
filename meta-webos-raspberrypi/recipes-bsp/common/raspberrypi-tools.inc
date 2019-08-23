@@ -1,3 +1,7 @@
+# Backported from meta-raspberrypi Yocto 2.7 Warrior
+# 284664b raspberrypi-tools: Update to remove Makefile patch
+# 242b1f5 armstubs: Add support for compiling ARM stubs
+
 SRCREV ?= "76f64a28dc4685507d12f57fe5cfc89f6c32f8e6"
 RPITOOLS_SRC_URI ?= "https://github.com/raspberrypi/tools/archive/${SRCREV}.tar.gz"
 RPITOOLS_S ?= "${WORKDIR}/tools-${SRCREV}"

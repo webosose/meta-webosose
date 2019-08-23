@@ -1,3 +1,8 @@
+# Backported from meta-raspberrypi Yocto 2.7 Warrior
+# 220c3bf armstubs: Error out when ARMSTUBS is not defined
+# 284664b raspberrypi-tools: Update to remove Makefile patch
+# 242b1f5 armstubs: Add support for compiling ARM stubs
+
 DESCRIPTION = "Boot strap code that the GPU puts on memory to start running the boot loader"
 LICENSE = "Proprietary"
 
