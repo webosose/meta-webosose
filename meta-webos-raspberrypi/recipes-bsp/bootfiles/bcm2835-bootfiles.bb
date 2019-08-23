@@ -1,3 +1,6 @@
+# Backported from meta-raspberrypi Yocto 2.7 Warrior
+# 004a1ef firmware: Rename firmware inc file to raspberrypi-firmware.inc
+
 DESCRIPTION = "Closed source binary files to help boot the ARM on the BCM2835."
 LICENSE = "Proprietary"
 
@@ -38,3 +41,4 @@ addtask deploy before do_build after do_install
 do_deploy[dirs] += "${DEPLOYDIR}/${PN}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
+
