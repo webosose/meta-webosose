@@ -7,7 +7,7 @@ LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=6e00eb832d81f89a0f47fac10db717c7"
 
 WEBOS_VERSION = "1.0.0-16_792e5db476a2752c98a9ea2052ed1fc2ad2060a0"
-PR = "r5"
+PR = "r6"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -60,7 +60,7 @@ install_acg_configuration() {
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.json
 }
 
-do_install_append() {
+do_install_append_webos() {
     install_acg_configuration
 }
 
