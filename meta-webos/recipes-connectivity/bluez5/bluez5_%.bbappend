@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos13"
+EXTENDPRAUTO_append = "webos14"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -26,6 +26,10 @@ SRC_URI += " \
     file://brcm43438.service \
     file://obex.service \
 "
+
+SRC_URI_append_raspberrypi4 = " ${BCM_BT_SOURCES}"
+
+RDEPENDS_${PN}_append_raspberrypi4 = " ${BCM_BT_RDEPENDS}"
 
 do_install_append () {
     install -d ${D}${sysconfdir}/systemd/system
