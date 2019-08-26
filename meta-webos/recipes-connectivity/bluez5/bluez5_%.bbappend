@@ -37,10 +37,6 @@ SRC_URI += " \
     file://obex.service \
 "
 
-SRC_URI_append_raspberrypi4 = " ${BCM_BT_SOURCES}"
-
-RDEPENDS_${PN}_append_raspberrypi4 = " ${BCM_BT_RDEPENDS}"
-
 do_install_append () {
     install -d ${D}${sysconfdir}/systemd/system
     install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
