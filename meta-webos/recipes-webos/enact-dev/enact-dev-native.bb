@@ -15,7 +15,7 @@ PR = "r6"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "${ENACTJS_GIT_REPO}/enact-dev-dist;branch=webpack-3;"
+SRC_URI = "${ENACTJS_GIT_REPO}/enact-dev-dist.git;nobranch=1"
 
 
 # we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
@@ -26,8 +26,8 @@ do_fetch[vardeps] += "SRCREV"
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "1.0.14"
-SRCREV = "28ce2e1067de550864352a66d9d5ee8638a094f0"
+PV = "2.5.1"
+SRCREV = "cf6d2d2f84028a6ad6093c0fb4084d86031cd6c0"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"

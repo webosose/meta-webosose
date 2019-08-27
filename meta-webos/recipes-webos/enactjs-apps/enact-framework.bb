@@ -19,8 +19,10 @@ SRC_URI = "${ENACTJS_GIT_REPO}/enact.git;nobranch=1;destsuffix=git/enact"
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.2.1"
-SRCREV = "4b4a834dfb156d40e0373d016e5a69f8a278e71c"
+PV = "3.0.0"
+SRCREV = "757ee297aee056a43f7775a0995b024ce606a887"
+
+WEBOS_ENACT_ILIB_DEPENDENCY ??= "ilib@14.3.0"
 
 # Ordered dependency list for Enact; provides shrink-wrap style locking in of package versions
 # Generated via https://gecko.lgsvl.com/jenkins/view/Enyo/job/enact-dependency-list/
@@ -30,11 +32,12 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     loose-envify@1.4.0 \
     invariant@2.2.4 \
     object-assign@4.1.1 \
-    prop-types@15.6.2 \
+    react-is@16.8.6 \
+    prop-types@15.7.2 \
     ramda@0.24.1 \
-    schedule@0.5.0 \
-    react@16.5.2 \
-    react-dom@16.5.2 \
+    scheduler@0.13.6 \
+    react@16.8.6 \
+    react-dom@16.8.6 \
     change-emitter@0.1.6 \
     core-js@1.2.7 \
     safer-buffer@2.1.2 \
@@ -47,13 +50,13 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     asap@2.0.6 \
     promise@7.3.1 \
     setimmediate@1.0.5 \
-    ua-parser-js@0.7.18 \
+    ua-parser-js@0.7.19 \
     fbjs@0.8.17 \
     hoist-non-react-statics@2.5.5 \
     symbol-observable@1.2.0 \
     recompose@0.26.0 \
-    direction@1.0.2 \
     warning@3.0.0 \
+    direction@1.0.3 \
     eases@1.0.8 \
     dom-walk@0.1.1 \
     min-document@2.19.0 \
@@ -62,16 +65,28 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     is-function@1.0.1 \
     is-callable@1.1.4 \
     for-each@0.3.3 \
-    trim@0.0.1 \
-    parse-headers@2.0.1 \
+    object-keys@1.1.1 \
+    define-properties@1.1.3 \
+    is-date-object@1.0.1 \
+    has-symbols@1.0.0 \
+    is-symbol@1.0.2 \
+    es-to-primitive@1.2.0 \
+    function-bind@1.1.1 \
+    has@1.0.3 \
+    is-regex@1.0.4 \
+    es-abstract@1.13.0 \
+    string.prototype.trim@1.1.2 \
+    parse-headers@2.0.2 \
     xtend@4.0.1 \
     xhr@2.5.0 \
+    ${WEBOS_ENACT_ILIB_DEPENDENCY} \
+    ilib-webos-tv@14.2.0-webostv2 \
 "
 
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r3"
+PR = "r4"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
@@ -83,8 +98,20 @@ do_compile() {
     rm -fr node_modules
     mkdir -p node_modules/@enact
 
-    sed -i -e "s/\(local([^)]*)\)[^;]*;/\1;/" enact/packages/moonstone/styles/fonts.less
+    # Update any fonts to exclude unneeded files
+    if [ -f enact/packages/moonstone/styles/fonts.less ] ; then
+        sed -i -e "s/[, ]*url([^)]*.ttf['\"]*)[^,;]*//" enact/packages/moonstone/styles/fonts.less
+    fi
+    if [ -f enact/packages/moonstone/styles/internal/fonts.less ] ; then
+        sed -i -e "s/[, ]*url([^)]*.ttf['\"]*)[^,;]*//" enact/packages/moonstone/styles/internal/fonts.less
+    fi
+
     for LIB in core ui moonstone spotlight i18n webos ; do
+        cd ${S}/enact/packages/${LIB}
+        mkdir node_modules
+        ln -sfn ../.. node_modules/@enact
+        ${ENACT_NODE} ${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-typedef.js
+        cd ${S}
         ${ENACT_NPM} pack --loglevel=error ./enact/packages/${LIB}
     done
 
