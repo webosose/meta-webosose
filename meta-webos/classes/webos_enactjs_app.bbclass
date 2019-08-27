@@ -18,7 +18,7 @@ inherit webos_filesystem_paths
 inherit webos_enactjs_env
 
 # Dependencies:
-#   - ilib-webapp so we can override @enact/i18n/ilib with device submission
+#   - ilib-webapp so we can override NPM ilib dependency with device submission
 #   - virtual/webruntime to use the mksnapshot binary to build v8 app snapshot blobs
 #   - enact-framework to use a shared Enact framework libraries
 #   - coreutils-native to use timeout utility to prevent frozen NPM processes
@@ -49,15 +49,20 @@ WEBOS_LOCALIZATION_INSTALL_RESOURCES = "false"
 # Allows a component to override the standard build command with something custom
 WEBOS_ENACTJS_PACK_OVERRIDE ??= ""
 
-# Allows overriding the build flags used with enact-dev
-WEBOS_ENACTJS_PACK_OPTS ??= "--production --isomorphic --snapshot --locales=tv"
+# Allows overriding the build arguments for Enact CLI
+WEBOS_ENACTJS_PACK_OPTS ??= "--production --isomorphic --snapshot --locales=webos"
+
+# When true, will force building apps in full CSS modular mode. Otherwise will build CSS in a global
+# context with *.module.css in the modular context.
+WEBOS_ENACTJS_FORCE_CSS_MODULES ??= "true"
 
 # When true, will override the app's version of Enact, React, etc. with the build-target versions
 # Defaults true. Any apps not compatible will system-wide Enact version standard will need to change this.
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE ??= "true"
 
 # Path to javascript override of a build submission ilib
-WEBOS_ENACTJS_ILIB_OVERRIDE ??= "${@ '${STAGING_DATADIR}/javascript/ilib'.replace('${LIB32_PREFIX}', '')}"
+WEBOS_ENACTJS_ILIB_OVERRIDE ??= "${STAGING_DATADIR}/javascript/ilib"
+WEBOS_ENACTJS_ILIB_OVERRIDE_ALLARCH ??= "${@ '${WEBOS_ENACTJS_ILIB_OVERRIDE}'.replace('${LIB32_PREFIX}', '')}"
 
 # On-device path to ilib json assets
 WEBOS_ENACTJS_ILIB_ASSETS ??= "${datadir}/javascript/ilib"
@@ -68,8 +73,9 @@ WEBOS_ENACTJS_FORCE_ES5 ??= "false"
 # May be provided by machine target; ensure the variable exists for allarch filtering
 LIB32_PREFIX ??= ""
 
-# use allarch enact framework data, filtering out "lib32-" prefix
-WEBOS_ENACTJS_FRAMEWORK ??= "${@ '${STAGING_DATADIR}/javascript/enact'.replace('${LIB32_PREFIX}', '')}"
+# support potential allarch enact framework data path, filtering out "lib32-" prefix
+WEBOS_ENACTJS_FRAMEWORK ??= "${STAGING_DATADIR}/javascript/enact"
+WEBOS_ENACTJS_FRAMEWORK_ALLARCH ??= "${@ '${WEBOS_ENACTJS_FRAMEWORK}'.replace('${LIB32_PREFIX}', '')}"
 
 # Don't need to configure or compile anything for an enyojs app, but don't use
 # do_<task>[noexec] = "1" so that recipes that inherit can still override
@@ -104,9 +110,17 @@ do_compile() {
 
     # apply shrinkwrap override, rerouting to shared enact framework tarballs as needed
     if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
+        bbnote "Attempting to use submission enact framework"
         if [ -d ${WEBOS_ENACTJS_FRAMEWORK} ] ; then
             bbnote "Using system submission Enact framework from ${WEBOS_ENACTJS_FRAMEWORK}"
             ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${WEBOS_ENACTJS_FRAMEWORK}"
+        else
+            if [ -d ${WEBOS_ENACTJS_FRAMEWORK_ALLARCH} ] ; then
+                bbnote "Using system submission Enact framework from ${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}"
+                ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}"
+            else
+                bbwarn "Enact framework submission could not be found"
+            fi
         fi
     fi
 
@@ -152,23 +166,21 @@ do_compile() {
     if [ ! -z "${WEBOS_ENACTJS_ILIB_OVERRIDE}" ] ; then
         ## only override ilib if using Enact submission via shrinkwrap override
         if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
-            if [ -d node_modules/@enact/i18n ] ; then
-                # use ilib submission component rather than one bundled within @enact/i18n
-                if [ -d ${WEBOS_ENACTJS_ILIB_OVERRIDE}/lib ] ; then
-                    # override local lib with system-based submission
-                    cp -fr ${WEBOS_ENACTJS_ILIB_OVERRIDE}/lib node_modules/@enact/i18n/ilib
-
-                    if [ -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/package.json ] ; then
-                        cp -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/package.json node_modules/@enact/i18n/ilib
+            SUB_ILIB=${WEBOS_ENACTJS_ILIB_OVERRIDE}
+            if [ ! -d ${WEBOS_ENACTJS_ILIB_OVERRIDE} ] ; then
+                SUB_ILIB=${WEBOS_ENACTJS_ILIB_OVERRIDE_ALLARCH}
+            fi
+            # use ilib submission component rather than one bundled within @enact/i18n
+            if [ -d ${SUB_ILIB}/lib ] ; then
+                # Support both old and current local ilib locations
+                for LOC_ILIB in node_modules/ilib node_modules/@enact/i18n/ilib ; do
+                    if [ -d ${LOC_ILIB} ] ; then
+                        # override local lib with system-based submission
+                        cp -fr ${SUB_ILIB}/lib ${LOC_ILIB}
+                        cp -f ${SUB_ILIB}/package.json ${LOC_ILIB}
+                        cp -f ${SUB_ILIB}/index.js ${LOC_ILIB}
                     fi
-
-                    if [ -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/index.js ] ; then
-                        cp -f ${WEBOS_ENACTJS_ILIB_OVERRIDE}/index.js node_modules/@enact/i18n/ilib
-                    fi
-
-                    # removed unneeded files
-                    rm -f node_modules/@enact/i18n/ilib/lib/ZoneInfo.js
-                fi
+                done
             fi
         fi
     fi
@@ -184,8 +196,11 @@ do_install() {
     # Support optional transpiling to full ES5 if needed
     export ES5="${WEBOS_ENACTJS_FORCE_ES5}"
 
-    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 68
-    export BROWSERSLIST="Chrome 68"
+    # Support forcing CSS modules for apps designed for Enact <3.0
+    export ENACT_FORCECSSMODULES="${WEBOS_ENACTJS_FORCE_CSS_MODULES}"
+
+    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 72
+    export BROWSERSLIST="Chrome 72"
 
     # use local on-device ilib locale assets
     if [ ! -z "${WEBOS_ENACTJS_ILIB_ASSETS}" ] ; then
