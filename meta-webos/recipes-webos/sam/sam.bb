@@ -12,7 +12,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
-WEBOS_VERSION = "2.0.0-7_264ac4b81112bc67a8ab10b44aa531c15f1919c8"
+WEBOS_VERSION = "2.0.0-8_5850f576c4daed1a08d57ae9d8f68955bb3c54a9"
 PR = "r22"
 
 inherit webos_component
