@@ -1,4 +1,4 @@
-From 1401660940fcd22a84ccd8018fbdc4979bcc40ff Mon Sep 17 00:00:00 2001
+From 252f7a98f9e4fbcb802ca0aaee777d6d9ef657a4 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 24 Apr 2019 10:19:27 +0000
 Subject: [PATCH] Update eglfs_kms to render on topmost drmplane
@@ -28,13 +28,13 @@ the patterns on HDMI output.
 Change-Id: Ic898dbde7a19f20a2f38f63d79ef0166970ef498
 Upstream-Status: Inappropriate [webOS specific]
 ---
- .../kmsconvenience/qkmsdevice.cpp             | 15 +--
- .../eglfs_kms/qeglfskmsgbmintegration.cpp     |  2 +-
- .../eglfs_kms/qeglfskmsgbmscreen.cpp          | 91 ++++---------------
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp  | 15 ++--
+ .../eglfs_kms/qeglfskmsgbmintegration.cpp          |  2 +-
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp               | 91 ++++------------------
  3 files changed, 25 insertions(+), 83 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index db37acf535..aae757aeae 100644
+index 7f6e732..ae0707a 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 @@ -437,6 +437,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
@@ -75,7 +75,7 @@ index db37acf535..aae757aeae 100644
      }
  }
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 1619509cda..7ae9d7afda 100644
+index 1619509..7ae9d7a 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 @@ -102,7 +102,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
@@ -88,7 +88,7 @@ index 1619509cda..7ae9d7afda 100644
  
      return reinterpret_cast<EGLNativeWindowType>(surface);
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 7e34e982e5..df965b9bee 100644
+index 9565f07..dc238be 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,16 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(

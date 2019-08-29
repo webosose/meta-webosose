@@ -1,0 +1,79 @@
+From 5e7777b0bdb0c06dc2a69ebbd2c986aa480c06e0 Mon Sep 17 00:00:00 2001
+From: Youngjin Kim <youngjin78.kim@lge.com>
+Date: Wed, 28 Aug 2019 11:10:14 +0900
+Subject: [PATCH] Fix the cursor problem on secondary display on Raspberry Pi 4
+
+:Release Notes:
+Fix the cursor problem on secondary display on Raspberry Pi 4
+
+:Detailed Notes:
+On the Raspberry Pi 4, the cursor on the first display is duplicated on
+second at a very large magnification. Unlike other Raspberry Pi devices,
+Raspberry Pi 4 must use FKMS. This may be the cause of the problem. This
+patch will remove the artifact but another problem still exists due to
+this patch - the cursor is suddenly appeared when moving the cursor
+between first display and second.
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issue Addressed:
+[PLAT-84822] SPIKE: Check feasibility of Multiple displays on RPi4
+[PLAT-84822] Multi-display support for Auto-LSM on RPi4
+
+Change-Id: If6ea73c091f26cd7118c315990ffbe0a9d784537
+Upstream-Status: Inappropriate [device specific]
+---
+ .../eglfs_kms/qeglfskmsgbmcursor.cpp               | 24 +++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
+index 4d0cf0c..acf1efc 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
+@@ -166,6 +166,7 @@ void QEglFSKmsGbmCursor::changeCursor(QCursor *windowCursor, QWindow *window)
+         Q_FOREACH (QPlatformScreen *screen, m_screen->virtualSiblings()) {
+             QEglFSKmsScreen *kmsScreen = static_cast<QEglFSKmsScreen *>(screen);
+             drmModeSetCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, 0, 0, 0);
++            drmModeMoveCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, 0, 0);
+         }
+     }
+ 
+@@ -215,10 +216,15 @@ void QEglFSKmsGbmCursor::changeCursor(QCursor *windowCursor, QWindow *window)
+     Q_FOREACH (QPlatformScreen *screen, m_screen->virtualSiblings()) {
+         QEglFSKmsScreen *kmsScreen = static_cast<QEglFSKmsScreen *>(screen);
+ 
+-        int status = drmModeSetCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, handle,
+-                                      m_cursorSize.width(), m_cursorSize.height());
+-        if (status != 0)
+-            qWarning("Could not set cursor on screen %s: %d", kmsScreen->name().toLatin1().constData(), status);
++        if (kmsScreen->geometry().contains(m_pos)) {
++            int status = drmModeSetCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, handle, m_cursorSize.width(), m_cursorSize.height());
++
++            if (status != 0)
++                qWarning("Could not set cursor on screen %s: %d", kmsScreen->name().toLatin1().constData(), status);
++        } else {
++            drmModeSetCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, 0, 0, 0);
++            drmModeMoveCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, 0, 0);
++        }
+     }
+ }
+ #endif // QT_NO_CURSOR
+@@ -236,7 +242,15 @@ void QEglFSKmsGbmCursor::setPos(const QPoint &pos)
+         QPoint localPos = pos - origin;
+         QPoint adjustedPos = localPos - m_cursorImage.hotspot();
+ 
+-        int ret = drmModeMoveCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, adjustedPos.x(), adjustedPos.y());
++        int ret = -1;
++        if (kmsScreen->geometry().contains(pos)) {
++            drmModeSetCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, gbm_bo_get_handle(m_bo).u32, m_cursorSize.width(), m_cursorSize.height());
++            ret = drmModeMoveCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, adjustedPos.x(), adjustedPos.y());
++        } else {
++            drmModeSetCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, 0, 0, 0);
++            ret = drmModeMoveCursor(kmsScreen->device()->fd(), kmsScreen->output().crtc_id, 0, 0);
++        }
++
+         if (ret == 0)
+             m_pos = pos;
+         else
