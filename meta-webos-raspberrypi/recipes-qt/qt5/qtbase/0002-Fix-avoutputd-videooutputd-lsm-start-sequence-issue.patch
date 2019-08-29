@@ -1,4 +1,4 @@
-From 8e7bdc177c4720e69f00d67548dfcc88be95e99a Mon Sep 17 00:00:00 2001
+From 3fb0f4ac876dfee931be4be8b1ab75109375ad33 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 24 Apr 2019 10:58:19 +0000
 Subject: [PATCH] Fix avoutputd/videooutputd, lsm start sequence issue
@@ -27,13 +27,13 @@ startup sequence.
 Change-Id: I6c7a2ea222e6d2415f9115f58fb2282285af1c96
 Upstream-Status: Inappropriate [webOS specific]
 ---
- src/platformsupport/kmsconvenience/qkmsdevice.cpp        | 9 +++++++++
- src/platformsupport/kmsconvenience/qkmsdevice_p.h        | 1 +
- .../eglfs_kms_support/qeglfskmsintegration.cpp           | 2 ++
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp                | 9 +++++++++
+ src/platformsupport/kmsconvenience/qkmsdevice_p.h                | 1 +
+ .../deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp | 2 ++
  3 files changed, 12 insertions(+)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index aae757aeae..663c8cbf34 100644
+index ae0707a..7a51a8e 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 @@ -849,6 +849,15 @@ void QKmsDevice::discoverPlanes()
@@ -53,7 +53,7 @@ index aae757aeae..663c8cbf34 100644
  {
      return m_dri_fd;
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-index 499d7236c4..f9a911e06c 100644
+index 499d723..f9a911e 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 @@ -247,6 +247,7 @@ public:
@@ -65,7 +65,7 @@ index 499d7236c4..f9a911e06c 100644
  
      QKmsScreenConfig *screenConfig() const;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index b2a13504d5..a1241c1571 100644
+index b2a1350..a1241c1 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -76,6 +76,8 @@ void QEglFSKmsIntegration::platformInit()

@@ -1,4 +1,4 @@
-From afe59f5bc1fb71beb42549f88d6cfc10fba0a0b7 Mon Sep 17 00:00:00 2001
+From 954f1f1862b9aecbdb7c08b92ccd54243861b5d8 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 12 Jun 2019 04:46:36 +0000
 Subject: [PATCH] Update eglfs to fix composition of graphic and video plane in
@@ -28,12 +28,12 @@ Upstream-Status: Inappropriate [webOS specific]
 
 Change-Id: Iecfd351a37c630b1ea766e388400caccd3ab483e
 ---
- src/platformsupport/kmsconvenience/qkmsdevice.cpp     | 11 ++++-------
- .../eglfs_kms/qeglfskmsgbmscreen.cpp                  |  9 ++++-----
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp             | 11 ++++-------
+ .../eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp  |  9 ++++-----
  2 files changed, 8 insertions(+), 12 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index 663c8cbf34..c16cb696a4 100644
+index 7a51a8e..9d35dc8 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 @@ -339,7 +339,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
@@ -72,7 +72,7 @@ index 663c8cbf34..c16cb696a4 100644
      m_crtc_allocator |= (1 << output.crtc_index);
  
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index df965b9bee..1d71cbf031 100644
+index dc238be..fe786ce 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,15 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
