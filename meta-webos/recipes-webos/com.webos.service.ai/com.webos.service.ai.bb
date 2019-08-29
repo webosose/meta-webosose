@@ -16,8 +16,8 @@ COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-4_625e5d8c8e4b7dc6b927fb24ba210120d5a822a8"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-6_34af70c0f579ecea63d0e430183e0a20c47953d7"
+PR = "r2"
 
 inherit systemd
 inherit webos_public_repo
@@ -29,14 +29,3 @@ inherit webos_machine_impl_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-do_install_append() {
-    if [ ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', True, False, d)} ]; then
-        install -d ${D}${systemd_system_unitdir}
-        install -d ${D}/var/systemd/system/env
-        install -m 644 ${S}/files/systemd/services/ai.service ${D}${systemd_system_unitdir}/
-        install -m 644 ${S}/files/systemd/services/ai.env ${D}/var/systemd/system/env/
-    fi
-}
-
-SYSTEMD_SERVICE_${PN} = "ai.service"
