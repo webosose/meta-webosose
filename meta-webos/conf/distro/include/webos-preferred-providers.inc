@@ -89,3 +89,7 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
 PREFERRED_PROVIDER_webappmanager-webos ?= "wam"
 
 VIRTUAL-RUNTIME_ntp = "ntp sntp"
+
+# Backport from Yocto 2.7 Warrior:
+# 25e835f568 default-providers: set mesa as default provider for nativesdk-mesa
+PREFERRED_PROVIDER_nativesdk-mesa ?= "nativesdk-mesa"
