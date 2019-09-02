@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "nyx-lib glib-2.0 luna-service2 openssl udev"
 
-RDEPENDS_${PN} = "lsb gzip"
+RDEPENDS_${PN} = "lsb-release gzip"
 
 WEBOS_VERSION = "7.1.0-8_11c9f881e6e362ea23ffc7db6daddaec695c0ccc"
 PR = "r16"
