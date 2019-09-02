@@ -211,8 +211,6 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
 
 # These packages that are installed in the qemux86 image only.
 RRECOMMENDS_${PN}_append_qemux86 = " \
-    bluez5 \
-    bluez5-obex \
     fuse-utils \
     kernel-module-bluetooth \
     kernel-module-btbcm \

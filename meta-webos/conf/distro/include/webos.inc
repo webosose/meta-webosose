@@ -177,6 +177,9 @@ CACHE = "${TMPDIR}/cache/${TCMODE}-${TCLIBC}${@['', '/' + str(d.getVar('MACHINE'
 
 USER_CLASSES ?= ""
 
+# Configure Bluetooth service classes we want to support
+WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ?= "FTP"
+
 # WEBOS_EXTRA_MACHINEOVERRIDES will appear in OVERRIDES before what's added by
 # the machine architecture .inc file, which appears before MACHINE.
 # WEBOS_EXTRA_MACHINEOVERRIDES is set in webos_machine_impl_dep.bbclass . Do it
