@@ -12,7 +12,7 @@ RDEPENDS_${PN} = "qtbase-plugins configd"
 
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
-WEBOS_VERSION = "0.99.0+20-88_cb8ae7ccb8eba767f65a92b523c2a97672484a21"
+WEBOS_VERSION = "0.99.0+20-89_9b0b598bedbefa4292fb7918d46d5ede5bdc9412"
 PR = "r31"
 
 inherit webos_daemon
