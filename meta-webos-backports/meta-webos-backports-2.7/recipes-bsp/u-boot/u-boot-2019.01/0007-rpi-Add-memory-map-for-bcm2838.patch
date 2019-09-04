@@ -1,15 +1,19 @@
-From 58f4101fb3c5aee50337bcf5545a2638d4ad3c70 Mon Sep 17 00:00:00 2001
+From cfb82f8e75438979565617d323eb2c2849e486ce Mon Sep 17 00:00:00 2001
 From: Andrei Gherzan <andrei@balena.io>
 Date: Fri, 12 Jul 2019 14:27:31 +0100
-Subject: rpi: Add memory map for bcm2838
+Subject: [PATCH 7/7] rpi: Add memory map for bcm2838
+
+Define the memory map for the BCM2838 based on the dt configuration
+available in the Raspberry Pi kernel fork.
 
 Signed-off-by: Andrei Gherzan <andrei@balena.io>
+Upstream-status: Pending
 ---
  board/raspberrypi/rpi/rpi.c | 27 ++++++++++++++++++++++++---
  1 file changed, 24 insertions(+), 3 deletions(-)
 
 diff --git a/board/raspberrypi/rpi/rpi.c b/board/raspberrypi/rpi/rpi.c
-index 8b6278630f..602681ea0f 100644
+index 5510ea25c1..9dac64b920 100644
 --- a/board/raspberrypi/rpi/rpi.c
 +++ b/board/raspberrypi/rpi/rpi.c
 @@ -244,7 +244,8 @@ static uint32_t rev_type;
@@ -54,5 +58,5 @@ index 8b6278630f..602681ea0f 100644
  
  int dram_init(void)
 -- 
-2.17.1
+2.22.0
 

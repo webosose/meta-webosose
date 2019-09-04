@@ -49,6 +49,6 @@ RDEPENDS_${PN}_append_rpi = " \
 "
 
 # TODO move this part to webOS FOTA service (not yet developped) later
-RDEPENDS_${PN}_append_sota = " \
+RDEPENDS_${PN}_append_rpi_sota = " \
     u-boot-fw-utils \
 "
