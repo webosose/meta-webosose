@@ -1,13 +1,14 @@
-From d93b3793de7b62eb9c5412843cbc7fe0e79c7680 Mon Sep 17 00:00:00 2001
+From e789ab00b2e03b810571de6226c5e1e009d9036b Mon Sep 17 00:00:00 2001
 From: Matthias Brugger <mbrugger@suse.com>
 Date: Wed, 10 Jul 2019 13:24:36 +0200
-Subject: mmc: bcm2835_sdhci: Add support for bcm2711 device
+Subject: [PATCH 6/7] mmc: bcm2835_sdhci: Add support for bcm2711 device
 
 The bcm2711 has two emmc controller. The difference is the clocks
 they use. Add support for the second emmc contoller.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 Signed-off-by: Andrei Gherzan <andrei@balena.io>
+Upstream-status: Pending
 ---
  drivers/mmc/bcm2835_sdhci.c | 12 ++++++++++--
  1 file changed, 10 insertions(+), 2 deletions(-)
@@ -48,5 +49,5 @@ index 08bddd410e..e68dec3be7 100644
  };
  
 -- 
-2.17.1
+2.22.0
 

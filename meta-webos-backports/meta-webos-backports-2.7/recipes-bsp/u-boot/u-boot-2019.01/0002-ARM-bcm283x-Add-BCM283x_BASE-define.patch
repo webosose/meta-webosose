@@ -1,7 +1,7 @@
-From 9a6b42cef5b5d3d4e2ca5712d00d21bf87be8e0b Mon Sep 17 00:00:00 2001
+From 960fd526d0ce4d54fe40cfbdbc215a54c18c7100 Mon Sep 17 00:00:00 2001
 From: Matthias Brugger <mbrugger@suse.com>
 Date: Fri, 12 Jul 2019 18:20:53 +0200
-Subject: ARM: bcm283x: Add BCM283x_BASE define
+Subject: [PATCH 2/7] ARM: bcm283x: Add BCM283x_BASE define
 
 Devices of bcm283x have different base address, depending if they are on
 bcm2835 or bcm2836/7. Use BCM283x_BASE depending on the SoC you want to
@@ -9,6 +9,7 @@ build and only add the offset in the header files.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 Signed-off-by: Andrei Gherzan <andrei@balena.io>
+Upstream-status: Pending
 ---
  arch/arm/mach-bcm283x/Kconfig              | 5 +++++
  arch/arm/mach-bcm283x/include/mach/mbox.h  | 6 +-----
@@ -100,5 +101,5 @@ index 99c88e5df7..00b5e06c3a 100644
  struct bcm2835_wdog_regs {
  	u32 unknown0[7];
 -- 
-2.17.1
+2.22.0
 

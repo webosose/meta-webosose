@@ -1,14 +1,14 @@
-From 6faa1b044c5b4c61cd994c7ffdce742200cfe68f Mon Sep 17 00:00:00 2001
+From 8251fd2c39a40886e521ecfc115ef975b5956fd5 Mon Sep 17 00:00:00 2001
 From: Andrei Gherzan <andrei@balena.io>
 Date: Fri, 12 Jul 2019 11:26:10 +0100
-Subject: arm: bcm283x: Include definition for additional emmc clock
+Subject: [PATCH 5/7] arm: bcm283x: Include definition for additional emmc
+ clock
 
-This clock has a different mbox ID[1] so have this included in the
-relevant header file.
-
-[1] https://github.com/raspberrypi/firmware/issues/1179
+This clock has a different mbox ID so have this included in the relevant
+header file.
 
 Signed-off-by: Andrei Gherzan <andrei@balena.io>
+Upstream-status: Pending
 ---
  arch/arm/mach-bcm283x/include/mach/mbox.h | 1 +
  1 file changed, 1 insertion(+)
@@ -26,5 +26,5 @@ index 81cd5780e4..36d2621408 100644
  struct bcm2835_mbox_tag_get_clock_rate {
  	struct bcm2835_mbox_tag_hdr tag_hdr;
 -- 
-2.17.1
+2.22.0
 
