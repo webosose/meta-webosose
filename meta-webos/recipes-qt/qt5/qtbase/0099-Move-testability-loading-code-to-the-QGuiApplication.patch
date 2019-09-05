@@ -1,4 +1,4 @@
-From e20b9dce4fe369df4a29a6712a4b87db815da88e Mon Sep 17 00:00:00 2001
+From 832be3a38901bc1ee994beb9123f10c460b66fa7 Mon Sep 17 00:00:00 2001
 From: Tigran Avanesov <tigran.avanesov@lge.com>
 Date: Fri, 25 Jul 2014 11:13:10 +0300
 Subject: [PATCH] Move testability loading code to the QGuiApplication
