@@ -1,4 +1,4 @@
-From a049c3e824f35b4bbe03eadfd7adf9880096b49e Mon Sep 17 00:00:00 2001
+From 7d6d6fc2d22efb6e256f70389a80ea2eef715b48 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 28 Mar 2019 02:09:30 +0900
 Subject: [PATCH] eglfs: Associate touch device with window
@@ -21,20 +21,21 @@ Confirmed touch events are delivered to the window associated.
 :Issues Addressed:
 [PLAT-61071] Improve the event handling flow for multi display
 [PLAT-54519] Handle touch events for dual displays
+[PLAT-85154] Improve DRM/input device detection logic
 
 Change-Id: Ib7a8b7afd5a525cdc2a059e790badc7f8c098714
 ---
  .../input/evdevtouch/qevdevtouchhandler.cpp        | 39 ++++++++++++++++++----
  .../input/evdevtouch/qevdevtouchhandler_p.h        | 11 ++++++
- .../input/evdevtouch/qevdevtouchmanager.cpp        | 11 ++++++
- .../input/evdevtouch/qevdevtouchmanager_p.h        |  3 ++
+ .../input/evdevtouch/qevdevtouchmanager.cpp        | 14 ++++++++
+ .../input/evdevtouch/qevdevtouchmanager_p.h        |  4 +++
  .../eglfs/api/qeglfsdeviceintegration.cpp          |  6 ++++
  .../eglfs/api/qeglfsdeviceintegration_p.h          |  1 +
  .../platforms/eglfs/api/qeglfsintegration.cpp      |  6 ++--
  .../platforms/eglfs/api/qeglfsintegration_p.h      |  2 ++
  .../eglfs_kms_support/qeglfskmsintegration.cpp     |  5 +++
  .../eglfs_kms_support/qeglfskmsintegration.h       |  1 +
- 10 files changed, 77 insertions(+), 8 deletions(-)
+ 10 files changed, 81 insertions(+), 8 deletions(-)
 
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
 index f3cc160..4baa4b3 100644
@@ -196,15 +197,25 @@ index 56308d0..22de69f 100644
  
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
-index 4cacbf0..eb4279f 100644
+index 4cacbf0..8e52ee5 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
-@@ -142,4 +142,15 @@ void QEvdevTouchManager::updateInputDeviceCount()
+@@ -109,6 +109,8 @@ void QEvdevTouchManager::addDevice(const QString &deviceNode)
+     handler = new QEvdevTouchScreenHandlerThread(deviceNode, m_spec);
+     if (handler) {
+         m_activeDevices.insert(deviceNode, handler);
++        if (m_windows.contains(deviceNode))
++            handler->setWindow(m_windows.value(deviceNode));
+         connect(handler, &QEvdevTouchScreenHandlerThread::touchDeviceRegistered, this, &QEvdevTouchManager::updateInputDeviceCount);
+     } else {
+         qWarning("evdevtouch: Failed to open touch device %s", qPrintable(deviceNode));
+@@ -142,4 +144,16 @@ void QEvdevTouchManager::updateInputDeviceCount()
          QInputDeviceManager::DeviceTypeTouch, registeredTouchDevices);
  }
  
 +bool QEvdevTouchManager::setWindow(const QString &deviceNode, QWindow *window)
 +{
++    m_windows.insert(deviceNode, window);
 +    if (m_activeDevices.contains(deviceNode)) {
 +        foreach (QEvdevTouchScreenHandlerThread *handler, m_activeDevices.values(deviceNode))
 +            handler->setWindow(window);
@@ -216,7 +227,7 @@ index 4cacbf0..eb4279f 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h b/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
-index e524c51..ca3d53f 100644
+index e524c51..9d67e07 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
 @@ -54,6 +54,7 @@
@@ -236,6 +247,14 @@ index e524c51..ca3d53f 100644
      void addDevice(const QString &deviceNode);
      void removeDevice(const QString &deviceNode);
  
+@@ -75,6 +78,7 @@ private:
+     QString m_spec;
+     QDeviceDiscovery *m_deviceDiscovery;
+     QHash<QString, QEvdevTouchScreenHandlerThread *> m_activeDevices;
++    QHash<QString, QWindow *> m_windows;
+ };
+ 
+ QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 index cc103d8..a0d3650 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp

@@ -1,4 +1,4 @@
-From 663e93dc712c58f28d88e71b94608e5c243cbf24 Mon Sep 17 00:00:00 2001
+From 39b6246935c3639e2058b1ec3d72700a7059b13e Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 5 Jul 2018 16:10:46 +0900
 Subject: [PATCH] eglfs: Associate keyboard device with window
@@ -11,7 +11,9 @@ an association between the device and the window under the given output.
 If QT_QPA_EGLFS_CONFIG specifies "keyboardDevice" for a certain output
 then the keyboard handler for that device will have a reference to a
 window which belongs to that output. Then all events handled there will
-be delivered to that window directly.
+be delivered to that window directly. A keyboard handler added later
+will also be associated to the window if it refers to the same device
+node.
 It is assumed in this patch that a screen has only one window. If a
 screen has multiple windows, then the latest window created or moved to
 that screen will be used.
@@ -28,20 +30,21 @@ Confirmed keyboard events are delivered to the window associated.
 :Issues Addressed:
 [PLAT-61071] Improve the event handling flow for multi display
 [PLAT-58591] Associate keyboard and display on static mode
+[PLAT-85154] Improve DRM/input device detection logic
 
 Change-Id: I835721c5d482eaec7220aa435e2f00cdb04f2a68
 ---
  .../input/evdevkeyboard/qevdevkeyboardhandler.cpp    | 15 +++++++++++++--
  .../input/evdevkeyboard/qevdevkeyboardhandler_p.h    |  5 +++++
- .../input/evdevkeyboard/qevdevkeyboardmanager.cpp    | 11 +++++++++++
- .../input/evdevkeyboard/qevdevkeyboardmanager_p.h    |  3 +++
+ .../input/evdevkeyboard/qevdevkeyboardmanager.cpp    | 14 ++++++++++++++
+ .../input/evdevkeyboard/qevdevkeyboardmanager_p.h    |  4 ++++
  .../platforms/eglfs/api/qeglfsdeviceintegration.cpp  |  6 ++++++
  .../platforms/eglfs/api/qeglfsdeviceintegration_p.h  |  2 ++
  .../platforms/eglfs/api/qeglfsintegration.cpp        | 20 ++++++++++++++++++++
  .../platforms/eglfs/api/qeglfsintegration_p.h        |  4 ++++
  .../eglfs_kms_support/qeglfskmsintegration.cpp       |  5 +++++
  .../eglfs_kms_support/qeglfskmsintegration.h         |  2 ++
- 10 files changed, 71 insertions(+), 2 deletions(-)
+ 10 files changed, 75 insertions(+), 2 deletions(-)
 
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
 index ad134a8..e4586b3 100644
@@ -112,15 +115,25 @@ index 5498a3e..baf772e 100644
      static const QEvdevKeyboardMap::Composing s_keycompose_default[];
  };
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
-index e1659bc..3dccf08 100644
+index e1659bc..7c4db35 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
-@@ -159,4 +159,15 @@ void QEvdevKeyboardManager::switchLang()
+@@ -109,6 +109,8 @@ void QEvdevKeyboardManager::addKeyboard(const QString &deviceNode)
+     keyboard = QEvdevKeyboardHandler::create(deviceNode, m_spec, m_defaultKeymapFile);
+     if (keyboard) {
+         m_keyboards.insert(deviceNode, keyboard);
++        if (m_windows.contains(deviceNode))
++            keyboard->setWindow(m_windows.value(deviceNode));
+         QInputDeviceManagerPrivate::get(QGuiApplicationPrivate::inputDeviceManager())->setDeviceCount(
+             QInputDeviceManager::DeviceTypeKeyboard, m_keyboards.count());
+     } else {
+@@ -159,4 +161,16 @@ void QEvdevKeyboardManager::switchLang()
          handler->switchLang();
  }
  
 +bool QEvdevKeyboardManager::setWindow(const QString &deviceNode, QWindow *window)
 +{
++    m_windows.insert(deviceNode, window);
 +    if (m_keyboards.contains(deviceNode)) {
 +        foreach (QEvdevKeyboardHandler *handler, m_keyboards.values(deviceNode))
 +            handler->setWindow(window);
@@ -132,7 +145,7 @@ index e1659bc..3dccf08 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
-index 326e438..d26590e 100644
+index 326e438..a0fb322 100644
 --- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
 +++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
 @@ -58,6 +58,7 @@
@@ -143,7 +156,7 @@ index 326e438..d26590e 100644
  
  QT_BEGIN_NAMESPACE
  
-@@ -73,6 +74,8 @@ public:
+@@ -73,9 +74,12 @@ public:
      void addKeyboard(const QString &deviceNode = QString());
      void removeKeyboard(const QString &deviceNode);
  
@@ -152,6 +165,10 @@ index 326e438..d26590e 100644
  private:
      QString m_spec;
      QHash<QString,QEvdevKeyboardHandler*> m_keyboards;
++    QHash<QString,QWindow*> m_windows;
+     QDeviceDiscovery *m_deviceDiscovery;
+     QString m_defaultKeymapFile;
+ };
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 index 8e71a49..cc103d8 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
