@@ -72,4 +72,4 @@ FILES_${PN} += "${libdir}/node_modules"
 # ERROR: QA Issue: /usr/lib/node_modules/node-red/nodes/core/hardware/nrgpio contained in package nodejs-module-node-red requires /bin/bash, but no providers found in RDEPENDS_nodejs-module-node-red? [file-rdeps]
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}_remove = "bash"
+RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"

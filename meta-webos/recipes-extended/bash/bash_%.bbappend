@@ -7,7 +7,7 @@ EXTENDPRAUTO_append = "webos2"
 # the ash supplied by busybox. Prevent the /bin/sh symlink from pointing to bash
 # by decreasing its priority.
 # busybox's /bin/sh has 50
-ALTERNATIVE_PRIORITY[sh] = "40"
+ALTERNATIVE_PRIORITY[sh] = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', '40', '100', d)}"
 
 # Update sh target, because it's renamed now
 ALTERNATIVE_TARGET[sh] = "${base_bindir}/bash.bash"
@@ -16,7 +16,7 @@ ALTERNATIVE_TARGET[sh] = "${base_bindir}/bash.bash"
 # but again use lower priority than busybox applet
 ALTERNATIVE_${PN} += "bash"
 ALTERNATIVE_LINK_NAME[bash] = "${base_bindir}/bash"
-ALTERNATIVE_PRIORITY[bash] = "40"
+ALTERNATIVE_PRIORITY[bash] = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', '40', '100', d)}"
 
 # We need to revert changes from
 # http://git.openembedded.org/openembedded-core/commit/?h=rocko&id=70e544452b6825686f06484d994936ded677825f
