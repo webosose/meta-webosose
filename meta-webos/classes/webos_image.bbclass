@@ -94,19 +94,26 @@ WKS_FILE = "webos-qemux86-directdisk.wks"
 IMAGE_FSTYPES_qemux86 = "wic.vmdk"
 IMAGE_FSTYPES_qemux86-64 = "wic.vmdk"
 
-# A workaround for controlling '/media' policy of meta-updater
+# A workaround for controlling '/media' and '/opt' policy of meta-updater
 IMAGE_CMD_ostree_prepend_sota() {
-    mv ${IMAGE_ROOTFS}/media ${IMAGE_ROOTFS}/.media || true
+    echo "Moving ${IMAGE_ROOTFS} /media and /opt to /.media and /.opt to prevent IMAGE_CMD_ostree replacing them with symlinks to /var/rootdirs/"
+    mv -v ${IMAGE_ROOTFS}/media ${IMAGE_ROOTFS}/.media || true
+    mv -v ${IMAGE_ROOTFS}/opt ${IMAGE_ROOTFS}/.opt || true
 }
 IMAGE_CMD_ostree_append_sota() {
-    mv ${IMAGE_ROOTFS}/.media ${IMAGE_ROOTFS}/media
-    mkdir media
+    echo "Moving ${IMAGE_ROOTFS} /.media and /.opt back to /media and /opt"
+    mv -v ${IMAGE_ROOTFS}/.media ${IMAGE_ROOTFS}/media
+    mv -v ${IMAGE_ROOTFS}/.opt ${IMAGE_ROOTFS}/opt
+
+    # Remove the symlinks to var/rootdirs/media, var/rootdirs/opt created in IMAGE_CMD_ostree and replace them with backup versions of the real directories saved above in IMAGE_CMD_ostree
+    rm -fv ${OSTREE_ROOTFS}/media ${OSTREE_ROOTFS}/opt
+    cp -av ${IMAGE_ROOTFS}/media ${OSTREE_ROOTFS} || true
+    cp -av ${IMAGE_ROOTFS}/opt ${OSTREE_ROOTFS} || true
 }
 IMAGE_CMD_ota_append_sota() {
-    # Copy /var, /media that was ignored by ostree
-    cp -a ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
-    cp -a ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
-    cp -a ${IMAGE_ROOTFS}/media ${OTA_SYSROOT} || true
+    # Copy /var that was ignored by ostree
+    cp -av ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
+    cp -av ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
 
     # make ostree hotfix mode as default (set /usr to R/W mode)
     echo "unlocked=hotfix" >> ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0.origin
