@@ -220,10 +220,6 @@ CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/locales"
 # TODO: check if we need INSANE_SKIP on ldflags
 INSANE_SKIP_${PN} = "textrel ldflags"
 
-#ERROR: lib32-webruntime-68.0.3440.106-27-local do_package_qa: QA Issue: /usr/lib/libcbe.so contained in package lib32-webruntime requires libwayland-egl.so, but no providers found in RDEPENDS_lib32-webruntime? [file-rdeps]
-# Temporarily until upgrade to newer Yocto 2.6 and proper fix from http://gpro.lgsvl.com/221697 http://gpro.lgsvl.com/221698
-INSANE_SKIP_${PN} += "file-rdeps"
-
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
 do_compile() {
     if [ ! -f ${OUT_DIR}/${BUILD_TYPE}/build.ninja ]; then
