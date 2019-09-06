@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
 PKGV .= "-0webos3"
 EXTENDPRAUTO_append = "webos13"
@@ -12,4 +12,4 @@ SRC_URI += " \
 "
 
 RPROVIDES_${PN} += "stat"
-RPROVIDES_${PN} += "bash"
+RPROVIDES_${PN} += "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"

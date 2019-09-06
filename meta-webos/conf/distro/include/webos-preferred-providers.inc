@@ -9,8 +9,9 @@
 PREFERRED_PROVIDER_virtual/webruntime = "webruntime"
 VIRTUAL-RUNTIME_webruntime = "webruntime"
 
-PREFERRED_PROVIDER_bash = "busybox"
-VIRTUAL-RUNTIME_bash = "busybox"
+WEBOS_PREFERRED_PROVIDER_FOR_BASH = "busybox"
+PREFERRED_PROVIDER_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'busybox', 'bash', d)}"
+VIRTUAL-RUNTIME_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'busybox', 'bash', d)}"
 
 # Prefer libjpeg-turbo from meta-oe as it provides SIMD optimizations
 PREFERRED_PROVIDER_jpeg = "libjpeg-turbo"

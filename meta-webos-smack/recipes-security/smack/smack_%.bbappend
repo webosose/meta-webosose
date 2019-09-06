@@ -13,7 +13,7 @@ SRC_URI += "file://default-access \
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}-ptest_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}-ptest_remove = "bash"
+RDEPENDS_${PN}-ptest_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
 do_install_append (){
     install -d ${D}${sysconfdir}/smack/netlabel.d
