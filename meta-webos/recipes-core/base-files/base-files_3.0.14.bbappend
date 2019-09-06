@@ -3,7 +3,7 @@
 AUTHOR = "Herb Kuta <herb.kuta@lge.com>"
 
 inherit webos_filesystem_paths
-EXTENDPRAUTO_append = "webos10"
+EXTENDPRAUTO_append = "webos11"
 
 dirs700 = " \
     ${webos_db8datadir} \
@@ -13,7 +13,6 @@ dirs700 = " \
 
 dirs755 += " \
     ${webos_cryptofsdir} \
-    ${webos_picapkgdir} \
     ${webos_preferencesdir} \
     ${webos_optdir} \
 "
