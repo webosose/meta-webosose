@@ -1,9 +1,9 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi1"
+EXTENDPRAUTO_append = "webosrpi2"
 
 do_install_append_sota() {
-    install -d ${D}/mnt/bootpart
+    install -d ${D}${localstatedir}/rootdirs/mnt/bootpart
 }
 
 generate_fstab_entries_append_sota() {
