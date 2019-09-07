@@ -17,7 +17,7 @@ OSTREE_COMMIT_SUBJECT ?= "${IMAGE_BASENAME}${IMAGE_VERSION_SUFFIX}"
 SOTA_CLIENT = ""
 SOTA_CLIENT_PROV = ""
 
-# Disable sota when target is qemux86
-INHERIT_remove_qemux86 = "sota"
-DISTRO_FEATURES_remove_qemux86 = "sota usrmerge"
-DISTRO_FEATURES_NATIVE_remove_qemux86 = "sota"
+# Disable sota when target is qemu
+INHERIT_remove_qemuall = "sota"
+DISTRO_FEATURES_remove_qemuall = "sota usrmerge"
+DISTRO_FEATURES_NATIVE_remove_qemuall = "sota"
