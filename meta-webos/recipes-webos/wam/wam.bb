@@ -19,8 +19,8 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.1-18_18bbe860fdf1e7a8bbfa5750a514dfacb8805253"
-PR = "r29"
+WEBOS_VERSION = "1.0.1-20_bd2f31927b2ab1e6d4a6e85e35c1f347fb05041a"
+PR = "r30"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -81,6 +81,10 @@ do_configure_append() {
         sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
         sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" ${B}/webapp-mgr.sh
     fi
+    # disable pinch zoom
+    sed -i '/--enable-aggressive-release-policy \\/a\     --disable-pinch \\' ${B}/webapp-mgr.sh
+    # enable touch events
+    sed -i 's/--touch-events=disabled/--touch-events=enabled/' ${B}/webapp-mgr.sh
 }
 
 do_configure_append_qemux86() {

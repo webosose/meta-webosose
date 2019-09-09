@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi2"
+EXTENDPRAUTO_append_rpi = "webosrpi3"
 
 install_app_shell_append() {
      sed -i 's/# Setup 4Mb limitation mse audio buffer size/# Setup 2Mb limitation mse audio buffer size/' ${A_DIR}/run_app_shell
@@ -10,4 +10,3 @@ install_app_shell_append() {
 }
 
 PACKAGECONFIG_remove_raspberrypi4 = "gstreamer umediaserver neva-media"
-GN_ARGS_append_raspberrypi4 = " use_neva_suspend_media_capture=false"
