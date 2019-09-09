@@ -8,7 +8,7 @@ PR = "${INC_PR}.1"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium72"
 
-WEBOS_VERSION = "72.0.3626.121-11_b32cd8f211feeabb714fd411776e9a4fda68d45a"
+WEBOS_VERSION = "72.0.3626.121-12_cbd3cae45b9bc0cb40165fcc9dda1d260c35bfc3"
 WEBOS_REPO_NAME = "chromium72"
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 
