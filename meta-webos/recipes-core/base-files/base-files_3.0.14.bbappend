@@ -15,6 +15,7 @@ dirs755 += " \
     ${webos_cryptofsdir} \
     ${webos_picapkgdir} \
     ${webos_preferencesdir} \
+    ${webos_optdir} \
 "
 
 # webOS expects this directory to be writeable by all (because it's typically
@@ -31,6 +32,9 @@ do_install_prepend() {
     for d in ${dirs777}; do
         install -v -m 0777 -d ${D}$d
     done
+    if [ "${webos_optdir}" != "/opt" ] ; then
+        ln -snf ${webos_optdir} ${D}/opt
+    fi
 }
 
 do_install_append() {

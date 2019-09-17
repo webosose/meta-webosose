@@ -150,9 +150,12 @@ webos_localstoragedir = "${webos_mountablestoragedir}"
 # under this tree is erased by a NYX_SYSTEM_ERASE_DEVELOPER erasure.
 webos_developerdir = "${webos_mediadir}/developer"
 
+# Allow to move the files from /opt to some other location.
+webos_optdir = "/opt"
+
 # Unit test executables and other test scripts or executables are installed,
 # if at all, under ${webos_testsdir}/${PN}
-webos_testsdir = "/opt/webos/tests"
+webos_testsdir = "${webos_optdir}/webos/tests"
 
 # This tree contains subdirectories of various types of customization data
 webos_customizationdir = "${prefix}/palm/customization"
@@ -167,7 +170,7 @@ webos_firstusesentinelfile = "${webos_sysmgr_localstatedir}/preferences/ran-firs
 webos_crashddir = "${webos_logdir}/crashd"
 
 # SDK tools
-webos_sdkdir = "/opt/webos/sdk"
+webos_sdkdir = "${webos_optdir}/webos/sdk"
 
 # Path to file which indicate failure to init settingsservice
 webos_settingsservice_errorsentinelfile = "${webos_localstatedir}/settingsservice_critical_error"
