@@ -150,8 +150,9 @@ webos_localstoragedir = "${webos_mountablestoragedir}"
 # under this tree is erased by a NYX_SYSTEM_ERASE_DEVELOPER erasure.
 webos_developerdir = "${webos_mediadir}/developer"
 
-# Allow to move the files from /opt to some other location.
-webos_optdir = "/opt"
+# We want to maintain /opt in ostree, move it under /usr/ and base-files will
+# provide symlink /opt -> /usr/opt
+webos_optdir = "/usr/opt"
 
 # Unit test executables and other test scripts or executables are installed,
 # if at all, under ${webos_testsdir}/${PN}

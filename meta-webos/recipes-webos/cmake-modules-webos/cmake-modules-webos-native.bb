@@ -23,7 +23,8 @@ do_compile() {
      :
 }
 
-# From http://gpro.lge.com/255718
+# From http://gpro.lge.com/255718 http://gpro.lge.com/255719
 SRC_URI += " \
     file://0001-_webos_init_install_vars-add-variables-originally-im.patch \
+    file://0002-_webos_init_install_vars-change-webos_testsdir-defau.patch \
 "

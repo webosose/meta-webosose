@@ -57,3 +57,9 @@ EXTRA_OECMAKE += '${@oe.utils.conditional("WEBOS_DISABLE_LS2_SECURITY", "1", "-D
 PACKAGES += "${PN}-perf"
 
 FILES_${PN}-perf += "${webos_testsdir}/${BPN}-perf"
+
+# Disable QA checks which are now triggered after moving the webos_testsdir from /opt to /usr/opt
+# luna-service2-ptest: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/libls-hublib-test.so
+INSANE_SKIP_${PN}-ptest += "libdir"
+# luna-service2-dbg: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/.debug/libls-hublib-test.so
+INSANE_SKIP_${PN}-dbg += "libdir"
