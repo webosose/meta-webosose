@@ -1,4 +1,4 @@
-From 369fe8106353a65ae7c9b827c5965b867256cafb Mon Sep 17 00:00:00 2001
+From 300fd1cacb149977af4d3a2f062e34d1d4cfadd0 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 2 Apr 2018 14:00:37 +0900
 Subject: [PATCH] eglfs: Support multiple display
@@ -46,10 +46,10 @@ Upstream-Status : Inappropriate [webOS specific]
  9 files changed, 186 insertions(+), 46 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index d0f18d5ba8..f1faceed86 100644
+index fec59cfc7b..224810b382 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -964,44 +964,48 @@ QKmsScreenConfig *QKmsDevice::screenConfig() const
+@@ -959,44 +959,48 @@ QKmsScreenConfig *QKmsDevice::screenConfig() const
      return m_screenConfig;
  }
  
@@ -120,7 +120,7 @@ index d0f18d5ba8..f1faceed86 100644
      const QByteArray headless = headlessStr.toUtf8();
      QSize headlessSize;
      if (sscanf(headless.constData(), "%dx%d", &headlessSize.rwidth(), &headlessSize.rheight()) == 2) {
-@@ -1011,12 +1015,12 @@ void QKmsScreenConfig::loadConfig()
+@@ -1006,12 +1010,12 @@ void QKmsScreenConfig::loadConfig()
          m_headless = false;
      }
  
@@ -138,7 +138,7 @@ index d0f18d5ba8..f1faceed86 100644
      if (!vdOriString.isEmpty()) {
          if (vdOriString == QLatin1String("horizontal"))
              m_virtualDesktopLayout = VirtualDesktopLayoutHorizontal;
-@@ -1026,7 +1030,7 @@ void QKmsScreenConfig::loadConfig()
+@@ -1021,7 +1025,7 @@ void QKmsScreenConfig::loadConfig()
              qCWarning(qLcKmsDebug) << "Unknown virtualDesktopOrientation value" << vdOriString;
      }
  
@@ -271,7 +271,7 @@ index 4c3149c7c9..d3ac31892a 100644
  QT_END_NAMESPACE
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 88b1f5083d..bc4024234a 100644
+index 791f44bb88..1d1c7b7a45 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -38,6 +38,9 @@
@@ -456,7 +456,7 @@ index 88b1f5083d..bc4024234a 100644
      switch (resourceType(resource)) {
      case XlibDisplay:
          // Play nice when using the x11 hooks: Be compatible with xcb that allows querying
-@@ -518,7 +610,12 @@ void QEglFSIntegration::createInputHandlers()
+@@ -515,7 +607,12 @@ void QEglFSIntegration::createInputHandlers()
  
  EGLNativeDisplayType QEglFSIntegration::nativeDisplay() const
  {
