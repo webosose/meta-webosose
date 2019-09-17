@@ -1,0 +1,42 @@
+From 303e12f0f60bce9211b6ee208942a103b3987274 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Tue, 17 Sep 2019 03:35:42 -0700
+Subject: [PATCH 2/2] _webos_init_install_vars: change webos_testsdir default
+ value
+
+:Release Notes:
+Move from /opt to /usr/opt.
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-85921] Move /opt into /usr/opt
+
+Change-Id: I8d49d3cab0cec1d29a0ff7feea4d7b0fb66fbe9a
+---
+ webOS/webOS.cmake | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/webOS/webOS.cmake b/webOS/webOS.cmake
+index 37aa2ca..48ae256 100644
+--- a/webOS/webOS.cmake
++++ b/webOS/webOS.cmake
+@@ -486,8 +486,8 @@ macro(_webos_init_install_vars)
+ 	# Deprecated name for WEBOS_INSTALL_MOUNTABLESTORAGEDIR
+ 	_webos_set_from_env(WEBOS_INSTALL_LOCALSTORAGEDIR           webos_mountablestoragedir       ${WEBOS_INSTALL_MOUNTABLESTORAGEDIR})
+ 
+-	# The /opt/webos/tests tree contains all installed unit and/or integration test scripts and executables
+-	_webos_set_from_env(WEBOS_INSTALL_TESTSDIR                  webos_testsdir                  ${WEBOS_INSTALL_ROOT}/opt/webos/tests)
++	# The /usr/opt/webos/tests tree contains all installed unit and/or integration test scripts and executables
++	_webos_set_from_env(WEBOS_INSTALL_TESTSDIR                  webos_testsdir                  ${WEBOS_INSTALL_PREFIX}/opt/webos/tests)
+ 
+ 	# This tree contains subdirectories of various types of customization data
+ 	_webos_set_from_env(WEBOS_INSTALL_WEBOS_CUSTOMIZATIONDIR              webos_customizationdir                  ${WEBOS_INSTALL_PREFIX}/palm/customization)
+-- 
+2.17.1
+
