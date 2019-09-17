@@ -1,0 +1,61 @@
+From 9a87fc9c5ef0a3e4df82c3f62befe3d149186f43 Mon Sep 17 00:00:00 2001
+From: Junil Kim <jjunil79.kim@lge.com>
+Date: Mon, 28 Oct 2019 18:13:59 +0900
+Subject: [PATCH] Set 2 outputs to call DRM_IOCTL_VMW_UPDATE_LAYOUT for vbox
+
+:Release Notes:
+Set 2 outputs to call DRM_IOCTL_VMW_UPDATE_LAYOUT for vbox
+
+:Detailed Notes:
+- Set 2 outputs to call DRM_IOCTL_VMW_UPDATE_LAYOUT for vbox.
+- Set DefaultDependecies=no in vmwgfx-setoutput systemd unit.
+Refer to the 'Default Dependencies' at
+https://www.freedesktop.org/software/systemd/man/systemd.target.html
+
+:Testing Performed:
+N/A
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[PLAT-77793] Support Multi Display on Virtualbox
+---
+ setlayout.c                 | 7 ++++---
+ unit/vmwgfx-setlayout.cmake | 1 +
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/setlayout.c b/setlayout.c
+index 68eee2e..9dc02af 100644
+--- a/setlayout.c
++++ b/setlayout.c
+@@ -97,10 +97,11 @@ int openSVGADrmFd() {
+ int setResolution(int fd, int32_t x, int32_t y, uint32_t w, uint32_t h) {
+     int rc;
+     struct DRMVMWUPDATELAYOUT ioctlLayout;
+-    struct DRMVMWRECT rect = {
+-        x, y, w, h
++    struct DRMVMWRECT rect[] = {
++        x, y, w, h,
++        x + w, y, w, h
+     };
+-    ioctlLayout.cOutputs = 1;
++    ioctlLayout.cOutputs = 2;
+     ioctlLayout.ptrRects = (uint64_t)(&rect);
+     rc = ioctl(fd, DRM_IOCTL_VMW_UPDATE_LAYOUT, &ioctlLayout, sizeof(ioctlLayout), NULL);
+     return rc;
+diff --git a/unit/vmwgfx-setlayout.cmake b/unit/vmwgfx-setlayout.cmake
+index 1ac7391..b11fe6a 100644
+--- a/unit/vmwgfx-setlayout.cmake
++++ b/unit/vmwgfx-setlayout.cmake
+@@ -16,6 +16,7 @@
+ 
+ [Unit]
+ Description=webos - "%n"
++DefaultDependencies=no
+ 
+ [Install]
+ WantedBy=default.target
+-- 
+2.17.1
+

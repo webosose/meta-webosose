@@ -87,7 +87,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.11 based on 5.12.meta-qt5-shared.9
+# Patches from 5.12.meta-webos.12 based on 5.12.meta-qt5-shared.9
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-DisableCertificateVerificationCheck.patch \
@@ -120,7 +120,7 @@ SRC_URI_append = " \
     file://0029-Workaround-for-SGX-clipping-bug.patch \
     file://0030-Workaround-for-RGX-broken-render-to-texture-with-siz.patch \
     file://0031-Fix-bug-of-calculate-xsize-for-fonts.patch \
-    file://0032-Emulator-NYX-integration-with-eglfs-plugin.patch \
+    file://0032-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
 "
 
 SRC_URI_append_hardware = " \

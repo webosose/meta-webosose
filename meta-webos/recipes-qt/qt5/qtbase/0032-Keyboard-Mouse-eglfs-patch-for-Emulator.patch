@@ -1,42 +1,50 @@
-From 02e120952cdddb160c5e4896d2b31a79af13f70a Mon Sep 17 00:00:00 2001
-From: "krishna.jha" <krishna.jha@lge.com>
+From 8cb4cd5b3f8bad388d23666e7ae5a316c25d7aa7 Mon Sep 17 00:00:00 2001
+From: Junil Kim <jjunil79.kim@lge.com>
 Date: Thu, 10 Aug 2017 14:40:15 +0530
-Subject: [PATCH] Emulator NYX integration with eglfs plugin
+Subject: [PATCH] Keyboard/Mouse eglfs patch for Emulator
 
 :Release Notes:
-Nyx input subsystem integration with eglfs plugin.
-Linux input key code and QT licence update.
+Use QEvdevMouseManager instead of QLinuxMouseHandler for virtualbox.
 
 :Detailed Notes:
-Emulator screen resolution set to 1920*1080.
-Nyx input subsystem integration for keyboard and mouse functionality.
+Previously, QLinuxMouseHandler and QEmulatorKeyboardManager were added
+to handle keyboard and mouse events in the emulator.
+The QLinuxMouseHandler gets input events from "VirtualBox USB Tablet"
+and the event coordinates were wrong in vbox 2 displays case.
+However, QEvdevMouseManager could get the events from
+"VirtualBox mouse integration" input device and it is valid even
+in vbox 2 displays case.
+In this patch, QEmulatorKeyboardManager still is used to handle keyboard
+event. But without this, virtualbox emulator can get keyboard events
+via QEvdevKeyboardManager as well.
+At this time, there are no problems with the keyboard's operability,
+so the existing patch remains intact, but it needs to be reviewed in the future.
 
 :Testing Performed:
 Launched Home screen successfuly.
 Keyboard and Mouse function verified.
+Mouse function verified in Vbox 2 displays.
+- Test Cases
+ QSDK-3128: verification mouse events on 2 displays in virtualbox environment
 
 :QA Notes:
+N/A
 
 :Issues Addressed:
 [PLAT-38159] Configure mesa for Virtual GPU Device.
 [PLAT-38160] Configure keyboard with QEMU input device.
 [PLAT-38161] Configure mouse with QEMU input device.
 [PLAT-49529] Update qtbase emulator integration to work with Qt 5.9
-
-Upstream-Status: Inappropriate [webOS specific with nyx dependency]
-
-Change-Id: I1e932ba47f217198fb03eff1bcdb00527598fc38
+[PLAT-77793] Support Multi Display on Virtualbox.
 ---
  config_help.txt                               |   1 +
  src/gui/configure.json                        |  14 +-
- .../kmsconvenience/kmsconvenience.pro         |   2 +
- .../kmsconvenience/qkmsdevice.cpp             |   5 +
  .../platforms/eglfs/api/InputControl.h        |  37 +
  .../platforms/eglfs/api/NyxInputControl.cpp   |  72 ++
  .../platforms/eglfs/api/NyxInputControl.h     |  39 ++
  src/plugins/platforms/eglfs/api/api.pri       |  22 +
  .../platforms/eglfs/api/input_keycode.h       |  51 ++
- .../platforms/eglfs/api/qeglfsintegration.cpp |  32 +
+ .../platforms/eglfs/api/qeglfsintegration.cpp |  29 +
  .../platforms/eglfs/api/qeglfsintegration_p.h |   7 +
  .../api/qemulatorkeyboard_defaultmap_p.h      | 640 ++++++++++++++++++
  .../eglfs/api/qemulatorkeyboardhandler.cpp    | 156 +++++
@@ -47,9 +55,7 @@ Change-Id: I1e932ba47f217198fb03eff1bcdb00527598fc38
  .../platforms/eglfs/api/qinputdevicescanner.h |  51 ++
  .../platforms/eglfs/api/qlinuxmouse.cpp       | 277 ++++++++
  src/plugins/platforms/eglfs/api/qlinuxmouse.h |  54 ++
- .../deviceintegration/eglfs_kms/eglfs_kms.pro |   2 +
- .../eglfs_kms/qeglfskmsgbmintegration.cpp     |   8 +
- 22 files changed, 1954 insertions(+), 1 deletion(-)
+ 18 files changed, 1934 insertions(+), 1 deletion(-)
  create mode 100644 src/plugins/platforms/eglfs/api/InputControl.h
  create mode 100644 src/plugins/platforms/eglfs/api/NyxInputControl.cpp
  create mode 100644 src/plugins/platforms/eglfs/api/NyxInputControl.h
@@ -122,37 +128,6 @@ index 6dd6f5b16c..6b6e6507ab 100644
              ]
          },
          {
-diff --git a/src/platformsupport/kmsconvenience/kmsconvenience.pro b/src/platformsupport/kmsconvenience/kmsconvenience.pro
-index 0c5a20a239..2d14a1bd2b 100644
---- a/src/platformsupport/kmsconvenience/kmsconvenience.pro
-+++ b/src/platformsupport/kmsconvenience/kmsconvenience.pro
-@@ -6,6 +6,8 @@ CONFIG += static internal_module
- 
- DEFINES += QT_NO_CAST_FROM_ASCII
- 
-+qtConfig(webos-emulator): DEFINES += WEBOS_EMULATOR=1
-+
- HEADERS += \
-     qkmsdevice_p.h
- 
-diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index fec59cfc7b..d0f18d5ba8 100644
---- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-+++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -184,8 +184,13 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
-     auto userConfig = m_screenConfig->outputSettings();
-     QVariantMap userConnectorConfig = userConfig.value(QString::fromUtf8(connectorName));
-     // default to the preferred mode unless overridden in the config
-+#if defined(WEBOS_EMULATOR)
-+    const QByteArray mode = userConnectorConfig.value(QStringLiteral("mode"), QStringLiteral("1920x1080"))
-+        .toByteArray().toLower();
-+#else
-     const QByteArray mode = userConnectorConfig.value(QStringLiteral("mode"), QStringLiteral("preferred"))
-         .toByteArray().toLower();
-+#endif
-     if (mode == "off") {
-         configuration = OutputConfigOff;
-     } else if (mode == "preferred") {
 diff --git a/src/plugins/platforms/eglfs/api/InputControl.h b/src/plugins/platforms/eglfs/api/InputControl.h
 new file mode 100644
 index 0000000000..e4d1c2ca6a
@@ -408,7 +383,7 @@ index 0000000000..3ecef96961
 +
 +
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 674f579b4f..88b1f5083d 100644
+index 674f579b4f..791f44bb88 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -98,6 +98,11 @@
@@ -423,7 +398,7 @@ index 674f579b4f..88b1f5083d 100644
  static void initResources()
  {
  #ifndef QT_NO_CURSOR
-@@ -455,6 +460,32 @@ void QEglFSIntegration::switchLangStatic()
+@@ -455,6 +460,29 @@ void QEglFSIntegration::switchLangStatic()
  #endif
  }
  
@@ -438,10 +413,6 @@ index 674f579b4f..88b1f5083d 100644
 +    for (int i = 0; i < scanner->getNumOfKeyboards(); i++) {
 +        printf("KbdName: %s\n", scanner->getKeyboardName(i).toUtf8().data());
 +    }
-+    for (int i = 0; i < scanner->getNumOfMouses(); i++) {
-+        QString mouse = scanner->getMouseName(i);
-+        m_mouses.append(new QLinuxMouseHandler(mouse));
-+    }
 +    /* Use our own QInputDeviceScanner to locate keyboards, if none are found, fall back
 +     * to the default QEvdevKeyboardManager methodology in Qt (by sending in a blank string)
 +     */
@@ -450,13 +421,14 @@ index 674f579b4f..88b1f5083d 100644
 +        keyboardDevices.append(":" + scanner->getKeyboardName(k));
 +    }
 +    new QEmulatorKeyboardManager(QLatin1String("EvdevKeyboard"), keyboardDevices, this);
++    new QEvdevMouseManager(QLatin1String("EvdevMouse"), QString("abs") /* spec */, this);
 +}
 +#else
 +
  void QEglFSIntegration::createInputHandlers()
  {
  #if QT_CONFIG(libinput)
-@@ -483,6 +514,7 @@ void QEglFSIntegration::createInputHandlers()
+@@ -483,6 +511,7 @@ void QEglFSIntegration::createInputHandlers()
     new QIntegrityHIDManager("HID", "", this);
  #endif
  }
@@ -1663,7 +1635,7 @@ index 0000000000..4cbc0c250a
 +#endif // QEMULATORKEYBOARDMANAGER_P_H
 diff --git a/src/plugins/platforms/eglfs/api/qinputdevicescanner.cpp b/src/plugins/platforms/eglfs/api/qinputdevicescanner.cpp
 new file mode 100644
-index 0000000000..8bdcc1778c
+index 0000000000..7f220435ad
 --- /dev/null
 +++ b/src/plugins/platforms/eglfs/api/qinputdevicescanner.cpp
 @@ -0,0 +1,139 @@
@@ -1744,7 +1716,7 @@ index 0000000000..8bdcc1778c
 +                       || devicePhys.startsWith("usb-ehci")
 +                       || devicePhys.startsWith("usb-ohci")
 +		       || deviceName.contains("keyboard")
-+		       || deviceName.contains("Mouse")
++               || deviceName.contains("Mouse", Qt::CaseInsensitive)
 +		       || deviceName.contains("Tablet")) {
 +                unsigned long evbit[NBITS(EV_MAX + 1)];
 +
@@ -2206,43 +2178,3 @@ index 0000000000..678f19337a
 +};
 +
 +#endif /* QLINUX_MOUSE_H */
-diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
-index f5c2c0ed89..88b7a4fc48 100644
---- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
-+++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
-@@ -11,6 +11,8 @@ INCLUDEPATH += $$PWD/../../api $$PWD/../eglfs_kms_support
- # Avoid X11 header collision, use generic EGL native types
- DEFINES += QT_EGL_NO_X11
- 
-+qtConfig(webos-emulator): DEFINES += WEBOS_EMULATOR=1
-+
- QMAKE_USE += gbm drm
- CONFIG += egl
- 
-diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index f154520669..4a7587b76b 100644
---- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-+++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-@@ -52,6 +52,10 @@
- 
- #include <gbm.h>
- 
-+#if defined(WEBOS_EMULATOR)
-+#define VIRTUAL_GPU_PATH  "/dev/dri/card0"
-+#endif
-+
- QT_BEGIN_NAMESPACE
- 
- QMutex QEglFSKmsGbmScreen::m_waitForFlipMutex;
-@@ -132,7 +136,11 @@ void QEglFSKmsGbmIntegration::presentBuffer(QPlatformSurface *surface)
- 
- QKmsDevice *QEglFSKmsGbmIntegration::createDevice()
- {
-+#if defined(WEBOS_EMULATOR)
-+    QString path = VIRTUAL_GPU_PATH;
-+#else
-     QString path = screenConfig()->devicePath();
-+#endif
-     if (!path.isEmpty()) {
-         qCDebug(qLcEglfsKmsDebug) << "GBM: Using DRM device" << path << "specified in config file";
-     } else {
