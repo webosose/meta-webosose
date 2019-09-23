@@ -15,6 +15,7 @@ SRC_URI += "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://lxc.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://vswitch.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://xt-checksum.cfg', '', d)} \
+    file://bridge.cfg \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \
@@ -25,6 +26,7 @@ KERNEL_MODULE_AUTOLOAD_append = " \
     videodev \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'nf_conntrack_ipv6', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'openvswitch', '', d)} \
+    bridge \
 "
 
 do_deploy_append() {
