@@ -1,0 +1,404 @@
+From f79b5418cc2cff7127d702170c4f2cf11eda213e Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Sat, 31 Aug 2019 14:41:49 +0900
+Subject: [PATCH] Provide station information when AP mode
+
+Provide station information when AP mode
+
+---
+ gsupplicant/gsupplicant.h |  2 +
+ gsupplicant/supplicant.c  | 53 +++++++++++++++++++++++++++
+ include/technology.h      |  2 +
+ plugins/wifi.c            | 21 +++++++++++
+ src/connman.h             | 11 ++++++
+ src/manager.c             | 21 +++++++++++
+ src/technology.c          | 36 ++++++++++++++++++
+ src/tethering.c           | 93 +++++++++++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 239 insertions(+)
+
+diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
+index 3520ee7..a3e5d51 100644
+--- a/gsupplicant/gsupplicant.h
++++ b/gsupplicant/gsupplicant.h
+@@ -375,6 +375,8 @@ struct _GSupplicantCallbacks {
+ 	void (*network_changed) (GSupplicantNetwork *network,
+ 					const char *property);
+ 	void (*network_associated) (GSupplicantNetwork *network);
++	void (*station_added) (const char *mac);
++	void (*station_removed) (const char *mac);
+ 	void (*peer_found) (GSupplicantPeer *peer);
+ 	void (*peer_lost) (GSupplicantPeer *peer);
+ 	void (*peer_changed) (GSupplicantPeer *peer,
+diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
+index fc6074c..f9f75a5 100644
+--- a/gsupplicant/supplicant.c
++++ b/gsupplicant/supplicant.c
+@@ -3031,6 +3031,56 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
+ 	callback_wps_state(interface);
+ }
+ 
++static void signal_station_connected(const char *path, DBusMessageIter *iter)
++{
++	GSupplicantInterface *interface;
++	const char *sta_mac = NULL;
++
++	SUPPLICANT_DBG("path %s %s", path, SUPPLICANT_PATH);
++
++	if (callbacks_pointer->station_added == NULL)
++		return 0;
++
++	if (g_strcmp0(path, "/") == 0)
++		return ;
++
++	interface = g_hash_table_lookup(interface_table, path);
++	if (interface == NULL)
++		return;
++
++	dbus_message_iter_get_basic(iter, &sta_mac);
++	if (sta_mac == NULL)
++		return;
++
++	SUPPLICANT_DBG("New station %s connected", sta_mac);
++	callbacks_pointer->station_added(sta_mac);
++}
++
++static void signal_station_disconnected(const char *path, DBusMessageIter *iter)
++{
++	GSupplicantInterface *interface;
++	const char *sta_mac = NULL;
++
++	SUPPLICANT_DBG("path %s %s", path, SUPPLICANT_PATH);
++
++	if (callbacks_pointer->station_removed == NULL)
++		return;
++
++	if (g_strcmp0(path, "/") == 0)
++		return;
++
++	interface = g_hash_table_lookup(interface_table, path);
++	if (interface == NULL)
++		return;
++
++	dbus_message_iter_get_basic(iter, &sta_mac);
++	if (sta_mac == NULL)
++		return;
++
++	SUPPLICANT_DBG("Station %s disconnected", sta_mac);
++	callbacks_pointer->station_removed(sta_mac);
++}
++
+ static void create_peer_identifier(GSupplicantPeer *peer)
+ {
+ 	const unsigned char test[ETH_ALEN] = {};
+@@ -3591,6 +3641,9 @@ static struct {
+ 	{ SUPPLICANT_INTERFACE ".Interface", "NetworkAdded",      signal_network_added     },
+ 	{ SUPPLICANT_INTERFACE ".Interface", "NetworkRemoved",    signal_network_removed   },
+ 
++	{ SUPPLICANT_INTERFACE ".Interface", "StaAuthorized",     signal_station_connected   },
++	{ SUPPLICANT_INTERFACE ".Interface", "StaDeauthorized",   signal_station_disconnected },
++
+ 	{ SUPPLICANT_INTERFACE ".BSS", "PropertiesChanged", signal_bss_changed   },
+ 
+ 	{ SUPPLICANT_INTERFACE ".Interface.WPS", "Credentials", signal_wps_credentials },
+diff --git a/include/technology.h b/include/technology.h
+index d24d765..d5c08e4 100644
+--- a/include/technology.h
++++ b/include/technology.h
+@@ -38,6 +38,8 @@ struct connman_technology;
+ 
+ int connman_technology_tethering_notify(struct connman_technology *technology,
+ 							bool enabled);
++int connman_technology_add_station(enum connman_service_type type, const char *mac);
++int connman_technology_remove_station(char *mac);
+ int connman_technology_set_regdom(const char *alpha2);
+ void connman_technology_regdom_notify(struct connman_technology *technology,
+ 							const char *alpha2);
+diff --git a/plugins/wifi.c b/plugins/wifi.c
+index c909a2d..f35337f 100644
+--- a/plugins/wifi.c
++++ b/plugins/wifi.c
+@@ -3287,6 +3287,25 @@ static void network_associated(GSupplicantNetwork *network)
+ 	interface_state(interface);
+ }
+ 
++static void station_added(const char *mac)
++{
++	int stacount = 0;
++	connman_technology_tethering_add_station(CONNMAN_SERVICE_TYPE_WIFI, mac);
++
++	stacount = __connman_tethering_sta_count();
++	__connman_technology_sta_count_changed(CONNMAN_SERVICE_TYPE_WIFI, stacount);
++}
++
++static void station_removed(const char *mac)
++{
++	int stacount = 0;
++
++	connman_technology_tethering_remove_station(mac);
++
++	stacount = __connman_tethering_sta_count();
++	__connman_technology_sta_count_changed(CONNMAN_SERVICE_TYPE_WIFI, stacount);
++}
++
+ static void apply_peer_services(GSupplicantPeer *peer,
+ 				struct connman_peer *connman_peer)
+ {
+@@ -3507,6 +3526,8 @@ static const GSupplicantCallbacks callbacks = {
+ 	.network_removed	= network_removed,
+ 	.network_changed	= network_changed,
+ 	.network_associated	= network_associated,
++	.station_added          = station_added,
++	.station_removed        = station_removed,
+ 	.peer_found		= peer_found,
+ 	.peer_lost		= peer_lost,
+ 	.peer_changed		= peer_changed,
+diff --git a/src/connman.h b/src/connman.h
+index f617425..8d7aeb0 100644
+--- a/src/connman.h
++++ b/src/connman.h
+@@ -625,10 +625,21 @@ bool __connman_config_get_bool(GKeyFile *key_file,
+ bool __connman_config_address_provisioned(const char *address,
+ 					const char *netmask);
+ 
++struct connman_station_info {
++	bool is_connected;
++	char *path;
++	char *type;
++	char ip[64];
++	char mac[32];
++	char hostname[64];
++};
++
+ int __connman_tethering_init(void);
+ void __connman_tethering_cleanup(void);
+ 
+ const char *__connman_tethering_get_bridge(void);
++int __connman_tethering_sta_count();
++GHashTable *__connman_tethering_get_sta_hash();
+ int __connman_tethering_set_enabled(void);
+ void __connman_tethering_set_disabled(void);
+ int __connman_tethering_set_enabled_with_ip(const char *ip);
+diff --git a/src/manager.c b/src/manager.c
+index d15ce20..758ac70 100644
+--- a/src/manager.c
++++ b/src/manager.c
+@@ -138,6 +138,24 @@ static DBusMessage *get_technologies(DBusConnection *conn,
+ 	return reply;
+ }
+ 
++static DBusMessage *get_sta_count(DBusConnection *conn,
++               DBusMessage *msg, void *data)
++{
++	DBusMessage *reply;
++	int sta_count = 0;
++
++	reply = dbus_message_new_method_return(msg);
++	if (reply == NULL)
++		return NULL;
++
++	sta_count = __connman_tethering_sta_count();
++
++	dbus_message_append_args(reply,
++				DBUS_TYPE_INT32, &sta_count, DBUS_TYPE_INVALID);
++
++	return reply;
++}
++
+ static DBusMessage *remove_provider(DBusConnection *conn,
+ 				    DBusMessage *msg, void *data)
+ {
+@@ -510,6 +528,9 @@ static const GDBusMethodTable manager_methods[] = {
+ 	{ GDBUS_METHOD("GetTechnologies",
+ 			NULL, GDBUS_ARGS({ "technologies", "a(oa{sv})" }),
+ 			get_technologies) },
++	{ GDBUS_METHOD("GetStaCount",
++			NULL, GDBUS_ARGS({ "stacount", "i" }),
++			get_sta_count) },
+ 	{ GDBUS_DEPRECATED_METHOD("RemoveProvider",
+ 			GDBUS_ARGS({ "provider", "o" }), NULL,
+ 			remove_provider) },
+diff --git a/src/technology.c b/src/technology.c
+index c31c5fc..9dc95f4 100644
+--- a/src/technology.c
++++ b/src/technology.c
+@@ -2118,3 +2118,39 @@ void __connman_technology_cleanup(void)
+ 
+ 	dbus_connection_unref(connection);
+ }
++
++static void append_station_mac(DBusMessageIter *iter, void *user_data)
++{
++	GHashTable *sta_hash = __connman_tethering_get_sta_hash();
++
++	GHashTableIter iterator;
++	gpointer key, value;
++	g_hash_table_iter_init (&iterator, sta_hash);
++
++	struct connman_station_info *info_found;
++
++	while (g_hash_table_iter_next (&iterator, &key, &value))
++	{
++		info_found = value;
++		const char* temp = info_found->mac;
++		dbus_message_iter_append_basic(iter,
++						DBUS_TYPE_STRING, &temp);
++	}
++}
++
++void __connman_technology_sta_count_changed(enum connman_service_type type, int stacount)
++{
++	struct connman_technology *technology;
++
++	technology = technology_find(type);
++	if (technology == NULL)
++		return;
++
++	connman_dbus_property_changed_basic(technology->path,
++					CONNMAN_TECHNOLOGY_INTERFACE, "StaCount",
++					DBUS_TYPE_INT32, &stacount);
++
++	connman_dbus_property_changed_array(technology->path,
++					CONNMAN_TECHNOLOGY_INTERFACE, "StationMac",
++					DBUS_TYPE_STRING, append_station_mac, NULL);
++}
+diff --git a/src/tethering.c b/src/tethering.c
+index 3ed3522..75d08f2 100644
+--- a/src/tethering.c
++++ b/src/tethering.c
+@@ -29,6 +29,7 @@
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <stdio.h>
++#include <stdbool.h>
+ #include <sys/ioctl.h>
+ #include <net/if.h>
+ #include <linux/sockios.h>
+@@ -53,6 +54,9 @@
+ 
+ #define DEFAULT_MTU	1500
+ 
++#define CONNMAN_STATION_STR_INFO_LEN 64
++#define CONNMAN_STATION_MAC_INFO_LEN 32
++
+ static char *private_network_primary_dns = NULL;
+ static char *private_network_secondary_dns = NULL;
+ 
+@@ -61,6 +65,7 @@ static GDHCPServer *tethering_dhcp_server = NULL;
+ static struct connman_ippool *dhcp_ippool = NULL;
+ static DBusConnection *connection;
+ static GHashTable *pn_hash;
++static GHashTable *sta_hash;
+ 
+ struct connman_private_network {
+ 	char *owner;
+@@ -77,6 +82,89 @@ struct connman_private_network {
+ 	char *secondary_dns;
+ };
+ 
++static void destroy_station(gpointer key, gpointer value, gpointer user_data)
++{
++	struct connman_station_info *station_info;
++
++	__sync_synchronize();
++
++	station_info = value;
++
++	g_free(station_info->path);
++	g_free(station_info->type);
++	g_free(station_info);
++}
++
++int connman_technology_tethering_add_station(enum connman_service_type type,
++                                               const char *mac)
++{
++	const char *str_type;
++	char *lower_mac;
++	char *path;
++	struct connman_station_info *station_info;
++
++	__sync_synchronize();
++
++	DBG("type %d", type);
++
++	str_type = __connman_service_type2string(type);
++	if (str_type == NULL)
++		return 0;
++
++	path = g_strdup_printf("%s/technology/%s", CONNMAN_PATH, str_type);
++
++	station_info = g_try_new0(struct connman_station_info, 1);
++	if(station_info == NULL)
++		return -ENOMEM;
++
++	lower_mac = g_ascii_strdown(mac, -1);
++
++	memcpy(station_info->mac, lower_mac, strlen(lower_mac) + 1);
++	station_info->path = path;
++	station_info->type = g_strdup(str_type);
++
++	g_hash_table_insert(sta_hash, station_info->mac, station_info);
++
++	g_free(lower_mac);
++	return 0;
++}
++
++int connman_technology_tethering_remove_station(const char *mac)
++{
++	char *lower_mac;
++	struct connman_station_info *info_found;
++
++	__sync_synchronize();
++
++	lower_mac = g_ascii_strdown(mac, -1);
++
++	info_found = g_hash_table_lookup(sta_hash, lower_mac);
++	if (info_found == NULL)
++		return -EACCES;
++
++	g_free(lower_mac);
++	g_hash_table_remove(sta_hash, info_found->mac);
++	g_free(info_found->path);
++	g_free(info_found->type);
++	g_free(info_found);
++
++	return 0;
++}
++
++int __connman_tethering_sta_count()
++{
++	if (sta_hash != NULL)
++		return g_hash_table_size(sta_hash);
++	else
++		return 0;
++}
++
++GHashTable *__connman_tethering_get_sta_hash()
++{
++	if (sta_hash != NULL)
++		return sta_hash;
++}
++
+ const char *__connman_tethering_get_bridge(void)
+ {
+ 	int sk, err;
+@@ -663,6 +751,9 @@ int __connman_tethering_init(void)
+ 	pn_hash = g_hash_table_new_full(g_str_hash, g_str_equal,
+ 						NULL, remove_private_network);
+ 
++	sta_hash = g_hash_table_new_full(g_str_hash, g_str_equal,
++						NULL, NULL);
++
+ 	return 0;
+ }
+ 
+@@ -683,5 +774,7 @@ void __connman_tethering_cleanup(void)
+ 		return;
+ 
+ 	g_hash_table_destroy(pn_hash);
++	g_hash_table_foreach(sta_hash, destroy_station, NULL);
++	g_hash_table_destroy(sta_hash);
+ 	dbus_connection_unref(connection);
+ }
+-- 
+1.9.1
+

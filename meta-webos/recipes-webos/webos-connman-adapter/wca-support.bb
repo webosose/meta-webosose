@@ -6,7 +6,7 @@ SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-2_ea5b172d2490da0acd115175aee8ca70bb799a7e"
+WEBOS_VERSION = "1.0.0-3_f0f033f7e50a2c437cbae89f9f314c1dcd23328b"
 PR = "r1"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib luna-prefs wca-support-api"

@@ -1,0 +1,1008 @@
+From 24825998ff3043a01e73b87bc690720682dcc4e5 Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Wed, 28 Aug 2019 15:35:45 +0900
+Subject: [PATCH] Support channel frequency of scanned AP
+
+Support channel frequency of scanned AP
+
+---
+ gsupplicant/gsupplicant.h |  19 ++++++
+ gsupplicant/supplicant.c  | 154 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/device.h          |  15 +++++
+ include/network.h         |  13 ++++
+ plugins/wifi.c            |  90 ++++++++++++++++++++++++++-
+ src/device.c              |  61 ++++++++++++++++++
+ src/network.c             |  96 +++++++++++++++++++++++++++++
+ src/service.c             |  73 +++++++++++++++++++++-
+ src/technology.c          | 108 ++++++++++++++++++++++++++++++++
+ 9 files changed, 627 insertions(+), 2 deletions(-)
+
+diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
+index 77dfe56..3520ee7 100644
+--- a/gsupplicant/gsupplicant.h
++++ b/gsupplicant/gsupplicant.h
+@@ -304,6 +304,14 @@ GSupplicantPeer *g_supplicant_interface_peer_lookup(GSupplicantInterface *interf
+ 						const char *identifier);
+ bool g_supplicant_interface_is_p2p_finding(GSupplicantInterface *interface);
+ 
++int g_supplicant_interface_update_signal_info(GSupplicantInterface *interface,
++										GSupplicantInterfaceCallback callback, void *user_data);
++
++unsigned int g_supplicant_interface_get_rssi(GSupplicantInterface *interface);
++unsigned int g_supplicant_interface_get_link_speed(GSupplicantInterface *interface);
++unsigned int g_supplicant_interface_get_frequency(GSupplicantInterface *interface);
++unsigned int g_supplicant_interface_get_noise(GSupplicantInterface *interface);
++
+ /* Network and Peer API */
+ struct _GSupplicantNetwork;
+ struct _GSupplicantGroup;
+@@ -326,6 +334,17 @@ dbus_bool_t g_supplicant_network_is_wps_active(GSupplicantNetwork *network);
+ dbus_bool_t g_supplicant_network_is_wps_pbc(GSupplicantNetwork *network);
+ dbus_bool_t g_supplicant_network_is_wps_advertizing(GSupplicantNetwork *network);
+ 
++const unsigned char *g_supplicant_network_get_bssid(GSupplicantNetwork *network);
++GHashTable *g_supplicant_network_get_bss_table(GSupplicantNetwork *network);
++
++struct g_supplicant_bss;
++
++typedef struct g_supplicant_bss GSupplicantBss;
++
++const unsigned char *g_supplicant_bss_get_bssid(GSupplicantBss *bss);
++dbus_int16_t g_supplicant_bss_get_signal(GSupplicantBss *bss);
++dbus_uint16_t g_supplicant_bss_get_frequency(GSupplicantBss *bss);
++
+ GSupplicantInterface *g_supplicant_peer_get_interface(GSupplicantPeer *peer);
+ const char *g_supplicant_peer_get_path(GSupplicantPeer *peer);
+ const char *g_supplicant_peer_get_identifier(GSupplicantPeer *peer);
+diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
+index 452492a..fc6074c 100644
+--- a/gsupplicant/supplicant.c
++++ b/gsupplicant/supplicant.c
+@@ -169,6 +169,10 @@ struct _GSupplicantInterface {
+ 	unsigned int scan_capa;
+ 	unsigned int mode_capa;
+ 	unsigned int max_scan_ssids;
++	unsigned int rssi;
++	unsigned int link_speed;
++	unsigned int frequency;
++	unsigned int noise;
+ 	bool p2p_support;
+ 	bool p2p_finding;
+ 	bool ap_create_in_progress;
+@@ -1115,6 +1119,38 @@ unsigned int g_supplicant_interface_get_max_scan_ssids(
+ 	return interface->max_scan_ssids;
+ }
+ 
++unsigned int g_supplicant_interface_get_rssi(GSupplicantInterface *interface)
++{
++	if (!interface)
++		return 0;
++
++	return interface->rssi;
++}
++
++unsigned int g_supplicant_interface_get_link_speed(GSupplicantInterface *interface)
++{
++	if (!interface)
++		return 0;
++
++	return interface->link_speed;
++}
++
++unsigned int g_supplicant_interface_get_frequency(GSupplicantInterface *interface)
++{
++	if (!interface)
++		return 0;
++
++	return interface->frequency;
++}
++
++unsigned int g_supplicant_interface_get_noise(GSupplicantInterface *interface)
++{
++	if (!interface)
++		return 0;
++
++	return interface->noise;
++}
++
+ static void set_network_enabled(DBusMessageIter *iter, void *user_data)
+ {
+ 	dbus_bool_t enable = *(dbus_bool_t *)user_data;
+@@ -1264,6 +1300,46 @@ dbus_bool_t g_supplicant_network_is_wps_advertizing(GSupplicantNetwork *network)
+ 	return FALSE;
+ }
+ 
++const unsigned char *g_supplicant_network_get_bssid(GSupplicantNetwork *network)
++{
++	if (!network || !network->best_bss)
++		return NULL;
++
++	return network->best_bss->bssid;
++}
++
++GHashTable *g_supplicant_network_get_bss_table(GSupplicantNetwork *network)
++{
++	if (!network)
++		return NULL;
++
++	return network->bss_table;
++}
++
++const unsigned char *g_supplicant_bss_get_bssid(GSupplicantBss *bss)
++{
++	if (!bss)
++		return NULL;
++
++	return bss->bssid;
++}
++
++dbus_int16_t g_supplicant_bss_get_signal(GSupplicantBss *bss)
++{
++	if (!bss)
++		return 0;
++
++	return bss->signal;
++}
++
++dbus_uint16_t g_supplicant_bss_get_frequency(GSupplicantBss *bss)
++{
++	if (!bss)
++		return 0;
++
++	return bss->frequency;
++}
++
+ GSupplicantInterface *g_supplicant_peer_get_interface(GSupplicantPeer *peer)
+ {
+ 	if (!peer)
+@@ -2241,6 +2317,36 @@ static void wps_property(const char *key, DBusMessageIter *iter,
+ 
+ }
+ 
++static void interface_signal_info(const char *key, DBusMessageIter *iter, void *user_data)
++{
++	GSupplicantInterface *interface = user_data;
++
++	if (g_strcmp0(key, "RSSI") == 0) {
++		dbus_int32_t rssi = 0;
++		dbus_message_iter_get_basic(iter, &rssi);
++
++		interface->rssi = rssi;
++
++	} else if (g_strcmp0(key, "LinkSpeed") == 0) {
++		dbus_int32_t link_speed = 0;
++		dbus_message_iter_get_basic(iter, &link_speed);
++
++		interface->link_speed = link_speed;
++
++	} else if (g_strcmp0(key, "Frequency") == 0) {
++		dbus_int32_t frequency = 0;
++		dbus_message_iter_get_basic(iter, &frequency);
++
++		interface->frequency = frequency;
++
++	} else if (g_strcmp0(key, "Noise") == 0) {
++		dbus_int32_t noise = 0;
++		dbus_message_iter_get_basic(iter, &noise);
++
++		interface->noise = noise;
++	}
++}
++
+ static void interface_property(const char *key, DBusMessageIter *iter,
+ 							void *user_data)
+ {
+@@ -2368,6 +2474,9 @@ static void interface_property(const char *key, DBusMessageIter *iter,
+ 	} else if (g_strcmp0(key, "Networks") == 0) {
+ 		supplicant_dbus_array_foreach(iter, interface_network_added,
+ 								interface);
++	} else if (g_strcmp0(key, "SignalInfo") == 0) {
++		supplicant_dbus_property_foreach(iter, interface_signal_info,
++                                                               interface);
+ 	} else if (g_strcmp0(key, "DisconnectReason") == 0) {
+ 		int reason_code;
+ 		if (dbus_message_iter_get_arg_type(iter) != DBUS_TYPE_INVALID) {
+@@ -5875,3 +5984,48 @@ void g_supplicant_unregister(const GSupplicantCallbacks *callbacks)
+ 	callbacks_pointer = NULL;
+ 	eap_methods = 0;
+ }
++
++static void signal_info_update_cb(const char *key,
++                               DBusMessageIter *iter, void *user_data)
++{
++	struct interface_data *data = user_data;
++	int err = 0;
++
++	supplicant_dbus_property_foreach(iter, interface_signal_info,
++						data->interface);
++
++	if (data->callback)
++		data->callback(err, data->interface, data->user_data);
++
++	g_free(data);
++}
++
++int g_supplicant_interface_update_signal_info(GSupplicantInterface *interface,
++                    GSupplicantInterfaceCallback callback, void *user_data)
++{
++	struct interface_data *data;
++	int ret;
++
++	if (!interface)
++		return -EINVAL;
++
++	if (!system_available)
++		return -EFAULT;
++
++	data = dbus_malloc0(sizeof(*data));
++	if (!data)
++		return -ENOMEM;
++
++	data->interface = interface;
++	data->callback = callback;
++	data->user_data = user_data;
++
++	ret = supplicant_dbus_property_get(interface->path,
++						SUPPLICANT_INTERFACE ".Interface", "SignalInfo",
++						signal_info_update_cb, data, NULL);
++
++	if (ret < 0)
++		dbus_free(data);
++
++	return ret;
++}
+diff --git a/include/device.h b/include/device.h
+index 140f9bc..04eb35d 100644
+--- a/include/device.h
++++ b/include/device.h
+@@ -72,6 +72,7 @@ void connman_device_set_index(struct connman_device *device, int index);
+ int connman_device_get_index(struct connman_device *device);
+ void connman_device_set_interface(struct connman_device *device,
+ 						const char *interface);
++const char *connman_device_get_interface(struct connman_device *device);
+ 
+ void connman_device_set_ident(struct connman_device *device,
+ 						const char *ident);
+@@ -90,6 +91,11 @@ int connman_device_set_string(struct connman_device *device,
+ const char *connman_device_get_string(struct connman_device *device,
+ 							const char *key);
+ 
++int connman_device_set_integer(struct connman_device *device,
++							const char *key, int value);
++int connman_device_get_integer(struct connman_device *device,
++							const char *key);
++
+ int connman_device_add_network(struct connman_device *device,
+ 					struct connman_network *network);
+ struct connman_network *connman_device_get_network(struct connman_device *device,
+@@ -111,6 +117,14 @@ struct connman_device *connman_device_create_from_index(int index);
+ struct connman_device *connman_device_find_by_index(int index);
+ int connman_device_reconnect_service(struct connman_device *device);
+ 
++int connman_device_set_integer(struct connman_device *device,
++										const char *key, int value);
++int connman_device_get_integer(struct connman_device *device,
++										const char *key);
++typedef void (*connman_device_request_signal_info_cb)(struct connman_device *device, void *user_data);
++int connman_device_request_signal_info(struct connman_device *device,
++										connman_device_request_signal_info_cb cb, void *user_data);
++
+ struct connman_device_driver {
+ 	const char *name;
+ 	enum connman_device_type type;
+@@ -128,6 +142,7 @@ struct connman_device_driver {
+ 						const char *alpha2);
+ 	int (*start_wps) (struct connman_device *device, const char *pin);
+ 	int (*cancel_wps) (struct connman_device *device);
++	int (*get_signal_info)(struct connman_device *device, connman_device_request_signal_info_cb cb, void *user_data);
+ };
+ 
+ int connman_device_driver_register(struct connman_device_driver *driver);
+diff --git a/include/network.h b/include/network.h
+index 4fc20c1..ed61718 100644
+--- a/include/network.h
++++ b/include/network.h
+@@ -27,6 +27,7 @@
+ 
+ #include <connman/device.h>
+ #include <connman/ipconfig.h>
++#include <glib.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -62,6 +63,7 @@ enum connman_network_error {
+ #define CONNMAN_NETWORK_PRIORITY_DEFAULT     0
+ #define CONNMAN_NETWORK_PRIORITY_HIGH      100
+ 
++struct connman_bss;
+ struct connman_network;
+ 
+ struct connman_network *connman_network_create(const char *identifier,
+@@ -117,6 +119,17 @@ int connman_network_set_nameservers(struct connman_network *network,
+ 				const char *nameservers);
+ int connman_network_set_domain(struct connman_network *network,
+ 			             const char *domain);
++int connman_network_set_address(struct connman_network *network,
++                                const unsigned char *addr_octet, unsigned int size);
++const char *connman_network_get_address(struct connman_network *network);
++int connman_network_add_bss(struct connman_network *network,
++                            const unsigned char *id,
++                            short signal,
++                            unsigned short frequency);
++GHashTable *connman_network_get_bss_table(struct connman_network *network);
++short connman_network_get_bss_signal(struct connman_bss *bss);
++unsigned short connman_network_get_bss_frequency(struct connman_bss *bss);
++
+ int connman_network_set_name(struct connman_network *network,
+ 							const char *name);
+ int connman_network_set_strength(struct connman_network *network,
+diff --git a/plugins/wifi.c b/plugins/wifi.c
+index de45e01..c909a2d 100644
+--- a/plugins/wifi.c
++++ b/plugins/wifi.c
+@@ -164,6 +164,12 @@ struct wifi_data {
+ 	bool wps_start_deferred;
+ };
+ 
++struct wifi_cb_data {
++	struct wifi_data *wifi;
++	void *callback;
++	void *user_data;
++};
++
+ static GList *iface_list = NULL;
+ 
+ static GList *pending_wifi_device = NULL;
+@@ -175,6 +181,27 @@ static int tech_set_tethering(struct connman_technology *technology,
+ 				const char *identifier, const char *passphrase,
+ 				const char *bridge, bool enabled);
+ 
++static void bss_foreach(gpointer key, gpointer value, gpointer user_data)
++{
++	GSupplicantBss *bss;
++	const unsigned char *bssid;
++	dbus_int16_t signal;
++	dbus_uint16_t frequency;
++	struct connman_network *network;
++
++	if (!key || !value || !user_data)
++		return;
++
++	network = (struct connman_network *)user_data;
++	bss = (GSupplicantBss *)value;
++	bssid = g_supplicant_bss_get_bssid(bss);
++	signal = g_supplicant_bss_get_signal(bss);
++	frequency = g_supplicant_bss_get_frequency(bss);
++	DBG("signal %d frequency %d",signal,frequency);
++
++	connman_network_add_bss(network, bssid, signal, frequency);
++}
++
+ static int p2p_tech_probe(struct connman_technology *technology)
+ {
+ 	p2p_technology = technology;
+@@ -2172,6 +2199,52 @@ static int wifi_cancel_wps(struct connman_device *device)
+ 	return cancel_wps(wifi);
+ }
+ 
++static void signal_info_cb(int result, GSupplicantInterface *interface, void *user_data)
++{
++	struct wifi_cb_data *data = user_data;
++	connman_device_request_signal_info_cb cb = data->callback;
++	unsigned int value;
++
++	if (result < 0)
++		goto done;
++
++	value = g_supplicant_interface_get_rssi(interface);
++	connman_device_set_integer(data->wifi->device, "WiFi.RSSI", value);
++
++	value = g_supplicant_interface_get_link_speed(interface);
++	connman_device_set_integer(data->wifi->device, "WiFi.LinkSpeed", value);
++
++	value = g_supplicant_interface_get_frequency(interface);
++	connman_device_set_integer(data->wifi->device, "WiFi.Frequency", value);
++
++	value = g_supplicant_interface_get_noise(interface);
++	connman_device_set_integer(data->wifi->device, "WiFi.Noise", value);
++
++done:
++	cb(data->wifi->device, data->user_data);
++
++	g_free(data);
++}
++
++static int wifi_get_signal_info(struct connman_device *device, connman_device_request_signal_info_cb cb, void *user_data)
++{
++	struct wifi_data *wifi = connman_device_get_data(device);
++	struct wifi_cb_data *data;
++
++	if (!wifi)
++		return -EINVAL;
++
++	data = g_new0(struct wifi_cb_data, 1);
++	if (!data)
++		return -ENOMEM;
++
++	data->callback = cb;
++	data->user_data = user_data;
++	data->wifi = wifi;
++
++	return g_supplicant_interface_update_signal_info(wifi->interface, signal_info_cb, data);
++}
++
+ static struct connman_device_driver wifi_ng_driver = {
+ 	.name		= "wifi",
+ 	.type		= CONNMAN_DEVICE_TYPE_WIFI,
+@@ -2183,7 +2256,8 @@ static struct connman_device_driver wifi_ng_driver = {
+ 	.scan		= wifi_scan,
+ 	.set_regdom	= wifi_set_regdom,
+ 	.start_wps	= wifi_start_wps,
+-	.cancel_wps	= wifi_cancel_wps
++	.cancel_wps	= wifi_cancel_wps,
++	.get_signal_info = wifi_get_signal_info,
+ };
+ 
+ static void system_ready(void)
+@@ -3008,6 +3082,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+ 	bool wps_pbc;
+ 	bool wps_ready;
+ 	bool wps_advertizing;
++	GHashTable *bss_table;
+ 
+ 	mode = g_supplicant_network_get_mode(supplicant_network);
+ 	identifier = g_supplicant_network_get_identifier(supplicant_network);
+@@ -3027,6 +3102,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+ 	wps_ready = g_supplicant_network_is_wps_active(supplicant_network);
+ 	wps_advertizing = g_supplicant_network_is_wps_advertizing(
+ 							supplicant_network);
++	bss_table = g_supplicant_network_get_bss_table(supplicant_network);
+ 
+ 	if (!wifi)
+ 		return;
+@@ -3091,6 +3167,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+ 			wifi->hidden = NULL;
+ 		}
+ 	}
++
++	connman_network_set_address(network, g_supplicant_network_get_bssid(supplicant_network), 6);
++
++	if (bss_table)
++		g_hash_table_foreach(bss_table, bss_foreach, network);
+ }
+ 
+ static void network_removed(GSupplicantNetwork *network)
+@@ -3126,11 +3207,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+ 	struct wifi_data *wifi;
+ 	const char *name, *identifier;
+ 	struct connman_network *connman_network;
++	GHashTable *bss_table;
+ 
+ 	interface = g_supplicant_network_get_interface(network);
+ 	wifi = g_supplicant_interface_get_data(interface);
+ 	identifier = g_supplicant_network_get_identifier(network);
+ 	name = g_supplicant_network_get_name(network);
++	bss_table = g_supplicant_network_get_bss_table(network);
+ 
+ 	DBG("name %s", name);
+ 
+@@ -3141,6 +3224,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+ 	if (!connman_network)
+ 		return;
+ 
++	connman_network_set_address(connman_network, g_supplicant_network_get_bssid(network), 6);
++
++	if (bss_table)
++		g_hash_table_foreach(bss_table, bss_foreach, connman_network);
++
+ 	if (g_str_equal(property, "Signal")) {
+ 	       connman_network_set_strength(connman_network,
+ 					calculate_strength(network));
+diff --git a/src/device.c b/src/device.c
+index 874e21f..3e45413 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -68,6 +68,11 @@ struct connman_device {
+ 	char *last_network;
+ 	struct connman_network *network;
+ 	GHashTable *networks;
++
++	unsigned int wifi_rssi;
++	unsigned int wifi_link_speed;
++	unsigned int wifi_frequency;
++	unsigned int wifi_noise;
+ };
+ 
+ static void clear_pending_trigger(struct connman_device *device)
+@@ -536,6 +541,14 @@ void connman_device_set_interface(struct connman_device *device,
+ 	}
+ }
+ 
++const char *connman_device_get_interface(struct connman_device *device)
++{
++	if (!device)
++		return NULL;
++
++	return device->interface;
++}
++
+ /**
+  * connman_device_set_ident:
+  * @device: device structure
+@@ -778,6 +791,25 @@ int connman_device_set_string(struct connman_device *device,
+ 	return 0;
+ }
+ 
++int connman_device_set_integer(struct connman_device *device,
++                                       const char *key, int value)
++{
++	DBG("device %p key %s value %d", device, key, value);
++
++	if (g_strcmp0(key, "WiFi.RSSI") == 0)
++		device->wifi_rssi = value;
++	else if (g_strcmp0(key, "WiFi.LinkSpeed") == 0)
++		device->wifi_link_speed = value;
++	else if (g_strcmp0(key, "WiFi.Frequency") == 0)
++		device->wifi_frequency = value;
++	else if (g_strcmp0(key, "WiFi.Noise") == 0)
++		device->wifi_noise = value;
++	else
++		return -EINVAL;
++
++	return 0;
++}
++
+ /**
+  * connman_device_get_string:
+  * @device: device structure
+@@ -804,6 +836,23 @@ const char *connman_device_get_string(struct connman_device *device,
+ 	return NULL;
+ }
+ 
++int connman_device_get_integer(struct connman_device *device,
++                                       const char *key)
++{
++	DBG("device %p key %s", device, key);
++
++	if (g_strcmp0(key, "WiFi.RSSI") == 0)
++		return device->wifi_rssi;
++	else if (g_strcmp0(key, "WiFi.LinkSpeed") == 0)
++		return device->wifi_link_speed;
++	else if (g_strcmp0(key, "WiFi.Frequency") == 0)
++		return device->wifi_frequency;
++	else if (g_strcmp0(key, "WiFi.Noise") == 0)
++		return device->wifi_noise;
++
++	return 0;
++}
++
+ /**
+  * connman_device_add_network:
+  * @device: device structure
+@@ -1224,6 +1273,18 @@ int __connman_device_request_cancel_wps(enum connman_service_type type)
+ 	return last_err;
+ }
+ 
++int connman_device_request_signal_info(struct connman_device *device,
++                                       connman_device_request_signal_info_cb cb, void *user_data)
++{
++	if (device->type != CONNMAN_DEVICE_TYPE_WIFI)
++		return -EOPNOTSUPP;
++
++	if (!device->driver || !device->driver->get_signal_info)
++		return -EOPNOTSUPP;
++
++	return device->driver->get_signal_info(device, cb, user_data);
++}
++
+ static char *index2ident(int index, const char *prefix)
+ {
+ 	struct ifreq ifr;
+diff --git a/src/network.c b/src/network.c
+index ed56210..cbbcd91 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -44,6 +44,12 @@
+ static GSList *network_list = NULL;
+ static GSList *driver_list = NULL;
+ 
++struct connman_bss {
++	short signal;
++	unsigned short frequency;
++	// add other properties needed later
++};
++
+ struct connman_network {
+ 	int refcount;
+ 	enum connman_network_type type;
+@@ -53,6 +59,7 @@ struct connman_network {
+ 	uint8_t strength;
+ 	uint16_t frequency;
+ 	char *identifier;
++	char *address;
+ 	char *name;
+ 	char *node;
+ 	char *group;
+@@ -92,6 +99,7 @@ struct connman_network {
+ 		bool wps;
+ 		bool use_wps;
+ 		char *pin_wps;
++		GHashTable *bss;
+ 	} wifi;
+ 
+ };
+@@ -905,15 +913,18 @@ static void network_destruct(struct connman_network *network)
+ 	g_free(network->wifi.private_key_passphrase);
+ 	g_free(network->wifi.phase2_auth);
+ 	g_free(network->wifi.pin_wps);
++	g_hash_table_destroy(network->wifi.bss);
+ 
+ 	g_free(network->path);
+ 	g_free(network->group);
+ 	g_free(network->node);
+ 	g_free(network->name);
+ 	g_free(network->identifier);
++	g_free(network->address);
+ 
+ 	network->device = NULL;
+ 
++	network->wifi.bss = NULL;
+ 	g_free(network);
+ }
+ 
+@@ -946,6 +957,7 @@ struct connman_network *connman_network_create(const char *identifier,
+ 
+ 	network->type       = type;
+ 	network->identifier = ident;
++	network->wifi.bss   = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+ 
+ 	network_list = g_slist_prepend(network_list, network);
+ 
+@@ -1707,6 +1719,90 @@ int connman_network_set_domain(struct connman_network *network,
+ 	return 0;
+ }
+ 
++int connman_network_set_address(struct connman_network *network,
++                                       const unsigned char *addr_octet, unsigned int size)
++{
++	char *str;
++
++	if (!addr_octet || size != 6)
++		return -EINVAL;
++
++	DBG("");
++	str = g_strdup_printf("%02X:%02X:%02X:%02X:%02X:%02X",
++						addr_octet[0], addr_octet[1], addr_octet[2],
++						addr_octet[3], addr_octet[4], addr_octet[5]);
++	if (!str)
++		return -ENOMEM;
++
++	g_free(network->address);
++	network->address = str;
++
++	return 0;
++}
++
++const char *connman_network_get_address(struct connman_network *network)
++{
++	if (!network)
++		return NULL;
++
++	return network->address;
++}
++
++int connman_network_add_bss(struct connman_network *network,
++                                                       const unsigned char *id,
++                                                       short signal,
++                                                       unsigned short frequency)
++{
++	struct connman_bss *bss;
++	char *str;
++
++	if (!id)
++		return -EINVAL;
++
++	bss = g_try_new0(struct connman_bss, 1);
++	if (!bss)
++		return -ENOMEM;
++
++	str = g_strdup_printf("%02X:%02X:%02X:%02X:%02X:%02X",
++						id[0], id[1], id[2],
++						id[3], id[4], id[5]);
++	if (!str) {
++		g_free(bss);
++		return -ENOMEM;
++	}
++
++	bss->signal = signal;
++	bss->frequency = frequency;
++
++	g_hash_table_replace(network->wifi.bss, str, bss);
++
++	return 0;
++}
++
++GHashTable *connman_network_get_bss_table(struct connman_network *network)
++{
++	if (!network)
++		return NULL;
++
++	return network->wifi.bss;
++}
++
++short connman_network_get_bss_signal(struct connman_bss *bss)
++{
++	if (!bss)
++		return 0;
++
++	return bss->signal;
++}
++
++unsigned short connman_network_get_bss_frequency(struct connman_bss *bss)
++{
++	if (!bss)
++		return 0;
++
++	return bss->frequency;
++}
++
+ /**
+  * connman_network_set_name:
+  * @network: network structure
+diff --git a/src/service.c b/src/service.c
+index c7074c9..319ecf5 100644
+--- a/src/service.c
++++ b/src/service.c
+@@ -141,6 +141,7 @@ static struct connman_ipconfig *create_ip4config(struct connman_service *service
+ static struct connman_ipconfig *create_ip6config(struct connman_service *service,
+ 		int index);
+ static void dns_changed(struct connman_service *service);
++static void append_bsses(DBusMessageIter *iter, void *user_data);
+ 
+ struct find_data {
+ 	const char *path;
+@@ -1558,6 +1559,13 @@ static void strength_changed(struct connman_service *service)
+ 	connman_dbus_property_changed_basic(service->path,
+ 				CONNMAN_SERVICE_INTERFACE, "Strength",
+ 					DBUS_TYPE_BYTE, &service->strength);
++
++	if (service->network)
++	{
++		connman_dbus_property_changed_array(service->path,
++					CONNMAN_SERVICE_INTERFACE, "BSS", DBUS_TYPE_DICT_ENTRY,
++					append_bsses, connman_network_get_bss_table(service->network));
++	}
+ }
+ 
+ static void favorite_changed(struct connman_service *service)
+@@ -2340,6 +2348,57 @@ int __connman_service_iterate_services(service_iterate_cb cb, void *user_data)
+ 	return 0;
+ }
+ 
++static void append_bss(DBusMessageIter *iter, void *key, void *value)
++{
++	char *bss_id = key;
++	struct connman_bss *bss_props = value;
++	DBusMessageIter item;
++	int signal = 0;
++	int frequency = 0;
++
++	connman_dbus_dict_open(iter, &item);
++
++	if (!bss_id || !bss_props)
++		goto empty_dict;
++
++	signal = connman_network_get_bss_signal(bss_props);
++	frequency = connman_network_get_bss_frequency(bss_props);
++
++	connman_dbus_dict_append_basic(&item, "Id",
++						DBUS_TYPE_STRING, &bss_id);
++
++	connman_dbus_dict_append_basic(&item, "Signal",
++						DBUS_TYPE_INT32, &signal);
++
++	connman_dbus_dict_append_basic(&item, "Frequency",
++						DBUS_TYPE_INT32, &frequency);
++
++empty_dict:
++	connman_dbus_dict_close(iter, &item);
++}
++
++static void append_bsses(DBusMessageIter *iter, void *user_data)
++{
++	GHashTable *bsses = user_data;
++	GHashTableIter hash;
++	gpointer key, value;
++
++	if (!bsses) {
++		// Empty array when no BSSes.
++		return;
++	}
++
++	g_hash_table_iter_init(&hash, bsses);
++
++	while (g_hash_table_iter_next(&hash, &key, &value)) {
++		DBusMessageIter dict;
++
++		dbus_message_iter_open_container(iter, DBUS_TYPE_STRUCT, NULL, &dict);
++		append_bss(&dict, key, value);
++		dbus_message_iter_close_container(iter, &dict);
++	}
++}
++
+ static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
+ 					struct connman_service *service)
+ {
+@@ -2405,9 +2464,21 @@ static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
+ 						append_ethernet, service);
+ 		break;
+ 	case CONNMAN_SERVICE_TYPE_WIFI:
+-	case CONNMAN_SERVICE_TYPE_ETHERNET:
++		if (service->network) {
++			connman_dbus_dict_append_array(dict, "BSS",
++											DBUS_TYPE_DICT_ENTRY,
++											append_bsses,
++											connman_network_get_bss_table(service->network));
++		}
+ 	case CONNMAN_SERVICE_TYPE_BLUETOOTH:
++		if (service->network) {
++			str = connman_network_get_address(service->network);
++			if (str)
++				connman_dbus_dict_append_basic(dict, "Address",
++												DBUS_TYPE_STRING, &str);
++		}
+ 	case CONNMAN_SERVICE_TYPE_GADGET:
++	case CONNMAN_SERVICE_TYPE_ETHERNET:
+ 		connman_dbus_dict_append_dict(dict, "Ethernet",
+ 						append_ethernet, service);
+ 		break;
+diff --git a/src/technology.c b/src/technology.c
+index 75e75ae..c31c5fc 100644
+--- a/src/technology.c
++++ b/src/technology.c
+@@ -77,6 +77,7 @@ struct connman_technology {
+ 	guint pending_timeout;
+ 
+ 	GSList *scan_pending;
++	GSList *iface_prop_pending;
+ 
+ 	bool rfkill_driven;
+ 	bool softblocked;
+@@ -537,6 +538,19 @@ static bool connman_technology_load_offlinemode(void)
+ 	return offlinemode;
+ }
+ 
++static void append_interfaces(DBusMessageIter *iter, void *user_data)
++{
++	struct connman_technology *technology = user_data;
++	GSList *list;
++
++	for (list = technology->device_list; list; list = list->next) {
++		struct connman_device *device = list->data;
++		const char *iface = connman_device_get_interface(device);
++
++		dbus_message_iter_append_basic(iter, DBUS_TYPE_STRING, &iface);
++	}
++}
++
+ static void append_properties(DBusMessageIter *iter,
+ 		struct connman_technology *technology)
+ {
+@@ -572,6 +586,11 @@ static void append_properties(DBusMessageIter *iter,
+ 					DBUS_TYPE_BOOLEAN,
+ 					&val);
+ 
++	connman_dbus_dict_append_array(&dict, "Interfaces",
++					DBUS_TYPE_STRING,
++					append_interfaces,
++					technology);
++
+ 	if (technology->tethering_ident)
+ 		connman_dbus_dict_append_basic(&dict, "TetheringIdentifier",
+ 					DBUS_TYPE_STRING,
+@@ -1240,6 +1259,91 @@ static DBusMessage *cancel_wps(DBusConnection *conn, DBusMessage *msg, void *dat
+ 	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
+ }
+ 
++static void reply_interface_properties(struct connman_device *device, void *user_data)
++{
++	DBusMessage *msg = user_data;
++	DBusMessage *reply;
++	DBusMessageIter iter, dict;
++
++	reply = dbus_message_new_method_return(msg);
++	if (!reply) {
++		reply = __connman_error_failed(msg, ENOMEM);
++		g_dbus_send_message(connection, reply);
++		dbus_message_unref(msg);
++		return;
++	}
++
++	dbus_message_iter_init_append(reply, &iter);
++
++	connman_dbus_dict_open(&iter, &dict);
++
++	if (connman_device_get_type(device) == CONNMAN_DEVICE_TYPE_WIFI) {
++		uint32_t value = 0;
++
++		value = connman_device_get_integer(device, "WiFi.RSSI");
++		connman_dbus_dict_append_basic(&dict, "WiFi.RSSI",
++								DBUS_TYPE_UINT32, &value);
++
++		value = connman_device_get_integer(device, "WiFi.LinkSpeed");
++		connman_dbus_dict_append_basic(&dict, "WiFi.LinkSpeed",
++								DBUS_TYPE_UINT32, &value);
++
++		value = connman_device_get_integer(device, "WiFi.Frequency");
++		connman_dbus_dict_append_basic(&dict, "WiFi.Frequency",
++								DBUS_TYPE_UINT32, &value);
++
++		value = connman_device_get_integer(device, "WiFi.Noise");
++		connman_dbus_dict_append_basic(&dict, "WiFi.Noise",
++								DBUS_TYPE_UINT32, &value);
++	}
++
++	connman_dbus_dict_close(&iter, &dict);
++
++	g_dbus_send_message(connection, reply);
++
++	dbus_message_unref(msg);
++}
++
++static DBusMessage *get_interface_properties(DBusConnection *conn,
++                                       DBusMessage *msg, void *user_data)
++{
++	struct connman_technology *technology = user_data;
++	DBusMessageIter iter;
++	GSList *list;
++	char *interface = NULL;
++
++	if (!dbus_message_iter_init(msg, &iter))
++		return __connman_error_invalid_arguments(msg);
++
++	if (dbus_message_iter_get_arg_type(&iter) != DBUS_TYPE_STRING)
++		return __connman_error_invalid_arguments(msg);
++
++	dbus_message_iter_get_basic(&iter, &interface);
++
++	if (!interface)
++		return __connman_error_invalid_arguments(msg);
++
++	struct connman_device *device = NULL;
++
++	for (list = technology->device_list; list; list = list->next) {
++		struct connman_device *current_device = list->data;
++		const char *iface = connman_device_get_interface(current_device);
++
++		if (g_strcmp0(iface, interface) == 0) {
++			device = current_device;
++			break;
++		}
++	}
++	if (!device)
++		return __connman_error_invalid_arguments(msg);
++
++	dbus_message_ref(msg);
++
++	connman_device_request_signal_info(device, reply_interface_properties, msg);
++
++	return NULL;
++}
++
+ static const GDBusMethodTable technology_methods[] = {
+ 	{ GDBUS_DEPRECATED_METHOD("GetProperties",
+ 			NULL, GDBUS_ARGS({ "properties", "a{sv}" }),
+@@ -1252,6 +1356,10 @@ static const GDBusMethodTable technology_methods[] = {
+ 			GDBUS_ARGS({ "pin", "s" }),
+ 			NULL, start_wps) },
+ 	{ GDBUS_METHOD("CancelWPS", NULL, NULL, cancel_wps) },
++	{ GDBUS_ASYNC_METHOD("GetInterfaceProperties",
++			GDBUS_ARGS({ "interface", "s" }),
++			GDBUS_ARGS({ "properties", "a{sv}"}),
++			get_interface_properties) },
+ 	{ },
+ };
+ 
+-- 
+1.9.1
+
