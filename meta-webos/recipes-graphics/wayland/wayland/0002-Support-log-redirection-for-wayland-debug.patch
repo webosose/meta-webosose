@@ -1,0 +1,156 @@
+From f9547ffe952c176dc7970459506e9adcb4ab71b4 Mon Sep 17 00:00:00 2001
+From: "cathy.park" <cathy.park@lge.com>
+Date: Wed, 28 Jan 2015 23:46:05 -0800
+Subject: [PATCH] Support log redirection for wayland debug
+
+Write and update wayland debug message in file
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ src/connection.c | 118 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
+
+diff --git a/src/connection.c b/src/connection.c
+index 294c521..a82d38e 100644
+--- a/src/connection.c
++++ b/src/connection.c
+@@ -56,6 +56,53 @@ struct wl_buffer {
+ #define MAX_FDS_OUT	28
+ #define CLEN		(CMSG_LEN(MAX_FDS_OUT * sizeof(int32_t)))
+ 
++#ifndef UNIX_PATH_MAX
++#define UNIX_PATH_MAX 1024
++#endif
++
++static FILE* open_file()
++{
++	char *debug_path;
++	char proc_name[UNIX_PATH_MAX] = {0,};
++	char proc_file[UNIX_PATH_MAX];
++	char filename[UNIX_PATH_MAX];
++	FILE *tmp_debug_fp = NULL;
++
++	debug_path = getenv("WAYLAND_DEBUG_PATH");
++	sprintf(proc_file, "/proc/%d/comm",getpid());
++	FILE* f = fopen(proc_file,"r");
++	if (f) {
++		size_t size;
++		size = fread(proc_name, sizeof(char), UNIX_PATH_MAX, f);
++		if (size>0 && '\n'==proc_name[size-1])
++			proc_name[size-1]='\0';
++		fclose(f);
++	}
++
++	if (!debug_path)
++		snprintf(filename, UNIX_PATH_MAX, "/tmp/wayland_%s.log",proc_name);
++	else
++		snprintf(filename, UNIX_PATH_MAX, "%s/wayland_%s.log",debug_path,proc_name);
++
++	tmp_debug_fp = fopen(filename, "a+");
++	if (!tmp_debug_fp) {
++		fprintf(stderr,"Error! Cannot open file...\n");
++		return NULL;
++	}
++	return tmp_debug_fp;
++}
++
++void get_time(struct timeval *now_Tv, struct tm *now_Tm)
++{
++	time_t now;
++
++	memset(now_Tv, 0, sizeof(struct timeval));
++	gettimeofday(now_Tv, NULL);
++	now = now_Tv->tv_sec;
++	memset(now_Tm, 0, sizeof(struct tm));
++	gmtime_r(&now, now_Tm);
++}
++
+ struct wl_connection {
+ 	struct wl_buffer in, out;
+ 	struct wl_buffer fds_in, fds_out;
+@@ -1241,7 +1288,11 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send)
+ 	const char *signature = closure->message->signature;
+ 	struct timespec tp;
+ 	unsigned int time;
++	static FILE *debug_fp = NULL;
++	struct timeval  nowTv;
++	struct tm       nowTm;
+ 
++#ifdef NO_WEBOS_WAYLAND_DEBUG
+ 	clock_gettime(CLOCK_REALTIME, &tp);
+ 	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
+ 
+@@ -1298,6 +1349,73 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send)
+ 	}
+ 
+ 	fprintf(stderr, ")\n");
++#else
++	if (!debug_fp) {
++		debug_fp = open_file();
++		if (!debug_fp) {
++			fprintf(stderr, "*** Warning: Cannot print debug message in file.");
++			debug_fp = stderr;
++		}
++	}
++
++	get_time(&nowTv, &nowTm);
++
++	fprintf(debug_fp,"%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ  %s%s@%u.%s(",
++			1900 + nowTm.tm_year, 1 + nowTm.tm_mon, nowTm.tm_mday,
++			nowTm.tm_hour, nowTm.tm_min, nowTm.tm_sec, nowTv.tv_usec,
++			send ? " -> " : "",
++			target->interface->name, target->id,
++			closure->message->name);
++
++	for (i = 0; i < closure->count; i++) {
++		signature = get_next_argument(signature, &arg);
++		if (i > 0)
++			fprintf(debug_fp, ", ");
++
++	switch (arg.type) {
++		case 'u':
++			fprintf(debug_fp, "%u", closure->args[i].u);
++			break;
++		case 'i':
++			fprintf(debug_fp, "%d", closure->args[i].i);
++			break;
++		case 'f':
++			fprintf(debug_fp, "%f",
++				wl_fixed_to_double(closure->args[i].f));
++			break;
++		case 's':
++			fprintf(debug_fp, "\"%s\"", closure->args[i].s);
++			break;
++		case 'o':
++			if (closure->args[i].o)
++				fprintf(debug_fp, "%s@%u",
++					closure->args[i].o->interface->name,
++					closure->args[i].o->id);
++			else
++				fprintf(debug_fp, "nil");
++			break;
++		case 'n':
++			fprintf(debug_fp, "new id %s@",
++				(closure->message->types[i]) ?
++				 closure->message->types[i]->name :
++				"[unknown]");
++			if (closure->args[i].n != 0)
++				fprintf(debug_fp, "%u", closure->args[i].n);
++			else
++				fprintf(debug_fp, "nil");
++			break;
++		case 'a':
++			fprintf(debug_fp, "array");
++			break;
++		case 'h':
++			fprintf(debug_fp, "fd %d", closure->args[i].h);
++			break;
++		}
++	}
++
++	fprintf(debug_fp, ")\n");
++	fflush(debug_fp);
++#endif
+ }
+ 
+ static int
