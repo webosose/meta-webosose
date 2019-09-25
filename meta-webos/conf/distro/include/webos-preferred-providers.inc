@@ -91,6 +91,11 @@ PREFERRED_PROVIDER_webappmanager-webos ?= "wam"
 
 VIRTUAL-RUNTIME_ntp = "ntp sntp"
 
+# Options: luna-surface-manager, auto-luna-surface-manager
+VIRTUAL-RUNTIME_surface-manager = "luna-surfacemanager-base"
+VIRTUAL-RUNTIME_surface-manager-conf = "auto-luna-surface-manager"
+VIRTUAL-RUNTIME_surface-manager-extension = "auto-luna-surface-manager"
+
 # Backport from Yocto 2.7 Warrior:
 # 25e835f568 default-providers: set mesa as default provider for nativesdk-mesa
 PREFERRED_PROVIDER_nativesdk-mesa ?= "nativesdk-mesa"
