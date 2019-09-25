@@ -184,9 +184,10 @@ RDEPENDS_${PN} = " \
 "
 
 RDEPENDS_${PN}_append_webos = " \
+    com.webos.app.home \
     com.webos.app.mediaviewer \
-    ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     crda \
+    ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
 "
 
 # XXX These FOSS components must be explicitly added because they are missing
