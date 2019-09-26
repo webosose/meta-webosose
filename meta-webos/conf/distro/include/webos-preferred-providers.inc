@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 # Place distro-wide PREFERRED_PROVIDER settings here. Place MACHINE-specific
 # settings (always with a _<MACHINE> override) in <MACHINE>.conf with a default
@@ -62,6 +62,8 @@ UPDATERCD_class-target = ""
 # Don't install big /boot/vmlinux* file by default in qemux86 images (included in oprofile's RRECOMMENDS)
 # Use --no-vmlinux option to opcontrol or install it manually if you need to see samples from kernel
 BAD_RECOMMENDATIONS_append_qemux86 = " kernel-vmlinux"
+
+PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 
 # Define which modules should be built by nyx-modules by default.
 #
