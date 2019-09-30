@@ -45,7 +45,7 @@ index fc6074c..f9f75a5 100644
 +	SUPPLICANT_DBG("path %s %s", path, SUPPLICANT_PATH);
 +
 +	if (callbacks_pointer->station_added == NULL)
-+		return 0;
++		return;
 +
 +	if (g_strcmp0(path, "/") == 0)
 +		return ;
