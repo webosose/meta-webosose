@@ -1,4 +1,4 @@
-From 9003493d9cafc0fc87d1526616ae3aec382edd1d Mon Sep 17 00:00:00 2001
+From 369fe8106353a65ae7c9b827c5965b867256cafb Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 2 Apr 2018 14:00:37 +0900
 Subject: [PATCH] eglfs: Support multiple display
@@ -32,6 +32,7 @@ platform screens and windows.
 [PLAT-52726] EGLFS: Support multiple display devices
 
 Change-Id: Iec3840877bf23ea5a9309095bfd718c241a9e1a5
+Upstream-Status : Inappropriate [webOS specific]
 ---
  .../kmsconvenience/qkmsdevice.cpp             |  60 ++++-----
  .../kmsconvenience/qkmsdevice_p.h             |   4 +-
