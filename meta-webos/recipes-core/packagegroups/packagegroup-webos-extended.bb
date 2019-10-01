@@ -57,6 +57,11 @@ WEBOS_PACKAGESET_TESTAPPS = " \
     com.webos.app.test.youtube \
 "
 
+WEBOS_PACKAGESET_SWUPDATER ?= " \
+    com.webos.app.swupdater \
+    com.webos.service.swupdater \
+"
+
 MEDIA = " \
     gstreamer1.0 \
     gstreamer1.0-libav \
@@ -192,6 +197,7 @@ RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
     crda \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
+    ${WEBOS_PACKAGESET_SWUPDATER} \
 "
 
 # XXX These FOSS components must be explicitly added because they are missing
