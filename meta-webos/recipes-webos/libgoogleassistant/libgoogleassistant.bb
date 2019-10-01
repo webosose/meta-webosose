@@ -11,7 +11,7 @@ DEPENDS = "glib-2.0 googleapis grpc json-c pmloglib pulseaudio patchelf-native"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target = "${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "1.0.0-4_72f471d5e617210b62fba191982f3fe0d95bdf1a"
+WEBOS_VERSION = "1.0.0-5_62d5e78e4368a079baacb7c1cbb9eca84328dd43"
 PR = "r2"
 
 inherit webos_library
