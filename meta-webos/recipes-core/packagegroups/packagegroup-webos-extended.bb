@@ -107,6 +107,10 @@ VIRTUAL-RUNTIME_com.webos.service.flowmanager ?= "com.webos.service.flowmanager"
 VIRTUAL-RUNTIME_com.webos.service.flowmanager_armv4 = ""
 VIRTUAL-RUNTIME_com.webos.service.flowmanager_armv5 = ""
 
+VIRTUAL-RUNTIME_com.webos.app.home ?= "com.webos.app.home"
+VIRTUAL-RUNTIME_com.webos.app.home_armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.home_armv5 = ""
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
@@ -163,6 +167,7 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_browser_fonts} \
     ${VIRTUAL-RUNTIME_com.example.app.iotivity} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
+    ${VIRTUAL-RUNTIME_com.webos.app.home} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_iotivity-node} \
@@ -184,7 +189,6 @@ RDEPENDS_${PN} = " \
 "
 
 RDEPENDS_${PN}_append_webos = " \
-    com.webos.app.home \
     com.webos.app.mediaviewer \
     crda \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
