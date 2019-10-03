@@ -13,6 +13,4 @@ RDEPENDS_${PN}_remove = "update-rc.d"
 PACKAGECONFIG_remove = " \
     networkd    \
     resolved    \
-    timedated   \
-    timesyncd   \
 "
