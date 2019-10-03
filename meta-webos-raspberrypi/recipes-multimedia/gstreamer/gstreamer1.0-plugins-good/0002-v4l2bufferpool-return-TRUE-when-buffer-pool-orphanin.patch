@@ -1,0 +1,41 @@
+From 05321db89a1d19cf94bdd3add1c7b22fdb4fb55f Mon Sep 17 00:00:00 2001
+From: Pankaj Maharana <pankaj.maharana@lge.com>
+Date: Thu, 12 Dec 2019 12:42:50 +0530
+Subject: [PATCH 2/7] v4l2bufferpool: return TRUE when buffer pool orphaning 
+ succeeds
+
+ When trying to orphan a buffer pool, successfully return and unref
+ the pool when the pool is either successfully stopped or orphaned.
+ Indicate failure and leave the pool untouched otherwise.
+
+ Upstream-Status: Submitted
+ https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/commit/1b9a0f1c2d8f26ca05abdf406fbf29300e0a987f
+---
+ sys/v4l2/gstv4l2bufferpool.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sys/v4l2/gstv4l2bufferpool.c b/sys/v4l2/gstv4l2bufferpool.c
+index a0a17bf..c3c9be7 100644
+--- a/sys/v4l2/gstv4l2bufferpool.c
++++ b/sys/v4l2/gstv4l2bufferpool.c
+@@ -995,11 +995,16 @@ gst_v4l2_buffer_pool_orphan (GstBufferPool ** bpool)
+    */
+   ret = gst_v4l2_buffer_pool_stop (*bpool);
+   if (!ret)
+-    gst_v4l2_allocator_orphan (pool->vallocator);
++    ret = gst_v4l2_allocator_orphan (pool->vallocator);
++
++  if (!ret)
++    goto orphan_failed;
+ 
+   pool->orphaned = TRUE;
+   gst_object_unref (*bpool);
+   *bpool = NULL;
++
++orphan_failed:
+   return ret;
+ }
+ 
+-- 
+2.7.4
+

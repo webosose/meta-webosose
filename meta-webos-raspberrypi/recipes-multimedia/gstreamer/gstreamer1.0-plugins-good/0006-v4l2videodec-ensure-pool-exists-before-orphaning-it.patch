@@ -1,0 +1,40 @@
+From 899b5dc92c23f5a31e84bd5df121b625ed5a77e3 Mon Sep 17 00:00:00 2001
+From: Pankaj Maharana <pankaj.maharana@lge.com>
+Date: Thu, 12 Dec 2019 12:57:24 +0530
+Subject: [PATCH 6/7] v4l2videodec: ensure pool exists before orphaning it
+
+In commit e2ff8773 ("v4l2videodec: support orphaning") support for
+orphaning the capture buffer pool was added when the format is
+renegotiated. However, the commit forgot to check that a pool existed
+before doing this. This is needed because it's possible for the format
+to be renegotiated before a capture pool is allocated, which would
+result in trying to orphan a NULL pool and lead to a NULL pointer
+dereference.
+
+Fix this by checking a pool exists first. If the pool doesn't exist,
+there are no buffers to be reclaimed, so skip the allocation query in
+that case.
+
+Upstream-Status: Submitted
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/commit/51b83d5ca184196bb48d494658680d007b6ee1d7
+---
+ sys/v4l2/gstv4l2videodec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
+index 1d8d37e..25bc5a0 100644
+--- a/sys/v4l2/gstv4l2videodec.c
++++ b/sys/v4l2/gstv4l2videodec.c
+@@ -246,7 +246,8 @@ gst_v4l2_video_dec_set_format (GstVideoDecoder * decoder,
+      * the complexity and should not have much impact in performance since the
+      * following allocation query will happen on a drained pipeline and won't
+      * block. */
+-    if (!gst_v4l2_buffer_pool_orphan (&self->v4l2capture->pool)) {
++    if (self->v4l2capture->pool &&
++        !gst_v4l2_buffer_pool_orphan (&self->v4l2capture->pool)) {
+       GstCaps *caps = gst_pad_get_current_caps (decoder->srcpad);
+       if (caps) {
+         GstQuery *query = gst_query_new_allocation (caps, FALSE);
+-- 
+2.7.4
+
