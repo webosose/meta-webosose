@@ -26,8 +26,13 @@ COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS_append_rpi = " virtual/libomxil"
 
+DEPENDS_append_raspberrypi4 = " webos-wayland-extensions"
+
 WEBOS_VERSION = "1.0.0-21_ecd90bea31daca759dc40061749131f2a61b99c1"
-PR = "r5"
+PR = "r6"
+
+WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.2_967f92e1055dced726efa9aa3dbff150d1447f8a"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

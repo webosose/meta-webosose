@@ -1,7 +1,7 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS_${PN} variable.
-EXTENDPRAUTO_append_rpi = "webosrpi6"
+EXTENDPRAUTO_append_rpi = "webosrpi7"
 
 # gst omx is used only for raspberrypi3 builds
 MEDIA_append_rpi = " \
@@ -27,6 +27,9 @@ CAMERASERVICE = " \
     com.webos.service.camera \
     g-camera-pipeline \
 "
+
+#TODO: Remove this and add g-camera-pipeline back after it is adapted to GAV
+CAMERASERVICE_remove_raspberrypi4 = "g-camera-pipeline"
 
 # TTS service functionality cannot be verified on webOS rpi64 which cannot boot yet
 TTSSERVICE_raspberrypi3-64 = ""
