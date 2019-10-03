@@ -15,7 +15,7 @@ COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-7_f2364ceafd827a93905f7d29fe41d8a5f61aba50"
+WEBOS_VERSION = "1.0.0-8_9da4cf3127e73505a8a756c47779bd255b76d6c4"
 PR = "r2"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
