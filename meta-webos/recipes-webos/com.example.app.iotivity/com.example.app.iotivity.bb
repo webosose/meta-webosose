@@ -15,7 +15,7 @@ SRC_URI = " \
     git://github.com/ARMmbed/mbedtls.git;destsuffix=iotivity/extlibs/mbedtls/mbedtls;protocol=http;branch=mbedtls-2.4;name=mbedtls \
 "
 
-SRCREV_main = "8fe09d4c9859d3ff32b4e8ca2ed996a156fccb81"
+SRCREV_main = "ff1837a569494cb9613c3b6c961fcf26f0014515"
 SRCREV_tinycbor = "ae64a3d9da39f3bf310b9a7b38427c096d8bcd43"
 SRCREV_mbedtls = "59ae96f167a19f4d04dc6db61f6587b37ccd429f"
 
@@ -24,7 +24,7 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/git"
 
-PR = "r0"
+PR = "r1"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_enactjs_app webos_component
