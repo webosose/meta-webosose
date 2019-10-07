@@ -114,6 +114,9 @@ IMAGE_CMD_ota_append_sota() {
     # Copy /var that was ignored by ostree
     cp -av ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
     cp -av ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
+    # Copy /media /opt that were ignored by ostree
+    cp -av ${IMAGE_ROOTFS}/media ${OTA_SYSROOT} || true
+    cp -av ${IMAGE_ROOTFS}/opt ${OTA_SYSROOT} || true
 
     # make ostree hotfix mode as default (set /usr to R/W mode)
     echo "unlocked=hotfix" >> ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0.origin
