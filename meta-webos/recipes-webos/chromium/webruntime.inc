@@ -30,7 +30,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r22"
+INC_PR = "r23"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -73,8 +73,6 @@ WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 PACKAGECONFIG ?= "jumbo neva-media"
 PACKAGECONFIG_append = " libpci"
 PACKAGECONFIG_append_hardware = " gstreamer umediaserver"
-# g-media-pipeline is still broken for aarch64 PLAT-45700 PLAT-45699
-PACKAGECONFIG_remove_aarch64 = "gstreamer umediaserver neva-media"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
