@@ -15,7 +15,7 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-8_e11abbece30e44c64bae375a4bc01104f8b3fef6"
+WEBOS_VERSION = "1.0.0-9_d9d4051a5f94567ba9e35bc80a6fb35b930c3e7e"
 PR = "r3"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
