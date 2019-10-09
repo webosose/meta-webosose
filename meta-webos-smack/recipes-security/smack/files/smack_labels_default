@@ -11,5 +11,11 @@ ${bindir} -a System::Run -e System::Run -r -t
 ${sbindir} -a System::Run -e System::Run -r -t
 
 # System::Lib access&mmap acces for shared libraries
-${libdir} -a System::Lib -m System::Lib -r -mask *.so,*.so.*,.chk
-${base_libdir} -a System::Lib -m System::Lib -r -mask *.so,*.so.*,.chk
+${libdir} -a System::Lib -m System::Lib -r -mask *.so,*.so.*,*.chk
+${base_libdir} -a System::Lib -m System::Lib -r -mask *.so,*.so.*,*.chk
+
+# webOS::WAM access for web applications
+${bindir}/WebAppMgr -a webOS::WAM -e webOS::WAM
+
+# Remove execute label from app-shell
+${bindir}/app-shell/app_shell -E

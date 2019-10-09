@@ -1,0 +1,22 @@
+From ef7b5c1385fc833a1ad950e51ff08dc6b4058b09 Mon Sep 17 00:00:00 2001
+From: Eugene Todoruk <eugene.todoruk@lge.com>
+Date: Fri, 4 Oct 2019 08:35:57 +0000
+Subject: [PATCH] run_app_shell: add SMACK labeling based on AppID
+
+---
+ src/webos/runtime/app_shell/run_app_shell | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/webos/runtime/app_shell/run_app_shell b/src/webos/runtime/app_shell/run_app_shell
+index fe93bfe..45d389a 100644
+--- a/src/webos/runtime/app_shell/run_app_shell
++++ b/src/webos/runtime/app_shell/run_app_shell
+@@ -171,4 +171,5 @@ echo "                       Launching App Shell                          "
+ echo "----------------------------------------------------------------------"
+ echo ""
+ 
++echo "webOS::App::${BROWSER_APP_ID}" > /proc/self/attr/current
+ exec ${DEPLOY_DIR}/app_shell ${CHROME_FLAGS} --launch-args="${EXTRA_PARAMS_JSON}" --js-flags="${JS_FLAGS}" "$@"
+-- 
+2.7.4
+
