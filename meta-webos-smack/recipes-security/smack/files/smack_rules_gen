@@ -15,6 +15,8 @@ be removed.
 
 2. Turn on/off permissive mode for provided labels. For these labels
 new rules with full access for all other labels will be created.
+
+3. Define basic set of rules for build in and installable apps.
 """
 
 script_version = "1.2"
@@ -98,16 +100,19 @@ def parse_arguments():
                         help='turn on permissive mode for provided labels')
     parser.add_argument('-P', '--permit-off', dest='perm_mode_off', type=str, nargs='+',
                         help='turn off permissive mode for provided labels')
+    parser.add_argument('-b', '--basic-rules', dest='basic_rules', type=str, nargs='+',
+                        help='set basic rules for provided labels')
     parser.add_argument('-v', '--version', action='version', version=script_version)
 
     args = parser.parse_args(sys.argv[1:])
 
     # Check for invalid combination of arguments
-    if not (args.perm_mode or args.perm_mode_off or args.logfile) or \
+    if not (args.perm_mode or args.perm_mode_off or args.logfile or args.basic_rules) or \
                             (args.perm_mode and args.logfile) or \
                             (args.perm_mode_off and args.logfile) or \
-                            (args.perm_mode and args.perm_mode_off):
-        raise argparse.ArgumentTypeError("Choose parsing logfile or enable permissive mode")
+                            (args.perm_mode and args.perm_mode_off) or \
+                            (args.basic_rules and args.logfile):
+        raise argparse.ArgumentTypeError("Choose parsing logfile or enable permissive mode or basic rules")
     if (args.perm_mode or args.perm_mode_off) and not args.rules_orig:
         raise argparse.ArgumentTypeError("File with original rules is required")
 
@@ -187,6 +192,10 @@ def main(args):
                         rule_name = rule.group('subj') + ' ' + rule.group('obj')
                         rule_acc = set(rule.group('acc'))
                         add_rule(rule_name, rule_acc)
+
+                        # Rules for "System::Run" and "System::Lib" as subjects must be equal
+                        if (rule.group('subj') == "System::Run") and ("webOS::App::" in rule.group('obj')):
+                            add_rule("System::Lib" + ' ' + rule.group('obj'), rule_acc)
         re.purge()
     else:
         # Writing not modified (actual) rules with bringUp modes
@@ -205,19 +214,39 @@ def main(args):
             except:
                 continue
 
-    if args.rules_out:
+    # Set basic rules for provided labels
+    if args.basic_rules:
+        for label in args.basic_rules:
+            full_label = "webOS::App::" + label
+            mod_rules_dict[full_label + " System::Shared"] = "rx"
+            mod_rules_dict[full_label + " System::Run"] = "rwx"
+            mod_rules_dict[full_label + " System::Lib"] = "rwx"
+            mod_rules_dict[full_label + " _"] = "rw"
+            mod_rules_dict["System::Run " + full_label] = "rwxt"
+            mod_rules_dict["System::Lib " + full_label] = "rwxt"
+
+
+    """
+    Output modified rules
+    In case of set permissive mode for provided labels new rules will be append to input
+    rules file if it exist or new file will be creating
+    """
+    if args.rules_out and args.perm_mode:
+        f_rules_out = open(args.rules_out, 'a+')
+    elif args.rules_out:
         f_rules_out = open(args.rules_out, 'w')
     else:
         f_rules_out = None
 
-    output_rules(mod_rules_dict, f_rules_out)
     if args.perm_mode:
         output_rules(perm_rules_dict, f_rules_out)
+    else:
+        output_rules(mod_rules_dict, f_rules_out)
 
     if args.rules_out:
         f_rules_out.close()
 
 
-if __name__ == '__main__':
-    args = parse_arguments()
-    main(args)
+# Main body
+args = parse_arguments()
+main(args)

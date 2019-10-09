@@ -1,0 +1,76 @@
+From 21946658a84c363ad710135877105941528dda7d Mon Sep 17 00:00:00 2001
+From: Eugene Todoruk <eugene.todoruk@lge.com>
+Date: Mon, 16 Sep 2019 08:14:29 +0000
+Subject: [PATCH] Add SMACK security labeling
+
+---
+ tools/runner/apploader.cpp | 25 +++++++++++++++++++++++++
+ tools/runner/apploader.h   |  2 ++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/tools/runner/apploader.cpp b/tools/runner/apploader.cpp
+index 8e92b7d..bedc6b4 100644
+--- a/tools/runner/apploader.cpp
++++ b/tools/runner/apploader.cpp
+@@ -25,6 +25,10 @@
+ #include "apploader.h"
+ 
+ #include <QDebug>
++#include <unistd.h>
++#include <fcntl.h>
++
++#define SMACK_LABEL_PREFIX          "webOS::App::"
+ 
+ AppLoader::AppLoader (QObject * parent)
+     : QObject (parent),
+@@ -85,6 +89,26 @@ void AppLoader::reloadApplication(const QVariant &params)
+     m_window->showFullScreen();
+ }
+ 
++int AppLoader::setProcessSmackLabel(const char *label) {
++    int fd, err = 0;
++
++    if (-1 == (fd = open("/proc/self/attr/current", O_WRONLY))) {
++        qWarning("SMACK is not enabled");
++        return -errno;
++    }
++
++    if (-1 == write(fd, label, strlen(label))) {
++        qFatal("Can not set SMACK label %s", label);
++        err = -errno;
++    } else {
++        qInfo("Set SMACK label %s", label);
++    }
++
++    close(fd);
++
++    return err;
++}
++
+ bool AppLoader::loadApplication(const QString &appId, const QString &mainQml, const QVariant &params)
+ {
+     qDebug() << "Entered" << Q_FUNC_INFO;
+@@ -102,6 +126,7 @@ bool AppLoader::loadApplication(const QString &appId, const QString &mainQml, co
+         // TODO: deprecate APP_ID in favor of QCoreApplication::applicationName
+         qputenv("APP_ID", appId.toUtf8());
+     }
++    setProcessSmackLabel((SMACK_LABEL_PREFIX + appId).toStdString().c_str());
+ 
+     m_component->loadUrl(mainQml);
+     if ( !m_component->isReady() ) {
+diff --git a/tools/runner/apploader.h b/tools/runner/apploader.h
+index 7372c74..443abf6 100644
+--- a/tools/runner/apploader.h
++++ b/tools/runner/apploader.h
+@@ -37,6 +37,8 @@ public:
+ public slots:
+     bool loadApplication(const QString &appId, const QString &mainQml, const QVariant &params);
+     void reloadApplication(const QVariant &params);
++    int setProcessSmackLabel(const char *label);
++
+     void terminate();
+ 
+ private:
+-- 
+2.11.0
+
