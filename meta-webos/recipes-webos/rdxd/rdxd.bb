@@ -10,7 +10,7 @@ DEPENDS = "glib-2.0 libpbnjson luna-prefs luna-service2 pmloglib"
 #Add tar dependency since --absolute-names support is missing in busybox tar
 RDEPENDS_${PN} = "nyx-utils tar"
 
-WEBOS_VERSION = "4.0.2-7_9f398d9ecb0c28014075e5d5dff7bf5666cd071d"
+WEBOS_VERSION = "4.0.2-8_9cbb90a2ce560219c286a9d99cd2e1c5bdf8bc64"
 PR = "r8"
 
 PROVIDES = "librdx rdx-utils"
