@@ -1,4 +1,4 @@
-From e276cf1b69d325461efed6f10c089577fbcb938e Mon Sep 17 00:00:00 2001
+From 5c87dd1603d100a81a0ae8e4a1939030d6a3e8cd Mon Sep 17 00:00:00 2001
 From: Jose Dapena Paz <jose.dapena@lge.com>
 Date: Mon, 23 Feb 2015 14:20:58 +0100
 Subject: [PATCH] Revert "Don't accept json strings with trailing garbage"

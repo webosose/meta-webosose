@@ -87,7 +87,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.8 based on 5.12.meta-qt5-shared.8
+# Patches from 5.12.meta-webos.9 based on 5.12.meta-qt5-shared.9
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-DisableCertificateVerificationCheck.patch \

@@ -1,4 +1,4 @@
-From c33b672dee109ee6cdb7f3262e8c2112c99d0c68 Mon Sep 17 00:00:00 2001
+From 9e7fdd6ba1d551259584f9eddc6da675b6fd5e96 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Fri, 17 Apr 2015 14:26:22 +0900
 Subject: [PATCH] Revert "Make SmoothedAnimation and SpringAnimation smoothly
@@ -32,7 +32,7 @@ Upstream-Status: do not apply, we may consider right fix for this.
  delete mode 100644 src/qml/animations/qcontinuinganimationgroupjob_p.h
 
 diff --git a/src/qml/animations/animations.pri b/src/qml/animations/animations.pri
-index a37969256..01ac25af4 100644
+index a379692567..01ac25af46 100644
 --- a/src/qml/animations/animations.pri
 +++ b/src/qml/animations/animations.pri
 @@ -5,7 +5,6 @@ HEADERS += \
@@ -50,7 +50,7 @@ index a37969256..01ac25af4 100644
 -        $$PWD/qcontinuinganimationgroupjob.cpp \
          $$PWD/qpauseanimationjob.cpp
 diff --git a/src/qml/animations/qabstractanimationjob.cpp b/src/qml/animations/qabstractanimationjob.cpp
-index ece2f0d69..e2949df43 100644
+index 7a784a2b35..29831e6919 100644
 --- a/src/qml/animations/qabstractanimationjob.cpp
 +++ b/src/qml/animations/qabstractanimationjob.cpp
 @@ -60,7 +60,7 @@ QAnimationJobChangeListener::~QAnimationJobChangeListener()
@@ -96,10 +96,10 @@ index ece2f0d69..e2949df43 100644
  }
  
 diff --git a/src/qml/animations/qabstractanimationjob_p.h b/src/qml/animations/qabstractanimationjob_p.h
-index 0be6ca96e..b5ab78529 100644
+index d046ce9def..615ed0740e 100644
 --- a/src/qml/animations/qabstractanimationjob_p.h
 +++ b/src/qml/animations/qabstractanimationjob_p.h
-@@ -226,6 +226,8 @@ public:
+@@ -227,6 +227,8 @@ public:
      void restartAnimationTimer() override;
      void updateAnimationsTime(qint64 timeStep) override;
  
@@ -108,7 +108,7 @@ index 0be6ca96e..b5ab78529 100644
      //useful for profiling/debugging
      int runningAnimationCount() override { return animations.count(); }
  
-@@ -237,6 +239,7 @@ public Q_SLOTS:
+@@ -238,6 +240,7 @@ public Q_SLOTS:
  
  private:
      qint64 lastTick;
@@ -118,7 +118,7 @@ index 0be6ca96e..b5ab78529 100644
      bool startAnimationPending;
 diff --git a/src/qml/animations/qcontinuinganimationgroupjob.cpp b/src/qml/animations/qcontinuinganimationgroupjob.cpp
 deleted file mode 100644
-index 10096bf19..000000000
+index 10096bf19c..0000000000
 --- a/src/qml/animations/qcontinuinganimationgroupjob.cpp
 +++ /dev/null
 @@ -1,129 +0,0 @@
@@ -253,7 +253,7 @@ index 10096bf19..000000000
 -
 diff --git a/src/qml/animations/qcontinuinganimationgroupjob_p.h b/src/qml/animations/qcontinuinganimationgroupjob_p.h
 deleted file mode 100644
-index c67b8d39a..000000000
+index c67b8d39ad..0000000000
 --- a/src/qml/animations/qcontinuinganimationgroupjob_p.h
 +++ /dev/null
 @@ -1,79 +0,0 @@
@@ -337,7 +337,7 @@ index c67b8d39a..000000000
 -
 -#endif // QCONTINUINGANIMATIONGROUPJOB_P_H
 diff --git a/src/quick/util/qquicksmoothedanimation.cpp b/src/quick/util/qquicksmoothedanimation.cpp
-index bae57172d..b22c3e9af 100644
+index bae57172d1..b22c3e9af0 100644
 --- a/src/quick/util/qquicksmoothedanimation.cpp
 +++ b/src/quick/util/qquicksmoothedanimation.cpp
 @@ -41,7 +41,6 @@
@@ -400,7 +400,7 @@ index bae57172d..b22c3e9af 100644
      if (!dataActions.isEmpty()) {
          QSet<QAbstractAnimationJob*> anims;
 diff --git a/src/quick/util/qquicksmoothedanimation_p_p.h b/src/quick/util/qquicksmoothedanimation_p_p.h
-index 785056259..e4797bea0 100644
+index 7850562594..e4797bea0a 100644
 --- a/src/quick/util/qquicksmoothedanimation_p_p.h
 +++ b/src/quick/util/qquicksmoothedanimation_p_p.h
 @@ -56,6 +56,8 @@
@@ -422,7 +422,7 @@ index 785056259..e4797bea0 100644
      bool recalc();
      void delayedStop();
 diff --git a/src/quick/util/qquickspringanimation.cpp b/src/quick/util/qquickspringanimation.cpp
-index 9012d20f9..1b679f2c5 100644
+index 9012d20f9a..1b679f2c51 100644
 --- a/src/quick/util/qquickspringanimation.cpp
 +++ b/src/quick/util/qquickspringanimation.cpp
 @@ -41,7 +41,7 @@

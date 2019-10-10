@@ -1,4 +1,4 @@
-From 5e7777b0bdb0c06dc2a69ebbd2c986aa480c06e0 Mon Sep 17 00:00:00 2001
+From 012bb081273a39acc21e889fd14ef50d5f0bbe74 Mon Sep 17 00:00:00 2001
 From: Youngjin Kim <youngjin78.kim@lge.com>
 Date: Wed, 28 Aug 2019 11:10:14 +0900
 Subject: [PATCH] Fix the cursor problem on secondary display on Raspberry Pi 4
@@ -25,11 +25,11 @@ between first display and second.
 Change-Id: If6ea73c091f26cd7118c315990ffbe0a9d784537
 Upstream-Status: Inappropriate [device specific]
 ---
- .../eglfs_kms/qeglfskmsgbmcursor.cpp               | 24 +++++++++++++++++-----
+ .../eglfs_kms/qeglfskmsgbmcursor.cpp          | 24 +++++++++++++++----
  1 file changed, 19 insertions(+), 5 deletions(-)
 
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
-index 4d0cf0c..acf1efc 100644
+index 4d0cf0c47e..acf1efca02 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
 @@ -166,6 +166,7 @@ void QEglFSKmsGbmCursor::changeCursor(QCursor *windowCursor, QWindow *window)

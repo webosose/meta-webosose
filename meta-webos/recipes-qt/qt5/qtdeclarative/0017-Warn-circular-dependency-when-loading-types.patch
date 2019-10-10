@@ -1,4 +1,4 @@
-From 6857b7ba1ae3ea8671d21b420e9a1b697bf8c91a Mon Sep 17 00:00:00 2001
+From 0806673fcc527fbefe17b8aebb52d8008dc51a85 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 8 Feb 2018 14:24:20 +0900
 Subject: [PATCH] Warn circular dependency when loading types
@@ -13,7 +13,7 @@ Upstream-Status: Pending
  1 file changed, 4 insertions(+)
 
 diff --git a/src/qml/qml/qqmltypeloader.cpp b/src/qml/qml/qqmltypeloader.cpp
-index df6a8f150..faf2b8073 100644
+index 9e5bc0b021..a9f83a8fc1 100644
 --- a/src/qml/qml/qqmltypeloader.cpp
 +++ b/src/qml/qml/qqmltypeloader.cpp
 @@ -516,6 +516,10 @@ void QQmlDataBlob::addDependency(QQmlDataBlob *blob)

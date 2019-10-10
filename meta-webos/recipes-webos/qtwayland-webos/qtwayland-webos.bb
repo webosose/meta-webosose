@@ -50,3 +50,5 @@ do_install_append() {
     sed -i 's@prefix=${STAGING_DIR_HOST}@prefix=@g ;s@-L${STAGING_DIR_HOST} @ @g;' ${D}${libdir}/pkgconfig/*.pc
     sed -i "s@-L${STAGING_LIBDIR}@-L\${libdir}@g" ${D}${libdir}/pkgconfig/*.pc
 }
+
+SRC_URI += "file://0001-webos-wayland-egl.pro-link-with-wayland-cursor.patch"

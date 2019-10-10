@@ -1,4 +1,4 @@
-From 47e15fd0e766bf3f2a0fec94f3a1f7822339f060 Mon Sep 17 00:00:00 2001
+From 1a80f8898118599ca6e33d61a2faac8a14f1539b Mon Sep 17 00:00:00 2001
 From: Dong-Heon Jung <dongheon.jung@lge.com>
 Date: Tue, 11 Nov 2014 16:37:00 +0900
 Subject: [PATCH] QNetworkDiskCache: Disable disk cache if content have cookie

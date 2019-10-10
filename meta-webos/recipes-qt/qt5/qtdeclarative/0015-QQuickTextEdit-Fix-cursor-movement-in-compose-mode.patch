@@ -1,4 +1,4 @@
-From 66f55b2e1cf6dff4866969a1649956579caf706b Mon Sep 17 00:00:00 2001
+From 129e006f821b318f4e82fc35c57d4b0e138a40c9 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 2 Jan 2018 08:36:18 +0900
 Subject: [PATCH] QQuickTextEdit: Fix cursor movement in compose mode
@@ -14,7 +14,7 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/215470]
  1 file changed, 13 insertions(+)
 
 diff --git a/src/quick/items/qquicktextinput.cpp b/src/quick/items/qquicktextinput.cpp
-index aac7137ff..caed0e833 100644
+index aac7137ff3..caed0e8332 100644
 --- a/src/quick/items/qquicktextinput.cpp
 +++ b/src/quick/items/qquicktextinput.cpp
 @@ -1511,6 +1511,11 @@ void QQuickTextInput::keyPressEvent(QKeyEvent* ev)

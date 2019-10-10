@@ -1,4 +1,4 @@
-From 45c9a2204c293e479d87a502dcc83d7d60ccaeb9 Mon Sep 17 00:00:00 2001
+From 9a522144aaaea3f254ded8d6edc5210e08a34156 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 26 Apr 2017 12:29:24 +0900
 Subject: [PATCH] Avoid loading comments from JPEG and PNG files
@@ -34,7 +34,7 @@ Change-Id: I3744312f69aa3201d5188776cbd99fe690b75d32
  2 files changed, 4 insertions(+)
 
 diff --git a/src/gui/image/qpnghandler.cpp b/src/gui/image/qpnghandler.cpp
-index 808037f434..58213e0e6e 100644
+index e7e998efd1..3628926663 100644
 --- a/src/gui/image/qpnghandler.cpp
 +++ b/src/gui/image/qpnghandler.cpp
 @@ -508,6 +508,7 @@ static void qt_png_warning(png_structp /*png_ptr*/, png_const_charp message)

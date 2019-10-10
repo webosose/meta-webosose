@@ -1,4 +1,4 @@
-From 252f7a98f9e4fbcb802ca0aaee777d6d9ef657a4 Mon Sep 17 00:00:00 2001
+From bd5f227803773f6b8f35dd2b5b429252be611667 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 24 Apr 2019 10:19:27 +0000
 Subject: [PATCH] Update eglfs_kms to render on topmost drmplane
@@ -28,16 +28,16 @@ the patterns on HDMI output.
 Change-Id: Ic898dbde7a19f20a2f38f63d79ef0166970ef498
 Upstream-Status: Inappropriate [webOS specific]
 ---
- src/platformsupport/kmsconvenience/qkmsdevice.cpp  | 15 ++--
- .../eglfs_kms/qeglfskmsgbmintegration.cpp          |  2 +-
- .../eglfs_kms/qeglfskmsgbmscreen.cpp               | 91 ++++------------------
+ .../kmsconvenience/qkmsdevice.cpp             | 15 +--
+ .../eglfs_kms/qeglfskmsgbmintegration.cpp     |  2 +-
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp          | 91 ++++---------------
  3 files changed, 25 insertions(+), 83 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index 7f6e732..ae0707a 100644
+index f1faceed86..5e6ef1cba9 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -437,6 +437,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+@@ -453,6 +453,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
      // This is for the EGLDevice/EGLStream backend. On some of those devices one
      // may want to target a pre-configured plane. It is probably useless for
      // eglfs_kms and others. Do not confuse with generic plane support (available_planes).
@@ -45,7 +45,7 @@ index 7f6e732..ae0707a 100644
      bool ok;
      int idx = qEnvironmentVariableIntValue("QT_QPA_EGLFS_KMS_PLANE_INDEX", &ok);
      if (ok) {
-@@ -463,8 +464,14 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+@@ -479,8 +480,14 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
          }
      }
  
@@ -61,7 +61,7 @@ index 7f6e732..ae0707a 100644
  
      m_crtc_allocator |= (1 << output.crtc_index);
  
-@@ -1035,12 +1042,6 @@ void QKmsScreenConfig::loadConfig()
+@@ -1057,12 +1064,6 @@ void QKmsScreenConfig::loadConfig()
  void QKmsOutput::restoreMode(QKmsDevice *device)
  {
      if (mode_set && saved_crtc) {
@@ -75,7 +75,7 @@ index 7f6e732..ae0707a 100644
      }
  }
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 1619509..7ae9d7a 100644
+index 1619509cda..7ae9d7afda 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 @@ -102,7 +102,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
@@ -88,7 +88,7 @@ index 1619509..7ae9d7a 100644
  
      return reinterpret_cast<EGLNativeWindowType>(surface);
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 9565f07..dc238be 100644
+index 029879c0c6..0ff1cd1718 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,16 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
@@ -113,7 +113,7 @@ index 9565f07..dc238be 100644
  
      if (ret) {
          qWarning("Failed to create KMS FB!");
-@@ -309,84 +309,25 @@ void QEglFSKmsGbmScreen::flip()
+@@ -322,84 +322,25 @@ void QEglFSKmsGbmScreen::flip()
      }
  
      FrameBuffer *fb = framebufferForBufferObject(m_gbm_bo_next);

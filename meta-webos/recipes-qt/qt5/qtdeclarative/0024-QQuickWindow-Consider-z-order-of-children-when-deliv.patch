@@ -1,4 +1,4 @@
-From 853e2ce5e8b6cfd7234b9b80596814fa6ed89e38 Mon Sep 17 00:00:00 2001
+From 4ae1885fce1188b8579df71417ad9d1a1bbb229d Mon Sep 17 00:00:00 2001
 From: YoungSun Park <cathy.park@lge.com>
 Date: Fri, 16 Aug 2019 21:32:22 +0900
 Subject: [PATCH] QQuickWindow: Consider z-order of children when delivering
@@ -17,10 +17,10 @@ Upstream-Status: Pending
  1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 4993bdc..72a9f1a 100644
+index 8fbd18c374..d545d3b8e1 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -2413,16 +2413,24 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
+@@ -2425,16 +2425,24 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
              return targets;
      }
  
@@ -47,7 +47,7 @@ index 4993bdc..72a9f1a 100644
      bool relevant = item->contains(itemPos);
      if (itemPrivate->hasPointerHandlers()) {
          if (!relevant)
-@@ -2436,6 +2444,11 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
+@@ -2448,6 +2456,11 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
      }
      if (relevant)
          targets << item; // add this item last: children take precedence

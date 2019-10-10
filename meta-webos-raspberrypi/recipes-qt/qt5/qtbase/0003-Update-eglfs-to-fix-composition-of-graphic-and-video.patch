@@ -1,4 +1,4 @@
-From 954f1f1862b9aecbdb7c08b92ccd54243861b5d8 Mon Sep 17 00:00:00 2001
+From 2d21a86a198cf55ddffc3215069fc050de9cce29 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 12 Jun 2019 04:46:36 +0000
 Subject: [PATCH] Update eglfs to fix composition of graphic and video plane in
@@ -28,24 +28,24 @@ Upstream-Status: Inappropriate [webOS specific]
 
 Change-Id: Iecfd351a37c630b1ea766e388400caccd3ab483e
 ---
- src/platformsupport/kmsconvenience/qkmsdevice.cpp             | 11 ++++-------
- .../eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp  |  9 ++++-----
+ src/platformsupport/kmsconvenience/qkmsdevice.cpp     | 11 ++++-------
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp                  |  9 ++++-----
  2 files changed, 8 insertions(+), 12 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index 7a51a8e..9d35dc8 100644
+index 1f01578fea..4bc01a3f94 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -339,7 +339,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+@@ -347,7 +347,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
      }
      qCDebug(qLcKmsDebug) << "Physical size is" << physSize << "mm" << "for output" << connectorName;
  
--    const QByteArray formatStr = userConnectorConfig.value(QStringLiteral("format"), QStringLiteral("xrgb8888"))
+-    const QByteArray formatStr = userConnectorConfig.value(QStringLiteral("format"), QString())
 +    const QByteArray formatStr = userConnectorConfig.value(QStringLiteral("format"), QStringLiteral("argb8888"))
              .toByteArray().toLower();
      uint32_t drmFormat;
-     if (formatStr == "xrgb8888") {
-@@ -427,7 +427,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+     bool drmFormatExplicit = true;
+@@ -443,7 +443,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
              output.available_planes.append(plane);
              planeListStr.append(QString::number(plane.id));
              planeListStr.append(QLatin1Char(' '));
@@ -54,7 +54,7 @@ index 7a51a8e..9d35dc8 100644
                  output.eglfs_plane = (QKmsPlane*)&plane;
          }
      }
-@@ -464,14 +464,11 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+@@ -480,14 +480,11 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
          }
      }
  
@@ -72,7 +72,7 @@ index 7a51a8e..9d35dc8 100644
      m_crtc_allocator |= (1 << output.crtc_index);
  
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index dc238be..fe786ce 100644
+index 0ff1cd1718..cf308465ff 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,15 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(

@@ -1,4 +1,4 @@
-From 12616a9fcc23252ba4aa47bbd492b2a400c407c0 Mon Sep 17 00:00:00 2001
+From e63f888498cf6d75a82dea012a7f802631c9602b Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:57:06 +0100
 Subject: [PATCH] QOpenGL2PaintEngineEx must makeCurrent own context

@@ -1,0 +1,128 @@
+From 1e54c9c1235d6a36d8422328916d541c3d4febef Mon Sep 17 00:00:00 2001
+From: Fabian Kosmale <fabian.kosmale@qt.io>
+Date: Fri, 30 Aug 2019 15:55:33 +0200
+Subject: [PATCH] Allow semicolon after property declaration
+
+Most of the rules already had Semicolon at the end, however it was
+missing for UiScriptStatement, list properties and UiObjectInitializer.
+
+This change fixes the regression from 5.11.3 to 5.12.0, and keeps the
+behavior consistent.
+
+(Semicolon was only introduced in 5.14, that why we need to introduce
+the rule in 5.12 first)
+
+Fixes: QTBUG-77954
+Change-Id: I45ef35fab399e3f971444b96d4a9ec6a99e29e09
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+(cherry picked from commit 45b1a3f97953fac65c6aef8e46abad865a0d0bc3)
+
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/272764]
+---
+ src/qml/parser/qqmljs.g                       | 20 ++++++++++++-------
+ .../qml/qqmlecmascript/tst_qqmlecmascript.cpp | 11 ++++++++++
+ 2 files changed, 24 insertions(+), 7 deletions(-)
+
+diff --git a/src/qml/parser/qqmljs.g b/src/qml/parser/qqmljs.g
+index e549c4620a..4a718ce160 100644
+--- a/src/qml/parser/qqmljs.g
++++ b/src/qml/parser/qqmljs.g
+@@ -1171,8 +1171,14 @@ UiObjectMember: T_DEFAULT T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlId
+         sym(1).Node = node;
+     } break;
+ ./
++Semicolon: T_SEMICOLON | T_AUTOMATIC_SEMICOLON;
++OptionalSemicolon: | Semicolon;
++/.
++/* we need OptionalSemicolon because UiScriptStatement might already parse the last semicolon
++  and then we would miss a semicolon (see tests/auto/quick/qquickvisualdatamodel/data/objectlist.qml)*/
++ ./
+ 
+-UiObjectMember: T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatement;
++UiObjectMember: T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatement OptionalSemicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(2).UiQualifiedId->finish(), stringRef(3), sym(5).Statement);
+@@ -1184,7 +1190,7 @@ UiObjectMember: T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatemen
+     } break;
+ ./
+ 
+-UiObjectMember: T_READONLY T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatement;
++UiObjectMember: T_READONLY T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatement OptionalSemicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(3).UiQualifiedId->finish(), stringRef(4), sym(6).Statement);
+@@ -1198,7 +1204,7 @@ UiObjectMember: T_READONLY T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScr
+     } break;
+ ./
+ 
+-UiObjectMember: T_DEFAULT T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatement;
++UiObjectMember: T_DEFAULT T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScriptStatement OptionalSemicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(3).UiQualifiedId->finish(), stringRef(4), sym(6).Statement);
+@@ -1212,7 +1218,7 @@ UiObjectMember: T_DEFAULT T_PROPERTY UiPropertyType QmlIdentifier T_COLON UiScri
+     } break;
+ ./
+ 
+-UiObjectMember: T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlIdentifier T_COLON T_LBRACKET UiArrayMemberList T_RBRACKET;
++UiObjectMember: T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlIdentifier T_COLON T_LBRACKET UiArrayMemberList T_RBRACKET Semicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(4).UiQualifiedId->finish(), stringRef(6));
+@@ -1238,7 +1244,7 @@ UiObjectMember: T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlIdentifier T
+     } break;
+ ./
+ 
+-UiObjectMember: T_READONLY T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlIdentifier T_COLON T_LBRACKET UiArrayMemberList T_RBRACKET;
++UiObjectMember: T_READONLY T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlIdentifier T_COLON T_LBRACKET UiArrayMemberList T_RBRACKET Semicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(5).UiQualifiedId->finish(), stringRef(7));
+@@ -1266,7 +1272,7 @@ UiObjectMember: T_READONLY T_PROPERTY T_IDENTIFIER T_LT UiPropertyType T_GT QmlI
+     } break;
+ ./
+ 
+-UiObjectMember: T_PROPERTY UiPropertyType QmlIdentifier T_COLON ExpressionStatementLookahead UiQualifiedId UiObjectInitializer;
++UiObjectMember: T_PROPERTY UiPropertyType QmlIdentifier T_COLON ExpressionStatementLookahead UiQualifiedId UiObjectInitializer Semicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(2).UiQualifiedId->finish(), stringRef(3));
+@@ -1289,7 +1295,7 @@ UiObjectMember: T_PROPERTY UiPropertyType QmlIdentifier T_COLON ExpressionStatem
+     } break;
+ ./
+ 
+-UiObjectMember: T_READONLY T_PROPERTY UiPropertyType QmlIdentifier T_COLON ExpressionStatementLookahead UiQualifiedId UiObjectInitializer;
++UiObjectMember: T_READONLY T_PROPERTY UiPropertyType QmlIdentifier T_COLON ExpressionStatementLookahead UiQualifiedId UiObjectInitializer Semicolon;
+ /.
+     case $rule_number: {
+         AST::UiPublicMember *node = new (pool) AST::UiPublicMember(sym(3).UiQualifiedId->finish(), stringRef(4));
+diff --git a/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp b/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp
+index 15bd9584df..dc8ef232c1 100644
+--- a/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp
++++ b/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript.cpp
+@@ -372,6 +372,7 @@ private slots:
+     void hugeRegexpQuantifiers();
+     void singletonTypeWrapperLookup();
+     void getThisObject();
++    void semicolonAfterProperty();
+ 
+ private:
+ //    static void propertyVarWeakRefCallback(v8::Persistent<v8::Value> object, void* parameter);
+@@ -9054,6 +9055,16 @@ void tst_qqmlecmascript::getThisObject()
+     QTRY_COMPARE(qvariant_cast<QObject *>(test->property("self")), test.data());
+ }
+ 
++// QTBUG-77954
++void tst_qqmlecmascript::semicolonAfterProperty()
++{
++    QQmlEngine engine;
++    QQmlComponent component(&engine, testFileUrl("semicolonAfterProperty.qml"));
++    QVERIFY(component.isReady());
++    QScopedPointer<QObject> test(component.create());
++    QVERIFY(!test.isNull());
++}
++
+ QTEST_MAIN(tst_qqmlecmascript)
+ 
+ #include "tst_qqmlecmascript.moc"

@@ -1,4 +1,4 @@
-From ddc8179cba796ed3c1b529361ae8884d52bdc117 Mon Sep 17 00:00:00 2001
+From e7d07668a0ff3f34dca8238fb8152ee14541ed6b Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 11:59:11 +0200
 Subject: [PATCH] network: SSL Handle Multiple Client Certificates
@@ -149,10 +149,10 @@ index 4f49a71e8a..b413f9da8d 100644
      ptr->sessionCipher = global->sessionCipher;
      ptr->sessionProtocol = global->sessionProtocol;
 diff --git a/src/network/ssl/qsslsocket_openssl.cpp b/src/network/ssl/qsslsocket_openssl.cpp
-index e07fc7da20..c395824e6c 100644
+index 66ce6a0a59..e65e8dd1fe 100644
 --- a/src/network/ssl/qsslsocket_openssl.cpp
 +++ b/src/network/ssl/qsslsocket_openssl.cpp
-@@ -96,6 +96,7 @@ QT_BEGIN_NAMESPACE
+@@ -100,6 +100,7 @@ QT_BEGIN_NAMESPACE
  bool QSslSocketPrivate::s_libraryLoaded = false;
  bool QSslSocketPrivate::s_loadedCiphersAndCerts = false;
  bool QSslSocketPrivate::s_loadRootCertsOnDemand = false;
@@ -160,7 +160,7 @@ index e07fc7da20..c395824e6c 100644
  
  #if OPENSSL_VERSION_NUMBER >= 0x10001000L
  int QSslSocketBackendPrivate::s_indexForSSLExtraData = -1;
-@@ -328,6 +329,48 @@ long QSslSocketBackendPrivate::setupOpenSslOptions(QSsl::SslProtocol protocol, Q
+@@ -378,6 +379,48 @@ long QSslSocketBackendPrivate::setupOpenSslOptions(QSsl::SslProtocol protocol, Q
      return options;
  }
  
@@ -209,7 +209,7 @@ index e07fc7da20..c395824e6c 100644
  bool QSslSocketBackendPrivate::initSslContext()
  {
      Q_Q(QSslSocket);
-@@ -354,6 +397,9 @@ bool QSslSocketBackendPrivate::initSslContext()
+@@ -404,6 +447,9 @@ bool QSslSocketBackendPrivate::initSslContext()
          return false;
      }
  
@@ -233,10 +233,10 @@ index c16b9d5f76..c8ae120b97 100644
      static QString msgErrorsDuringHandshake();
  };
 diff --git a/src/network/ssl/qsslsocket_openssl_symbols.cpp b/src/network/ssl/qsslsocket_openssl_symbols.cpp
-index 299df6b685..fe1729cb8f 100644
+index c303e266ba..81f14144be 100644
 --- a/src/network/ssl/qsslsocket_openssl_symbols.cpp
 +++ b/src/network/ssl/qsslsocket_openssl_symbols.cpp
-@@ -536,6 +536,8 @@ DEFINEFUNC(X509_STORE_CTX *, X509_STORE_CTX_new, DUMMYARG, DUMMYARG, return null
+@@ -542,6 +542,8 @@ DEFINEFUNC(X509_STORE_CTX *, X509_STORE_CTX_new, DUMMYARG, DUMMYARG, return null
  DEFINEFUNC2(void *, X509_STORE_CTX_get_ex_data, X509_STORE_CTX *ctx, ctx, int idx, idx, return nullptr, return)
  DEFINEFUNC(int, SSL_get_ex_data_X509_STORE_CTX_idx, DUMMYARG, DUMMYARG, return -1, return)
  DEFINEFUNC3(int, SSL_CTX_load_verify_locations, SSL_CTX *ctx, ctx, const char *CAfile, CAfile, const char *CApath, CApath, return 0, return)
@@ -245,7 +245,7 @@ index 299df6b685..fe1729cb8f 100644
  DEFINEFUNC2(int, i2d_SSL_SESSION, SSL_SESSION *in, in, unsigned char **pp, pp, return 0, return)
  DEFINEFUNC3(SSL_SESSION *, d2i_SSL_SESSION, SSL_SESSION **a, a, const unsigned char **pp, pp, long length, length, return nullptr, return)
  #if OPENSSL_VERSION_NUMBER >= 0x1000100fL && !defined(OPENSSL_NO_NEXTPROTONEG)
-@@ -1332,6 +1334,8 @@ bool q_resolveOpenSslSymbols()
+@@ -1361,6 +1363,8 @@ bool q_resolveOpenSslSymbols()
      RESOLVEFUNC(d2i_X509)
      RESOLVEFUNC(i2d_X509)
      RESOLVEFUNC(SSL_CTX_load_verify_locations)
@@ -255,10 +255,10 @@ index 299df6b685..fe1729cb8f 100644
      RESOLVEFUNC(d2i_SSL_SESSION)
  #if OPENSSL_VERSION_NUMBER >= 0x1000100fL && !defined(OPENSSL_NO_NEXTPROTONEG)
 diff --git a/src/network/ssl/qsslsocket_openssl_symbols_p.h b/src/network/ssl/qsslsocket_openssl_symbols_p.h
-index bfdfbf0efc..49ec821738 100644
+index 3143117621..3875b5564a 100644
 --- a/src/network/ssl/qsslsocket_openssl_symbols_p.h
 +++ b/src/network/ssl/qsslsocket_openssl_symbols_p.h
-@@ -493,6 +493,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
+@@ -494,6 +494,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
  
  #define q_sk_X509_num(st) q_SKM_sk_num(X509, (st))
  #define q_sk_X509_value(st, i) q_SKM_sk_value(X509, (st), (i))
@@ -267,7 +267,7 @@ index bfdfbf0efc..49ec821738 100644
  #define q_sk_SSL_CIPHER_num(st) q_SKM_sk_num(SSL_CIPHER, (st))
  #define q_sk_SSL_CIPHER_value(st, i) q_SKM_sk_value(SSL_CIPHER, (st), (i))
  #define q_SSL_CTX_add_extra_chain_cert(ctx,x509) \
-@@ -503,6 +505,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
+@@ -504,6 +506,8 @@ void q_GENERAL_NAME_free(GENERAL_NAME *a);
                                          (char *)(dsa))
  #define q_OpenSSL_add_all_algorithms() q_OPENSSL_add_all_algorithms_conf()
  int q_SSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile, const char *CApath);

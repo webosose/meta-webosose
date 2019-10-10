@@ -1,4 +1,4 @@
-From 57d51274a6067966626c11549974e0818f0e3cf0 Mon Sep 17 00:00:00 2001
+From fdd8174b6d19213edeb25716c3c1bb079d8d3538 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 1 Jul 2019 12:18:11 +0900
 Subject: [PATCH] Add QQmlEngine to QQuickPixmapKey
@@ -13,12 +13,12 @@ Change-Id: I2074c79bb148c53cc5efb638b9218df412b9d70f
 Upstream-Status: Pending
 ---
  src/quick/items/qquickanimatedimage.cpp |  2 +-
- src/quick/util/qquickpixmapcache.cpp    | 54 +++++++++++++++++----------------
+ src/quick/util/qquickpixmapcache.cpp    | 54 +++++++++++++------------
  src/quick/util/qquickpixmapcache_p.h    |  2 +-
  3 files changed, 30 insertions(+), 28 deletions(-)
 
 diff --git a/src/quick/items/qquickanimatedimage.cpp b/src/quick/items/qquickanimatedimage.cpp
-index fe44542..aca67e8 100644
+index fe445425e7..aca67e8a75 100644
 --- a/src/quick/items/qquickanimatedimage.cpp
 +++ b/src/quick/items/qquickanimatedimage.cpp
 @@ -67,7 +67,7 @@ QQuickPixmap* QQuickAnimatedImagePrivate::infoForCurrentFrame(QQmlEngine *engine
@@ -31,7 +31,7 @@ index fe44542..aca67e8 100644
              else
                  pixmap = new QQuickPixmap(requestedUrl, movie->currentImage());
 diff --git a/src/quick/util/qquickpixmapcache.cpp b/src/quick/util/qquickpixmapcache.cpp
-index b9a6a18..d4d8371 100644
+index b9a6a18b4d..d4d8371f56 100644
 --- a/src/quick/util/qquickpixmapcache.cpp
 +++ b/src/quick/util/qquickpixmapcache.cpp
 @@ -243,8 +243,8 @@ public:
@@ -246,7 +246,7 @@ index b9a6a18..d4d8371 100644
  
      return store->m_cache.contains(key);
 diff --git a/src/quick/util/qquickpixmapcache_p.h b/src/quick/util/qquickpixmapcache_p.h
-index 91fb1ed..15b4e74 100644
+index 91fb1ed3bb..15b4e7423c 100644
 --- a/src/quick/util/qquickpixmapcache_p.h
 +++ b/src/quick/util/qquickpixmapcache_p.h
 @@ -175,7 +175,7 @@ public:

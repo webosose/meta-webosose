@@ -1,4 +1,4 @@
-From f0771f8fd6a340247a17b04e91835ea2b42b55e4 Mon Sep 17 00:00:00 2001
+From b33e6d7949a7a969745f4d0ad6035d5b0b13f26d Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Mon, 9 Jun 2014 11:50:33 +0200
 Subject: [PATCH] network: Send SslHandShakeError more in detail
@@ -12,7 +12,7 @@ Change-Id: I435e30476ad30bf4dd5957b2703d72b865d98669
  4 files changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/src/network/access/qhttpnetworkconnection.cpp b/src/network/access/qhttpnetworkconnection.cpp
-index c58fd24a44..c4456b38d6 100644
+index 10c8541c5f..cec68c4468 100644
 --- a/src/network/access/qhttpnetworkconnection.cpp
 +++ b/src/network/access/qhttpnetworkconnection.cpp
 @@ -876,7 +876,7 @@ bool QHttpNetworkConnectionPrivate::fillPipeline(QList<HttpMessagePair> &queue,
@@ -58,10 +58,10 @@ index 91827a6eb1..d72d49b823 100644
  
      void removeReply(QHttpNetworkReply *reply);
 diff --git a/src/network/access/qhttpnetworkconnectionchannel.cpp b/src/network/access/qhttpnetworkconnectionchannel.cpp
-index d5f63af745..03e2afa45c 100644
+index 38adca2633..09bea96ea6 100644
 --- a/src/network/access/qhttpnetworkconnectionchannel.cpp
 +++ b/src/network/access/qhttpnetworkconnectionchannel.cpp
-@@ -286,7 +286,8 @@ void QHttpNetworkConnectionChannel::handleUnexpectedEOF()
+@@ -289,7 +289,8 @@ void QHttpNetworkConnectionChannel::handleUnexpectedEOF()
          // too many errors reading/receiving/parsing the status, close the socket and emit error
          requeueCurrentlyPipelinedRequests();
          close();

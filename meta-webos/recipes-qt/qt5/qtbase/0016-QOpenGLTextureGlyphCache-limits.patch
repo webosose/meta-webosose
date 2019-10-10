@@ -1,4 +1,4 @@
-From 2f7b7d3e9a444ca96ec2754437217c25c365f17a Mon Sep 17 00:00:00 2001
+From 432c03a3e8c1709412d079bdfc2ec1eacd0fd266 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Wed, 29 Oct 2014 00:21:30 +0200
 Subject: [PATCH] QOpenGLTextureGlyphCache limits
@@ -11,14 +11,14 @@ Upstream-Status: Inappropriate [specific to tv]
  src/gui/opengl/qopengltextureglyphcache.cpp | 16 ++++++++++++++++
  src/gui/opengl/qopengltextureglyphcache_p.h |  3 +++
  src/gui/painting/qtextureglyphcache.cpp     |  4 ++--
- src/gui/painting/qtextureglyphcache_p.h     | 14 +++++++++++---
- 4 files changed, 32 insertions(+), 5 deletions(-)
+ src/gui/painting/qtextureglyphcache_p.h     | 13 ++++++++++---
+ 4 files changed, 31 insertions(+), 5 deletions(-)
  mode change 100644 => 100755 src/gui/opengl/qopengltextureglyphcache.cpp
 
 diff --git a/src/gui/opengl/qopengltextureglyphcache.cpp b/src/gui/opengl/qopengltextureglyphcache.cpp
 old mode 100644
 new mode 100755
-index e3cbba955d..7be012679b
+index 490dc99749..90897a111e
 --- a/src/gui/opengl/qopengltextureglyphcache.cpp
 +++ b/src/gui/opengl/qopengltextureglyphcache.cpp
 @@ -61,6 +61,8 @@ QOpenGLTextureGlyphCache::QOpenGLTextureGlyphCache(QFontEngine::GlyphFormat form
@@ -66,7 +66,7 @@ index e3cbba955d..7be012679b
      if (ctx == 0)
          return QImageTextureGlyphCache::maxTextureHeight();
 diff --git a/src/gui/opengl/qopengltextureglyphcache_p.h b/src/gui/opengl/qopengltextureglyphcache_p.h
-index 598cb00ee5..fa17d888fc 100644
+index 38c9aede7d..2e98331074 100644
 --- a/src/gui/opengl/qopengltextureglyphcache_p.h
 +++ b/src/gui/opengl/qopengltextureglyphcache_p.h
 @@ -171,6 +171,9 @@ private:
@@ -80,7 +80,7 @@ index 598cb00ee5..fa17d888fc 100644
      QOpenGLVertexArrayObject m_vao;
  };
 diff --git a/src/gui/painting/qtextureglyphcache.cpp b/src/gui/painting/qtextureglyphcache.cpp
-index 99b04aaba6..8da111254d 100644
+index 06fa4bf95e..ce689aca03 100644
 --- a/src/gui/painting/qtextureglyphcache.cpp
 +++ b/src/gui/painting/qtextureglyphcache.cpp
 @@ -176,8 +176,8 @@ bool QTextureGlyphCache::populate(QFontEngine *fontEngine, int numGlyphs, const
@@ -95,13 +95,13 @@ index 99b04aaba6..8da111254d 100644
              m_w = qNextPowerOfTwo(qCeil(fontEngine->maxCharWidth()) - 1);
      }
 diff --git a/src/gui/painting/qtextureglyphcache_p.h b/src/gui/painting/qtextureglyphcache_p.h
-index e4db691ad0..e7b95914ef 100644
+index 37bff7e449..36e92373a1 100644
 --- a/src/gui/painting/qtextureglyphcache_p.h
 +++ b/src/gui/painting/qtextureglyphcache_p.h
-@@ -76,8 +76,14 @@ class Q_GUI_EXPORT QTextureGlyphCache : public QFontEngineGlyphCache
+@@ -76,8 +76,13 @@ class Q_GUI_EXPORT QTextureGlyphCache : public QFontEngineGlyphCache
  public:
-     QTextureGlyphCache(QFontEngine::GlyphFormat format, const QTransform &matrix)
-         : QFontEngineGlyphCache(format, matrix), m_current_fontengine(0),
+     QTextureGlyphCache(QFontEngine::GlyphFormat format, const QTransform &matrix, const QColor &color = QColor())
+         : QFontEngineGlyphCache(format, matrix, color), m_current_fontengine(0),
 -                                               m_w(0), m_h(0), m_cx(0), m_cy(0), m_currentRowHeight(0)
 -        { }
 +                                               m_w(0), m_h(0), m_cx(0), m_cy(0), m_currentRowHeight(0),
@@ -111,11 +111,10 @@ index e4db691ad0..e7b95914ef 100644
 +            if (!env.isEmpty())
 +                m_defaultGlyphCacheWidth = env.toInt();
 +        }
-+
  
      ~QTextureGlyphCache();
  
-@@ -138,13 +144,14 @@ public:
+@@ -138,13 +143,14 @@ public:
      inline bool isNull() const { return m_h == 0; }
  
      QHash<GlyphAndSubPixelPosition, Coord> coords;
@@ -131,7 +130,7 @@ index e4db691ad0..e7b95914ef 100644
  
      QFontEngine *m_current_fontengine;
      QHash<GlyphAndSubPixelPosition, Coord> m_pendingGlyphs;
-@@ -154,6 +161,7 @@ protected:
+@@ -154,6 +160,7 @@ protected:
      int m_cx; // current x
      int m_cy; // current y
      int m_currentRowHeight; // Height of last row

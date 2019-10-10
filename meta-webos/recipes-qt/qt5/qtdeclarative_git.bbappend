@@ -4,7 +4,7 @@ EXTENDPRAUTO_append = "webos43"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.12 based on 5.12.meta-qt5.2
+# Patches from 5.12.meta-webos.14 based on 5.12.meta-qt5.3
 SRC_URI_append_class-target = " \
     file://0001-Revert-Remove-dead-code.patch \
     file://0002-LTTNG-tracing-support-in-Qt-Quick.patch \
@@ -28,9 +28,8 @@ SRC_URI_append_class-target = " \
     file://0020-Add-guard-to-avoid-recursively-text-layout-call.patch \
     file://0021-QQuickItemView-Remove-redundant-refill-when-layout.patch \
     file://0022-Remove-null-pointer-checks-for-this-from-QQmlContext.patch \
-    file://0023-Fix-crashes-in-QQmlXMLHttpRequest.patch \
-    file://0024-Add-QQmlEngine-to-QQuickPixmapKey.patch \
-    file://0025-Fix-thisObject-when-calling-scope-and-context-properties-through-lookups.patch \
-    file://0026-QQuickWindow-Consider-z-order-of-children-when-deliv.patch \
-    file://0027-Allow-to-have-activeFocus-for-each-window.patch \
+    file://0023-Add-QQmlEngine-to-QQuickPixmapKey.patch \
+    file://0024-QQuickWindow-Consider-z-order-of-children-when-deliv.patch \
+    file://0025-Allow-to-have-activeFocus-for-each-window.patch \
+    file://0026-Allow-semicolon-after-property-declaration.patch \
 "

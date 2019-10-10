@@ -1,4 +1,4 @@
-From 6fafa667b7a5c3780698d20564a399bc7aefd94a Mon Sep 17 00:00:00 2001
+From 51e5488dd3f7c9e992b0103013edc89c6d5e1a6d Mon Sep 17 00:00:00 2001
 From: Byungseon Shin <sun.shin@lge.com>
 Date: Fri, 7 Feb 2014 04:53:25 +0100
 Subject: [PATCH] WebOS platform expects filenames in UTF-8
