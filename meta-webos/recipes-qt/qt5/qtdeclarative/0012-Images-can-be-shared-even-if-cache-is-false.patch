@@ -1,4 +1,4 @@
-From eb50b539fbfc1695f97c6467612e017f1ec372cc Mon Sep 17 00:00:00 2001
+From 6191e2051bd9e1e533c625290262e733087fdc43 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Thu, 22 Jun 2017 18:40:35 +0900
 Subject: [PATCH] Images can be shared even if cache is false
@@ -38,7 +38,7 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/src/quick/util/qquickpixmapcache.cpp b/src/quick/util/qquickpixmapcache.cpp
-index dc8bed812..b9a6a18b4 100644
+index dc8bed8125..b9a6a18b4d 100644
 --- a/src/quick/util/qquickpixmapcache.cpp
 +++ b/src/quick/util/qquickpixmapcache.cpp
 @@ -248,7 +248,7 @@ public:

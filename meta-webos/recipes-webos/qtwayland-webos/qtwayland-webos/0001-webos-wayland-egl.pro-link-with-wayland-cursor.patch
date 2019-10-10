@@ -1,0 +1,39 @@
+From b0dae2e604060cb4ab83200d915392c9429b3322 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 10 Oct 2019 11:32:33 +0000
+Subject: [PATCH] webos-wayland-egl.pro: link with wayland-cursor
+
+Otherwise there is undefined reference in weboscursor.o:
+
+qtwayland-webos/1.0.0-43-r8$ i586-webos-linux-objdump -x build/src/plugins/platforms/webos-wayland-egl/.obj/weboscursor.o | grep wl_cursor_image_get_buffer
+00000000         *UND*  00000000 wl_cursor_image_get_buffer
+00000395 R_386_PLT32       wl_cursor_image_get_buffer
+
+and linking final libwebos-wayland-egl.so fails:
+
+linking ../../../../plugins/platforms/libwebos-wayland-egl.so
+/usr/src/debug/qtwayland-webos/1.0.0-43-r8/git/src/plugins/platforms/webos-wayland-egl/weboscursor.cpp:71:
+error: undefined reference to 'wl_cursor_image_get_buffer'
+collect2: error: ld returned 1 exit status
+Makefile:99: recipe for target
+'../../../../plugins/platforms/libwebos-wayland-egl.so' failed
+---
+ src/plugins/platforms/webos-wayland-egl/webos-wayland-egl.pro | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/plugins/platforms/webos-wayland-egl/webos-wayland-egl.pro b/src/plugins/platforms/webos-wayland-egl/webos-wayland-egl.pro
+index 051b9e2..72e16e9 100644
+--- a/src/plugins/platforms/webos-wayland-egl/webos-wayland-egl.pro
++++ b/src/plugins/platforms/webos-wayland-egl/webos-wayland-egl.pro
+@@ -20,7 +20,7 @@ load(qt_plugin)
+ QT += waylandclient-private
+ 
+ INCLUDEPATH += ../../../webos-platform-interface
+-LIBS += -L../../../webos-platform-interface -lwebos-platform-interface
++LIBS += -L../../../webos-platform-interface -lwebos-platform-interface -lwayland-cursor
+ 
+ OTHER_FILES += \
+     webos-wayland-egl.json
+-- 
+2.17.1
+

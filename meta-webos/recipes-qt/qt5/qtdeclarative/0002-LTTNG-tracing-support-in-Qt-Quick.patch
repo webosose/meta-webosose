@@ -1,4 +1,4 @@
-From aef75d162460554831cbad011a1bd5382a7ca810 Mon Sep 17 00:00:00 2001
+From 1930cc120dcb4b0accbf8b36ea7f183dd5aff688 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Sat, 14 Jun 2014 00:57:58 +0200
 Subject: [PATCH] LTTNG tracing support in Qt Quick
@@ -35,10 +35,10 @@ Change-Id: Iadb777c9d8d34ad9bccd5e6582313467ef3f4cd6
  7 files changed, 37 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 3329bef76..b6d9866ac 100644
+index b9d37daf7c..b05c3afbbb 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -83,6 +83,8 @@
+@@ -84,6 +84,8 @@
  #include <private/qdebug_p.h>
  #endif
  
@@ -47,7 +47,7 @@ index 3329bef76..b6d9866ac 100644
  QT_BEGIN_NAMESPACE
  
  Q_LOGGING_CATEGORY(DBG_TOUCH, "qt.quick.touch")
-@@ -440,6 +442,7 @@ void forceUpdate(QQuickItem *item)
+@@ -441,6 +443,7 @@ void forceUpdate(QQuickItem *item)
  
  void QQuickWindowPrivate::syncSceneGraph()
  {
@@ -55,7 +55,7 @@ index 3329bef76..b6d9866ac 100644
      QML_MEMORY_SCOPE_STRING("SceneGraph");
      Q_Q(QQuickWindow);
  
-@@ -475,6 +478,7 @@ void QQuickWindowPrivate::syncSceneGraph()
+@@ -476,6 +479,7 @@ void QQuickWindowPrivate::syncSceneGraph()
  
  void QQuickWindowPrivate::renderSceneGraph(const QSize &size)
  {
@@ -64,7 +64,7 @@ index 3329bef76..b6d9866ac 100644
      Q_Q(QQuickWindow);
      if (!renderer)
 diff --git a/src/quick/quick.pro b/src/quick/quick.pro
-index 0f5f5abca..6eaea6efa 100644
+index 0f5f5abca3..6eaea6efa8 100644
 --- a/src/quick/quick.pro
 +++ b/src/quick/quick.pro
 @@ -47,4 +47,7 @@ SOURCES += qtquick2.cpp
@@ -76,7 +76,7 @@ index 0f5f5abca..6eaea6efa 100644
 +
  load(qt_module)
 diff --git a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
-index 8121b4559..6d85d3a48 100644
+index c51358df7c..b608fbb947 100644
 --- a/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
 +++ b/src/quick/scenegraph/qsgdefaultdistancefieldglyphcache.cpp
 @@ -46,6 +46,7 @@
@@ -87,7 +87,7 @@ index 8121b4559..6d85d3a48 100644
  #include <qopenglfunctions.h>
  #include <qopenglframebufferobject.h>
  #include <qmath.h>
-@@ -173,6 +174,7 @@ void QSGDefaultDistanceFieldGlyphCache::requestGlyphs(const QSet<glyph_t> &glyph
+@@ -184,6 +185,7 @@ void QSGDefaultDistanceFieldGlyphCache::requestGlyphs(const QSet<glyph_t> &glyph
  
  void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField> &glyphs)
  {
@@ -95,7 +95,7 @@ index 8121b4559..6d85d3a48 100644
      typedef QHash<TextureInfo *, QVector<glyph_t> > GlyphTextureHash;
      typedef GlyphTextureHash::const_iterator GlyphTextureHashConstIt;
  
-@@ -217,16 +219,20 @@ void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField>
+@@ -228,16 +230,20 @@ void QSGDefaultDistanceFieldGlyphCache::storeGlyphs(const QList<QDistanceField>
  #endif
          if (useTextureUploadWorkaround()) {
              for (int i = 0; i < glyph.height(); ++i) {
@@ -116,7 +116,7 @@ index 8121b4559..6d85d3a48 100644
          }
      }
  
-@@ -264,6 +270,7 @@ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo,
+@@ -275,6 +281,7 @@ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo,
                                                        int height,
                                                        const void *pixels)
  {
@@ -124,7 +124,7 @@ index 8121b4559..6d85d3a48 100644
      if (useTextureResizeWorkaround() && texInfo->image.isNull()) {
          texInfo->image = QDistanceField(width, height);
          memcpy(texInfo->image.bits(), pixels, width * height);
-@@ -288,7 +295,9 @@ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo,
+@@ -299,7 +306,9 @@ void QSGDefaultDistanceFieldGlyphCache::createTexture(TextureInfo *texInfo,
      const GLenum format = GL_ALPHA;
  #endif
  
@@ -134,7 +134,7 @@ index 8121b4559..6d85d3a48 100644
  
      texInfo->size = QSize(width, height);
  
-@@ -308,6 +317,7 @@ static void freeFramebufferFunc(QOpenGLFunctions *funcs, GLuint id)
+@@ -319,6 +328,7 @@ static void freeFramebufferFunc(QOpenGLFunctions *funcs, GLuint id)
  
  void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int width, int height)
  {
@@ -142,7 +142,7 @@ index 8121b4559..6d85d3a48 100644
      QOpenGLContext *ctx = QOpenGLContext::currentContext();
      Q_ASSERT(ctx);
  
-@@ -383,16 +393,20 @@ void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int
+@@ -394,16 +404,20 @@ void QSGDefaultDistanceFieldGlyphCache::resizeTexture(TextureInfo *texInfo, int
  
          if (useTextureUploadWorkaround()) {
              for (int i = 0; i < texInfo->image.height(); ++i) {
@@ -164,7 +164,7 @@ index 8121b4559..6d85d3a48 100644
  
          m_funcs->glPixelStorei(GL_UNPACK_ALIGNMENT, alignment); // restore to previous value
 diff --git a/src/quick/scenegraph/qsgdefaultrendercontext.cpp b/src/quick/scenegraph/qsgdefaultrendercontext.cpp
-index 73b79c630..d13de4893 100644
+index 73b79c6300..d13de4893f 100644
 --- a/src/quick/scenegraph/qsgdefaultrendercontext.cpp
 +++ b/src/quick/scenegraph/qsgdefaultrendercontext.cpp
 @@ -48,6 +48,8 @@
@@ -186,7 +186,7 @@ index 73b79c630..d13de4893 100644
          qsg_framerender_mutex.lock();
  
 diff --git a/src/quick/scenegraph/util/qsgatlastexture.cpp b/src/quick/scenegraph/util/qsgatlastexture.cpp
-index 921ed0c1f..5207c7ba8 100644
+index 921ed0c1fc..5207c7ba8c 100644
 --- a/src/quick/scenegraph/util/qsgatlastexture.cpp
 +++ b/src/quick/scenegraph/util/qsgatlastexture.cpp
 @@ -59,6 +59,8 @@
@@ -223,7 +223,7 @@ index 921ed0c1f..5207c7ba8 100644
  
  #if 0
 diff --git a/src/quick/scenegraph/util/qsgtexture.cpp b/src/quick/scenegraph/util/qsgtexture.cpp
-index d33bdffe7..b8ecd270c 100644
+index d33bdffe74..b8ecd270cf 100644
 --- a/src/quick/scenegraph/util/qsgtexture.cpp
 +++ b/src/quick/scenegraph/util/qsgtexture.cpp
 @@ -43,6 +43,7 @@
@@ -253,7 +253,7 @@ index d33bdffe7..b8ecd270c 100644
      qint64 uploadTime = 0;
      if (profileFrames)
 diff --git a/src/quick/scenegraph/util/qsgtexturematerial.cpp b/src/quick/scenegraph/util/qsgtexturematerial.cpp
-index 7b1d5abb2..ed34d00f5 100644
+index 7b1d5abb26..ed34d00f58 100644
 --- a/src/quick/scenegraph/util/qsgtexturematerial.cpp
 +++ b/src/quick/scenegraph/util/qsgtexturematerial.cpp
 @@ -44,6 +44,8 @@

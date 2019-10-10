@@ -1,4 +1,4 @@
-From 3eaef5b2db3bbdafe1a9bd28ecb25a6ca20c3d14 Mon Sep 17 00:00:00 2001
+From 501893f3446dfbede82e52d51f4a4260d996db18 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Thu, 4 Aug 2016 15:11:35 +0300
 Subject: [PATCH] Check if decoration allowed for a dialog
@@ -23,7 +23,7 @@ when SelectDialog is shown.
  2 files changed, 21 insertions(+), 2 deletions(-)
 
 diff --git a/src/dialogs/qquickabstractdialog.cpp b/src/dialogs/qquickabstractdialog.cpp
-index 38245d6..0d7c226 100644
+index e459ef43..5a40c726 100644
 --- a/src/dialogs/qquickabstractdialog.cpp
 +++ b/src/dialogs/qquickabstractdialog.cpp
 @@ -69,6 +69,7 @@ QQuickAbstractDialog::QQuickAbstractDialog(QObject *parent)
@@ -34,16 +34,16 @@ index 38245d6..0d7c226 100644
  {
  }
  
-@@ -172,7 +173,7 @@ void QQuickAbstractDialog::setVisible(bool v)
-             // If the platform does not support multiple windows, but the dialog is
-             // implemented as an Item, then try to decorate it as a fake window and make it visible.
+@@ -174,7 +175,7 @@ void QQuickAbstractDialog::setVisible(bool v)
              if (!m_windowDecoration) {
+                 if (!m_decorationComponent)
+                     m_decorationComponent = new QQmlComponent(qmlEngine(this), m_decorationComponentUrl, QQmlComponent::Asynchronous, this);
 -                if (m_decorationComponent) {
 +                if (m_decorationComponent && decorationAllowed()) {
                      if (m_decorationComponent->isLoading())
                          connect(m_decorationComponent, SIGNAL(statusChanged(QQmlComponent::Status)),
                                  this, SLOT(decorationLoaded()));
-@@ -197,13 +198,15 @@ void QQuickAbstractDialog::setVisible(bool v)
+@@ -199,13 +200,15 @@ void QQuickAbstractDialog::setVisible(bool v)
      if (m_windowDecoration) {
          setDecorationDismissBehavior();
          m_windowDecoration->setVisible(v);
@@ -60,7 +60,7 @@ index 38245d6..0d7c226 100644
      }
  
      emit visibilityChanged();
-@@ -365,6 +368,17 @@ int QQuickAbstractDialog::height() const
+@@ -367,6 +370,17 @@ int QQuickAbstractDialog::height() const
      return m_sizeAspiration.height();
  }
  
@@ -79,7 +79,7 @@ index 38245d6..0d7c226 100644
      A non-fullscreen dialog is not allowed to be too large
      to fit on the screen in either orientation (portrait or landscape).
 diff --git a/src/dialogs/qquickabstractdialog_p.h b/src/dialogs/qquickabstractdialog_p.h
-index 54dbaac..4cd5505 100644
+index a861739b..d0f4c32e 100644
 --- a/src/dialogs/qquickabstractdialog_p.h
 +++ b/src/dialogs/qquickabstractdialog_p.h
 @@ -73,6 +73,7 @@ class QQuickAbstractDialog : public QObject
@@ -113,5 +113,5 @@ index 54dbaac..4cd5505 100644
      bool m_dialogHelperInUse;
 +    bool m_decorationAllowed;
  
-     static QQmlComponent *m_decorationComponent;
- 
+     QQmlComponent *m_decorationComponent = nullptr;
+     static QUrl m_decorationComponentUrl;

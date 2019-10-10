@@ -1,4 +1,4 @@
-From d3550c578b4d4bfad241fc99a812e718f1049baa Mon Sep 17 00:00:00 2001
+From 49cf102d1a076933766bb5fb48a8160d529c9353 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Thu, 26 Jul 2018 13:01:20 +0900
 Subject: [PATCH] Add guard to avoid recursively text layout call
@@ -28,7 +28,7 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/#/c/235313/]
  2 files changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquicktext.cpp b/src/quick/items/qquicktext.cpp
-index 97cc33b95..2944c6b36 100644
+index 97cc33b95f..2944c6b365 100644
 --- a/src/quick/items/qquicktext.cpp
 +++ b/src/quick/items/qquicktext.cpp
 @@ -89,6 +89,7 @@ QQuickTextPrivate::QQuickTextPrivate()
@@ -66,7 +66,7 @@ index 97cc33b95..2944c6b36 100644
  }
  
 diff --git a/src/quick/items/qquicktext_p_p.h b/src/quick/items/qquicktext_p_p.h
-index efa45e095..72b84c991 100644
+index efa45e0958..72b84c9911 100644
 --- a/src/quick/items/qquicktext_p_p.h
 +++ b/src/quick/items/qquicktext_p_p.h
 @@ -176,6 +176,7 @@ public:

@@ -1,4 +1,4 @@
-From 65c1eda3bb3d2652293a8f58ba69237ead95c686 Mon Sep 17 00:00:00 2001
+From 67f0619547fb7ee8ce332631f75827309ebd2a69 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:59:01 +0100
 Subject: [PATCH] Workaround for RGX broken render to texture with size over
@@ -9,7 +9,7 @@ Subject: [PATCH] Workaround for RGX broken render to texture with size over
  1 file changed, 8 insertions(+)
 
 diff --git a/src/gui/opengl/qopengltextureglyphcache.cpp b/src/gui/opengl/qopengltextureglyphcache.cpp
-index 728d23f61e..aba98e1425 100755
+index 1a69a138a1..516661b332 100755
 --- a/src/gui/opengl/qopengltextureglyphcache.cpp
 +++ b/src/gui/opengl/qopengltextureglyphcache.cpp
 @@ -470,7 +470,11 @@ int QOpenGLTextureGlyphCache::maxTextureWidth() const

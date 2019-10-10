@@ -1,4 +1,4 @@
-From 80d598c8ca5449a37167a859aa85707260669335 Mon Sep 17 00:00:00 2001
+From a1513597992b3487fdfdcf693824900369b7f5d1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Fri, 13 Jun 2014 18:48:49 +0200
 Subject: [PATCH] LTTNG tracing support in QtGUI
@@ -36,7 +36,7 @@ Change-Id: I03150d6ff80cbbcd787133d75854715cb81b5571
  5 files changed, 33 insertions(+)
 
 diff --git a/src/gui/image/qimage.cpp b/src/gui/image/qimage.cpp
-index 3e18ca6528..db0e40dd91 100644
+index ef0481bdb2..c7a6ecb599 100644
 --- a/src/gui/image/qimage.cpp
 +++ b/src/gui/image/qimage.cpp
 @@ -66,6 +66,8 @@
@@ -57,7 +57,7 @@ index 3e18ca6528..db0e40dd91 100644
      int width = size.width();
      int height = size.height();
      int depth = qt_depthForFormat(format);
-@@ -1130,6 +1134,7 @@ static void copyMetadata(QImageData *dst, const QImageData *src)
+@@ -1146,6 +1150,7 @@ static void copyMetadata(QImage *dst, const QImage &src)
  */
  QImage QImage::copy(const QRect& r) const
  {
@@ -65,7 +65,7 @@ index 3e18ca6528..db0e40dd91 100644
      if (!d)
          return QImage();
  
-@@ -2787,6 +2792,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
+@@ -2805,6 +2810,8 @@ QImage QImage::scaled(const QSize& s, Qt::AspectRatioMode aspectMode, Qt::Transf
      if (newSize == size())
          return *this;
  
@@ -74,7 +74,7 @@ index 3e18ca6528..db0e40dd91 100644
      QTransform wm = QTransform::fromScale((qreal)newSize.width() / width(), (qreal)newSize.height() / height());
      QImage img = transformed(wm, mode);
      return img;
-@@ -2815,6 +2822,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
+@@ -2833,6 +2840,8 @@ QImage QImage::scaledToWidth(int w, Qt::TransformationMode mode) const
      if (w <= 0)
          return QImage();
  
@@ -83,7 +83,7 @@ index 3e18ca6528..db0e40dd91 100644
      qreal factor = (qreal) w / width();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -2843,6 +2852,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
+@@ -2861,6 +2870,8 @@ QImage QImage::scaledToHeight(int h, Qt::TransformationMode mode) const
      if (h <= 0)
          return QImage();
  
@@ -92,7 +92,7 @@ index 3e18ca6528..db0e40dd91 100644
      qreal factor = (qreal) h / height();
      QTransform wm = QTransform::fromScale(factor, factor);
      return transformed(wm, mode);
-@@ -3339,6 +3350,8 @@ QImage QImage::rgbSwapped_helper() const
+@@ -3362,6 +3373,8 @@ QImage QImage::rgbSwapped_helper() const
      if (isNull())
          return *this;
  
@@ -101,7 +101,7 @@ index 3e18ca6528..db0e40dd91 100644
      QImage res;
  
      switch (d->format) {
-@@ -4748,6 +4761,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
+@@ -4768,6 +4781,8 @@ QImage QImage::transformed(const QTransform &matrix, Qt::TransformationMode mode
      if (!d)
          return QImage();
  

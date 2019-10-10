@@ -4,7 +4,7 @@ EXTENDPRAUTO_append_rpi = "webosrpi10"
 
 FILESEXTRAPATHS_prepend_rpi := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos-raspberrypi.8 based on 5.12.meta-webos.8
+# Patches from 5.12.meta-webos-raspberrypi.9 based on 5.12.meta-webos.9
 # Patches below are raspberrypi3 specific and even cause issues with raspberrypi4.
 #   1) Always use secondary display for launcher and applications.
 #   2) Duplicate the first display into second even if enable ensureModeSet.

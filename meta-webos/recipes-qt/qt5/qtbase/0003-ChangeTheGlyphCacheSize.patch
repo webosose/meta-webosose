@@ -1,4 +1,4 @@
-From 0bff588cbe4466c4aa9a7ead19483897f513d704 Mon Sep 17 00:00:00 2001
+From 7af313300aff3a1ddbcc8643e1b75a473c881355 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Fri, 7 Feb 2014 04:56:00 +0100
 Subject: [PATCH] ChangeTheGlyphCacheSize
@@ -8,7 +8,7 @@ Subject: [PATCH] ChangeTheGlyphCacheSize
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/gui/painting/qtextureglyphcache_p.h b/src/gui/painting/qtextureglyphcache_p.h
-index 3da28872b1..e4db691ad0 100644
+index c105e89e50..37bff7e449 100644
 --- a/src/gui/painting/qtextureglyphcache_p.h
 +++ b/src/gui/painting/qtextureglyphcache_p.h
 @@ -60,7 +60,7 @@

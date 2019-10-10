@@ -1,4 +1,4 @@
-From b0f02bc9ad477786275d1ca3f7f6eef64410617c Mon Sep 17 00:00:00 2001
+From 4be3e0b3001566f85fe355c3dfd61ea1f1c17bf1 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 28 Jan 2019 19:22:06 +0900
 Subject: [PATCH] QQuickItemView: Remove redundant refill when layout
@@ -13,10 +13,10 @@ Upstream-Status: Pending
  1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/src/quick/items/qquickitemview.cpp b/src/quick/items/qquickitemview.cpp
-index 8dafc16cf..9dd8e4e3c 100644
+index 21d644dad5..2c90a78401 100644
 --- a/src/quick/items/qquickitemview.cpp
 +++ b/src/quick/items/qquickitemview.cpp
-@@ -1853,10 +1853,8 @@ void QQuickItemViewPrivate::layout()
+@@ -1862,10 +1862,8 @@ void QQuickItemViewPrivate::layout()
      markExtentsDirty();
      updateHighlight();
  

@@ -1,4 +1,4 @@
-From 8e569f82d02cb960faac7bf7c8f5bbb24f924914 Mon Sep 17 00:00:00 2001
+From cd6a35ac59ac1f5854f0c2efc53172a3167bd850 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Wed, 2 Sep 2015 17:36:45 +0300
 Subject: [PATCH] Correct pixelRatio for glyphs
@@ -33,7 +33,7 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/#/c/125105/]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/quick/scenegraph/shaders/textmask.vert b/src/quick/scenegraph/shaders/textmask.vert
-index 4c678270d..8815b3bc4 100644
+index 4c678270d0..8815b3bc48 100644
 --- a/src/quick/scenegraph/shaders/textmask.vert
 +++ b/src/quick/scenegraph/shaders/textmask.vert
 @@ -10,5 +10,5 @@ varying highp vec2 sampleCoord;

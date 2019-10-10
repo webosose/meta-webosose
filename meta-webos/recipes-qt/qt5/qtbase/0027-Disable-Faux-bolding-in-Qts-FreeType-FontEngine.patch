@@ -1,4 +1,4 @@
-From bfc4962ecbc0aaecd4261866e0bbebcbc9b93fb6 Mon Sep 17 00:00:00 2001
+From 85faf353316d0c00e8904f7c14a52af417d545a3 Mon Sep 17 00:00:00 2001
 From: Kyu Man Lim <kyuman.lim@lge.com>
 Date: Fri, 10 Feb 2017 10:21:33 +0900
 Subject: [PATCH] Disable Faux bolding in Qts FreeType FontEngine
@@ -12,10 +12,10 @@ Upstream-Status : Inappropriate [webOS specific]
  1 file changed, 2 insertions(+)
 
 diff --git a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-index 04a5026395..43174cb4e0 100644
+index e132442e37..2140dee8e3 100644
 --- a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
 +++ b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-@@ -835,6 +835,8 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+@@ -830,6 +830,8 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
                      embolden = true;
              }
          }

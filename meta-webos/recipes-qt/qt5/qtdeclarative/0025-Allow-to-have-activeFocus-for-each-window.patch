@@ -1,4 +1,4 @@
-From a8e627deb2adf21afc5dea2d734c1e616b37369c Mon Sep 17 00:00:00 2001
+From 99073f0ed1995f7a9a1be3b8a8f57277a69bfa17 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 21 Aug 2019 20:44:57 +0900
 Subject: [PATCH] Allow to have activeFocus for each window
@@ -14,10 +14,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 72a9f1a..81c6918 100644
+index d545d3b8e1..f77f90480c 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -927,6 +927,20 @@ static inline bool windowHasFocus(QQuickWindow *win)
+@@ -939,6 +939,20 @@ static inline bool windowHasFocus(QQuickWindow *win)
      return win == focusWindow || QQuickRenderControl::renderWindowFor(win) == focusWindow;
  }
  
@@ -38,7 +38,7 @@ index 72a9f1a..81c6918 100644
  /*!
  Set the focus inside \a scope to be \a item.
  If the scope contains the active focus item, it will be changed to \a item.
-@@ -1001,7 +1015,8 @@ void QQuickWindowPrivate::setFocusInScope(QQuickItem *scope, QQuickItem *item, Q
+@@ -1013,7 +1027,8 @@ void QQuickWindowPrivate::setFocusInScope(QQuickItem *scope, QQuickItem *item, Q
      }
  
      if (!(options & DontChangeFocusProperty)) {

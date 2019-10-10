@@ -1,4 +1,4 @@
-From f0e44bd8f4a931e4e5cb4c773159998b744b8e77 Mon Sep 17 00:00:00 2001
+From 88f863d56c357202f4652fe9b1a40bd34fc0d327 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Thu, 4 Aug 2016 14:55:38 +0300
 Subject: [PATCH] Fix Do not resize dialog parent window
@@ -20,11 +20,11 @@ Upstream-Status: pending
 [DRD-11631] Black overlay after QML MessageDialog close
 [DRD-10448] QML MessageDialog is scaled to full screen
 ---
- src/dialogs/qquickabstractdialog.cpp | 97 +++++++++++++++++++-----------------
+ src/dialogs/qquickabstractdialog.cpp | 97 ++++++++++++++--------------
  1 file changed, 50 insertions(+), 47 deletions(-)
 
 diff --git a/src/dialogs/qquickabstractdialog.cpp b/src/dialogs/qquickabstractdialog.cpp
-index e00c17a..38245d6 100644
+index e71948d1..e459ef43 100644
 --- a/src/dialogs/qquickabstractdialog.cpp
 +++ b/src/dialogs/qquickabstractdialog.cpp
 @@ -112,33 +112,53 @@ void QQuickAbstractDialog::setVisible(bool v)
@@ -113,7 +113,7 @@ index e00c17a..38245d6 100644
              m_dialogWindow = parentWindow();
  
              // If the platform does not support multiple windows, but the dialog is
-@@ -167,30 +188,12 @@ void QQuickAbstractDialog::setVisible(bool v)
+@@ -169,30 +190,12 @@ void QQuickAbstractDialog::setVisible(bool v)
              }
          }
      }
