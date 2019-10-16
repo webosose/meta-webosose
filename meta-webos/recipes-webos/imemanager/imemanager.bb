@@ -8,10 +8,10 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
-RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge"
+RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
-WEBOS_VERSION = "1.0.0-8_d59207a27a35d4c080ac764e1345f688930c3256"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-9_ca00ab087d738bc9ee8eb7d15e63b5e6f58be590"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,6 +27,7 @@ OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 EXTRA_QMAKEVARS_PRE += "CONFIG+=disable-tests"
 EXTRA_QMAKEVARS_PRE += "CONFIG+=enable-maliit-plugin-chinese"
+EXTRA_QMAKEVARS_PRE += "CONFIG+=enable-maliit-plugin-japanese"
 
 EXTRA_QMAKEVARS_PRE += "LIBDIR=${STAGING_LIBDIR}"
 EXTRA_QMAKEVARS_PRE += "WEBOS_INSTALL_BINS=${sbindir}"
