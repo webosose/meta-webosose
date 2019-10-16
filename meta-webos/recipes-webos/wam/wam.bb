@@ -19,8 +19,8 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.1-22_d311b9eebde64e48a494be910be2eeb9cec799cc"
-PR = "r30"
+WEBOS_VERSION = "1.0.1-25_8732f9e4a4a6f779d16b53d176cf960c4d51d769"
+PR = "r31"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -67,6 +67,9 @@ COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 
+# Flag to control runtime flags for touch
+TOUCH_ENABLED ?= "true"
+
 do_configure_prepend() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
       cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
@@ -81,10 +84,19 @@ do_configure_append() {
         sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
         sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" ${B}/webapp-mgr.sh
     fi
+
     # disable pinch zoom
     sed -i '/--enable-aggressive-release-policy \\/a\     --disable-pinch \\' ${B}/webapp-mgr.sh
-    # enable touch events
-    sed -i 's/--touch-events=disabled/--touch-events=enabled/' ${B}/webapp-mgr.sh
+
+    if ${TOUCH_ENABLED}; then
+       # enable touch events
+       sed -i 's/--touch-events=disabled/--touch-events=enabled/' ${B}/webapp-mgr.sh
+       # enable touch events (with 10 touch points)
+       sed -i '/--enable-aggressive-release-policy \\/a\   --force-max-touch-points=10 \\' ${B}/webapp-mgr.sh
+    else
+       # ignore touch devices
+       sed -i '/--enable-aggressive-release-policy \\/a\   --ignore-touch-devices \\' ${B}/webapp-mgr.sh
+    fi
 }
 
 do_configure_append_qemux86() {
