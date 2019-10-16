@@ -1,4 +1,4 @@
-From 21fb4e5d4089acba1574da578322e3f3b175f0f8 Mon Sep 17 00:00:00 2001
+From 430003a9d5a73f4a883b5e0466c84c1935d20b47 Mon Sep 17 00:00:00 2001
 From: Minju Kim <minju2.kim@lge.com>
 Date: Wed, 12 Jun 2019 18:13:23 +0900
 Subject: [PATCH] fixup! [ose][acg][error_page] Register
@@ -30,12 +30,12 @@ Change-Id: I36a47bdb955e03aa019fc0151c23584a392bae73
  files/sysbus/com.palm.webappmanager.role.json.in | 4 ++--
  src/core/WebPageBase.cpp                         | 7 +++++++
  src/core/WebPageBase.h                           | 1 +
- src/platform/webengine/BlinkWebView.cpp          | 6 ++++++
- src/platform/webengine/BlinkWebView.h            | 1 +
+ src/platform/webengine/BlinkWebView.cpp          | 7 +++++++
+ src/platform/webengine/BlinkWebView.h            | 2 +-
  src/platform/webengine/WebPageBlink.cpp          | 4 ++++
  src/platform/webengine/WebPageBlink.h            | 1 +
  src/platform/webengine/WebPageBlinkDelegate.h    | 1 +
- 9 files changed, 24 insertions(+), 3 deletions(-)
+ 9 files changed, 25 insertions(+), 4 deletions(-)
 
 diff --git a/files/sysbus/com.palm.webappmanager.perm.json b/files/sysbus/com.palm.webappmanager.perm.json
 index fad2918..fc01878 100644
@@ -73,7 +73,7 @@ index 1d81b93..81e8483 100644
            \"com.webos.applicationManager\",
            \"com.webos.settingsservice\"
 diff --git a/src/core/WebPageBase.cpp b/src/core/WebPageBase.cpp
-index 241ed2a..c30685d 100644
+index 895c443..c0e1712 100644
 --- a/src/core/WebPageBase.cpp
 +++ b/src/core/WebPageBase.cpp
 @@ -31,12 +31,15 @@
@@ -118,10 +118,10 @@ index 241ed2a..c30685d 100644
  
  void WebPageBase::handleLoadFinished()
 diff --git a/src/core/WebPageBase.h b/src/core/WebPageBase.h
-index b373eb6..eabfce5 100644
+index bf070b9..9f34e8b 100644
 --- a/src/core/WebPageBase.h
 +++ b/src/core/WebPageBase.h
-@@ -196,6 +196,7 @@ protected:
+@@ -198,6 +198,7 @@ protected:
      bool m_isClosing;
      bool m_isLoadErrorPageFinish;
      bool m_isLoadErrorPageStart;
@@ -130,13 +130,14 @@ index b373eb6..eabfce5 100644
      QUrl m_defaultUrl;
      QString m_launchParams;
 diff --git a/src/platform/webengine/BlinkWebView.cpp b/src/platform/webengine/BlinkWebView.cpp
-index 7081e30..24d9093 100644
+index 609e5d5..e73028c 100644
 --- a/src/platform/webengine/BlinkWebView.cpp
 +++ b/src/platform/webengine/BlinkWebView.cpp
-@@ -227,3 +227,9 @@ bool BlinkWebView::AllowMouseOnOffEvent() const
-     return m_delegate->allowMouseOnOffEvent();
+@@ -259,3 +259,10 @@ void BlinkWebView::DidResumeDOM()
+     if (m_delegate)
+         m_delegate->didResumeDOM();
  }
- 
++
 +void BlinkWebView::DidErrorPageLoadedFromNetErrorHelper()
 +{
 +    if (!m_delegate)
@@ -144,22 +145,23 @@ index 7081e30..24d9093 100644
 +    return m_delegate->didErrorPageLoadedFromNetErrorHelper();
 +}
 diff --git a/src/platform/webengine/BlinkWebView.h b/src/platform/webengine/BlinkWebView.h
-index 467cd97..9d517cc 100644
+index 39dac65..0baddeb 100644
 --- a/src/platform/webengine/BlinkWebView.h
 +++ b/src/platform/webengine/BlinkWebView.h
-@@ -64,6 +64,7 @@ public:
-     void HandleBrowserControlCommand(const std::string& command, const std::vector<std::string>& arguments) override;
+@@ -68,7 +68,7 @@ public:
      void HandleBrowserControlFunction(const std::string& command, const std::vector<std::string>& arguments, std::string* result) override;
      void LoadVisuallyCommitted() override;
+     void DidResumeDOM() override;
+-
 +    void DidErrorPageLoadedFromNetErrorHelper() override;
  
  private:
      WebPageBlinkDelegate* m_delegate;
 diff --git a/src/platform/webengine/WebPageBlink.cpp b/src/platform/webengine/WebPageBlink.cpp
-index a285165..4ecf3c5 100644
+index d5d8d8f..cbefb82 100644
 --- a/src/platform/webengine/WebPageBlink.cpp
 +++ b/src/platform/webengine/WebPageBlink.cpp
-@@ -703,6 +703,10 @@ void WebPageBlink::loadFailed(const std::string& url, int errCode, const std::st
+@@ -746,6 +746,10 @@ void WebPageBlink::loadFailed(const std::string& url, int errCode, const std::st
      handleLoadFailed(errCode);
  }
  
@@ -171,10 +173,10 @@ index a285165..4ecf3c5 100644
  {
      m_hasBeenShown = true;
 diff --git a/src/platform/webengine/WebPageBlink.h b/src/platform/webengine/WebPageBlink.h
-index 287861a..9910647 100644
+index 5f04680..1609242 100644
 --- a/src/platform/webengine/WebPageBlink.h
 +++ b/src/platform/webengine/WebPageBlink.h
-@@ -118,6 +118,7 @@ public:
+@@ -121,6 +121,7 @@ public:
      void renderProcessCrashed() override;
      void titleChanged(const std::string& title) override;
      void navigationHistoryChanged() override;
@@ -183,13 +185,13 @@ index 287861a..9910647 100644
      void updateExtensionData(const QString& key, const QString& value);
      void setLoadErrorPolicy(const QString& policy);
 diff --git a/src/platform/webengine/WebPageBlinkDelegate.h b/src/platform/webengine/WebPageBlinkDelegate.h
-index bebaff7..a24abc1 100644
+index 7f4e0e4..aa28d1e 100644
 --- a/src/platform/webengine/WebPageBlinkDelegate.h
 +++ b/src/platform/webengine/WebPageBlinkDelegate.h
-@@ -46,6 +46,7 @@ public:
-     virtual void didDropAllPeerConnections() {}
+@@ -51,6 +51,7 @@ public:
      virtual void didSwapCompositorFrame() {}
      virtual bool allowMouseOnOffEvent() const = 0;
+     virtual void didResumeDOM() {}
 +    virtual void didErrorPageLoadedFromNetErrorHelper() = 0;
  };
  

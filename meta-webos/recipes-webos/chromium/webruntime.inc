@@ -30,7 +30,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r23"
+INC_PR = "r24"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -78,7 +78,7 @@ PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
 # By default debug is completely disabled to speed up build
 PACKAGECONFIG[debug] = "symbol_level=2,symbol_level=1"
-PACKAGECONFIG[debug-webcore] = "remove_webcore_debug_symbols=false,remove_webcore_debug_symbols=true"
+PACKAGECONFIG[debug-blink] = "blink_symbol_level=1,blink_symbol_level=0"
 PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
 PACKAGECONFIG[libpci] = "use_webos_gpu_info_collector=false,use_webos_gpu_info_collector=true"
 
