@@ -1,10 +1,13 @@
-# Backported from meta-raspberrypi Yocto 2.7 Warrior
-# 004a1ef firmware: Rename firmware inc file to raspberrypi-firmware.inc
+# Backported from meta-raspberrypi Yocto 3.1 Dunfell
+# 655dbf3 raspberrypi-firmware: Update to current HEAD
+# ae6611e bcm2835-bootfiles: Clarify license conditions
+# 787bcf3 bcm2835-bootfiles: tighten up dep on rpi-config
+# 2e45813 firmware: Rename firmware inc file to raspberrypi-firmware.inc
 
 DESCRIPTION = "Closed source binary files to help boot the ARM on the BCM2835."
-LICENSE = "Proprietary"
+LICENSE = "Broadcom-RPi"
 
-LIC_FILES_CHKSUM = "file://LICENCE.broadcom;md5=4a4d169737c0786fb9482bb6d30401d1"
+LIC_FILES_CHKSUM = "file://LICENCE.broadcom;md5=c403841ff2837657b2ed8e5bb474ac8d"
 
 inherit deploy nopackages
 
@@ -36,6 +39,8 @@ do_deploy() {
     # Add stamp in deploy directory
     touch ${DEPLOYDIR}/${PN}/${PN}-${PV}.stamp
 }
+
+do_deploy[depends] += "rpi-config:do_deploy"
 
 addtask deploy before do_build after do_install
 do_deploy[dirs] += "${DEPLOYDIR}/${PN}"
