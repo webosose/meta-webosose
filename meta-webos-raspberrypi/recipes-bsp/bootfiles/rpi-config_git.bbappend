@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi7"
+EXTENDPRAUTO_append = "webosrpi8"
 
 do_deploy_append() {
     echo "gpu_mem=300" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
@@ -8,6 +8,7 @@ do_deploy_append() {
 }
 
 do_deploy_append_raspberrypi4() {
-    echo -e "\n[pi4]" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
+    echo >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
+    echo "[pi4]" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
     echo "max_framebuffers=2" >> ${DEPLOYDIR}/bcm2835-bootfiles/config.txt
 }
