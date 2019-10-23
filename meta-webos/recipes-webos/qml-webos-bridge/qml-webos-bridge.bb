@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 RDEPENDS_${PN} += "qml-webos-components"
 
-WEBOS_VERSION = "1.0.0-112_167ed56a6e60f070f0404c0a6cb5a1632f67e635"
+WEBOS_VERSION = "1.0.0-113_810babf69a0be232e5eaba05b10d0636242f77b2"
 PR = "r11"
 
 inherit webos_qmake5
