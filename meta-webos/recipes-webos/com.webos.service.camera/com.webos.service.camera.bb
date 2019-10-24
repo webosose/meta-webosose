@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
 
-WEBOS_VERSION = "1.0.0-5_15d473e4cb2e6c40b3f60af173ae2df682f2b1ee"
+WEBOS_VERSION = "1.0.0-6_cefe311d2ed8035230f52520837f1a2c8ec8ce34"
 PR = "r1"
 
 inherit webos_component
@@ -27,6 +27,9 @@ COMPATIBLE_MACHINE = "^raspberrypi3$"
 
 # Build for raspberrypi4
 COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
+
+# Build for qemux86
+COMPATIBLE_MACHINE_append = "|^qemux86$"
 
 FILES_${PN} += "${libdir}/*.so"
 FILES_SOLIBSDEV = ""
