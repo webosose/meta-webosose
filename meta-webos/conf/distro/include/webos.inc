@@ -331,6 +331,9 @@ APPEND_append_qemuall = " console=ttyS0 net.ifnames=0 biosdevname=0"
 #   mode of the display device
 # APPEND_append_qemuall = " console=tty0"
 
+require conf/distro/include/yocto-uninative.inc
+INHERIT += "uninative"
+
 SANITY_TESTED_DISTROS ?= " \
     ubuntu-18.04 \n \
 "
