@@ -19,7 +19,7 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.1-25_8732f9e4a4a6f779d16b53d176cf960c4d51d769"
+WEBOS_VERSION = "1.0.1-26_2674680864d72eefd3b5060a91889571e0d94fa9"
 PR = "r31"
 
 inherit webos_enhanced_submissions
