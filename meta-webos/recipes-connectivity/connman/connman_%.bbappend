@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos9"
+EXTENDPRAUTO_append = "webos10"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -14,6 +14,7 @@ SRC_URI += " \
     file://0010-Support-channel-frequency-of-scanned-AP.patch \
     file://0011-Provide-station-information-when-AP-mode.patch \
     file://0012-Fix-compile-error-regarding-connman_tethering_get_st.patch \
+    file://0013-Fix-the-wifi-connection-failure.patch \
 "
 
 do_install_append() {
