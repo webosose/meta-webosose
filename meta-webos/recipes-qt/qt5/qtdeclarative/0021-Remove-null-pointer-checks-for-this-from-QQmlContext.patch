@@ -1,4 +1,4 @@
-From 500033a081a4cbcd890e908f5dc102da6c4d02cc Mon Sep 17 00:00:00 2001
+From 015309b7aca001ca53bb3371d49eefb1c2b6f569 Mon Sep 17 00:00:00 2001
 From: Pavel Tumakaev <p.tumakaev@lgepartner.com>
 Date: Wed, 22 May 2019 17:32:25 +0300
 Subject: [PATCH] Remove null pointer checks for "this" from

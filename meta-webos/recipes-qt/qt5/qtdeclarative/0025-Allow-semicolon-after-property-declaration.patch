@@ -1,4 +1,4 @@
-From 1e54c9c1235d6a36d8422328916d541c3d4febef Mon Sep 17 00:00:00 2001
+From 40daeca26256affbd005b055625db381365ff1f6 Mon Sep 17 00:00:00 2001
 From: Fabian Kosmale <fabian.kosmale@qt.io>
 Date: Fri, 30 Aug 2019 15:55:33 +0200
 Subject: [PATCH] Allow semicolon after property declaration

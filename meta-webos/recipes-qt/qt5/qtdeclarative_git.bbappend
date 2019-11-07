@@ -1,10 +1,10 @@
 # Copyright (c) 2014-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos43"
+EXTENDPRAUTO_append = "webos45"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.14 based on 5.12.meta-qt5.3
+# Patches from 5.12.meta-webos.17 based on 5.12.meta-qt5.3
 SRC_URI_append_class-target = " \
     file://0001-Revert-Remove-dead-code.patch \
     file://0002-LTTNG-tracing-support-in-Qt-Quick.patch \
@@ -25,11 +25,10 @@ SRC_URI_append_class-target = " \
     file://0017-Warn-circular-dependency-when-loading-types.patch \
     file://0018-Fix-baseUrl-returning-an-empty-url.patch \
     file://0019-Don-t-send-synthetic-hover-event-on-a-frame-update.patch \
-    file://0020-Add-guard-to-avoid-recursively-text-layout-call.patch \
-    file://0021-QQuickItemView-Remove-redundant-refill-when-layout.patch \
-    file://0022-Remove-null-pointer-checks-for-this-from-QQmlContext.patch \
-    file://0023-Add-QQmlEngine-to-QQuickPixmapKey.patch \
-    file://0024-QQuickWindow-Consider-z-order-of-children-when-deliv.patch \
-    file://0025-Allow-to-have-activeFocus-for-each-window.patch \
-    file://0026-Allow-semicolon-after-property-declaration.patch \
+    file://0020-QQuickItemView-Remove-redundant-refill-when-layout.patch \
+    file://0021-Remove-null-pointer-checks-for-this-from-QQmlContext.patch \
+    file://0022-Add-QQmlEngine-to-QQuickPixmapKey.patch \
+    file://0023-QQuickWindow-Consider-z-order-of-children-when-deliv.patch \
+    file://0024-Allow-to-have-activeFocus-for-each-window.patch \
+    file://0025-Allow-semicolon-after-property-declaration.patch \
 "

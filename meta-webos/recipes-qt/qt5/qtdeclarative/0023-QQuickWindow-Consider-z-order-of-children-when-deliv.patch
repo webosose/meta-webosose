@@ -1,4 +1,4 @@
-From 4ae1885fce1188b8579df71417ad9d1a1bbb229d Mon Sep 17 00:00:00 2001
+From 381bcd50a2c83aca6d7e5bed6cde9b045186ce00 Mon Sep 17 00:00:00 2001
 From: YoungSun Park <cathy.park@lge.com>
 Date: Fri, 16 Aug 2019 21:32:22 +0900
 Subject: [PATCH] QQuickWindow: Consider z-order of children when delivering
