@@ -111,13 +111,15 @@ do_compile() {
     # apply shrinkwrap override, rerouting to shared enact framework tarballs as needed
     if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
         bbnote "Attempting to use submission enact framework"
-        if [ -d ${WEBOS_ENACTJS_FRAMEWORK} ] ; then
-            bbnote "Using system submission Enact framework from ${WEBOS_ENACTJS_FRAMEWORK}"
-            ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${WEBOS_ENACTJS_FRAMEWORK}"
+        FRAMEWORK_PATH="${WEBOS_ENACTJS_FRAMEWORK}${ENACTJS_FRAMEWORK_VARIANT}"
+        if [ -d ${FRAMEWORK_PATH} ] ; then
+            bbnote "Using system submission Enact framework from ${FRAMEWORK_PATH}"
+            ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${FRAMEWORK_PATH}"
         else
-            if [ -d ${WEBOS_ENACTJS_FRAMEWORK_ALLARCH} ] ; then
-                bbnote "Using system submission Enact framework from ${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}"
-                ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}"
+            FRAMEWORK_ALLARCH_PATH="${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}${ENACTJS_FRAMEWORK_VARIANT}"
+            if [ -d ${FRAMEWORK_ALLARCH_PATH} ] ; then
+                bbnote "Using system submission Enact framework from ${FRAMEWORK_ALLARCH_PATH}"
+                ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${FRAMEWORK_ALLARCH_PATH}"
             else
                 bbwarn "Enact framework submission could not be found"
             fi
