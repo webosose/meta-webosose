@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2019 LG Electronics, Inc.
 
 SUMMARY = "Enact framework standard override used for Enact apps"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -19,13 +19,10 @@ SRC_URI = "${ENACTJS_GIT_REPO}/enact.git;nobranch=1;destsuffix=git/enact"
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "3.0.0"
-SRCREV = "757ee297aee056a43f7775a0995b024ce606a887"
-
-WEBOS_ENACT_ILIB_DEPENDENCY ??= "ilib@14.3.0"
+PV = "3.2.4"
+SRCREV = "170e35cb472bb0ff73e9b5187dd653ced254438d"
 
 # Ordered dependency list for Enact; provides shrink-wrap style locking in of package versions
-# Generated via https://gecko.lgsvl.com/jenkins/view/Enyo/job/enact-dependency-list/
 WEBOS_ENACT_DEPENDENCIES ??= "\
     classnames@2.2.6 \
     js-tokens@4.0.0 \
@@ -79,14 +76,13 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     parse-headers@2.0.2 \
     xtend@4.0.1 \
     xhr@2.5.0 \
-    ${WEBOS_ENACT_ILIB_DEPENDENCY} \
-    ilib-webos-tv@14.2.0-webostv2 \
+    ilib@14.4.0 \
 "
 
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r4"
+PR = "r5"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
