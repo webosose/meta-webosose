@@ -10,7 +10,7 @@ DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-WEBOS_VERSION = "5.6.3-134_ca46e908ae80d7908031b9b9a441540414d1913c"
+WEBOS_VERSION = "5.6.3-135_66aa6d6f66255cb650dfd569800aa54adb7dc4cf"
 EXTENDPRAUTO_append = "webos16"
 
 # Upstream 5.5.0 recipe updated LIC_FILES_CHKSUM
