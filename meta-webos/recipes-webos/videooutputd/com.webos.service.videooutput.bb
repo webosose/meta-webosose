@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
 VIRTUAL-RUNTIME_val-impl ??= "videooutput-adaptation-layer-mock"
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson val-impl"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_val-impl}"
-WEBOS_VERSION = "1.0.0-9_0a37751d15ff1afa310ebac00a5f1e50bfb326a9"
+WEBOS_VERSION = "1.0.0-10_bacac1e9dbfbc05c1b4d088908862fcc6dd79551"
 PR = "r1"
 
 inherit webos_component
