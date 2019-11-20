@@ -25,7 +25,6 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
     nyx-modules \
     nyx-modules-qemux86 \
 "
-VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
 
 VIRTUAL-RUNTIME_g-media-pipeline ?= ""
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3 = "g-media-pipeline"
