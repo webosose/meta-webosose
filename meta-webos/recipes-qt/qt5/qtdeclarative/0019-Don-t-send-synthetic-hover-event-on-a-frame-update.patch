@@ -1,4 +1,4 @@
-From 824683c836335301cb9d618ff33e5d38eb40cf06 Mon Sep 17 00:00:00 2001
+From 244209bcab315789a2692fa47fd773286673e913 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 12 Jun 2018 20:25:29 +0900
 Subject: [PATCH] Don't send synthetic hover event on a frame update
@@ -14,7 +14,7 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 4 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 1bb308476c..8fbd18c374 100644
+index 1bb308476..8fbd18c37 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -2272,6 +2272,9 @@ void QQuickWindowPrivate::flushFrameSynchronousEvents()

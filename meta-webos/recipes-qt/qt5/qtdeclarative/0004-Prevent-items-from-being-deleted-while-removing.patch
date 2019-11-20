@@ -1,4 +1,4 @@
-From 432c541406c06d535469d49ef969e2c17ad1cef6 Mon Sep 17 00:00:00 2001
+From 6faf0997387437b968751ca8b9fdadf4cb2c7cd6 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 10 Dec 2014 15:28:17 +0900
 Subject: [PATCH] Prevent items from being deleted while removing
@@ -10,7 +10,7 @@ That may cause to crash. ObjectReference keep the items from being deleted.
  1 file changed, 11 insertions(+)
 
 diff --git a/src/qml/types/qqmldelegatemodel.cpp b/src/qml/types/qqmldelegatemodel.cpp
-index af328fbe2a..4d6d7b09ca 100644
+index af328fbe2..4d6d7b09c 100644
 --- a/src/qml/types/qqmldelegatemodel.cpp
 +++ b/src/qml/types/qqmldelegatemodel.cpp
 @@ -1488,6 +1488,12 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)

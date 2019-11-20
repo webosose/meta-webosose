@@ -1,10 +1,10 @@
-# Copyright (c) 2014-2019 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos46"
+EXTENDPRAUTO_append = "webos47"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.18 based on 5.12.meta-qt5.3
+# Patches from 5.12.meta-webos.19 based on 5.12.meta-qt5.4
 SRC_URI_append_class-target = " \
     file://0001-Revert-Remove-dead-code.patch \
     file://0002-LTTNG-tracing-support-in-Qt-Quick.patch \
@@ -30,6 +30,5 @@ SRC_URI_append_class-target = " \
     file://0022-Add-QQmlEngine-to-QQuickPixmapKey.patch \
     file://0023-QQuickWindow-Consider-z-order-of-children-when-deliv.patch \
     file://0024-Allow-to-have-activeFocus-for-each-window.patch \
-    file://0025-Allow-semicolon-after-property-declaration.patch \
-    file://0026-Fix-nullptr-handling-in-binding.patch \
+    file://0025-Fix-nullptr-handling-in-binding.patch \
 "

@@ -1,4 +1,4 @@
-From 384f4a91a842644ed7c281de70bc86aca793b962 Mon Sep 17 00:00:00 2001
+From 62989966bde9d8cad9f50388d316a152c08be3a4 Mon Sep 17 00:00:00 2001
 From: Gleb Manyagin <gleb.manyagin@lge.com>
 Date: Mon, 15 Jan 2018 15:19:17 +0300
 Subject: [PATCH] Fix for Hindi glyph break
@@ -17,7 +17,7 @@ Upstream-status: [Inappropriate]
  2 files changed, 30 insertions(+), 4 deletions(-)
 
 diff --git a/src/quick/items/qquicktextnode_p.h b/src/quick/items/qquicktextnode_p.h
-index 2969ce9dbc..c25d01dc74 100644
+index 2969ce9db..c25d01dc7 100644
 --- a/src/quick/items/qquicktextnode_p.h
 +++ b/src/quick/items/qquicktextnode_p.h
 @@ -107,6 +107,7 @@ public:
@@ -29,7 +29,7 @@ index 2969ce9dbc..c25d01dc74 100644
  private:
      QSGInternalRectangleNode *m_cursorNode;
 diff --git a/src/quick/items/qquicktextnodeengine.cpp b/src/quick/items/qquicktextnodeengine.cpp
-index 5a4ef2b686..360602c32d 100644
+index f407de84c..00e1600c6 100644
 --- a/src/quick/items/qquicktextnodeengine.cpp
 +++ b/src/quick/items/qquicktextnodeengine.cpp
 @@ -767,6 +767,20 @@ void QQuickTextNodeEngine::mergeProcessedNodes(QList<BinaryTreeNode *> *regularN

@@ -1,4 +1,4 @@
-From aab2ccb8a2bea6812ec4149eb4e8a0c2d3136680 Mon Sep 17 00:00:00 2001
+From 9c824b1ce9afa1736bd373a9bea652d9977db1c7 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 21 Sep 2017 22:25:17 +0900
 Subject: [PATCH] QQuickWindow: Add invalidateCursorItem
@@ -15,7 +15,7 @@ Upstream-Status: Pending
  2 files changed, 17 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index e0422371c2..1bb308476c 100644
+index e0422371c..1bb308476 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -2905,6 +2905,19 @@ QQuickItem *QQuickWindowPrivate::findCursorItem(QQuickItem *item, const QPointF
@@ -39,7 +39,7 @@ index e0422371c2..1bb308476c 100644
  
  bool QQuickWindowPrivate::sendFilteredPointerEvent(QQuickPointerEvent *event, QQuickItem *receiver, QQuickItem *filteringParent)
 diff --git a/src/quick/items/qquickwindow.h b/src/quick/items/qquickwindow.h
-index 114e30fb61..80c37fe73f 100644
+index 114e30fb6..80c37fe73 100644
 --- a/src/quick/items/qquickwindow.h
 +++ b/src/quick/items/qquickwindow.h
 @@ -124,6 +124,10 @@ public:
