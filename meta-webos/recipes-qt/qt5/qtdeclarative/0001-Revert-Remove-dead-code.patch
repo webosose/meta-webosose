@@ -1,4 +1,4 @@
-From 3bd6c3a53009a9df99b171756d5a76670018a8b3 Mon Sep 17 00:00:00 2001
+From 766ec3171bd15a8eaad7e685351a8ac9d3c2c3e9 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Fri, 14 Feb 2014 14:58:58 +0200
 Subject: [PATCH] Revert "Remove dead code."
@@ -10,7 +10,7 @@ This reverts commit 909d3a57dfc279d8a8dee0751bf7635551d6ee3b.
  2 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index c55db04566..b9d37daf7c 100644
+index c55db0456..b9d37daf7 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -327,6 +327,29 @@ void QQuickWindowPrivate::polishItems()
@@ -62,7 +62,7 @@ index c55db04566..b9d37daf7c 100644
  
  void QQuickWindowPrivate::contextCreationFailureMessage(const QSurfaceFormat &format,
 diff --git a/src/quick/items/qquickwindow_p.h b/src/quick/items/qquickwindow_p.h
-index 63760a3b68..7d76893b51 100644
+index 63760a3b6..7d76893b5 100644
 --- a/src/quick/items/qquickwindow_p.h
 +++ b/src/quick/items/qquickwindow_p.h
 @@ -220,6 +220,8 @@ public:

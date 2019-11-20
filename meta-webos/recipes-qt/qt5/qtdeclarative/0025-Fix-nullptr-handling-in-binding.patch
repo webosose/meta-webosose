@@ -1,4 +1,4 @@
-From 9d2bdb492ce652f850f3eb68368f306b65a6f245 Mon Sep 17 00:00:00 2001
+From cec43ea8fe883f05276425a0186847c06367cc49 Mon Sep 17 00:00:00 2001
 From: Fabian Kosmale <fabian.kosmale@qt.io>
 Date: Mon, 22 Jul 2019 13:41:11 +0200
 Subject: [PATCH] Fix nullptr handling in binding
@@ -6,7 +6,6 @@ Subject: [PATCH] Fix nullptr handling in binding
 Fixes: QTBUG-77027
 Change-Id: I61d5a20329ffe95af810b89e338eee2bc10bfe04
 Reviewed-by: Simon Hausmann <simon.hausmann@qt.io>
-Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/268297]
 ---
  src/qml/qml/qqmlproperty.cpp                  | 12 ++++++++--
  .../qqmlproperty/data/nullPropertyBinding.qml | 22 +++++++++++++++++++
@@ -15,7 +14,7 @@ Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/
  create mode 100644 tests/auto/qml/qqmlproperty/data/nullPropertyBinding.qml
 
 diff --git a/src/qml/qml/qqmlproperty.cpp b/src/qml/qml/qqmlproperty.cpp
-index c8166695ba..5f57e0eca1 100644
+index c8166695b..5f57e0eca 100644
 --- a/src/qml/qml/qqmlproperty.cpp
 +++ b/src/qml/qml/qqmlproperty.cpp
 @@ -1216,10 +1216,18 @@ bool QQmlPropertyPrivate::write(QObject *object,
@@ -41,7 +40,7 @@ index c8166695ba..5f57e0eca1 100644
          if (o)
 diff --git a/tests/auto/qml/qqmlproperty/data/nullPropertyBinding.qml b/tests/auto/qml/qqmlproperty/data/nullPropertyBinding.qml
 new file mode 100644
-index 0000000000..4fffc7aead
+index 000000000..4fffc7aea
 --- /dev/null
 +++ b/tests/auto/qml/qqmlproperty/data/nullPropertyBinding.qml
 @@ -0,0 +1,22 @@
@@ -68,7 +67,7 @@ index 0000000000..4fffc7aead
 +    }
 +}
 diff --git a/tests/auto/qml/qqmlproperty/tst_qqmlproperty.cpp b/tests/auto/qml/qqmlproperty/tst_qqmlproperty.cpp
-index 27e06c6f67..8f0c8f0585 100644
+index 27e06c6f6..8f0c8f058 100644
 --- a/tests/auto/qml/qqmlproperty/tst_qqmlproperty.cpp
 +++ b/tests/auto/qml/qqmlproperty/tst_qqmlproperty.cpp
 @@ -144,6 +144,7 @@ private slots:

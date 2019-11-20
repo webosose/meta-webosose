@@ -1,4 +1,4 @@
-From a0343010ce76c65ebb4e6b79aacc1c54fe12adfe Mon Sep 17 00:00:00 2001
+From 94ff689e6aab2e8a307ea421d44412132ab31bf3 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Tue, 12 Dec 2017 15:02:16 +0300
 Subject: [PATCH] Fix for possible crash in QSGDefaultLayer::grab
@@ -18,7 +18,7 @@ Change-Id: If785e5328a044ec9d2564a82361470f1b8091fc5
  2 files changed, 9 insertions(+)
 
 diff --git a/src/quick/items/qquickshadereffectsource.cpp b/src/quick/items/qquickshadereffectsource.cpp
-index 505940e673..a02cb1407c 100644
+index 505940e67..a02cb1407 100644
 --- a/src/quick/items/qquickshadereffectsource.cpp
 +++ b/src/quick/items/qquickshadereffectsource.cpp
 @@ -348,6 +348,7 @@ void QQuickShaderEffectSource::setSourceItem(QQuickItem *item)
@@ -44,7 +44,7 @@ index 505940e673..a02cb1407c 100644
      \qmlproperty rect QtQuick::ShaderEffectSource::sourceRect
  
 diff --git a/src/quick/items/qquickshadereffectsource_p.h b/src/quick/items/qquickshadereffectsource_p.h
-index d5bb33902a..102c89f75a 100644
+index d5bb33902..102c89f75 100644
 --- a/src/quick/items/qquickshadereffectsource_p.h
 +++ b/src/quick/items/qquickshadereffectsource_p.h
 @@ -172,6 +172,7 @@ Q_SIGNALS:

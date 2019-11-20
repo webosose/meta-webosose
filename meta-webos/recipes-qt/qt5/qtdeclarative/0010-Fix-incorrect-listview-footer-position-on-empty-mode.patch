@@ -1,4 +1,4 @@
-From 0ead23df50265d2c0febdfe2846dc4d2536fa20f Mon Sep 17 00:00:00 2001
+From d7658e5baa6a9101d1f48831b6f72bc22812a89d Mon Sep 17 00:00:00 2001
 From: Sergejs Kovrovs <sergejs.kovrovs@lge.com>
 Date: Mon, 11 May 2015 16:27:26 -0700
 Subject: [PATCH] Fix incorrect listview footer position on empty model
@@ -11,7 +11,7 @@ Signed-off-by: Sergejs Kovrovs <sergejs.kovrovs@lge.com>
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquicklistview.cpp b/src/quick/items/qquicklistview.cpp
-index c4c22526f3..a8514e1e6d 100644
+index c4c22526f..a8514e1e6 100644
 --- a/src/quick/items/qquicklistview.cpp
 +++ b/src/quick/items/qquicklistview.cpp
 @@ -1380,7 +1380,8 @@ void QQuickListViewPrivate::updateFooter()

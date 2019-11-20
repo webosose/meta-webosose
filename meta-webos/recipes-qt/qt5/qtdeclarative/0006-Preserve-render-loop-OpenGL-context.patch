@@ -1,4 +1,4 @@
-From 344519abf801723d7b531744dd8844d2606d7d60 Mon Sep 17 00:00:00 2001
+From bd3f6c9294b619696ee4c23312d72c966ab4470e Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Sat, 28 Mar 2015 16:03:14 +0200
 Subject: [PATCH] Preserve render loop OpenGL context
@@ -30,7 +30,7 @@ Change-Id: Ic38ef5b759e2a678a6003b450c44a15ce411c6af
  1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index 2e91bafa7c..fa2eed2b63 100644
+index 2e91bafa7..fa2eed2b6 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
 @@ -88,6 +88,9 @@ extern Q_GUI_EXPORT QImage qt_gl_read_framebuffer(const QSize &size, bool alpha_

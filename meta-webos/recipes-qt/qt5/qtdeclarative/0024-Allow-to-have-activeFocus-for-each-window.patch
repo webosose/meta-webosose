@@ -1,4 +1,4 @@
-From 945abcf3968ee17384603a3abefcd897bf4ee8db Mon Sep 17 00:00:00 2001
+From b6df04ac0f5c50ea9bc41948c8dd5387be44c4c1 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 21 Aug 2019 20:44:57 +0900
 Subject: [PATCH] Allow to have activeFocus for each window
@@ -14,7 +14,7 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index d545d3b8e1..f77f90480c 100644
+index d545d3b8e..f77f90480 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -939,6 +939,20 @@ static inline bool windowHasFocus(QQuickWindow *win)

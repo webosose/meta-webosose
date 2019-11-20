@@ -1,4 +1,4 @@
-From 2a5d8f0c1581e642858be73d164d802b17d5c4d1 Mon Sep 17 00:00:00 2001
+From d175d7c763388c0e40c8774ae7ce048c6d19ae03 Mon Sep 17 00:00:00 2001
 From: Andrey Volykhin <andrey.volykhin@lge.com>
 Date: Fri, 10 Apr 2015 17:10:57 -0700
 Subject: [PATCH] Allow to abort the scene graph rendering of QML
@@ -34,7 +34,7 @@ Updated for qt5.4
  6 files changed, 40 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index b05c3afbbb..e0422371c2 100644
+index b05c3afbb..e0422371c 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -540,6 +540,7 @@ QQuickWindowPrivate::QQuickWindowPrivate()
@@ -74,7 +74,7 @@ index b05c3afbbb..e0422371c2 100644
      \overload
   */
 diff --git a/src/quick/items/qquickwindow.h b/src/quick/items/qquickwindow.h
-index 53fe0a4c4b..114e30fb61 100644
+index 53fe0a4c4..114e30fb6 100644
 --- a/src/quick/items/qquickwindow.h
 +++ b/src/quick/items/qquickwindow.h
 @@ -146,6 +146,9 @@ public:
@@ -88,7 +88,7 @@ index 53fe0a4c4b..114e30fb61 100644
      bool clearBeforeRendering() const;
  
 diff --git a/src/quick/items/qquickwindow_p.h b/src/quick/items/qquickwindow_p.h
-index 7d76893b51..445944b014 100644
+index 7d76893b5..445944b01 100644
 --- a/src/quick/items/qquickwindow_p.h
 +++ b/src/quick/items/qquickwindow_p.h
 @@ -262,6 +262,8 @@ public:
@@ -101,7 +101,7 @@ index 7d76893b51..445944b014 100644
      uint persistentSceneGraph : 1;
  
 diff --git a/src/quick/scenegraph/coreapi/qsgrenderer_p.h b/src/quick/scenegraph/coreapi/qsgrenderer_p.h
-index d4ff6ea9fe..f1839605df 100644
+index d4ff6ea9f..f1839605d 100644
 --- a/src/quick/scenegraph/coreapi/qsgrenderer_p.h
 +++ b/src/quick/scenegraph/coreapi/qsgrenderer_p.h
 @@ -97,6 +97,9 @@ public:
@@ -115,7 +115,7 @@ index d4ff6ea9fe..f1839605df 100644
      virtual void render() = 0;
  
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index 4962b11063..f707dc1de2 100644
+index 4962b1106..f707dc1de 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
 @@ -423,6 +423,9 @@ void QSGGuiThreadRenderLoop::renderWindow(QQuickWindow *window)
@@ -129,7 +129,7 @@ index 4962b11063..f707dc1de2 100644
          polishTime = renderTimer.nsecsElapsed();
      Q_QUICK_SG_PROFILE_SWITCH(QQuickProfiler::SceneGraphPolishFrame,
 diff --git a/src/quick/scenegraph/qsgthreadedrenderloop.cpp b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
-index 232ef77324..4bf32f1f1c 100644
+index 232ef7732..4bf32f1f1 100644
 --- a/src/quick/scenegraph/qsgthreadedrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgthreadedrenderloop.cpp
 @@ -609,6 +609,13 @@ void QSGRenderThread::syncAndRender()

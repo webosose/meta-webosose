@@ -1,4 +1,4 @@
-From 2a09ce61abdde70cd21cc82a77fc2815fbb0d581 Mon Sep 17 00:00:00 2001
+From 6a24983ff283c40a5022409fe8fd3d94068b9629 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Mon, 20 Apr 2015 17:24:14 +0900
 Subject: [PATCH] do not call windowDestroyed when cleanup
@@ -32,7 +32,7 @@ Upstream-Status: do not apply (local workaround)
  1 file changed, 1 deletion(-)
 
 diff --git a/src/quick/scenegraph/qsgrenderloop.cpp b/src/quick/scenegraph/qsgrenderloop.cpp
-index fa2eed2b63..4962b11063 100644
+index fa2eed2b6..4962b1106 100644
 --- a/src/quick/scenegraph/qsgrenderloop.cpp
 +++ b/src/quick/scenegraph/qsgrenderloop.cpp
 @@ -109,7 +109,6 @@ void QSGRenderLoop::cleanup()
