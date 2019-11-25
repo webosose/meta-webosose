@@ -33,6 +33,7 @@ EXTRA_QMAKEVARS_PRE += "\
     WEBOS_INSTALL_DATADIR=${datadir} \
     WEBOS_INSTALL_SYSCONFDIR=${sysconfdir} \
     WEBOS_INSTALL_SYSBUS_DATADIR=${sysbus_datadir} \
+    WEBOS_INSTALL_TESTSDIR=${webos_testsdir} \
     WEBOS_INSTALL_UPSTARTCONFDIR=${webos_upstartconfdir} \
     WEBOS_INSTALL_WEBOS_SDKDIR=${webos_sdkdir} \
 "

@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
-WEBOS_VERSION = "1.1.0-302_459cd29abd0761b0762f535013ed828cb316797f"
-PR = "r44"
+WEBOS_VERSION = "1.1.0-303_0b3d0ac259b7c3bd83b0eeb6bac3b81b8d4dfe2a"
+PR = "r45"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -60,7 +60,12 @@ PACKAGECONFIG[cursor-theme] = "CONFIG+=cursor_theme,,"
 
 PACKAGECONFIG_webos = "compositor cursor-theme"
 
-PACKAGES =+ "${PN}-base ${PN}-conf"
+PACKAGES =+ "${PN}-conf ${PN}-base ${PN}-base-tests"
+
+FILES_${PN}-conf += " \
+    ${sysconfdir}/surface-manager.d/ \
+    ${WEBOS_SYSTEM_BUS_DIRS} \
+"
 
 FILES_${PN}-base += " \
     ${OE_QMAKE_PATH_QML}/WebOSCompositorBase/ \
@@ -70,8 +75,8 @@ FILES_${PN}-base += " \
     ${datadir}/webos-keymap/webos-keymap.qmap \
 "
 
-FILES_${PN}-conf += " \
-    ${sysconfdir}/surface-manager.d/ \
-    ${WEBOS_SYSTEM_BUS_DIRS} \
+FILES_${PN}-base-tests += " \
+    ${webos_testsdir}/${BPN}/ \
 "
+
 RDEPENDS_${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components"
