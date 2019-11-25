@@ -11,7 +11,7 @@ RDEPENDS_${PN} = " \
     luna-surfacemanager-base \
 "
 
-WEBOS_VERSION = "0.0.1-5_1b75d3159393dbe1e5ec2b9cadf1c059945d40c7"
+WEBOS_VERSION = "0.0.1-6_814bfab23c2a9503fde12a9715418a86b46f88ec"
 PR = "r0"
 
 inherit webos_qmake5
