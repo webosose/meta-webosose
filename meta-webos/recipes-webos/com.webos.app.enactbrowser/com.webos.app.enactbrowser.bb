@@ -6,8 +6,8 @@ SECTION = "webos/apps"
 LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=6e00eb832d81f89a0f47fac10db717c7"
 
-WEBOS_VERSION = "1.0.0-17_37245f6b563101cdbef55e3a29f767d450cff2d7"
-PR = "r6"
+WEBOS_VERSION = "1.0.0-18_1a6603dd6bf5cfa6cf8eb8713a080388da407c4d"
+PR = "r7"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -48,6 +48,11 @@ do_compile_prepend() {
     ${ENACT_NPM} config set prefer-offline true
     ${ENACT_NPM} install
     ${ENACT_NODE} ./scripts/cli.js transpile
+}
+
+do_compile_append() {
+    cd ${S}/${WEBOS_ENACTJS_PROJECT_PATH}
+    ./scripts/disable-ilib.sh
 }
 
 install_acg_configuration() {
