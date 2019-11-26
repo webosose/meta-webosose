@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "glib-2.0 glibmm luna-service2 libpbnjson pmloglib openssl libbson boost"
 RDEPENDS_${PN} = "settingsservice-conf python"
 
-WEBOS_VERSION = "1.0.22-2_8712f9ab11463fa3c696fd1c0bf082708c626b40"
+WEBOS_VERSION = "1.0.22-3_fc48b9406a98316588007c157b5aa105b07365fd"
 PR = "r22"
 
 inherit webos_component
