@@ -17,6 +17,18 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=d9ae089c8dc5339f8ac9d8563038a29f \
 # Date:    Fri Feb 3 09:06:35 2017 +0200
 # Subject: pulseaudio: 9.0 -> 10.0
 DEPENDS += "json-c gdbm"
+# removed from oe-core's pulseaudio.inc in upgrade from 12.2 to 13.0
+# commit e4b9e98100cdeb74d4898afcab2d76f2e0855960
+# Author: Tanu Kaskinen <tanuk@iki.fi>
+# Date:   Thu Nov 21 16:06:24 2019 +0200
+# Subject: pulseaudio: 12.2 -> 13.0
+#
+# Release notes:
+# https://www.freedesktop.org/wiki/Software/PulseAudio/Notes/13.0/
+#
+# Dropped intltool-native from DEPENDS. The .desktop file translations
+# don't need intltool any more, gettext is enough.
+DEPENDS += "intltool-native"
 
 # This is blacklisted because of the license
 DEPENDS_remove = "libatomic-ops"
