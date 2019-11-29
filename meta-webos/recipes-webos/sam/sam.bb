@@ -6,14 +6,14 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-DEPENDS = "gtest glib-2.0 luna-service2 libpbnjson boost icu pmloglib librolegen procps libwebosi18n"
+DEPENDS = "glib-2.0 luna-service2 libpbnjson boost icu pmloglib procps libwebosi18n"
 RDEPENDS_${PN} = "ecryptfs-utils"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
-WEBOS_VERSION = "2.0.0-8_5850f576c4daed1a08d57ae9d8f68955bb3c54a9"
-PR = "r22"
+WEBOS_VERSION = "2.0.0-12_7fbcb08ae0d2e4dc6602da4e2e00fa42fdf0edd5"
+PR = "r23"
 
 inherit webos_component
 inherit webos_cmake
@@ -28,6 +28,3 @@ S = "${WORKDIR}/git"
 PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY_${PN}-tests = "1"
 FILES_${PN}-tests = "${libexecdir}/tests/*"
-
-SRC_URI += "file://0001-CMakeLists.txt-don-t-check-for-signals-Boost-library.patch \
-            file://0002-Remove-prerequisite-for-sam-initialize.patch"
