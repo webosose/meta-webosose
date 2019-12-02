@@ -1,6 +1,6 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
-WEBOS_VERSION = "1.0.0-17_239aef4f43a373f4a879dde65d872c812eab3a49"
+WEBOS_VERSION = "1.0.0-18_f6fffb67429afb6b0f59e41b0e210cf3b04d8480"
 
 inherit webos_component
 inherit webos_enhanced_submissions
