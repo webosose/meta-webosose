@@ -19,8 +19,8 @@ SRC_URI = "${ENACTJS_GIT_REPO}/enact.git;nobranch=1;destsuffix=git/enact"
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "3.2.4"
-SRCREV = "170e35cb472bb0ff73e9b5187dd653ced254438d"
+PV = "3.2.5"
+SRCREV = "5f5c308a08f279518c873c2272017583770829cc"
 
 # Ordered dependency list for Enact; provides shrink-wrap style locking in of package versions
 WEBOS_ENACT_DEPENDENCIES ??= "\

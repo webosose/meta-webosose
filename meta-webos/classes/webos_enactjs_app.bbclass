@@ -108,6 +108,9 @@ do_compile() {
         exit 1
     fi
 
+    cp -f package.json package.json.bak
+    cp -f npm-shrinkwrap.json npm-shrinkwrap.json.bak
+
     # apply shrinkwrap override, rerouting to shared enact framework tarballs as needed
     if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
         bbnote "Attempting to use submission enact framework"
@@ -187,6 +190,8 @@ do_compile() {
         fi
     fi
 
+    cp -f package.json.bak package.json
+    cp -f npm-shrinkwrap.json.bak npm-shrinkwrap.json
     cd ${working}
 }
 
