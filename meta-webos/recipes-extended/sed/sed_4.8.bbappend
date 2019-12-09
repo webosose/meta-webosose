@@ -1,4 +1,4 @@
-# Copyright (c) 2015 LG Electronics, Inc.
+# Copyright (c) 2015-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos1"
 
