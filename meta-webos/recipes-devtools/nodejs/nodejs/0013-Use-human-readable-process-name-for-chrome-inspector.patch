@@ -1,0 +1,98 @@
+From ce1334a066cfc1173505081134f5bd5fffdebc66 Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Mon, 9 Dec 2019 22:15:55 +0900
+Subject: [PATCH] Use human readable process name for chrome inspector
+
+:Release Notes:
+Use human readable process name for chrome inspector
+
+:Detailed Notes:
+This commit patches nodejs to display the human readable process
+name at the target title in the chrome inspector. Chrome inspector used
+to show duplicate title filled with script name when multiple targets
+are running in the remote target.
+http://gpro.lge.com/c/gmrsi/meta-gm-webos/+/263199 was merged to
+fix the duplicate client name. However, we faced the problem that garbage
+character is appended after the target title. Investigating further, it
+has been found out that getTargetTitle returns human readable name when
+script name is empty. Since process name is useful for developer to
+distinguish the remote target, let us patch getTargetTitle to return only
+human readable process name.
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-97316] Contains unnecessary characters in title of node inspect
+---
+ src/inspector_io.cc  |  6 +++++-
+ src/node_internals.h |  2 ++
+ src/util.cc          | 16 ++++++++++++++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/src/inspector_io.cc b/src/inspector_io.cc
+index 539cdb5501..478cf08985 100644
+--- a/src/inspector_io.cc
++++ b/src/inspector_io.cc
+@@ -474,7 +474,11 @@ std::vector<std::string> InspectorIoDelegate::GetTargetIds() {
+ }
+ 
+ std::string InspectorIoDelegate::GetTargetTitle(const std::string& id) {
+-  return script_name_.empty() ? GetHumanReadableProcessName() : script_name_;
++  /*
++   * Return human readable process name instead of script name for webOS
++   * Refer to PLAT-97316 for more detail
++   */
++  return GetHumanReadableProcessNameWithoutPID();
+ }
+ 
+ std::string InspectorIoDelegate::GetTargetUrl(const std::string& id) {
+diff --git a/src/node_internals.h b/src/node_internals.h
+index 778205e3c9..d786441c04 100644
+--- a/src/node_internals.h
++++ b/src/node_internals.h
+@@ -233,7 +233,9 @@ void RegisterSignalHandler(int signal,
+ bool SafeGetenv(const char* key, std::string* text);
+ 
+ std::string GetHumanReadableProcessName();
++std::string GetHumanReadableProcessNameWithoutPID();
+ void GetHumanReadableProcessName(char (*name)[1024]);
++void GetHumanReadableProcessNameWithoutPID(char (*name)[1024]);
+ 
+ template <typename T, size_t N>
+ constexpr size_t arraysize(const T(&)[N]) { return N; }
+diff --git a/src/util.cc b/src/util.cc
+index 77824acb03..5b5f745159 100644
+--- a/src/util.cc
++++ b/src/util.cc
+@@ -112,10 +112,26 @@ std::string GetHumanReadableProcessName() {
+   return name;
+ }
+ 
++std::string GetHumanReadableProcessNameWithoutPID() {
++  char name[1024];
++  GetHumanReadableProcessNameWithoutPID(&name);
++  return name;
++}
++
+ void GetHumanReadableProcessName(char (*name)[1024]) {
+   char title[1024] = "Node.js";
+   uv_get_process_title(title, sizeof(title));
+   snprintf(*name, sizeof(*name), "%s[%u]", title, uv_os_getpid());
+ }
+ 
++void GetHumanReadableProcessNameWithoutPID(char (*name)[1024]) {
++  char title[1024] = "Node.js";
++  uv_get_process_title(title, sizeof(title));
++  /*
++   * Remove process id from the GetHumanReadableProcessName for webOS
++   * Refer to PLAT-97316 for more detail
++   */
++  snprintf(*name, sizeof(*name), "%s", title);
++}
++
+ }  // namespace node
+-- 
+2.17.1
+

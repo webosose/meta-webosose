@@ -1,6 +1,6 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO_append = "webos3"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}-npm_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
@@ -20,4 +20,5 @@ SRC_URI_append = "\
     file://0009-Provide-option-compile-js-to-node-for-.js-compilatio.patch \
     file://0010-Add-instanceof-check-for-all-Timeout-methods.patch \
     file://0012-Prevent-creating-usr-etc-in-native-sysroot.patch \
+    file://0013-Use-human-readable-process-name-for-chrome-inspector.patch \
 "
