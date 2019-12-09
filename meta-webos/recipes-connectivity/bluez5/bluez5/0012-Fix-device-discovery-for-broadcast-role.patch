@@ -1,4 +1,4 @@
-From c668a392271f494cff968acf90847d2311a69dc5 Mon Sep 17 00:00:00 2001
+From 277f3c0f369f80b5d773b793bc98915bed5b299e Mon Sep 17 00:00:00 2001
 From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
 Date: Mon, 24 Jun 2019 16:01:58 +0530
 Subject: [PATCH] Fix device discovery for broadcast role
@@ -25,10 +25,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/src/adapter.c b/src/adapter.c
-index af340fd..1e17572 100755
+index cef25616f..b09855aa5 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
-@@ -5995,11 +5995,10 @@ static void update_found_devices(struct btd_adapter *adapter,
+@@ -6095,11 +6095,10 @@ static void update_found_devices(struct btd_adapter *adapter,
  	dev = btd_adapter_find_device(adapter, bdaddr, bdaddr_type);
  	if (!dev) {
  		/*
@@ -42,6 +42,3 @@ index af340fd..1e17572 100755
  			eir_data_free(&eir_data);
  			return;
  		}
--- 
-2.7.4
-

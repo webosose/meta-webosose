@@ -1,4 +1,4 @@
-From 1699241f4e044e34fa201f678770a3062d8da4fb Mon Sep 17 00:00:00 2001
+From 28e13af7a80bbe35112cd573b56c9805ffde5776 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -23,7 +23,6 @@ Builded and tested
 Upstream-Status: Inappropriate[webos specific]
 
 Change-Id: I9c07aa27f242247b5c3df85e0b3605d2ba055cad
-
 ---
  profiles/audio/avctp.c |  5 ++++
  src/device.c           | 56 +++++++++++++++++++++++++++++++++++++++++-
@@ -31,7 +30,7 @@ Change-Id: I9c07aa27f242247b5c3df85e0b3605d2ba055cad
  3 files changed, 62 insertions(+), 1 deletion(-)
 
 diff --git a/profiles/audio/avctp.c b/profiles/audio/avctp.c
-index 5f8625c..ff8dd81 100644
+index 70a3e40b2..6ded1d814 100644
 --- a/profiles/audio/avctp.c
 +++ b/profiles/audio/avctp.c
 @@ -413,6 +413,7 @@ static size_t handle_panel_passthrough(struct avctp *session,
@@ -57,10 +56,10 @@ index 5f8625c..ff8dd81 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index 6a00e4c..3ddb016 100644
+index acfc42894..fec718288 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -178,6 +178,11 @@ struct csrk_info {
+@@ -177,6 +177,11 @@ struct csrk_info {
  	uint32_t counter;
  };
  
@@ -72,7 +71,7 @@ index 6a00e4c..3ddb016 100644
  struct btd_device {
  	int ref_count;
  
-@@ -264,6 +269,7 @@ struct btd_device {
+@@ -263,6 +268,7 @@ struct btd_device {
  
  	GIOChannel	*att_io;
  	guint		store_id;
@@ -80,7 +79,7 @@ index 6a00e4c..3ddb016 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1274,6 +1280,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
+@@ -1276,6 +1282,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
  	return bt_ad_has_manufacturer_data(device->ad, NULL);
  }
  
@@ -99,7 +98,7 @@ index 6a00e4c..3ddb016 100644
  static void append_service_data(void *data, void *user_data)
  {
  	struct bt_ad_service_data *sd = data;
-@@ -1292,13 +1310,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1294,13 +1312,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	struct btd_device *device = data;
  	DBusMessageIter dict;
  
@@ -114,7 +113,7 @@ index 6a00e4c..3ddb016 100644
  	bt_ad_foreach_service_data(device->ad, append_service_data, &dict);
  
  	dbus_message_iter_close_container(iter, &dict);
-@@ -1306,6 +1324,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1308,6 +1326,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -143,7 +142,7 @@ index 6a00e4c..3ddb016 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -1741,6 +1781,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -1743,6 +1783,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -159,7 +158,7 @@ index 6a00e4c..3ddb016 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -2811,6 +2860,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -2851,6 +2900,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -168,7 +167,7 @@ index 6a00e4c..3ddb016 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -3900,6 +3951,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -3970,6 +4021,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->adapter = adapter;
  	device->temporary = true;
  
@@ -179,7 +178,7 @@ index 6a00e4c..3ddb016 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 06b1004..9c2178b 100644
+index 06b100499..9c2178b78 100644
 --- a/src/device.h
 +++ b/src/device.h
 @@ -178,3 +178,5 @@ int btd_device_connect_services(struct btd_device *dev, GSList *services);

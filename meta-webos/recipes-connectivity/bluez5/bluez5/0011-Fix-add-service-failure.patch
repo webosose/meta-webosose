@@ -1,4 +1,4 @@
-From 7d5e1b8ce5abe5a640005948d09262394df2b3a7 Mon Sep 17 00:00:00 2001
+From 8a5ecb24db04a3b458b0b8fc31dbd3d6b6e8496d Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Wed, 12 Jun 2019 11:42:52 +0530
 Subject: [PATCH] Fix add service failure
@@ -24,10 +24,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/src/gatt-database.c b/src/gatt-database.c
-index 99c8ea2..93434e0 100644
+index 2bae8711a..6d2fb97f4 100644
 --- a/src/gatt-database.c
 +++ b/src/gatt-database.c
-@@ -1788,20 +1788,20 @@ static bool parse_includes(GDBusProxy *proxy, struct external_service *service)
+@@ -1935,20 +1935,20 @@ static bool parse_includes(GDBusProxy *proxy, struct external_service *service)
  		return true;
  
  	if (dbus_message_iter_get_arg_type(&iter) != DBUS_TYPE_ARRAY)
@@ -51,6 +51,3 @@ index 99c8ea2..93434e0 100644
  
  		}
  
--- 
-2.7.4
-
