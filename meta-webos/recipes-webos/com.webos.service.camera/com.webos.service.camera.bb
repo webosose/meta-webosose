@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
 
-WEBOS_VERSION = "1.0.0-6_cefe311d2ed8035230f52520837f1a2c8ec8ce34"
+WEBOS_VERSION = "1.0.0-7_0a830d1bd602b4dd8606aa893874e4242a821911"
 PR = "r1"
 
 inherit webos_component
