@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2017 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 
 SUMMARY = "LevelDB Template Library"
 DESCRIPTION = "Template library to build a more complex storage schema with leveldb as a backend"
@@ -26,3 +26,5 @@ EXTRA_OECMAKE_append_class-native = " -DBUILD_TESTING:BOOL=false -DBUILD_MKSANDW
 BBCLASSEXTEND = "native"
 
 SRC_URI += "file://0001-util-Fix-build-with-gcc7.patch"
+
+SRC_URI += "file://0001-test_corners-initialize-cookie.patch"

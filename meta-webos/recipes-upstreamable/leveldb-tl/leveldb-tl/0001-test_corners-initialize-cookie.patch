@@ -1,0 +1,40 @@
+From df8c83b95bc695227c8ea751c7e0134a6a74df14 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Tue, 10 Dec 2019 15:55:51 +0000
+Subject: [PATCH] test_corners: initialize cookie
+
+* fixes:
+/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot-native/usr/bin/i686-webos-linux/i686-webos-linux-g++   -I/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/include -isystem /home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot/usr/src/gtest/include -isystem /home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot/usr/src/gtest -m32 -march=core2 -mtune=core2 -msse3 -mfpmath=sse  --sysroot=/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0=/usr/src/debug/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0                      -fdebug-prefix-map=/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0=/usr/src/debug/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0                      -fdebug-prefix-map=/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot=                      -fdebug-prefix-map=/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -m32 -march=core2 -mtune=core2 -msse3 -mfpmath=sse  --sysroot=/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot -std=c++0x -Wall -Wextra -Wconversion -Werror -pthread -MD -MT test/CMakeFiles/test_corners.dir/test_corners.cpp.o -MF test/CMakeFiles/test_corners.dir/test_corners.cpp.o.d -o test/CMakeFiles/test_corners.dir/test_corners.cpp.o -c /home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/test_corners.cpp
+In file included from /home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/test_corners.cpp:22:
+/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/include/leveldb/sandwich_db.hpp: In member function 'virtual void TestSandwichIterator_stuff_sandwich_to_overflow_Test::TestBody()':
+/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/include/leveldb/sandwich_db.hpp:161:26: error: 'cookie' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  161 |             (void) memcpy(buf, prefix.data(), prefix.size());
+      |                    ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jenkins/workspace/luneos-unstable/webos-ports/tmp-glibc/work/core2-32-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/test_corners.cpp:386:31: note: 'cookie' was declared here
+  386 |         decltype(sdb)::Cookie cookie;
+      |                               ^~~~~~
+cc1plus: all warnings being treated as errors
+
+* Interstingly this doesn't happen with -D_FORTIFY_SOURCE=2 from security-flags.inc
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ test/test_corners.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/test_corners.cpp b/test/test_corners.cpp
+index fe7d08a..125d2f5 100644
+--- a/test/test_corners.cpp
++++ b/test/test_corners.cpp
+@@ -383,7 +383,7 @@ TEST(TestSandwichIterator, stuff_sandwich_to_overflow)
+     for(size_t n = 0; n < 0xff; ++n) // one part reserved for meta
+     {
+         SCOPED_TRACE("n=" + to_string(n));
+-        decltype(sdb)::Cookie cookie;
++        decltype(sdb)::Cookie cookie { };
+         ASSERT_OK( sdb.cook(to_string(n), cookie) )
+             << "Failed to allocate cookie #" << n;
+         auto db = sdb.use(cookie);
+-- 
+2.20.1
+
