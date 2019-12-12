@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos53"
+EXTENDPRAUTO_append = "webos54"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -43,3 +43,7 @@ SRC_URI_append_class-native = " file://qmllint-supplement.py"
 do_install_append_class-native() {
     install -m 755 ${WORKDIR}/qmllint-supplement.py ${D}${OE_QMAKE_PATH_QT_BINS}
 }
+
+SRC_URI_append = " \
+    file://0026-Use-python3-explicitly.patch \
+"
