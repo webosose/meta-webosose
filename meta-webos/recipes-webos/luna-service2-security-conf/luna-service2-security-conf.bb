@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2019 LG Electronics, Inc.
+# Copyright (c) 2015-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS LS2 security configuration"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.2-12_8eefba0ff2c3ff1e311aad0bc01bcb5f31c5a6c1"
+WEBOS_VERSION = "1.0.2-14_eb18da78916cc1bf663442ab10c6351574a91ef7"
 PR = "r5"
 
 inherit webos_component
