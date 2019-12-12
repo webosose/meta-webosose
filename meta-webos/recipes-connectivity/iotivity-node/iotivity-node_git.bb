@@ -25,6 +25,10 @@ S = "${WORKDIR}/git"
 
 PR = "r4"
 
+inherit pythonnative
+
+export PYTHON = "python"
+
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
     export OCTBSTACK_CFLAGS="-I${OCTBDIR} -I${OCTBDIR}/stack -I${OCTBDIR}/ocrandom -I${STAGING_INCDIR}/iotivity/c_common -DROUTING_EP -DRD_CLIENT -DRD_SERVER -D__WITH_DTLS__"
