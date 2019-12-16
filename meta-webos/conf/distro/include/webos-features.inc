@@ -22,7 +22,14 @@ WEBOS_DISTRO_FEATURES_INIT_CONSIDERED = "sysvinit"
 # Our gstreamer recipes and forks didn't apply the fixes for introspection.m4 and fail with:
 # | make[4]: *** No rule to make target `/usr/bin/g-ir-scanner-wrapper', needed by `Gst-1.0.gir'.  Stop.
 WEBOS_DISTRO_FEATURES_INIT_CONSIDERED += "gobject-introspection-data"
+
 DISTRO_FEATURES_BACKFILL_CONSIDERED += "${WEBOS_DISTRO_FEATURES_INIT_CONSIDERED}"
+
+WEBOS_DISTRO_FEATURES_LD = "ld-is-gold"
+DISTRO_FEATURES_BACKFILL_append = " ${WEBOS_DISTRO_FEATURES_LD}"
+WEBOS_DISTRO_FEATURES_LD_CONSIDERED ?= ""
+
+DISTRO_FEATURES_BACKFILL_CONSIDERED += "${WEBOS_DISTRO_FEATURES_LD_CONSIDERED}"
 
 WEBOS_DISTRO_FEATURES_TEST = "ptest"
 
@@ -37,6 +44,5 @@ DISTRO_FEATURES = "\
   ${WEBOS_DISTRO_FEATURES_LIBC} \
   ${WEBOS_DISTRO_FEATURES_INIT} \
   ${WEBOS_DISTRO_FEATURES_TEST} \
-  ld-is-gold \
   virtualization \
 "
