@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 require webruntime.inc
 
@@ -8,7 +8,7 @@ PR = "${INC_PR}.1"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium72"
 
-WEBOS_VERSION = "72.0.3626.121-22_0a99d44018974a541a22145f2559e25516b0095a"
+WEBOS_VERSION = "72.0.3626.121-23_42d6d7d0b8caf517f7f0d36501361eeec5b05954"
 WEBOS_REPO_NAME = "chromium72"
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 
