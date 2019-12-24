@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "com.webos.service.pdm"
 
-WEBOS_VERSION = "1.0.0-1_66b00bfbe23518465b6ddcb754ae06ccef7b3c6e"
+WEBOS_VERSION = "1.0.0-2_2cc0afe160111b00cbc02e9a3c4d31f809661913"
 PR = "r1"
 
 inherit webos_component
