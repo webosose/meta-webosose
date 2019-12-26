@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "The core of the Luna Surface Manager (compositor)"
 AUTHOR  = "Anupam Kaul <anupam.kaul@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
-WEBOS_VERSION = "1.1.0-305_e28dbdfb0f034c8c1136c8c54ec50ae36641d88a"
+WEBOS_VERSION = "1.1.0-308_187238cdf32588082b4007e529e177300ec8c61a"
 PR = "r45"
 
 inherit webos_qmake5
