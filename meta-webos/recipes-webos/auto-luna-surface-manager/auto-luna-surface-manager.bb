@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "Surface Manager for webOS Auto Reference UX"
 AUTHOR  = "Jaeyoon Jung <jaeyoon.jung@lge.com>"
@@ -11,7 +11,7 @@ RDEPENDS_${PN} = " \
     luna-surfacemanager-base \
 "
 
-WEBOS_VERSION = "0.0.1-9_b092d13ad0ef3a41c1e8e9f86180af00f39ffd1c"
+WEBOS_VERSION = "0.0.1-10_53032c7b5ae0bfdf661d510f251af22c4f580ed7"
 PR = "r0"
 
 inherit webos_qmake5
