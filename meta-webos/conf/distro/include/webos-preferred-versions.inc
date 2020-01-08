@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2020 LG Electronics, Inc.
 
-PREFERRED_VERSION_webruntime ?= "72.%"
+PREFERRED_VERSION_webruntime ?= "79.%"
 
 # Prefer GStreamer version 1.14.% for rpi3
 GSTREAMER_VERSION = "1.14.%"
