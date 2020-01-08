@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
@@ -60,6 +60,8 @@ WEBOS_PACKAGESET_SWUPDATER ?= " \
     com.webos.app.swupdater \
     com.webos.service.swupdater \
 "
+WEBOS_PACKAGESET_SWUPDATER_armv4 = ""
+WEBOS_PACKAGESET_SWUPDATER_armv5 = ""
 
 MEDIA = " \
     gstreamer1.0 \
