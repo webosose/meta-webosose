@@ -1,4 +1,4 @@
-From 430003a9d5a73f4a883b5e0466c84c1935d20b47 Mon Sep 17 00:00:00 2001
+From f925acb5f94b45001cfe7889a4c9392721718898 Mon Sep 17 00:00:00 2001
 From: Minju Kim <minju2.kim@lge.com>
 Date: Wed, 12 Jun 2019 18:13:23 +0900
 Subject: [PATCH] fixup! [ose][acg][error_page] Register
@@ -73,7 +73,7 @@ index 1d81b93..81e8483 100644
            \"com.webos.applicationManager\",
            \"com.webos.settingsservice\"
 diff --git a/src/core/WebPageBase.cpp b/src/core/WebPageBase.cpp
-index 895c443..c0e1712 100644
+index 3a4feab..2950095 100644
 --- a/src/core/WebPageBase.cpp
 +++ b/src/core/WebPageBase.cpp
 @@ -31,12 +31,15 @@
@@ -100,16 +100,16 @@ index 895c443..c0e1712 100644
      , m_enableBackgroundRun(false)
      , m_defaultUrl(url)
      , m_launchParams(params)
-@@ -88,6 +92,8 @@ QString WebPageBase::getIdentifier() const
- 
-     if(appId().isEmpty() || appId() == WebAppManager::instance()->getContainerAppId())
+@@ -85,6 +89,8 @@ QString WebPageBase::getIdentifier() const
+ {
+     if(appId().isEmpty())
          return QStringLiteral("");
 +    if ((m_isLoadErrorPageFinish && m_isLoadErrorPageStart) || m_didErrorPageLoadedFromNetErrorHelper)
 +        return QString(kIdentifierForNetErrorPage);
      return m_appId;
  }
  
-@@ -247,6 +253,7 @@ void WebPageBase::urlChangedSlot()
+@@ -244,6 +250,7 @@ void WebPageBase::urlChangedSlot()
  void WebPageBase::handleLoadStarted()
  {
      m_suspendAtLoad = true;
@@ -118,10 +118,10 @@ index 895c443..c0e1712 100644
  
  void WebPageBase::handleLoadFinished()
 diff --git a/src/core/WebPageBase.h b/src/core/WebPageBase.h
-index bf070b9..9f34e8b 100644
+index 6d9845e..477352c 100644
 --- a/src/core/WebPageBase.h
 +++ b/src/core/WebPageBase.h
-@@ -198,6 +198,7 @@ protected:
+@@ -197,6 +197,7 @@ protected:
      bool m_isClosing;
      bool m_isLoadErrorPageFinish;
      bool m_isLoadErrorPageStart;
@@ -158,10 +158,10 @@ index 39dac65..0baddeb 100644
  private:
      WebPageBlinkDelegate* m_delegate;
 diff --git a/src/platform/webengine/WebPageBlink.cpp b/src/platform/webengine/WebPageBlink.cpp
-index d5d8d8f..cbefb82 100644
+index 221dca6..d34d21a 100644
 --- a/src/platform/webengine/WebPageBlink.cpp
 +++ b/src/platform/webengine/WebPageBlink.cpp
-@@ -746,6 +746,10 @@ void WebPageBlink::loadFailed(const std::string& url, int errCode, const std::st
+@@ -728,6 +728,10 @@ void WebPageBlink::loadFailed(const std::string& url, int errCode, const std::st
      handleLoadFailed(errCode);
  }
  
@@ -173,10 +173,10 @@ index d5d8d8f..cbefb82 100644
  {
      m_hasBeenShown = true;
 diff --git a/src/platform/webengine/WebPageBlink.h b/src/platform/webengine/WebPageBlink.h
-index 5f04680..1609242 100644
+index 7a87df7..89bbc82 100644
 --- a/src/platform/webengine/WebPageBlink.h
 +++ b/src/platform/webengine/WebPageBlink.h
-@@ -121,6 +121,7 @@ public:
+@@ -119,6 +119,7 @@ public:
      void renderProcessCrashed() override;
      void titleChanged(const std::string& title) override;
      void navigationHistoryChanged() override;
