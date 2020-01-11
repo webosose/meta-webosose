@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "The sampler for swupdater"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -6,10 +6,9 @@ SECTION = "webos/apps"
 LICENSE = "CLOSED"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r0"
+PR = "r1"
 
 inherit webos_enactjs_app
-inherit webos_arch_indep
 
 require swupdater.inc
 
