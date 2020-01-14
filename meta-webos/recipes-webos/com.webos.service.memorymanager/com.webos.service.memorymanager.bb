@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "Memory Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
 
 WEBOS_VERSION = "1.0.0-15_75827b0cd273064d110473eecadf73eb73a5ca43"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_cmake
@@ -20,3 +20,9 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+
+SRC_URI += " \
+    file://0001-Apply-single-app-policy.patch \
+"
