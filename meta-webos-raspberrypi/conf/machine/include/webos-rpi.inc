@@ -64,6 +64,9 @@ SDIMG_VFAT_DEPLOY = "1"
 
 ENABLE_UART = "1"
 
+# Otherwise there are black bars around the screen and touchscreen calibration then doesn't match with the rendered screen in some setups
+DISABLE_OVERSCAN = "1"
+
 # Configure all Bluetooth service classes we want to support
 WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "SPP GATT FTP OPP A2DP"
 
