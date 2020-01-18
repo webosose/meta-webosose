@@ -11,3 +11,6 @@ PACKAGECONFIG_GL_rpi = "${@bb.utils.contains('DISTRO_FEATURES', 'opengl', ' egl'
 WEBOS_REPO_NAME_rpi = "gst-plugins-base"
 
 WEBOS_VERSION_rpi = "1.14.4-3_dba68182527f24b313951383ddbb701ddde340d1"
+
+PACKAGECONFIG[dispmanx] = ",,virtual/libomxil"
+OPENGL_WINSYS_append = "${@bb.utils.contains('PACKAGECONFIG', 'dispmanx', ' dispmanx', '', d)}"

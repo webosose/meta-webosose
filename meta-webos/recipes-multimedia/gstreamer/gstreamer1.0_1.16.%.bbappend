@@ -10,4 +10,4 @@ EXTENDPRAUTO_append = "webos1"
 # Fixes:
 # ERROR: gstreamer1.0-1.14.2-r0 do_package_qa: QA Issue: gstreamer1.0-ptest rdepends on gsl, but it isn't a build dependency, missing gsl in DEPENDS or PACKAGECONFIG? [build-deps]
 # ERROR: gstreamer1.0-1.14.2-r0 do_package_qa: QA Issue: gstreamer1.0-ptest rdepends on gmp, but it isn't a build dependency, missing gmp in DEPENDS or PACKAGECONFIG? [build-deps]
-PACKAGECONFIG[tests] = "--enable-tests,--disable-tests,gsl gmp"
+PACKAGECONFIG[tests] = "-Dtests=enabled -Dinstalled-tests=true,-Dtests=disabled -Dinstalled-tests=false,gsl gmp"
