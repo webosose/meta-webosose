@@ -208,7 +208,6 @@ RDEPENDS_${PN} = " \
 RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
     com.webos.service.swupdater \
-    crda \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_g-camera-pipeline} \
