@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "AudioOutputd adaptation layer (UMI) API definition and test harness"
 SECTION = "webos/libs"
@@ -15,7 +15,7 @@ inherit webos_public_repo
 
 DEPENDS = "glib-2.0 pmloglib libpbnjson alsa-lib"
 
-WEBOS_VERSION = "1.0.0-5_fa28751523912c7ead3304530b843d609506123d"
+WEBOS_VERSION = "1.0.0-6_555a0cc7812bbe675cbcf1f18c5ca20da2c9a285"
 PR = "r2"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
