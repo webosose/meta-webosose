@@ -25,9 +25,9 @@ S = "${WORKDIR}/git"
 
 PR = "r4"
 
-inherit pythonnative
+inherit python3native
 
-export PYTHON = "python"
+export PYTHON = "python3"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
