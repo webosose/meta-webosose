@@ -16,13 +16,6 @@ RDEPENDS_${PN} += " \
     babeltrace \
     lttng-tools \
     lttng-modules \
-    python-core \
-    python-argparse \
-    python-compression \
-    python-json \
-    python-logging \
-    python-multiprocessing \
-    python-subprocess \
 "
 
 WEBOS_VERSION = "1.0.0-8_f13162fadda4dea25d9218850d4824385ff48963"
@@ -43,3 +36,5 @@ S = "${WORKDIR}/git"
 # Only libpmtrace header files need to install in all builds for other modules that are referring to the header files.
 EXTRA_OECMAKE += "-DENABLE_LIBPMTRACE:BOOLEAN=${@'False' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'True'}"
 EXTRA_OECMAKE += "-DDEFAULT_LOGGING:STRING=${@'' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'pmlog'}"
+
+SRC_URI += "file://0001-use-python3.patch"

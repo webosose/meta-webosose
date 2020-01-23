@@ -1,0 +1,65 @@
+From 7803554665e7ce3a780c18fbd56d0aaac333dc03 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 23 Jan 2020 12:30:40 -0800
+Subject: [PATCH] use python3
+
+* this isn't complete fix, just the initial change to resolve:
+  ERROR: pmtrace-1.0.0-7-r10 do_package_qa: QA Issue: /usr/bin/perf_log_viewer.py contained in package pmtrace requires /usr/bin/python, but no providers found in RDEPENDS_pmtrace? [file-rdeps]
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ files/scripts/acg_migration_tracker.py | 2 +-
+ files/scripts/mem_profile.py           | 4 ++--
+ files/scripts/perf_log_viewer.py       | 2 +-
+ files/scripts/smem.arm                 | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/files/scripts/acg_migration_tracker.py b/files/scripts/acg_migration_tracker.py
+index d89b94f..b750110 100755
+--- a/files/scripts/acg_migration_tracker.py
++++ b/files/scripts/acg_migration_tracker.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/env python3
+ # Copyright (c) 2018 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+diff --git a/files/scripts/mem_profile.py b/files/scripts/mem_profile.py
+index ada75a9..e49d8c1 100755
+--- a/files/scripts/mem_profile.py
++++ b/files/scripts/mem_profile.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/env python3
+ # Copyright (c) 2018 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -129,7 +129,7 @@ class MemoryProfiler(object):
+     def _run_smem(self, fpath, unit):
+         # Expects smem.arm to be in same folder as mem_profile.py
+         smem_path = os.path.join(os.path.dirname(__file__), './smem.arm')
+-        cmd = 'python2 %s -S %s -t %s --export aps >/dev/null 2>&1' \
++        cmd = 'python3 %s -S %s -t %s --export aps >/dev/null 2>&1' \
+               % (smem_path, fpath, unit)
+         try:
+             # Try processing memory snapshot asynchronously
+diff --git a/files/scripts/perf_log_viewer.py b/files/scripts/perf_log_viewer.py
+index e7a43b0..a1a8aab 100755
+--- a/files/scripts/perf_log_viewer.py
++++ b/files/scripts/perf_log_viewer.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/usr/bin/env python3
+ # Copyright (c) 2018 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+diff --git a/files/scripts/smem.arm b/files/scripts/smem.arm
+index 114805b..5104c61 100755
+--- a/files/scripts/smem.arm
++++ b/files/scripts/smem.arm
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ #
+ # smem - a tool for meaningful memory reporting
+ #
