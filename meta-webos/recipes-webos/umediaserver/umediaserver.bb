@@ -7,7 +7,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 LIC_FILES_CHKSUM_raspberrypi4 += "file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519"
 
-DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 python luna-service2 pmloglib boost luna-prefs"
+DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 luna-service2 pmloglib boost luna-prefs"
 DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
@@ -22,10 +22,14 @@ inherit webos_library
 inherit webos_daemon
 inherit webos_system_bus
 inherit webos_machine_dep
-inherit python-dir
-inherit pythonnative
+inherit python3-dir
+inherit python3native
 inherit webos_public_repo
 inherit webos_prerelease_dep
+
+do_configure_prepend() {
+    sed -i 's@add_subdirectory(test/python)@#disabled until updated to work with python3 add_subdirectory(test/python)@g' ${S}/CMakeLists.txt
+}
 
 # umediaserver doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"

@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 
 SUMMARY = "Components for testing added to webOS OSE -devel images"
 LICENSE = "Apache-2.0"
@@ -10,7 +10,7 @@ PR = "r15"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
-VIRTUAL-RUNTIME_umediaserver-python ?= "umediaserver-python"
+VIRTUAL-RUNTIME_umediaserver-python ?= ""
 VIRTUAL-RUNTIME_umediaserver-python_armv4 = ""
 VIRTUAL-RUNTIME_umediaserver-python_armv5 = ""
 
