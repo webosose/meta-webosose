@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "Loadable node-red module for nodejs services"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=d6f37569f5013072e9490d2194d10ae6"
 PR = "r1"
 
 DEPENDS += "nodejs-native"
-RDEPENDS_${PN} = "nodejs python"
+RDEPENDS_${PN} = "nodejs"
 
 # The same restrition as nodejs
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
@@ -73,3 +73,6 @@ FILES_${PN} += "${libdir}/node_modules"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+
+# From 0.19.0 https://github.com/node-red/node-red/commit/4bcf13cb58869902e3d62294af91eeece5c93497
+SRC_URI += "file://python3.patch"
