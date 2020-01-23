@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos1"
 
@@ -18,3 +18,8 @@ EXTENDPRAUTO_append = "webos1"
 RDEPENDS_${PN}-ptest_remove_libc-glibc = " \
     locale-base-tr-tr.iso-8859-9 \
 "
+
+# ERROR: python3-3.8.1-r0 do_package_qa: QA Issue: /usr/lib/python3.8/test/ziptestdata/header.sh contained in package python3-tests requires /bin/bash, but no providers found in RDEPENDS_python3-tests? [file-rdeps]
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS_${PN}-tests_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"

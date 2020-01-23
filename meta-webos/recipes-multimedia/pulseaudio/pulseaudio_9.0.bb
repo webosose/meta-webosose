@@ -104,3 +104,7 @@ python populate_packages_prepend() {
     do_split_packages(d, plugindir, '^lib(.*)\.so$', 'pulseaudio-lib-%s', 'PulseAudio library for %s', extra_depends='', prepend=True)
 }
 
+# ERROR: pulseaudio-9.0-13-r20 do_package_qa: QA Issue: pulseaudio-pa-info rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS_${PN}-pa-info_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS_${PN}-pa-info_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
