@@ -1,17 +1,14 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 DESCRIPTION = "Node.js native addon build tool"
-HOMEPAGE = "https://github.com/TooTallNate/node-gyp"
+HOMEPAGE = "https://github.com/nodejs/node-gyp"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=694e396551033371686c80d3a1a69e88"
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
-PR = "r4"
-PV = "0.12.2+git${SRCPV}"
-
-# v0.12.2 tag
-SRCREV = "7e98c99ce7e04e1599677a8b7919f7c387ad6a09"
-SRC_URI = "git://github.com/TooTallNate/${BPN}"
+PV = "6.1.0+git${SRCPV}"
+SRCREV = "d1dea13fe44bc65ee3ea8441c08c9a3d03d6d63d"
+SRC_URI = "git://github.com/nodejs/node-gyp.git"
 
 S = "${WORKDIR}/git"
 
