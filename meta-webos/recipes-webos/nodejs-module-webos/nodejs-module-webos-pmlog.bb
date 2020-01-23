@@ -17,7 +17,7 @@ inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_library
 inherit webos_filesystem_paths
-inherit pythonnative
+inherit python3native
 
 export PYTHON = "python"
 
