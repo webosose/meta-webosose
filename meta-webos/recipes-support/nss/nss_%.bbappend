@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos1"
 
@@ -11,7 +11,8 @@ do_compile() {
 
     export CROSS_COMPILE=1
     export NATIVE_CC="${BUILD_CC}"
-    export NATIVE_FLAGS="${BUILD_CFLAGS}"
+    # Additional defines needed on Centos 7
+    export NATIVE_FLAGS="${BUILD_CFLAGS} -DLINUX -Dlinux"
     export BUILD_OPT=1
 
     export FREEBL_NO_DEPEND=1
@@ -22,6 +23,8 @@ do_compile() {
     export NS_USE_GCC=1
     export NSS_USE_SYSTEM_SQLITE=1
     export NSS_ENABLE_ECC=1
+
+    ${@bb.utils.contains("TUNE_FEATURES", "crypto", "export NSS_USE_ARM_HW_CRYPTO=1", "", d)}
 
     export OS_RELEASE=3.4
     export OS_TARGET=Linux
