@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos70"
+EXTENDPRAUTO_append = "webos71"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -89,7 +89,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.12 based on 5.12.meta-qt5-shared.9
+# Patches from 5.12.meta-webos.14 based on 5.12.meta-qt5-shared.9
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-DisableCertificateVerificationCheck.patch \
@@ -123,12 +123,13 @@ SRC_URI_append = " \
     file://0030-Workaround-for-RGX-broken-render-to-texture-with-siz.patch \
     file://0031-Fix-bug-of-calculate-xsize-for-fonts.patch \
     file://0032-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
+    file://0033-Modify-the-touch-event-for-emulator.patch \
 "
 
 SRC_URI_append_hardware = " \
-    file://0033-eglfs-Support-multiple-device-integration.patch \
-    file://0034-eglfs-Support-multiple-display.patch \
-    file://0035-eglfs-Associate-keyboard-touch-device-with-window.patch \
+    file://0034-eglfs-Support-multiple-device-integration.patch \
+    file://0035-eglfs-Support-multiple-display.patch \
+    file://0036-eglfs-Associate-keyboard-touch-device-with-window.patch \
 "
 
 # Do not include Qt testability patch for release

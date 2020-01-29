@@ -1,4 +1,4 @@
-From b4c1175342e9bc997b61b2eab7cc9c48fbc6dd0e Mon Sep 17 00:00:00 2001
+From 2350633f5304c521df93079488d0a9e5cbaa77c9 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Wed, 27 Mar 2019 22:36:41 +0900
 Subject: [PATCH] eglfs: Support multiple device integration
