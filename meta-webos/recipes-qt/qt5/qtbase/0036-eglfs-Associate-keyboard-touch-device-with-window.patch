@@ -1,4 +1,4 @@
-From 8fdf732042ca1d40f95f3adb9eab9e393b1a6c0a Mon Sep 17 00:00:00 2001
+From 2c7106f72b56ba0bd6eec64691124b9ee01ce079 Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Mon, 14 Oct 2019 18:58:04 +0900
 Subject: [PATCH] eglfs: Associate keyboard, touch device with window
@@ -930,7 +930,7 @@ index a22d197d3d..acf9250496 100644
      static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration);
  };
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 1d1c7b7a45..6c9e4042cd 100644
+index 4269d3b0f2..048d93320c 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -120,7 +120,7 @@ QEglFSIntegration::QEglFSIntegration()
@@ -951,7 +951,7 @@ index 1d1c7b7a45..6c9e4042cd 100644
  
      return w;
  }
-@@ -590,13 +592,38 @@ void QEglFSIntegration::createInputHandlers()
+@@ -593,13 +595,38 @@ void QEglFSIntegration::createInputHandlers()
          new QTsLibMouseHandler(QLatin1String("TsLib"), QString() /* spec */);
  #endif
  
@@ -992,7 +992,7 @@ index 1d1c7b7a45..6c9e4042cd 100644
  #endif
  
  #if QT_CONFIG(integrityhid)
-@@ -615,4 +642,24 @@ EGLNativeDisplayType QEglFSIntegration::nativeDisplay(QEglFSDeviceIntegration *i
+@@ -618,4 +645,24 @@ EGLNativeDisplayType QEglFSIntegration::nativeDisplay(QEglFSDeviceIntegration *i
      return integration->platformDisplay();
  }
  
@@ -1018,10 +1018,10 @@ index 1d1c7b7a45..6c9e4042cd 100644
 +
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index 2bf5ed01b0..2b1d8d9b78 100644
+index 8a3c34df4b..b48c4496b3 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-@@ -69,6 +69,7 @@ class QEglFSContext;
+@@ -71,6 +71,7 @@ class QEglFSContext;
  class QEglFSDeviceIntegration;
  class QFbVtHandler;
  class QEvdevKeyboardManager;
@@ -1029,7 +1029,7 @@ index 2bf5ed01b0..2b1d8d9b78 100644
  
  class Q_EGLFS_EXPORT QEglFSIntegration : public QPlatformIntegration, public QPlatformNativeInterface
  {
-@@ -109,10 +110,14 @@ public:
+@@ -111,10 +112,14 @@ public:
  
      QFbVtHandler *vtHandler() { return m_vtHandler.data(); }
  
@@ -1044,14 +1044,14 @@ index 2bf5ed01b0..2b1d8d9b78 100644
      static void loadKeymapStatic(const QString &filename);
      static void switchLangStatic();
  
-@@ -124,6 +129,7 @@ private:
+@@ -126,6 +131,7 @@ private:
      QScopedPointer<QPlatformServices> m_services;
      QScopedPointer<QFbVtHandler> m_vtHandler;
      QEvdevKeyboardManager *m_kbdMgr;
 +    QEvdevTouchManager *m_touchMgr;
      bool m_disableInputHandlers;
  #if defined(WEBOS_EMULATOR)
- 	QList<QLinuxMouseHandler *> m_mouses;
+     QEmulatorKeyboardManager* m_emulatorKeyboardManager;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 index 38736181d3..b2a13504d5 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp

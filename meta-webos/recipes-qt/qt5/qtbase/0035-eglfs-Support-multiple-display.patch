@@ -1,4 +1,4 @@
-From 300fd1cacb149977af4d3a2f062e34d1d4cfadd0 Mon Sep 17 00:00:00 2001
+From 09db17d42b8e5001077acd44b40390094bd0b2ff Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 2 Apr 2018 14:00:37 +0900
 Subject: [PATCH] eglfs: Support multiple display
@@ -271,7 +271,7 @@ index 4c3149c7c9..d3ac31892a 100644
  QT_END_NAMESPACE
  
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
-index 791f44bb88..1d1c7b7a45 100644
+index b141f93926..4269d3b0f2 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
 @@ -38,6 +38,9 @@
@@ -456,7 +456,7 @@ index 791f44bb88..1d1c7b7a45 100644
      switch (resourceType(resource)) {
      case XlibDisplay:
          // Play nice when using the x11 hooks: Be compatible with xcb that allows querying
-@@ -515,7 +607,12 @@ void QEglFSIntegration::createInputHandlers()
+@@ -518,7 +610,12 @@ void QEglFSIntegration::createInputHandlers()
  
  EGLNativeDisplayType QEglFSIntegration::nativeDisplay() const
  {
@@ -471,7 +471,7 @@ index 791f44bb88..1d1c7b7a45 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
-index 69ddfbd70c..2bf5ed01b0 100644
+index 2a9cc3edd0..8a3c34df4b 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 +++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
 @@ -53,6 +53,7 @@
@@ -482,7 +482,7 @@ index 69ddfbd70c..2bf5ed01b0 100644
  #include <qpa/qplatformintegration.h>
  #include <qpa/qplatformnativeinterface.h>
  #include <qpa/qplatformscreen.h>
-@@ -65,6 +66,7 @@ QT_BEGIN_NAMESPACE
+@@ -67,6 +68,7 @@ QT_BEGIN_NAMESPACE
  
  class QEglFSWindow;
  class QEglFSContext;
@@ -490,7 +490,7 @@ index 69ddfbd70c..2bf5ed01b0 100644
  class QFbVtHandler;
  class QEvdevKeyboardManager;
  
-@@ -109,11 +111,14 @@ public:
+@@ -111,11 +113,14 @@ public:
  
  private:
      EGLNativeDisplayType nativeDisplay() const;
