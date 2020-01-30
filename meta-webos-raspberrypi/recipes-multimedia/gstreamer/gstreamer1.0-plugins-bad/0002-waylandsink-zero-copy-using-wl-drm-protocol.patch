@@ -1,6 +1,6 @@
-From 2ff6c6fde5299ba7f916a633239b1cbb13bfb2c1 Mon Sep 17 00:00:00 2001
+From 97783c86bda910054db53dac7e0dc545d4c87a51 Mon Sep 17 00:00:00 2001
 From: Pankaj Maharana <pankaj.maharana@lge.com>
-Date: Sun, 1 Dec 2019 21:40:00 +0530
+Date: Mon, 3 Feb 2020 06:00:29 +0000
 Subject: [PATCH 2/2] waylandsink: zero copy using wl-drm protocol
 
 :Release Notes:
@@ -25,14 +25,14 @@ Tested in raspberrypi4
              via wayland sink
 ---
  ext/wayland/Makefile.am      |   6 +
- ext/wayland/gstwaylandsink.c |  77 ++++++++-
+ ext/wayland/gstwaylandsink.c |  77 ++++++-
  ext/wayland/gstwaylandsink.h |   1 +
  ext/wayland/meson.build      |   1 +
- ext/wayland/wldisplay.c      |  94 +++++++++-
+ ext/wayland/wldisplay.c      |  94 +++++++-
  ext/wayland/wldisplay.h      |   9 +
- ext/wayland/wldrmallocator.c | 400 +++++++++++++++++++++++++++++++++++++++++++
- ext/wayland/wldrmallocator.h |  84 +++++++++
- ext/wayland/wlvideoformat.c  |  85 ++++++++-
+ ext/wayland/wldrmallocator.c | 400 +++++++++++++++++++++++++++++++++++
+ ext/wayland/wldrmallocator.h |  84 ++++++++
+ ext/wayland/wlvideoformat.c  |  85 +++++++-
  ext/wayland/wlvideoformat.h  |   6 +
  10 files changed, 753 insertions(+), 10 deletions(-)
  create mode 100644 ext/wayland/wldrmallocator.c
@@ -422,10 +422,11 @@ index c7d9381..72f7e1f 100644
  gboolean
  gst_wl_display_check_format_for_shm (GstWlDisplay * display,
      GstVideoFormat format)
-@@ -164,6 +231,27 @@ gst_wl_display_check_format_for_shm (GstWlDisplay * display,
+@@ -163,6 +230,27 @@ gst_wl_display_check_format_for_shm (GstWlDisplay * display,
+   return FALSE;
  }
  
- gboolean
++gboolean
 +gst_wl_display_check_format_for_drm (GstWlDisplay * display,
 +    GstVideoFormat format)
 +{
@@ -446,10 +447,9 @@ index c7d9381..72f7e1f 100644
 +  return FALSE;
 +}
 +
-+gboolean
+ gboolean
  gst_wl_display_check_format_for_dmabuf (GstWlDisplay * display,
      GstVideoFormat format)
- {
 @@ -203,8 +291,6 @@ registry_handle_global (void *data, struct wl_registry *registry,
  {
    GstWlDisplay *self = data;
@@ -523,7 +523,7 @@ index aaa3235..f949f3c 100644
  
 diff --git a/ext/wayland/wldrmallocator.c b/ext/wayland/wldrmallocator.c
 new file mode 100644
-index 0000000..4bb9347
+index 0000000..72cfbde
 --- /dev/null
 +++ b/ext/wayland/wldrmallocator.c
 @@ -0,0 +1,400 @@
@@ -913,8 +913,8 @@ index 0000000..4bb9347
 +  g_return_val_if_fail (gst_wl_display_check_format_for_drm (display,
 +          GST_VIDEO_INFO_FORMAT (vinfo)), NULL);
 +
-+  buffer = wl_drm_create_prime_buffer (display->drm, prime_fd,
-+      width, height, format, 0, stride, 0, 0, 0, 0);
++  buffer = wl_drm_create_linear_prime_buffer (display->drm, prime_fd,
++                                              width, height, format, 0, stride);
 +
 +  if (buffer) {
 +  GST_DEBUG_OBJECT (display, "Creating wl_buffer from DRM of size %"
@@ -1021,19 +1021,19 @@ diff --git a/ext/wayland/wlvideoformat.c b/ext/wayland/wlvideoformat.c
 index 77cfac8..f91f7d6 100644
 --- a/ext/wayland/wlvideoformat.c
 +++ b/ext/wayland/wlvideoformat.c
-@@ -38,6 +38,12 @@ typedef struct
+@@ -36,6 +36,12 @@ typedef struct
+   GstVideoFormat gst_format;
+ } wl_ShmVideoFormat;
  
- typedef struct
- {
++typedef struct
++{
 +  enum wl_drm_format wl_format;
 +  GstVideoFormat gst_format;
 +} wl_DrmVideoFormat;
 +
-+typedef struct
-+{
+ typedef struct
+ {
    guint wl_format;
-   GstVideoFormat gst_format;
- } wl_DmabufVideoFormat;
 @@ -83,6 +89,41 @@ static const wl_ShmVideoFormat shm_formats[] = {
    {WL_SHM_FORMAT_YUV444, GST_VIDEO_FORMAT_v308},
  };
@@ -1113,10 +1113,11 @@ index 77cfac8..f91f7d6 100644
  gint
  gst_video_format_to_wl_dmabuf_format (GstVideoFormat format)
  {
-@@ -151,6 +215,18 @@ gst_wl_shm_format_to_video_format (enum wl_shm_format wl_format)
+@@ -150,6 +214,18 @@ gst_wl_shm_format_to_video_format (enum wl_shm_format wl_format)
+   return GST_VIDEO_FORMAT_UNKNOWN;
  }
  
- GstVideoFormat
++GstVideoFormat
 +gst_wl_drm_format_to_video_format (enum wl_drm_format wl_format)
 +{
 +  guint i;
@@ -1128,11 +1129,10 @@ index 77cfac8..f91f7d6 100644
 +  return GST_VIDEO_FORMAT_UNKNOWN;
 +}
 +
-+GstVideoFormat
+ GstVideoFormat
  gst_wl_dmabuf_format_to_video_format (guint wl_format)
  {
-   guint i;
-@@ -165,11 +241,18 @@ gst_wl_dmabuf_format_to_video_format (guint wl_format)
+@@ -165,10 +241,17 @@ gst_wl_dmabuf_format_to_video_format (guint wl_format)
  const gchar *
  gst_wl_shm_format_to_string (enum wl_shm_format wl_format)
  {
@@ -1141,17 +1141,16 @@ index 77cfac8..f91f7d6 100644
        (gst_wl_shm_format_to_video_format (wl_format));
  }
  
- const gchar *
++const gchar *
 +gst_wl_drm_format_to_string (enum wl_drm_format drm_format)
 +{
 +  return gst_wl_gst_video_format_to_string
 +      (gst_wl_drm_format_to_video_format (drm_format));
 +}
 +
-+const gchar *
+ const gchar *
  gst_wl_dmabuf_format_to_string (guint wl_format)
  {
-   return gst_video_format_to_string
 diff --git a/ext/wayland/wlvideoformat.h b/ext/wayland/wlvideoformat.h
 index 331f582..362f55d 100644
 --- a/ext/wayland/wlvideoformat.h
@@ -1177,5 +1176,5 @@ index 331f582..362f55d 100644
  
  G_END_DECLS
 -- 
-2.7.4
+2.17.1
 

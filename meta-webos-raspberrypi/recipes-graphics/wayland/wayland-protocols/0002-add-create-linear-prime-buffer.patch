@@ -1,0 +1,20 @@
+diff -ruN a/stable/wayland-drm/wayland-drm.xml b/stable/wayland-drm/wayland-drm.xml
+--- a/stable/wayland-drm/wayland-drm.xml	2020-02-01 07:47:03.065271551 +0000
++++ b/stable/wayland-drm/wayland-drm.xml	2020-02-03 04:49:30.364351712 +0000
+@@ -164,5 +164,16 @@
+       <arg name="offset2" type="int"/>
+       <arg name="stride2" type="int"/>
+     </request>
++    <!-- Create a wayland buffer for the prime fd.  Use for prime
++         buffers with LINEAR modifier. -->
++    <request name="create_linear_prime_buffer" since="2">
++      <arg name="id" type="new_id" interface="wl_buffer"/>
++      <arg name="name" type="fd"/>
++      <arg name="width" type="int"/>
++      <arg name="height" type="int"/>
++      <arg name="format" type="uint"/>
++      <arg name="offset" type="int"/>
++      <arg name="stride" type="int"/>
++    </request>
+   </interface>
+ </protocol>
