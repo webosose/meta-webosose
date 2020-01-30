@@ -1,0 +1,236 @@
+diff -ruN a/include/GL/internal/dri_interface.h b/include/GL/internal/dri_interface.h
+--- a/include/GL/internal/dri_interface.h	2020-02-01 13:58:29.393918675 +0000
++++ b/include/GL/internal/dri_interface.h	2020-02-01 13:59:57.733546527 +0000
+@@ -1553,6 +1553,7 @@
+     */
+    __DRIimage *(*createImageFromFds)(__DRIscreen *screen,
+                                      int width, int height, int fourcc,
++                                     uint64_t modifier,
+                                      int *fds, int num_fds,
+                                      int *strides, int *offsets,
+                                      void *loaderPrivate);
+diff -ruN a/src/egl/drivers/dri2/egl_dri2.c b/src/egl/drivers/dri2/egl_dri2.c
+--- a/src/egl/drivers/dri2/egl_dri2.c	2020-02-01 13:58:29.557925423 +0000
++++ b/src/egl/drivers/dri2/egl_dri2.c	2020-02-01 13:59:53.837386784 +0000
+@@ -2778,7 +2778,7 @@
+ 
+ static void
+ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
+-                         struct wl_drm_buffer *buffer)
++                         struct wl_drm_buffer *buffer, uint64_t modifier)
+ {
+    _EGLDisplay *disp = user_data;
+    struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
+@@ -2799,6 +2799,7 @@
+                                                 buffer->width,
+                                                 buffer->height,
+                                                 buffer->format,
++                                                modifier,
+                                                 &fd, 1,
+                                                 buffer->stride,
+                                                 buffer->offset,
+diff -ruN a/src/egl/drivers/dri2/platform_android.c b/src/egl/drivers/dri2/platform_android.c
+--- a/src/egl/drivers/dri2/platform_android.c	2020-02-01 13:58:29.557925423 +0000
++++ b/src/egl/drivers/dri2/platform_android.c	2020-02-01 14:00:21.570523353 +0000
+@@ -565,6 +565,7 @@
+                                              dri2_surf->base.Width,
+                                              dri2_surf->base.Height,
+                                              fourcc,
++                                             DRM_FORMAT_MOD_INVALID,
+                                              &fd,
+                                              1,
+                                              &pitch,
+diff -ruN a/src/egl/wayland/wayland-drm/meson.build b/src/egl/wayland/wayland-drm/meson.build
+--- a/src/egl/wayland/wayland-drm/meson.build	2020-02-01 13:58:29.557925423 +0000
++++ b/src/egl/wayland/wayland-drm/meson.build	2020-02-01 14:06:37.213830538 +0000
+@@ -45,6 +45,7 @@
+   'wayland_drm',
+   ['wayland-drm.c', wayland_drm_protocol_c, wayland_drm_server_protocol_h],
+   c_args : c_vis_args,
++  include_directories : [inc_wayland_drm, inc_include],
+   dependencies : [dep_wayland_server],
+   build_by_default : false,
+ )
+diff -ruN a/src/egl/wayland/wayland-drm/wayland-drm.c b/src/egl/wayland/wayland-drm/wayland-drm.c
+--- a/src/egl/wayland/wayland-drm/wayland-drm.c	2020-02-01 13:58:29.557925423 +0000
++++ b/src/egl/wayland/wayland-drm/wayland-drm.c	2020-02-01 15:45:51.107592946 +0000
+@@ -37,6 +37,8 @@
+ #include "wayland-drm.h"
+ #include "wayland-drm-server-protocol.h"
+ 
++#include "drm-uapi/drm_fourcc.h"
++
+ #define MIN(x,y) (((x)<(y))?(x):(y))
+ 
+ static void
+@@ -59,7 +61,7 @@
+ create_buffer(struct wl_client *client, struct wl_resource *resource,
+               uint32_t id, uint32_t name, int fd,
+               int32_t width, int32_t height,
+-              uint32_t format,
++              uint32_t format, uint64_t modifier,
+               int32_t offset0, int32_t stride0,
+               int32_t offset1, int32_t stride1,
+               int32_t offset2, int32_t stride2)
+@@ -84,7 +86,7 @@
+ 	buffer->offset[2] = offset2;
+ 	buffer->stride[2] = stride2;
+ 
+-        drm->callbacks.reference_buffer(drm->user_data, name, fd, buffer);
++	drm->callbacks.reference_buffer(drm->user_data, name, fd, buffer, modifier);
+ 	if (buffer->driver_buffer == NULL) {
+ 		wl_resource_post_error(resource,
+ 				       WL_DRM_ERROR_INVALID_NAME,
+@@ -128,7 +130,8 @@
+         }
+ 
+         create_buffer(client, resource, id,
+-                      name, -1, width, height, format, 0, stride, 0, 0, 0, 0);
++                      name, -1, width, height, format, DRM_FORMAT_MOD_INVALID,
++                      0, stride, 0, 0, 0, 0);
+ }
+ 
+ static void
+@@ -157,6 +160,7 @@
+         }
+ 
+         create_buffer(client, resource, id, name, -1, width, height, format,
++                      DRM_FORMAT_MOD_INVALID,
+                       offset0, stride0, offset1, stride1, offset2, stride2);
+ }
+ 
+@@ -170,11 +174,24 @@
+                         int32_t offset2, int32_t stride2)
+ {
+         create_buffer(client, resource, id, 0, fd, width, height, format,
++                      DRM_FORMAT_MOD_INVALID,
+                       offset0, stride0, offset1, stride1, offset2, stride2);
+         close(fd);
+ }
+ 
+ static void
++drm_create_linear_prime_buffer(struct wl_client *client,
++                         struct wl_resource *resource,
++                         uint32_t id, int fd,
++                         int32_t width, int32_t height, uint32_t format,
++                        int32_t offset, int32_t stride)
++{
++        create_buffer(client, resource, id, 0, fd, width, height, format,
++                      DRM_FORMAT_MOD_LINEAR, offset, stride, 0, 0, 0, 0);
++        close(fd);
++}
++
++static void
+ drm_authenticate(struct wl_client *client,
+ 		 struct wl_resource *resource, uint32_t id)
+ {
+@@ -191,8 +208,9 @@
+ static const struct wl_drm_interface drm_interface = {
+ 	drm_authenticate,
+ 	drm_create_buffer,
+-        drm_create_planar_buffer,
+-        drm_create_prime_buffer
++	drm_create_planar_buffer,
++	drm_create_prime_buffer,
++	drm_create_linear_prime_buffer
+ };
+ 
+ static void
+diff -ruN a/src/egl/wayland/wayland-drm/wayland-drm.h b/src/egl/wayland/wayland-drm/wayland-drm.h
+--- a/src/egl/wayland/wayland-drm/wayland-drm.h	2020-02-01 13:58:29.557925423 +0000
++++ b/src/egl/wayland/wayland-drm/wayland-drm.h	2020-02-01 13:59:03.863335757 +0000
+@@ -11,7 +11,7 @@
+ 	int (*authenticate)(void *user_data, uint32_t id);
+ 
+ 	void (*reference_buffer)(void *user_data, uint32_t name, int fd,
+-                                 struct wl_drm_buffer *buffer);
++                           struct wl_drm_buffer *buffer, uint64_t modifier);
+ 
+ 	void (*release_buffer)(void *user_data, struct wl_drm_buffer *buffer);
+ 
+diff -ruN a/src/egl/wayland/wayland-drm/wayland-drm.xml b/src/egl/wayland/wayland-drm/wayland-drm.xml
+--- a/src/egl/wayland/wayland-drm/wayland-drm.xml	2020-02-01 13:58:29.557925423 +0000
++++ b/src/egl/wayland/wayland-drm/wayland-drm.xml	2020-02-01 15:45:15.850222523 +0000
+@@ -182,6 +182,18 @@
+       <arg name="stride2" type="int"/>
+     </request>
+ 
++    <!-- Create a wayland buffer for the prime fd.  Use for prime
++         buffers with LINEAR modifier. -->
++    <request name="create_linear_prime_buffer" since="2">
++      <arg name="id" type="new_id" interface="wl_buffer"/>
++      <arg name="name" type="fd"/>
++      <arg name="width" type="int"/>
++      <arg name="height" type="int"/>
++      <arg name="format" type="uint"/>
++      <arg name="offset" type="int"/>
++      <arg name="stride" type="int"/>
++    </request>
++
+   </interface>
+ 
+ </protocol>
+diff -ruN a/src/gallium/state_trackers/dri/dri2.c b/src/gallium/state_trackers/dri/dri2.c
+--- a/src/gallium/state_trackers/dri/dri2.c	2020-02-01 13:58:29.689930854 +0000
++++ b/src/gallium/state_trackers/dri/dri2.c	2020-02-01 13:58:55.703000460 +0000
+@@ -1284,11 +1284,11 @@
+ 
+ static __DRIimage *
+ dri2_from_fds(__DRIscreen *screen, int width, int height, int fourcc,
+-              int *fds, int num_fds, int *strides, int *offsets,
+-              void *loaderPrivate)
++              uint64_t modifier, int *fds, int num_fds, int *strides,
++              int *offsets, void *loaderPrivate)
+ {
+    return dri2_create_image_from_fd(screen, width, height, fourcc,
+-                                   DRM_FORMAT_MOD_INVALID, fds, num_fds,
++                                   modifier, fds, num_fds,
+                                    strides, offsets, NULL, loaderPrivate);
+ }
+ 
+diff -ruN a/src/gbm/backends/dri/gbm_dri.c b/src/gbm/backends/dri/gbm_dri.c
+--- a/src/gbm/backends/dri/gbm_dri.c	2020-02-01 13:58:29.401919005 +0000
++++ b/src/gbm/backends/dri/gbm_dri.c	2020-02-01 14:00:09.374023651 +0000
+@@ -912,6 +912,7 @@
+                                              fd_data->width,
+                                              fd_data->height,
+                                              fourcc,
++                                             DRM_FORMAT_MOD_INVALID,
+                                              &fd_data->fd, 1,
+                                              &stride, &offset,
+                                              NULL);
+diff -ruN a/src/loader/loader_dri3_helper.c b/src/loader/loader_dri3_helper.c
+--- a/src/loader/loader_dri3_helper.c	2020-02-01 13:58:29.433920321 +0000
++++ b/src/loader/loader_dri3_helper.c	2020-02-01 14:00:18.386392917 +0000
+@@ -1607,6 +1607,7 @@
+                                             bp_reply->width,
+                                             bp_reply->height,
+                                             image_format_to_fourcc(format),
++                                            DRM_FORMAT_MOD_INVALID,
+                                             fds, 1,
+                                             &stride, &offset, loaderPrivate);
+    close(fds[0]);
+diff -ruN a/src/mesa/drivers/dri/i915/intel_screen.c b/src/mesa/drivers/dri/i915/intel_screen.c
+--- a/src/mesa/drivers/dri/i915/intel_screen.c	2020-02-01 13:58:29.449920979 +0000
++++ b/src/mesa/drivers/dri/i915/intel_screen.c	2020-02-01 14:00:25.146669832 +0000
+@@ -584,7 +584,7 @@
+ 
+ static __DRIimage *
+ intel_create_image_from_fds(__DRIscreen *screen,
+-                            int width, int height, int fourcc,
++                            int width, int height, int fourcc, uint64_t modifier,
+                             int *fds, int num_fds, int *strides, int *offsets,
+                             void *loaderPrivate)
+ {
+diff -ruN a/src/mesa/drivers/dri/i965/intel_screen.c b/src/mesa/drivers/dri/i965/intel_screen.c
+--- a/src/mesa/drivers/dri/i965/intel_screen.c	2020-02-01 13:58:29.453921144 +0000
++++ b/src/mesa/drivers/dri/i965/intel_screen.c	2020-02-01 14:00:00.729669352 +0000
+@@ -1213,7 +1213,7 @@
+ 
+ static __DRIimage *
+ intel_create_image_from_fds(__DRIscreen *dri_screen,
+-                            int width, int height, int fourcc,
++                            int width, int height, int fourcc, uint64_t modifier,
+                             int *fds, int num_fds, int *strides, int *offsets,
+                             void *loaderPrivate)
+ {
