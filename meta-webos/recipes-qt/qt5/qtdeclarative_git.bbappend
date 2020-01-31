@@ -32,3 +32,10 @@ SRC_URI_append_class-target = " \
     file://0024-Allow-to-have-activeFocus-for-each-window.patch \
     file://0025-Fix-nullptr-handling-in-binding.patch \
 "
+
+# Supplement tool for qmllint
+DEPENDS_append_class-native = " python3-regex-native"
+SRC_URI_append_class-native = " file://qmllint-supplement.py"
+do_install_append_class-native() {
+    install -m 755 ${WORKDIR}/qmllint-supplement.py ${D}${OE_QMAKE_PATH_QT_BINS}
+}
