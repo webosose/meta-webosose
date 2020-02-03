@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "Pinyin input method library"
 AUTHOR = "pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
@@ -10,13 +10,13 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=0fb040b9b86a214885e3285fe25d74bc"
 DEPENDS = "sqlite3"
 DEPENDS_append_class-target = " sunpinyin-native"
 
-inherit pkgconfig scons
+inherit pkgconfig scons perlnative
 
 BBCLASSEXTEND = "native"
 
 SRCREV = "e3c122ed3bf6274fc73042843243e1fb168dfc7e"
 PV = "2.99+3.0.0-rc1+git${SRCPV}"
-PR = "r1"
+PR = "r2"
 
 SRC_URI[arpa.md5sum] = "20cdc36b3bd7ec28f7e39c2ebb810421"
 SRC_URI[arpa.sha256sum] = "751bab7c55ea93a2cedfb0fbb7eb09f67d4da9c2c55496e5f31eb8580f1d1e2f"
