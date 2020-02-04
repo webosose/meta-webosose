@@ -12,7 +12,7 @@ RDEPENDS_${PN} = " \
 "
 
 WEBOS_VERSION = "0.0.1-10_53032c7b5ae0bfdf661d510f251af22c4f580ed7"
-PR = "r0"
+PR = "r1"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -24,6 +24,9 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
+
+# Perform extra QML validation
+WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 

@@ -10,7 +10,7 @@ DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 RDEPENDS_${PN} += "qml-webos-components"
 
 WEBOS_VERSION = "1.0.0-114_a25fdf68a95a9f2a5e7a3f6d3db16c8b369d5eb8"
-PR = "r11"
+PR = "r12"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -21,6 +21,9 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
+
+# Perform extra QML validation
+WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/WebOSServices/*"
 
