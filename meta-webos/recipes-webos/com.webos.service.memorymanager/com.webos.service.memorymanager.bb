@@ -8,21 +8,21 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
 
-WEBOS_VERSION = "1.0.0-15_75827b0cd273064d110473eecadf73eb73a5ca43"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-19_7081e1845cd22df9b8b534bc14cefe437ce96f11"
+PR = "r4"
 
 inherit webos_component
 inherit webos_cmake
 inherit webos_enhanced_submissions
 inherit webos_daemon
 inherit webos_system_bus
+inherit webos_machine_dep
+inherit webos_machine_impl_dep
+inherit webos_distro_dep
+inherit webos_distro_variant_dep
 inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
-
-SRC_URI += " \
-    file://0001-Apply-single-app-policy.patch \
-"
