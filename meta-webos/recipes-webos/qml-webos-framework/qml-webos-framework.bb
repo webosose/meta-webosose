@@ -15,7 +15,7 @@ RPROVIDES_${PN}-examples = " \
 "
 
 WEBOS_VERSION = "1.0.0-143_4893fa3e32ae2382d40f3e4a7ffcea29d1f1ad4e"
-PR = "r27"
+PR = "r28"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -30,6 +30,9 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
+
+# Perform extra QML validation
+WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/Eos/*"
 

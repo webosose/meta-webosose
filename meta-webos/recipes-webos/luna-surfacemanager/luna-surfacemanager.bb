@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
 WEBOS_VERSION = "1.1.0-309_f2f263c059e7ab5851f96f7f94d25e38707ea1f5"
-PR = "r45"
+PR = "r46"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -52,6 +52,9 @@ inherit webos_qmllint
 # qt-features-webos have its own logic to install system bus files reason for
 # that is because only qmake knows where substitued files will be placed.
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
+
+# Perform extra QML validation
+WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
 PACKAGECONFIG ??= "multi-input"
 PACKAGECONFIG[compositor] = "CONFIG+=compositor_base,,qt-features-webos-native"
