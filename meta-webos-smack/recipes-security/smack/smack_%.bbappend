@@ -1,12 +1,11 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "smack2"
+EXTENDPRAUTO_append = "smack3"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI += "file://default-access \
     file://unconfined \
-    file://smack_labels_default \
     file://smack_rules_gen \
     file://onlycap \
 "
@@ -20,7 +19,6 @@ do_install_append (){
     install -v -m 0644 ${WORKDIR}/default-access ${D}${sysconfdir}/smack/accesses.d/
     install -v -m 0644 ${WORKDIR}/unconfined ${D}${sysconfdir}/smack/
     install -v -m 0644 ${WORKDIR}/onlycap ${D}${sysconfdir}/smack/
-    install -v -m 0644 ${WORKDIR}/smack_labels_default ${TMPDIR}
     install -d ${D}${datadir}/smack
     install -v -m 0755 ${WORKDIR}/smack_rules_gen ${D}${datadir}/smack/smack_rules_gen
 }
