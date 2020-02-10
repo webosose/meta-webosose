@@ -1,6 +1,6 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos68"
+EXTENDPRAUTO_append = "webos70"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -42,6 +42,8 @@ PACKAGECONFIG_append = " fontconfig"
 PACKAGECONFIG_append = " sql-sqlite"
 # No longer added automatically
 PACKAGECONFIG_append = " gif"
+# Needed since qtwayland 5.12
+PACKAGECONFIG_append = " xkbcommon"
 
 # XXX Change --linuxfb => -no-linuxfb
 # PACKAGECONFIG_append = " linuxfb"
