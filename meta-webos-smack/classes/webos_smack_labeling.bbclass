@@ -1,9 +1,8 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
-SMACK_LABELS_FILE ?= "${TMPDIR}/smack_labels_default"
-SMACK_RULES_GEN = "${exec_prefix}/share/smack/smack_rules_gen"
-APP_DIR = "${webos_applicationsdir}"
-APP_RULES_DIR = "${sysconfdir}/smack/accesses.d"
+SMACK_RULES_GEN ?= "${exec_prefix}/share/smack/smack_rules_gen"
+APP_DIR ?= "${webos_applicationsdir}"
+APP_RULES_DIR ?= "${sysconfdir}/smack/accesses.d"
 
 do_smack_labeling[dirs] = "${IMAGE_ROOTFS}"
 fakeroot python do_smack_labeling() {
@@ -25,7 +24,6 @@ fakeroot python do_smack_labeling() {
     APP_RULES_DIR = ROOTFS + d.expand(d.getVar('APP_RULES_DIR', True))
 
 
-    # Python 3: xattr support is enabled by default.
     def lgetxattr(f, attr):
         try:
             value = os.getxattr(f, attr, follow_symlinks=False)
