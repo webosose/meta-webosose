@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 #
 # Localization-related settings and tasks
 #
@@ -50,6 +50,7 @@ do_generate_webos_localization[depends] += "localization-tool-native:do_populate
 # recdeptask and then in webos-bom.json
 WEBOS_LOCALIZATION_DEPENDS += "localization-tool-native"
 WEBOS_LOCALIZATION_DATA_PATH ?= "${S}"
+JAVANAME = "java-11-openjdk-amd64"
 
 do_generate_webos_localization () {
     if "${WEBOS_LOCALIZATION_GENERATE_RESOURCES}" ; then
@@ -72,7 +73,10 @@ do_generate_webos_localization () {
         bbnote "- locales to localization : ${translation_target_locales}"
         bbnote "- Source location: ${S}"
 
-        buildloc ${webos_localization_options} -n ${WEBOS_LOCALIZATION_XLIFF_BASENAME} -x ${WEBOS_LOCALIZATION_DATA_PATH} --list-of-locales ${translation_target_locales}
+        bbnote "- Using JAVA_HOME=/usr/lib/jvm/${JAVANAME}"
+
+        JAVA_HOME=/usr/lib/jvm/${JAVANAME} \
+            buildloc ${webos_localization_options} -n ${WEBOS_LOCALIZATION_XLIFF_BASENAME} -x ${WEBOS_LOCALIZATION_DATA_PATH} --list-of-locales ${translation_target_locales}
     else
         bbnote "Generating localized files was disabled by WEBOS_LOCALIZATION_GENERATE_RESOURCES variable"
     fi
