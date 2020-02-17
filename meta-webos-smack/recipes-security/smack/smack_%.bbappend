@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "smack3"
+EXTENDPRAUTO_append = "smack4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 

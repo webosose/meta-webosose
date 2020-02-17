@@ -2,7 +2,8 @@ webOS::App::com.webos.app.enactbrowser _ rwx
 webOS::App::com.webos.app.enactbrowser System wx
 webOS::App::com.webos.app.enactbrowser System::Lib rwx
 webOS::App::com.webos.app.enactbrowser System::Run rwx
-webOS::App::com.webos.app.enactbrowser System::Shared rx
+webOS::App::com.webos.app.enactbrowser System::Shared lrx
+webOS::App::com.webos.app.enactbrowser webOS::WAM x
 webOS::WAM webOS::App::com.webos.app.enactbrowser rx
 System webOS::App::com.webos.app.enactbrowser w
 System::Lib webOS::App::com.webos.app.enactbrowser rtwx
