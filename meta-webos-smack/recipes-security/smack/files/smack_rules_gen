@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 #
 # Confidential computer software. Valid license from LG required for
 # possession, use or copying.
@@ -19,7 +19,7 @@ new rules with full access for all other labels will be created.
 3. Define basic set of rules for build in and installable apps.
 """
 
-script_version = "1.2"
+script_version = "1.2.1"
 
 import sys
 import argparse
@@ -218,12 +218,14 @@ def main(args):
     if args.basic_rules:
         for label in args.basic_rules:
             full_label = "webOS::App::" + label
+            mod_rules_dict[full_label + " System"] = "wx"
             mod_rules_dict[full_label + " System::Shared"] = "rx"
-            mod_rules_dict[full_label + " System::Run"] = "rwx"
-            mod_rules_dict[full_label + " System::Lib"] = "rwx"
+            mod_rules_dict[full_label + " System::Run"] = "lrwx"
+            mod_rules_dict[full_label + " System::Lib"] = "r"
             mod_rules_dict[full_label + " _"] = "rw"
             mod_rules_dict["System::Run " + full_label] = "rwxt"
             mod_rules_dict["System::Lib " + full_label] = "rwxt"
+            mod_rules_dict["webOS::WAM " + full_label] = "rx"
 
 
     """

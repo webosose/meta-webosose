@@ -1,12 +1,12 @@
 _ System rwx
 _ System::Lib r
 _ System::Run r
-_ System::Shared rx
+_ System::Shared lrx
 webOS::WAM _ rwx
 webOS::WAM System wx
 webOS::WAM System::Lib rx
 webOS::WAM System::Run rwx
-webOS::WAM System::Shared rx
+webOS::WAM System::Shared lrx
 System _ rwx
 System webOS::WAM w
 System System::Lib x
@@ -15,9 +15,9 @@ System::Lib _ rwx
 System::Lib webOS::WAM rwx
 System::Lib System rwx
 System::Lib System::Run rwx
-System::Lib System::Shared rx
+System::Lib System::Shared lrxt
 System::Run _ rwx
 System::Run webOS::WAM rwx
 System::Run System rwx
 System::Run System::Lib rx
-System::Run System::Shared rx
+System::Run System::Shared lrxt
