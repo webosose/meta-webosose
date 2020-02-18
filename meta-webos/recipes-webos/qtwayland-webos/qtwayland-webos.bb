@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
-WEBOS_VERSION = "1.0.0-47_412317be63e6ef52604a5da4a7bfe18a9d4c15c2"
-PR = "r8"
+WEBOS_VERSION = "2.0.0-48_5dfd3feea2ab1c3c8072aa1c906d8d70db5e8f84"
+PR = "r9"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -50,5 +50,3 @@ do_install_append() {
     sed -i 's@prefix=${STAGING_DIR_HOST}@prefix=@g ;s@-L${STAGING_DIR_HOST} @ @g;' ${D}${libdir}/pkgconfig/*.pc
     sed -i "s@-L${STAGING_LIBDIR}@-L\${libdir}@g" ${D}${libdir}/pkgconfig/*.pc
 }
-
-SRC_URI += "file://0001-webos-wayland-egl.pro-link-with-wayland-cursor.patch"
