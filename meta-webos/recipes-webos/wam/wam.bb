@@ -19,8 +19,10 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', '1.0.1-30_d66e6f356f8f96cb4849929ea5149f45747027fe', '1.0.1-25_8732f9e4a4a6f779d16b53d176cf960c4d51d769', d)}"
-PR = "r31"
+WEBOS_VERSION_MASTER = "1.0.2-34_f24934afb15e58670cea181d1d693450ba96a874"
+WEBOS_VERSION_CHR72 = "1.0.1-33.ose.chr72.1_df17aefedb696b1e9f69962a28aed7c69f0f1283"
+WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', '${WEBOS_VERSION_CHR72}', '${WEBOS_VERSION_MASTER}', d)}"
+PR = "r32"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -35,8 +37,6 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-SRC_URI_append_webos = " ${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', 'file://0001-fixup-ose-acg-error_page-Register-com.webos.settings.patch', '', d)}"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
@@ -78,12 +78,10 @@ do_configure_prepend() {
 }
 
 do_configure_append() {
-    if [ "${PREFERRED_VERSION_webruntime}" = "72.%" ]; then
-        sed -i -e "s/NETWORK_STABLE_TIMEOUT/NETWORK_QUIET_TIMEOUT/gI" -e "s/network-stable-timeout/network-quiet-timeout/gI" ${B}/webapp-mgr.sh
-        sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-in-process-stack-traces \\' ${B}/webapp-mgr.sh
-        sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
-        sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" ${B}/webapp-mgr.sh
-    fi
+    sed -i -e "s/NETWORK_STABLE_TIMEOUT/NETWORK_QUIET_TIMEOUT/gI" -e "s/network-stable-timeout/network-quiet-timeout/gI" ${B}/webapp-mgr.sh
+    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-in-process-stack-traces \\' ${B}/webapp-mgr.sh
+    sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
+    sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" ${B}/webapp-mgr.sh
 
     # disable pinch zoom
     sed -i '/--enable-aggressive-release-policy \\/a\     --disable-pinch \\' ${B}/webapp-mgr.sh
@@ -96,6 +94,11 @@ do_configure_append() {
     else
        # ignore touch devices
        sed -i '/--enable-aggressive-release-policy \\/a\   --ignore-touch-devices \\' ${B}/webapp-mgr.sh
+    fi
+
+    # Extra added for chromium79
+    if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
+        sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-pal-media-service \\' ${B}/webapp-mgr.sh
     fi
 }
 

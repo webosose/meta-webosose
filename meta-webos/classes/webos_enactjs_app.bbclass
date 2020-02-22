@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2019 LG Electronics, Inc.
+# Copyright (c) 2016-2020 LG Electronics, Inc.
 #
 # webos_enactjs_app
 #
@@ -195,7 +195,7 @@ do_compile() {
     cd ${working}
 }
 
-V8_SNAPSHOT_EXTRA_ARGS = "${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', ' --turbo_instruction_scheduling', '', d)}"
+V8_SNAPSHOT_EXTRA_ARGS = " --turbo_instruction_scheduling"
 do_install() {
     working=$(pwd)
     cd ${WEBOS_ENACTJS_PROJECT_PATH}
