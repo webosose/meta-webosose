@@ -1,4 +1,4 @@
-From f79b5418cc2cff7127d702170c4f2cf11eda213e Mon Sep 17 00:00:00 2001
+From ec697c7db8030ea825915e24c81e849d4849df59 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Sat, 31 Aug 2019 14:41:49 +0900
 Subject: [PATCH] Provide station information when AP mode
@@ -7,13 +7,13 @@ Provide station information when AP mode
 
 ---
  gsupplicant/gsupplicant.h |  2 +
- gsupplicant/supplicant.c  | 53 +++++++++++++++++++++++++++
+ gsupplicant/supplicant.c  | 53 ++++++++++++++++++++++
  include/technology.h      |  2 +
- plugins/wifi.c            | 21 +++++++++++
- src/connman.h             | 11 ++++++
- src/manager.c             | 21 +++++++++++
- src/technology.c          | 36 ++++++++++++++++++
- src/tethering.c           | 93 +++++++++++++++++++++++++++++++++++++++++++++++
+ plugins/wifi.c            | 21 +++++++++
+ src/connman.h             | 11 +++++
+ src/manager.c             | 21 +++++++++
+ src/technology.c          | 36 +++++++++++++++
+ src/tethering.c           | 93 +++++++++++++++++++++++++++++++++++++++
  8 files changed, 239 insertions(+)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
@@ -30,7 +30,7 @@ index 3520ee7..a3e5d51 100644
  	void (*peer_lost) (GSupplicantPeer *peer);
  	void (*peer_changed) (GSupplicantPeer *peer,
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index fc6074c..f9f75a5 100644
+index fc6074c..a4d8257 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
 @@ -3031,6 +3031,56 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
@@ -114,10 +114,10 @@ index d24d765..d5c08e4 100644
  void connman_technology_regdom_notify(struct connman_technology *technology,
  							const char *alpha2);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index c909a2d..f35337f 100644
+index 39c47b0..c41356d 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3287,6 +3287,25 @@ static void network_associated(GSupplicantNetwork *network)
+@@ -3286,6 +3286,25 @@ static void network_associated(GSupplicantNetwork *network)
  	interface_state(interface);
  }
  
@@ -143,7 +143,7 @@ index c909a2d..f35337f 100644
  static void apply_peer_services(GSupplicantPeer *peer,
  				struct connman_peer *connman_peer)
  {
-@@ -3507,6 +3526,8 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3506,6 +3525,8 @@ static const GSupplicantCallbacks callbacks = {
  	.network_removed	= network_removed,
  	.network_changed	= network_changed,
  	.network_associated	= network_associated,
@@ -218,10 +218,10 @@ index d15ce20..758ac70 100644
  			GDBUS_ARGS({ "provider", "o" }), NULL,
  			remove_provider) },
 diff --git a/src/technology.c b/src/technology.c
-index c31c5fc..9dc95f4 100644
+index 13c64fe..292a533 100644
 --- a/src/technology.c
 +++ b/src/technology.c
-@@ -2118,3 +2118,39 @@ void __connman_technology_cleanup(void)
+@@ -2074,3 +2074,39 @@ void __connman_technology_cleanup(void)
  
  	dbus_connection_unref(connection);
  }
@@ -262,7 +262,7 @@ index c31c5fc..9dc95f4 100644
 +					DBUS_TYPE_STRING, append_station_mac, NULL);
 +}
 diff --git a/src/tethering.c b/src/tethering.c
-index 3ed3522..75d08f2 100644
+index 69fb7a1..26d71b4 100644
 --- a/src/tethering.c
 +++ b/src/tethering.c
 @@ -29,6 +29,7 @@
@@ -272,8 +272,8 @@ index 3ed3522..75d08f2 100644
 +#include <stdbool.h>
  #include <sys/ioctl.h>
  #include <net/if.h>
- #include <linux/sockios.h>
-@@ -53,6 +54,9 @@
+ #include <string.h>
+@@ -51,6 +52,9 @@
  
  #define DEFAULT_MTU	1500
  
@@ -283,7 +283,7 @@ index 3ed3522..75d08f2 100644
  static char *private_network_primary_dns = NULL;
  static char *private_network_secondary_dns = NULL;
  
-@@ -61,6 +65,7 @@ static GDHCPServer *tethering_dhcp_server = NULL;
+@@ -59,6 +63,7 @@ static GDHCPServer *tethering_dhcp_server = NULL;
  static struct connman_ippool *dhcp_ippool = NULL;
  static DBusConnection *connection;
  static GHashTable *pn_hash;
@@ -291,7 +291,7 @@ index 3ed3522..75d08f2 100644
  
  struct connman_private_network {
  	char *owner;
-@@ -77,6 +82,89 @@ struct connman_private_network {
+@@ -75,6 +80,89 @@ struct connman_private_network {
  	char *secondary_dns;
  };
  
@@ -381,7 +381,7 @@ index 3ed3522..75d08f2 100644
  const char *__connman_tethering_get_bridge(void)
  {
  	int sk, err;
-@@ -663,6 +751,9 @@ int __connman_tethering_init(void)
+@@ -661,6 +749,9 @@ int __connman_tethering_init(void)
  	pn_hash = g_hash_table_new_full(g_str_hash, g_str_equal,
  						NULL, remove_private_network);
  
@@ -391,7 +391,7 @@ index 3ed3522..75d08f2 100644
  	return 0;
  }
  
-@@ -683,5 +774,7 @@ void __connman_tethering_cleanup(void)
+@@ -681,5 +772,7 @@ void __connman_tethering_cleanup(void)
  		return;
  
  	g_hash_table_destroy(pn_hash);
@@ -399,6 +399,3 @@ index 3ed3522..75d08f2 100644
 +	g_hash_table_destroy(sta_hash);
  	dbus_connection_unref(connection);
  }
--- 
-1.9.1
-

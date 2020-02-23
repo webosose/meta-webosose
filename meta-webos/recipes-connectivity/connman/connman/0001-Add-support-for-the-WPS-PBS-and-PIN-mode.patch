@@ -1,4 +1,4 @@
-From 1886b233b6c8ab77066b4a58a88c31738c23fff0 Mon Sep 17 00:00:00 2001
+From 1fdb99a8829b048a0f1a95c5f60ba12c8ce02ed6 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Wed, 21 Feb 2018 16:36:23 +0530
 Subject: [PATCH] Add support for the WPS PBS and PIN mode
@@ -19,14 +19,14 @@ Upstream-Status : Inappropriate [webOS specific]
 
 ---
  gsupplicant/gsupplicant.h |   5 +
- gsupplicant/supplicant.c  |  66 ++++++++
+ gsupplicant/supplicant.c  |  66 +++++++
  include/device.h          |   2 +
  include/technology.h      |   2 +
- plugins/wifi.c            | 387 +++++++++++++++++++++++++++++++++++++++++++---
+ plugins/wifi.c            | 387 ++++++++++++++++++++++++++++++++++++--
  src/connman.h             |   2 +
- src/device.c              | 116 ++++++++++++++
+ src/device.c              | 116 ++++++++++++
  src/service.c             |   2 +
- src/technology.c          |  49 ++++++
+ src/technology.c          |  49 +++++
  9 files changed, 611 insertions(+), 20 deletions(-)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
