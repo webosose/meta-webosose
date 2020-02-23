@@ -1,4 +1,4 @@
-From a8e2ae978dca12b309676ff87a3ccda90524ca0a Mon Sep 17 00:00:00 2001
+From 079c9c521073c6ba36a6f84bb913584c35c11ae5 Mon Sep 17 00:00:00 2001
 From: Seungwoo Yang <ysw.yang@lge.com>
 Date: Wed, 22 Jun 2016 12:35:12 +0900
 Subject: [PATCH] Fix the wifi connection failure
@@ -27,15 +27,16 @@ Change-Id: Ib06f23b8c2cd5a4acbd8fb792156fb139539dd51
 Reviewed-on: http://gpro.lgsvl.com/230653
 Reviewed-by: Rajesh Kanna <rajesh.kanna@lge.com>
 Tested-by: Rajesh Kanna <rajesh.kanna@lge.com>
+
 ---
  src/service.c | 5 +++++
  1 file changed, 5 insertions(+)
 
 diff --git a/src/service.c b/src/service.c
-index edbdd51d..327a8327 100644
+index 319ecf5..52bb2ad 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -7440,6 +7440,11 @@ int __connman_service_disconnect(struct connman_service *service)
+@@ -6436,6 +6436,11 @@ int __connman_service_disconnect(struct connman_service *service)
  		__connman_ipconfig_set_proxy_autoconfig(service->ipconfig_ipv6,
  							NULL);
  
@@ -47,6 +48,3 @@ index edbdd51d..327a8327 100644
  	__connman_ipconfig_address_remove(service->ipconfig_ipv4);
  	settings_changed(service, service->ipconfig_ipv4);
  
--- 
-2.17.1
-

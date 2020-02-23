@@ -1,16 +1,17 @@
-From 1714caa8ce21c5e83d737980df11d6be08d6e3c3 Mon Sep 17 00:00:00 2001
+From 786711a97b845886fbfea648fc3a1a9d11e3beec Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 25 Jun 2019 13:11:11 +0900
 Subject: [PATCH] Support additional feature for tethering
 
 Support additional feature for tethering
+
 ---
  gdhcp/server.c       |   3 ++
  include/technology.h |   1 +
- plugins/wifi.c       |  11 ++++-
+ plugins/wifi.c       |  11 +++-
  src/connman.h        |   1 +
- src/technology.c     | 119 +++++++++++++++++++++++++++++++++++++++++++++---
- src/tethering.c      | 125 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/technology.c     | 119 +++++++++++++++++++++++++++++++++++++---
+ src/tethering.c      | 125 +++++++++++++++++++++++++++++++++++++++++++
  6 files changed, 252 insertions(+), 8 deletions(-)
 
 diff --git a/gdhcp/server.c b/gdhcp/server.c
@@ -425,6 +426,3 @@ index f3cb36f..69fb7a1 100644
  static void setup_tun_interface(unsigned int flags, unsigned change,
  		void *data)
  {
--- 
-1.9.1
-

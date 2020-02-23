@@ -1,4 +1,4 @@
-From 7408cc223cb168da0d426cb6286ec7f0f920915c Mon Sep 17 00:00:00 2001
+From 63642a04a072f0bff70e202b885b30fb508ee01c Mon Sep 17 00:00:00 2001
 From: "krishna.konwar" <krishna.konwar@lge.com>
 Date: Fri, 3 Aug 2018 16:17:00 +0530
 Subject: [PATCH] Set IPv6 state same as IPV4 on disconnect
@@ -18,10 +18,10 @@ Upstream-Status : Inappropriate [webOS specific]
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/service.c b/src/service.c
-index 768426b..9bac0d5 100644
+index 13902ba..c7074c9 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -5803,8 +5803,10 @@ int __connman_service_ipconfig_indicate_state(struct connman_service *service,
+@@ -6010,8 +6010,10 @@ int __connman_service_ipconfig_indicate_state(struct connman_service *service,
  		if (service->state == CONNMAN_SERVICE_STATE_IDLE)
  			return -EINVAL;
  
@@ -33,6 +33,3 @@ index 768426b..9bac0d5 100644
  
  		break;
  
--- 
-2.7.4
-

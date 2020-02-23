@@ -1,4 +1,4 @@
-From 5c558b979b6ac3bb7a1e35b0be989cac0135d738 Mon Sep 17 00:00:00 2001
+From 3f07e5a35bde758e5839bf80836496d489b72db4 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Wed, 28 Aug 2019 15:35:45 +0900
 Subject: [PATCH] Support channel frequency of scanned AP
@@ -18,7 +18,7 @@ Support channel frequency of scanned AP
  9 files changed, 583 insertions(+), 2 deletions(-)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index 77dfe56e..3520ee73 100644
+index 77dfe56..3520ee7 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
 @@ -304,6 +304,14 @@ GSupplicantPeer *g_supplicant_interface_peer_lookup(GSupplicantInterface *interf
@@ -55,7 +55,7 @@ index 77dfe56e..3520ee73 100644
  const char *g_supplicant_peer_get_path(GSupplicantPeer *peer);
  const char *g_supplicant_peer_get_identifier(GSupplicantPeer *peer);
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 452492af..fc6074c6 100644
+index 452492a..fc6074c 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
 @@ -169,6 +169,10 @@ struct _GSupplicantInterface {
@@ -252,7 +252,7 @@ index 452492af..fc6074c6 100644
 +	return ret;
 +}
 diff --git a/include/device.h b/include/device.h
-index 140f9bcf..04eb35de 100644
+index 140f9bc..04eb35d 100644
 --- a/include/device.h
 +++ b/include/device.h
 @@ -72,6 +72,7 @@ void connman_device_set_index(struct connman_device *device, int index);
@@ -299,7 +299,7 @@ index 140f9bcf..04eb35de 100644
  
  int connman_device_driver_register(struct connman_device_driver *driver);
 diff --git a/include/network.h b/include/network.h
-index 4fc20c1c..ed61718e 100644
+index 4fc20c1..ed61718 100644
 --- a/include/network.h
 +++ b/include/network.h
 @@ -27,6 +27,7 @@
@@ -337,10 +337,10 @@ index 4fc20c1c..ed61718e 100644
  							const char *name);
  int connman_network_set_strength(struct connman_network *network,
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index de45e011..c909a2de 100644
+index cbe86a2..39c47b0 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -164,6 +164,12 @@ struct wifi_data {
+@@ -163,6 +163,12 @@ struct wifi_data {
  	bool wps_start_deferred;
  };
  
@@ -353,7 +353,7 @@ index de45e011..c909a2de 100644
  static GList *iface_list = NULL;
  
  static GList *pending_wifi_device = NULL;
-@@ -175,6 +181,27 @@ static int tech_set_tethering(struct connman_technology *technology,
+@@ -174,6 +180,27 @@ static int tech_set_tethering(struct connman_technology *technology,
  				const char *identifier, const char *passphrase,
  				const char *bridge, bool enabled);
  
@@ -381,7 +381,7 @@ index de45e011..c909a2de 100644
  static int p2p_tech_probe(struct connman_technology *technology)
  {
  	p2p_technology = technology;
-@@ -2172,6 +2199,52 @@ static int wifi_cancel_wps(struct connman_device *device)
+@@ -2171,6 +2198,52 @@ static int wifi_cancel_wps(struct connman_device *device)
  	return cancel_wps(wifi);
  }
  
@@ -434,7 +434,7 @@ index de45e011..c909a2de 100644
  static struct connman_device_driver wifi_ng_driver = {
  	.name		= "wifi",
  	.type		= CONNMAN_DEVICE_TYPE_WIFI,
-@@ -2183,7 +2256,8 @@ static struct connman_device_driver wifi_ng_driver = {
+@@ -2182,7 +2255,8 @@ static struct connman_device_driver wifi_ng_driver = {
  	.scan		= wifi_scan,
  	.set_regdom	= wifi_set_regdom,
  	.start_wps	= wifi_start_wps,
@@ -444,7 +444,7 @@ index de45e011..c909a2de 100644
  };
  
  static void system_ready(void)
-@@ -3008,6 +3082,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3007,6 +3081,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  	bool wps_pbc;
  	bool wps_ready;
  	bool wps_advertizing;
@@ -452,7 +452,7 @@ index de45e011..c909a2de 100644
  
  	mode = g_supplicant_network_get_mode(supplicant_network);
  	identifier = g_supplicant_network_get_identifier(supplicant_network);
-@@ -3027,6 +3102,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3026,6 +3101,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  	wps_ready = g_supplicant_network_is_wps_active(supplicant_network);
  	wps_advertizing = g_supplicant_network_is_wps_advertizing(
  							supplicant_network);
@@ -460,7 +460,7 @@ index de45e011..c909a2de 100644
  
  	if (!wifi)
  		return;
-@@ -3091,6 +3167,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3090,6 +3166,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  			wifi->hidden = NULL;
  		}
  	}
@@ -472,7 +472,7 @@ index de45e011..c909a2de 100644
  }
  
  static void network_removed(GSupplicantNetwork *network)
-@@ -3126,11 +3207,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+@@ -3125,11 +3206,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
  	struct wifi_data *wifi;
  	const char *name, *identifier;
  	struct connman_network *connman_network;
@@ -486,7 +486,7 @@ index de45e011..c909a2de 100644
  
  	DBG("name %s", name);
  
-@@ -3141,6 +3224,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+@@ -3140,6 +3223,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
  	if (!connman_network)
  		return;
  
@@ -499,7 +499,7 @@ index de45e011..c909a2de 100644
  	       connman_network_set_strength(connman_network,
  					calculate_strength(network));
 diff --git a/src/device.c b/src/device.c
-index 874e21f7..3e45413b 100644
+index 874e21f..3e45413 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -68,6 +68,11 @@ struct connman_device {
@@ -599,7 +599,7 @@ index 874e21f7..3e45413b 100644
  {
  	struct ifreq ifr;
 diff --git a/src/network.c b/src/network.c
-index ed56210f..cbbcd91d 100644
+index ed56210..cbbcd91 100644
 --- a/src/network.c
 +++ b/src/network.c
 @@ -44,6 +44,12 @@
@@ -750,7 +750,7 @@ index ed56210f..cbbcd91d 100644
   * connman_network_set_name:
   * @network: network structure
 diff --git a/src/service.c b/src/service.c
-index c7074c9c..319ecf58 100644
+index c7074c9..319ecf5 100644
 --- a/src/service.c
 +++ b/src/service.c
 @@ -141,6 +141,7 @@ static struct connman_ipconfig *create_ip4config(struct connman_service *service
@@ -857,7 +857,7 @@ index c7074c9c..319ecf58 100644
  						append_ethernet, service);
  		break;
 diff --git a/src/technology.c b/src/technology.c
-index 75e75ae5..13c64fee 100644
+index 75e75ae..13c64fe 100644
 --- a/src/technology.c
 +++ b/src/technology.c
 @@ -77,6 +77,7 @@ struct connman_technology {
@@ -952,6 +952,3 @@ index 75e75ae5..13c64fee 100644
  static const GDBusMethodTable technology_methods[] = {
  	{ GDBUS_DEPRECATED_METHOD("GetProperties",
  			NULL, GDBUS_ARGS({ "properties", "a{sv}" }),
--- 
-2.17.1
-
