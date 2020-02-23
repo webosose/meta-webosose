@@ -28,8 +28,10 @@ CAMERASERVICE = " \
     g-camera-pipeline \
 "
 
-#TODO: Remove this and add g-camera-pipeline back after it is adapted to GAV
-CAMERASERVICE_remove_raspberrypi4 = "g-camera-pipeline"
+# TODO: Remove g-camera-pipeline, add it back after it is adapted to GAV
+CAMERASERVICE_raspberrypi4 = " \
+    com.webos.service.camera \
+"
 
 # TTS service functionality cannot be verified on webOS rpi64 which cannot boot yet
 TTSSERVICE_raspberrypi3-64 = ""
