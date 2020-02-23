@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "Camera service framework to control camera devices"
 AUTHOR = "Gururaj Patil"
@@ -23,13 +23,7 @@ inherit webos_daemon
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-COMPATIBLE_MACHINE = "^raspberrypi3$"
-
-# Build for raspberrypi4
-COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
-
-# Build for qemux86
-COMPATIBLE_MACHINE_append = "|^qemux86$"
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$"
 
 FILES_${PN} += "${libdir}/*.so"
 FILES_SOLIBSDEV = ""

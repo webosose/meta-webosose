@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "Node-red based context intent manager (CIM)"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
@@ -8,11 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "nodejs-module-node-red"
 
-COMPATIBLE_MACHINE = "^raspberrypi3$"
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
-
-# Build for raspberrypi4
-COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
 WEBOS_VERSION = "1.0.0-10_e9a95ccce0f12254dd762b7ad552cf0f569ba02a"

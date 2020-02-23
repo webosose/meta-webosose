@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "Ai service for voice/face/gesture recognition"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -9,11 +9,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libgoogleassistant"
 
 # libgoogleassistant contains prebuilt binaries useful only on raspberrypi3
-COMPATIBLE_MACHINE = "^raspberrypi3$"
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
-
-# Build for raspberrypi4
-COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
 WEBOS_VERSION = "1.0.0-6_34af70c0f579ecea63d0e430183e0a20c47953d7"
