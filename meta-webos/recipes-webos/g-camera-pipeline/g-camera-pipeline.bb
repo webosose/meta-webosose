@@ -25,9 +25,12 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git/"
 
 # See the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
+COMPATIBLE_MACHINE = "^raspberrypi3$"
 
 # From http://gpro.lge.com/251819
+# But needs to be adapted to GAV, currently it fails with:
+# g-camera-pipeline/1.0.0-13-r3/git/src/resourcefacilitator/requestor.cpp:25:10: fatal error: MDCClient.h: No such file or directory
+# because raspberrypi4 version of umediaserver doesn't provide MDCClient.h
 SRC_URI += "file://0001-Add-raspberrypi4-and-raspberrypi4-64-targets.patch"
 
 FILES_SOLIBSDEV = ""
