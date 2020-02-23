@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "g-camera-pipeline is a player which uses GStreamer"
 AUTHOR = "Praveen P <praveen.p@lge.com>"
@@ -25,10 +25,8 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git/"
 
 # See the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^raspberrypi3$"
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 
-# Build for raspberrypi4
-COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
 # From http://gpro.lge.com/251819
 SRC_URI += "file://0001-Add-raspberrypi4-and-raspberrypi4-64-targets.patch"
 
