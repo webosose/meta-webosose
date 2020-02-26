@@ -11,8 +11,8 @@ RDEPENDS_${PN} = " \
     luna-surfacemanager-base \
 "
 
-WEBOS_VERSION = "0.0.1-12_6a5a23502d8bcdc4b222730cc9cb17af5d2cb20e"
-PR = "r1"
+WEBOS_VERSION = "0.0.1-13_963e008e78f88ef6b443f5ad1d2dbf9212b0c5db"
+PR = "r2"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -32,4 +32,5 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
 FILES_${PN} += " \
     ${OE_QMAKE_PATH_QML}/WebOSCompositor \
+    ${OE_QMAKE_PATH_PLUGINS}/compositor \
 "
