@@ -1,0 +1,26 @@
+From bada9ecc440f92179b3134840a967be113e754e3 Mon Sep 17 00:00:00 2001
+From: Sergejs Kovrovs <sergejs.kovrovs@lge.com>
+Date: Mon, 11 May 2015 16:27:26 -0700
+Subject: [PATCH] Fix incorrect listview footer position on empty model
+
+QQuickListView: incorrect footer position on empty model
+
+Signed-off-by: Sergejs Kovrovs <sergejs.kovrovs@lge.com>
+---
+ src/quick/items/qquicklistview.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/quick/items/qquicklistview.cpp b/src/quick/items/qquicklistview.cpp
+index c4c22526f..a8514e1e6 100644
+--- a/src/quick/items/qquicklistview.cpp
++++ b/src/quick/items/qquicklistview.cpp
+@@ -1380,7 +1380,8 @@ void QQuickListViewPrivate::updateFooter()
+             }
+         }
+     } else {
+-        listItem->setPosition(visiblePos);
++        qreal endPos = header ? header->endPosition() : 0;
++        listItem->setPosition(endPos);
+     }
+ 
+     if (created)
