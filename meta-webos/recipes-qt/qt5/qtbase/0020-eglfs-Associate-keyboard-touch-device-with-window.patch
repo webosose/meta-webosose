@@ -1,0 +1,1087 @@
+From 06790796827884481514180d7556db7bf0343765 Mon Sep 17 00:00:00 2001
+From: Hyungchan Kim <hyungchan2.kim@lge.com>
+Date: Mon, 14 Oct 2019 18:58:04 +0900
+Subject: [PATCH] eglfs: Associate keyboard, touch device with window
+
+:Release Notes:
+Add an optional "keyboardDevice" and "touchDevice" field in
+QT_QPA_EGLFS_CONFIG and make an association between the device and the
+window under the given output.
+
+:Detailed Notes:
+If QT_QPA_EGLFS_CONFIG specifies "keyboardDevice" or "touchDevice" for a
+certain output then the keyboard or touch handler for that device will
+have a reference to a window which belongs to that output. Then all
+events handled there will be delivered to that window directly.
+A handler added later will also be associated to the window if it refers
+to the same device node.
+It is assumed in this patch that a screen has only one window. If a
+screen has multiple windows, then the latest window created or moved to
+that screen will be used.
+If a keyboard or touch device is not associated with any output, then
+the handler will have a null reference for the target window which
+results in events to be delivered to the focused window.
+This is not yet implemented for keyboard or touch plugins other than
+Evdev.
+
+It provides dynamic(=auto) or fixed configuration.
+If there is no "keyboardDevice" nor "touchDevice" specified, then newly
+added device will be associated by USB topological order. If specifed,
+then devices will be associated as specifed in QT_QPA_EGLFS_CONFIG.
+
+:Testing Performed:
+QWA-1412
+QWA-1413
+QWA-1414
+QWA-1423
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-86242] Improve DRM/input device detection logic (Take 2)
+[PLAT-86458] Keyboard and touchscreen device association with displays
+             can be hardcoded
+
+Change-Id: Ief771120268f60a2385020e1bc119e41dc622298
+Upstream-Status : Inappropriate [webOS specific]
+---
+ .../devicediscovery/devicediscovery.pro       |   6 +
+ .../devicediscovery/qdevicediscovery_udev.cpp |   3 +
+ .../devicediscovery/qdevicediscovery_udev_p.h |   4 +-
+ .../qdevicediscovery_udev_sorted.cpp          | 214 ++++++++++++++++++
+ .../qdevicediscovery_udev_sorted_p.h          |  69 ++++++
+ .../evdevkeyboard/qevdevkeyboardhandler.cpp   |  15 +-
+ .../evdevkeyboard/qevdevkeyboardhandler_p.h   |   5 +
+ .../evdevkeyboard/qevdevkeyboardmanager.cpp   |  54 ++++-
+ .../evdevkeyboard/qevdevkeyboardmanager_p.h   |   9 +
+ .../input/evdevtouch/qevdevtouchhandler.cpp   |  39 +++-
+ .../input/evdevtouch/qevdevtouchhandler_p.h   |  11 +
+ .../input/evdevtouch/qevdevtouchmanager.cpp   |  51 ++++-
+ .../input/evdevtouch/qevdevtouchmanager_p.h   |   9 +
+ .../eglfs/api/qeglfsdeviceintegration.cpp     |  12 +
+ .../eglfs/api/qeglfsdeviceintegration_p.h     |   3 +
+ .../platforms/eglfs/api/qeglfsintegration.cpp |  53 ++++-
+ .../platforms/eglfs/api/qeglfsintegration_p.h |   6 +
+ .../qeglfskmsintegration.cpp                  |  10 +
+ .../eglfs_kms_support/qeglfskmsintegration.h  |   3 +
+ 19 files changed, 562 insertions(+), 14 deletions(-)
+ create mode 100644 src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted.cpp
+ create mode 100644 src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted_p.h
+
+diff --git a/src/platformsupport/devicediscovery/devicediscovery.pro b/src/platformsupport/devicediscovery/devicediscovery.pro
+index 881ec4d41e..b5943aea24 100644
+--- a/src/platformsupport/devicediscovery/devicediscovery.pro
++++ b/src/platformsupport/devicediscovery/devicediscovery.pro
+@@ -21,4 +21,10 @@ qtConfig(libudev) {
+     HEADERS += qdevicediscovery_dummy_p.h
+ }
+ 
++# webOS
++qtConfig(libudev) {
++    SOURCES += qdevicediscovery_udev_sorted.cpp
++    HEADERS += qdevicediscovery_udev_sorted_p.h
++}
++
+ load(qt_module)
+diff --git a/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp b/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp
+index f601a196ca..01ce5aff3e 100644
+--- a/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp
++++ b/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp
+@@ -52,6 +52,8 @@ QT_BEGIN_NAMESPACE
+ 
+ Q_LOGGING_CATEGORY(lcDD, "qt.qpa.input")
+ 
++// Use the one in qdevicediscovery_udev_sorted.cpp instead
++#if defined(Q_OS_WEBOS)
+ QDeviceDiscovery *QDeviceDiscovery::create(QDeviceTypes types, QObject *parent)
+ {
+     qCDebug(lcDD) << "udev device discovery for type" << types;
+@@ -68,6 +70,7 @@ QDeviceDiscovery *QDeviceDiscovery::create(QDeviceTypes types, QObject *parent)
+ 
+     return helper;
+ }
++#endif
+ 
+ QDeviceDiscoveryUDev::QDeviceDiscoveryUDev(QDeviceTypes types, struct udev *udev, QObject *parent) :
+     QDeviceDiscovery(types, parent),
+diff --git a/src/platformsupport/devicediscovery/qdevicediscovery_udev_p.h b/src/platformsupport/devicediscovery/qdevicediscovery_udev_p.h
+index 28618d0b21..4d0bf4957f 100644
+--- a/src/platformsupport/devicediscovery/qdevicediscovery_udev_p.h
++++ b/src/platformsupport/devicediscovery/qdevicediscovery_udev_p.h
+@@ -65,6 +65,9 @@ public:
+     ~QDeviceDiscoveryUDev();
+     QStringList scanConnectedDevices() override;
+ 
++protected:
++    struct udev *m_udev;
++
+ private slots:
+     void handleUDevNotification();
+ 
+@@ -74,7 +77,6 @@ private:
+     void startWatching();
+     void stopWatching();
+ 
+-    struct udev *m_udev;
+     struct udev_monitor *m_udevMonitor;
+     int m_udevMonitorFileDescriptor;
+     QSocketNotifier *m_udevSocketNotifier;
+diff --git a/src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted.cpp b/src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted.cpp
+new file mode 100644
+index 0000000000..ae59309d78
+--- /dev/null
++++ b/src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted.cpp
+@@ -0,0 +1,214 @@
++/****************************************************************************
++**
++** Copyright (c) 2019 LG Electronics, Inc.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 3 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL3 included in the
++** packaging of this file. Please review the following information to
++** ensure the GNU Lesser General Public License version 3 requirements
++** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 2.0 or (at your option) the GNU General
++** Public license version 3 or any later version approved by the KDE Free
++** Qt Foundation. The licenses are as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
++** included in the packaging of this file. Please review the following
++** information to ensure the GNU General Public License requirements will
++** be met: https://www.gnu.org/licenses/gpl-2.0.html and
++** https://www.gnu.org/licenses/gpl-3.0.html.
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#include "qdevicediscovery_udev_sorted_p.h"
++
++#include <QStringList>
++#include <QObject>
++#include <QRegularExpression>
++#include <QLoggingCategory>
++
++#include <linux/input.h>
++
++QT_BEGIN_NAMESPACE
++
++Q_LOGGING_CATEGORY(lcDDS, "qt.qpa.input")
++
++QDeviceDiscovery *QDeviceDiscovery::create(QDeviceTypes types, QObject *parent)
++{
++    qCDebug(lcDDS) << "udev device discovery for type" << types;
++
++    QDeviceDiscovery *helper = 0;
++    struct udev *udev;
++
++    udev = udev_new();
++    if (udev) {
++        // For touch devices only case, sort devices by port number in ascending order
++        if (types == (Device_Touchpad | Device_Touchscreen))
++            helper = new QDeviceDiscoveryUDevSorted(types, udev, parent);
++        // For keyboard devices only case, sort devices by port number in ascending order
++        else if (types == Device_Keyboard)
++            helper = new QDeviceDiscoveryUDevSorted(types, udev, parent);
++        else
++            helper = new QDeviceDiscoveryUDev(types, udev, parent);
++    } else {
++        qWarning("Failed to get udev library context");
++    }
++
++    return helper;
++}
++
++QDeviceDiscoveryUDevSorted::QDeviceDiscoveryUDevSorted(QDeviceTypes types, struct udev *udev, QObject *parent) :
++    QDeviceDiscoveryUDev(types, udev, parent)
++{
++}
++
++class USBKey
++{
++public:
++    USBKey(QString value) : m_value(value) {}
++    operator QString() const { return m_value; }
++
++    // How to match input device (by USB topological order)
++    //
++    //                  [1]
++    //                 /
++    //               [1.1] - [1.2] - [1.3] - [1.4]
++    //                /
++    //             [1.1.1] - [1.1.2] - [1.1.3] - ...
++    //
++    // Sort criteria
++    // 1. Smaller number has higher priority than bigger one
++    // 2. Leaves(having longer length) have lower priority than its parent
++    //
++    // 1.1 > 1.2 > 1.3 > 1.4    (Rule 1)
++    // 1.2.1 > 1.2.2 > 1.2.3    (Rule 1)
++    // 1.1.1 > 1.2              (Rule 2)
++    // 1.1.1.1 > 1.2            (Rule 2)
++    friend bool operator<(const USBKey& e1, const USBKey& e2)
++    {
++        int i = 0;
++        QStringList l1 = ((QString)e1).split(QLatin1String("."));
++        QStringList l2 = ((QString)e2).split(QLatin1String("."));
++
++        int n1, n2;
++        while (i < l1.length() && i < l2.length()) {
++            n1 = l1[i].toInt();
++            n2 = l2[i].toInt();
++            if (n1 < n2)
++                return true;
++            else if (n1 > n2)
++                return false;
++            else
++                i++;
++        }
++        return i == l1.length();
++    }
++
++private:
++    QString m_value;
++};
++
++QStringList QDeviceDiscoveryUDevSorted::scanConnectedDevices()
++{
++    QVector<QString> nodes;
++    QVector<QString> syspaths;
++    QVector<QString> pendingNodes;
++
++    udev_enumerate *ue = udev_enumerate_new(m_udev);
++    udev_enumerate_add_match_subsystem(ue, "input");
++
++    if (m_types & Device_Touchpad)
++        udev_enumerate_add_match_property(ue, "ID_INPUT_TOUCHPAD", "1");
++    if (m_types & Device_Touchscreen)
++        udev_enumerate_add_match_property(ue, "ID_INPUT_TOUCHSCREEN", "1");
++    if (m_types & Device_Keyboard)
++        udev_enumerate_add_match_property(ue, "ID_INPUT_KEYBOARD", "1");
++
++    QStringList devices;
++
++    if (udev_enumerate_scan_devices(ue) != 0) {
++        qWarning("Failed to scan devices");
++        return devices;
++    }
++
++    udev_list_entry *entry;
++    udev_list_entry_foreach (entry, udev_enumerate_get_list_entry(ue)) {
++        const char *syspath = udev_list_entry_get_name(entry);
++        udev_device *udevice = udev_device_new_from_syspath(m_udev, syspath);
++        QString candidate = QString::fromUtf8(udev_device_get_devnode(udevice));
++
++        if (candidate.startsWith(QLatin1String(QT_EVDEV_DEVICE))) {
++            bool match = false;
++            if (m_types & Device_Touchpad) {
++                const char* property = udev_device_get_property_value(udevice, "ID_INPUT_TOUCHPAD");
++                if (property && strcmp(property, "1") == 0)
++                    match = true;
++            }
++            if (m_types & Device_Touchscreen) {
++                const char* property = udev_device_get_property_value(udevice, "ID_INPUT_TOUCHSCREEN");
++                if (property && strcmp(property, "1") == 0)
++                    match = true;
++            }
++            if (m_types & Device_Keyboard) {
++                const char* property = udev_device_get_property_value(udevice, "ID_INPUT_KEYBOARD");
++                if (property && strcmp(property, "1") == 0)
++                    match = true;
++            }
++            if (match) {
++                qCDebug(lcDDS) << "matched:" << QLatin1String(syspath) << candidate;
++                nodes.push_back(candidate);
++                syspaths.push_back(QLatin1String(syspath));
++            }
++        }
++        udev_device_unref(udevice);
++    }
++    udev_enumerate_unref(ue);
++
++    QMap<USBKey, int> orders;
++    QRegularExpression re(QLatin1String("/1-([0-9\\.]+):1.0"));
++
++    for (int i = 0; i < syspaths.length(); i++) {
++        QRegularExpressionMatch match = re.match(syspaths[i]);
++        QString key = match.captured(1);
++        if (key.isEmpty()) {
++            qWarning() << "Failed to get order from" << syspaths[i] << ". Append them at the end instead";
++            pendingNodes.push_back(nodes[i]);
++            continue;
++        }
++        orders.insert(USBKey(key), i);
++    }
++
++    QMap<USBKey, int>::const_iterator i = orders.constBegin();
++    while (i != orders.constEnd()) {
++        devices << nodes[i.value()];
++        i++;
++    }
++
++    QVector<QString>::const_iterator pi = pendingNodes.constBegin();
++    while (pi != pendingNodes.constEnd()) {
++        devices << *pi;
++        pi++;
++    }
++
++    qCDebug(lcDDS) << "Found matching devices" << devices;
++    return devices;
++}
++
++QT_END_NAMESPACE
+diff --git a/src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted_p.h b/src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted_p.h
+new file mode 100644
+index 0000000000..d6a238ec72
+--- /dev/null
++++ b/src/platformsupport/devicediscovery/qdevicediscovery_udev_sorted_p.h
+@@ -0,0 +1,69 @@
++/****************************************************************************
++**
++** Copyright (c) 2019 LG Electronics, Inc.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the plugins of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 3 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL3 included in the
++** packaging of this file. Please review the following information to
++** ensure the GNU Lesser General Public License version 3 requirements
++** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 2.0 or (at your option) the GNU General
++** Public license version 3 or any later version approved by the KDE Free
++** Qt Foundation. The licenses are as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
++** included in the packaging of this file. Please review the following
++** information to ensure the GNU General Public License requirements will
++** be met: https://www.gnu.org/licenses/gpl-2.0.html and
++** https://www.gnu.org/licenses/gpl-3.0.html.
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++#ifndef QDEVICEDISCOVERY_UDEV_SORTED_P_H
++#define QDEVICEDISCOVERY_UDEV_SORTED_P_H
++
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qdevicediscovery_udev_p.h"
++
++QT_BEGIN_NAMESPACE
++
++class QDeviceDiscoveryUDevSorted : public QDeviceDiscoveryUDev
++{
++    Q_OBJECT
++
++public:
++    QDeviceDiscoveryUDevSorted(QDeviceTypes types, struct udev *udev, QObject *parent = 0);
++    QStringList scanConnectedDevices() override;
++};
++
++QT_END_NAMESPACE
++
++#endif // QDEVICEDISCOVERY_UDEV_SORTED_P_H
+diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
+index ad134a825f..e4586b30fc 100644
+--- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
++++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
+@@ -77,7 +77,8 @@ QEvdevKeyboardHandler::QEvdevKeyboardHandler(const QString &device, QFdContainer
+     : m_device(device), m_fd(fd.release()), m_notify(nullptr),
+       m_modifiers(0), m_composing(0), m_dead_unicode(0xffff),
+       m_langLock(0), m_no_zap(disableZap), m_do_compose(enableCompose),
+-      m_keymap(0), m_keymap_size(0), m_keycompose(0), m_keycompose_size(0)
++      m_keymap(0), m_keymap_size(0), m_keycompose(0), m_keycompose_size(0),
++      m_window(0)
+ {
+     qCDebug(qLcEvdevKey) << "Create keyboard handler with for device" << device;
+ 
+@@ -228,7 +229,9 @@ void QEvdevKeyboardHandler::processKeyEvent(int nativecode, int unicode, int qtc
+     if (!autoRepeat)
+         QGuiApplicationPrivate::inputDeviceManager()->setKeyboardModifiers(QEvdevKeyboardHandler::toQtModifiers(m_modifiers));
+ 
+-    QWindowSystemInterface::handleExtendedKeyEvent(0, (isPress ? QEvent::KeyPress : QEvent::KeyRelease),
++    if (m_window)
++        m_window->requestActivate();
++    QWindowSystemInterface::handleExtendedKeyEvent(m_window, (isPress ? QEvent::KeyPress : QEvent::KeyRelease),
+                                                    qtcode, modifiers, nativecode + 8, 0, int(modifiers),
+                                                    (unicode != 0xffff ) ? QString(unicode) : QString(), autoRepeat);
+ }
+@@ -579,4 +582,12 @@ void QEvdevKeyboardHandler::switchLang()
+     m_langLock ^= 1;
+ }
+ 
++void QEvdevKeyboardHandler::setWindow(QWindow *window)
++{
++    if (m_window != window) {
++        qCDebug(qLcEvdevKey) << "keyboard device" << m_device << "is now associated with window" << window;
++        m_window = window;
++    }
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
+index 5498a3e4f0..baf772ed3d 100644
+--- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
++++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler_p.h
+@@ -54,6 +54,7 @@
+ #include <qobject.h>
+ #include <QTimer>
+ #include <QDataStream>
++#include <QWindow>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -194,6 +195,8 @@ public:
+ 
+     void switchLang();
+ 
++    void setWindow(QWindow *window);
++
+ private:
+     void processKeyEvent(int nativecode, int unicode, int qtcode,
+                          Qt::KeyboardModifiers modifiers, bool isPress, bool autoRepeat);
+@@ -218,6 +221,8 @@ private:
+     const QEvdevKeyboardMap::Composing *m_keycompose;
+     int m_keycompose_size;
+ 
++    QWindow *m_window;
++
+     static const QEvdevKeyboardMap::Mapping s_keymap_default[];
+     static const QEvdevKeyboardMap::Composing s_keycompose_default[];
+ };
+diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
+index e1659bc0d9..1e17769750 100644
+--- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
++++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager.cpp
+@@ -51,7 +51,8 @@ QT_BEGIN_NAMESPACE
+ Q_DECLARE_LOGGING_CATEGORY(qLcEvdevKey)
+ 
+ QEvdevKeyboardManager::QEvdevKeyboardManager(const QString &key, const QString &specification, QObject *parent)
+-    : QObject(parent)
++    : QObject(parent),
++      m_useFixedAssociation(false)
+ {
+     Q_UNUSED(key);
+ 
+@@ -96,6 +97,12 @@ QEvdevKeyboardManager::QEvdevKeyboardManager(const QString &key, const QString &
+     }
+ }
+ 
++QEvdevKeyboardManager::QEvdevKeyboardManager(const QString &key, const QString &specification, bool useFixedAssociation, QObject *parent)
++    : QEvdevKeyboardManager(key, specification, parent)
++{
++    m_useFixedAssociation = useFixedAssociation;
++}
++
+ QEvdevKeyboardManager::~QEvdevKeyboardManager()
+ {
+     qDeleteAll(m_keyboards);
+@@ -109,8 +116,12 @@ void QEvdevKeyboardManager::addKeyboard(const QString &deviceNode)
+     keyboard = QEvdevKeyboardHandler::create(deviceNode, m_spec, m_defaultKeymapFile);
+     if (keyboard) {
+         m_keyboards.insert(deviceNode, keyboard);
++        if (m_windows.contains(deviceNode))
++            keyboard->setWindow(m_windows.value(deviceNode));
+         QInputDeviceManagerPrivate::get(QGuiApplicationPrivate::inputDeviceManager())->setDeviceCount(
+             QInputDeviceManager::DeviceTypeKeyboard, m_keyboards.count());
++        if (!m_useFixedAssociation)
++            associateWindow();
+     } else {
+         qWarning("Failed to open keyboard device %s", qPrintable(deviceNode));
+     }
+@@ -124,6 +135,8 @@ void QEvdevKeyboardManager::removeKeyboard(const QString &deviceNode)
+         m_keyboards.remove(deviceNode);
+         QInputDeviceManagerPrivate::get(QGuiApplicationPrivate::inputDeviceManager())->setDeviceCount(
+             QInputDeviceManager::DeviceTypeKeyboard, m_keyboards.count());
++        if (!m_useFixedAssociation)
++            associateWindow();
+         delete keyboard;
+     }
+ }
+@@ -159,4 +172,43 @@ void QEvdevKeyboardManager::switchLang()
+         handler->switchLang();
+ }
+ 
++bool QEvdevKeyboardManager::setWindow(const QString &deviceNode, QWindow *window)
++{
++    qCDebug(qLcEvdevKey) << "evdevkeyboard: append" << window << " into" << m_windowList;
++    m_windowList << window;
++
++    if (m_useFixedAssociation) {
++        m_windows.insert(deviceNode, window);
++        if (m_keyboards.contains(deviceNode)) {
++            foreach (QEvdevKeyboardHandler *handler, m_keyboards.values(deviceNode))
++                handler->setWindow(window);
++            return true;
++        }
++
++        return false;
++    } else {
++        associateWindow();
++    }
++    return true;
++}
++
++void QEvdevKeyboardManager::associateWindow()
++{
++    // Update association between window and handler
++    if (!m_deviceDiscovery)
++        return;
++
++    const QStringList devices = m_deviceDiscovery->scanConnectedDevices();
++
++    qCDebug(qLcEvdevKey) << "evdevkeyboard: associateWindow" << devices << m_windowList;
++    for (int i = 0; i < devices.size(); i++) {
++        if (m_keyboards.contains(devices.at(i))) {
++            foreach (QEvdevKeyboardHandler *handler, m_keyboards.values(devices.at(i))) {
++                if (i < m_windowList.size())
++                    handler->setWindow(m_windowList.at(i));
++            }
++        }
++    }
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
+index 326e438a7c..35e8998b9a 100644
+--- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
++++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardmanager_p.h
+@@ -58,6 +58,7 @@
+ #include <QObject>
+ #include <QHash>
+ #include <QSocketNotifier>
++#include <QWindow>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -65,6 +66,7 @@ class QEvdevKeyboardManager : public QObject
+ {
+ public:
+     QEvdevKeyboardManager(const QString &key, const QString &specification, QObject *parent = 0);
++    QEvdevKeyboardManager(const QString &key, const QString &specification, bool useFixedAssociation, QObject *parent = 0);
+     ~QEvdevKeyboardManager();
+ 
+     void loadKeymap(const QString &file);
+@@ -73,11 +75,18 @@ public:
+     void addKeyboard(const QString &deviceNode = QString());
+     void removeKeyboard(const QString &deviceNode);
+ 
++    bool setWindow(const QString &deviceNode, QWindow *window);
++
++    void associateWindow();
++
+ private:
+     QString m_spec;
+     QHash<QString,QEvdevKeyboardHandler*> m_keyboards;
++    QHash<QString,QWindow*> m_windows;
++    QWindowList m_windowList;
+     QDeviceDiscovery *m_deviceDiscovery;
+     QString m_defaultKeymapFile;
++    bool m_useFixedAssociation;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
+index f3cc160b3e..4baa4b31e9 100644
+--- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
++++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
+@@ -192,7 +192,7 @@ static inline bool testBit(long bit, const long *array)
+ #endif
+ 
+ QEvdevTouchScreenHandler::QEvdevTouchScreenHandler(const QString &device, const QString &spec, QObject *parent)
+-    : QObject(parent), m_notify(nullptr), m_fd(-1), d(nullptr), m_device(nullptr)
++    : QObject(parent), m_notify(nullptr), m_fd(-1), d(nullptr), m_device(nullptr), m_thread(qobject_cast<QEvdevTouchScreenHandlerThread*>(parent))
+ #if QT_CONFIG(mtdev)
+       , m_mtdev(nullptr)
+ #endif
+@@ -376,6 +376,11 @@ QTouchDevice *QEvdevTouchScreenHandler::touchDevice() const
+     return m_device;
+ }
+ 
++QWindow *QEvdevTouchScreenHandler::window() const
++{
++    return m_thread ? m_thread->window() : Q_NULLPTR;
++}
++
+ void QEvdevTouchScreenHandler::readData()
+ {
+     ::input_event buffer[32];
+@@ -745,7 +750,14 @@ QRect QEvdevTouchScreenData::screenGeometry() const
+ 
+ void QEvdevTouchScreenData::reportPoints()
+ {
+-    QRect winRect = screenGeometry();
++    QRect winRect;
++    QWindow *window = q->window();
++
++    if (window)
++        winRect = QHighDpi::toNativePixels(window->geometry(), window);
++    else
++        winRect = screenGeometry();
++
+     if (winRect.isNull())
+         return;
+ 
+@@ -781,7 +793,7 @@ void QEvdevTouchScreenData::reportPoints()
+     if (m_filtered)
+         emit q->touchPointsUpdated();
+     else
+-        QWindowSystemInterface::handleTouchEvent(nullptr, q->touchDevice(), m_touchPoints);
++        QWindowSystemInterface::handleTouchEvent(window, q->touchDevice(), m_touchPoints);
+ }
+ 
+ QEvdevTouchScreenHandlerThread::QEvdevTouchScreenHandlerThread(const QString &device, const QString &spec, QObject *parent)
+@@ -789,6 +801,7 @@ QEvdevTouchScreenHandlerThread::QEvdevTouchScreenHandlerThread(const QString &de
+     , m_touchUpdatePending(false)
+     , m_filterWindow(nullptr)
+     , m_touchRate(-1)
++    , m_window(nullptr)
+ {
+     start();
+ }
+@@ -801,7 +814,7 @@ QEvdevTouchScreenHandlerThread::~QEvdevTouchScreenHandlerThread()
+ 
+ void QEvdevTouchScreenHandlerThread::run()
+ {
+-    m_handler = new QEvdevTouchScreenHandler(m_device, m_spec);
++    m_handler = new QEvdevTouchScreenHandler(m_device, m_spec, this);
+ 
+     if (m_handler->isFiltered())
+         connect(m_handler, &QEvdevTouchScreenHandler::touchPointsUpdated, this, &QEvdevTouchScreenHandlerThread::scheduleTouchPointUpdate);
+@@ -853,7 +866,14 @@ bool QEvdevTouchScreenHandlerThread::eventFilter(QObject *object, QEvent *event)
+ 
+ void QEvdevTouchScreenHandlerThread::filterAndSendTouchPoints()
+ {
+-    QRect winRect = m_handler->d->screenGeometry();
++    QRect winRect;
++    QWindow *window = m_handler->d->q->window();
++
++    if (window)
++        winRect = QHighDpi::toNativePixels(window->geometry(), window);
++    else
++        winRect = m_handler->d->screenGeometry();
++
+     if (winRect.isNull())
+         return;
+ 
+@@ -953,10 +973,17 @@ void QEvdevTouchScreenHandlerThread::filterAndSendTouchPoints()
+ 
+     m_filteredPoints = filteredPoints;
+ 
+-    QWindowSystemInterface::handleTouchEvent(nullptr,
++    QWindowSystemInterface::handleTouchEvent(window,
+                                              m_handler->touchDevice(),
+                                              points);
+ }
+ 
++void QEvdevTouchScreenHandlerThread::setWindow(QWindow *window)
++{
++    if (m_window != window) {
++        qCDebug(qLcEvdevTouch) << "touch device" << m_device << "is now associated with window" << window;
++        m_window = window;
++    }
++}
+ 
+ QT_END_NAMESPACE
+diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h b/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
+index 56308d0352..22de69f5b9 100644
+--- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
++++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler_p.h
+@@ -57,6 +57,7 @@
+ #include <QString>
+ #include <QList>
+ #include <QThread>
++#include <QWindow>
+ #include <QtCore/private/qthread_p.h>
+ #include <qpa/qwindowsysteminterface.h>
+ #include "qevdevtouchfilter_p.h"
+@@ -69,6 +70,7 @@ QT_BEGIN_NAMESPACE
+ 
+ class QSocketNotifier;
+ class QEvdevTouchScreenData;
++class QEvdevTouchScreenHandlerThread;
+ 
+ class QEvdevTouchScreenHandler : public QObject
+ {
+@@ -82,6 +84,8 @@ public:
+ 
+     bool isFiltered() const;
+ 
++    QWindow *window() const;
++
+     void readData();
+ 
+ signals:
+@@ -101,6 +105,8 @@ private:
+ #if QT_CONFIG(mtdev)
+     mtdev *m_mtdev;
+ #endif
++
++    QEvdevTouchScreenHandlerThread *m_thread;
+ };
+ 
+ class QEvdevTouchScreenHandlerThread : public QDaemonThread
+@@ -117,6 +123,9 @@ public:
+ 
+     void scheduleTouchPointUpdate();
+ 
++    QWindow *window() const { return m_window; }
++    void setWindow(QWindow *window);
++
+ signals:
+     void touchDeviceRegistered();
+ 
+@@ -142,6 +151,8 @@ private:
+     QHash<int, FilteredTouchPoint> m_filteredPoints;
+ 
+     float m_touchRate;
++
++    QWindow *m_window;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
+index 4cacbf03e5..8780e54b71 100644
+--- a/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
++++ b/src/platformsupport/input/evdevtouch/qevdevtouchmanager.cpp
+@@ -52,7 +52,8 @@ QT_BEGIN_NAMESPACE
+ Q_DECLARE_LOGGING_CATEGORY(qLcEvdevTouch)
+ 
+ QEvdevTouchManager::QEvdevTouchManager(const QString &key, const QString &specification, QObject *parent)
+-    : QObject(parent)
++    : QObject(parent),
++      m_useFixedAssociation(false)
+ {
+     Q_UNUSED(key);
+ 
+@@ -97,6 +98,12 @@ QEvdevTouchManager::QEvdevTouchManager(const QString &key, const QString &specif
+     }
+ }
+ 
++QEvdevTouchManager::QEvdevTouchManager(const QString &key, const QString &specification, bool useFixedAssociation, QObject *parent)
++    : QEvdevTouchManager(key, specification, parent)
++{
++    m_useFixedAssociation = useFixedAssociation;
++}
++
+ QEvdevTouchManager::~QEvdevTouchManager()
+ {
+     qDeleteAll(m_activeDevices);
+@@ -140,6 +147,48 @@ void QEvdevTouchManager::updateInputDeviceCount()
+ 
+     QInputDeviceManagerPrivate::get(QGuiApplicationPrivate::inputDeviceManager())->setDeviceCount(
+         QInputDeviceManager::DeviceTypeTouch, registeredTouchDevices);
++
++    if (!m_useFixedAssociation)
++        associateWindow();
++}
++
++bool QEvdevTouchManager::setWindow(const QString &deviceNode, QWindow *window)
++{
++    qCDebug(qLcEvdevTouch) << "evdevtouch: append" << window << " into" << m_windowList;
++    m_windowList << window;
++
++    if (m_useFixedAssociation) {
++        m_windows.insert(deviceNode, window);
++        if (m_activeDevices.contains(deviceNode)) {
++            foreach (QEvdevTouchScreenHandlerThread *handler, m_activeDevices.values(deviceNode))
++                handler->setWindow(window);
++            return true;
++        }
++
++        return false;
++    } else {
++        associateWindow();
++    }
++
++    return true;
++}
++
++void QEvdevTouchManager::associateWindow()
++{
++    // Update association between window and handler
++    if (!m_deviceDiscovery)
++        return;
++
++    const QStringList devices = m_deviceDiscovery->scanConnectedDevices();
++
++    for (int i = 0; i < devices.size(); i++) {
++        if (m_activeDevices.contains(devices.at(i))) {
++            foreach (QEvdevTouchScreenHandlerThread *handler, m_activeDevices.values(devices.at(i))) {
++                if (i < m_windowList.size())
++                    handler->setWindow(m_windowList.at(i));
++            }
++        }
++    }
+ }
+ 
+ QT_END_NAMESPACE
+diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h b/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
+index e524c516f1..f49c2180af 100644
+--- a/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
++++ b/src/platformsupport/input/evdevtouch/qevdevtouchmanager_p.h
+@@ -54,6 +54,7 @@
+ #include <QObject>
+ #include <QHash>
+ #include <QSocketNotifier>
++#include <QWindow>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -64,17 +65,25 @@ class QEvdevTouchManager : public QObject
+ {
+ public:
+     QEvdevTouchManager(const QString &key, const QString &spec, QObject *parent = 0);
++    QEvdevTouchManager(const QString &key, const QString &spec, bool useFixedAssociation, QObject *parent = 0);
+     ~QEvdevTouchManager();
+ 
++    bool setWindow(const QString &deviceNode, QWindow *window);
++
+     void addDevice(const QString &deviceNode);
+     void removeDevice(const QString &deviceNode);
+ 
+     void updateInputDeviceCount();
+ 
++    void associateWindow();
++
+ private:
+     QString m_spec;
+     QDeviceDiscovery *m_deviceDiscovery;
+     QHash<QString, QEvdevTouchScreenHandlerThread *> m_activeDevices;
++    QHash<QString, QWindow *> m_windows;
++    QWindowList m_windowList;
++    bool m_useFixedAssociation;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
+index 8e71a491c1..a0d3650037 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
++++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
+@@ -406,4 +406,16 @@ EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfa
+     return chooser.chooseConfig();
+ }
+ 
++QString QEglFSDeviceIntegration::kbdDeviceName(QString &output) const
++{
++    Q_UNUSED(output);
++    return QString();
++}
++
++QString QEglFSDeviceIntegration::touchDeviceName(QString &output) const
++{
++    Q_UNUSED(output);
++    return QString();
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
+index a22d197d3d..acf9250496 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
++++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration_p.h
+@@ -111,6 +111,9 @@ public:
+     virtual void *nativeResourceForScreen(const QByteArray &resource, QScreen *screen);
+     virtual void *wlDisplay() const;
+ 
++    virtual QString kbdDeviceName(QString &output) const;
++    virtual QString touchDeviceName(QString &output) const;
++
+     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format);
+     static EGLConfig chooseConfig(EGLDisplay display, const QSurfaceFormat &format, QEglFSDeviceIntegration *integration);
+ };
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
+index 4269d3b0f2..048d93320c 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
++++ b/src/plugins/platforms/eglfs/api/qeglfsintegration.cpp
+@@ -120,7 +120,7 @@ QEglFSIntegration::QEglFSIntegration()
+       m_inputContext(0),
+       m_fontDb(new QGenericUnixFontDatabase),
+       m_services(new QGenericUnixServices),
+-      m_kbdMgr(0),
++      m_kbdMgr(0), m_touchMgr(0),
+       m_disableInputHandlers(false)
+ {
+     m_disableInputHandlers = qEnvironmentVariableIntValue("QT_QPA_EGLFS_DISABLE_INPUT");
+@@ -285,6 +285,8 @@ QPlatformWindow *QEglFSIntegration::createPlatformWindow(QWindow *window) const
+     // Activate only the window for the primary screen to make input work
+     if (window->type() != Qt::ToolTip && window->screen() == QGuiApplication::primaryScreen())
+         w->requestActivateWindow();
++    if (associateInputHandlers(window))
++        connect(window, &QWindow::screenChanged, this, &QEglFSIntegration::handleScreenChange);
+ 
+     return w;
+ }
+@@ -593,13 +595,38 @@ void QEglFSIntegration::createInputHandlers()
+         new QTsLibMouseHandler(QLatin1String("TsLib"), QString() /* spec */);
+ #endif
+ 
++    bool useFixedAssociationForKeyboard = false;
++    bool useFixedAssociationForTouch = false;
++
++    if (!m_configJson.isEmpty()) {
++        for (int i = 0; i < m_configJson.array().size(); i++) {
++            const QJsonObject object = m_configJson.array().at(i).toObject();
++            const QJsonArray outputs = object.value(QLatin1String("outputs")).toArray();
++            for (int j = 0; j < outputs.size(); j++) {
++                const QJsonObject output = outputs.at(j).toObject();
++                if (!useFixedAssociationForTouch) {
++                    QString touchDevice = output.value(QLatin1String("touchDevice")).toString();
++                    if (!touchDevice.isEmpty())
++                        useFixedAssociationForTouch = true;
++                }
++                if (!useFixedAssociationForKeyboard) {
++                    QString keyboardDevice = output.value(QLatin1String("keyboardDevice")).toString();
++                    if (!keyboardDevice.isEmpty())
++                        useFixedAssociationForKeyboard = true;
++                }
++            }
++        }
++    }
++    qWarning() << "useFixedAssociationForTouch:" << useFixedAssociationForTouch
++               << "useFixedAssociationForKeyboard:" << useFixedAssociationForKeyboard;
++
+ #if QT_CONFIG(evdev)
+-    m_kbdMgr = new QEvdevKeyboardManager(QLatin1String("EvdevKeyboard"), QString() /* spec */, this);
++    m_kbdMgr = new QEvdevKeyboardManager(QLatin1String("EvdevKeyboard"), QString() /* spec */, useFixedAssociationForKeyboard, this);
+     new QEvdevMouseManager(QLatin1String("EvdevMouse"), QString() /* spec */, this);
+ #if QT_CONFIG(tslib)
+     if (!useTslib)
+ #endif
+-        new QEvdevTouchManager(QLatin1String("EvdevTouch"), QString() /* spec */, this);
++        m_touchMgr = new QEvdevTouchManager(QLatin1String("EvdevTouch"), QString() /* spec */, useFixedAssociationForTouch, this);
+ #endif
+ 
+ #if QT_CONFIG(integrityhid)
+@@ -618,4 +645,24 @@ EGLNativeDisplayType QEglFSIntegration::nativeDisplay(QEglFSDeviceIntegration *i
+     return integration->platformDisplay();
+ }
+ 
++bool QEglFSIntegration::associateInputHandlers(QWindow *window) const
++{
++    bool associated = false;
++    if (window) {
++        QEglFSScreen *s = window->screen() ? static_cast<QEglFSScreen *>(window->screen()->handle()) : NULL;
++        QEglFSDeviceIntegration *i = s ? s->deviceIntegration() : qt_egl_device_integration();
++        QString outputName = s ? s->name() : QString();
++        if (m_kbdMgr)
++            associated = m_kbdMgr->setWindow(i->kbdDeviceName(outputName), window);
++        if (m_touchMgr)
++            associated = m_touchMgr->setWindow(i->touchDeviceName(outputName), window);
++    }
++    return associated;
++}
++
++void QEglFSIntegration::handleScreenChange(QScreen *screen)
++{
++    associateInputHandlers(qobject_cast<QWindow *>(sender()));
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
+index 8a3c34df4b..b48c4496b3 100644
+--- a/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
++++ b/src/plugins/platforms/eglfs/api/qeglfsintegration_p.h
+@@ -71,6 +71,7 @@ class QEglFSContext;
+ class QEglFSDeviceIntegration;
+ class QFbVtHandler;
+ class QEvdevKeyboardManager;
++class QEvdevTouchManager;
+ 
+ class Q_EGLFS_EXPORT QEglFSIntegration : public QPlatformIntegration, public QPlatformNativeInterface
+ {
+@@ -111,10 +112,14 @@ public:
+ 
+     QFbVtHandler *vtHandler() { return m_vtHandler.data(); }
+ 
++private slots:
++    void handleScreenChange(QScreen *screen);
++
+ private:
+     EGLNativeDisplayType nativeDisplay() const;
+     EGLNativeDisplayType nativeDisplay(QEglFSDeviceIntegration *integration) const;
+     void createInputHandlers();
++    bool associateInputHandlers(QWindow *window) const;
+     static void loadKeymapStatic(const QString &filename);
+     static void switchLangStatic();
+ 
+@@ -126,6 +131,7 @@ private:
+     QScopedPointer<QPlatformServices> m_services;
+     QScopedPointer<QFbVtHandler> m_vtHandler;
+     QEvdevKeyboardManager *m_kbdMgr;
++    QEvdevTouchManager *m_touchMgr;
+     bool m_disableInputHandlers;
+ #if defined(WEBOS_EMULATOR)
+     QEmulatorKeyboardManager* m_emulatorKeyboardManager;
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+index 38736181d3..b2a13504d5 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+@@ -174,4 +174,14 @@ QKmsScreenConfig *QEglFSKmsIntegration::screenConfig() const
+     return m_screenConfig;
+ }
+ 
++QString QEglFSKmsIntegration::kbdDeviceName(QString &output) const
++{
++    return m_screenConfig->outputSettings().value(output).value(QStringLiteral("keyboardDevice")).toString();
++}
++
++QString QEglFSKmsIntegration::touchDeviceName(QString &output) const
++{
++    return m_screenConfig->outputSettings().value(output).value(QStringLiteral("touchDevice")).toString();
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
+index 3fa6a0a0d8..e8ececa392 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
+@@ -74,6 +74,9 @@ public:
+     void *nativeResourceForIntegration(const QByteArray &name) override;
+     void *nativeResourceForScreen(const QByteArray &resource, QScreen *screen) override;
+ 
++    QString kbdDeviceName(QString &output) const override;
++    QString touchDeviceName(QString &output) const override;
++
+     QKmsDevice *device() const;
+     QKmsScreenConfig *screenConfig() const;
+ 
