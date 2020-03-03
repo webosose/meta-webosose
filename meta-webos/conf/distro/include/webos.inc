@@ -61,6 +61,16 @@ EXTRA_WEBOS_WERROR_pn-libc-bench = ""
 EXTRA_WEBOS_WERROR_pn-qtwebengine = ""
 # Temporarily until patches from PLAT-84533 are integrated
 EXTRA_WEBOS_WERROR_pn-webruntime = ""
+# ERROR: ntop-5.0.1-r0 do_compile: Function failed: do_compile: netflowPlugin.c:2144:1: error: no return statement in function returning non-void [-Werror=return-type]
+EXTRA_WEBOS_WERROR_pn-ntop = ""
+# ERROR: python3-twofish-0.3.0-r0 do_compile: Function failed: do_compile: twofish.c:45:1: error: control reaches end of non-void function [-Werror=return-type]
+EXTRA_WEBOS_WERROR_pn-python3-twofish = ""
+# ERROR: live555-20190828-r0 do_compile: oe_runmake failed: MPEG2TransportStreamParser.cpp:302:1: error: control reaches end of non-void function [-Werror=return-type]
+EXTRA_WEBOS_WERROR_pn-live555 = ""
+# ERROR: hdf5-1.8.21-r0 do_compile: hdf5/1.8.21-r0/hdf5-1.8.21/c++/src/H5Location.cpp:258:34: error: control reaches end of non-void function [-Werror=return-type]
+EXTRA_WEBOS_WERROR_pn-hdf5 = ""
+# ERROR: libev-4.31-r0 do_compile: oe_runmake failed: libev-4.31/ev_iouring.c:227:1: error: no return statement in function returning non-void [-Werror=return-type] libev-4.31/ev_iouring.c:261:1: error: no return statement in function returning non-void [-Werror=return-type]
+EXTRA_WEBOS_WERROR_pn-libev = ""
 
 TARGET_CC_ARCH_append = " ${EXTRA_WEBOS_WERROR}"
 
