@@ -72,12 +72,6 @@ PNBLACKLIST[python3-twofish] ?= "ERROR: python3-twofish-0.3.0-r0 do_compile: Fun
 PNBLACKLIST[big-update] ?= "ERROR: big-update-2.0-r0 do_populate_lic: QA Issue: big-update: Recipe file fetches files and does not have license file information (LIC_FILES_CHKSUM) [license-checksum]"
 # meta-virtualization/recipes-containers/cri-o/cri-o_git.bb:do_compile
 PNBLACKLIST[cri-o] ?= "ERROR: cri-o-1.12.0+git774a29ecf6855f2dff266dc2aa2fe81d7d964465-r0 do_compile: Function failed: do_compile: | Makefile:112: recipe for target conmon/config.h failed"
-# meta-virtualization/recipes-containers/docker/docker-ce_git.bb:do_package_qa
-PNBLACKLIST[docker-ce] ?= "ERROR: docker-ce-18.09.0-ce+git6e632f7fc395d15bce46f426086e91c01598cf59-r0 do_package_qa: QA Issue: docker-ce-contrib rdepends on bash, but it isnt a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]"
-# meta-virtualization/recipes-containers/lxc/lxc_3.1.0.bb:do_package_qa
-PNBLACKLIST[lxc] ?= "ERROR: lxc-3.1.0-r0 do_package_qa: QA Issue: lxc-ptest rdepends on bash, but it isnt a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]"
-# meta-virtualization/recipes-containers/singularity/singularity_git.bb:do_package_qa
-PNBLACKLIST[singularity] ?= "ERROR: singularity-2.3.1+gitAUTOINC+e214d4ebf0-r0 do_package_qa: QA Issue: singularity rdepends on bash, but it isnt a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]"
 # meta-virtualization/recipes-core/kata-containers/kata-agent_git.bb:do_package_qa
 PNBLACKLIST[kata-agent] ?= "ERROR: kata-agent-git-r0 do_package_qa: QA Issue: ELF binary kata-agent/git-r0/packages-split/kata-agent/usr/bin/kata-agent has relocations in .text [textrel]"
 # meta-virtualization/recipes-core/kata-containers/kata-proxy_git.bb:do_package_qa
@@ -97,16 +91,12 @@ PNBLACKLIST[dev86] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure:
 PNBLACKLIST[ipxe] ?= "ERROR: ipxe-gitrAUTOINC+64b4452bca-r0 do_compile: Function failed: do_compile: Makefile.housekeeping:111: GNU gold is unsuitable for building iPXE"
 # meta-virtualization/recipes-extended/kvmtool/kvmtool.bb:do_compile
 PNBLACKLIST[kvmtool] ?= "ERROR: kvmtool-4.14.0+git0e1882a49f81cb15d328ef83a78849c0ea26eecc-r0 do_compile: Function failed: do_compile: virtio/net.c:336:47: error: argument to sizeof in strncpy call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]"
-# meta-virtualization/recipes-extended/libvirt/libvirt_4.7.0.bb:do_package_qa
-PNBLACKLIST[libvirt] ?= "ERROR: libvirt-4.7.0-r0 do_package_qa: QA Issue: libvirt-ptest rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]"
 # meta-virtualization/recipes-extended/seabios/seabios_1.11.2.bb:do_compile
 PNBLACKLIST[seabios] ?= "ERROR: seabios-1.11.2-r0 do_compile: Function failed: do_compile: i586-webos-linux-ld: error: out/rom16.strip.o: unsupported ELF file type 2"
 # meta-virtualization/recipes-extended/vgabios/biossums_0.7a.bb:do_package_qa
 PNBLACKLIST[biossums] ?= "ERROR: biossums-0.7a-r0 do_package_qa: QA Issue: No GNU_HASH in the ELF binary biossums/0.7a-r0/packages-split/biossums/usr/bin/biossums, didnt pass LDFLAGS? [ldflags]"
 # meta-virtualization/recipes-networking/cni/cni_git.bb:do_compile
 PNBLACKLIST[cni] ?= "ERROR: cni-0.6.0+gitcc562d1b44b3d00b8c341250d49a8a0823a1c085-r0 do_compile: Function failed: do_compile: | ../../../src/github.com/containernetworking/plugins/vendor/github.com/safchain/ethtool/ethtool.go:205:35: undefined: syscall.SYS_SOCKET"
-# meta-virtualization/recipes-networking/openvswitch/openvswitch_git.bb:do_package_qa
-PNBLACKLIST[openvswitch] ?= "ERROR: openvswitch-2.10.0+5563e309b80bbea9bff538e71ecfd7e5e538bab9-r0 do_package_qa: QA Issue: openvswitch rdepends on bash, but it isnt a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]"
 # meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gst-validate_1.16.0.bb:do_configure
 PNBLACKLIST[gst-validate] ?= "ERROR: gst-validate-1.16.0-r0 do_configure: Function failed: do_configure: configure: Requested gstreamer-1.0 >= 1.16.0 but version of GStreamer is 1.14.4"
 # meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gstreamer1.0-rtsp-server_1.16.0.bb:do_configure
@@ -114,7 +104,6 @@ PNBLACKLIST[gstreamer1.0-rtsp-server] ?= "ERROR: gstreamer1.0-rtsp-server-1.16.0
 # meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gstreamer1.0-vaapi_1.16.0.bb:do_configure
 PNBLACKLIST[gstreamer1.0-vaapi] ?= "ERROR: gstreamer1.0-vaapi-1.16.0-r0 do_configure: Function failed: do_configure: configure: Requested gstreamer-1.0 >= 1.16.0 but version of GStreamer is 1.14.4"
 
-PNBLACKLIST[libvmi] ?= "Depends on blacklisted libvirt"
 PNBLACKLIST[openlmi-tools] ?= "Depends on blacklisted python-m2crypto"
 PNBLACKLIST[gstd] ?= "Depends on blacklisted gstreamer1.0-rtsp-server"
 PNBLACKLIST[vgabios] ?= "Depends on blacklisted dev86-native"
