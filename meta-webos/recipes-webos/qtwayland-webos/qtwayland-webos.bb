@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
-WEBOS_VERSION = "2.0.0-49_f3a0715a6fc14a86e11e9150c2abbec4060b8eb6"
+WEBOS_VERSION = "2.0.0-50_4ebdb38c282da36dee2a35f24b761e13ae240166"
 PR = "r9"
 
 inherit webos_qmake5

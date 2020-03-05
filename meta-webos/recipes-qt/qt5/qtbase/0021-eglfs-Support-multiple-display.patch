@@ -1,4 +1,4 @@
-From 2075c6073b6646fbf6d587599f1f58d7012f1ca6 Mon Sep 17 00:00:00 2001
+From 0c9fb73b7aa57aaad698662e7f85bbe213ade8f7 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 2 Apr 2018 14:00:37 +0900
 Subject: [PATCH] eglfs: Support multiple display
@@ -46,10 +46,10 @@ Upstream-Status : Inappropriate [webOS specific]
  9 files changed, 186 insertions(+), 46 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index fec59cfc7b..224810b382 100644
+index 9fc4d00a5f..7880cb21b5 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -959,44 +959,48 @@ QKmsScreenConfig *QKmsDevice::screenConfig() const
+@@ -988,44 +988,48 @@ QKmsScreenConfig *QKmsDevice::screenConfig() const
      return m_screenConfig;
  }
  
@@ -120,7 +120,7 @@ index fec59cfc7b..224810b382 100644
      const QByteArray headless = headlessStr.toUtf8();
      QSize headlessSize;
      if (sscanf(headless.constData(), "%dx%d", &headlessSize.rwidth(), &headlessSize.rheight()) == 2) {
-@@ -1006,12 +1010,12 @@ void QKmsScreenConfig::loadConfig()
+@@ -1035,12 +1039,12 @@ void QKmsScreenConfig::loadConfig()
          m_headless = false;
      }
  
@@ -138,7 +138,7 @@ index fec59cfc7b..224810b382 100644
      if (!vdOriString.isEmpty()) {
          if (vdOriString == QLatin1String("horizontal"))
              m_virtualDesktopLayout = VirtualDesktopLayoutHorizontal;
-@@ -1021,7 +1025,7 @@ void QKmsScreenConfig::loadConfig()
+@@ -1050,7 +1054,7 @@ void QKmsScreenConfig::loadConfig()
              qCWarning(qLcKmsDebug) << "Unknown virtualDesktopOrientation value" << vdOriString;
      }
  
@@ -148,18 +148,18 @@ index fec59cfc7b..224810b382 100644
          const QVariantMap outputSettings = outputs.at(i).toObject().toVariantMap();
  
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-index 14da6bb947..95f745350c 100644
+index 47e1fb4a73..ec9257f7e8 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-@@ -57,6 +57,7 @@
- #include <qpa/qplatformscreen.h>
+@@ -58,6 +58,7 @@
  #include <QtCore/QMap>
  #include <QtCore/QVariant>
+ #include <QtCore/QThreadStorage>
 +#include <QtCore/QJsonObject>
  
  #include <xf86drm.h>
  #include <xf86drmMode.h>
-@@ -109,7 +110,7 @@ public:
+@@ -110,7 +111,7 @@ public:
          VirtualDesktopLayoutVertical
      };
  
@@ -168,7 +168,7 @@ index 14da6bb947..95f745350c 100644
  
      QString devicePath() const { return m_devicePath; }
  
-@@ -125,6 +126,7 @@ public:
+@@ -126,6 +127,7 @@ public:
  private:
      void loadConfig();
  
@@ -506,7 +506,7 @@ index 2a9cc3edd0..8a3c34df4b 100644
      QScopedPointer<QPlatformFontDatabase> m_fontDb;
      QScopedPointer<QPlatformServices> m_services;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index a6aac61506..38736181d3 100644
+index 28b6b7df63..1936b09d1a 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -55,18 +55,23 @@ QT_BEGIN_NAMESPACE

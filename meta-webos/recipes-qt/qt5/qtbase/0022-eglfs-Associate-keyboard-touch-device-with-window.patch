@@ -1,4 +1,4 @@
-From e1b30b886566e0fdca44c132e854f04dd69b766b Mon Sep 17 00:00:00 2001
+From a4d07aaa77a1228e4b841bda7507e2b517ab0323 Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Mon, 14 Oct 2019 18:58:04 +0900
 Subject: [PATCH] eglfs: Associate keyboard, touch device with window
@@ -1053,7 +1053,7 @@ index 8a3c34df4b..b48c4496b3 100644
  #if defined(WEBOS_EMULATOR)
      QEmulatorKeyboardManager* m_emulatorKeyboardManager;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index 38736181d3..b2a13504d5 100644
+index 1936b09d1a..0e4a1a9bf1 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -174,4 +174,14 @@ QKmsScreenConfig *QEglFSKmsIntegration::screenConfig() const

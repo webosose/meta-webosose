@@ -1,6 +1,6 @@
-From bd5f227803773f6b8f35dd2b5b429252be611667 Mon Sep 17 00:00:00 2001
+From 4470a3bd7d047a789938f01b7cfdf2ecfc55aec5 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
-Date: Wed, 24 Apr 2019 10:19:27 +0000
+Date: Wed, 1 Apr 2020 09:25:36 +0900
 Subject: [PATCH] Update eglfs_kms to render on topmost drmplane
 
 :Release Notes:
@@ -28,16 +28,16 @@ the patterns on HDMI output.
 Change-Id: Ic898dbde7a19f20a2f38f63d79ef0166970ef498
 Upstream-Status: Inappropriate [webOS specific]
 ---
- .../kmsconvenience/qkmsdevice.cpp             | 15 +--
+ .../kmsconvenience/qkmsdevice.cpp             | 15 ++--
  .../eglfs_kms/qeglfskmsgbmintegration.cpp     |  2 +-
- .../eglfs_kms/qeglfskmsgbmscreen.cpp          | 91 ++++---------------
- 3 files changed, 25 insertions(+), 83 deletions(-)
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp          | 90 ++++---------------
+ 3 files changed, 25 insertions(+), 82 deletions(-)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index f1faceed86..5e6ef1cba9 100644
+index 7880cb21b5..fa6c3d1fc0 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -453,6 +453,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+@@ -460,6 +460,7 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
      // This is for the EGLDevice/EGLStream backend. On some of those devices one
      // may want to target a pre-configured plane. It is probably useless for
      // eglfs_kms and others. Do not confuse with generic plane support (available_planes).
@@ -45,7 +45,7 @@ index f1faceed86..5e6ef1cba9 100644
      bool ok;
      int idx = qEnvironmentVariableIntValue("QT_QPA_EGLFS_KMS_PLANE_INDEX", &ok);
      if (ok) {
-@@ -479,8 +480,14 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
+@@ -488,8 +489,14 @@ QPlatformScreen *QKmsDevice::createScreenForConnector(drmModeResPtr resources,
          }
      }
  
@@ -59,9 +59,9 @@ index f1faceed86..5e6ef1cba9 100644
 +    }
 +    output.forced_plane_id = output.eglfs_plane->id;
  
-     m_crtc_allocator |= (1 << output.crtc_index);
- 
-@@ -1057,12 +1064,6 @@ void QKmsScreenConfig::loadConfig()
+ #if QT_CONFIG(drm_atomic)
+     if (hasAtomicSupport() && !output.eglfs_plane) {
+@@ -1081,12 +1088,6 @@ void QKmsScreenConfig::loadConfig()
  void QKmsOutput::restoreMode(QKmsDevice *device)
  {
      if (mode_set && saved_crtc) {
@@ -75,10 +75,10 @@ index f1faceed86..5e6ef1cba9 100644
      }
  }
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 1619509cda..7ae9d7afda 100644
+index 45a06f3d59..a89131ca24 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-@@ -102,7 +102,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
+@@ -98,7 +98,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
  
      gbm_surface *surface = gbm_surface_create(static_cast<QEglFSKmsGbmDevice *>(device())->gbmDevice(),
                                                1, 1,
@@ -88,7 +88,7 @@ index 1619509cda..7ae9d7afda 100644
  
      return reinterpret_cast<EGLNativeWindowType>(surface);
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 029879c0c6..0ff1cd1718 100644
+index ef28c80598..6cb300632f 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,16 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
@@ -113,7 +113,7 @@ index 029879c0c6..0ff1cd1718 100644
  
      if (ret) {
          qWarning("Failed to create KMS FB!");
-@@ -322,84 +322,25 @@ void QEglFSKmsGbmScreen::flip()
+@@ -321,83 +321,25 @@ void QEglFSKmsGbmScreen::flip()
      }
  
      FrameBuffer *fb = framebufferForBufferObject(m_gbm_bo_next);
@@ -128,16 +128,16 @@ index 029879c0c6..0ff1cd1718 100644
  
 -    if (device()->hasAtomicSupport()) {
 -#if QT_CONFIG(drm_atomic)
--        drmModeAtomicReq *request = device()->atomic_request();
+-        drmModeAtomicReq *request = device()->threadLocalAtomicRequest();
 -        if (request) {
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->framebufferPropertyId, fb->fb);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcPropertyId, op.crtc_id);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcwidthPropertyId,
--                                     output().size.width() << 16);
+-                                     op.size.width() << 16);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcXPropertyId, 0);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcYPropertyId, 0);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcheightPropertyId,
--                                     output().size.height() << 16);
+-                                     op.size.height() << 16);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcXPropertyId, 0);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcYPropertyId, 0);
 -            drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcwidthPropertyId,
@@ -175,7 +175,7 @@ index 029879c0c6..0ff1cd1718 100644
 -
 -            if (device()->hasAtomicSupport()) {
 -#if QT_CONFIG(drm_atomic)
--                drmModeAtomicReq *request = device()->atomic_request();
+-                drmModeAtomicReq *request = device()->threadLocalAtomicRequest();
 -                if (request) {
 -                    drmModeAtomicAddProperty(request, d.screen->output().eglfs_plane->id,
 -                                                      d.screen->output().eglfs_plane->framebufferPropertyId, fb->fb);
@@ -201,8 +201,7 @@ index 029879c0c6..0ff1cd1718 100644
      }
  
 -#if QT_CONFIG(drm_atomic)
--    if (device()->hasAtomicSupport())
--         device()->atomicCommit(this);
+-    device()->threadLocalAtomicCommit(this);
 -#endif
 +    flipFinished();
 +
