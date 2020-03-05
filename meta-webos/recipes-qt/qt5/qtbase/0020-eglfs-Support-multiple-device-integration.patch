@@ -1,4 +1,4 @@
-From e3acefaff50d3757645047ba416787ba9ae65090 Mon Sep 17 00:00:00 2001
+From 4518614636be721778be926b8ae71ff200b8ae93 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Wed, 27 Mar 2019 22:36:41 +0900
 Subject: [PATCH] eglfs: Support multiple device integration
@@ -565,7 +565,7 @@ index 71f232abf9..a64471be3f 100644
  protected:
      QKmsDevice *createDevice() override;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 3a2951efbd..029879c0c6 100644
+index 88b9485b0b..ef28c80598 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -43,6 +43,7 @@

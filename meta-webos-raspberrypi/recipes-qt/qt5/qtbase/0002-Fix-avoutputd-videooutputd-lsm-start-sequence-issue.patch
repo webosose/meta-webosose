@@ -1,4 +1,4 @@
-From 43089c0d2ddd18b2ea3723355a0832644ee789ce Mon Sep 17 00:00:00 2001
+From 36965f3f22e9d03b1de8e9ac8fb505c27610e90e Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 24 Apr 2019 10:58:19 +0000
 Subject: [PATCH] Fix avoutputd/videooutputd, lsm start sequence issue
@@ -33,10 +33,10 @@ Upstream-Status: Inappropriate [webOS specific]
  3 files changed, 12 insertions(+)
 
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-index 5e6ef1cba9..1f01578fea 100644
+index fa6c3d1fc0..f66b4d63f1 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
-@@ -871,6 +871,15 @@ void QKmsDevice::discoverPlanes()
+@@ -883,6 +883,15 @@ void QKmsDevice::discoverPlanes()
      drmModeFreePlaneResources(planeResources);
  }
  
@@ -53,10 +53,10 @@ index 5e6ef1cba9..1f01578fea 100644
  {
      return m_dri_fd;
 diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-index 95f745350c..2d24dd067b 100644
+index ec9257f7e8..bd4036f251 100644
 --- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
 +++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
-@@ -248,6 +248,7 @@ public:
+@@ -249,6 +249,7 @@ public:
      void createScreens();
  
      int fd() const;
@@ -65,7 +65,7 @@ index 95f745350c..2d24dd067b 100644
  
      QKmsScreenConfig *screenConfig() const;
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
-index b2a13504d5..a1241c1571 100644
+index 0e4a1a9bf1..f489689c4b 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
 @@ -76,6 +76,8 @@ void QEglFSKmsIntegration::platformInit()
