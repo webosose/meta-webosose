@@ -1,0 +1,248 @@
+From ffba7ae254ce5bbabd7e0cdf9f73201d0ea751fa Mon Sep 17 00:00:00 2001
+From: Gleb Manyagin <gleb.manyagin@lge.com>
+Date: Thu, 5 Mar 2020 11:14:30 +0300
+Subject: [PATCH] Revert "Fix various accumulator-saving problems"
+
+This reverts commit db3dd029d7cd911712102efd5ea71868494f9f6f.
+
+Change-Id: I7ba952221f25e86bde62477ccff66741cfaa3581
+Upstream-Status: Inappropriate [hotfix for crashes in QML JS stack]
+---
+ src/qml/jit/qv4assemblercommon_p.h   |  2 +-
+ src/qml/jit/qv4baselineassembler.cpp |  7 +------
+ src/qml/jit/qv4baselineassembler_p.h |  1 -
+ src/qml/jit/qv4baselinejit.cpp       | 16 +---------------
+ src/qml/jsruntime/qv4vme_moth.cpp    |  6 ++----
+ 5 files changed, 5 insertions(+), 27 deletions(-)
+
+diff --git a/src/qml/jit/qv4assemblercommon_p.h b/src/qml/jit/qv4assemblercommon_p.h
+index dcf39ab636..729d0fc53d 100644
+--- a/src/qml/jit/qv4assemblercommon_p.h
++++ b/src/qml/jit/qv4assemblercommon_p.h
+@@ -621,9 +621,9 @@ public:
+ 
+         loadPtr(exceptionHandlerAddress(), ScratchRegister);
+         Jump exitFunction = branchPtr(Equal, ScratchRegister, TrustedImmPtr(0));
+-        loadUndefined();
+         jump(ScratchRegister);
+         exitFunction.link(this);
++        loadUndefined();
+ 
+         if (functionExit.isSet())
+             jump(functionExit);
+diff --git a/src/qml/jit/qv4baselineassembler.cpp b/src/qml/jit/qv4baselineassembler.cpp
+index 73e396890e..b13f646360 100644
+--- a/src/qml/jit/qv4baselineassembler.cpp
++++ b/src/qml/jit/qv4baselineassembler.cpp
+@@ -1469,12 +1469,6 @@ void BaselineAssembler::saveAccumulatorInFrame()
+                                                         offsetof(CallData, accumulator)));
+ }
+ 
+-void BaselineAssembler::loadAccumulatorFromFrame()
+-{
+-    pasm()->loadAccumulator(PlatformAssembler::Address(PlatformAssembler::JSStackFrameRegister,
+-                                                       offsetof(CallData, accumulator)));
+-}
+-
+ static ReturnedValue TheJitIs__Tail_Calling__ToTheRuntimeSoTheJitFrameIsMissing(CppStackFrame *frame, ExecutionEngine *engine)
+ {
+     return Runtime::method_tailCall(frame, engine);
+@@ -1600,6 +1594,7 @@ void BaselineAssembler::deadTemporalZoneCheck(int offsetForSavedIP, int variable
+ {
+     auto valueIsAliveJump = pasm()->jumpNotEmpty();
+     storeInstructionPointer(offsetForSavedIP);
++    saveAccumulatorInFrame();
+     prepareCallWithArgCount(2);
+     passInt32AsArg(variableName, 1);
+     passEngineAsArg(0);
+diff --git a/src/qml/jit/qv4baselineassembler_p.h b/src/qml/jit/qv4baselineassembler_p.h
+index f5ae826c55..0aa508ae71 100644
+--- a/src/qml/jit/qv4baselineassembler_p.h
++++ b/src/qml/jit/qv4baselineassembler_p.h
+@@ -152,7 +152,6 @@ public:
+     void passInt32AsArg(int value, int arg);
+     void callRuntime(const char *functionName, const void *funcPtr, CallResultDestination dest);
+     void saveAccumulatorInFrame();
+-    void loadAccumulatorFromFrame();
+     void jsTailCall(int func, int thisObject, int argc, int argv);
+ 
+     // exception/context stuff
+diff --git a/src/qml/jit/qv4baselinejit.cpp b/src/qml/jit/qv4baselinejit.cpp
+index 51cd15099d..7bd51ba37e 100644
+--- a/src/qml/jit/qv4baselinejit.cpp
++++ b/src/qml/jit/qv4baselinejit.cpp
+@@ -75,7 +75,6 @@ void BaselineJIT::generate()
+ 
+ #define STORE_IP() as->storeInstructionPointer(nextInstructionOffset())
+ #define STORE_ACC() as->saveAccumulatorInFrame()
+-#define LOAD_ACC() as->loadAccumulatorFromFrame()
+ #define BASELINEJIT_GENERATE_RUNTIME_CALL(function, destination) \
+     as->GENERATE_RUNTIME_CALL(function, destination)
+ #define BASELINEJIT_GENERATE_TAIL_CALL(function) \
+@@ -234,7 +233,6 @@ void BaselineJIT::generate_StoreNameSloppy(int name)
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Runtime::method_storeNameSloppy, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_StoreNameStrict(int name)
+@@ -247,7 +245,6 @@ void BaselineJIT::generate_StoreNameStrict(int name)
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Runtime::method_storeNameStrict, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_LoadElement(int base)
+@@ -273,7 +270,6 @@ void BaselineJIT::generate_StoreElement(int base, int index)
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Runtime::method_storeElement, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_LoadProperty(int name)
+@@ -312,7 +308,6 @@ void BaselineJIT::generate_StoreProperty(int name, int base)
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Runtime::method_storeProperty, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_SetLookup(int index, int base)
+@@ -332,6 +327,7 @@ void BaselineJIT::generate_SetLookup(int index, int base)
+ void BaselineJIT::generate_LoadSuperProperty(int property)
+ {
+     STORE_IP();
++    STORE_ACC();
+     as->prepareCallWithArgCount(2);
+     as->passJSSlotAsArg(property, 1);
+     as->passEngineAsArg(0);
+@@ -349,7 +345,6 @@ void BaselineJIT::generate_StoreSuperProperty(int property)
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Runtime::method_storeSuperProperty, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_Yield()
+@@ -594,7 +589,6 @@ void BaselineJIT::generate_PushBlockContext(int index)
+     as->passInt32AsArg(index, 1);
+     as->passJSSlotAsArg(0, 0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Helpers::pushBlockContext, CallResultDestination::Ignore);
+-    as->loadAccumulatorFromFrame();
+ }
+ 
+ void BaselineJIT::generate_CloneBlockContext()
+@@ -603,7 +597,6 @@ void BaselineJIT::generate_CloneBlockContext()
+     as->prepareCallWithArgCount(1);
+     as->passJSSlotAsArg(CallData::Context, 0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Helpers::cloneBlockContext, CallResultDestination::Ignore);
+-    as->loadAccumulatorFromFrame();
+ }
+ 
+ void BaselineJIT::generate_PushScriptContext(int index)
+@@ -614,7 +607,6 @@ void BaselineJIT::generate_PushScriptContext(int index)
+     as->passEngineAsArg(1);
+     as->passJSSlotAsArg(0, 0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Helpers::pushScriptContext, CallResultDestination::Ignore);
+-    as->loadAccumulatorFromFrame();
+ }
+ 
+ void BaselineJIT::generate_PopScriptContext()
+@@ -624,7 +616,6 @@ void BaselineJIT::generate_PopScriptContext()
+     as->passEngineAsArg(1);
+     as->passJSSlotAsArg(0, 0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Helpers::popScriptContext, CallResultDestination::Ignore);
+-    as->loadAccumulatorFromFrame();
+ }
+ 
+ void BaselineJIT::generate_PopContext() { as->popContext(); }
+@@ -725,13 +716,11 @@ void BaselineJIT::generate_TypeofValue()
+ 
+ void BaselineJIT::generate_DeclareVar(int varName, int isDeletable)
+ {
+-    STORE_ACC();
+     as->prepareCallWithArgCount(3);
+     as->passInt32AsArg(varName, 2);
+     as->passInt32AsArg(isDeletable, 1);
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Runtime::method_declareVar, CallResultDestination::Ignore);
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_DefineArray(int argc, int args)
+@@ -789,13 +778,11 @@ void BaselineJIT::generate_CreateRestParameter(int argIndex)
+ 
+ void BaselineJIT::generate_ConvertThisToObject()
+ {
+-    STORE_ACC();
+     as->prepareCallWithArgCount(2);
+     as->passJSSlotAsArg(CallData::This, 1);
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Helpers::convertThisToObject, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_LoadSuperConstructor()
+@@ -922,7 +909,6 @@ void BaselineJIT::generate_ThrowOnNullOrUndefined()
+     as->passEngineAsArg(0);
+     BASELINEJIT_GENERATE_RUNTIME_CALL(Helpers::throwOnNullOrUndefined, CallResultDestination::Ignore);
+     as->checkException();
+-    LOAD_ACC();
+ }
+ 
+ void BaselineJIT::generate_GetTemplateObject(int index)
+diff --git a/src/qml/jsruntime/qv4vme_moth.cpp b/src/qml/jsruntime/qv4vme_moth.cpp
+index 47ad22f4f7..c69bb67061 100644
+--- a/src/qml/jsruntime/qv4vme_moth.cpp
++++ b/src/qml/jsruntime/qv4vme_moth.cpp
+@@ -640,6 +640,7 @@ QV4::ReturnedValue VME::interpret(CppStackFrame *frame, ExecutionEngine *engine,
+ 
+     MOTH_BEGIN_INSTR(LoadSuperProperty)
+         STORE_IP();
++        STORE_ACC();
+         acc = Runtime::method_loadSuperProperty(engine, STACK_VALUE(property));
+         CHECK_EXCEPTION;
+     MOTH_END_INSTR(LoadSuperProperty)
+@@ -786,14 +787,12 @@ QV4::ReturnedValue VME::interpret(CppStackFrame *frame, ExecutionEngine *engine,
+ 
+     MOTH_BEGIN_INSTR(Construct)
+         STORE_IP();
+-        STORE_ACC();
+         acc = Runtime::method_construct(engine, STACK_VALUE(func), ACC, stack + argv, argc);
+         CHECK_EXCEPTION;
+     MOTH_END_INSTR(Construct)
+ 
+     MOTH_BEGIN_INSTR(ConstructWithSpread)
+         STORE_IP();
+-        STORE_ACC();
+         acc = Runtime::method_constructWithSpread(engine, STACK_VALUE(func), ACC, stack + argv, argc);
+         CHECK_EXCEPTION;
+     MOTH_END_INSTR(ConstructWithSpread)
+@@ -821,6 +820,7 @@ QV4::ReturnedValue VME::interpret(CppStackFrame *frame, ExecutionEngine *engine,
+     MOTH_BEGIN_INSTR(DeadTemporalZoneCheck)
+         if (ACC.isEmpty()) {
+             STORE_IP();
++            STORE_ACC();
+             Runtime::method_throwReferenceError(engine, name);
+             goto handleUnwind;
+         }
+@@ -989,7 +989,6 @@ QV4::ReturnedValue VME::interpret(CppStackFrame *frame, ExecutionEngine *engine,
+             if (t->isNullOrUndefined()) {
+                 *t = engine->globalObject->asReturnedValue();
+             } else {
+-                STORE_ACC();
+                 *t = t->toObject(engine)->asReturnedValue();
+                 CHECK_EXCEPTION;
+             }
+@@ -1002,7 +1001,6 @@ QV4::ReturnedValue VME::interpret(CppStackFrame *frame, ExecutionEngine *engine,
+     MOTH_END_INSTR(LoadSuperConstructor)
+ 
+     MOTH_BEGIN_INSTR(ToObject)
+-        STORE_ACC();
+         acc = ACC.toObject(engine)->asReturnedValue();
+         CHECK_EXCEPTION;
+     MOTH_END_INSTR(ToObject)
