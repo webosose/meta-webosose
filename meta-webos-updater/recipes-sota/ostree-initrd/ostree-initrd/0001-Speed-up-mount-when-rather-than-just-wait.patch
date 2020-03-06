@@ -1,0 +1,41 @@
+From 7fe379dcc787b1bb2ddd00c3584dc0184f85ce6a Mon Sep 17 00:00:00 2001
+From: JeongBong Seo <jb.seo@lge.com>
+Date: Wed, 18 Mar 2020 10:41:22 +0900
+Subject: Speed-up mount when rather than just wait
+
+---
+ init.sh | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/init.sh b/init.sh
+index 4818a07..dd667d7 100644
+--- a/init.sh
++++ b/init.sh
+@@ -55,13 +55,17 @@ grep -q smackfs /proc/filesystems && {
+ mkdir -p /sysroot
+ ostree_sysroot=$(get_ostree_sysroot)
+ 
+-mount "$ostree_sysroot" /sysroot || {
+-	# The SD card in the R-Car M3 takes a bit of time to come up
+-	# Retry the mount if it fails the first time
+-	log_info "Mounting $ostree_sysroot failed, waiting 5s for the device to be available..."
+-	sleep 5
+-	mount "$ostree_sysroot" /sysroot || bail_out "Unable to mount $ostree_sysroot as physical sysroot"
+-}
++tryLimit=5
++echo "Try to mount /sysroot"
++while [ "$tryLimit" -gt 0 ]
++do
++	mount "$ostree_sysroot" /sysroot && break
++	echo "Failed to mount /sysroot, retry more $tryLimit times"
++	tryLimit=$(( $tryLimit - 1))
++	if [ "$tryLimit" -lt 3 ]; then
++		sleep 1
++	fi
++done
+ 
+ ostree-prepare-root /sysroot
+ 
+-- 
+2.17.1
+
