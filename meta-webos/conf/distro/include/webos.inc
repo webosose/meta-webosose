@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 require conf/distro/include/webos-component-head.inc
 require conf/distro/include/webos-preferred-providers.inc
@@ -339,14 +339,6 @@ MIRRORS =+ "\
 ftp://.*/.*      http://downloads.yoctoproject.org/mirror/sources/ \n \
 http://.*/.*     http://downloads.yoctoproject.org/mirror/sources/ \n \
 https://.*/.*    http://downloads.yoctoproject.org/mirror/sources/ \n"
-
-# The CONNECTIVITY_CHECK_URI's are used to test whether we can succesfully
-# fetch from the network (and warn you if not). To disable the test set
-# the variable to be empty.
-CONNECTIVITY_CHECK_URIS ?= " \
-    git://git.yoctoproject.org/yocto-firewall-test;protocol=git;rev=master \
-    https://eula-downloads.yoctoproject.org/index.php \
-    http://bugzilla.yoctoproject.org/report.cgi"
 
 SANITY_TESTED_DISTROS ?= " \
     ubuntu-14.04 \n \
