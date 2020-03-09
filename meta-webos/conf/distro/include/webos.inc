@@ -336,8 +336,6 @@ APPEND_append_qemuall = " console=ttyS0 net.ifnames=0 biosdevname=0"
 # APPEND_append_qemuall = " console=tty0"
 
 SANITY_TESTED_DISTROS ?= " \
-    ubuntu-14.04 \n \
-    ubuntu-16.04 \n \
     ubuntu-18.04 \n \
 "
 
