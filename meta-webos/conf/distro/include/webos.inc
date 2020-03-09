@@ -303,8 +303,6 @@ PACKAGE_ARCH_pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFI
 
 PATH_prepend = "${WEBOS_EXTRA_PATH}"
 
-DEPENDS_append_pn-cmake-native = " openssl-native libidn-native"
-
 EXTRAOPKGCONFIG = ""
 # with multilib libdir would became /usr/lib64 and we want opkg files in /usr/lib
 OPKGLIBDIR_forcevariable := "${exec_prefix}/lib"
