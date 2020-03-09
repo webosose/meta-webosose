@@ -335,11 +335,6 @@ APPEND_append_qemuall = " console=ttyS0 net.ifnames=0 biosdevname=0"
 #   mode of the display device
 # APPEND_append_qemuall = " console=tty0"
 
-MIRRORS =+ "\
-ftp://.*/.*      http://downloads.yoctoproject.org/mirror/sources/ \n \
-http://.*/.*     http://downloads.yoctoproject.org/mirror/sources/ \n \
-https://.*/.*    http://downloads.yoctoproject.org/mirror/sources/ \n"
-
 SANITY_TESTED_DISTROS ?= " \
     ubuntu-14.04 \n \
     ubuntu-16.04 \n \
