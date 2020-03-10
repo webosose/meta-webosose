@@ -1,4 +1,4 @@
-From d2e99e17b60c3ed7b7e1df164c46dff9fba5f20f Mon Sep 17 00:00:00 2001
+From 1219406e96eafb107bf169abb795c1ee473a0855 Mon Sep 17 00:00:00 2001
 From: guruprasadkn <guruprasad.kn@lge.com>
 Date: Wed, 15 Nov 2017 13:41:16 +0530
 Subject: [PATCH] Change scon to download open gram dictionary
@@ -7,11 +7,11 @@ Author:    guruprasadkn <guruprasad.kn@lge.com>
 
 Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
 ---
- SConstruct | 43 +++++++++++++++----------------------------
- 1 file changed, 15 insertions(+), 28 deletions(-)
+ SConstruct | 42 +++++++++++++++---------------------------
+ 1 file changed, 15 insertions(+), 27 deletions(-)
 
 diff --git a/SConstruct b/SConstruct
-index 412d0d4..19e319d 100644
+index 9cebc03..a04a206 100644
 --- a/SConstruct
 +++ b/SConstruct
 @@ -138,6 +138,11 @@ bins = [
@@ -26,15 +26,7 @@ index 412d0d4..19e319d 100644
  man1s = [
      'man/mmseg.1',
      'man/slmseg.1',
-@@ -227,7 +232,6 @@ def CreateEnvironment():
- def PassVariables(envvar, env):
-     for (x, y) in envvar:
-         if x in os.environ:
--            print 'Warning: you\'ve set %s in the environmental variable!' % x
-             env[y] = os.environ[x]
- 
- env = CreateEnvironment()
-@@ -448,39 +452,22 @@ else:
+@@ -448,39 +453,22 @@ else:
  
  
  def DoInstall():
@@ -84,6 +76,3 @@ index 412d0d4..19e319d 100644
  ])
  
  # -*- indent-tabs-mode: nil -*- vim:et:ts=4
--- 
-1.9.0
-

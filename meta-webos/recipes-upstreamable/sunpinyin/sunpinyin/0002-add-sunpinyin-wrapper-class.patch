@@ -1,4 +1,4 @@
-From 770c74f7f5ac4ec7f00d95726f420d09d3143834 Mon Sep 17 00:00:00 2001
+From c234187fb43fe41fcf4d7d8bdf8e0d83640ccae6 Mon Sep 17 00:00:00 2001
 From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
 Date: Wed, 6 Dec 2017 17:24:58 +0530
 Subject: [PATCH] add sunpinyin wrapper class
@@ -11,7 +11,7 @@ Author:    pugalendhi ganesan <pugalendhi.ganesan@lge.com>
 Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
 ---
  SConstruct          |   1 +
- src/sun_wrapper.cpp | 167 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/sun_wrapper.cpp | 167 ++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 168 insertions(+)
  mode change 100644 => 100755 SConstruct
  create mode 100755 src/sun_wrapper.cpp
@@ -19,7 +19,7 @@ Upstream-Status: Inappropriate [webos specific change, not intended to be upstre
 diff --git a/SConstruct b/SConstruct
 old mode 100644
 new mode 100755
-index 19e319d..48e0028
+index a04a206..9bee5bd
 --- a/SConstruct
 +++ b/SConstruct
 @@ -61,6 +61,7 @@ imesource = [
@@ -203,6 +203,3 @@ index 0000000..b463dcd
 +	pv->updateWindows(pv->clearIC());
 +    }
 +}
--- 
-1.9.0
-
