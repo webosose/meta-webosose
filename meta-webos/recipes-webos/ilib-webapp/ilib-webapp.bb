@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 SUMMARY = "iLib code and locale data"
 AUTHOR = "Goun Lee <goun.lee@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "libs/javascript"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
-WEBOS_VERSION = "14.4.0-5_439c6f48b9eba8f83df3020fd6588d047b5a8e10"
+WEBOS_VERSION = "14.4.0-6_7ddc75c65abb86e5148e4c00196d1fcba4043b0e"
 PR = "r6"
 
 inherit webos_arch_indep
