@@ -1,0 +1,119 @@
+From 50379996de1e30f9ba8e365b8f96397bb936d47a Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Tue, 21 Apr 2020 09:27:33 +0900
+Subject: [PATCH 1/2] Implementing the configuration options related to P2P
+
+---
+ gsupplicant/gsupplicant.h |  2 +-
+ gsupplicant/supplicant.c  |  9 ++++++++-
+ plugins/wifi.c            | 26 ++++++++++++++++++++++++--
+ 3 files changed, 33 insertions(+), 4 deletions(-)
+
+diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
+index a3e5d51..6cfb6d2 100644
+--- a/gsupplicant/gsupplicant.h
++++ b/gsupplicant/gsupplicant.h
+@@ -219,7 +219,7 @@ typedef void (*GSupplicantInterfaceCallback) (int result,
+ void g_supplicant_interface_cancel(GSupplicantInterface *interface);
+ 
+ int g_supplicant_interface_create(const char *ifname, const char *driver,
+-					const char *bridge,
++					const char *bridge, const char *config_file,
+ 					GSupplicantInterfaceCallback callback,
+ 							void *user_data);
+ int g_supplicant_interface_remove(GSupplicantInterface *interface,
+diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
+index a4d8257..9119cb0 100644
+--- a/gsupplicant/supplicant.c
++++ b/gsupplicant/supplicant.c
+@@ -278,6 +278,7 @@ struct interface_create_data {
+ 	char *ifname;
+ 	char *driver;
+ 	char *bridge;
++	const char *config_file;
+ 	GSupplicantInterface *interface;
+ 	GSupplicantInterfaceCallback callback;
+ 	void *user_data;
+@@ -4051,6 +4052,11 @@ static void interface_create_params(DBusMessageIter *iter, void *user_data)
+ 					DBUS_TYPE_STRING, &config_file);
+ 	}
+ 
++    if (data->config_file != NULL)
++            supplicant_dbus_dict_append_basic(&dict, "ConfigFile",
++                                    DBUS_TYPE_STRING, &data->config_file);
++
++
+ 	supplicant_dbus_dict_close(iter, &dict);
+ }
+ 
+@@ -4124,7 +4130,7 @@ static void interface_get_params(DBusMessageIter *iter, void *user_data)
+ }
+ 
+ int g_supplicant_interface_create(const char *ifname, const char *driver,
+-					const char *bridge,
++					const char *bridge, const char *config_file,
+ 					GSupplicantInterfaceCallback callback,
+ 							void *user_data)
+ {
+@@ -4146,6 +4152,7 @@ int g_supplicant_interface_create(const char *ifname, const char *driver,
+ 	data->ifname = g_strdup(ifname);
+ 	data->driver = g_strdup(driver);
+ 	data->bridge = g_strdup(bridge);
++	data->config_file = g_strdup(config_file);
+ 	data->callback = callback;
+ 	data->user_data = user_data;
+ 
+diff --git a/plugins/wifi.c b/plugins/wifi.c
+index c41356d..ded7ef6 100644
+--- a/plugins/wifi.c
++++ b/plugins/wifi.c
+@@ -1536,6 +1536,27 @@ static void interface_create_callback(int result,
+ 	}
+ }
+ 
++static const char* load_wpas_config_file_path()
++{
++       GKeyFile *keyfile;
++       gchar *identifier;
++       const char *wpas_config_file = NULL;
++
++       keyfile = __connman_storage_load_global();
++       if(keyfile == NULL)
++               return NULL;
++
++       identifier = g_strdup_printf("%s", "WiFi");
++       if (identifier == NULL)
++               return NULL;
++
++       wpas_config_file = g_key_file_get_string(keyfile, identifier, "WpaSupplicantConfigFile", NULL);
++
++       g_key_file_free(keyfile);
++
++       return wpas_config_file;
++}
++
+ static int wifi_enable(struct connman_device *device)
+ {
+ 	struct wifi_data *wifi = connman_device_get_data(device);
+@@ -1554,7 +1575,8 @@ static int wifi_enable(struct connman_device *device)
+ 		return -EINPROGRESS;
+ 
+ 	interface = connman_inet_ifname(index);
+-	ret = g_supplicant_interface_create(interface, driver, NULL,
++	const char *wpas_config_file = load_wpas_config_file_path();
++	ret = g_supplicant_interface_create(interface, driver, NULL, wpas_config_file,
+ 						interface_create_callback,
+ 							wifi);
+ 	g_free(interface);
+@@ -3675,7 +3697,7 @@ static void sta_remove_callback(int result,
+ 
+ 	info->wifi->interface = NULL;
+ 
+-	g_supplicant_interface_create(info->ifname, driver, info->wifi->bridge,
++	g_supplicant_interface_create(info->ifname, driver, info->wifi->bridge, NULL,
+ 						ap_create_callback,
+ 							info);
+ }
+-- 
+2.17.1
+

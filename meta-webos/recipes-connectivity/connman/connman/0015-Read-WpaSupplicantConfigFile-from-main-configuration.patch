@@ -1,0 +1,140 @@
+From b7ed5587cdd7bbe2600402b930a2524c799a02b3 Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Tue, 4 Aug 2020 09:42:25 +0900
+Subject: [PATCH] Read WpaSupplicantConfigFile from main configuration
+
+---
+ include/setting.h |  1 +
+ plugins/wifi.c    | 23 +----------------------
+ src/main.c        | 20 ++++++++++++++++++++
+ 3 files changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/include/setting.h b/include/setting.h
+index a8820217..3c87e77d 100644
+--- a/include/setting.h
++++ b/include/setting.h
+@@ -29,6 +29,7 @@ extern "C" {
+ #endif
+ 
+ bool connman_setting_get_bool(const char *key);
++char *connman_setting_get_string(const char *key);
+ char **connman_setting_get_string_list(const char *key);
+ unsigned int *connman_setting_get_uint_list(const char *key);
+ 
+diff --git a/plugins/wifi.c b/plugins/wifi.c
+index e6544c69..4a8ec19f 100644
+--- a/plugins/wifi.c
++++ b/plugins/wifi.c
+@@ -1539,27 +1539,6 @@ static void interface_create_callback(int result,
+ 	}
+ }
+ 
+-static const char* load_wpas_config_file_path()
+-{
+-       GKeyFile *keyfile;
+-       gchar *identifier;
+-       const char *wpas_config_file = NULL;
+-
+-       keyfile = __connman_storage_load_global();
+-       if(keyfile == NULL)
+-               return NULL;
+-
+-       identifier = g_strdup_printf("%s", "WiFi");
+-       if (identifier == NULL)
+-               return NULL;
+-
+-       wpas_config_file = g_key_file_get_string(keyfile, identifier, "WpaSupplicantConfigFile", NULL);
+-
+-       g_key_file_free(keyfile);
+-
+-       return wpas_config_file;
+-}
+-
+ static int wifi_enable(struct connman_device *device)
+ {
+ 	struct wifi_data *wifi = connman_device_get_data(device);
+@@ -1578,7 +1557,7 @@ static int wifi_enable(struct connman_device *device)
+ 		return -EINPROGRESS;
+ 
+ 	interface = connman_inet_ifname(index);
+-	const char *wpas_config_file = load_wpas_config_file_path();
++	const char *wpas_config_file = connman_setting_get_string("WpaSupplicantConfigFile");
+ 	ret = g_supplicant_interface_create(interface, driver, NULL, wpas_config_file,
+ 						interface_create_callback,
+ 							wifi);
+diff --git a/src/main.c b/src/main.c
+index 2371771f..c579fa18 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -83,6 +83,7 @@ static struct {
+ 	bool allow_hostname_updates;
+ 	bool allow_domainname_updates;
+ 	bool single_tech;
++	char *wpas_config_file;
+ 	char **tethering_technologies;
+ 	bool persistent_tethering_mode;
+ 	bool enable_6to4;
+@@ -105,6 +106,7 @@ static struct {
+ 	.allow_hostname_updates = true,
+ 	.allow_domainname_updates = true,
+ 	.single_tech = false,
++	.wpas_config_file = NULL,
+ 	.tethering_technologies = NULL,
+ 	.persistent_tethering_mode = false,
+ 	.enable_6to4 = false,
+@@ -128,6 +130,7 @@ static struct {
+ #define CONF_ALLOW_HOSTNAME_UPDATES     "AllowHostnameUpdates"
+ #define CONF_ALLOW_DOMAINNAME_UPDATES   "AllowDomainnameUpdates"
+ #define CONF_SINGLE_TECH                "SingleConnectedTechnology"
++#define CONF_WPA_SUPPLICANT_CONF_FILE   "WpaSupplicantConfigFile"
+ #define CONF_TETHERING_TECHNOLOGIES      "TetheringTechnologies"
+ #define CONF_PERSISTENT_TETHERING_MODE  "PersistentTetheringMode"
+ #define CONF_ENABLE_6TO4                "Enable6to4"
+@@ -150,6 +153,7 @@ static const char *supported_options[] = {
+ 	CONF_ALLOW_HOSTNAME_UPDATES,
+ 	CONF_ALLOW_DOMAINNAME_UPDATES,
+ 	CONF_SINGLE_TECH,
++	CONF_WPA_SUPPLICANT_CONF_FILE,
+ 	CONF_TETHERING_TECHNOLOGIES,
+ 	CONF_PERSISTENT_TETHERING_MODE,
+ 	CONF_ENABLE_6TO4,
+@@ -279,6 +283,7 @@ static void parse_config(GKeyFile *config)
+ 	char **timeservers;
+ 	char **interfaces;
+ 	char **str_list;
++	char *wpas_config_file;
+ 	char **tethering;
+         char *vendor_class_id;
+ 	gsize len;
+@@ -417,6 +422,13 @@ static void parse_config(GKeyFile *config)
+ 
+ 	g_clear_error(&error);
+ 
++	wpas_config_file = g_key_file_get_string(config, "General",
++											CONF_WPA_SUPPLICANT_CONF_FILE, &error);
++	if (error == NULL)
++		connman_settings.wpas_config_file = wpas_config_file;
++
++	g_clear_error(&error);
++
+ 	tethering = __connman_config_get_string_list(config, "General",
+ 			CONF_TETHERING_TECHNOLOGIES, &len, &error);
+ 
+@@ -698,6 +710,14 @@ bool connman_setting_get_bool(const char *key)
+ 	return false;
+ }
+ 
++char *connman_setting_get_string(const char *key)
++{
++	if (g_str_equal(key, CONF_WPA_SUPPLICANT_CONF_FILE) == TRUE)
++		return connman_settings.wpas_config_file;
++
++	return NULL;
++}
++
+ char **connman_setting_get_string_list(const char *key)
+ {
+ 	if (g_str_equal(key, CONF_PREF_TIMESERVERS))
+-- 
+2.17.1
+

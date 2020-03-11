@@ -1,8 +1,8 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO_append = "webos3"
 
 SRC_URI += " \
     file://connman.service \
