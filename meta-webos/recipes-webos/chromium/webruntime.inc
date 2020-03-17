@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r26"
+INC_PR = "r27"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -266,6 +266,12 @@ install_ls2_roles() {
     install -d ${D}${webos_sysbus_prvrolesdir}
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.json ${D}${webos_sysbus_pubrolesdir}/$1.json
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.json ${D}${webos_sysbus_prvrolesdir}/$1.json
+
+    #sysbus files *.container.json
+    if [ -f ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.container.json ]; then
+        install -d ${D}${webos_sysbus_containersdir}
+        install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.container.json ${D}${webos_sysbus_containersdir}/$1.container.json
+    fi
 }
 
 install_chromium_browser() {
@@ -439,6 +445,7 @@ WEBOS_SYSTEM_BUS_DIRS_LEGACY_APP_SHELL_RUNTIME = " \
     ${webos_sysbus_pubservicesdir}/${APP_SHELL_RUNTIME}.service \
     ${webos_sysbus_prvrolesdir}/${APP_SHELL_RUNTIME}.json \
     ${webos_sysbus_pubrolesdir}/${APP_SHELL_RUNTIME}.json \
+    ${webos_sysbus_containersdir}/${APP_SHELL_RUNTIME}.container.json \
 "
 
 WEBOS_SYSTEM_BUS_DIRS_ACG_APP_SHELL_RUNTIME = " \
