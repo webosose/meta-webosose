@@ -1,5 +1,4 @@
-#
-# Copyright (c) 2014-2019 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 #
 # Things that must be added when using the internal OE toolchain, i.e., when
 # TCMODE is "default".
@@ -19,3 +18,5 @@ PACKAGE_ARCH_pn-linux-libc-headers = "${TUNE_PKGARCH}"
 PACKAGE_ARCH_pn-libgcc-initial = "${TUNE_PKGARCH}"
 
 LIBC_DEPENDENCIES_remove = "libsegfault"
+
+BINUVERSION_sa8155 = ""
