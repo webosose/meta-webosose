@@ -1,4 +1,4 @@
-From 06790796827884481514180d7556db7bf0343765 Mon Sep 17 00:00:00 2001
+From e1b30b886566e0fdca44c132e854f04dd69b766b Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Mon, 14 Oct 2019 18:58:04 +0900
 Subject: [PATCH] eglfs: Associate keyboard, touch device with window
