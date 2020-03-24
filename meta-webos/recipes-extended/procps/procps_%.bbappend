@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2019 LG Electronics, Inc.
+# Copyright (c) 2015-2020 LG Electronics, Inc.
 
 AUTHOR  = "Viesturs Zarins <viesturs.zarins@lge.com>"
 EXTENDPRAUTO_append = "webos1"
@@ -31,7 +31,7 @@ do_install_append_hardware() {
     sed -i 's/^.*net.ipv4.icmp_ignore_bogus_error_responses.*/net.ipv4.icmp_ignore_bogus_error_responses = 1/g' ${D}${sysconfdir}/sysctl.conf
 
     # For proper network operation during syn flood attacks
-    # TODO Re-enable this option if wearable or TV kernel gets compiled with CONFIG_SYN_COOKIES
+    # TODO Re-enable this option if webos devices or kernel gets compiled with CONFIG_SYN_COOKIES
     #sed -i 's/^.*net.ipv4.tcp_syncookies.*/net.ipv4.tcp_syncookies = 1/g' ${D}${sysconfdir}/sysctl.conf
 
     # Enable reverse path source validation

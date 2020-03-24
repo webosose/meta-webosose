@@ -1,4 +1,4 @@
-From b8ba5352588b586c3f0a6579e70400a23181a93d Mon Sep 17 00:00:00 2001
+From c9da8f0c0fc91389ff832c54ca8f77296a8468cc Mon Sep 17 00:00:00 2001
 From: Lokesh Kumar Goel <lokeshkumar.goel@lge.com>
 Date: Mon, 28 Aug 2017 14:01:48 -0700
 Subject: [PATCH] implement function chroot in process module
@@ -35,8 +35,8 @@ Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
  deps/v8/src/d8.h        |  1 +
  src/node.cc             |  1 +
  src/node_internals.h    |  1 +
- src/node_process.cc     | 12 ++++++++++++
- 7 files changed, 50 insertions(+)
+ src/node_process.cc     | 14 +++++++++++++-
+ 7 files changed, 51 insertions(+), 1 deletion(-)
 
 diff --git a/deps/uv/include/uv.h b/deps/uv/include/uv.h
 index 9794d99..1028363 100644
@@ -150,10 +150,10 @@ index a891b1b..778205e 100644
  void Cwd(const v8::FunctionCallbackInfo<v8::Value>& args);
  void Hrtime(const v8::FunctionCallbackInfo<v8::Value>& args);
 diff --git a/src/node_process.cc b/src/node_process.cc
-index f953f5f..80afa84 100644
+index f953f5f..6355148 100644
 --- a/src/node_process.cc
 +++ b/src/node_process.cc
-@@ -64,6 +64,18 @@ void Chdir(const FunctionCallbackInfo<Value>& args) {
+@@ -64,9 +64,21 @@ void Chdir(const FunctionCallbackInfo<Value>& args) {
      return env->ThrowUVException(err, "uv_chdir");
  }
  
@@ -171,4 +171,11 @@ index f953f5f..80afa84 100644
 +
  // CPUUsage use libuv's uv_getrusage() this-process resource usage accessor,
  // to access ru_utime (user CPU time used) and ru_stime (system CPU time used),
- // which are uv_timeval_t structs (long tv_sec, long tv_usec).
+-// which are uv_timeval_t structs (long tv_sec, long tv_usec).
++// which are uv_timeval_t structs
+ // Returns those values as Float64 microseconds in the elements of the array
+ // passed to the function.
+ void CPUUsage(const FunctionCallbackInfo<Value>& args) {
+-- 
+2.17.1
+

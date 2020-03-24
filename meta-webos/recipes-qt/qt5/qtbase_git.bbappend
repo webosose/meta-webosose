@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos72"
+EXTENDPRAUTO_append = "webos73"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -89,7 +89,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.15 based on 5.12.meta-qt5-shared.9
+# Patches from 5.12.meta-webos.16 based on 5.12.meta-qt5-shared.9
 SRC_URI_append = " \
     file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
     file://0002-Decrease-the-size-of-QFontCache.patch \
