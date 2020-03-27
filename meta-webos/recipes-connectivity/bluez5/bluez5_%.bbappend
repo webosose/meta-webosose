@@ -21,7 +21,6 @@ SRC_URI += " \
     file://0009-Added-dbus-signal-for-MediaPlayRequest.patch \
     file://0010-avrcp-getting-remote-device-features-list.patch \
     file://0011-Fix-add-service-failure.patch \
-    file://0012-Fix-device-discovery-for-broadcast-role.patch \
     file://0014-Fix-volume-property-not-able-to-set.patch \
     file://0015-Fix-volume-level-notification-not-appearing-after-127.patch \
     file://0016-Support-enabling-avdtp-delayReport.patch \
