@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 #
 # Variables invented by webOS for standard locations
@@ -134,7 +134,7 @@ webos_db8mediadir = "${webos_persistentstoragedir}/db8/mediadb"
 
 
 # Enhanced ACG - IPK verifier keys
-webos_eacg_certificates = "${sysconfdir}/eacgcertificates"
+webos_eacg_certificates = "${sysconfdir}/ssl/certs/ca-certificates/pkg"
 
 # On devices that support it, this tree is externally mountable as (USB) mass
 # storage. Applications that want their data to be visible in this manner should
