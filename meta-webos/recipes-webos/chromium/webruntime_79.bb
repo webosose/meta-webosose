@@ -6,15 +6,15 @@ PROVIDES = "virtual/webruntime"
 
 PR = "${INC_PR}.1"
 
-WEBOS_VERSION = "79.0.3945.79-23_bf8a39e38b406d78f7695ab73d7a1c4c674733ed"
+WEBOS_VERSION = "79.0.3945.79-24_75658792a62beb66d819a1744e21bf93ffea8ba6"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium79"
 
 WEBOS_REPO_NAME = "chromium79"
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 
-WEBOS_VERSION_V8 = "7.9.317.31-chromium79.4_10ebaf4a53cc187953a90a50f90bbbed85e859ff"
-SRCREV_v8 = "9d74e94dcf33ad1b4c70d16ab499f844e0893f60"
+WEBOS_VERSION_V8 = "7.9.317.31-chromium79.5_f187e079dfbaadb3d2a573bac25a4f4d09d21a93"
+SRCREV_v8 = "e876fd0e28bd3bda5815394874183b7e6079d440"
 
 # Since _remove is always applied LAST, we cannot implement
 # GN_ARGS_remove = "ozone_platform_wayland_external=true" here
