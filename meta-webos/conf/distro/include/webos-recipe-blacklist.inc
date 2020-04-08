@@ -46,14 +46,6 @@ PNBLACKLIST[netkit-rusers] ?= "BROKEN: fails to build rup.c:57:45: error: unknow
 PNBLACKLIST[android-tools] ?= "Fails to build with thumb enabled http://caprica.lgsvl.com:8080/Errors/Details/1532133"
 PNBLACKLIST[paho-mqtt-c] ?= "Sometimes fails with cannot create build/VersionInfo.h: Directory nonexistent http://caprica.lgsvl.com:8080/Errors/Details/1530992"
 
-# Caused by openssl10
-PNBLACKLIST[openssl10] ?= "conflicts with openssl when both versions are pulled into the same RSS"
-PNBLACKLIST[openssl10-native] ?= "conflicts with openssl when both versions are pulled into the same RSS"
-PNBLACKLIST[nativesdk-openssl10] ?= "conflicts with openssl when both versions are pulled into the same RSS"
-PNBLACKLIST[android-tools] ?= "depends on blacklisted openssl10 - fixed in Yocto 2.7 Warrior with meta-oe commit 335bb5297def5804fee657eaa3c386eba984be91"
-PNBLACKLIST[oscam] ?= "depends on blacklisted openssl10 - fixed in Yocto 2.7 Warrior with meta-oe commit ace62392d15b0e500f9af1774ffcfc752d441a98"
-PNBLACKLIST[packagegroup-meta-multimedia] ?= "rdepends on blacklisted oscam"
-
 PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted ndctl, android-tools, .."
 
 # ERROR: QA Issue: ELF binary 'TOPDIR/BUILD/work/qemux86-webos-linux/x264/r2854+gitAUTOINC+e9a5903edf-r0/packages-split/x264/usr/lib/libx264.so.152' has relocations in .text [textrel] http://caprica.lgsvl.com:8080/Errors/Details/1509766
