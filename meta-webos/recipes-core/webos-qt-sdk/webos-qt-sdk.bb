@@ -1,8 +1,8 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS SDK Toolchain including qt host tools"
 
-PR = "r0"
+PR = "r1"
 
 TOOLCHAIN_HOST_TASK = "nativesdk-packagegroup-sdk-host"
 TOOLCHAIN_HOST_TASK += "nativesdk-packagegroup-qt5-toolchain-host"
@@ -31,5 +31,9 @@ inherit webos_image
 
 inherit webos_machine_impl_dep
 inherit webos_machine_dep
+
+IMAGE_FSTYPES = ""
+IMAGE_FSTYPES_qemux86 = ""
+IMAGE_FSTYPES_qemux86-64 = ""
 
 SDK_NAME = "${BPN}-${DISTRO}-${SDK_ARCH}-${WEBOS_DISTRO_BUILD_CODENAME}-${MACHINE_ARCH}"
