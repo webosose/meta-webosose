@@ -1,13 +1,13 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos23"
+EXTENDPRAUTO_append = "webos22"
 
 inherit update-alternatives
 ALTERNATIVE_${PN}-conf = "openssl-cnf2"
 ALTERNATIVE_LINK_NAME[openssl-cnf2] = "${sysconfdir}/ssl/openssl.cnf"
 ALTERNATIVE_PRIORITY[openssl-cnf2] ?= "1"
 
-do_install_append () {
+do_install_append_class-target() {
     mv ${D}${sysconfdir}/ssl/openssl.cnf ${D}${sysconfdir}/ssl/openssl.cnf.${BPN}
 }
 
