@@ -1,4 +1,4 @@
-From 038fc48dfa0180ab09e43fbd7701566221d4e718 Mon Sep 17 00:00:00 2001
+From c498d0872ab84e5b0d05298c199f35e04cbf15bc Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Wed, 20 May 2015 14:05:45 +0300
 Subject: [PATCH] Fix HarfBuzz-NG regression

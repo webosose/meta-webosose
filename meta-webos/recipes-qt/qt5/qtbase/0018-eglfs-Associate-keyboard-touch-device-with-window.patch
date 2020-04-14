@@ -1,4 +1,4 @@
-From 823cef610a7ac24e45d08eb5eb690bdf63a99bc5 Mon Sep 17 00:00:00 2001
+From 52388821ff07d6243034f76a99a30bc3fe00d625 Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Mon, 14 Oct 2019 18:58:04 +0900
 Subject: [PATCH] eglfs: Associate keyboard, touch device with window
@@ -622,10 +622,10 @@ index 326e438a7c..35e8998b9a 100644
  
  QT_END_NAMESPACE
 diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
-index f3cc160b3e..4baa4b31e9 100644
+index 70271c7fd6..55ee59951c 100644
 --- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
 +++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
-@@ -192,7 +192,7 @@ static inline bool testBit(long bit, const long *array)
+@@ -195,7 +195,7 @@ static inline bool testBit(long bit, const long *array)
  #endif
  
  QEvdevTouchScreenHandler::QEvdevTouchScreenHandler(const QString &device, const QString &spec, QObject *parent)
@@ -634,7 +634,7 @@ index f3cc160b3e..4baa4b31e9 100644
  #if QT_CONFIG(mtdev)
        , m_mtdev(nullptr)
  #endif
-@@ -376,6 +376,11 @@ QTouchDevice *QEvdevTouchScreenHandler::touchDevice() const
+@@ -379,6 +379,11 @@ QTouchDevice *QEvdevTouchScreenHandler::touchDevice() const
      return m_device;
  }
  
@@ -646,7 +646,7 @@ index f3cc160b3e..4baa4b31e9 100644
  void QEvdevTouchScreenHandler::readData()
  {
      ::input_event buffer[32];
-@@ -745,7 +750,14 @@ QRect QEvdevTouchScreenData::screenGeometry() const
+@@ -752,7 +757,14 @@ QRect QEvdevTouchScreenData::screenGeometry() const
  
  void QEvdevTouchScreenData::reportPoints()
  {
@@ -662,7 +662,7 @@ index f3cc160b3e..4baa4b31e9 100644
      if (winRect.isNull())
          return;
  
-@@ -781,7 +793,7 @@ void QEvdevTouchScreenData::reportPoints()
+@@ -788,7 +800,7 @@ void QEvdevTouchScreenData::reportPoints()
      if (m_filtered)
          emit q->touchPointsUpdated();
      else
@@ -671,7 +671,7 @@ index f3cc160b3e..4baa4b31e9 100644
  }
  
  QEvdevTouchScreenHandlerThread::QEvdevTouchScreenHandlerThread(const QString &device, const QString &spec, QObject *parent)
-@@ -789,6 +801,7 @@ QEvdevTouchScreenHandlerThread::QEvdevTouchScreenHandlerThread(const QString &de
+@@ -796,6 +808,7 @@ QEvdevTouchScreenHandlerThread::QEvdevTouchScreenHandlerThread(const QString &de
      , m_touchUpdatePending(false)
      , m_filterWindow(nullptr)
      , m_touchRate(-1)
@@ -679,7 +679,7 @@ index f3cc160b3e..4baa4b31e9 100644
  {
      start();
  }
-@@ -801,7 +814,7 @@ QEvdevTouchScreenHandlerThread::~QEvdevTouchScreenHandlerThread()
+@@ -808,7 +821,7 @@ QEvdevTouchScreenHandlerThread::~QEvdevTouchScreenHandlerThread()
  
  void QEvdevTouchScreenHandlerThread::run()
  {
@@ -688,7 +688,7 @@ index f3cc160b3e..4baa4b31e9 100644
  
      if (m_handler->isFiltered())
          connect(m_handler, &QEvdevTouchScreenHandler::touchPointsUpdated, this, &QEvdevTouchScreenHandlerThread::scheduleTouchPointUpdate);
-@@ -853,7 +866,14 @@ bool QEvdevTouchScreenHandlerThread::eventFilter(QObject *object, QEvent *event)
+@@ -860,7 +873,14 @@ bool QEvdevTouchScreenHandlerThread::eventFilter(QObject *object, QEvent *event)
  
  void QEvdevTouchScreenHandlerThread::filterAndSendTouchPoints()
  {
@@ -704,7 +704,7 @@ index f3cc160b3e..4baa4b31e9 100644
      if (winRect.isNull())
          return;
  
-@@ -953,10 +973,17 @@ void QEvdevTouchScreenHandlerThread::filterAndSendTouchPoints()
+@@ -960,10 +980,17 @@ void QEvdevTouchScreenHandlerThread::filterAndSendTouchPoints()
  
      m_filteredPoints = filteredPoints;
  
@@ -895,10 +895,10 @@ index e524c516f1..f49c2180af 100644
  
  QT_END_NAMESPACE
 diff --git a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-index 8e71a491c1..a0d3650037 100644
+index 5a5f628b07..da3bfb7992 100644
 --- a/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
 +++ b/src/plugins/platforms/eglfs/api/qeglfsdeviceintegration.cpp
-@@ -406,4 +406,16 @@ EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfa
+@@ -412,4 +412,16 @@ EGLConfig QEglFSDeviceIntegration::chooseConfig(EGLDisplay display, const QSurfa
      return chooser.chooseConfig();
  }
  

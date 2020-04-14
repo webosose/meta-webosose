@@ -1,4 +1,4 @@
-From 50598d228839490bb5fadc24e6be643de04d02dc Mon Sep 17 00:00:00 2001
+From 7d08761101c93b26b1baec1dba48e7f609d8556c Mon Sep 17 00:00:00 2001
 From: JeongBong Seo <jb.seo@lge.com>
 Date: Thu, 30 Apr 2015 15:04:57 +0900
 Subject: [PATCH] Add the 'accessiblebridge' as a plugintype of gui module

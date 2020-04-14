@@ -1,4 +1,4 @@
-From 35e01a38c753f1da3d2157535c8506b91648e8d6 Mon Sep 17 00:00:00 2001
+From ff91498397d1d2b7ceb452f01c9be86d86367a4c Mon Sep 17 00:00:00 2001
 From: Kyu Man Lim <kyuman.lim@lge.com>
 Date: Fri, 10 Feb 2017 10:21:33 +0900
 Subject: [PATCH] Disable Faux bolding in Qts FreeType FontEngine
