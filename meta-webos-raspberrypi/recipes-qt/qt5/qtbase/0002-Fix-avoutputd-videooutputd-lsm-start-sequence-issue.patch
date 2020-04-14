@@ -1,4 +1,4 @@
-From 36965f3f22e9d03b1de8e9ac8fb505c27610e90e Mon Sep 17 00:00:00 2001
+From 6e9d4b952a01293c7efdbc40434c544830f02532 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 24 Apr 2019 10:58:19 +0000
 Subject: [PATCH] Fix avoutputd/videooutputd, lsm start sequence issue

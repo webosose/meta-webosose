@@ -1,4 +1,4 @@
-From 4470a3bd7d047a789938f01b7cfdf2ecfc55aec5 Mon Sep 17 00:00:00 2001
+From a34d79801240ca1cd452a593d4ba487e266f65e3 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 1 Apr 2020 09:25:36 +0900
 Subject: [PATCH] Update eglfs_kms to render on topmost drmplane
@@ -75,10 +75,10 @@ index 7880cb21b5..fa6c3d1fc0 100644
      }
  }
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-index 45a06f3d59..a89131ca24 100644
+index 402aa2e3bf..2a33a9963d 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
-@@ -98,7 +98,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
+@@ -96,7 +96,7 @@ EGLNativeWindowType QEglFSKmsGbmIntegration::createNativeOffscreenWindow(const Q
  
      gbm_surface *surface = gbm_surface_create(static_cast<QEglFSKmsGbmDevice *>(device())->gbmDevice(),
                                                1, 1,
@@ -88,7 +88,7 @@ index 45a06f3d59..a89131ca24 100644
  
      return reinterpret_cast<EGLNativeWindowType>(surface);
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index ef28c80598..6cb300632f 100644
+index ef391a6018..d64d1c8140 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,16 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(
@@ -113,7 +113,7 @@ index ef28c80598..6cb300632f 100644
  
      if (ret) {
          qWarning("Failed to create KMS FB!");
-@@ -321,83 +321,25 @@ void QEglFSKmsGbmScreen::flip()
+@@ -318,83 +318,25 @@ void QEglFSKmsGbmScreen::flip()
      }
  
      FrameBuffer *fb = framebufferForBufferObject(m_gbm_bo_next);
@@ -207,4 +207,4 @@ index ef28c80598..6cb300632f 100644
 +
  }
  
- void QEglFSKmsGbmScreen::pageFlipHandler(int fd, unsigned int sequence, unsigned int tv_sec, unsigned int tv_usec, void *user_data)
+ void QEglFSKmsGbmScreen::flipFinished()

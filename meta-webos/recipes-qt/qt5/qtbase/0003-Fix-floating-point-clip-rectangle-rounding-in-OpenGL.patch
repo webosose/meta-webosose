@@ -1,4 +1,4 @@
-From a4183a2617bdb863cc461702de2772ff29df126e Mon Sep 17 00:00:00 2001
+From ca81b35683bb4f5d0381edcd5bbaea9a11d925d8 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Thu, 12 Dec 2013 21:48:35 +0200
 Subject: [PATCH] Fix floating point clip rectangle rounding in OpenGL paint

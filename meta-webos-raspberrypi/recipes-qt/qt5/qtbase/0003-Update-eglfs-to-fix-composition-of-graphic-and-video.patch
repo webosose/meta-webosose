@@ -1,4 +1,4 @@
-From 8109b1d7d81624f7df5073aa1c6a0b0618c56a41 Mon Sep 17 00:00:00 2001
+From 867786c0da0636b8a762111cf441ce9237a362a9 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 1 Apr 2020 09:30:28 +0900
 Subject: [PATCH] Update eglfs to fix composition of graphic and video plane in
@@ -72,7 +72,7 @@ index f66b4d63f1..3e6f14e961 100644
  #if QT_CONFIG(drm_atomic)
      if (hasAtomicSupport() && !output.eglfs_plane) {
 diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
-index 6cb300632f..cad2031470 100644
+index d64d1c8140..83dd6ccec4 100644
 --- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 +++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
 @@ -91,16 +91,15 @@ QEglFSKmsGbmScreen::FrameBuffer *QEglFSKmsGbmScreen::framebufferForBufferObject(

@@ -1,4 +1,4 @@
-From 1be9a4abf247f4933b963c960ef9c130939af76d Mon Sep 17 00:00:00 2001
+From f7ca1532aee3c1ca865b97cf99344529e514e039 Mon Sep 17 00:00:00 2001
 From: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
 Date: Tue, 2 Apr 2019 10:31:52 +0200
 Subject: [PATCH] Allow word break wrapping in Korean text
