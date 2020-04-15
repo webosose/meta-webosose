@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2019 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS Bluetooth SIL API"
 AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0"
 
-WEBOS_VERSION = "1.0.0-6_110e9d6b2caf59b04ab6567b244686e1378c1ce3"
+WEBOS_VERSION = "1.0.0-7_697a4cb8a5f58f4a6c0456f5b536310e0ec552d3"
 PR = "r1"
 
 inherit webos_component
