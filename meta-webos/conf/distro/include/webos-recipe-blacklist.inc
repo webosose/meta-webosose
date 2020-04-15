@@ -214,3 +214,6 @@ PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold',
 # meta-virtualization/recipes-extended/xen/xen-python2.bb
 PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
 PNBLACKLIST[mosquitto] ?= "Depends on blacklisted dlt-daemon"
+
+# meta-openembedded/meta-oe/recipes-multimedia/pipewire/pipewire_git.bb
+PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson.build:234:2: ERROR: Invalid version of dependency, need 'libpulse' ['>= 11.1'] found '9.0-14-gdf81'."
