@@ -29,18 +29,21 @@ PNBLACKLIST[omxplayer] ?= "not compatible with webOS Open components"
 PNBLACKLIST[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 PNBLACKLIST[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
 
-MACHINE_EXTRA_RRECOMMENDS_remove_raspberrypi3 = "kernel-modules"
-MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
+MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_remove = "kernel-modules"
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " ${RPI_KERNEL_MODULES}"
+RPI_KERNEL_MODULES = " \
     kernel-module-bcm2835-gpiomem \
     kernel-module-bcm2835-wdt \
     kernel-module-bluetooth \
     kernel-module-brcmfmac \
+    kernel-module-bridge \
     kernel-module-btbcm \
+    kernel-module-btusb \
+    kernel-module-configs \
     kernel-module-evdev \
     kernel-module-hci-uart \
-    kernel-module-btusb \
     kernel-module-i2c-bcm2708 \
-    kernel-module-configs \
     kernel-module-media \
     kernel-module-rfcomm \
     kernel-module-snd-bcm2835 \
@@ -49,7 +52,22 @@ MACHINE_EXTRA_RRECOMMENDS_append_raspberrypi3 = " \
     kernel-module-uvcvideo \
     kernel-module-vc4 \
     kernel-module-videodev \
-    kernel-module-bridge \
+"
+# Few more modules which are automatically loaded on
+# raspberrypi4 when all kernel-modules are installed
+RPI_KERNEL_MODULES_append_raspberrypi4 = " \
+    kernel-module-8021q \
+    kernel-module-bcm2835-codec \
+    kernel-module-bcm2835-v4l2 \
+    kernel-module-bnep \
+    kernel-module-cmac \
+    kernel-module-fixed \
+    kernel-module-joydev \
+    kernel-module-raspberrypi-hwmon \
+    kernel-module-rpivid-mem \
+    kernel-module-sch-fq-codel \
+    kernel-module-uio-pdrv-genirq \
+    kernel-module-v3d \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " uinput bridge vc4"
