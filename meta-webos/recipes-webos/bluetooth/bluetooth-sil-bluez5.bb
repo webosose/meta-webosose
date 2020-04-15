@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2019 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS Bluetooth SIL implementation for bluez5"
 AUTHOR = "Sameeer Mulla <sameer.mulla@lge.com>"
@@ -14,7 +14,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 # Add runtime dependency on bluez5 OBEX service when we have to support FTP
 RDEPENDS_${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
-WEBOS_VERSION = "0.1.0-25_b4efcf7bfaa7da10ed0cc808010f2e58ba68ae12"
+WEBOS_VERSION = "0.1.0-27_09b99ab66e2a0f54c7ae674d136e0d699c070403"
 PR = "r0"
 
 inherit webos_component
