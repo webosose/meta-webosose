@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS preferences manager"
 AUTHOR = "Oleksandr Ivanov <oleksandr.ivanov@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "luna-service2 json-c sqlite3 glib-2.0 nyx-lib"
 RDEPENDS_${PN} = "luna-prefs-data"
 
-WEBOS_VERSION = "3.0.0-3_1b978a6d3989a851561baec3ec60082052029f13"
+WEBOS_VERSION = "3.0.0-4_1865a03ae8da054d792604ef478cae24d6f420e2"
 PR = "r13"
 
 #inherit webos_component
