@@ -1,0 +1,54 @@
+From 690c30096601a26373f585fc032783e5f41d4f30 Mon Sep 17 00:00:00 2001
+From: Alexey Turitsyn <alexey.turitsyn@lge.com>
+Date: Tue, 1 Mar 2016 14:27:11 +0300
+Subject: [PATCH] Check if combined glyph exists in font's charmap table
+
+:Release Notes:
+There are incorrect glyph rendering when combined
+symbol is found inside font, but charmap table
+does not have ligature bindings for that symbol's
+unicode value.
+
+:Detailed Notes:
+Before actually combining two symbols into one,
+existence of ligature binding in charmap is checked.
+If it is absent, then proceed rendering two glyphs
+separately.
+
+:Testing Performed:
+PC - ok
+
+Upstream-Status: not applicable
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-16844] Some Latin characters are not combined on Qt
+
+Change-Id: I4fb669836c9656341e9207eb852f04f925ef75de
+---
+ src/gui/text/qharfbuzzng.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gui/text/qharfbuzzng.cpp b/src/gui/text/qharfbuzzng.cpp
+index 2f25aea92b..b13c5bc5b5 100644
+--- a/src/gui/text/qharfbuzzng.cpp
++++ b/src/gui/text/qharfbuzzng.cpp
+@@ -462,7 +462,7 @@ _hb_qt_font_get_nominal_glyph(hb_font_t * /*font*/, void *font_data,
+ 
+     *glyph = fe->glyphIndex(unicode);
+ 
+-    return *glyph != 0;
++    return (*glyph != 0 || unicode == 0) ? true : false;
+ }
+ 
+ static hb_bool_t
+@@ -477,7 +477,7 @@ _hb_qt_font_get_variation_glyph(hb_font_t * /*font*/, void *font_data,
+     // ### TODO add support for variation selectors
+     *glyph = fe->glyphIndex(unicode);
+ 
+-    return *glyph != 0;
++    return (*glyph != 0 || unicode == 0) ? true : false;
+ }
+ 
+ static hb_position_t

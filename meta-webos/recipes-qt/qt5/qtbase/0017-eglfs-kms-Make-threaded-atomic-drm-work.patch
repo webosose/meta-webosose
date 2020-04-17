@@ -1,0 +1,241 @@
+From f752fb5fd47ed243d54d69fb49b7c415878b1b2e Mon Sep 17 00:00:00 2001
+From: Laszlo Agocs <laszlo.agocs@qt.io>
+Date: Fri, 8 Nov 2019 11:41:16 +0100
+Subject: [PATCH] eglfs: kms: Make threaded atomic drm work
+
+The atomic modesetting support was not prepared for page flips being
+issued from different (per-screen) threads.
+
+This could be seen with the threaded render loop of Qt Quick: having a
+QQuickWindow per screen means having a dedicated render thread for each
+screen. QKmsDevice used simply instance variables to keep track of the
+request. This leads to the commit failing with EBUSY sooner or later.
+
+Make the atomic request and related variables thread local.
+
+This prevents failing drmModeAtomicCommit() with 2 or more screens and
+the threaded render loop. It does not fix other potential issues when
+waiting for page flips to complete, that is to be tackled separately.
+
+Task-number: QTBUG-74953
+Change-Id: I2dac10d5e9bdc0cb556ac78c9643c96d40d692e4
+Reviewed-by: Johan Helsing <johan.helsing@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/280755]
+---
+ .../kmsconvenience/qkmsdevice.cpp             | 58 +++++++++++--------
+ .../kmsconvenience/qkmsdevice_p.h             | 15 +++--
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp          | 16 +++--
+ .../qeglfskmsintegration.cpp                  |  2 +-
+ 4 files changed, 50 insertions(+), 41 deletions(-)
+
+diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+index 866bc3cce5..9fc4d00a5f 100644
+--- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
++++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+@@ -543,10 +543,6 @@ QKmsDevice::QKmsDevice(QKmsScreenConfig *screenConfig, const QString &path)
+     , m_path(path)
+     , m_dri_fd(-1)
+     , m_has_atomic_support(false)
+-#if QT_CONFIG(drm_atomic)
+-    , m_atomic_request(nullptr)
+-    , m_previous_request(nullptr)
+-#endif
+     , m_crtc_allocator(0)
+ {
+     if (m_path.isEmpty()) {
+@@ -562,7 +558,7 @@ QKmsDevice::QKmsDevice(QKmsScreenConfig *screenConfig, const QString &path)
+ QKmsDevice::~QKmsDevice()
+ {
+ #if QT_CONFIG(drm_atomic)
+-    atomicReset();
++    threadLocalAtomicReset();
+ #endif
+ }
+ 
+@@ -902,39 +898,51 @@ bool QKmsDevice::hasAtomicSupport()
+ }
+ 
+ #if QT_CONFIG(drm_atomic)
+-drmModeAtomicReq * QKmsDevice::atomic_request()
++drmModeAtomicReq *QKmsDevice::threadLocalAtomicRequest()
+ {
+-    if (!m_atomic_request && m_has_atomic_support)
+-        m_atomic_request = drmModeAtomicAlloc();
++    if (!m_has_atomic_support)
++        return nullptr;
+ 
+-    return m_atomic_request;
++    AtomicReqs &a(m_atomicReqs.localData());
++    if (!a.request)
++        a.request = drmModeAtomicAlloc();
++
++    return a.request;
+ }
+ 
+-bool QKmsDevice::atomicCommit(void *user_data)
++bool QKmsDevice::threadLocalAtomicCommit(void *user_data)
+ {
+-    if (m_atomic_request) {
+-        int ret = drmModeAtomicCommit(m_dri_fd, m_atomic_request,
+-                          DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_ALLOW_MODESET, user_data);
++    if (!m_has_atomic_support)
++        return false;
+ 
+-        if (ret) {
+-           qWarning("Failed to commit atomic request (code=%d)", ret);
+-           return false;
+-        }
++    AtomicReqs &a(m_atomicReqs.localData());
++    if (!a.request)
++        return false;
+ 
+-        m_previous_request = m_atomic_request;
+-        m_atomic_request = nullptr;
++    int ret = drmModeAtomicCommit(m_dri_fd, a.request,
++                                  DRM_MODE_ATOMIC_NONBLOCK | DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_ALLOW_MODESET,
++                                  user_data);
+ 
+-        return true;
++    if (ret) {
++        qWarning("Failed to commit atomic request (code=%d)", ret);
++        return false;
+     }
+ 
+-    return false;
++    a.previous_request = a.request;
++    a.request = nullptr;
++
++    return true;
+ }
+ 
+-void QKmsDevice::atomicReset()
++void QKmsDevice::threadLocalAtomicReset()
+ {
+-    if (m_previous_request) {
+-        drmModeAtomicFree(m_previous_request);
+-        m_previous_request = nullptr;
++    if (!m_has_atomic_support)
++        return;
++
++    AtomicReqs &a(m_atomicReqs.localData());
++    if (a.previous_request) {
++        drmModeAtomicFree(a.previous_request);
++        a.previous_request = nullptr;
+     }
+ }
+ #endif
+diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
+index bb6f500a68..47e1fb4a73 100644
+--- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
++++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
+@@ -57,6 +57,7 @@
+ #include <qpa/qplatformscreen.h>
+ #include <QtCore/QMap>
+ #include <QtCore/QVariant>
++#include <QtCore/QThreadStorage>
+ 
+ #include <xf86drm.h>
+ #include <xf86drmMode.h>
+@@ -239,10 +240,9 @@ public:
+     bool hasAtomicSupport();
+ 
+ #if QT_CONFIG(drm_atomic)
+-    bool atomicCommit(void *user_data);
+-    void atomicReset();
+-
+-    drmModeAtomicReq *atomic_request();
++    drmModeAtomicReq *threadLocalAtomicRequest();
++    bool threadLocalAtomicCommit(void *user_data);
++    void threadLocalAtomicReset();
+ #endif
+     void createScreens();
+ 
+@@ -282,8 +282,11 @@ protected:
+     bool m_has_atomic_support;
+ 
+ #if QT_CONFIG(drm_atomic)
+-    drmModeAtomicReq *m_atomic_request;
+-    drmModeAtomicReq *m_previous_request;
++    struct AtomicReqs {
++        drmModeAtomicReq *request = nullptr;
++        drmModeAtomicReq *previous_request = nullptr;
++    };
++    QThreadStorage<AtomicReqs> m_atomicReqs;
+ #endif
+     quint32 m_crtc_allocator;
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+index 3a2951efbd..88b9485b0b 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+@@ -243,7 +243,7 @@ void QEglFSKmsGbmScreen::ensureModeSet(uint32_t fb)
+ 
+             if (device()->hasAtomicSupport()) {
+ #if QT_CONFIG(drm_atomic)
+-                drmModeAtomicReq *request = device()->atomic_request();
++                drmModeAtomicReq *request = device()->threadLocalAtomicRequest();
+                 if (request) {
+                     drmModeAtomicAddProperty(request, op.connector_id, op.crtcIdPropertyId, op.crtc_id);
+                     drmModeAtomicAddProperty(request, op.crtc_id, op.modeIdPropertyId, op.mode_blob_id);
+@@ -287,8 +287,7 @@ void QEglFSKmsGbmScreen::waitForFlip()
+     }
+ 
+ #if QT_CONFIG(drm_atomic)
+-    if (device()->hasAtomicSupport())
+-        device()->atomicReset();
++    device()->threadLocalAtomicReset();
+ #endif
+ }
+ 
+@@ -324,16 +323,16 @@ void QEglFSKmsGbmScreen::flip()
+ 
+     if (device()->hasAtomicSupport()) {
+ #if QT_CONFIG(drm_atomic)
+-        drmModeAtomicReq *request = device()->atomic_request();
++        drmModeAtomicReq *request = device()->threadLocalAtomicRequest();
+         if (request) {
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->framebufferPropertyId, fb->fb);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcPropertyId, op.crtc_id);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcwidthPropertyId,
+-                                     output().size.width() << 16);
++                                     op.size.width() << 16);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcXPropertyId, 0);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcYPropertyId, 0);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->srcheightPropertyId,
+-                                     output().size.height() << 16);
++                                     op.size.height() << 16);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcXPropertyId, 0);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcYPropertyId, 0);
+             drmModeAtomicAddProperty(request, op.eglfs_plane->id, op.eglfs_plane->crtcwidthPropertyId,
+@@ -368,7 +367,7 @@ void QEglFSKmsGbmScreen::flip()
+ 
+             if (device()->hasAtomicSupport()) {
+ #if QT_CONFIG(drm_atomic)
+-                drmModeAtomicReq *request = device()->atomic_request();
++                drmModeAtomicReq *request = device()->threadLocalAtomicRequest();
+                 if (request) {
+                     drmModeAtomicAddProperty(request, d.screen->output().eglfs_plane->id,
+                                                       d.screen->output().eglfs_plane->framebufferPropertyId, fb->fb);
+@@ -391,8 +390,7 @@ void QEglFSKmsGbmScreen::flip()
+     }
+ 
+ #if QT_CONFIG(drm_atomic)
+-    if (device()->hasAtomicSupport())
+-         device()->atomicCommit(this);
++    device()->threadLocalAtomicCommit(this);
+ #endif
+ }
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+index a6aac61506..28b6b7df63 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+@@ -140,7 +140,7 @@ void *QEglFSKmsIntegration::nativeResourceForIntegration(const QByteArray &name)
+ 
+ #if QT_CONFIG(drm_atomic)
+     if (name == QByteArrayLiteral("dri_atomic_request") && m_device)
+-        return (void *) (qintptr) m_device->atomic_request();
++        return (void *) (qintptr) m_device->threadLocalAtomicRequest();
+ #endif
+     return nullptr;
+ }

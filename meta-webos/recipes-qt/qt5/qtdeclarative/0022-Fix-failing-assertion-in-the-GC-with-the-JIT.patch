@@ -1,0 +1,69 @@
+From 764b71514c001ba84377b1dcdffc96b9ec376e49 Mon Sep 17 00:00:00 2001
+From: Simon Hausmann <simon.hausmann@qt.io>
+Date: Tue, 21 Apr 2020 12:01:29 +0200
+Subject: [PATCH] Fix failing assertion in the GC with the JIT
+
+Commit db3dd029d7cd911712102efd5ea71868494f9f6f introduced the saving of
+the accumulator register on the JS stack in more situations. This
+unveiled another bug: When the physical ACC register contains garbage,
+we may end up saving it on the stack and thus making it visible to the
+GC. That one may trip with the infamous Q_ASSERT(m->inUse()) assertion
+failing when the value looks like a managed pointer but in fact isn't.
+
+So the question is: How can garbage end up in the physical ACC register?
+
+Thanks to a detailed bug report from David Faure, KDE's ktexteditor
+kateindenttest (testCstyle:comma6 in particular) triggered this
+situation when run with aggressive GC, where the prologue of a generated
+constructor function started with two instructions
+
+    CreateCallContext
+    ConvertThisToObject
+
+The first instruction is a call into the run-time with
+CallResultDestination::Ignore - it's a "void" call. The second
+instruction starts with STORE_ACC and also ends up allocating memory,
+triggering the GC when run with aggressive mode enabled.
+
+The problem here is the ::Ignore option for the return value. It means
+that the ReturnValueRegister is clobbered and may contain anything. If
+the ReturnValueRegister  is the same as the AccumulatorRegister, then
+the STORE_ACC call later will end up writing "garbage" into the JS
+stack.
+
+As a remedy, this patch treats the ::Ignore case special and loads
+undefined into the ACC when the return value register and the ACC
+register are the same.
+
+Change-Id: I82c7a3456125f9c87e83abb9eb54465106873560
+Task-number: QTBUG-83384
+Pick-to: 5.15
+Pick-to: 5.12
+Reviewed-by: Fabian Kosmale <fabian.kosmale@qt.io>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/297737]
+---
+ src/qml/jit/qv4baselineassembler.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/qml/jit/qv4baselineassembler.cpp b/src/qml/jit/qv4baselineassembler.cpp
+index 73e396890e..f9941ca587 100644
+--- a/src/qml/jit/qv4baselineassembler.cpp
++++ b/src/qml/jit/qv4baselineassembler.cpp
+@@ -91,6 +91,8 @@ public:
+         PlatformAssemblerCommon::callRuntime(functionName, funcPtr);
+         if (dest == CallResultDestination::InAccumulator)
+             saveReturnValueInAccumulator();
++        else if (AccumulatorRegister == ReturnValueRegister)
++            loadUndefined();
+     }
+ 
+     void saveReturnValueInAccumulator()
+@@ -391,6 +393,8 @@ public:
+         PlatformAssemblerCommon::callRuntime(functionName, funcPtr);
+         if (dest == CallResultDestination::InAccumulator)
+             saveReturnValueInAccumulator();
++        else if (AccumulatorRegisterValue == ReturnValueRegisterValue)
++            loadUndefined();
+     }
+ 
+     void saveReturnValueInAccumulator()

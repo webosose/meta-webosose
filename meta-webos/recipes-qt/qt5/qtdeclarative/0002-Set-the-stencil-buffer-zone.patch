@@ -13,7 +13,7 @@ Change-Id: I9a399667ec7ee0a1028e233c899ee49c98e4e622
  1 file changed, 42 insertions(+)
 
 diff --git a/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp b/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
-index afe338049..6925c269f 100644
+index afe3380494..6925c269f6 100644
 --- a/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
 +++ b/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
 @@ -2087,9 +2087,51 @@ Renderer::ClipType Renderer::updateStencilClip(const QSGClipNode *clip)

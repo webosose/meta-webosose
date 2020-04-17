@@ -1,0 +1,55 @@
+From 416519bfae4c8a3e5fd128583f59503f812136c2 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Thu, 21 Sep 2017 22:25:17 +0900
+Subject: [PATCH] QQuickWindow: Add invalidateCursorItem
+
+Add QQuickWindow::invalidateCursorItem that clears cursorItem of
+QQuickWindowPrivate. It results in the next updateCursor call to take
+effect even if a mouse move event is delivered to the same item.
+
+Change-Id: Ifd427aad884aec30d6bfe29cec945a30ed87c8ce
+Upstream-Status: Pending
+---
+ src/quick/items/qquickwindow.cpp | 13 +++++++++++++
+ src/quick/items/qquickwindow.h   |  4 ++++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
+index 0e45500aad..615de543cf 100644
+--- a/src/quick/items/qquickwindow.cpp
++++ b/src/quick/items/qquickwindow.cpp
+@@ -2880,6 +2880,19 @@ QQuickItem *QQuickWindowPrivate::findCursorItem(QQuickItem *item, const QPointF
+     }
+     return nullptr;
+ }
++
++/*!
++    Invalidate the cursor item.
++
++    The cursor item is the item that updated the cursor at the previous
++    mouse move event. Invalidating the cursor item results in the next mouse
++    move event to update the cursor even if it is sent to the same item.
++ */
++void QQuickWindow::invalidateCursorItem()
++{
++    Q_D(QQuickWindow);
++    d->cursorItem = 0;
++}
+ #endif
+ 
+ bool QQuickWindowPrivate::sendFilteredPointerEvent(QQuickPointerEvent *event, QQuickItem *receiver, QQuickItem *filteringParent)
+diff --git a/src/quick/items/qquickwindow.h b/src/quick/items/qquickwindow.h
+index 53fe0a4c4b..a2ccd2158d 100644
+--- a/src/quick/items/qquickwindow.h
++++ b/src/quick/items/qquickwindow.h
+@@ -124,6 +124,10 @@ public:
+     QT_DEPRECATED bool sendEvent(QQuickItem *, QEvent *);
+ #endif
+ 
++#ifndef QT_NO_CURSOR
++    void invalidateCursorItem();
++#endif
++
+     QImage grabWindow();
+ #if QT_CONFIG(opengl)
+     void setRenderTarget(QOpenGLFramebufferObject *fbo);
