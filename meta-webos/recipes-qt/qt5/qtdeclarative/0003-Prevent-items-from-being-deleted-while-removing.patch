@@ -10,7 +10,7 @@ That may cause to crash. ObjectReference keep the items from being deleted.
  1 file changed, 11 insertions(+)
 
 diff --git a/src/qml/types/qqmldelegatemodel.cpp b/src/qml/types/qqmldelegatemodel.cpp
-index af328fbe2..4d6d7b09c 100644
+index af328fbe2a..4d6d7b09ca 100644
 --- a/src/qml/types/qqmldelegatemodel.cpp
 +++ b/src/qml/types/qqmldelegatemodel.cpp
 @@ -1488,6 +1488,12 @@ void QQmlDelegateModel::_q_itemsRemoved(int index, int count)
