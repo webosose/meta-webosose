@@ -1,6 +1,6 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosvirt1"
+EXTENDPRAUTO_append = "webosvirt2"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}-contrib_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
@@ -20,7 +20,13 @@ RRECOMMENDS_${PN}_append = " \
     kernel-module-xt-nat \
 "
 
-# don't start by default
 do_install_append() {
+    # don't start by default
     sed -i '/\[Install\]/,+1 d' ${D}${systemd_system_unitdir}/docker.service
+
+    # create symlink for /etc/docker because of it's on the R/O partition.
+    if ${@bb.utils.contains('IMAGE_FEATURES','read-only-rootfs','true','false',d)}; then
+        install -d ${D}/${sysconfdir}
+        ln -sf /var/lib/docker ${D}/${sysconfdir}/docker
+    fi
 }
