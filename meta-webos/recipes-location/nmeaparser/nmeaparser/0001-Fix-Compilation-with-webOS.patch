@@ -1,0 +1,85 @@
+From a93f90696345713a2a8bd9bbc2d1c1663b068e21 Mon Sep 17 00:00:00 2001
+From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
+Date: Mon, 20 Apr 2020 17:06:55 +0530
+Subject: [PATCH] Fix Compilation with webOS
+
+---
+ CMakeLists.txt                        |  7 +++++++
+ Software/CMakeLists.txt               |  2 +-
+ Software/NMEAParserLib/CMakeLists.txt | 15 ++++++++++-----
+ files/pkgconfig/nmeaparser.pc         |  4 ++++
+ 4 files changed, 22 insertions(+), 6 deletions(-)
+ create mode 100644 CMakeLists.txt
+ create mode 100644 files/pkgconfig/nmeaparser.pc
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..4241da4
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,7 @@
++#
++# CMakeLists - NMEAParserLib project
++#
++cmake_minimum_required(VERSION 2.8)
++add_subdirectory (Software)
++# install(FILES nmeaparser.pc DESTINATION "${INSTALL_PKGCONFIG_DIR}")
++install(FILES "files/pkgconfig/nmeaparser.pc" DESTINATION "/usr/lib/pkgconfig")
+diff --git a/Software/CMakeLists.txt b/Software/CMakeLists.txt
+index 2484ae0..afb24c4 100644
+--- a/Software/CMakeLists.txt
++++ b/Software/CMakeLists.txt
+@@ -5,5 +5,5 @@ cmake_minimum_required (VERSION 2.8)
+ project (NMEAParserLib)
+ 
+ add_subdirectory (NMEAParserLib)
+-add_subdirectory (NMEAParserTest)
++#add_subdirectory (NMEAParserTest)
+ 
+diff --git a/Software/NMEAParserLib/CMakeLists.txt b/Software/NMEAParserLib/CMakeLists.txt
+index f653a90..dc7c3aa 100644
+--- a/Software/NMEAParserLib/CMakeLists.txt
++++ b/Software/NMEAParserLib/CMakeLists.txt
+@@ -6,12 +6,15 @@ cmake_minimum_required(VERSION 2.8)
+ project(NMEAParserLib)
+ 
+ 
+-if(MSVC)
+-	# Do nothing for now...
+-else()
+-        set(CMAKE_CXX_FLAGS " -Wall")
+-endif ()
++#if(MSVC)
++#	# Do nothing for now...
++#else()
++#        set(CMAKE_CXX_FLAGS " -Wall")
++#endif ()
+ 
++#set(CMAKE_CXX_FLAGS " -Wall")
++set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -fPIC")
+ FIND_PACKAGE(Git)
+ 
+ execute_process(COMMAND git describe --abbrev=4 HEAD
+@@ -46,6 +49,8 @@ add_library(NMEAParserLib
+ 	NMEASentenceRMC.h
+ )
+ 
++install(TARGETS NMEAParserLib DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
++install(DIRECTORY . DESTINATION ${CMAKE_INSTALL_PREFIX}/include/nmeaparser FILES_MATCHING PATTERN "*.h")
+ #
+ # Add additional libraries
+ #
+diff --git a/files/pkgconfig/nmeaparser.pc b/files/pkgconfig/nmeaparser.pc
+new file mode 100644
+index 0000000..7820987
+--- /dev/null
++++ b/files/pkgconfig/nmeaparser.pc
+@@ -0,0 +1,4 @@
++Name: nmeaparser
++Description: NMEA data parser for GPS data
++Version: 1.0.0
++Libs: -L/usr/lib -lNMEAParserLib
+-- 
+2.17.1
+
