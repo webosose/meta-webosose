@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 SUMMARY = "Enact framework standard override used for Enact apps"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -76,13 +76,13 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     parse-headers@2.0.2 \
     xtend@4.0.1 \
     xhr@2.5.0 \
-    ilib@14.4.0 \
+    ilib@14.6.0 \
 "
 
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r5"
+PR = "r6"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
