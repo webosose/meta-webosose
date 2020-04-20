@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "Physical Device Manager handles physical devices using netlink events"
 DESCRIPTION = "Service for detecting and managing physical devices using netlink events. A physical device is a USB device, available internal storage device and so on."
@@ -14,7 +14,7 @@ RDEPENDS_${PN} = "fuse-utils gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
-WEBOS_VERSION = "1.0.0-9_0b9bebd031bee12d81171cf9b6f4e59bc9a4b8a7"
+WEBOS_VERSION = "1.0.0-10_94337142f8277ed6368b0c0ad93bec45c4b96dc1"
 PR = "r1"
 
 inherit webos_component

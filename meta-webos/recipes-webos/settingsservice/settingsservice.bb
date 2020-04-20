@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "Settings Service"
 AUTHOR = "Radhika S <radhika.s@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "glib-2.0 glibmm luna-service2 libpbnjson pmloglib openssl libbson boost"
 RDEPENDS_${PN} = "settingsservice-conf python"
 
-WEBOS_VERSION = "1.0.22-3_fc48b9406a98316588007c157b5aa105b07365fd"
+WEBOS_VERSION = "1.0.22-4_76ceebe8f20ac0cf2e7955d5fc04ce13b7344d23"
 PR = "r22"
 
 inherit webos_component
