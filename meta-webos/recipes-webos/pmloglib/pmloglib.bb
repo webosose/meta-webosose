@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS logging library"
 AUTHOR = "Gayathri Srinivasan <gayathri.srinivasan@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 libpbnjson"
 
-WEBOS_VERSION = "3.3.0-4_c2746a5e97bd53c3738a99008c6e612a575922ca"
+WEBOS_VERSION = "3.3.0-5_364a998749a90caca2ecbb0de72f2ca9b8e0483a"
 PR = "r9"
 
 LEAD_SONAME = "libPmLogLib.so"
