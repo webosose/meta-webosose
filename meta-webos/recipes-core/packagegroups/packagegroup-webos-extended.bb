@@ -251,6 +251,7 @@ RDEPENDS_${PN}_append_qemux86 = " \
     vmwgfx-layout \
     com.webos.service.audiooutput \
     com.webos.service.camera \
+    com.webos.service.location \
     kernel-module-vboxguest \
     kernel-module-snd-pcm \
     kernel-module-ac97-bus \
