@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "VAL API implementation library Raspberry Pi"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"
@@ -21,7 +21,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "udev glib-2.0 pmloglib libpbnjson libdrm videooutput-adaptation-layer-api"
 
-WEBOS_VERSION = "1.0.0-10_4303e28f20934b0211ee2b385a79a3ad664f0f05"
+WEBOS_VERSION = "1.0.0-11_52a6d0fd1088e173aef481023c8c06d5ad64d34a"
 PR = "r1"
 
 COMPATIBLE_MACHINE = "^rpi$"

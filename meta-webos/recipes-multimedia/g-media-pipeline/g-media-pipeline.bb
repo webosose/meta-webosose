@@ -32,7 +32,7 @@ WEBOS_VERSION = "1.0.0-21_ecd90bea31daca759dc40061749131f2a61b99c1"
 PR = "r6"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.4_3726137bb12e8feb1e5eebd85a403fc2ce8d700f"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.5_df1e19445960c0d19fb50c13de50bf3e1c8d23bd"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
