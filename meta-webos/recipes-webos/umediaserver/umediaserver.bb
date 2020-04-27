@@ -36,7 +36,7 @@ COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-24.gav.4_32a2b11b07a0a865de88dd224764cc73d95e01d3"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-24.gav.5_4dfa0fde6d3272dc6fc9ad4f4b025b549c93e3ae"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
