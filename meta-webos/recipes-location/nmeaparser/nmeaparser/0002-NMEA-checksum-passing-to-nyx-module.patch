@@ -1,0 +1,92 @@
+From e7a0b26c8e7e27e37e958f962869171ced523186 Mon Sep 17 00:00:00 2001
+From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
+Date: Tue, 12 May 2020 13:47:30 +0530
+Subject: [PATCH 2/2] NMEA checksum passing to nyx-module
+
+:Release Notes:
+NMEA library checksum value support for nyx-modules.
+
+:Detailed Notes:
+NMEA library Checksum value passing to inyx-modules function
+ProcessRxCommand().
+
+:Testing Performed:
+Build success
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+N/A
+
+Upstream-Status : Inappropriate [webOS specific]
+---
+ Software/NMEAParserLib/NMEAParserPacket.cpp | 8 ++++++--
+ Software/NMEAParserLib/NMEAParserPacket.h   | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/Software/NMEAParserLib/NMEAParserPacket.cpp b/Software/NMEAParserLib/NMEAParserPacket.cpp
+index 504b76f..be92028 100644
+--- a/Software/NMEAParserLib/NMEAParserPacket.cpp
++++ b/Software/NMEAParserLib/NMEAParserPacket.cpp
+@@ -40,6 +40,7 @@ CNMEAParserPacket::~CNMEAParserPacket()
+ 
+ CNMEAParserData::ERROR_E CNMEAParserPacket::ProcessNMEABuffer(char * pData, size_t nBufferSize)
+ {
++	char checksum[2] = {0};
+ 	for (size_t i = 0; i < nBufferSize; i++) {
+ 		char cData = pData[i];
+ 		switch (m_nState)
+@@ -60,6 +61,7 @@ CNMEAParserData::ERROR_E CNMEAParserPacket::ProcessNMEABuffer(char * pData, size
+ 				m_u8Checksum = 0;			// reset checksum
+ 				m_nIndex = 0;				// reset index
+ 				m_nState = PARSE_STATE_CMD;
++				checksum[0] = '\0';
+ 			}
+ 			break;
+ 
+@@ -103,7 +105,7 @@ CNMEAParserData::ERROR_E CNMEAParserPacket::ProcessNMEABuffer(char * pData, size
+ 				if (cData == '\r')
+ 				{
+ 					m_pData[m_nIndex] = '\0';
+-					ProcessRxCommand(m_pCommand, m_pData);
++					ProcessRxCommand(m_pCommand, m_pData, checksum);
+ 					m_nState = PARSE_STATE_SOM;
+ 					return CNMEAParserData::ERROR_OK;
+ 				}
+@@ -133,6 +135,7 @@ CNMEAParserData::ERROR_E CNMEAParserPacket::ProcessNMEABuffer(char * pData, size
+ 				m_u8ReceivedChecksum = (cData - 'A' + 10) << 4;
+ 			}
+ 
++			checksum[0] = cData;
+ 			m_nState = PARSE_STATE_CHECKSUM_2;
+ 
+ 			break;
+@@ -148,9 +151,10 @@ CNMEAParserData::ERROR_E CNMEAParserPacket::ProcessNMEABuffer(char * pData, size
+ 				m_u8ReceivedChecksum |= (cData - 'A' + 10);
+ 			}
+ 
++			checksum[1] = cData;
+ 			if (m_u8Checksum == m_u8ReceivedChecksum)
+ 			{
+-				ProcessRxCommand(m_pCommand, m_pData);
++				ProcessRxCommand(m_pCommand, m_pData, checksum);
+ 			}
+ 			// Checksum error
+ 			else {
+diff --git a/Software/NMEAParserLib/NMEAParserPacket.h b/Software/NMEAParserLib/NMEAParserPacket.h
+index b090797..5a0888b 100644
+--- a/Software/NMEAParserLib/NMEAParserPacket.h
++++ b/Software/NMEAParserLib/NMEAParserPacket.h
+@@ -125,7 +125,7 @@ protected:
+ 	/// \param pData Comma separated data that belongs to the command
+ 	/// \return Returns CNMEAParserData::ERROR_OK If successful
+ 	///
+-	virtual CNMEAParserData::ERROR_E ProcessRxCommand(char *pCmd, char *pData) = 0;
++	virtual CNMEAParserData::ERROR_E ProcessRxCommand(char *pCmd, char *pData, char *checksum) = 0;
+ 
+ 	///
+ 	/// \brief This method is called when receiving the start of message of the NMEA packet.
+-- 
+2.17.1
+
