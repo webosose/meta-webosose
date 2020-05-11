@@ -1,7 +1,7 @@
-From 50379996de1e30f9ba8e365b8f96397bb936d47a Mon Sep 17 00:00:00 2001
+From a95c72f57740e0a8fd3d66f3bad3f16070e8f3ae Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 21 Apr 2020 09:27:33 +0900
-Subject: [PATCH 1/2] Implementing the configuration options related to P2P
+Subject: [PATCH] Implementing the configuration options related to P2P
 
 ---
  gsupplicant/gsupplicant.h |  2 +-
@@ -10,7 +10,7 @@ Subject: [PATCH 1/2] Implementing the configuration options related to P2P
  3 files changed, 33 insertions(+), 4 deletions(-)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index a3e5d51..6cfb6d2 100644
+index 04ebcc04..e034cade 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
 @@ -219,7 +219,7 @@ typedef void (*GSupplicantInterfaceCallback) (int result,
@@ -23,7 +23,7 @@ index a3e5d51..6cfb6d2 100644
  							void *user_data);
  int g_supplicant_interface_remove(GSupplicantInterface *interface,
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index a4d8257..9119cb0 100644
+index c95ca62b..8c008319 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
 @@ -278,6 +278,7 @@ struct interface_create_data {
@@ -34,7 +34,7 @@ index a4d8257..9119cb0 100644
  	GSupplicantInterface *interface;
  	GSupplicantInterfaceCallback callback;
  	void *user_data;
-@@ -4051,6 +4052,11 @@ static void interface_create_params(DBusMessageIter *iter, void *user_data)
+@@ -4174,6 +4175,11 @@ static void interface_create_params(DBusMessageIter *iter, void *user_data)
  					DBUS_TYPE_STRING, &config_file);
  	}
  
@@ -46,7 +46,7 @@ index a4d8257..9119cb0 100644
  	supplicant_dbus_dict_close(iter, &dict);
  }
  
-@@ -4124,7 +4130,7 @@ static void interface_get_params(DBusMessageIter *iter, void *user_data)
+@@ -4247,7 +4253,7 @@ static void interface_get_params(DBusMessageIter *iter, void *user_data)
  }
  
  int g_supplicant_interface_create(const char *ifname, const char *driver,
@@ -55,7 +55,7 @@ index a4d8257..9119cb0 100644
  					GSupplicantInterfaceCallback callback,
  							void *user_data)
  {
-@@ -4146,6 +4152,7 @@ int g_supplicant_interface_create(const char *ifname, const char *driver,
+@@ -4269,6 +4275,7 @@ int g_supplicant_interface_create(const char *ifname, const char *driver,
  	data->ifname = g_strdup(ifname);
  	data->driver = g_strdup(driver);
  	data->bridge = g_strdup(bridge);
@@ -64,10 +64,10 @@ index a4d8257..9119cb0 100644
  	data->user_data = user_data;
  
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index c41356d..ded7ef6 100644
+index f5a6bc6e..c76ae2be 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -1536,6 +1536,27 @@ static void interface_create_callback(int result,
+@@ -1590,6 +1590,27 @@ static void interface_create_callback(int result,
  	}
  }
  
@@ -95,7 +95,7 @@ index c41356d..ded7ef6 100644
  static int wifi_enable(struct connman_device *device)
  {
  	struct wifi_data *wifi = connman_device_get_data(device);
-@@ -1554,7 +1575,8 @@ static int wifi_enable(struct connman_device *device)
+@@ -1608,7 +1629,8 @@ static int wifi_enable(struct connman_device *device)
  		return -EINPROGRESS;
  
  	interface = connman_inet_ifname(index);
@@ -105,7 +105,7 @@ index c41356d..ded7ef6 100644
  						interface_create_callback,
  							wifi);
  	g_free(interface);
-@@ -3675,7 +3697,7 @@ static void sta_remove_callback(int result,
+@@ -3837,7 +3859,7 @@ static void sta_remove_callback(int result,
  
  	info->wifi->interface = NULL;
  
@@ -114,6 +114,3 @@ index c41356d..ded7ef6 100644
  						ap_create_callback,
  							info);
  }
--- 
-2.17.1
-

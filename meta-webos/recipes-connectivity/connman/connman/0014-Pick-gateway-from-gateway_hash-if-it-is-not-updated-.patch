@@ -1,4 +1,4 @@
-From 0034ba7a5e774cc3ec335ecea73d4d03aabd67fb Mon Sep 17 00:00:00 2001
+From 0805a5d13a3ec891823d75c6f9c7c1295683fcbe Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Tue, 19 Jan 2021 17:53:14 +0530
 Subject: [PATCH] Pick gateway from gateway_hash if it is not updated in ipv4
@@ -29,10 +29,10 @@ Upstream-Status: Inappropriate[webos specific]
  5 files changed, 28 insertions(+), 4 deletions(-)
 
 diff --git a/src/connection.c b/src/connection.c
-index 7a1fbce..e785f8a 100644
+index 303e9922..32e1c91b 100644
 --- a/src/connection.c
 +++ b/src/connection.c
-@@ -568,6 +568,20 @@ static struct gateway_data *find_default_gateway(void)
+@@ -581,6 +581,20 @@ static struct gateway_data *find_default_gateway(void)
  	return g_hash_table_lookup(gateway_hash, service);
  }
  
@@ -54,10 +54,10 @@ index 7a1fbce..e785f8a 100644
  					struct gateway_data *candidate)
  {
 diff --git a/src/connman.h b/src/connman.h
-index 3d26e59..336b26d 100644
+index 374b0def..5765c302 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -391,7 +391,7 @@ const char *__connman_ipconfig_type2string(enum connman_ipconfig_type type);
+@@ -390,7 +390,7 @@ const char *__connman_ipconfig_type2string(enum connman_ipconfig_type type);
  enum connman_ipconfig_method __connman_ipconfig_string2method(const char *method);
  
  void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
@@ -66,7 +66,7 @@ index 3d26e59..336b26d 100644
  void __connman_ipconfig_append_ipv4config(struct connman_ipconfig *ipconfig,
  							DBusMessageIter *iter);
  void __connman_ipconfig_append_ipv6(struct connman_ipconfig *ipconfig,
-@@ -502,6 +502,8 @@ int __connman_connection_gateway_add(struct connman_service *service,
+@@ -501,6 +501,8 @@ int __connman_connection_gateway_add(struct connman_service *service,
  					const char *peer);
  void __connman_connection_gateway_remove(struct connman_service *service,
  					enum connman_ipconfig_type type);
@@ -76,10 +76,10 @@ index 3d26e59..336b26d 100644
  
  bool __connman_connection_update_gateway(void);
 diff --git a/src/ipconfig.c b/src/ipconfig.c
-index 2565773..104ae88 100644
+index 915c0823..8a1c7414 100644
 --- a/src/ipconfig.c
 +++ b/src/ipconfig.c
-@@ -1745,7 +1745,7 @@ int __connman_ipconfig_ipv6_set_privacy(struct connman_ipconfig *ipconfig,
+@@ -1831,7 +1831,7 @@ int __connman_ipconfig_ipv6_set_privacy(struct connman_ipconfig *ipconfig,
  }
  
  void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
@@ -88,7 +88,7 @@ index 2565773..104ae88 100644
  {
  	struct connman_ipaddress *append_addr = NULL;
  	const char *str;
-@@ -1796,6 +1796,13 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
+@@ -1882,6 +1882,13 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
  	if (append_addr->gateway)
  		connman_dbus_dict_append_basic(iter, "Gateway",
  				DBUS_TYPE_STRING, &append_addr->gateway);
@@ -103,18 +103,18 @@ index 2565773..104ae88 100644
  
  void __connman_ipconfig_append_ipv6(struct connman_ipconfig *ipconfig,
 diff --git a/src/service.c b/src/service.c
-index bf5c219..6e903de 100644
+index c463d9f7..a693d11f 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -35,6 +35,7 @@
- #include <connman/setting.h>
- #include <connman/agent.h>
+@@ -37,6 +37,7 @@
+ 
+ #include "src/shared/util.h"
  
 +
  #include "connman.h"
  
  #define CONNECT_TIMEOUT		120
-@@ -1720,7 +1721,7 @@ static void append_ipv4(DBusMessageIter *iter, void *user_data)
+@@ -1778,7 +1779,7 @@ static void append_ipv4(DBusMessageIter *iter, void *user_data)
  		return;
  
  	if (service->ipconfig_ipv4)
@@ -124,7 +124,7 @@ index bf5c219..6e903de 100644
  
  static void append_ipv6(DBusMessageIter *iter, void *user_data)
 diff --git a/src/session.c b/src/session.c
-index 2a1dd9a..4814d39 100644
+index 2a1dd9aa..4814d391 100644
 --- a/src/session.c
 +++ b/src/session.c
 @@ -836,7 +836,7 @@ static void append_ipconfig_ipv4(DBusMessageIter *iter, void *user_data)
@@ -136,6 +136,3 @@ index 2a1dd9a..4814d39 100644
  }
  
  static void append_ipconfig_ipv6(DBusMessageIter *iter, void *user_data)
--- 
-2.26.0
-

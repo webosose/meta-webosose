@@ -1,4 +1,4 @@
-From b7ed5587cdd7bbe2600402b930a2524c799a02b3 Mon Sep 17 00:00:00 2001
+From ac24b5350701baad92a6b8d8feab0a29333f2a10 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 4 Aug 2020 09:42:25 +0900
 Subject: [PATCH] Read WpaSupplicantConfigFile from main configuration
@@ -22,10 +22,10 @@ index a8820217..3c87e77d 100644
  unsigned int *connman_setting_get_uint_list(const char *key);
  
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index e6544c69..4a8ec19f 100644
+index c76ae2be..429a50c4 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -1539,27 +1539,6 @@ static void interface_create_callback(int result,
+@@ -1590,27 +1590,6 @@ static void interface_create_callback(int result,
  	}
  }
  
@@ -53,7 +53,7 @@ index e6544c69..4a8ec19f 100644
  static int wifi_enable(struct connman_device *device)
  {
  	struct wifi_data *wifi = connman_device_get_data(device);
-@@ -1578,7 +1557,7 @@ static int wifi_enable(struct connman_device *device)
+@@ -1629,7 +1608,7 @@ static int wifi_enable(struct connman_device *device)
  		return -EINPROGRESS;
  
  	interface = connman_inet_ifname(index);
@@ -135,6 +135,3 @@ index 2371771f..c579fa18 100644
  char **connman_setting_get_string_list(const char *key)
  {
  	if (g_str_equal(key, CONF_PREF_TIMESERVERS))
--- 
-2.17.1
-

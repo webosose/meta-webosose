@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos13"
+EXTENDPRAUTO_append = "webos14"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -15,13 +15,15 @@ SRC_URI += " \
     file://0007-Provide-station-information-when-AP-mode.patch \
     file://0008-Fix-compile-error-regarding-connman_tethering_get_st.patch \
     file://0009-Fix-the-wifi-connection-failure.patch \
-    file://0014-Implementing-the-configuration-options-related-to-P2.patch \
-    file://0015-Read-WpaSupplicantConfigFile-from-main-configuration.patch \
-    file://0016-Send-properties-changed-signal-in-case-of-interface-.patch \
-    file://0017-Added-new-method-SetDefault-for-Interface-net.connma.patch \
-    file://0018-Pick-gateway-from-gateway_hash-if-it-is-not-updated-.patch \
-    file://0019-Add-CIDR-prefix-length-as-ipv4-property.patch \
-    file://0020-Add-p2p-changes.patch \
+    file://0010-Implementing-the-configuration-options-related-to-P2.patch \
+    file://0011-Read-WpaSupplicantConfigFile-from-main-configuration.patch \
+    file://0012-Send-properties-changed-signal-in-case-of-interface-.patch \
+    file://0013-Added-new-method-SetDefault-for-Interface-net.connma.patch \
+    file://0014-Pick-gateway-from-gateway_hash-if-it-is-not-updated-.patch \
+    file://0015-Add-CIDR-prefix-length-as-ipv4-property.patch \
+    file://0016-Add-p2p-changes.patch \
+    file://0017-Revert-storage-Remove-unused-__connman_storage_open_.patch \
+    file://0018-Fix-crash-in-p2p-addservice-and-p2p-settethering.patch \
 "
 
 do_install_append() {

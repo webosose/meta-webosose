@@ -1,4 +1,4 @@
-From c036b3f43900d34b448968fecdcf4b28699f39bb Mon Sep 17 00:00:00 2001
+From c29db794384aeaa87b800756d8f42ccc320ceed3 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 4 Dec 2020 14:31:45 +0530
 Subject: [PATCH] Send properties changed signal in case of interface change
@@ -28,7 +28,7 @@ Upstream-Status: Inappropriate[webos specific]
  3 files changed, 21 insertions(+), 2 deletions(-)
 
 diff --git a/include/technology.h b/include/technology.h
-index 6068690..8b4f159 100644
+index 60686900..8b4f159c 100644
 --- a/include/technology.h
 +++ b/include/technology.h
 @@ -38,6 +38,7 @@ struct connman_technology;
@@ -40,7 +40,7 @@ index 6068690..8b4f159 100644
  int connman_technology_remove_station(char *mac);
  int connman_technology_set_regdom(const char *alpha2);
 diff --git a/plugins/ethernet.c b/plugins/ethernet.c
-index b0395c8..6bed7de 100644
+index ed4208ad..fc8cd433 100644
 --- a/plugins/ethernet.c
 +++ b/plugins/ethernet.c
 @@ -345,6 +345,8 @@ static void eth_tech_add_interface(struct connman_technology *technology,
@@ -61,7 +61,7 @@ index b0395c8..6bed7de 100644
  
  static void eth_tech_enable_tethering(struct connman_technology *technology,
 diff --git a/src/technology.c b/src/technology.c
-index 54a32b3..5bfc1c5 100644
+index 54a32b33..5bfc1c5f 100644
 --- a/src/technology.c
 +++ b/src/technology.c
 @@ -554,6 +554,21 @@ static void append_interfaces(DBusMessageIter *iter, void *user_data)
@@ -97,6 +97,3 @@ index 54a32b3..5bfc1c5 100644
  	g_free(name);
  
  	technology = technology_find(type);
--- 
-2.26.0
-

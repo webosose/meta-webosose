@@ -1,4 +1,4 @@
-From d208a5da68d8b4ccf2e93c0e37912f3f6f2b7d59 Mon Sep 17 00:00:00 2001
+From f2814b30bdca4ebcd4054a5b324ec5a2aea01538 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 27 Jan 2021 17:23:22 +0530
 Subject: [PATCH] Add p2p changes
@@ -62,7 +62,7 @@ Upstream-Status: Inappropriate[webos specific]
  create mode 100644 src/sd.c
 
 diff --git a/Makefile.am b/Makefile.am
-index 011ef24..83ac894 100644
+index 5971ca9b..a9ae37dd 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -11,8 +11,8 @@ include_HEADERS = include/log.h include/plugin.h \
@@ -76,7 +76,7 @@ index 011ef24..83ac894 100644
  
  nodist_include_HEADERS = include/version.h
  
-@@ -129,9 +129,9 @@ src_connmand_SOURCES = $(gdhcp_sources) $(gweb_sources) $(stats_sources) \
+@@ -128,9 +128,9 @@ src_connmand_SOURCES = $(gdhcp_sources) $(gweb_sources) $(stats_sources) \
  			src/technology.c src/counter.c src/ntp.c \
  			src/session.c src/tethering.c src/wpad.c src/wispr.c \
  			src/6to4.c src/ippool.c src/bridge.c src/nat.c \
@@ -89,7 +89,7 @@ index 011ef24..83ac894 100644
  if INTERNAL_DNS_BACKEND
  src_connmand_SOURCES += src/dnsproxy.c
 diff --git a/gsupplicant/dbus.c b/gsupplicant/dbus.c
-index 2957979..c034737 100644
+index 2957979a..c0347374 100644
 --- a/gsupplicant/dbus.c
 +++ b/gsupplicant/dbus.c
 @@ -66,12 +66,14 @@ struct property_call_data {
@@ -232,7 +232,7 @@ index 2957979..c034737 100644
 +	return result;
 +}
 diff --git a/gsupplicant/dbus.h b/gsupplicant/dbus.h
-index 3a90406..071d19f 100644
+index 3a904069..071d19f4 100644
 --- a/gsupplicant/dbus.h
 +++ b/gsupplicant/dbus.h
 @@ -20,6 +20,7 @@
@@ -257,7 +257,7 @@ index 3a90406..071d19f 100644
 + */
 +bool dbus_message_get_args_from_array_of_sv(DBusMessageIter *iter, int first_arg_type, ...);
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index f3a8861..f13db37 100644
+index e034cade..c787d5a0 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
 @@ -155,6 +155,7 @@ struct _GSupplicantSSID {
@@ -597,7 +597,7 @@ index f3a8861..f13db37 100644
  int g_supplicant_set_widi_ies(GSupplicantP2PServiceParams *p2p_service_params,
  					GSupplicantInterfaceCallback callback,
  					void *user_data);
-@@ -300,12 +567,19 @@ bool g_supplicant_interface_has_p2p(GSupplicantInterface *interface);
+@@ -303,12 +570,19 @@ bool g_supplicant_interface_has_p2p(GSupplicantInterface *interface);
  int g_supplicant_interface_set_p2p_device_config(GSupplicantInterface *interface,
  						const char *device_name,
  						const char *primary_dev_type);
@@ -618,7 +618,7 @@ index f3a8861..f13db37 100644
  
  unsigned int g_supplicant_interface_get_rssi(GSupplicantInterface *interface);
  unsigned int g_supplicant_interface_get_link_speed(GSupplicantInterface *interface);
-@@ -316,6 +590,9 @@ unsigned int g_supplicant_interface_get_noise(GSupplicantInterface *interface);
+@@ -319,6 +593,9 @@ unsigned int g_supplicant_interface_get_noise(GSupplicantInterface *interface);
  struct _GSupplicantNetwork;
  struct _GSupplicantGroup;
  
@@ -628,7 +628,7 @@ index f3a8861..f13db37 100644
  typedef struct _GSupplicantNetwork GSupplicantNetwork;
  typedef struct _GSupplicantGroup GSupplicantGroup;
  
-@@ -347,12 +624,18 @@ dbus_uint16_t g_supplicant_bss_get_frequency(GSupplicantBss *bss);
+@@ -350,12 +627,18 @@ dbus_uint16_t g_supplicant_bss_get_frequency(GSupplicantBss *bss);
  
  GSupplicantInterface *g_supplicant_peer_get_interface(GSupplicantPeer *peer);
  const char *g_supplicant_peer_get_path(GSupplicantPeer *peer);
@@ -647,7 +647,7 @@ index f3a8861..f13db37 100644
  bool g_supplicant_peer_is_wps_pbc(GSupplicantPeer *peer);
  bool g_supplicant_peer_is_wps_pin(GSupplicantPeer *peer);
  bool g_supplicant_peer_is_in_a_group(GSupplicantPeer *peer);
-@@ -360,6 +643,31 @@ GSupplicantInterface *g_supplicant_peer_get_group_interface(GSupplicantPeer *pee
+@@ -363,6 +646,31 @@ GSupplicantInterface *g_supplicant_peer_get_group_interface(GSupplicantPeer *pee
  bool g_supplicant_peer_is_client(GSupplicantPeer *peer);
  bool g_supplicant_peer_has_requested_connection(GSupplicantPeer *peer);
  
@@ -679,7 +679,7 @@ index f3a8861..f13db37 100644
  struct _GSupplicantCallbacks {
  	void (*system_ready) (void);
  	void (*system_killed) (void);
-@@ -367,6 +675,7 @@ struct _GSupplicantCallbacks {
+@@ -370,6 +678,7 @@ struct _GSupplicantCallbacks {
  	void (*interface_state) (GSupplicantInterface *interface);
  	void (*interface_removed) (GSupplicantInterface *interface);
  	void (*p2p_support) (GSupplicantInterface *interface);
@@ -687,7 +687,7 @@ index f3a8861..f13db37 100644
  	void (*scan_started) (GSupplicantInterface *interface);
  	void (*scan_finished) (GSupplicantInterface *interface);
  	void (*ap_create_fail) (GSupplicantInterface *interface);
-@@ -385,13 +694,31 @@ struct _GSupplicantCallbacks {
+@@ -388,13 +697,31 @@ struct _GSupplicantCallbacks {
  	void (*peer_lost) (GSupplicantPeer *peer);
  	void (*peer_changed) (GSupplicantPeer *peer,
  					GSupplicantPeerState state);
@@ -722,7 +722,7 @@ index f3a8861..f13db37 100644
  
  typedef struct _GSupplicantCallbacks GSupplicantCallbacks;
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 84dc2e1..da9f2a6 100644
+index 8c008319..6546ca93 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
 @@ -46,6 +46,9 @@
@@ -1273,7 +1273,7 @@ index 84dc2e1..da9f2a6 100644
  
  	g_free(peer);
  }
-@@ -1178,6 +1585,19 @@ unsigned int g_supplicant_interface_get_noise(GSupplicantInterface *interface)
+@@ -1196,6 +1603,19 @@ unsigned int g_supplicant_interface_get_noise(GSupplicantInterface *interface)
  	return interface->noise;
  }
  
@@ -1293,7 +1293,7 @@ index 84dc2e1..da9f2a6 100644
  static void set_network_enabled(DBusMessageIter *iter, void *user_data)
  {
  	dbus_bool_t enable = *(dbus_bool_t *)user_data;
-@@ -1383,6 +1803,14 @@ const char *g_supplicant_peer_get_path(GSupplicantPeer *peer)
+@@ -1401,6 +1821,14 @@ const char *g_supplicant_peer_get_path(GSupplicantPeer *peer)
  	return peer->path;
  }
  
@@ -1308,7 +1308,7 @@ index 84dc2e1..da9f2a6 100644
  const char *g_supplicant_peer_get_identifier(GSupplicantPeer *peer)
  {
  	if (!peer)
-@@ -1407,6 +1835,14 @@ const void *g_supplicant_peer_get_iface_address(GSupplicantPeer *peer)
+@@ -1425,6 +1853,14 @@ const void *g_supplicant_peer_get_iface_address(GSupplicantPeer *peer)
  	return peer->iface_address;
  }
  
@@ -1323,7 +1323,7 @@ index 84dc2e1..da9f2a6 100644
  const char *g_supplicant_peer_get_name(GSupplicantPeer *peer)
  {
  	if (!peer)
-@@ -1425,26 +1861,50 @@ const unsigned char *g_supplicant_peer_get_widi_ies(GSupplicantPeer *peer,
+@@ -1443,26 +1879,50 @@ const unsigned char *g_supplicant_peer_get_widi_ies(GSupplicantPeer *peer,
  	return peer->widi_ies;
  }
  
@@ -1386,7 +1386,7 @@ index 84dc2e1..da9f2a6 100644
  }
  
  bool g_supplicant_peer_is_in_a_group(GSupplicantPeer *peer)
-@@ -1497,6 +1957,57 @@ bool g_supplicant_peer_has_requested_connection(GSupplicantPeer *peer)
+@@ -1515,6 +1975,57 @@ bool g_supplicant_peer_has_requested_connection(GSupplicantPeer *peer)
  	return peer->connection_requested;
  }
  
@@ -1444,7 +1444,7 @@ index 84dc2e1..da9f2a6 100644
  static void merge_network(GSupplicantNetwork *network)
  {
  	GString *str;
-@@ -2157,17 +2668,23 @@ static void interface_bss_added_with_keys(DBusMessageIter *iter,
+@@ -2175,17 +2686,23 @@ static void interface_bss_added_with_keys(DBusMessageIter *iter,
  						void *user_data)
  {
  	struct g_supplicant_bss *bss;
@@ -1469,7 +1469,7 @@ index 84dc2e1..da9f2a6 100644
  
  	supplicant_dbus_property_foreach(iter, bss_property, bss);
  
-@@ -2180,9 +2697,13 @@ static void interface_bss_added_without_keys(DBusMessageIter *iter,
+@@ -2198,9 +2715,13 @@ static void interface_bss_added_without_keys(DBusMessageIter *iter,
  						void *user_data)
  {
  	struct g_supplicant_bss *bss;
@@ -1483,7 +1483,7 @@ index 84dc2e1..da9f2a6 100644
  	bss = interface_bss_added(iter, user_data);
  	if (!bss)
  		return;
-@@ -2597,6 +3118,12 @@ static GSupplicantInterface *interface_alloc(const char *path)
+@@ -2615,6 +3136,12 @@ static GSupplicantInterface *interface_alloc(const char *path)
  	interface->bss_mapping = g_hash_table_new_full(g_str_hash, g_str_equal,
  								NULL, NULL);
  
@@ -1496,7 +1496,7 @@ index 84dc2e1..da9f2a6 100644
  	g_hash_table_replace(interface_table, interface->path, interface);
  
  	return interface;
-@@ -2743,6 +3270,7 @@ static void signal_name_owner_changed(const char *path, DBusMessageIter *iter)
+@@ -2761,6 +3288,7 @@ static void signal_name_owner_changed(const char *path, DBusMessageIter *iter)
  		g_hash_table_remove_all(group_mapping);
  		g_hash_table_remove_all(config_file_table);
  		g_hash_table_remove_all(interface_table);
@@ -1504,7 +1504,7 @@ index 84dc2e1..da9f2a6 100644
  		callback_system_killed();
  	}
  
-@@ -3214,6 +3742,14 @@ struct peer_property_data {
+@@ -3232,6 +3760,14 @@ struct peer_property_data {
  	bool services_changed;
  };
  
@@ -1519,7 +1519,7 @@ index 84dc2e1..da9f2a6 100644
  static void peer_groups_relation(DBusMessageIter *iter, void *user_data)
  {
  	struct peer_property_data *data = user_data;
-@@ -3240,12 +3776,73 @@ static void peer_groups_relation(DBusMessageIter *iter, void *user_data)
+@@ -3258,12 +3794,73 @@ static void peer_groups_relation(DBusMessageIter *iter, void *user_data)
  	}
  }
  
@@ -1593,7 +1593,7 @@ index 84dc2e1..da9f2a6 100644
  
  	SUPPLICANT_DBG("key: %s", key);
  
-@@ -3253,18 +3850,40 @@ static void peer_property(const char *key, DBusMessageIter *iter,
+@@ -3271,18 +3868,40 @@ static void peer_property(const char *key, DBusMessageIter *iter,
  		return;
  
  	if (!key) {
@@ -1635,7 +1635,7 @@ index 84dc2e1..da9f2a6 100644
  			dbus_free(data);
  		}
  
-@@ -3291,6 +3910,7 @@ static void peer_property(const char *key, DBusMessageIter *iter,
+@@ -3309,6 +3928,7 @@ static void peer_property(const char *key, DBusMessageIter *iter,
  		uint16_t wps_config;
  
  		dbus_message_iter_get_basic(iter, &wps_config);
@@ -1643,7 +1643,7 @@ index 84dc2e1..da9f2a6 100644
  
  		if (wps_config & G_SUPPLICANT_WPS_CONFIG_PBC)
  			peer->wps_capabilities |= G_SUPPLICANT_WPS_PBC;
-@@ -3306,6 +3926,47 @@ static void peer_property(const char *key, DBusMessageIter *iter,
+@@ -3324,6 +3944,47 @@ static void peer_property(const char *key, DBusMessageIter *iter,
  			g_slist_free_full(data->old_groups, g_free);
  			data->groups_changed = true;
  		}
@@ -1691,7 +1691,7 @@ index 84dc2e1..da9f2a6 100644
  	} else if (g_strcmp0(key, "IEs") == 0) {
  		DBusMessageIter array;
  		unsigned char *ie;
-@@ -3330,6 +3991,25 @@ static void peer_property(const char *key, DBusMessageIter *iter,
+@@ -3348,6 +4009,25 @@ static void peer_property(const char *key, DBusMessageIter *iter,
  		memcpy(peer->widi_ies, ie, ie_len);
  		peer->widi_ies_length = ie_len;
  		data->services_changed = true;
@@ -1717,7 +1717,7 @@ index 84dc2e1..da9f2a6 100644
  	}
  }
  
-@@ -3339,6 +4019,7 @@ static void signal_peer_found(const char *path, DBusMessageIter *iter)
+@@ -3357,6 +4037,7 @@ static void signal_peer_found(const char *path, DBusMessageIter *iter)
  	GSupplicantInterface *interface;
  	const char *obj_path = NULL;
  	GSupplicantPeer *peer;
@@ -1725,7 +1725,7 @@ index 84dc2e1..da9f2a6 100644
  
  	SUPPLICANT_DBG("");
  
-@@ -3362,8 +4043,13 @@ static void signal_peer_found(const char *path, DBusMessageIter *iter)
+@@ -3380,8 +4061,13 @@ static void signal_peer_found(const char *path, DBusMessageIter *iter)
  	peer->path = g_strdup(obj_path);
  	g_hash_table_insert(interface->peer_table, peer->path, peer);
  	g_hash_table_replace(peer_mapping, peer->path, interface);
@@ -1739,7 +1739,7 @@ index 84dc2e1..da9f2a6 100644
  	property_data->peer = peer;
  
  	dbus_message_iter_next(iter);
-@@ -3374,9 +4060,12 @@ static void signal_peer_found(const char *path, DBusMessageIter *iter)
+@@ -3392,9 +4078,12 @@ static void signal_peer_found(const char *path, DBusMessageIter *iter)
  		return;
  	}
  
@@ -1753,7 +1753,7 @@ index 84dc2e1..da9f2a6 100644
  }
  
  static void signal_peer_lost(const char *path, DBusMessageIter *iter)
-@@ -3384,6 +4073,7 @@ static void signal_peer_lost(const char *path, DBusMessageIter *iter)
+@@ -3402,6 +4091,7 @@ static void signal_peer_lost(const char *path, DBusMessageIter *iter)
  	GSupplicantInterface *interface;
  	const char *obj_path = NULL;
  	GSupplicantPeer *peer;
@@ -1761,7 +1761,7 @@ index 84dc2e1..da9f2a6 100644
  
  	SUPPLICANT_DBG("");
  
-@@ -3399,6 +4089,21 @@ static void signal_peer_lost(const char *path, DBusMessageIter *iter)
+@@ -3417,6 +4107,21 @@ static void signal_peer_lost(const char *path, DBusMessageIter *iter)
  	if (!peer)
  		return;
  
@@ -1783,7 +1783,7 @@ index 84dc2e1..da9f2a6 100644
  	g_hash_table_remove(interface->peer_table, obj_path);
  }
  
-@@ -3421,12 +4126,14 @@ static void signal_peer_changed(const char *path, DBusMessageIter *iter)
+@@ -3439,12 +4144,14 @@ static void signal_peer_changed(const char *path, DBusMessageIter *iter)
  	}
  
  	property_data = dbus_malloc0(sizeof(struct peer_property_data));
@@ -1800,7 +1800,7 @@ index 84dc2e1..da9f2a6 100644
  
  	if (property_data->groups_changed)
  		callback_peer_changed(peer, G_SUPPLICANT_PEER_GROUP_CHANGED);
-@@ -3437,18 +4144,45 @@ static void signal_peer_changed(const char *path, DBusMessageIter *iter)
+@@ -3455,18 +4162,45 @@ static void signal_peer_changed(const char *path, DBusMessageIter *iter)
  		peer->connection_requested = false;
  }
  
@@ -1846,7 +1846,7 @@ index 84dc2e1..da9f2a6 100644
  
  	if (!key)
  		return;
-@@ -3463,7 +4197,7 @@ static void group_sig_property(const char *key, DBusMessageIter *iter,
+@@ -3481,7 +4215,7 @@ static void group_sig_property(const char *key, DBusMessageIter *iter,
  
  		if (len == ETH_ALEN)
  			memcpy(data->iface_address, dev_addr, len);
@@ -1855,7 +1855,7 @@ index 84dc2e1..da9f2a6 100644
  		const char *str = NULL;
  
  		dbus_message_iter_get_basic(iter, &str);
-@@ -3477,7 +4211,49 @@ static void group_sig_property(const char *key, DBusMessageIter *iter,
+@@ -3495,7 +4229,49 @@ static void group_sig_property(const char *key, DBusMessageIter *iter,
  		dbus_message_iter_get_basic(iter, &data->interface_obj_path);
  	else if (g_strcmp0(key, "group_object") == 0)
  		dbus_message_iter_get_basic(iter, &data->group_obj_path);
@@ -1906,7 +1906,7 @@ index 84dc2e1..da9f2a6 100644
  }
  
  static void signal_group_success(const char *path, DBusMessageIter *iter)
-@@ -3524,16 +4300,137 @@ static void signal_group_failure(const char *path, DBusMessageIter *iter)
+@@ -3542,16 +4318,137 @@ static void signal_group_failure(const char *path, DBusMessageIter *iter)
  	if (!peer)
  		return;
  
@@ -2046,7 +2046,7 @@ index 84dc2e1..da9f2a6 100644
  
  	SUPPLICANT_DBG("");
  
-@@ -3545,11 +4442,13 @@ static void signal_group_started(const char *path, DBusMessageIter *iter)
+@@ -3563,11 +4460,13 @@ static void signal_group_started(const char *path, DBusMessageIter *iter)
  	if (!data.interface_obj_path || !data.group_obj_path)
  		return;
  
@@ -2065,7 +2065,7 @@ index 84dc2e1..da9f2a6 100644
  
  	g_interface = g_hash_table_lookup(interface_table,
  						data.interface_obj_path);
-@@ -3569,12 +4468,26 @@ static void signal_group_started(const char *path, DBusMessageIter *iter)
+@@ -3587,12 +4486,26 @@ static void signal_group_started(const char *path, DBusMessageIter *iter)
  	group->orig_interface = interface;
  	group->path = g_strdup(data.group_obj_path);
  	group->role = data.role;
@@ -2094,7 +2094,7 @@ index 84dc2e1..da9f2a6 100644
  }
  
  static void remove_peer_group_interface(GHashTable *group_table,
-@@ -3602,6 +4515,40 @@ static void remove_peer_group_interface(GHashTable *group_table,
+@@ -3620,6 +4533,40 @@ static void remove_peer_group_interface(GHashTable *group_table,
  	}
  }
  
@@ -2135,7 +2135,7 @@ index 84dc2e1..da9f2a6 100644
  static void signal_group_finished(const char *path, DBusMessageIter *iter)
  {
  	GSupplicantInterface *interface;
-@@ -3622,6 +4569,9 @@ static void signal_group_finished(const char *path, DBusMessageIter *iter)
+@@ -3640,6 +4587,9 @@ static void signal_group_finished(const char *path, DBusMessageIter *iter)
  	g_hash_table_remove(group_mapping, data.group_obj_path);
  
  	g_hash_table_remove(interface->group_table, data.group_obj_path);
@@ -2145,7 +2145,7 @@ index 84dc2e1..da9f2a6 100644
  }
  
  static void signal_group_request(const char *path, DBusMessageIter *iter)
-@@ -3629,6 +4579,7 @@ static void signal_group_request(const char *path, DBusMessageIter *iter)
+@@ -3647,6 +4597,7 @@ static void signal_group_request(const char *path, DBusMessageIter *iter)
  	GSupplicantInterface *interface;
  	GSupplicantPeer *peer;
  	const char *obj_path;
@@ -2153,7 +2153,7 @@ index 84dc2e1..da9f2a6 100644
  
  	SUPPLICANT_DBG("");
  
-@@ -3644,1692 +4595,4630 @@ static void signal_group_request(const char *path, DBusMessageIter *iter)
+@@ -3662,1692 +4613,4630 @@ static void signal_group_request(const char *path, DBusMessageIter *iter)
  	if (!peer)
  		return;
  
@@ -7990,7 +7990,7 @@ index 84dc2e1..da9f2a6 100644
  	}
  
  	if (data->callback != NULL)
-@@ -5338,18 +9227,19 @@ static void interface_wps_cancel_result(const char *error,
+@@ -5356,18 +9245,19 @@ static void interface_wps_cancel_result(const char *error,
  	dbus_free(data);
  }
  
@@ -8017,7 +8017,7 @@ index 84dc2e1..da9f2a6 100644
  
  	data = dbus_malloc0(sizeof(*data));
  	if (data == NULL)
-@@ -5358,327 +9248,388 @@ int g_supplicant_interface_wps_cancel(GSupplicantInterface *interface,
+@@ -5376,327 +9266,388 @@ int g_supplicant_interface_wps_cancel(GSupplicantInterface *interface,
  	data->interface = interface;
  	data->callback = callback;
  	data->user_data = user_data;
@@ -8599,7 +8599,7 @@ index 84dc2e1..da9f2a6 100644
  
  	if (!interface->p2p_support)
  		return -ENOTSUP;
-@@ -5688,17 +9639,18 @@ int g_supplicant_interface_p2p_connect(GSupplicantInterface *interface,
+@@ -5706,17 +9657,18 @@ int g_supplicant_interface_p2p_connect(GSupplicantInterface *interface,
  		return -ENOMEM;
  
  	data->interface = interface;
@@ -8624,7 +8624,7 @@ index 84dc2e1..da9f2a6 100644
  		dbus_free(data);
  		return ret;
  	}
-@@ -5706,144 +9658,160 @@ int g_supplicant_interface_p2p_connect(GSupplicantInterface *interface,
+@@ -5724,144 +9676,160 @@ int g_supplicant_interface_p2p_connect(GSupplicantInterface *interface,
  	return -EINPROGRESS;
  }
  
@@ -8872,7 +8872,7 @@ index 84dc2e1..da9f2a6 100644
  	if (ret < 0) {
  		dbus_free(data);
  		return ret;
-@@ -5852,28 +9820,33 @@ int g_supplicant_interface_p2p_add_service(GSupplicantInterface *interface,
+@@ -5870,28 +9838,33 @@ int g_supplicant_interface_p2p_add_service(GSupplicantInterface *interface,
  	return -EINPROGRESS;
  }
  
@@ -8917,7 +8917,7 @@ index 84dc2e1..da9f2a6 100644
  	if (ret < 0) {
  		dbus_free(data);
  		return ret;
-@@ -5882,42 +9855,147 @@ int g_supplicant_interface_p2p_del_service(GSupplicantInterface *interface,
+@@ -5900,42 +9873,147 @@ int g_supplicant_interface_p2p_del_service(GSupplicantInterface *interface,
  	return -EINPROGRESS;
  }
  
@@ -9075,7 +9075,7 @@ index 84dc2e1..da9f2a6 100644
  }
  
  static void widi_ies_params(DBusMessageIter *iter, void *user_data)
-@@ -6047,6 +10125,12 @@ int g_supplicant_register(const GSupplicantCallbacks *callbacks)
+@@ -6065,6 +10143,12 @@ int g_supplicant_register(const GSupplicantCallbacks *callbacks)
  								NULL, NULL);
  	config_file_table = g_hash_table_new_full(g_str_hash, g_str_equal,
  								g_free, g_free);
@@ -9088,7 +9088,7 @@ index 84dc2e1..da9f2a6 100644
  
  	supplicant_dbus_setup(connection);
  
-@@ -6150,6 +10234,15 @@ void g_supplicant_unregister(const GSupplicantCallbacks *callbacks)
+@@ -6168,6 +10252,15 @@ void g_supplicant_unregister(const GSupplicantCallbacks *callbacks)
  		connection = NULL;
  	}
  
@@ -9105,7 +9105,7 @@ index 84dc2e1..da9f2a6 100644
  	eap_methods = 0;
  }
 diff --git a/include/dbus.h b/include/dbus.h
-index bcab418..13f8c70 100644
+index bcab4189..13f8c700 100644
 --- a/include/dbus.h
 +++ b/include/dbus.h
 @@ -45,6 +45,9 @@ extern "C" {
@@ -9119,7 +9119,7 @@ index bcab418..13f8c70 100644
  #define CONNMAN_PRIVILEGE_MODIFY	1
  #define CONNMAN_PRIVILEGE_SECRET	2
 diff --git a/include/device.h b/include/device.h
-index 082c1a3..3b65365 100644
+index 082c1a3d..3b65365b 100644
 --- a/include/device.h
 +++ b/include/device.h
 @@ -153,6 +153,8 @@ struct connman_device_driver {
@@ -9133,7 +9133,7 @@ index 082c1a3..3b65365 100644
  
 diff --git a/include/group.h b/include/group.h
 new file mode 100644
-index 0000000..6d09284
+index 00000000..6d092843
 --- /dev/null
 +++ b/include/group.h
 @@ -0,0 +1,74 @@
@@ -9212,7 +9212,7 @@ index 0000000..6d09284
 +
 +#endif /* __CONNMAN_GROUP_H */
 diff --git a/include/network.h b/include/network.h
-index ad764e6..8b4f56d 100644
+index ad764e64..8b4f56db 100644
 --- a/include/network.h
 +++ b/include/network.h
 @@ -30,6 +30,7 @@
@@ -9233,7 +9233,7 @@ index ad764e6..8b4f56d 100644
  struct connman_device *connman_network_get_device(struct connman_network *network);
  
 diff --git a/include/peer.h b/include/peer.h
-index 8066393..9a968f3 100644
+index 80663932..9a968f36 100644
 --- a/include/peer.h
 +++ b/include/peer.h
 @@ -40,6 +40,9 @@ enum connman_peer_wps_method {
@@ -9300,7 +9300,7 @@ index 8066393..9a968f3 100644
  }
 diff --git a/include/sd.h b/include/sd.h
 new file mode 100644
-index 0000000..c8b6530
+index 00000000..c8b6530a
 --- /dev/null
 +++ b/include/sd.h
 @@ -0,0 +1,25 @@
@@ -9330,7 +9330,7 @@ index 0000000..c8b6530
 +
 +#endif /* __CONNMAN_SD_H */
 diff --git a/include/technology.h b/include/technology.h
-index 8b4f159..445174d 100644
+index 8b4f159c..445174d0 100644
 --- a/include/technology.h
 +++ b/include/technology.h
 @@ -23,6 +23,7 @@
@@ -9401,7 +9401,7 @@ index 8b4f159..445174d 100644
  int connman_technology_driver_register(struct connman_technology_driver *driver);
 diff --git a/include/types.h b/include/types.h
 new file mode 100644
-index 0000000..0f671ec
+index 00000000..0f671ec3
 --- /dev/null
 +++ b/include/types.h
 @@ -0,0 +1,45 @@
@@ -9451,7 +9451,7 @@ index 0000000..0f671ec
 +
 +#endif /* __CONNMAN_TYPES_H */
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 63c154e..0945a4a 100644
+index 429a50c4..22696291 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
 @@ -33,6 +33,8 @@
@@ -9471,11 +9471,11 @@ index 63c154e..0945a4a 100644
 +
 +#include "include/group.h"
 +
+ #include "src/shared/util.h"
+ 
  #define CLEANUP_TIMEOUT   8	/* in seconds */
- #define INACTIVE_TIMEOUT  12	/* in seconds */
- #define FAVORITE_MAXIMUM_RETRIES 2
-@@ -67,15 +73,29 @@
- #define BGSCAN_DEFAULT "simple:30:-45:300"
+@@ -69,15 +75,29 @@
+ #define BGSCAN_DEFAULT "simple:30:-65:300"
  #define AUTOSCAN_EXPONENTIAL "exponential:3:300"
  #define AUTOSCAN_SINGLE "single:3"
 +#define P2P_PERSISTENT_INFO		"P2PPersistentInfo"
@@ -9507,7 +9507,7 @@ index 63c154e..0945a4a 100644
  static struct connman_technology *wifi_technology = NULL;
  static struct connman_technology *p2p_technology = NULL;
  
-@@ -155,12 +175,14 @@ struct wifi_data {
+@@ -157,12 +177,14 @@ struct wifi_data {
  	struct autoscan_params *autoscan;
  	enum wifi_scanning_type scanning_type;
  	GSupplicantScanParams *scan_params;
@@ -9522,7 +9522,7 @@ index 63c154e..0945a4a 100644
  	int servicing;
  	int disconnect_code;
  	int assoc_code;
-@@ -169,6 +191,12 @@ struct wifi_data {
+@@ -171,6 +193,12 @@ struct wifi_data {
  	GSupplicantSSID *wps_ssid;
  	guint wps_timeout;
  	bool wps_start_deferred;
@@ -9535,7 +9535,7 @@ index 63c154e..0945a4a 100644
  };
  
  struct wifi_cb_data {
-@@ -183,10 +211,23 @@ static GList *pending_wifi_device = NULL;
+@@ -185,10 +213,23 @@ static GList *pending_wifi_device = NULL;
  static GList *p2p_iface_list = NULL;
  static bool wfd_service_registered = false;
  
@@ -9559,7 +9559,7 @@ index 63c154e..0945a4a 100644
  
  static void bss_foreach(gpointer key, gpointer value, gpointer user_data)
  {
-@@ -221,3453 +262,5621 @@ static void p2p_tech_remove(struct connman_technology *technology)
+@@ -223,3453 +264,5621 @@ static void p2p_tech_remove(struct connman_technology *technology)
  	p2p_technology = NULL;
  }
  
@@ -12170,7 +12170,7 @@ index 63c154e..0945a4a 100644
 +	g_supplicant_interface_set_data(wifi->interface, NULL);
  
 -struct last_connected {
--	GTimeVal modified;
+-	struct timeval modified;
 -	gchar *ssid;
 -	int freq;
 -};
@@ -12178,8 +12178,8 @@ index 63c154e..0945a4a 100644
  
 -static gint sort_entry(gconstpointer a, gconstpointer b, gpointer user_data)
 -{
--	GTimeVal *aval = (GTimeVal *)a;
--	GTimeVal *bval = (GTimeVal *)b;
+-	struct timeval *aval = (struct timeval *)a;
+-	struct timeval *bval = (struct timeval *)b;
 +	if (wifi->scan_params)
 +		g_supplicant_free_scan_params(wifi->scan_params);
  
@@ -12240,7 +12240,7 @@ index 63c154e..0945a4a 100644
 -	GSequence *latest_list;
 -	struct last_connected *entry;
 -	GKeyFile *keyfile;
--	GTimeVal modified;
+-	struct timeval modified;
 -	gchar **services;
 -	gchar *str;
 -	char *ssid;
@@ -12313,7 +12313,7 @@ index 63c154e..0945a4a 100644
 +				g_free(ssid);
 +			return 0;
  		}
--		g_time_val_from_iso8601(str, &modified);
+-		util_iso8601_to_timeval(str, &modified);
 -		g_free(str);
  
 -		ssid = g_key_file_get_string(keyfile,
@@ -13427,7 +13427,7 @@ index 63c154e..0945a4a 100644
  
 -static int network_probe(struct connman_network *network)
 +struct last_connected {
-+	GTimeVal modified;
++	struct timeval modified;
 +	gchar *ssid;
 +	int freq;
 +};
@@ -13435,8 +13435,8 @@ index 63c154e..0945a4a 100644
 +static gint sort_entry(gconstpointer a, gconstpointer b, gpointer user_data)
  {
 -	DBG("network %p", network);
-+	GTimeVal *aval = (GTimeVal *)a;
-+	GTimeVal *bval = (GTimeVal *)b;
++	struct timeval *aval = (struct timeval *)a;
++	struct timeval *bval = (struct timeval *)b;
 +
 +	/* Note that the sort order is descending */
 +	if (aval->tv_sec < bval->tv_sec)
@@ -13479,7 +13479,7 @@ index 63c154e..0945a4a 100644
 +	GSequence *latest_list;
 +	struct last_connected *entry;
 +	GKeyFile *keyfile;
-+	GTimeVal modified;
++	struct timeval modified;
 +	gchar **services;
 +	gchar *str;
 +	char *ssid;
@@ -13540,7 +13540,7 @@ index 63c154e..0945a4a 100644
 +			g_key_file_free(keyfile);
 +			continue;
 +		}
-+		g_time_val_from_iso8601(str, &modified);
++		util_iso8601_to_timeval(str, &modified);
 +		g_free(str);
  
 -	if (result == -ENOKEY) {
@@ -14570,7 +14570,7 @@ index 63c154e..0945a4a 100644
 +		return;
 +	}
 +
-+	if (wifi->network != wifi->pending_network)
++	if (wifi->network && wifi->network != wifi->pending_network)
 +		connman_network_set_connected(wifi->network, false);
 +	wifi->network = NULL;
 +
@@ -15700,7 +15700,7 @@ index 63c154e..0945a4a 100644
  		return;
 -	}
 -
--	if (wifi->network != wifi->pending_network)
+-	if (wifi->network && wifi->network != wifi->pending_network)
 -		connman_network_set_connected(wifi->network, false);
 -	wifi->network = NULL;
  
@@ -17624,7 +17624,7 @@ index 63c154e..0945a4a 100644
  }
  
  static const GSupplicantCallbacks callbacks = {
-@@ -3677,6 +5886,7 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3679,6 +5888,7 @@ static const GSupplicantCallbacks callbacks = {
  	.interface_state	= interface_state,
  	.interface_removed	= interface_removed,
  	.p2p_support		= p2p_support,
@@ -17632,7 +17632,7 @@ index 63c154e..0945a4a 100644
  	.scan_started		= scan_started,
  	.scan_finished		= scan_finished,
  	.ap_create_fail		= ap_create_fail,
-@@ -3692,13 +5902,29 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3694,13 +5904,29 @@ static const GSupplicantCallbacks callbacks = {
  	.peer_lost		= peer_lost,
  	.peer_changed		= peer_changed,
  	.peer_request		= peer_request,
@@ -17663,7 +17663,7 @@ index 63c154e..0945a4a 100644
  static int tech_probe(struct connman_technology *technology)
  {
  	wifi_technology = technology;
-@@ -4003,6 +6229,21 @@ static int tech_set_regdom(struct connman_technology *technology, const char *al
+@@ -4005,6 +6231,21 @@ static int tech_set_regdom(struct connman_technology *technology, const char *al
  	return g_supplicant_set_country(alpha2, regdom_callback, NULL);
  }
  
@@ -17685,7 +17685,7 @@ index 63c154e..0945a4a 100644
  static struct connman_technology_driver tech_driver = {
  	.name		= "wifi",
  	.type		= CONNMAN_SERVICE_TYPE_WIFI,
-@@ -4010,12 +6251,15 @@ static struct connman_technology_driver tech_driver = {
+@@ -4012,12 +6253,15 @@ static struct connman_technology_driver tech_driver = {
  	.remove		= tech_remove,
  	.set_tethering	= tech_set_tethering,
  	.set_regdom	= tech_set_regdom,
@@ -17701,7 +17701,7 @@ index 63c154e..0945a4a 100644
  	err = connman_network_driver_register(&network_driver);
  	if (err < 0)
  		return err;
-@@ -4036,6 +6280,72 @@ static int wifi_init(void)
+@@ -4038,6 +6282,72 @@ static int wifi_init(void)
  	return 0;
  }
  
@@ -17775,7 +17775,7 @@ index 63c154e..0945a4a 100644
  {
  	DBG();
 diff --git a/src/connman.h b/src/connman.h
-index 336b26d..2ca8432 100644
+index 5765c302..defd8f2a 100644
 --- a/src/connman.h
 +++ b/src/connman.h
 @@ -279,6 +279,7 @@ void __connman_storage_save_provider(GKeyFile *keyfile, const char *identifier);
@@ -17786,7 +17786,7 @@ index 336b26d..2ca8432 100644
  
  int __connman_detect_init(void);
  void __connman_detect_cleanup(void);
-@@ -464,6 +465,7 @@ typedef void (* dhcpv6_cb) (struct connman_network *network,
+@@ -463,6 +464,7 @@ typedef void (* dhcpv6_cb) (struct connman_network *network,
  typedef void (* dhcp_cb) (struct connman_ipconfig *ipconfig,
  			struct connman_network *opt_network,
  			bool success, gpointer data);
@@ -17794,7 +17794,7 @@ index 336b26d..2ca8432 100644
  char *__connman_dhcp_get_server_address(struct connman_ipconfig *ipconfig);
  int __connman_dhcp_start(struct connman_ipconfig *ipconfig,
  			struct connman_network *network, dhcp_cb callback,
-@@ -557,6 +559,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
+@@ -556,6 +558,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
  				int index, const char *ident);
  void __connman_technology_notify_regdom_by_device(struct connman_device *device,
  						int result, const char *alpha2);
@@ -17803,7 +17803,7 @@ index 336b26d..2ca8432 100644
  
  #include <connman/device.h>
  
-@@ -571,6 +575,7 @@ int __connman_device_request_scan(enum connman_service_type type);
+@@ -570,6 +574,7 @@ int __connman_device_request_scan(enum connman_service_type type);
  int __connman_device_request_scan_full(enum connman_service_type type);
  int __connman_device_request_start_wps(enum connman_service_type type, const char *pin);
  int __connman_device_request_cancel_wps(enum connman_service_type type);
@@ -17811,7 +17811,7 @@ index 336b26d..2ca8432 100644
  int __connman_device_request_hidden_scan(struct connman_device *device,
  				const char *ssid, unsigned int ssid_len,
  				const char *identity, const char *passphrase,
-@@ -695,6 +700,7 @@ int __connman_service_compare(const struct connman_service *a,
+@@ -694,6 +699,7 @@ int __connman_service_compare(const struct connman_service *a,
  					const struct connman_service *b);
  
  struct connman_service *__connman_service_lookup_from_index(int index);
@@ -17819,7 +17819,7 @@ index 336b26d..2ca8432 100644
  struct connman_service *__connman_service_create_from_network(struct connman_network *network);
  struct connman_service *__connman_service_create_from_provider(struct connman_provider *provider);
  bool __connman_service_index_is_default(int index);
-@@ -846,7 +852,9 @@ void __connman_peer_cleanup(void);
+@@ -845,7 +851,9 @@ void __connman_peer_cleanup(void);
  
  void __connman_peer_list_struct(DBusMessageIter *array);
  const char *__connman_peer_get_path(struct connman_peer *peer);
@@ -17830,7 +17830,7 @@ index 336b26d..2ca8432 100644
  
  int __connman_peer_service_init(void);
  void __connman_peer_service_cleanup(void);
-@@ -1000,6 +1008,15 @@ typedef void (*ippool_collision_cb_t) (struct connman_ippool *pool,
+@@ -999,6 +1007,15 @@ typedef void (*ippool_collision_cb_t) (struct connman_ippool *pool,
  int __connman_ippool_init(void);
  void __connman_ippool_cleanup(void);
  
@@ -17846,7 +17846,7 @@ index 336b26d..2ca8432 100644
  void __connman_ippool_free(struct connman_ippool *pool);
  
  struct connman_ippool *__connman_ippool_create(int index,
-@@ -1008,6 +1025,13 @@ struct connman_ippool *__connman_ippool_create(int index,
+@@ -1007,6 +1024,13 @@ struct connman_ippool *__connman_ippool_create(int index,
  					ippool_collision_cb_t collision_cb,
  					void *user_data);
  
@@ -17860,13 +17860,13 @@ index 336b26d..2ca8432 100644
  const char *__connman_ippool_get_gateway(struct connman_ippool *pool);
  const char *__connman_ippool_get_broadcast(struct connman_ippool *pool);
  const char *__connman_ippool_get_subnet_mask(struct connman_ippool *pool);
-@@ -1094,3 +1118,4 @@ int __connman_util_get_random(uint64_t *val);
+@@ -1093,3 +1117,4 @@ int __connman_util_get_random(uint64_t *val);
  unsigned int __connman_util_random_delay_ms(unsigned int secs);
  int __connman_util_init(void);
  void __connman_util_cleanup(void);
 +char *__connman_util_insert_colon_to_mac_addr(const char *mac_addr);
 diff --git a/src/dbus.c b/src/dbus.c
-index d80a46c..e0b69d4 100644
+index d80a46ce..e0b69d4c 100644
 --- a/src/dbus.c
 +++ b/src/dbus.c
 @@ -182,6 +182,11 @@ void connman_dbus_property_append_array(DBusMessageIter *iter,
@@ -17882,7 +17882,7 @@ index d80a46c..e0b69d4 100644
  		variant_sig = DBUS_TYPE_ARRAY_AS_STRING
  				DBUS_TYPE_STRING_AS_STRING;
 diff --git a/src/device.c b/src/device.c
-index ce70da9..5c6d363 100644
+index ce70da90..5c6d3637 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -1060,6 +1060,9 @@ void connman_device_unregister(struct connman_device *device)
@@ -17976,7 +17976,7 @@ index ce70da9..5c6d363 100644
                                         connman_device_request_signal_info_cb cb, void *user_data)
  {
 diff --git a/src/dhcp.c b/src/dhcp.c
-index 42e9f41..a1df828 100644
+index 42e9f417..a1df8289 100644
 --- a/src/dhcp.c
 +++ b/src/dhcp.c
 @@ -659,6 +659,16 @@ static int dhcp_release(struct connman_dhcp *dhcp)
@@ -17998,7 +17998,7 @@ index 42e9f41..a1df828 100644
  {
 diff --git a/src/group.c b/src/group.c
 new file mode 100644
-index 0000000..83661cf
+index 00000000..83661cf1
 --- /dev/null
 +++ b/src/group.c
 @@ -0,0 +1,799 @@
@@ -18802,7 +18802,7 @@ index 0000000..83661cf
 +	group_hash = NULL;
 +}
 diff --git a/src/ippool.c b/src/ippool.c
-index f2e9b00..f3fd094 100644
+index f2e9b000..f3fd094e 100644
 --- a/src/ippool.c
 +++ b/src/ippool.c
 @@ -42,6 +42,8 @@ struct address_info {
@@ -18921,7 +18921,7 @@ index f2e9b00..f3fd094 100644
  	pool->collision_cb = collision_cb;
  	pool->user_data = user_data;
 diff --git a/src/manager.c b/src/manager.c
-index 2aacee3..0c42459 100644
+index 2aacee37..0c424598 100644
 --- a/src/manager.c
 +++ b/src/manager.c
 @@ -30,6 +30,7 @@
@@ -19046,7 +19046,7 @@ index 2aacee3..0c42459 100644
  };
  
 diff --git a/src/network.c b/src/network.c
-index 140d09b..d40f30e 100644
+index 161e84e0..a66cffa3 100644
 --- a/src/network.c
 +++ b/src/network.c
 @@ -87,6 +87,7 @@ struct connman_network {
@@ -19084,7 +19084,7 @@ index 140d09b..d40f30e 100644
  	struct connman_service *service;
 diff --git a/src/p2pgo.c b/src/p2pgo.c
 new file mode 100644
-index 0000000..e9d5f2d
+index 00000000..e9d5f2d0
 --- /dev/null
 +++ b/src/p2pgo.c
 @@ -0,0 +1,284 @@
@@ -19373,7 +19373,7 @@ index 0000000..e9d5f2d
 +	DBG("");
 +}
 diff --git a/src/peer.c b/src/peer.c
-index 2102f11..83586cb 100644
+index 2102f119..83586cbc 100644
 --- a/src/peer.c
 +++ b/src/peer.c
 @@ -33,12 +33,16 @@
@@ -20175,7 +20175,7 @@ index 2102f11..83586cb 100644
  
  int __connman_peer_init(void)
 diff --git a/src/peer_service.c b/src/peer_service.c
-index a457bff..c73863c 100644
+index a457bff7..c73863c8 100644
 --- a/src/peer_service.c
 +++ b/src/peer_service.c
 @@ -228,6 +228,20 @@ static int register_peer_service(struct _peer_service *service)
@@ -20218,7 +20218,7 @@ index a457bff..c73863c 100644
  int __connman_peer_service_register(const char *owner, DBusMessage *msg,
 diff --git a/src/sd.c b/src/sd.c
 new file mode 100644
-index 0000000..9be1bde
+index 00000000..9be1bde8
 --- /dev/null
 +++ b/src/sd.c
 @@ -0,0 +1,382 @@
@@ -20605,10 +20605,10 @@ index 0000000..9be1bde
 +	}
 +}
 diff --git a/src/service.c b/src/service.c
-index 6e903de..aa9ccd9 100644
+index a693d11f..6bdfdc93 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -7154,6 +7154,11 @@ struct connman_service *__connman_service_lookup_from_index(int index)
+@@ -7280,6 +7280,11 @@ struct connman_service *__connman_service_lookup_from_index(int index)
  	return NULL;
  }
  
@@ -20621,10 +20621,10 @@ index 6e903de..aa9ccd9 100644
  {
  	return service ? service->identifier : NULL;
 diff --git a/src/storage.c b/src/storage.c
-index 5e877ef..2de5c7f 100644
+index 90f03ebc..7e6d6590 100644
 --- a/src/storage.c
 +++ b/src/storage.c
-@@ -285,6 +285,14 @@ int __connman_storage_save_service(GKeyFile *keyfile, const char *service_id)
+@@ -263,6 +263,14 @@ int __connman_storage_save_service(GKeyFile *keyfile, const char *service_id)
  	return ret;
  }
  
@@ -20639,7 +20639,7 @@ index 5e877ef..2de5c7f 100644
  static bool remove_file(const char *service_id, const char *file)
  {
  	gchar *pathname;
-@@ -295,7 +303,12 @@ static bool remove_file(const char *service_id, const char *file)
+@@ -273,7 +281,12 @@ static bool remove_file(const char *service_id, const char *file)
  		return false;
  
  	if (!g_file_test(pathname, G_FILE_TEST_EXISTS)) {
@@ -20653,7 +20653,7 @@ index 5e877ef..2de5c7f 100644
  	} else if (g_file_test(pathname, G_FILE_TEST_IS_REGULAR)) {
  		unlink(pathname);
  		ret = true;
-@@ -474,3 +487,127 @@ gchar **__connman_storage_get_providers(void)
+@@ -452,3 +465,127 @@ gchar **__connman_storage_get_providers(void)
  
  	return providers;
  }
@@ -20782,7 +20782,7 @@ index 5e877ef..2de5c7f 100644
 +	closedir(dir);
 +}
 diff --git a/src/technology.c b/src/technology.c
-index 5bfc1c5..aab672c 100644
+index 5bfc1c5f..aab672c8 100644
 --- a/src/technology.c
 +++ b/src/technology.c
 @@ -69,6 +69,16 @@ struct connman_technology {
@@ -21767,7 +21767,7 @@ index 5bfc1c5..aab672c 100644
  }
  
 diff --git a/src/util.c b/src/util.c
-index 03b14cd..78a312c 100644
+index 03b14cdc..78a312ca 100644
 --- a/src/util.c
 +++ b/src/util.c
 @@ -102,3 +102,108 @@ unsigned int __connman_util_random_delay_ms(unsigned int secs)
@@ -21879,6 +21879,3 @@ index 03b14cd..78a312c 100644
 +	binmac[4] = char2_to_hex_value(mac_string+12);
 +	binmac[5] = char2_to_hex_value(mac_string+15);
 +}
--- 
-2.26.0
-

@@ -1,4 +1,4 @@
-From 12ea7737048f410769e46309dcc9128dc8b35ce4 Mon Sep 17 00:00:00 2001
+From fdf3b71aab6a8d0f33ef65862dc9d29df4b62d02 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Sat, 31 Aug 2019 14:41:49 +0900
 Subject: [PATCH] Provide station information when AP mode
@@ -16,10 +16,10 @@ Provide station information when AP mode
  8 files changed, 239 insertions(+)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index 838cf1d8..1a72e48c 100644
+index 46a12191..04ebcc04 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
-@@ -375,6 +375,8 @@ struct _GSupplicantCallbacks {
+@@ -378,6 +378,8 @@ struct _GSupplicantCallbacks {
  	void (*network_changed) (GSupplicantNetwork *network,
  					const char *property);
  	void (*network_associated) (GSupplicantNetwork *network);
@@ -29,10 +29,10 @@ index 838cf1d8..1a72e48c 100644
  					const char *addr);
  	void (*sta_deauthorized) (GSupplicantInterface *interface,
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index e54a219a..2b93da8b 100644
+index 9ed96f36..c95ca62b 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -3134,6 +3134,56 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
+@@ -3152,6 +3152,56 @@ static void signal_wps_event(const char *path, DBusMessageIter *iter)
  	callback_wps_state(interface);
  }
  
@@ -89,7 +89,7 @@ index e54a219a..2b93da8b 100644
  static void create_peer_identifier(GSupplicantPeer *peer)
  {
  	const unsigned char test[ETH_ALEN] = {};
-@@ -3696,6 +3746,9 @@ static struct {
+@@ -3714,6 +3764,9 @@ static struct {
  	{ SUPPLICANT_INTERFACE ".Interface", "StaAuthorized",     signal_sta_authorized    },
  	{ SUPPLICANT_INTERFACE ".Interface", "StaDeauthorized",   signal_sta_deauthorized  },
  
@@ -113,10 +113,10 @@ index 1d78649c..60686900 100644
  void connman_technology_regdom_notify(struct connman_technology *technology,
  							const char *alpha2);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 22d0e997..5914c639 100644
+index 034fecd2..f5a6bc6e 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3444,6 +3444,25 @@ static void sta_deauthorized(GSupplicantInterface *interface,
+@@ -3446,6 +3446,25 @@ static void sta_deauthorized(GSupplicantInterface *interface,
  	__connman_tethering_client_unregister(addr);
  }
  
@@ -142,7 +142,7 @@ index 22d0e997..5914c639 100644
  static void apply_peer_services(GSupplicantPeer *peer,
  				struct connman_peer *connman_peer)
  {
-@@ -3664,6 +3683,8 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3666,6 +3685,8 @@ static const GSupplicantCallbacks callbacks = {
  	.network_removed	= network_removed,
  	.network_changed	= network_changed,
  	.network_associated	= network_associated,
@@ -152,10 +152,10 @@ index 22d0e997..5914c639 100644
  	.sta_deauthorized	= sta_deauthorized,
  	.peer_found		= peer_found,
 diff --git a/src/connman.h b/src/connman.h
-index cc32d065..3d26e599 100644
+index 57f218f9..374b0def 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -635,10 +635,21 @@ bool __connman_config_address_provisioned(const char *address,
+@@ -634,10 +634,21 @@ bool __connman_config_address_provisioned(const char *address,
  
  #include <connman/tethering.h>
  
@@ -261,7 +261,7 @@ index 5bfd48f6..aa4a1c69 100644
 +					DBUS_TYPE_STRING, append_station_mac, NULL);
 +}
 diff --git a/src/tethering.c b/src/tethering.c
-index 99abf46c..67d304f3 100644
+index b465bdd3..83df2896 100644
 --- a/src/tethering.c
 +++ b/src/tethering.c
 @@ -29,6 +29,7 @@
