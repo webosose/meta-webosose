@@ -6,7 +6,7 @@ SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "0.0.1-1_ba77f3edc7bfe82f55281d087360b1282897f85e"
+WEBOS_VERSION = "0.0.1-3_d7071b49d5d2ee72dcc87cff4689b49b7d71c502"
 PR = "r0"
 
 inherit webos_enhanced_submissions
