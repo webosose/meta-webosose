@@ -3,12 +3,6 @@
 PKGV .= "-0webos4"
 EXTENDPRAUTO:append = "webos4"
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-
-SRC_URI += " \
-    file://0002-gdbus-codegen-also-replace-character-with-underscore.patch \
-"
-
 # We need to revert changes from
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-October/156510.html
 # because as described in:
