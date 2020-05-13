@@ -2,7 +2,7 @@
 
 inherit webos_qmake5
 
-EXTENDPRAUTO_append = "webos83"
+EXTENDPRAUTO_append = "webos84"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -68,6 +68,10 @@ inherit webos_lttng
 PACKAGECONFIG[lttng] = "-trace lttng,-trace no,lttng-ust"
 PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' }"
 
+# Needed by Emulator
+inherit webos_machine_impl_dep
+PACKAGECONFIG_append_emulator = " gbm kms eglfs"
+
 # XXX Try -reduce-exports
 
 # XXX maliit-framework-webos currently requires --dbus; change to -no-dbus and
@@ -89,38 +93,32 @@ PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' 
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Emulator eglfs support with NYX input subsystem
-inherit webos_machine_impl_dep
-PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
-PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
-
-# Patches from 5.12.meta-webos.31 based on 5.12.meta-qt5.3
+# Patches from 5.12.meta-webos.32 based on 5.12.meta-qt5.3
+# Upstream-Status: Backport
 SRC_URI_append = " \
-    file://0001-Add-webos-oe-g-and-webos-oe-clang-platforms.patch \
-    file://0002-Make-the-QFontCache-size-configurable.patch \
-    file://0003-Fix-floating-point-clip-rectangle-rounding-in-raster.patch \
-    file://0004-webOS-Fix-allocateTimerId.patch \
-    file://0005-Add-more-LTTNG-tracing-points.patch \
-    file://0006-Fix-build-with-trace-lttng.patch \
-    file://0007-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
-    file://0008-Add-a-way-to-disable-syntethesized-bold-and-italic-s.patch \
-    file://0009-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
+    file://0001-Do-not-ignore-exit-codes-of-install-commands.patch \
+    file://0002-Do-not-ignore-exit-codes-when-installing-meta-files.patch \
+    file://0003-Make-the-QFontCache-size-configurable.patch \
+    file://0004-Fix-floating-point-clip-rectangle-rounding-in-raster.patch \
+    file://0005-webOS-Fix-allocateTimerId.patch \
+    file://0006-Add-more-LTTNG-tracing-points.patch \
+    file://0007-Fix-build-with-trace-lttng.patch \
+    file://0008-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
+    file://0009-Add-a-way-to-disable-syntethesized-bold-and-italic-s.patch \
     file://0010-Make-it-possible-to-avoid-loading-comments-from-JPEG.patch \
-    file://0011-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
-    file://0012-Modify-the-touch-event-for-emulator.patch \
-    file://0013-eglfs-kms-Choose-unique-primary-planes-for-each-crtc.patch \
-    file://0014-Allow-word-break-wrapping-in-Korean-text.patch \
+    file://0011-eglfs-kms-Choose-unique-primary-planes-for-each-crtc.patch \
+    file://0012-Allow-word-break-wrapping-in-Korean-text.patch \
+    file://0013-Export-gbm-device-integration-to-build-it-outside.patch \
+    file://0014-webOS-Support-mapping-evdev-keyboard-and-touchscreen.patch \
+    file://0015-Support-customized-device-discovery-with-udev.patch \
+    file://0016-Correct-headers-to-build-with-eglfs-modules.patch \
 "
 
-SRC_URI_append_hardware = " \
-    file://0015-eglfs-Support-multiple-device-integration.patch \
-    file://0016-eglfs-Support-multiple-display.patch \
-    file://0017-eglfs-Associate-keyboard-touch-device-with-window.patch \
+# Upstream-Status: Inappropriate
+SRC_URI_append = " \
+    file://9901-Add-webos-oe-g-and-webos-oe-clang-platforms.patch \
+    file://9902-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
 "
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
-
-SRC_URI += "file://0001-Do-not-ignore-exit-codes-of-install-commands.patch \
-    file://0002-Do-not-ignore-exit-codes-when-installing-meta-files.patch \
-"

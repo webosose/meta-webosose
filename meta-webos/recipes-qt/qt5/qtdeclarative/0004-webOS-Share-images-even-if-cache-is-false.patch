@@ -1,4 +1,4 @@
-From 59352c40567c971487f9113a93bfa38bbd09858a Mon Sep 17 00:00:00 2001
+From 7bf54087f2c90e4595bd41641f8aedf8eb1dde75 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Thu, 22 Jun 2017 18:40:35 +0900
 Subject: [PATCH] webOS: Share images even if cache is false
@@ -18,7 +18,7 @@ Task-number: QTBUG-83115
 Reviewed-by: Risto Avila <risto.avila@qt.io>
 Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
 (cherry picked from commit 60280cab2d96b0646469f3d85f8927c7baa166d1)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/308706]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/308706]
 ---
  src/quick/util/qquickpixmapcache.cpp | 35 +++++++++++++++++++++++++++-
  1 file changed, 34 insertions(+), 1 deletion(-)

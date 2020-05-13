@@ -1,4 +1,4 @@
-From f8b275ea969822f49d2b627b01dbb29e5ea23f90 Mon Sep 17 00:00:00 2001
+From fbabd246db4d337c03d2cadb34cd3dfdf4adcfdd Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 8 Feb 2018 14:24:20 +0900
 Subject: [PATCH] Warn circular dependency when loading types
@@ -10,7 +10,7 @@ Task-number: QTBUG-83354
 Change-Id: I826b28775ba3212ccccaeb56d50b64fec6f38ea9
 Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
 (cherry picked from commit f0c08dc2175cffadb73e06d2cc69a152002e0df0)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/303661]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/303661]
 ---
  src/qml/qml/qqmltypeloader.cpp                           | 6 ++++++
  .../auto/qml/qqmltypeloader/data/CircularDependency.qml  | 3 +++

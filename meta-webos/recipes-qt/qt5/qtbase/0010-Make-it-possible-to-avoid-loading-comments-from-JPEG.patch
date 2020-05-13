@@ -1,4 +1,4 @@
-From 2800a4059c4295f4052c143c59e90b7599e84e83 Mon Sep 17 00:00:00 2001
+From 98cb6f73d612d62b3d7bfdd34646ad48dff9158d Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 26 Apr 2017 12:29:24 +0900
 Subject: [PATCH] Make it possible to avoid loading comments from JPEG and PNG
@@ -13,7 +13,7 @@ Change-Id: I3744312f69aa3201d5188776cbd99fe690b75d32
 Task-number: QTBUG-83123
 Reviewed-by: Eirik Aavitsland <eirik.aavitsland@qt.io>
 (cherry picked from commit ab6fd84c62ff4a72696798dcf6598dd6a44389f6)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/303934]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/303934]
 ---
  src/gui/configure.json                         | 7 +++++++
  src/gui/image/qpnghandler.cpp                  | 4 ++++

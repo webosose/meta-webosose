@@ -1,4 +1,4 @@
-From a1677459005b883fcfc592cb18e01c73e54ebf98 Mon Sep 17 00:00:00 2001
+From 6c8982cae981f5f148ab1784d3034464eb78fb9a Mon Sep 17 00:00:00 2001
 From: JeongBong Seo <jb.seo@lge.com>
 Date: Thu, 30 Apr 2015 15:04:57 +0900
 Subject: [PATCH] Add the 'accessiblebridge' as a plugintype of gui module
@@ -12,7 +12,7 @@ Change-Id: I99f01fcd434be25bbbe5460bbc8cc1d76aa744b9
 Task-number: QTBUG-83126
 Reviewed-by: Jan Arve Sæther <jan-arve.saether@qt.io>
 (cherry picked from commit ea86f1931991fed9034e67399a2a88c7939eca6c)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/303376]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/303376]
 ---
  src/gui/gui.pro | 1 +
  1 file changed, 1 insertion(+)

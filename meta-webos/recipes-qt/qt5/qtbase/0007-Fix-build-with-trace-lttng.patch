@@ -1,4 +1,4 @@
-From 0807f9cd84018eeec9d11296ab86a768dd2016bd Mon Sep 17 00:00:00 2001
+From 8ef502ee8228be3e75bba584ee123cf0fbce7463 Mon Sep 17 00:00:00 2001
 From: Joerg Bornemann <joerg.bornemann@qt.io>
 Date: Thu, 10 Sep 2020 15:43:22 +0200
 Subject: [PATCH] Fix build with -trace lttng
@@ -13,7 +13,7 @@ Reviewed-by: Alexandru Croitor <alexandru.croitor@qt.io>
 Reviewed-by: Milian Wolff <milian.wolff@kdab.com>
 (cherry picked from commit 756c65d3676d2b3ce5c7b56145e5f0f7cf7178ad)
 Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/313623]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/313623]
 ---
  src/gui/qtgui.tracepoints    |  2 +-
  src/tools/tracegen/lttng.cpp |  3 ++-

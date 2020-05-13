@@ -1,4 +1,4 @@
-From 0811ed413cef95a321e452090fe676d67cd0957a Mon Sep 17 00:00:00 2001
+From 8d4cfcff54a7ab135840e1c05a226ba236e57c11 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Fri, 24 Jul 2020 10:24:24 +0300
 Subject: [PATCH] Add clipNext null pointer guard
@@ -9,7 +9,7 @@ Added null pointer guard to avoid segfault.
 Fixes: QTBUG-85996
 Change-Id: I3cd4486fefbf9aa71cf0fdb765bb8398c0e2d591
 Reviewed-by: Tim Jenssen <tim.jenssen@qt.io>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/308526]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/308526]
 ---
  .../scenegraph/coreapi/qsgbatchrenderer.cpp   | 36 ++++++++++---------
  1 file changed, 19 insertions(+), 17 deletions(-)

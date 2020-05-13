@@ -1,4 +1,4 @@
-From abd4a1c304978de862abe092e6548b3b2b5953c1 Mon Sep 17 00:00:00 2001
+From 28a65bfc245ed9c4c7bd2614cb012da4d4abddeb Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Thu, 12 Dec 2013 21:48:35 +0200
 Subject: [PATCH] Fix floating point clip rectangle rounding in raster and
@@ -8,7 +8,7 @@ Fixes: QTBUG-83229
 Change-Id: If94028f27c9085e391acb9c423cde1b7c12bca36
 Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
 (cherry picked from commit d9cc1499954829faf9486fb72056e29f1bad58e3)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/306723]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/306723]
 ---
  src/gui/opengl/qopenglpaintengine.cpp         |  2 +-
  src/gui/painting/qpaintengine_raster.cpp      |  2 +-

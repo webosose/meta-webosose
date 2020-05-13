@@ -1,4 +1,4 @@
-From fe6302ebeed15ed732f2f165ef7ff2a7a6a00322 Mon Sep 17 00:00:00 2001
+From 447c4baf1b642504b2fd21ff7447dc87e2a45e28 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Mon, 20 Apr 2020 20:42:56 +0300
 Subject: [PATCH] Fix QQuickKeyNavigationAttached issue
@@ -21,7 +21,7 @@ Change-Id: I9ea6d6a7d13ff989aac3d9e2d22467b48080de13
 Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
 (cherry picked from commit f07641b47a7c479894472e933d202bfcec0e222e)
 Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/303942]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/303942]
 ---
  src/quick/items/qquickitem.cpp                | 12 +++---
  .../data/keynavigationtest_repeater.qml       | 37 +++++++++++++++++++

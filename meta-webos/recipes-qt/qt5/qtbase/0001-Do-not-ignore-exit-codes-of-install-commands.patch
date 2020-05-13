@@ -1,7 +1,7 @@
-From 592183c937d67ceac1da0baae8ef3d64df6975eb Mon Sep 17 00:00:00 2001
+From edb737f306dfdac19bacedd29a398e0f631ecdb9 Mon Sep 17 00:00:00 2001
 From: Joerg Bornemann <joerg.bornemann@qt.io>
 Date: Thu, 23 May 2019 10:58:30 +0200
-Subject: [PATCH 1/2] Do not ignore exit codes of install commands
+Subject: [PATCH] Do not ignore exit codes of install commands
 
 All calls to QINSTALL or QINSTALL_PROGRAM were written into Makefiles
 with a preceding dash which lets make ignore the command's exit code.
@@ -20,8 +20,7 @@ Fixes: QTBUG-18870
 Change-Id: I7c072c896e6bd2b2ddba4b9c082c5bf627c90f50
 Reviewed-by: Lars Knoll <lars.knoll@qt.io>
 Reviewed-by: Simon Hausmann <simon.hausmann@qt.io>
-
-Upstream-Status: Backport [https://code.qt.io/cgit/qt/qtbase.git/commit/qmake/generators/makefile.cpp?id=20e9422e069a27b7e29b54207447e6ca02b3a55a]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/262607]
 ---
  qmake/generators/makefile.cpp      | 10 +++++-----
  qmake/generators/unix/unixmake.cpp | 10 +++++-----
@@ -106,6 +105,3 @@ index d7c9413290..fa410c1220 100644
                  if (!uninst.isEmpty())
                      uninst.append("\n\t");
                  uninst.append("-$(DEL_FILE) " + dst);
--- 
-2.17.1
-

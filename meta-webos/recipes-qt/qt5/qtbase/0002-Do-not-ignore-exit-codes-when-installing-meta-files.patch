@@ -1,7 +1,7 @@
-From bf0cbee86cb87d4bca45eafe889ae9c4b5146428 Mon Sep 17 00:00:00 2001
+From 162ec7fc651d4950b701e3c56de0102358e25009 Mon Sep 17 00:00:00 2001
 From: Joerg Bornemann <joerg.bornemann@qt.io>
 Date: Mon, 24 Jun 2019 17:49:55 +0200
-Subject: [PATCH 2/2] Do not ignore exit codes when installing meta files
+Subject: [PATCH] Do not ignore exit codes when installing meta files
 
 Since commit 20e9422e we don't ignore exit codes when installing files
 anymore. This patch does the same for meta file installation. We
@@ -11,8 +11,7 @@ Task-number: QTBUG-18870
 Change-Id: Ib6a20293380f400379b10ec767bf38dc74d5beeb
 Reviewed-by: Oliver Wolff <oliver.wolff@qt.io>
 Reviewed-by: Christian Kandeler <christian.kandeler@qt.io>
-
-Upstream-Status: Backport [https://code.qt.io/cgit/qt/qtbase.git/commit/qmake/generators/makefile.cpp?id=2f672b223900e056ffa642d3186e6cdcac9152aa]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/266118]
 ---
  qmake/generators/makefile.cpp | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
@@ -42,6 +41,3 @@ index 57d3bb01b1..ab73fdc6d0 100644
          }
      }
      return ret;
--- 
-2.17.1
-

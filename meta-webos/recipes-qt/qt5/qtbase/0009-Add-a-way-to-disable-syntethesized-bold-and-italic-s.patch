@@ -1,4 +1,4 @@
-From 1bcbdcd7de2ac347fcaf9a5e574ed0eb5adbd4a9 Mon Sep 17 00:00:00 2001
+From 07b415fd43c8b1ba2bd4b9c211ec69b12d7c8a6a Mon Sep 17 00:00:00 2001
 From: Kyu Man Lim <kyuman.lim@lge.com>
 Date: Fri, 10 Feb 2017 10:21:33 +0900
 Subject: [PATCH] Add a way to disable syntethesized bold and italic support
@@ -12,7 +12,7 @@ Change-Id: Ic1a6984858e1260f252662689705553073859df4
 Task-number: QTBUG-83124
 Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
 (cherry picked from commit f1beb28c461ba162d27e87bc7a23183989a5b9fd)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/304914]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/304914]
 ---
  src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp | 4 ++--
  src/platformsupport/fontdatabases/mac/qfontengine_coretext.mm | 4 ++--

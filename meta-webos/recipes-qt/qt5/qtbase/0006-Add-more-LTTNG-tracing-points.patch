@@ -1,4 +1,4 @@
-From 234d9041ededce737424097d036b4f00aba15314 Mon Sep 17 00:00:00 2001
+From 13c5db08b5dce1d6d7aafeba8664964ed7a79578 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Fri, 13 Jun 2014 18:48:49 +0200
 Subject: [PATCH] Add more LTTNG tracing points
@@ -12,7 +12,7 @@ Change-Id: I03150d6ff80cbbcd787133d75854715cb81b5571
 Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
 Reviewed-by: Eirik Aavitsland <eirik.aavitsland@qt.io>
 (cherry picked from commit 6d323c0b221a3b127d80e338a42306cc34bc4d40)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/303223]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/303223]
 ---
  src/gui/image/qimage.cpp                    | 15 ++++++++++++++
  src/gui/image/qpixmap.cpp                   |  8 ++++++++

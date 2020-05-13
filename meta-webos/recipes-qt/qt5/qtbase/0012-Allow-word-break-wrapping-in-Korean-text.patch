@@ -1,4 +1,4 @@
-From 1757639daef45362fd32de3fb4581c4db0de8c1d Mon Sep 17 00:00:00 2001
+From 459d2bf0b08562529c12f0c8fa8b42e54ad6eae7 Mon Sep 17 00:00:00 2001
 From: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
 Date: Tue, 2 Apr 2019 10:31:52 +0200
 Subject: [PATCH] Allow word break wrapping in Korean text
@@ -35,7 +35,7 @@ Done-with: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Task-number: QTBUG-47644
 Change-Id: I37b45cea2995db7fc2b61e3a0cc681bbdc334678
 Reviewed-by: Lars Knoll <lars.knoll@qt.io>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/257879]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/257879]
 ---
  src/corelib/tools/qunicodetools.cpp           | 29 ++++++++++++++--
  src/corelib/tools/qunicodetools_p.h           |  1 +

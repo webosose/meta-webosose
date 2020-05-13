@@ -1,4 +1,4 @@
-From 4bc2e968e9dbda9767ca8790e24f4dd9b3e3cbde Mon Sep 17 00:00:00 2001
+From ef814dd56183557d7d5131721fc936cfe918b74f Mon Sep 17 00:00:00 2001
 From: YoungSun Park <cathy.park@lge.com>
 Date: Fri, 16 Aug 2019 21:32:22 +0900
 Subject: [PATCH] QQuickWindow: Consider z-order of children when delivering
@@ -14,7 +14,7 @@ Fixes: QTBUG-83114
 Change-Id: I711faa22516f5c2396b1138dc507bcaa4ba22241
 Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
 (cherry picked from commit 3ff11ceca37dcc4b6f0420332fa7f6aa007be7f3)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/313819]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/313819]
 ---
  src/quick/items/qquickwindow.cpp              | 36 ++++++-----
  .../data/tapHandlersOverlapped.qml            | 60 +++++++++++++++++++

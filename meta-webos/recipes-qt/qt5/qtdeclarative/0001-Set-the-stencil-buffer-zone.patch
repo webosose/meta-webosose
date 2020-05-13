@@ -1,4 +1,4 @@
-From d1bfd8a595ff331c07ee156ba3026d2a1edcd3c3 Mon Sep 17 00:00:00 2001
+From 0d62ffc5320854a2129c7d69a82e213e2c70bc88 Mon Sep 17 00:00:00 2001
 From: DH Kang <kdh.kang@lge.com>
 Date: Mon, 17 Nov 2014 16:03:01 +0900
 Subject: [PATCH] Set the stencil buffer zone
@@ -10,7 +10,7 @@ information located in the following node's siccor area.
 Change-Id: I9a399667ec7ee0a1028e233c899ee49c98e4e622
 Task-number: QTBUG-83108
 Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/288653]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/288653]
 ---
  .../scenegraph/coreapi/qsgbatchrenderer.cpp   | 42 +++++++++++++++----
  1 file changed, 33 insertions(+), 9 deletions(-)

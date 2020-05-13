@@ -1,4 +1,4 @@
-From cf4f9e038829cd6e8f60f871511eece50f509923 Mon Sep 17 00:00:00 2001
+From c70e8ce7bf4ec5fee1be27bb9792cb5f0af56e96 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 12 Jun 2018 20:25:29 +0900
 Subject: [PATCH] webOS: Don't send synthetic hover event on a frame update
@@ -12,7 +12,7 @@ Task-number: QTBUG-83119
 Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
 (cherry picked from commit a06e873a1e80eda2f8e946ebe4e2f7631c78f53d)
 Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/305716]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/305716]
 ---
  src/quick/items/qquickwindow.cpp | 4 ++++
  1 file changed, 4 insertions(+)

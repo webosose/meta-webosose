@@ -1,4 +1,4 @@
-From 5445f31cda6b9625fba541c97e98308ac51f8add Mon Sep 17 00:00:00 2001
+From 00032875ba3a6e102dc573b90b0e67750c3d393f Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 21 Aug 2019 20:44:57 +0900
 Subject: [PATCH] webOS: Allow to have activeFocus for each window
@@ -12,7 +12,7 @@ Change-Id: Id6f6fd0c95747b03d56c5e535f1313c27d67ab24
 Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
 (cherry picked from commit a2c5f5abff3cafc5769588b573bb04cf950a0450)
 Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/313342]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/313342]
 ---
  src/quick/items/qquickwindow.cpp | 26 +++++++++++++++++++++++++-
  1 file changed, 25 insertions(+), 1 deletion(-)

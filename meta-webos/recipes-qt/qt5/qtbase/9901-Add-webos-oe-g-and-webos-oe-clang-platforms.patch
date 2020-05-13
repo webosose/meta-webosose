@@ -1,4 +1,4 @@
-From 4f406e41d8117431f3269e4404dc74cf7c13c53e Mon Sep 17 00:00:00 2001
+From b1b8d8178e70d48d8c181982ccc268f36b2cea14 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Wed, 16 Sep 2020 09:47:01 +0900
 Subject: [PATCH] Add webos-oe-g++ and webos-oe-clang platforms

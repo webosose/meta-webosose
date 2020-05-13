@@ -2,11 +2,12 @@
 
 inherit webos_qmake5
 
-EXTENDPRAUTO_append = "webos58"
+EXTENDPRAUTO_append = "webos59"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.29 based on 5.12.meta-qt5.2
+# Patches from 5.12.meta-webos.30 based on 5.12.meta-qt5.2
+# Upstream-Status: Backport
 SRC_URI_append_class-target = " \
     file://0001-Set-the-stencil-buffer-zone.patch \
     file://0002-Add-clipNext-null-pointer-guard.patch \
@@ -24,14 +25,12 @@ SRC_URI_append_class-target = " \
     file://0014-Fix-QQuickKeyNavigationAttached-issue.patch \
 "
 
-SRC_URI_append_qemux86 = " \
-    file://0098-Revert-Fix-failing-assertion-in-the-GC-with-JIT.patch \
-    file://0099-Revert-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
-"
-
-SRC_URI_append_qemux86-64 = " \
-    file://0098-Revert-Fix-failing-assertion-in-the-GC-with-JIT.patch \
-    file://0099-Revert-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
+# Upstream-Status: Inappropriate
+# Needed by Emulator
+inherit webos_machine_impl_dep
+SRC_URI_append_emulator = " \
+    file://9901-Revert-Fix-failing-assertion-in-the-GC-with-JIT.patch \
+    file://9902-Revert-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
 "
 
 # Supplement tool for qmllint

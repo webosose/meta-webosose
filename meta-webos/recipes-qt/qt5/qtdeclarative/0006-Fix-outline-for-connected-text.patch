@@ -1,4 +1,4 @@
-From 8ec353d5e3016ea7f52de92d373cd9389d87b10a Mon Sep 17 00:00:00 2001
+From 52b0778ba7926ac425cefecda85e37a55d35f762 Mon Sep 17 00:00:00 2001
 From: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
 Date: Tue, 16 Jun 2020 09:03:43 +0200
 Subject: [PATCH] Fix outline for connected text
@@ -31,7 +31,7 @@ Change-Id: If52a940bfb0267384ea002120655aed1310458a1
 Reviewed-by: Lars Knoll <lars.knoll@qt.io>
 Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
 (cherry picked from commit e8d9bc1bcada7d94af5a33d64a9afc860ede5b84)
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/304566]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/304566]
 ---
  src/quick/items/qquicktextnode.cpp            | 16 ++++++++++
  src/quick/scenegraph/qsgadaptationlayer_p.h   |  1 +

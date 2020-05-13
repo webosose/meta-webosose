@@ -1,0 +1,326 @@
+From c3a7d52dccbd350fc127d34a532bdc33fb8b8695 Mon Sep 17 00:00:00 2001
+From: Elvis Lee <kwangwoong.lee@lge.com>
+Date: Thu, 24 Sep 2020 16:54:50 +0900
+Subject: [PATCH] webOS: Support mapping evdev keyboard and touchscreen to
+ specific window
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+First we refactor QTouchOutputMapping into a QOutputMapping base class and
+a QDefaultOutputMapping subclass, because it will be used to map more kinds
+of devices, not only touchscreens.
+
+On WebOS, the plan is to have a custom subclass that overrides an
+additional windowForDeviceNode() virtual function, so that events from
+specific devices can be sent to specific windows.  But in the future,
+Qt may have a more generic mechanism for mapping devices to screens,
+and of course windows are displayed on screens; so this direct
+device->window mapping is likely to be temporary.
+
+In the QT_QPA_EGLFS_KMS_CONFIG JSON configuration, symlinked device
+nodes are now supported.
+
+Task-number: QTBUG-85268
+Change-Id: Id1f0bb59f4a439abaec6bd35016c95de1cbdb26a
+Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
+Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+Reviewed-by: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/315130]
+---
+ .../evdevkeyboard/qevdevkeyboardhandler.cpp   |  7 ++-
+ .../input/evdevtouch/qevdevtouchhandler.cpp   | 10 ++--
+ .../input/libinput/qlibinputtouch.cpp         | 29 +++++++----
+ .../input/libinput/qlibinputtouch_p.h         |  1 +
+ ...choutputmapping.cpp => qoutputmapping.cpp} | 48 +++++++++++++++++--
+ ...choutputmapping_p.h => qoutputmapping_p.h} | 29 ++++++++---
+ src/platformsupport/input/shared/shared.pri   |  4 +-
+ 7 files changed, 99 insertions(+), 29 deletions(-)
+ rename src/platformsupport/input/shared/{qtouchoutputmapping.cpp => qoutputmapping.cpp} (76%)
+ rename src/platformsupport/input/shared/{qtouchoutputmapping_p.h => qoutputmapping_p.h} (79%)
+
+diff --git a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
+index ad134a825f..75c9429bc2 100644
+--- a/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
++++ b/src/platformsupport/input/evdevkeyboard/qevdevkeyboardhandler.cpp
+@@ -38,6 +38,7 @@
+ ****************************************************************************/
+ 
+ #include "qevdevkeyboardhandler_p.h"
++#include "qoutputmapping_p.h"
+ 
+ #include <qplatformdefs.h>
+ 
+@@ -228,7 +229,11 @@ void QEvdevKeyboardHandler::processKeyEvent(int nativecode, int unicode, int qtc
+     if (!autoRepeat)
+         QGuiApplicationPrivate::inputDeviceManager()->setKeyboardModifiers(QEvdevKeyboardHandler::toQtModifiers(m_modifiers));
+ 
+-    QWindowSystemInterface::handleExtendedKeyEvent(0, (isPress ? QEvent::KeyPress : QEvent::KeyRelease),
++    QWindow *window = nullptr;
++#ifdef Q_OS_WEBOS
++    window = QOutputMapping::get()->windowForDeviceNode(m_device);
++#endif
++    QWindowSystemInterface::handleExtendedKeyEvent(window, (isPress ? QEvent::KeyPress : QEvent::KeyRelease),
+                                                    qtcode, modifiers, nativecode + 8, 0, int(modifiers),
+                                                    (unicode != 0xffff ) ? QString(unicode) : QString(), autoRepeat);
+ }
+diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
+index 70271c7fd6..e99f27353d 100644
+--- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
++++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
+@@ -39,7 +39,7 @@
+ ****************************************************************************/
+ 
+ #include "qevdevtouchhandler_p.h"
+-#include "qtouchoutputmapping_p.h"
++#include "qoutputmapping_p.h"
+ #include <QStringList>
+ #include <QHash>
+ #include <QSocketNotifier>
+@@ -341,9 +341,9 @@ QEvdevTouchScreenHandler::QEvdevTouchScreenHandler(const QString &device, const
+     if (inverty)
+         d->m_rotate *= QTransform::fromTranslate(0.5, 0.5).scale(1.0, -1.0).translate(-0.5, -0.5);
+ 
+-    QTouchOutputMapping mapping;
+-    if (mapping.load()) {
+-        d->m_screenName = mapping.screenNameForDeviceNode(d->deviceNode);
++    QOutputMapping *mapping = QOutputMapping::get();
++    d->m_screenName = mapping->screenNameForDeviceNode(d->deviceNode);
++    if (mapping->load()) {
+         if (!d->m_screenName.isEmpty())
+             qCDebug(qLcEvdevTouch, "evdevtouch: Mapping device %s to screen %s",
+                     qPrintable(d->deviceNode), qPrintable(d->m_screenName));
+@@ -728,7 +728,7 @@ QRect QEvdevTouchScreenData::screenGeometry() const
+     // suddenly it was all broken.
+     //
+     // For now we only support the display configuration of the KMS/DRM
+-    // backends of eglfs. See QTouchOutputMapping.
++    // backends of eglfs. See QOutputMapping.
+     //
+     // The good news it that once winRect refers to the correct screen
+     // geometry in the full virtual desktop space, there is nothing else
+diff --git a/src/platformsupport/input/libinput/qlibinputtouch.cpp b/src/platformsupport/input/libinput/qlibinputtouch.cpp
+index 7a8eaf577a..2f225fcaf8 100644
+--- a/src/platformsupport/input/libinput/qlibinputtouch.cpp
++++ b/src/platformsupport/input/libinput/qlibinputtouch.cpp
+@@ -38,7 +38,7 @@
+ ****************************************************************************/
+ 
+ #include "qlibinputtouch_p.h"
+-#include "qtouchoutputmapping_p.h"
++#include "qoutputmapping_p.h"
+ #include <libinput.h>
+ #include <QtGui/QGuiApplication>
+ #include <QtGui/QScreen>
+@@ -65,9 +65,8 @@ QLibInputTouch::DeviceState *QLibInputTouch::deviceState(libinput_event_touch *e
+     return &m_devState[dev];
+ }
+ 
+-QPointF QLibInputTouch::getPos(libinput_event_touch *e)
++QRect QLibInputTouch::screenGeometry(DeviceState *state)
+ {
+-    DeviceState *state = deviceState(e);
+     QScreen *screen = QGuiApplication::primaryScreen();
+     if (!state->m_screenName.isEmpty()) {
+         if (!m_screen) {
+@@ -82,7 +81,13 @@ QPointF QLibInputTouch::getPos(libinput_event_touch *e)
+         if (m_screen)
+             screen = m_screen;
+     }
+-    const QRect geom = QHighDpi::toNativePixels(screen->geometry(), screen);
++    return QHighDpi::toNativePixels(screen->geometry(), screen);
++}
++
++QPointF QLibInputTouch::getPos(libinput_event_touch *e)
++{
++    DeviceState *state = deviceState(e);
++    QRect geom = screenGeometry(state);
+     const double x = libinput_event_touch_get_x_transformed(e, geom.width());
+     const double y = libinput_event_touch_get_y_transformed(e, geom.height());
+     return geom.topLeft() + QPointF(x, y);
+@@ -98,12 +103,16 @@ void QLibInputTouch::registerDevice(libinput_device *dev)
+     qCDebug(qLcLibInput, "libinput: registerDevice %s - %s",
+             qPrintable(devNode), qPrintable(devName));
+ 
+-    QTouchOutputMapping mapping;
+-    if (mapping.load()) {
+-        m_devState[dev].m_screenName = mapping.screenNameForDeviceNode(devNode);
+-        if (!m_devState[dev].m_screenName.isEmpty())
+-            qCDebug(qLcLibInput, "libinput: Mapping device %s to screen %s",
+-                    qPrintable(devNode), qPrintable(m_devState[dev].m_screenName));
++    QOutputMapping *mapping = QOutputMapping::get();
++    QRect geom;
++    if (mapping->load()) {
++        m_devState[dev].m_screenName = mapping->screenNameForDeviceNode(devNode);
++        if (!m_devState[dev].m_screenName.isEmpty()) {
++            geom = screenGeometry(&m_devState[dev]);
++            qCDebug(qLcLibInput) << "libinput: Mapping device" << devNode
++                                 << "to screen" << m_devState[dev].m_screenName
++                                 << "with geometry" << geom;
++        }
+     }
+ 
+     QTouchDevice *&td = m_devState[dev].m_touchDevice;
+diff --git a/src/platformsupport/input/libinput/qlibinputtouch_p.h b/src/platformsupport/input/libinput/qlibinputtouch_p.h
+index 2682b83b26..72ae83dd53 100644
+--- a/src/platformsupport/input/libinput/qlibinputtouch_p.h
++++ b/src/platformsupport/input/libinput/qlibinputtouch_p.h
+@@ -83,6 +83,7 @@ private:
+     };
+ 
+     DeviceState *deviceState(libinput_event_touch *e);
++    QRect screenGeometry(DeviceState *state);
+     QPointF getPos(libinput_event_touch *e);
+ 
+     QHash<libinput_device *, DeviceState> m_devState;
+diff --git a/src/platformsupport/input/shared/qtouchoutputmapping.cpp b/src/platformsupport/input/shared/qoutputmapping.cpp
+similarity index 76%
+rename from src/platformsupport/input/shared/qtouchoutputmapping.cpp
+rename to src/platformsupport/input/shared/qoutputmapping.cpp
+index 0a1afd4739..b1c428dee2 100644
+--- a/src/platformsupport/input/shared/qtouchoutputmapping.cpp
++++ b/src/platformsupport/input/shared/qoutputmapping.cpp
+@@ -37,8 +37,9 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qtouchoutputmapping_p.h"
++#include "qoutputmapping_p.h"
+ #include <QFile>
++#include <QFileInfo>
+ #include <QVariantMap>
+ #include <QJsonDocument>
+ #include <QJsonObject>
+@@ -46,7 +47,44 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-bool QTouchOutputMapping::load()
++static QOutputMapping *s_outputMapping = nullptr;
++
++QOutputMapping *QOutputMapping::get()
++{
++    if (!s_outputMapping)
++        s_outputMapping = new QDefaultOutputMapping;
++
++    return s_outputMapping;
++}
++
++bool QOutputMapping::load()
++{
++   return false;
++}
++
++QString QOutputMapping::screenNameForDeviceNode(const QString &deviceNode)
++{
++    Q_UNUSED(deviceNode);
++    return QString();
++}
++
++#ifdef Q_OS_WEBOS
++QWindow *QOutputMapping::windowForDeviceNode(const QString &deviceNode)
++{
++    Q_UNUSED(deviceNode);
++    return nullptr;
++}
++
++void QOutputMapping::set(QOutputMapping *mapping)
++{
++    if (s_outputMapping)
++        delete s_outputMapping;
++
++    s_outputMapping = mapping;
++}
++#endif // Q_OS_WEBOS
++
++bool QDefaultOutputMapping::load()
+ {
+     static QByteArray configFile = qgetenv("QT_QPA_EGLFS_KMS_CONFIG");
+     if (configFile.isEmpty())
+@@ -75,15 +113,15 @@ bool QTouchOutputMapping::load()
+             qWarning("evdevtouch: Output %d specifies touchDevice but not name, this is wrong", i);
+             continue;
+         }
+-        const QString &deviceNode = output.value(QStringLiteral("touchDevice")).toString();
++        QFileInfo deviceNode(output.value(QStringLiteral("touchDevice")).toString());
+         const QString &screenName = output.value(QStringLiteral("name")).toString();
+-        m_screenTable.insert(deviceNode, screenName);
++        m_screenTable.insert(deviceNode.canonicalFilePath(), screenName);
+     }
+ 
+     return true;
+ }
+ 
+-QString QTouchOutputMapping::screenNameForDeviceNode(const QString &deviceNode)
++QString QDefaultOutputMapping::screenNameForDeviceNode(const QString &deviceNode)
+ {
+     return m_screenTable.value(deviceNode);
+ }
+diff --git a/src/platformsupport/input/shared/qtouchoutputmapping_p.h b/src/platformsupport/input/shared/qoutputmapping_p.h
+similarity index 79%
+rename from src/platformsupport/input/shared/qtouchoutputmapping_p.h
+rename to src/platformsupport/input/shared/qoutputmapping_p.h
+index 94d4dbc3b1..5376672eff 100644
+--- a/src/platformsupport/input/shared/qtouchoutputmapping_p.h
++++ b/src/platformsupport/input/shared/qoutputmapping_p.h
+@@ -37,8 +37,8 @@
+ **
+ ****************************************************************************/
+ 
+-#ifndef QTOUCHOUTPUTMAPPING_P_H
+-#define QTOUCHOUTPUTMAPPING_P_H
++#ifndef QOUTPUTMAPPING_P_H
++#define QOUTPUTMAPPING_P_H
+ 
+ //
+ //  W A R N I N G
+@@ -56,11 +56,28 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-class QTouchOutputMapping
++class QWindow;
++
++class QOutputMapping
++{
++public:
++    virtual ~QOutputMapping() {}
++
++    static QOutputMapping *get();
++    virtual bool load();
++    virtual QString screenNameForDeviceNode(const QString &deviceNode);
++
++#ifdef Q_OS_WEBOS
++    virtual QWindow *windowForDeviceNode(const QString &deviceNode);
++    static void set(QOutputMapping *mapping);
++#endif
++};
++
++class QDefaultOutputMapping : public QOutputMapping
+ {
+ public:
+-    bool load();
+-    QString screenNameForDeviceNode(const QString &deviceNode);
++    bool load() override;
++    QString screenNameForDeviceNode(const QString &deviceNode) override;
+ 
+ private:
+     QHash<QString, QString> m_screenTable;
+@@ -68,4 +85,4 @@ private:
+ 
+ QT_END_NAMESPACE
+ 
+-#endif // QTOUCHOUTPUTMAPPING_P_H
++#endif // QOUTPUTMAPPING_P_H
+diff --git a/src/platformsupport/input/shared/shared.pri b/src/platformsupport/input/shared/shared.pri
+index 1443235244..d7dbc44da5 100644
+--- a/src/platformsupport/input/shared/shared.pri
++++ b/src/platformsupport/input/shared/shared.pri
+@@ -1,5 +1,5 @@
+ HEADERS += \
+-    $$PWD/qtouchoutputmapping_p.h
++    $$PWD/qoutputmapping_p.h
+ 
+ SOURCES += \
+-    $$PWD/qtouchoutputmapping.cpp
++    $$PWD/qoutputmapping.cpp

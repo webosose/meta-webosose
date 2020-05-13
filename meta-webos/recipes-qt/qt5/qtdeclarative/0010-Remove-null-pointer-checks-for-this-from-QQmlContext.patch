@@ -1,4 +1,4 @@
-From 6a8e6a24e9341e8f5e48f048e668b9eb3157d34a Mon Sep 17 00:00:00 2001
+From d6933a6cf40e21bccf7c768e2db89903cc50bae3 Mon Sep 17 00:00:00 2001
 From: Pavel Tumakaev <p.tumakaev@lgepartner.com>
 Date: Wed, 22 May 2019 17:32:25 +0300
 Subject: [PATCH] Remove null pointer checks for "this" from
@@ -23,7 +23,7 @@ check leads to undefined behavior if ctxt/this == nullptr.
 Task-number: QTBUG-75983
 Change-Id: Idfb1e26758d83223bb0845139d63e2e8e80dc714
 Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
-Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/262573]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/262573]
 ---
  src/qml/qml/qqmlcontext.cpp | 27 ++++++++++++---------------
  1 file changed, 12 insertions(+), 15 deletions(-)

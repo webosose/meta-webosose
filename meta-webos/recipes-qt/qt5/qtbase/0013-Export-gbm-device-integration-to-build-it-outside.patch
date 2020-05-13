@@ -1,0 +1,924 @@
+From ce19ae50eddd4d9484e1a58f36d7e5a864d42c51 Mon Sep 17 00:00:00 2001
+From: Elvis Lee <kwangwoong.lee@lge.com>
+Date: Thu, 9 Jul 2020 17:26:01 +0900
+Subject: [PATCH] Export gbm device integration to build it outside
+
+Support external build for device integration which uses
+kms and gbm. QKmsScreenConfig supports inheritance
+to consider platform specific screen configuration.
+
+Task-number: QTBUG-85268
+Change-Id: Iac58898a9cf0bb1d53237a719667a6ebd53d88b9
+Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
+Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/308352]
+---
+ .../kmsconvenience/qkmsdevice.cpp             |  1 -
+ .../kmsconvenience/qkmsdevice_p.h             |  6 ++--
+ .../eglfs_kms/eglfs_kms-plugin.pro            | 17 ++++++++++
+ .../deviceintegration/eglfs_kms/eglfs_kms.pro | 33 +++----------------
+ .../eglfs_kms/eglfs_kms_gbm_support.pro       | 25 ++++++++++++++
+ .../eglfs_kms/qeglfskmsgbmcursor.cpp          |  6 ++--
+ ...skmsgbmcursor.h => qeglfskmsgbmcursor_p.h} | 11 +++++++
+ .../eglfs_kms/qeglfskmsgbmdevice.cpp          | 15 ++++++---
+ ...skmsgbmdevice.h => qeglfskmsgbmdevice_p.h} | 18 ++++++++--
+ .../eglfs_kms/qeglfskmsgbmintegration.cpp     | 10 +++---
+ ...egration.h => qeglfskmsgbmintegration_p.h} | 15 +++++++--
+ .../eglfs_kms/qeglfskmsgbmmain.cpp            |  2 +-
+ .../eglfs_kms/qeglfskmsgbmscreen.cpp          |  6 ++--
+ ...skmsgbmscreen.h => qeglfskmsgbmscreen_p.h} | 21 +++++++++---
+ .../eglfs_kms/qeglfskmsgbmwindow.cpp          |  6 ++--
+ ...skmsgbmwindow.h => qeglfskmsgbmwindow_p.h} | 13 +++++++-
+ .../eglfs_kms_egldevice/qeglfskmsegldevice.h  |  2 +-
+ .../qeglfskmsegldeviceintegration.h           |  2 +-
+ .../qeglfskmsegldevicescreen.h                |  2 +-
+ .../eglfs_kms_support/eglfs_kms_support.pro   | 12 +++----
+ .../eglfs_kms_support/qeglfskmsdevice.cpp     |  4 +--
+ ...{qeglfskmsdevice.h => qeglfskmsdevice_p.h} | 13 +++++++-
+ .../qeglfskmseventreader.cpp                  |  4 +--
+ ...eventreader.h => qeglfskmseventreader_p.h} | 11 +++++++
+ ...eglfskmshelpers.h => qeglfskmshelpers_p.h} | 11 +++++++
+ .../qeglfskmsintegration.cpp                  | 21 +++++++++---
+ ...integration.h => qeglfskmsintegration_p.h} | 14 +++++++-
+ .../eglfs_kms_support/qeglfskmsscreen.cpp     |  4 +--
+ ...{qeglfskmsscreen.h => qeglfskmsscreen_p.h} | 11 +++++++
+ .../eglfs_kms_vsp2/qeglfskmsvsp2device.h      |  2 +-
+ .../eglfs_kms_vsp2/qeglfskmsvsp2integration.h |  2 +-
+ .../eglfs_kms_vsp2/qeglfskmsvsp2screen.cpp    |  2 +-
+ .../eglfs_kms_vsp2/qeglfskmsvsp2screen.h      |  2 +-
+ .../eglfs_kms_vsp2/qlinuxmediadevice.cpp      |  2 +-
+ .../eglfs_kms_vsp2/qvsp2blendingdevice.cpp    |  2 +-
+ .../platforms/linuxfb/qlinuxfbdrmscreen.cpp   |  1 +
+ sync.profile                                  |  2 ++
+ 37 files changed, 239 insertions(+), 92 deletions(-)
+ create mode 100644 src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms-plugin.pro
+ create mode 100644 src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms_gbm_support.pro
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/{qeglfskmsgbmcursor.h => qeglfskmsgbmcursor_p.h} (93%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/{qeglfskmsgbmdevice.h => qeglfskmsgbmdevice_p.h} (87%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/{qeglfskmsgbmintegration.h => qeglfskmsgbmintegration_p.h} (88%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/{qeglfskmsgbmscreen.h => qeglfskmsgbmscreen_p.h} (89%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/{qeglfskmsgbmwindow.h => qeglfskmsgbmwindow_p.h} (89%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/{qeglfskmsdevice.h => qeglfskmsdevice_p.h} (90%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/{qeglfskmseventreader.h => qeglfskmseventreader_p.h} (92%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/{qeglfskmshelpers.h => qeglfskmshelpers_p.h} (90%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/{qeglfskmsintegration.h => qeglfskmsintegration_p.h} (90%)
+ rename src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/{qeglfskmsscreen.h => qeglfskmsscreen_p.h} (94%)
+
+diff --git a/src/platformsupport/kmsconvenience/qkmsdevice.cpp b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+index 9fc4d00a5f..9d3120c0a8 100644
+--- a/src/platformsupport/kmsconvenience/qkmsdevice.cpp
++++ b/src/platformsupport/kmsconvenience/qkmsdevice.cpp
+@@ -995,7 +995,6 @@ QKmsScreenConfig::QKmsScreenConfig()
+     , m_pbuffers(false)
+     , m_virtualDesktopLayout(VirtualDesktopLayoutHorizontal)
+ {
+-    loadConfig();
+ }
+ 
+ void QKmsScreenConfig::loadConfig()
+diff --git a/src/platformsupport/kmsconvenience/qkmsdevice_p.h b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
+index 47e1fb4a73..a588473570 100644
+--- a/src/platformsupport/kmsconvenience/qkmsdevice_p.h
++++ b/src/platformsupport/kmsconvenience/qkmsdevice_p.h
+@@ -111,6 +111,7 @@ public:
+     };
+ 
+     QKmsScreenConfig();
++    virtual ~QKmsScreenConfig() {}
+ 
+     QString devicePath() const { return m_devicePath; }
+ 
+@@ -122,10 +123,9 @@ public:
+     VirtualDesktopLayout virtualDesktopLayout() const { return m_virtualDesktopLayout; }
+ 
+     QMap<QString, QVariantMap> outputSettings() const { return m_outputSettings; }
++    virtual void loadConfig();
+ 
+-private:
+-    void loadConfig();
+-
++protected:
+     QString m_devicePath;
+     bool m_headless;
+     QSize m_headlessSize;
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms-plugin.pro b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms-plugin.pro
+new file mode 100644
+index 0000000000..e62d417422
+--- /dev/null
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms-plugin.pro
+@@ -0,0 +1,17 @@
++TARGET = qeglfs-kms-integration
++
++PLUGIN_TYPE = egldeviceintegrations
++PLUGIN_CLASS_NAME = QEglFSKmsGbmIntegrationPlugin
++load(qt_plugin)
++
++QT += core-private gui-private eglfsdeviceintegration-private eglfs_kms_support-private kms_support-private eglfs_kms_gbm_support-private edid_support-private
++
++# Avoid X11 header collision, use generic EGL native types
++DEFINES += QT_EGL_NO_X11
++
++QMAKE_USE += gbm drm
++CONFIG += egl
++
++SOURCES += $$PWD/qeglfskmsgbmmain.cpp
++
++OTHER_FILES += $$PWD/eglfs_kms.json
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
+index f5c2c0ed89..23063c052e 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms.pro
+@@ -1,30 +1,5 @@
+-TARGET = qeglfs-kms-integration
++TEMPLATE = subdirs
++CONFIG += ordered
+ 
+-PLUGIN_TYPE = egldeviceintegrations
+-PLUGIN_CLASS_NAME = QEglFSKmsGbmIntegrationPlugin
+-load(qt_plugin)
+-
+-QT += core-private gui-private eglfsdeviceintegration-private eglfs_kms_support-private kms_support-private edid_support-private
+-
+-INCLUDEPATH += $$PWD/../../api $$PWD/../eglfs_kms_support
+-
+-# Avoid X11 header collision, use generic EGL native types
+-DEFINES += QT_EGL_NO_X11
+-
+-QMAKE_USE += gbm drm
+-CONFIG += egl
+-
+-SOURCES += $$PWD/qeglfskmsgbmmain.cpp \
+-           $$PWD/qeglfskmsgbmintegration.cpp \
+-           $$PWD/qeglfskmsgbmdevice.cpp \
+-           $$PWD/qeglfskmsgbmscreen.cpp \
+-           $$PWD/qeglfskmsgbmcursor.cpp \
+-           $$PWD/qeglfskmsgbmwindow.cpp
+-
+-HEADERS += $$PWD/qeglfskmsgbmintegration.h \
+-           $$PWD/qeglfskmsgbmdevice.h \
+-           $$PWD/qeglfskmsgbmscreen.h \
+-           $$PWD/qeglfskmsgbmcursor.h \
+-           $$PWD/qeglfskmsgbmwindow.h
+-
+-OTHER_FILES += $$PWD/eglfs_kms.json
++SUBDIRS += eglfs_kms_gbm_support.pro
++SUBDIRS += eglfs_kms-plugin.pro
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms_gbm_support.pro b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms_gbm_support.pro
+new file mode 100644
+index 0000000000..a0ff6bce39
+--- /dev/null
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/eglfs_kms_gbm_support.pro
+@@ -0,0 +1,25 @@
++TARGET = QtEglFsKmsGbmSupport
++CONFIG += internal_module
++load(qt_module)
++
++QT += core-private gui-private eglfsdeviceintegration-private eglfs_kms_support-private kms_support-private edid_support-private
++
++INCLUDEPATH += $$PWD/../../api $$PWD/../eglfs_kms_support
++
++# Avoid X11 header collision, use generic EGL native types
++DEFINES += QT_EGL_NO_X11
++
++QMAKE_USE += gbm drm
++CONFIG += egl
++
++SOURCES += $$PWD/qeglfskmsgbmintegration.cpp \
++           $$PWD/qeglfskmsgbmdevice.cpp \
++           $$PWD/qeglfskmsgbmscreen.cpp \
++           $$PWD/qeglfskmsgbmcursor.cpp \
++           $$PWD/qeglfskmsgbmwindow.cpp
++
++HEADERS += $$PWD/qeglfskmsgbmintegration_p.h \
++           $$PWD/qeglfskmsgbmdevice_p.h \
++           $$PWD/qeglfskmsgbmscreen_p.h \
++           $$PWD/qeglfskmsgbmcursor_p.h \
++           $$PWD/qeglfskmsgbmwindow_p.h
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
+index 4d0cf0c47e..16efb249d5 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.cpp
+@@ -39,9 +39,9 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsgbmcursor.h"
+-#include "qeglfskmsgbmscreen.h"
+-#include "qeglfskmsgbmdevice.h"
++#include "qeglfskmsgbmcursor_p.h"
++#include "qeglfskmsgbmscreen_p.h"
++#include "qeglfskmsgbmdevice_p.h"
+ 
+ #include <QtCore/QJsonDocument>
+ #include <QtCore/QJsonObject>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor_p.h
+similarity index 93%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor_p.h
+index c96dd585d3..0d438b6bb5 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmcursor_p.h
+@@ -40,6 +40,17 @@
+ #ifndef QEGLFSKMSGBMCURSOR_H
+ #define QEGLFSKMSGBMCURSOR_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include <qpa/qplatformcursor.h>
+ #include <QtCore/QList>
+ #include <QtGui/QImage>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
+index 8d0fb523c4..8c653cb4c2 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.cpp
+@@ -39,8 +39,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsgbmdevice.h"
+-#include "qeglfskmsgbmscreen.h"
++#include "qeglfskmsgbmdevice_p.h"
++#include "qeglfskmsgbmscreen_p.h"
+ 
+ #include "qeglfsintegration_p.h"
+ 
+@@ -131,14 +131,19 @@ void QEglFSKmsGbmDevice::destroyGlobalCursor()
+     }
+ }
+ 
+-QPlatformScreen *QEglFSKmsGbmDevice::createScreen(const QKmsOutput &output)
++void QEglFSKmsGbmDevice::createGlobalCursor(QEglFSKmsGbmScreen *screen)
+ {
+-    QEglFSKmsGbmScreen *screen = new QEglFSKmsGbmScreen(this, output, false);
+-
+     if (!m_globalCursor && screenConfig()->hwCursor()) {
+         qCDebug(qLcEglfsKmsDebug, "Creating new global GBM mouse cursor");
+         m_globalCursor = new QEglFSKmsGbmCursor(screen);
+     }
++}
++
++QPlatformScreen *QEglFSKmsGbmDevice::createScreen(const QKmsOutput &output)
++{
++    QEglFSKmsGbmScreen *screen = new QEglFSKmsGbmScreen(this, output, false);
++
++    createGlobalCursor(screen);
+ 
+     return screen;
+ }
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice_p.h
+similarity index 87%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice_p.h
+index 518e2ce58b..701727a7e6 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmdevice_p.h
+@@ -42,8 +42,19 @@
+ #ifndef QEGLFSKMSGBMDEVICE_H
+ #define QEGLFSKMSGBMDEVICE_H
+ 
+-#include "qeglfskmsgbmcursor.h"
+-#include <qeglfskmsdevice.h>
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qeglfskmsgbmcursor_p.h"
++#include <qeglfskmsdevice_p.h>
+ 
+ #include <gbm.h>
+ 
+@@ -51,7 +62,7 @@ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSKmsScreen;
+ 
+-class QEglFSKmsGbmDevice: public QEglFSKmsDevice
++class Q_EGLFS_EXPORT QEglFSKmsGbmDevice: public QEglFSKmsDevice
+ {
+ public:
+     QEglFSKmsGbmDevice(QKmsScreenConfig *screenConfig, const QString &path);
+@@ -64,6 +75,7 @@ public:
+ 
+     QPlatformCursor *globalCursor() const;
+     void destroyGlobalCursor();
++    void createGlobalCursor(QEglFSKmsGbmScreen *screen);
+ 
+     QPlatformScreen *createScreen(const QKmsOutput &output) override;
+     QPlatformScreen *createHeadlessScreen() override;
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
+index caa1187b40..791512237e 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.cpp
+@@ -39,11 +39,11 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsgbmintegration.h"
+-#include "qeglfskmsgbmdevice.h"
+-#include "qeglfskmsgbmscreen.h"
+-#include "qeglfskmsgbmcursor.h"
+-#include "qeglfskmsgbmwindow.h"
++#include "qeglfskmsgbmintegration_p.h"
++#include "qeglfskmsgbmdevice_p.h"
++#include "qeglfskmsgbmscreen_p.h"
++#include "qeglfskmsgbmcursor_p.h"
++#include "qeglfskmsgbmwindow_p.h"
+ #include "private/qeglfscursor_p.h"
+ 
+ #include <QtCore/QLoggingCategory>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration_p.h
+similarity index 88%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration_p.h
+index 71f232abf9..823e5f2c09 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmintegration_p.h
+@@ -42,7 +42,18 @@
+ #ifndef QEGLFSKMSGBMINTEGRATION_H
+ #define QEGLFSKMSGBMINTEGRATION_H
+ 
+-#include "qeglfskmsintegration.h"
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include <private/qeglfskmsintegration_p.h>
+ #include <QtCore/QMap>
+ #include <QtCore/QVariant>
+ 
+@@ -50,7 +61,7 @@ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSKmsDevice;
+ 
+-class QEglFSKmsGbmIntegration : public QEglFSKmsIntegration
++class Q_EGLFS_EXPORT QEglFSKmsGbmIntegration : public QEglFSKmsIntegration
+ {
+ public:
+     QEglFSKmsGbmIntegration();
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmmain.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmmain.cpp
+index 945c8b4255..65203d93c7 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmmain.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmmain.cpp
+@@ -39,7 +39,7 @@
+ ****************************************************************************/
+ 
+ #include "private/qeglfsdeviceintegration_p.h"
+-#include "qeglfskmsgbmintegration.h"
++#include "qeglfskmsgbmintegration_p.h"
+ 
+ QT_BEGIN_NAMESPACE
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+index 02b975fc75..294b09b178 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.cpp
+@@ -39,9 +39,9 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsgbmscreen.h"
+-#include "qeglfskmsgbmdevice.h"
+-#include "qeglfskmsgbmcursor.h"
++#include "qeglfskmsgbmscreen_p.h"
++#include "qeglfskmsgbmdevice_p.h"
++#include "qeglfskmsgbmcursor_p.h"
+ #include "qeglfsintegration_p.h"
+ 
+ #include <QtCore/QLoggingCategory>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen_p.h
+similarity index 89%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen_p.h
+index 69feeee703..ed4b2ec223 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmscreen_p.h
+@@ -42,7 +42,18 @@
+ #ifndef QEGLFSKMSGBMSCREEN_H
+ #define QEGLFSKMSGBMSCREEN_H
+ 
+-#include "qeglfskmsscreen.h"
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
++#include "qeglfskmsscreen_p.h"
+ #include <QMutex>
+ #include <QWaitCondition>
+ 
+@@ -52,7 +63,7 @@ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSKmsGbmCursor;
+ 
+-class QEglFSKmsGbmScreen : public QEglFSKmsScreen
++class Q_EGLFS_EXPORT QEglFSKmsGbmScreen : public QEglFSKmsScreen
+ {
+ public:
+     QEglFSKmsGbmScreen(QEglFSKmsDevice *device, const QKmsOutput &output, bool headless);
+@@ -68,13 +79,13 @@ public:
+ 
+     void waitForFlip() override;
+ 
+-    void flip();
++    virtual void flip();
++    virtual void updateFlipStatus();
+ 
+-private:
++protected:
+     void flipFinished();
+     void ensureModeSet(uint32_t fb);
+     void cloneDestFlipFinished(QEglFSKmsGbmScreen *cloneDestScreen);
+-    void updateFlipStatus();
+ 
+     gbm_surface *m_gbm_surface;
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.cpp
+index a93762e5b4..7fd61e290d 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.cpp
+@@ -37,9 +37,9 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsgbmwindow.h"
+-#include "qeglfskmsgbmintegration.h"
+-#include "qeglfskmsgbmscreen.h"
++#include "qeglfskmsgbmwindow_p.h"
++#include "qeglfskmsgbmintegration_p.h"
++#include "qeglfskmsgbmscreen_p.h"
+ 
+ #include <QtEglSupport/private/qeglconvenience_p.h>
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow_p.h
+similarity index 89%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow_p.h
+index ee4b7978f1..103361b60b 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms/qeglfskmsgbmwindow_p.h
+@@ -42,13 +42,24 @@
+ #ifndef QEGLFSKMSGBMWINDOW_H
+ #define QEGLFSKMSGBMWINDOW_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include "private/qeglfswindow_p.h"
+ 
+ QT_BEGIN_NAMESPACE
+ 
+ class QEglFSKmsGbmIntegration;
+ 
+-class QEglFSKmsGbmWindow : public QEglFSWindow
++class Q_EGLFS_EXPORT QEglFSKmsGbmWindow : public QEglFSWindow
+ {
+ public:
+     QEglFSKmsGbmWindow(QWindow *w, const QEglFSKmsGbmIntegration *integration)
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevice.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevice.h
+index 8d469879ab..aa321e0982 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevice.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevice.h
+@@ -40,7 +40,7 @@
+ #ifndef QEGLFSKMSEGLDEVICE_H
+ #define QEGLFSKMSEGLDEVICE_H
+ 
+-#include <qeglfskmsdevice.h>
++#include <qeglfskmsdevice_p.h>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldeviceintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldeviceintegration.h
+index 5819d82ebf..7dff46888d 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldeviceintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldeviceintegration.h
+@@ -41,7 +41,7 @@
+ #ifndef QEGLFSKMSEGLDEVICEINTEGRATION_H
+ #define QEGLFSKMSEGLDEVICEINTEGRATION_H
+ 
+-#include <qeglfskmsintegration.h>
++#include <qeglfskmsintegration_p.h>
+ 
+ #include <xf86drm.h>
+ #include <xf86drmMode.h>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevicescreen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevicescreen.h
+index 961398ba3e..7cede5afbe 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevicescreen.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_egldevice/qeglfskmsegldevicescreen.h
+@@ -40,7 +40,7 @@
+ #ifndef QEGLFSKMSEGLDEVICESCREEN_H
+ #define QEGLFSKMSEGLDEVICESCREEN_H
+ 
+-#include <qeglfskmsscreen.h>
++#include <qeglfskmsscreen_p.h>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/eglfs_kms_support.pro b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/eglfs_kms_support.pro
+index e51903ed96..faad423be1 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/eglfs_kms_support.pro
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/eglfs_kms_support.pro
+@@ -1,5 +1,5 @@
+ TARGET = QtEglFsKmsSupport
+-CONFIG += no_module_headers internal_module
++CONFIG += internal_module
+ load(qt_module)
+ 
+ QT += core-private gui-private eglfsdeviceintegration-private kms_support-private edid_support-private
+@@ -17,8 +17,8 @@ SOURCES += $$PWD/qeglfskmsintegration.cpp \
+            $$PWD/qeglfskmsscreen.cpp \
+            $$PWD/qeglfskmseventreader.cpp
+ 
+-HEADERS += $$PWD/qeglfskmsintegration.h \
+-           $$PWD/qeglfskmsdevice.h \
+-           $$PWD/qeglfskmsscreen.h \
+-           $$PWD/qeglfskmshelpers.h \
+-           $$PWD/qeglfskmseventreader.h
++HEADERS += $$PWD/qeglfskmsintegration_p.h \
++           $$PWD/qeglfskmsdevice_p.h \
++           $$PWD/qeglfskmsscreen_p.h \
++           $$PWD/qeglfskmshelpers_p.h \
++           $$PWD/qeglfskmseventreader_p.h
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
+index 4f0b0d7725..7316bd4d5b 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.cpp
+@@ -38,8 +38,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsdevice.h"
+-#include "qeglfskmsscreen.h"
++#include "qeglfskmsdevice_p.h"
++#include "qeglfskmsscreen_p.h"
+ #include "private/qeglfsintegration_p.h"
+ #include <QtGui/private/qguiapplication_p.h>
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice_p.h
+similarity index 90%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice_p.h
+index 34908aa60f..006f4a656e 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsdevice_p.h
+@@ -41,8 +41,19 @@
+ #ifndef QEGLFSKMSDEVICE_H
+ #define QEGLFSKMSDEVICE_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include "private/qeglfsglobal_p.h"
+-#include "qeglfskmseventreader.h"
++#include "qeglfskmseventreader_p.h"
+ #include <QtKmsSupport/private/qkmsdevice_p.h>
+ 
+ QT_BEGIN_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp
+index 645a0ae2e9..67606f895f 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp
+@@ -37,8 +37,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmseventreader.h"
+-#include "qeglfskmsdevice.h"
++#include "qeglfskmseventreader_p.h"
++#include "qeglfskmsdevice_p.h"
+ #include <QSocketNotifier>
+ #include <QCoreApplication>
+ #include <QLoggingCategory>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader_p.h
+similarity index 92%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader_p.h
+index 4aa285b0fe..d5738e71cb 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader_p.h
+@@ -40,6 +40,17 @@
+ #ifndef QEGLFSKKMSEVENTREADER_H
+ #define QEGLFSKKMSEVENTREADER_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include "private/qeglfsglobal_p.h"
+ #include <QObject>
+ #include <QThread>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmshelpers.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmshelpers_p.h
+similarity index 90%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmshelpers.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmshelpers_p.h
+index c9e5f04a7b..89607c687b 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmshelpers.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmshelpers_p.h
+@@ -40,6 +40,17 @@
+ #ifndef QEGLFSKMSHELPERS_H
+ #define QEGLFSKMSHELPERS_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include <QString>
+ 
+ QT_BEGIN_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+index 28b6b7df63..8d15449679 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.cpp
+@@ -39,8 +39,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsintegration.h"
+-#include "qeglfskmsscreen.h"
++#include "qeglfskmsintegration_p.h"
++#include "qeglfskmsscreen_p.h"
+ 
+ #include <QtKmsSupport/private/qkmsdevice_p.h>
+ 
+@@ -55,18 +55,19 @@ QT_BEGIN_NAMESPACE
+ Q_LOGGING_CATEGORY(qLcEglfsKmsDebug, "qt.qpa.eglfs.kms")
+ 
+ QEglFSKmsIntegration::QEglFSKmsIntegration()
+-    : m_device(nullptr),
+-      m_screenConfig(new QKmsScreenConfig)
++    : m_device(nullptr)
+ {
+ }
+ 
+ QEglFSKmsIntegration::~QEglFSKmsIntegration()
+ {
+-    delete m_screenConfig;
+ }
+ 
+ void QEglFSKmsIntegration::platformInit()
+ {
++    qCDebug(qLcEglfsKmsDebug, "platformInit: Load Screen Config");
++    m_screenConfig = createScreenConfig();
++
+     qCDebug(qLcEglfsKmsDebug, "platformInit: Opening DRM device");
+     m_device = createDevice();
+     if (Q_UNLIKELY(!m_device->open()))
+@@ -79,6 +80,8 @@ void QEglFSKmsIntegration::platformDestroy()
+     m_device->close();
+     delete m_device;
+     m_device = nullptr;
++    delete m_screenConfig;
++    m_screenConfig = nullptr;
+ }
+ 
+ EGLNativeDisplayType QEglFSKmsIntegration::platformDisplay() const
+@@ -167,4 +170,12 @@ QKmsScreenConfig *QEglFSKmsIntegration::screenConfig() const
+     return m_screenConfig;
+ }
+ 
++QKmsScreenConfig *QEglFSKmsIntegration::createScreenConfig()
++{
++    QKmsScreenConfig *screenConfig = new QKmsScreenConfig;
++    screenConfig->loadConfig();
++
++    return screenConfig;
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration_p.h
+similarity index 90%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration_p.h
+index e2c37f60fc..8f7b0e3cb6 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsintegration_p.h
+@@ -42,6 +42,17 @@
+ #ifndef QEGLFSKMSINTEGRATION_H
+ #define QEGLFSKMSINTEGRATION_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include "private/qeglfsdeviceintegration_p.h"
+ #include <QtCore/QMap>
+ #include <QtCore/QVariant>
+@@ -77,9 +88,10 @@ public:
+ 
+ protected:
+     virtual QKmsDevice *createDevice() = 0;
++    virtual QKmsScreenConfig *createScreenConfig();
+ 
+     QKmsDevice *m_device;
+-    QKmsScreenConfig *m_screenConfig;
++    QKmsScreenConfig *m_screenConfig = nullptr;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
+index b2ee7206aa..39c5d317b2 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
+@@ -39,8 +39,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfskmsscreen.h"
+-#include "qeglfskmsdevice.h"
++#include "qeglfskmsscreen_p.h"
++#include "qeglfskmsdevice_p.h"
+ #include "qeglfsintegration_p.h"
+ 
+ #include <QtCore/QLoggingCategory>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h
+similarity index 94%
+rename from src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h
+rename to src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h
+index bbd929cba5..3c00a8de7a 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h
+@@ -42,6 +42,17 @@
+ #ifndef QEGLFSKMSSCREEN_H
+ #define QEGLFSKMSSCREEN_H
+ 
++//
++//  W A R N I N G
++//  -------------
++//
++// This file is not part of the Qt API.  It exists purely as an
++// implementation detail.  This header file may change from version to
++// version without notice, or even be removed.
++//
++// We mean it.
++//
++
+ #include "private/qeglfsscreen_p.h"
+ #include <QtCore/QList>
+ #include <QtCore/QMutex>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2device.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2device.h
+index c795fa4005..1f9006a3c6 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2device.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2device.h
+@@ -42,7 +42,7 @@
+ #ifndef QEGLFSKMSVSP2DEVICE_H
+ #define QEGLFSKMSVSP2DEVICE_H
+ 
+-#include <qeglfskmsdevice.h>
++#include <qeglfskmsdevice_p.h>
+ 
+ #include <gbm.h>
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2integration.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2integration.h
+index b1a8a2edf3..c6f206180a 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2integration.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2integration.h
+@@ -42,7 +42,7 @@
+ #ifndef QEGLFSKMSVSP2INTEGRATION_H
+ #define QEGLFSKMSVSP2INTEGRATION_H
+ 
+-#include "qeglfskmsintegration.h"
++#include "qeglfskmsintegration_p.h"
+ #include <QtCore/QMap>
+ #include <QtCore/QVariant>
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.cpp
+index c255bc84b7..981adbd510 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.cpp
+@@ -41,7 +41,7 @@
+ 
+ #include "qeglfskmsvsp2screen.h"
+ #include "qeglfskmsvsp2device.h"
+-#include <qeglfskmshelpers.h>
++#include <qeglfskmshelpers_p.h>
+ 
+ #include <QtCore/QLoggingCategory>
+ #include <QtGui/private/qguiapplication_p.h>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.h
+index 378786643d..c77440e98c 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qeglfskmsvsp2screen.h
+@@ -42,7 +42,7 @@
+ #ifndef QEGLFSKMSVSP2SCREEN_H
+ #define QEGLFSKMSVSP2SCREEN_H
+ 
+-#include "qeglfskmsscreen.h"
++#include "qeglfskmsscreen_p.h"
+ #include "qvsp2blendingdevice.h"
+ #include <QtCore/QMutex>
+ 
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qlinuxmediadevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qlinuxmediadevice.cpp
+index f77430d7a0..241afdcc31 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qlinuxmediadevice.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qlinuxmediadevice.cpp
+@@ -39,7 +39,7 @@
+ 
+ #include "qeglfsintegration_p.h"
+ #include "qlinuxmediadevice.h"
+-#include <qeglfskmshelpers.h>
++#include <qeglfskmshelpers_p.h>
+ 
+ #include <QtCore/QLoggingCategory>
+ #include <QtCore/QSize>
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qvsp2blendingdevice.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qvsp2blendingdevice.cpp
+index 132806a2e3..2f00f679b0 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qvsp2blendingdevice.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_vsp2/qvsp2blendingdevice.cpp
+@@ -38,7 +38,7 @@
+ ****************************************************************************/
+ 
+ #include "qvsp2blendingdevice.h"
+-#include <qeglfskmshelpers.h>
++#include <qeglfskmshelpers_p.h>
+ 
+ #include <QDebug>
+ #include <QtCore/QLoggingCategory>
+diff --git a/src/plugins/platforms/linuxfb/qlinuxfbdrmscreen.cpp b/src/plugins/platforms/linuxfb/qlinuxfbdrmscreen.cpp
+index dcc1ef2790..eb69390e25 100644
+--- a/src/plugins/platforms/linuxfb/qlinuxfbdrmscreen.cpp
++++ b/src/plugins/platforms/linuxfb/qlinuxfbdrmscreen.cpp
+@@ -399,6 +399,7 @@ QLinuxFbDrmScreen::~QLinuxFbDrmScreen()
+ bool QLinuxFbDrmScreen::initialize()
+ {
+     m_screenConfig = new QKmsScreenConfig;
++    m_screenConfig->loadConfig();
+     m_device = new QLinuxFbDevice(m_screenConfig);
+     if (!m_device->open())
+         return false;
+diff --git a/sync.profile b/sync.profile
+index a6d0e2a4a7..7a7e7fb951 100644
+--- a/sync.profile
++++ b/sync.profile
+@@ -36,6 +36,8 @@
+     "QtZlib" => "!>$basedir/src/corelib;$basedir/src/3rdparty/zlib",
+     "QtOpenGLExtensions" => "$basedir/src/openglextensions",
+     "QtEglFSDeviceIntegration" => "$basedir/src/plugins/platforms/eglfs",
++    "QtEglFsKmsSupport" => "$basedir/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support",
++    "QtEglFsKmsGbmSupport" => "$basedir/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms",
+ );
+ %moduleheaders = ( # restrict the module headers to those found in relative path
+     "QtEglFSDeviceIntegration" => "api",
