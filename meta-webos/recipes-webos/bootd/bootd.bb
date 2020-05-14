@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "Bootd single-shot launching service"
 DESCRIPTION = "Bootd is a simplified upstart-like component. It provides automatic single-shot launching at boot time"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost gtest pmtrace"
 
-WEBOS_VERSION = "2.0.0-9_8cda9e559f359165080a50faf163e6e7f3a162b5"
+WEBOS_VERSION = "2.0.0-10_ec492d1b9ecb61297dc329fc399f4529371b5690"
 PR = "r10"
 
 inherit webos_component
