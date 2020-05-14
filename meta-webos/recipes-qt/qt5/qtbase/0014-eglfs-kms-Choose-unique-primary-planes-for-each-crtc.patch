@@ -1,4 +1,4 @@
-From 39f00a9af15aa70c8b3be807d33aa4c31425ad0d Mon Sep 17 00:00:00 2001
+From 1fc06e84556804b5548ef02660fc28275ae58132 Mon Sep 17 00:00:00 2001
 From: Laszlo Agocs <laszlo.agocs@qt.io>
 Date: Fri, 8 Nov 2019 10:18:10 +0100
 Subject: [PATCH] eglfs: kms: Choose unique primary planes for each crtc

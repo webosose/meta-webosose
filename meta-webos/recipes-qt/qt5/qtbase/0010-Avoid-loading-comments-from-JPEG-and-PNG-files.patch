@@ -1,4 +1,4 @@
-From 76a26ab4bbf2e861193064973577addfe0867d6d Mon Sep 17 00:00:00 2001
+From ef510160e4ee0577fa9cee352a44ca4afce2142f Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 26 Apr 2017 12:29:24 +0900
 Subject: [PATCH] Avoid loading comments from JPEG and PNG files
