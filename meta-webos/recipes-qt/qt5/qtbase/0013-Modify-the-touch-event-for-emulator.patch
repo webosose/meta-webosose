@@ -1,4 +1,4 @@
-From e9891e8f743f13f33a64e44afec9ca76adace7ba Mon Sep 17 00:00:00 2001
+From 51c2ff12b2aff50d09641852a99a712e5a23c016 Mon Sep 17 00:00:00 2001
 From: "wonsang.ryu" <wonsang.ryu@lge.com>
 Date: Fri, 20 Mar 2020 18:26:47 +0900
 Subject: [PATCH] Modify the touch event for emulator

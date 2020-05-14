@@ -1,0 +1,180 @@
+From 1be9a4abf247f4933b963c960ef9c130939af76d Mon Sep 17 00:00:00 2001
+From: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+Date: Tue, 2 Apr 2019 10:31:52 +0200
+Subject: [PATCH] Allow word break wrapping in Korean text
+
+In Korean text, they typically can use both the "Western" style of
+word wrapping, i.e. breaking on spaces, as well as the East-Asian
+style of potentially breaking between all syllables. However,
+the Unicode Line Breaking Algorithm, TR14 defaults to breaks on
+syllables and specifies a possible tailoring where Hangul is
+mapped to the AL class instead:
+
+"When Korean uses SPACE for line breaking, the classes in rule
+LB26, as well as characters of class ID, are often tailored to AL"
+
+When using Qt, the user would expect the WordWrap wrap mode to
+break between words in Korean. If you want the syllable-based
+text layout, you would use WrapAnywhere, probably accompanied
+by line justification.
+
+To avoid breaking QTextBoundaryFinder and other potential clients
+of QUnicodeTools which depend on getting the precise Unicode
+data from the algorithm, we do this by passing a flag from
+QTextEngine when initializing the attributes. This way, it
+can also be made optional later on, if we decide there is
+a reason to add an additional wrap mode specifically to
+handle cases like this.
+
+[ChangeLog][Important Behavioral Change] WrapWord now
+correctly prefers line breaks between words in Korean text.
+WrapAnywhere can still be used to get breaks between syllables
+instead.
+
+Done-with: Alexey Turitsyn <alexey.turitsyn@lge.com>
+Task-number: QTBUG-47644
+Change-Id: I37b45cea2995db7fc2b61e3a0cc681bbdc334678
+Reviewed-by: Lars Knoll <lars.knoll@qt.io>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/257879]
+---
+ src/corelib/tools/qunicodetools.cpp           | 29 ++++++++++++++--
+ src/corelib/tools/qunicodetools_p.h           |  1 +
+ src/gui/text/qtextengine.cpp                  |  4 ++-
+ .../gui/text/qtextlayout/tst_qtextlayout.cpp  | 33 ++++++++++++-------
+ 4 files changed, 52 insertions(+), 15 deletions(-)
+
+diff --git a/src/corelib/tools/qunicodetools.cpp b/src/corelib/tools/qunicodetools.cpp
+index c9d0868fef..d14118abf7 100644
+--- a/src/corelib/tools/qunicodetools.cpp
++++ b/src/corelib/tools/qunicodetools.cpp
+@@ -542,7 +542,7 @@ static const uchar breakTable[QUnicodeTables::LineBreak_SA][QUnicodeTables::Line
+ 
+ } // namespace LB
+ 
+-static void getLineBreaks(const ushort *string, quint32 len, QCharAttributes *attributes)
++static void getLineBreaks(const ushort *string, quint32 len, QCharAttributes *attributes, QUnicodeTools::CharAttributeOptions options)
+ {
+     quint32 nestart = 0;
+     LB::NS::Class nelast = LB::NS::XX;
+@@ -564,6 +564,31 @@ static void getLineBreaks(const ushort *string, quint32 len, QCharAttributes *at
+         QUnicodeTables::LineBreakClass ncls = (QUnicodeTables::LineBreakClass) prop->lineBreakClass;
+         QUnicodeTables::LineBreakClass tcls;
+ 
++        if (options & QUnicodeTools::HangulLineBreakTailoring) {
++            if (Q_UNLIKELY((ncls >= QUnicodeTables::LineBreak_H2
++                        &&  ncls <= QUnicodeTables::LineBreak_JT)
++                        || (ucs4 >= 0x3130 && ucs4 <= 0x318F && ncls == QUnicodeTables::LineBreak_ID))
++                    ) {
++                // LB27: use SPACE for line breaking
++                // "When Korean uses SPACE for line breaking, the classes in rule LB26,
++                // as well as characters of class ID, are often tailored to AL; see Section 8, Customization."
++                // In case of Korean syllables: "3130..318F  HANGUL COMPATIBILITY JAMO"
++                ncls = QUnicodeTables::LineBreak_AL;
++            } else {
++                if (Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_SA)) {
++                    // LB1: resolve SA to AL, except of those that have Category Mn or Mc be resolved to CM
++                    static const int test = FLAG(QChar::Mark_NonSpacing) | FLAG(QChar::Mark_SpacingCombining);
++                    if (FLAG(prop->category) & test)
++                        ncls = QUnicodeTables::LineBreak_CM;
++                }
++                if (Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_CM)) {
++                    // LB10: treat CM that follows SP, BK, CR, LF, NL, or ZW as AL
++                    if (lcls == QUnicodeTables::LineBreak_ZW || lcls >= QUnicodeTables::LineBreak_SP)
++                        ncls = QUnicodeTables::LineBreak_AL;
++                }
++            }
++        }
++
+         if (Q_UNLIKELY(ncls == QUnicodeTables::LineBreak_SA)) {
+             // LB1: resolve SA to AL, except of those that have Category Mn or Mc be resolved to CM
+             static const int test = FLAG(QChar::Mark_NonSpacing) | FLAG(QChar::Mark_SpacingCombining);
+@@ -716,7 +741,7 @@ Q_CORE_EXPORT void initCharAttributes(const ushort *string, int length,
+     if (options & SentenceBreaks)
+         getSentenceBreaks(string, length, attributes);
+     if (options & LineBreaks)
+-        getLineBreaks(string, length, attributes);
++        getLineBreaks(string, length, attributes, options);
+     if (options & WhiteSpaces)
+         getWhiteSpaces(string, length, attributes);
+ 
+diff --git a/src/corelib/tools/qunicodetools_p.h b/src/corelib/tools/qunicodetools_p.h
+index 5e2d56a226..ed6fcb5d65 100644
+--- a/src/corelib/tools/qunicodetools_p.h
++++ b/src/corelib/tools/qunicodetools_p.h
+@@ -88,6 +88,7 @@ enum CharAttributeOption {
+     SentenceBreaks = 0x04,
+     LineBreaks = 0x08,
+     WhiteSpaces = 0x10,
++    HangulLineBreakTailoring = 0x20,
+     DefaultOptionsCompat = GraphemeBreaks | LineBreaks | WhiteSpaces, // ### remove
+ 
+     DontClearAttributes = 0x1000
+diff --git a/src/gui/text/qtextengine.cpp b/src/gui/text/qtextengine.cpp
+index 748d8cb780..20706502ea 100644
+--- a/src/gui/text/qtextengine.cpp
++++ b/src/gui/text/qtextengine.cpp
+@@ -1968,7 +1968,9 @@ const QCharAttributes *QTextEngine::attributes() const
+     QUnicodeTools::initCharAttributes(reinterpret_cast<const ushort *>(layoutData->string.constData()),
+                                       layoutData->string.length(),
+                                       scriptItems.data(), scriptItems.size(),
+-                                      (QCharAttributes *)layoutData->memory);
++                                      (QCharAttributes *)layoutData->memory,
++                                      QUnicodeTools::CharAttributeOptions(QUnicodeTools::DefaultOptionsCompat
++                                                                          | QUnicodeTools::HangulLineBreakTailoring));
+ 
+ 
+     layoutData->haveCharAttributes = true;
+diff --git a/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp b/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
+index f0a32c2ed4..d7febd69b9 100644
+--- a/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
++++ b/tests/auto/gui/text/qtextlayout/tst_qtextlayout.cpp
+@@ -138,7 +138,7 @@ private slots:
+     void noModificationOfInputString();
+     void superscriptCrash_qtbug53911();
+     void showLineAndParagraphSeparatorsCrash();
+-    void tooManyDirectionalCharctersCrash_qtbug77819();
++    void koreanWordWrap();
+ 
+ private:
+     QFont testFont;
+@@ -2310,20 +2310,29 @@ void tst_QTextLayout::nbspWithFormat()
+     QCOMPARE(layout.lineAt(1).textLength(), s2.length() + 1 + s3.length());
+ }
+ 
+-void tst_QTextLayout::tooManyDirectionalCharctersCrash_qtbug77819()
++oid tst_QTextLayout::koreanWordWrap()
+ {
+-    QString data;
+-    data += QString::fromUtf8("\xe2\x81\xa8"); // U+2068 FSI character
+-    data += QString::fromUtf8("\xe2\x81\xa7"); // U+2067 RLI character
++    QString s = QString::fromUtf8("안녕하세요 여러분!");
++    QTextLayout layout;
++    QTextOption option = layout.textOption();
++    option.setWrapMode(QTextOption::WordWrap);
++    option.setFlags(QTextOption::Flag(QTextOption::IncludeTrailingSpaces));
++    layout.setTextOption(option);
++    layout.setText(s);
+ 
+-    // duplicating the text
+-    for (int i = 0; i < 10; i++)
+-        data += data;
++    QFontMetrics metrics(layout.font());
+ 
+-    // Nothing to test. It must not crash in beginLayout().
+-    QTextLayout tl(data);
+-    tl.beginLayout();
+-    tl.endLayout();
++    layout.beginLayout();
++    forever {
++        QTextLine line = layout.createLine();
++        if (!line.isValid())
++            break;
++        line.setLineWidth(metrics.width(s) * 0.8);
++    }
++    layout.endLayout();
++    QCOMPARE(layout.lineCount(), 2);
++    QCOMPARE(layout.lineAt(0).textLength(), 6);
++    QCOMPARE(layout.lineAt(1).textLength(), 4);
+ }
+ 
+ QTEST_MAIN(tst_QTextLayout)

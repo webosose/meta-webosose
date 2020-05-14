@@ -1,4 +1,4 @@
-From 690c30096601a26373f585fc032783e5f41d4f30 Mon Sep 17 00:00:00 2001
+From 7f667bca40a8c0f349bc58082ab056a34370cc27 Mon Sep 17 00:00:00 2001
 From: Alexey Turitsyn <alexey.turitsyn@lge.com>
 Date: Tue, 1 Mar 2016 14:27:11 +0300
 Subject: [PATCH] Check if combined glyph exists in font's charmap table

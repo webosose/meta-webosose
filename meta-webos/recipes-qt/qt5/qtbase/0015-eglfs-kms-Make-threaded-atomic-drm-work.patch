@@ -1,4 +1,4 @@
-From f752fb5fd47ed243d54d69fb49b7c415878b1b2e Mon Sep 17 00:00:00 2001
+From badb089e019b21bcedc6ff968e42505027d5d587 Mon Sep 17 00:00:00 2001
 From: Laszlo Agocs <laszlo.agocs@qt.io>
 Date: Fri, 8 Nov 2019 11:41:16 +0100
 Subject: [PATCH] eglfs: kms: Make threaded atomic drm work
