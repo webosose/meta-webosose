@@ -19,7 +19,7 @@ SECTION = "webos/libs"
 
 DEPENDS = "glib-2.0 pmloglib"
 
-WEBOS_VERSION = "7.3.0-3_09ee6e1c6e3f7cae53f891cd8bc1a769326d9421"
+WEBOS_VERSION = "7.3.0-4_df496494544387e8e1dec53024ba91ae9f82099a"
 PR = "r7"
 
 inherit webos_component
