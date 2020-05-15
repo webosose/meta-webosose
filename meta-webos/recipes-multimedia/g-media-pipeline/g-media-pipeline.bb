@@ -29,10 +29,11 @@ DEPENDS_append_rpi = " virtual/libomxil"
 DEPENDS_append_raspberrypi4 = " webos-wayland-extensions"
 
 WEBOS_VERSION = "1.0.0-21_ecd90bea31daca759dc40061749131f2a61b99c1"
-PR = "r6"
+PR = "r7"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
 WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.7_c01991c7c1679850ed8f9837146ca161b1bb0555"
+SRC_URI_append_raspberrypi4 = " file://0001-LunaServiceClient.cpp-include-string-to-fix-build-wi.patch"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
