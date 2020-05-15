@@ -6,7 +6,7 @@ PROVIDES = "virtual/webruntime"
 
 PR = "${INC_PR}.1"
 
-WEBOS_VERSION = "79.0.3945.79-26_dfec1d875e6ed67539c80af98ebb96c7f7620fc4"
+WEBOS_VERSION = "79.0.3945.79-27_b1fccd74053af767b6e5de157167a9ecc222722a"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium79"
 
@@ -32,7 +32,7 @@ GN_ARGS_append = " \
 "
 
 # TODO: qemux86 build fails
-PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav"
+PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media neva-webrtc gav"
 #END TODO
 
 D = "${OUT_DIR}/${BUILD_TYPE}/image"
