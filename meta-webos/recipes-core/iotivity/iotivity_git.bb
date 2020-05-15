@@ -32,6 +32,7 @@ SRC_URI = " \
     git://github.com/miloyip/rapidjson.git;destsuffix=git/extlibs/rapidjson/rapidjson;protocol=http;name=rapidjson \
     git://github.com/dthaler/libcoap.git;destsuffix=git/extlibs/libcoap/libcoap;protocol=http;branch=develop;name=libcoap \
     file://0001-hippomocks-fix-build-for-MIPS.patch;patchdir=extlibs/hippomocks/hippomocks \
+    file://0001-OCApi.h-prevent-multiple-definitions-of-OC-detail-oc.patch \
 "
 SRCREV_main = "255060695e4de0e8f357aeab6e3e2c46e3c68bac"
 SRCREV_tinycbor = "ae64a3d9da39f3bf310b9a7b38427c096d8bcd43"
@@ -46,7 +47,7 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r3"
+PR = "r4"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_enactjs_app webos_component
