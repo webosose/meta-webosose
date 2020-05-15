@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS Luna System Bus library, daemon, and utilities"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -13,7 +13,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_rdx-utils} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-5_082946a210dab1a390adbe78753a6ebed9492bbf"
-PR = "r23"
+PR = "r24"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
@@ -63,3 +63,5 @@ FILES_${PN}-perf += "${webos_testsdir}/${BPN}-perf"
 INSANE_SKIP_${PN}-ptest += "libdir"
 # luna-service2-dbg: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/.debug/libls-hublib-test.so
 INSANE_SKIP_${PN}-dbg += "libdir"
+
+SRC_URI += "file://0001-util.hpp-hub_service.hpp-include-string-to-fix-build.patch"
