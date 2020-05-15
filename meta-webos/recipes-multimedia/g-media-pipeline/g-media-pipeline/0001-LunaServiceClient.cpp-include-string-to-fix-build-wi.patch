@@ -1,0 +1,28 @@
+From 9fd26a30166db09600e4c72a96b60f7adf2e4630 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Fri, 15 May 2020 14:06:31 +0000
+Subject: [PATCH] LunaServiceClient.cpp: include string to fix build with
+ gcc-10
+
+* fixes:
+g-media-pipeline/1.0.0-21.gav.5-r6/git/src/lunaserviceclient/LunaServiceClient.cpp:27:13: error: variable 'std::string gmp::kServiceName' has initializer but incomplete type
+g-media-pipeline/1.0.0-21.gav.5-r6/git/src/lunaserviceclient/LunaServiceClient.cpp:37:15: error: variable 'std::string service_name' has initializer but incomplete type
+g-media-pipeline/1.0.0-21.gav.5-r6/git/src/lunaserviceclient/LunaServiceClient.cpp:37:50: error: 'to_string' is not a member of 'std'; did you mean 'u32string'?
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ src/lunaserviceclient/LunaServiceClient.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/lunaserviceclient/LunaServiceClient.cpp b/src/lunaserviceclient/LunaServiceClient.cpp
+index 9a1a890..326f086 100644
+--- a/src/lunaserviceclient/LunaServiceClient.cpp
++++ b/src/lunaserviceclient/LunaServiceClient.cpp
+@@ -10,6 +10,7 @@
+ // LICENSE@@@
+ 
+ #include <chrono>
++#include <string>
+ 
+ #include "LunaServiceClient.h"
+ #include "log.h"
