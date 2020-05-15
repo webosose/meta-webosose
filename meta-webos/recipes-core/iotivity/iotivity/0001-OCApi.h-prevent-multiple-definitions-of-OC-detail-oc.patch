@@ -1,0 +1,53 @@
+From 8a38f33159000d590fe4b3d7c2177e9886abd485 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Fri, 15 May 2020 14:06:02 -0700
+Subject: [PATCH] OCApi.h: prevent multiple definitions of
+ OC::detail::oclog_target and OC::oclog
+
+* with gcc-10 is was failing with:
+
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCPlatform_impl.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCPlatform_impl.os: multiple definition of 'OC::oclog'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCResource.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCResource.os: multiple definition of 'OC::oclog'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCUtilities.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCUtilities.os: multiple definition of 'OC::oclog'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/InProcServerWrapper.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/InProcServerWrapper.os: multiple definition of 'OC::oclog'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/InProcClientWrapper.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/InProcClientWrapper.os: multiple definition of 'OC::oclog'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCResourceRequest.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/OCResourceRequest.os: multiple definition of 'OC::oclog'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/CAManager.os: multiple definition of 'OC::detail::oclog_target'
+/jenkins/mjansa/build/ros/webos-dashing-gatesgarth/tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/iotivity/1.3.99+gitAUTOINC+255060695e-r3/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/../../libexec/arm-webos-linux-gnueabi/gcc/arm-webos-linux-gnueabi/10.1.0/ld: error: out/webos/arm/release/resource/src/CAManager.os: multiple definition of 'OC::oclog'
+collect2: error: ld returned 1 exit status
+
+* it probably isn't the right fix, but at least it builds now with just
+  warnings:
+  resource/include/OCApi.h:73:5: warning: inline variables are only available with '-std=c++17' or '-std=gnu++17'
+---
+ resource/include/OCApi.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/resource/include/OCApi.h b/resource/include/OCApi.h
+index 83b658ef3..699f09919 100644
+--- a/resource/include/OCApi.h
++++ b/resource/include/OCApi.h
+@@ -61,7 +61,7 @@ namespace OC
+         /* We'll want to provide some sort of explicit hook for custom logging at some
+         point; until then, this should do nicely (note that since these are lambdas,
+         later a special target could be captured, allowing much flexibility): */
+-        auto oclog_target = []() -> log_target_t&
++        inline auto oclog_target = []() -> log_target_t&
+         {
+             static OC::oc_log_stream    ols(oc_make_ostream_logger);
+             static log_target_t         os(ols);
+@@ -70,7 +70,7 @@ namespace OC
+         };
+     } // namespace OC::detail
+ 
+-    auto oclog = []() -> boost::iostreams::stream<OC::oc_log_stream>&
++    inline auto oclog = []() -> boost::iostreams::stream<OC::oc_log_stream>&
+     {
+         return detail::oclog_target();
+     };
