@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 #
 # webos_base
 #
@@ -35,8 +35,10 @@ python do_write_bom_data() {
     jsondata["arch"] = d.getVar("PACKAGE_ARCH", True)
     jsondata["author"] = d.getVar("AUTHOR", True)
     license = d.getVar("LICENSE", True)
+    license_flags = d.getVar("LICENSE_FLAGS", True)
     packages = d.getVar("PACKAGES", True)
     jsondata["license"] = license
+    jsondata["license_flags"] = license_flags
     jsondata["packages"] = packages
     pkg_lic = {}
     if packages:
