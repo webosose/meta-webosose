@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
 
-WEBOS_VERSION = "1.0.0-8_f7ff4e76a7b08a1c130cd62cf0c755360ffc918e"
+WEBOS_VERSION = "1.0.0-9_0b17d8082add82a8040e591481544a0b2e35fe96"
 PR = "r6"
 
 inherit webos_cmake
