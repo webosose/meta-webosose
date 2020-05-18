@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 # IMAGE_FEATURES controls the contents of webOS OSE images
 #
@@ -87,7 +87,8 @@ inherit webos_filesystem_paths
 inherit webos_prerelease_dep
 do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
 
-WKS_FILE = "webos-qemux86-directdisk.wks"
+WKS_FILE_qemux86 = "webos-qemux86-directdisk.wks"
+WKS_FILE_qemux86-64 = "webos-qemux86-directdisk.wks"
 
 # Build only wic.vmdk for qemux86*, otherwise wic.vmdk might conflict with tar.gz and cause errors like:
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
