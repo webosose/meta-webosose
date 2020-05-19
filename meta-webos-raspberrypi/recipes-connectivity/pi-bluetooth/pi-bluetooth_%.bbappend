@@ -1,33 +1,13 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
+
+EXTENDPRAUTO_append = "webosrpi2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+SRC_URI += "file://0001-hciuart-lower-the-speed-and-restart-on-failure.patch"
 
-EXTENDPRAUTO_append = "webosrpi1"
-
-inherit systemd
-SYSTEMD_SERVICE_${PN} = "\
-    hciuart.service \
-"
-
-SRC_URI += " \
-    file://hciuart.service \
-    file://btuart \
-"
-
-inherit allarch
-
-do_install() {
-    install -d ${D}${bindir}
-    install -m 0755 ${WORKDIR}/btuart ${D}${bindir}
-
-    if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-        install -d ${D}${systemd_system_unitdir}
-        install -m 0644 ${WORKDIR}/hciuart.service ${D}${systemd_system_unitdir}/hciuart.service
-    fi
+do_install_append() {
+    rm -vf ${D}${systemd_system_unitdir}/bthelper@.service
+    rm -vf ${D}${bindir}/bthelper
+    rm -vrf ${D}${sysconfdir}
 }
-
-FILES_${PN} = "\
-    ${bindir} \
-    ${sysconfdir} \
-    ${systemd_unitdir}/system \
-"
+SYSTEMD_SERVICE_${PN}_remove = "bthelper@.service"
