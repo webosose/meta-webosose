@@ -1,0 +1,35 @@
+From 4684ff596bfa2d0c3e21f641822b6ec542a50df4 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Mon, 18 May 2020 16:57:25 -0700
+Subject: [PATCH] hciuart: lower the speed and restart on failure
+
+---
+ debian/pi-bluetooth.hciuart.service | 1 +
+ usr/bin/btuart                      | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/debian/pi-bluetooth.hciuart.service b/debian/pi-bluetooth.hciuart.service
+index daada84..0b37d58 100644
+--- a/debian/pi-bluetooth.hciuart.service
++++ b/debian/pi-bluetooth.hciuart.service
+@@ -7,6 +7,7 @@ After=dev-serial1.device
+ [Service]
+ Type=forking
+ ExecStart=/usr/bin/btuart
++Restart=on-failure
+ 
+ [Install]
+ WantedBy=multi-user.target
+diff --git a/usr/bin/btuart b/usr/bin/btuart
+index eb8cf37..3b4c682 100755
+--- a/usr/bin/btuart
++++ b/usr/bin/btuart
+@@ -15,7 +15,7 @@ if [ "$uart0" = "$serial1" ] ; then
+ 	if [ "$uart0_pins" = "16" ] ; then
+ 		$HCIATTACH /dev/serial1 bcm43xx 3000000 flow - $BDADDR
+ 	else
+-		$HCIATTACH /dev/serial1 bcm43xx 921600 noflow - $BDADDR
++		$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
+ 	fi
+ else
+ 	$HCIATTACH /dev/serial1 bcm43xx 460800 noflow - $BDADDR
