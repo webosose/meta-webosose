@@ -43,6 +43,7 @@ RPI_KERNEL_MODULES = " \
     kernel-module-configs \
     kernel-module-evdev \
     kernel-module-hci-uart \
+    kernel-module-hid-multitouch \
     kernel-module-i2c-bcm2708 \
     kernel-module-media \
     kernel-module-rfcomm \
