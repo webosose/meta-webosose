@@ -197,6 +197,16 @@ PNBLACKLIST[wmiconfig] ?= "svn://svn.openmoko.org is automatically redirected to
 # meta-openembedded/meta-oe/recipes-support/usbpath/usbpath_svn.bb:do_patch
 PNBLACKLIST[usbpath] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
 
+# It's no longer available, see
+# http://wiringpi.com/wiringpi-deprecated/
+# and removed already in meta-raspberrypi/zeus in:
+# commit e050601d868df6f7b38812ca930e30a6a4cff135
+# Author: Khem Raj <raj.khem@gmail.com>
+# Date:   Thu Oct 10 07:51:33 2019 -0700
+#
+#     wiringpi: Delete
+PNBLACKLIST[wiringpi] ?= "It is no longer available, see http://wiringpi.com/wiringpi-deprecated/ and do_fetch is failing with: git.drogon.net[0: 188.246.205.22]: errno=Connection refused"
+
 # Few more failing in warrior:
 # meta-virtualization/recipes-networking/netns/netns_git.bb:do_compile_ptest_base
 PNBLACKLIST[netns] ?= "ERROR: netns-0.5.3-r0 do_compile_ptest_base: Function failed: do_compile_ptest_base: | bridge.go:10:2: cannot find package "github.com/genuinetools/netns/netutils""
