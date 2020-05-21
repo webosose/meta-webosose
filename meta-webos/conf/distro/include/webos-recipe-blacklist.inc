@@ -180,6 +180,23 @@ PNBLACKLIST[python-snimpy] ?= "Depends on blacklisted libsmi"
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
 PNBLACKLIST[usb-modeswitch-data] ?= "Depends on blacklisted usb-modeswitch"
 
+# Recipes failing because of svn fetcher issue
+# http://lists.openembedded.org/pipermail/openembedded-devel/2020-February/205012.html
+# it was fixed in dunfell:
+# https://github.com/openembedded/meta-openembedded/commit/6902dcd2edc3a08f6929e19e9a9c18493883f9d2
+# and then all of these were removed:
+# https://github.com/openembedded/meta-openembedded/commit/7449a3e08389a0c50cdf17bc16995ef1678dc2d2
+# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c24xx-gpio_svn.bb:do_populate_lic
+# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c24xx-gpio_svn.bb:do_compile
+PNBLACKLIST[s3c24xx-gpio] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
+# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c64xx-gpio_svn.bb:do_populate_lic
+# meta-openembedded/meta-oe/recipes-support/samsung-soc-utils/s3c64xx-gpio_svn.bb:do_compile
+PNBLACKLIST[s3c64xx-gpio] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
+# meta-openembedded/meta-oe/recipes-support/wmiconfig/wmiconfig_svn.bb:do_patch
+PNBLACKLIST[wmiconfig] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
+# meta-openembedded/meta-oe/recipes-support/usbpath/usbpath_svn.bb:do_patch
+PNBLACKLIST[usbpath] ?= "svn://svn.openmoko.org is automatically redirected to https://github.com/openmoko/openmoko-svn where it's fetched, but into different directory, S does not point to correct directory and build fails"
+
 # Few more failing in warrior:
 # meta-virtualization/recipes-networking/netns/netns_git.bb:do_compile_ptest_base
 PNBLACKLIST[netns] ?= "ERROR: netns-0.5.3-r0 do_compile_ptest_base: Function failed: do_compile_ptest_base: | bridge.go:10:2: cannot find package "github.com/genuinetools/netns/netutils""
