@@ -1,0 +1,216 @@
+From 53fbf2b85384e2bae2e5ce729c3dbbf08d58d7c7 Mon Sep 17 00:00:00 2001
+From: Martin Unsal <martin.unsal@lge.com>
+Date: Thu, 12 Dec 2013 16:42:37 -0800
+Subject: [PATCH] Add --ignore-mtime option to fc-cache
+
+This option generates a font cache file which does not record
+the mtime of the font cache directory. As a result, the cache
+will continue to be valid regardless of any changes to the fonts
+directory. This is only desirable if the font cache directory
+is guaranteed to never change (e.g. readonly filesystem).
+
+Also libfontcache is modified to respect this option in font
+cache file.
+
+Imported from:
+https://github.com/openwebos/meta-webos/blob/master/recipes-graphics/fontconfig/fontconfig/Add-ignore-mtime-option-to-fc-cache.patch
+and rebased from fontconfig-2.10.2 to 2.11.1
+
+Upstream-Status: Pending
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ fc-cache/fc-cache.c     | 18 ++++++++++++++----
+ fontconfig/fontconfig.h |  6 ++++++
+ src/fccache.c           | 12 ++++++++----
+ src/fccfg.c             | 13 +++++++++++++
+ src/fcint.h             |  7 +++++++
+ 5 files changed, 48 insertions(+), 8 deletions(-)
+
+diff --git a/fc-cache/fc-cache.c b/fc-cache/fc-cache.c
+index 0336073..702a9ef 100644
+--- a/fc-cache/fc-cache.c
++++ b/fc-cache/fc-cache.c
+@@ -69,6 +69,7 @@ const struct option longopts[] = {
+     {"force", 0, 0, 'f'},
+     {"really-force", 0, 0, 'r'},
+     {"sysroot", required_argument, 0, 'y'},
++    {"ignore-mtime", 0, 0, 'i'},
+     {"system-only", 0, 0, 's'},
+     {"version", 0, 0, 'V'},
+     {"verbose", 0, 0, 'v'},
+@@ -87,10 +88,10 @@ usage (char *program, int error)
+ {
+     FILE *file = error ? stderr : stdout;
+ #if HAVE_GETOPT_LONG
+-    fprintf (file, "usage: %s [-EfrsvVh] [-y SYSROOT] [--error-on-no-fonts] [--force|--really-force] [--sysroot=SYSROOT] [--system-only] [--verbose] [--version] [--help] [dirs]\n",
++    fprintf (file, "usage: %s [-EfrsvVh] [-y SYSROOT] [--ignore-mtime] [--error-on-no-fonts] [--force|--really-force] [--sysroot=SYSROOT] [--system-only] [--verbose] [--version] [--help] [dirs]\n",
+ 	     program);
+ #else
+-    fprintf (file, "usage: %s [-EfrsvVh] [-y SYSROOT] [dirs]\n",
++    fprintf (file, "usage: %s [-EfrsivVh] [-y SYSROOT] [dirs]\n",
+ 	     program);
+ #endif
+     fprintf (file, "Build font information caches in [dirs]\n"
+@@ -102,6 +103,7 @@ usage (char *program, int error)
+     fprintf (file, "  -r, --really-force       erase all existing caches, then rescan\n");
+     fprintf (file, "  -s, --system-only        scan system-wide directories only\n");
+     fprintf (file, "  -y, --sysroot=SYSROOT    prepend SYSROOT to all paths for scanning\n");
++    fprintf (file, "  -i, --ignore-mtime       always use cache file regardless of font directory mtime\n");
+     fprintf (file, "  -v, --verbose            display status information while busy\n");
+     fprintf (file, "  -V, --version            display font config version and exit\n");
+     fprintf (file, "  -h, --help               display this help and exit\n");
+@@ -112,6 +114,7 @@ usage (char *program, int error)
+     fprintf (file, "  -r,   (really force) erase all existing caches, then rescan\n");
+     fprintf (file, "  -s         (system)  scan system-wide directories only\n");
+     fprintf (file, "  -y SYSROOT (sysroot) prepend SYSROOT to all paths for scanning\n");
++    fprintf (file, "  -i    (ignore-mtime) always use cache file regardless of font directory mtime\n");
+     fprintf (file, "  -v         (verbose) display status information while busy\n");
+     fprintf (file, "  -V         (version) display font config version and exit\n");
+     fprintf (file, "  -h         (help)    display this help and exit\n");
+@@ -283,6 +286,7 @@ main (int argc, char **argv)
+     FcBool	really_force = FcFalse;
+     FcBool	systemOnly = FcFalse;
+     FcBool	error_on_no_fonts = FcFalse;
++    FcBool	ignoreMtime = FcFalse;
+     FcConfig	*config;
+     FcChar8     *sysroot = NULL;
+     int		i;
+@@ -292,9 +296,9 @@ main (int argc, char **argv)
+     int		c;
+ 
+ #if HAVE_GETOPT_LONG
+-    while ((c = getopt_long (argc, argv, "Efrsy:Vvh", longopts, NULL)) != -1)
++    while ((c = getopt_long (argc, argv, "Efrsy:iVvh", longopts, NULL)) != -1)
+ #else
+-    while ((c = getopt (argc, argv, "Efrsy:Vvh")) != -1)
++    while ((c = getopt (argc, argv, "Efrsy:iVvh")) != -1)
+ #endif
+     {
+ 	switch (c) {
+@@ -313,6 +317,9 @@ main (int argc, char **argv)
+ 	case 'y':
+ 	    sysroot = FcStrCopy ((const FcChar8 *)optarg);
+ 	    break;
++	case 'i':
++	    ignoreMtime = FcTrue;
++	    break;
+ 	case 'V':
+ 	    fprintf (stderr, "fontconfig version %d.%d.%d\n", 
+ 		     FC_MAJOR, FC_MINOR, FC_REVISION);
+@@ -331,6 +338,9 @@ main (int argc, char **argv)
+     i = 1;
+ #endif
+ 
++    if (ignoreMtime)
++       FcConfigSetIgnoreMtime(FcTrue);
++
+     if (systemOnly)
+ 	FcConfigEnableHome (FcFalse);
+     if (sysroot)
+diff --git a/fontconfig/fontconfig.h b/fontconfig/fontconfig.h
+index 5c72b22..54c0a8e 100644
+--- a/fontconfig/fontconfig.h
++++ b/fontconfig/fontconfig.h
+@@ -440,6 +440,12 @@ FcPublic void
+ FcConfigSetSysRoot (FcConfig      *config,
+ 		    const FcChar8 *sysroot);
+ 
++FcPublic void
++FcConfigSetIgnoreMtime (const FcBool ignoreMtime);
++
++FcPublic FcBool
++FcConfigGetIgnoreMtime (void);
++
+ /* fccharset.c */
+ FcPublic FcCharSet*
+ FcCharSetCreate (void);
+diff --git a/src/fccache.c b/src/fccache.c
+index 02ec301..c9dc37a 100644
+--- a/src/fccache.c
++++ b/src/fccache.c
+@@ -584,8 +584,9 @@ FcCacheTimeValid (FcConfig *config, FcCache *cache, struct stat *dir_stat)
+ 	printf ("FcCacheTimeValid dir \"%s\" cache checksum %d dir checksum %d\n",
+ 		FcCacheDir (cache), cache->checksum, (int) dir_stat->st_mtime);
+ #endif
+-
+-    return cache->checksum == (int) dir_stat->st_mtime && fnano;
++    /* cache checksum may instruct us to ignore font dir mtime, used
++       with readonly root filesystem and pre-generated font cache */
++    return (cache->checksum == (int) dir_stat->st_mtime && fnano) || (cache->checksum == FC_INVALID_TIME);
+ }
+ 
+ static FcBool
+@@ -828,7 +829,7 @@ FcDirCacheValidateHelper (FcConfig *config, int fd, struct stat *fd_stat, struct
+ 	ret = FcFalse;
+     else if (fd_stat->st_size != c.size)
+ 	ret = FcFalse;
+-    else if (c.checksum != (int) dir_stat->st_mtime)
++    else if ( (c.checksum != (int) dir_stat->st_mtime) && (c.checksum != FC_INVALID_TIME) )
+ 	ret = FcFalse;
+ #ifdef HAVE_STRUCT_STAT_ST_MTIM
+     else if (c.checksum_nano != dir_stat->st_mtim.tv_nsec)
+@@ -907,7 +908,10 @@ FcDirCacheBuild (FcFontSet *set, const FcChar8 *dir, struct stat *dir_stat, FcSt
+     cache->magic = FC_CACHE_MAGIC_ALLOC;
+     cache->version = FC_CACHE_VERSION_NUMBER;
+     cache->size = serialize->size;
+-    cache->checksum = (int) dir_stat->st_mtime;
++    if (FcConfigGetIgnoreMtime())
++	cache->checksum = (int) FC_INVALID_TIME;
++    else
++	cache->checksum = (int) dir_stat->st_mtime;
+ #ifdef HAVE_STRUCT_STAT_ST_MTIM
+     cache->checksum_nano = dir_stat->st_mtim.tv_nsec;
+ #endif
+diff --git a/src/fccfg.c b/src/fccfg.c
+index 9f8ee7c..4cd2533 100644
+--- a/src/fccfg.c
++++ b/src/fccfg.c
+@@ -34,6 +34,7 @@
+ #endif
+ 
+ static FcConfig    *_fcConfig; /* MT-safe */
++static FcBool _FcConfigIgnoreMtime = FcFalse;
+ 
+ static FcConfig *
+ FcConfigEnsure (void)
+@@ -2425,6 +2426,18 @@ FcConfigSetSysRoot (FcConfig      *config,
+     }
+ }
+ 
++FcPublic void
++FcConfigSetIgnoreMtime (const FcBool ignoreMtime)
++{
++    _FcConfigIgnoreMtime = ignoreMtime;
++}
++
++FcPublic FcBool
++FcConfigGetIgnoreMtime ()
++{
++    return _FcConfigIgnoreMtime;
++}
++
+ #define __fccfg__
+ #include "fcaliastail.h"
+ #undef __fccfg__
+diff --git a/src/fcint.h b/src/fcint.h
+index ac911ad..8515490 100644
+--- a/src/fcint.h
++++ b/src/fcint.h
+@@ -390,6 +390,13 @@ struct _FcCache {
+ 					   FcChar8)
+ 
+ /*
++ * Provide an invalid value for _FcCache.checksum. (time_t)(-1) is
++ * guaranteed not to be a valid time, see "man mktime". This value
++ * is used to skip mtime check.
++ */
++#define FC_INVALID_TIME	(time_t)(-1)
++
++/*
+  * Used while constructing a directory cache object
+  */
+ 
+-- 
+2.7.4
+

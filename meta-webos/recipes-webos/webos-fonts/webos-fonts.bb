@@ -1,8 +1,8 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 require ${BPN}.inc
 
-WEBOS_VERSION = "1.0.0-4_d838a7be2fc07168df0991bac43b6a7504e13ef7"
+WEBOS_VERSION = "1.0.0-5_b2831cddd9c37ccbb1946178fc137b115e6430fe"
 PR = "r0"
 
 inherit webos_arch_indep
