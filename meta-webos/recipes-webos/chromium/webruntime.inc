@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r30"
+INC_PR = "r31"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -353,6 +353,17 @@ MKSNAPSHOT_PATH = ""
 MKSNAPSHOT_PATH_arm = "clang_x86_v8_arm/"
 MKSNAPSHOT_PATH_aarch64 = "clang_x64_v8_arm64/"
 LTTNG_PROVIDER = "liblttng_provider.so"
+
+MKSNAPSHOT_PATH_qemux86 = "host/"
+
+GN_ARGS_append_qemux86 = "\
+    is_host_clang=false\
+    v8_snapshot_toolchain=\"//build/toolchain/cros:host\" \
+    host_toolchain=\"//build/toolchain/cros:host\" \
+    use_custom_libcxx=false \
+    use_custom_libcxx_for_host=false \
+    v8_enable_embedded_builtins=false \
+"
 
 install_webruntime() {
     install -d ${D}${libdir}
