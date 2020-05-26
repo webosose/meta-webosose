@@ -47,7 +47,11 @@ python do_write_oss_pkg_info() {
             lock = bb.utils.lockfile(datafile + '.lock')
             with open(datafile, "a") as dest:
                 dest.write('%s:\n' % pn)
-                for l in src.readlines():
-                    dest.write(l)
+                oss_string = src.read()
+                if oss_string.startswith("Open Source Software Package:"):
+                    dest.write("\n".join(oss_string.split("\n")[1:]))
+                else:
+                    bb.warn("There is no OSS item in the yaml file. :%s" % pn)
+                    dest.write(oss_string)
             bb.utils.unlockfile(lock)
 }
