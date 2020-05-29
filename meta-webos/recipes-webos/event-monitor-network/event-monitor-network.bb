@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 event-monitor pmloglib libpbnjson libwebosi18n"
 
-WEBOS_VERSION = "1.0.0-3_56fa4487982a448e0261d436bad63bbe7eb16a4d"
+WEBOS_VERSION = "1.0.0-5_c99401afd1464f8b74766696560bad84a10e5ab4"
 PR = "r0"
 
 inherit webos_component
