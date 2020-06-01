@@ -4,12 +4,15 @@ SUMMARY = "webOS extension for Qtwayland"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=f102406252ebecb028a76f141a01f268 \
+"
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
 WEBOS_VERSION = "2.0.0-52_444603949a89113bf29f2f9b1606b51f747264cd"
-PR = "r9"
+PR = "r10"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

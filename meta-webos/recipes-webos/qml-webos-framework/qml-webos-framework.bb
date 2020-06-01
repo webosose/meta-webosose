@@ -4,7 +4,10 @@ SUMMARY = "QML widgets and runtime framework for webOS apps"
 AUTHOR = "Mikko Levonmaa <mikko.levonmaa@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=c05a4b7c2c9b0aed0d7c1cd8d1af63c3 \
+"
 
 DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2"
 RDEPENDS_${PN} = "qtgraphicaleffects-qmlplugins"
@@ -15,7 +18,7 @@ RPROVIDES_${PN}-examples = " \
 "
 
 WEBOS_VERSION = "1.0.0-147_a39630262701abb37a6ebe497cce82fa13f7b678"
-PR = "r28"
+PR = "r29"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

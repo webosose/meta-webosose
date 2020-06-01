@@ -4,12 +4,15 @@ DESCRIPTION = "location framework which provides location based services impleme
 AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"
 SECTION = "webos/location"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=7be9908f876cc5f1edaf1124d0084067 \
+"
 
 DEPENDS = "glib-2.0 libpbnjson libxml2 pmloglib luna-service2 luna-prefs loc-utils boost"
 
 WEBOS_VERSION = "1.0.0-77_16d3076f8838c3b13cfd29082e725b99fcf0d0d4"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_public_repo

@@ -4,12 +4,15 @@ SUMMARY = "Event Monitoring for Network service"
 AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=ea312253974af80f7c37202a514df9e6 \
+"
 
 DEPENDS = "glib-2.0 event-monitor pmloglib libpbnjson libwebosi18n"
 
 WEBOS_VERSION = "1.0.0-5_c99401afd1464f8b74766696560bad84a10e5ab4"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions

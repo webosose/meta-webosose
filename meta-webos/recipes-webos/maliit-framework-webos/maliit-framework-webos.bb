@@ -5,7 +5,10 @@ DESCRIPTION = "This is the webOS edition of the Maliit input method framework. I
 AUTHOR = "Minjoong Park <minjoong.park@lgepartner.com>"
 SECTION = "webos/base"
 LICENSE = "LGPLv2"
-LIC_FILES_CHKSUM = "file://LICENSE.LGPL;md5=5c917f6ce94ceb8d8d5e16e2fca5b9ad"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE.LGPL;md5=5c917f6ce94ceb8d8d5e16e2fca5b9ad \
+    file://oss-pkg-info.yaml;md5=08fbd1f453eb64b01cd466196cb27922 \
+"
 
 DEPENDS = "qtbase qtdeclarative qtwayland-webos libxkbcommon pmloglib luna-service2 glib-2.0 udev wayland"
 RDEPENDS_${PN} = "qtbase-plugins configd"
@@ -13,7 +16,7 @@ RDEPENDS_${PN} = "qtbase-plugins configd"
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
 WEBOS_VERSION = "0.99.0+20-93_a5d0503f6b3287ce09dd0690188f106116a1f53b"
-PR = "r31"
+PR = "r32"
 
 inherit webos_daemon
 inherit webos_enhanced_submissions

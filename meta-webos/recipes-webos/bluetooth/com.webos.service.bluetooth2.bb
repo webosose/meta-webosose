@@ -4,7 +4,10 @@ SUMMARY = "webOS Bluetooth management service"
 AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=1ff1242ee7d960d745e8abafd26f2471 \
+"
 
 DEPENDS = " \
     bluetooth-sil-api \
@@ -46,7 +49,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
 WEBOS_VERSION = "1.0.0-22_8d9ff52d8a3a6d1fdfe20de3cea4ca11ceb68c5c"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_public_repo
