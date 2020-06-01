@@ -247,7 +247,7 @@ PTEST_ENABLED_pn-valgrind = "0"
 PTEST_ENABLED_pn-parted = "0"
 PTEST_ENABLED_pn-apr = "0"
 
-INHERIT_DISTRO ?= "debian devshell sstate license buildstats-summary webos_base webos_oss_pkg_info remove-libtool image-buildinfo"
+INHERIT_DISTRO ?= "debian devshell sstate license buildstats-summary webos_base remove-libtool image-buildinfo"
 
 # Inherit icecc here, so that all builders have the same sstate signatures
 INHERIT_DISTRO += "icecc"
@@ -256,6 +256,19 @@ INHERIT_DISTRO += "icecc"
 # You need to set _empty_ value in webos-local.conf to enable icecc function:
 # ICECC_DISABLED = ""
 ICECC_DISABLED ??= "1"
+
+# webOS supports the generation of oss package information file.
+# $ bitbake -c write_oss_pkg_info <image>
+# Components can have oss-pkg-info file itself but it is forced to
+# add checksum in LIC_FILES_CHKSUM if it contain oss-pkg-info.yaml
+IMAGE_CLASSES += "webos_oss_pkg_info"
+do_populate_lic_append() {
+    """ To check oss-pkg-info.yaml """
+    oss_filename = "oss-pkg-info.yaml"
+    if os.path.isfile(os.path.join(d.getVar("S"), oss_filename)):
+        if not os.path.isfile(os.path.join(destdir, oss_filename)):
+            bb.fatal("%s is in source repository but LIC_FILES_CHKSUM doesn't include it." % oss_filename)
+}
 
 WARN_QA_append = " version-going-backwards webos-enh-sub-warning"
 WEBOS_ERROR_QA_AUTOREV ?= "webos-enh-sub-autorev-error"
