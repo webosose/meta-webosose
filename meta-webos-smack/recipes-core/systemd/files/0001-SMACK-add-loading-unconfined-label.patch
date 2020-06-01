@@ -1,4 +1,4 @@
-From f211d3b2903dbf697ae6a8694c872caae05bf55c Mon Sep 17 00:00:00 2001
+From e526c2be637c655b8e472538ef5a2522ce1350e4 Mon Sep 17 00:00:00 2001
 From: "eugene.todoruk" <eugene.todoruk@lge.com>
 Date: Thu, 28 Mar 2019 17:35:24 +0300
 Subject: [PATCH] SMACK: add loading unconfined label
@@ -15,11 +15,11 @@ drop FOREACH_LINE() in systemd version 244, it is replaced.
 |    41 |         FOREACH_LINE(unconfined, f,log_error_errno(errno, "Failed to read line from '%s': %m", "/etc/smack/unconfined")) {
 |       |
 ---
- src/core/smack-setup.c | 68 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ src/core/smack-setup.c | 67 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
 diff --git a/src/core/smack-setup.c b/src/core/smack-setup.c
-index 49b37aefc7..41563b0c45 100644
+index b95e6239d4..1025fd63cc 100644
 --- a/src/core/smack-setup.c
 +++ b/src/core/smack-setup.c
 @@ -25,6 +25,57 @@
@@ -77,14 +77,14 @@ index 49b37aefc7..41563b0c45 100644
 +        return 0;
 +}
 +
- static int write_access2_rules(const char* srcdir) {
-         _cleanup_close_ int load2_fd = -1, change_fd = -1;
-         _cleanup_closedir_ DIR *dir = NULL;
-@@ -413,6 +464,23 @@ int mac_smack_setup(bool *loaded_policy) {
+ static int fdopen_unlocked_at(int dfd, const char *dir, const char *name, int *status, FILE **ret_file) {
+         int fd, r;
+         FILE *f;
+@@ -388,6 +439,22 @@ int mac_smack_setup(bool *loaded_policy) {
                  return r;
          }
  
-+        r = write_unconfined();
++	r = write_unconfined();
 +        switch(r) {
 +        case -ENOENT:
 +                log_debug("Smack is not enabled in the kernel.");
@@ -99,7 +99,6 @@ index 49b37aefc7..41563b0c45 100644
 +                log_emergency_errno(r, "Failed to write Smack unconfined label: %m");
 +                return r;
 +        }
-+
 +
          *loaded_policy = true;
  
