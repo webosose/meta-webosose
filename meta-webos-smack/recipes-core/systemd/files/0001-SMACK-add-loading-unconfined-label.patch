@@ -1,17 +1,28 @@
-From b1ea9128df06f43864defe8aa3d7293c6eef2de8 Mon Sep 17 00:00:00 2001
+From f211d3b2903dbf697ae6a8694c872caae05bf55c Mon Sep 17 00:00:00 2001
 From: "eugene.todoruk" <eugene.todoruk@lge.com>
 Date: Thu, 28 Mar 2019 17:35:24 +0300
 Subject: [PATCH] SMACK: add loading unconfined label
 
+drop FOREACH_LINE() in systemd version 244, it is replaced.
+
+| ../git/src/core/smack-setup.c: In function 'write_unconfined':
+| ../git/src/core/smack-setup.c:41:9: error: implicit declaration of function 'FOREACH_LINE'; did you mean 'FOREACH_WORD'? [-Werror=implicit-function-declaration]
+|    41 |         FOREACH_LINE(unconfined, f,log_error_errno(errno, "Failed to read line from '%s': %m", "/etc/smack/unconfined")) {
+|       |         ^~~~~~~~~~~~
+|       |         FOREACH_WORD
+| ../git/src/core/smack-setup.c:41:9: warning: nested extern declaration of 'FOREACH_LINE' [-Wnested-externs]
+| ../git/src/core/smack-setup.c:41:121: error: expected ';' before '{' token
+|    41 |         FOREACH_LINE(unconfined, f,log_error_errno(errno, "Failed to read line from '%s': %m", "/etc/smack/unconfined")) {
+|       |
 ---
- src/core/smack-setup.c | 61 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ src/core/smack-setup.c | 68 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
 diff --git a/src/core/smack-setup.c b/src/core/smack-setup.c
-index 50115c0..2ac11d5 100644
+index 49b37aefc7..41563b0c45 100644
 --- a/src/core/smack-setup.c
 +++ b/src/core/smack-setup.c
-@@ -25,6 +25,50 @@
+@@ -25,6 +25,57 @@
  
  #if ENABLE_SMACK
  
@@ -30,9 +41,16 @@ index 50115c0..2ac11d5 100644
 +                return errno == ENOENT ? ENOENT : -errno;
 +        }
 +
-+        FOREACH_LINE(unconfined, f,
-+                     log_error_errno(errno, "Failed to read line from '%s': %m",
-+                                     "/etc/smack/unconfined")) {
++        for(;;) {
++                _cleanup_free_ char *line = NULL;
++                bool invalid_line = false;
++                int k;
++
++                k = read_line(f, LONG_LINE_MAX, &line);
++                if (k < 0)
++                        return log_error_errno(k, "Failed to read line from '%s': %m", "/etc/smack/unconfined");
++                if (k == 0)
++                        break;
 +
 +                if (isempty(truncate_nl(unconfined)))
 +                        continue;
@@ -62,7 +80,7 @@ index 50115c0..2ac11d5 100644
  static int write_access2_rules(const char* srcdir) {
          _cleanup_close_ int load2_fd = -1, change_fd = -1;
          _cleanup_closedir_ DIR *dir = NULL;
-@@ -394,6 +438,23 @@ int mac_smack_setup(bool *loaded_policy) {
+@@ -413,6 +464,23 @@ int mac_smack_setup(bool *loaded_policy) {
                  return r;
          }
  
