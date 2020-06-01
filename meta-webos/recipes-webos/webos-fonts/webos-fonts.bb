@@ -2,7 +2,7 @@
 
 require ${BPN}.inc
 
-WEBOS_VERSION = "1.0.0-5_b2831cddd9c37ccbb1946178fc137b115e6430fe"
+WEBOS_VERSION = "1.0.0-6_b1a181219a888ad0547a9578af06ce3b6875fc0b"
 PR = "r0"
 
 inherit webos_arch_indep

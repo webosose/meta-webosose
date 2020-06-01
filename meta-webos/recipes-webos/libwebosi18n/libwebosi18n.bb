@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "libpbnjson boost"
 
-WEBOS_VERSION = "1.0.1-2_19a01865c632dd48268866b843c2e8c28d6ccbbe"
+WEBOS_VERSION = "1.0.1-3_3df441675f74b5beeff8a45201d078986ad2c68b"
 PR = "r1"
 
 inherit webos_component

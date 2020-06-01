@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 SUMMARY = "Private configuration files for fontconfig"
 AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/fonts"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-3_ca7bd0df799739744041652273710f48e85fad7c"
+WEBOS_VERSION = "1.0.0-4_0b84b8467b4733a1db299443dfa997c54e934a2c"
 PR = "r2"
 
 inherit webos_enhanced_submissions
