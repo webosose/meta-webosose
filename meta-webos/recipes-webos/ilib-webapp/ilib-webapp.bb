@@ -6,7 +6,7 @@ SECTION = "libs/javascript"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
-WEBOS_VERSION = "14.6.0-7_3fba9d5fa42a9e9094d3d10263a1de7fc4303a1b"
+WEBOS_VERSION = "14.6.0-9_2a4e325b6bec50592ce3f199e3c018dd3c47ce8f"
 PR = "r6"
 
 inherit webos_arch_indep

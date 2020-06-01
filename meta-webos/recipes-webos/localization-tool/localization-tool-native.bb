@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS localization tool"
 AUTHOR = "Seonmi Jin<seonmi1.jin@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-2_e4686b9246b129f308155ef774a6e722912fabfa"
+WEBOS_VERSION = "1.0.0-3_3a6b4a3e827a1d5eb0cdded285367e7c081b7448"
 
 PR = "r0"
 

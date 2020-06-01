@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 SUMMARY = "iLib Qml loader"
 AUTHOR = "Goun Lee <goun.lee@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 DEPENDS = "qtdeclarative"
 
-WEBOS_VERSION = "11.0.0-2_1d8cff6dcb5cd95114f19316be776b02b1bea773"
+WEBOS_VERSION = "11.0.0-4_539dcee647f3b28fc6b39b9ff6684ae07b8e8579"
 PR = "r3"
 
 inherit webos_qmake5
