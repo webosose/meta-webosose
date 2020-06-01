@@ -2,56 +2,48 @@
 #
 # webos_oss_pkg_info
 #
-# This class adds populate_oss_pkg_info and write_oss_pkg_info task,
-# write_oss_pkg_info can be run by bitbake --runall option to get
-# constructed oss-pkg-info.yaml files of each components
+# This class adds write_oss_pkg_info task.
+# write_oss_pkg_info can be run by bitbake -c write_oss_pkg_info <image>
+# collected oss-pkg-info.yaml files of image
 
-OSS_DEPLOY_DIR ?= "${DEPLOY_DIR}/oss-pkg-info/"
-OSS_DESTDIR    ?= "${WORKDIR}/osspkginfo-destdir/"
+OSS_DEPLOY_DIR ?= "${DEPLOY_DIR}/licenses"
 OSS_FILENAME   ?= "oss-pkg-info.yaml"
 
-addtask populate_oss_pkg_info after do_patch before do_preconfigure do_configure do_build
-do_populate_oss_pkg_info[doc] = "Writes oss package information for the recipe that is collected later when the image is constructed"
-do_populate_oss_pkg_info[dirs] = "${OSS_DESTDIR}/${PN}"
-do_populate_oss_pkg_info[cleandirs] = "${OSS_DESTDIR}"
-do_populate_oss_pkg_info[vardeps] = "${OSS_DEPLOY_DIR} ${OSS_DESTDIR} ${OSS_FILENAME}"
-
-# Copy oss package information file into deploy path
-do_populate_oss_pkg_info () {
-    if [ -f "${S}/${OSS_FILENAME}" ] ; then
-        install -m 644 ${S}/${OSS_FILENAME} ${OSS_DESTDIR}/${PN}/
-    fi
-}
-
-SSTATETASKS += "do_populate_oss_pkg_info"
-do_populate_oss_pkg_info[sstate-inputdirs] = "${OSS_DESTDIR}"
-do_populate_oss_pkg_info[sstate-outputdirs] = "${OSS_DEPLOY_DIR}"
-
-python do_populate_oss_pkg_info_setscene () {
-    sstate_setscene(d)
-}
-addtask do_populate_oss_pkg_info_setscene
-
-addtask write_oss_pkg_info after do_populate_oss_pkg_info
-do_write_oss_pkg_info[doc] = "Constructs oss package information of the recipe"
+# We need license.manifest of image
+addtask write_oss_pkg_info after do_rootfs before do_build
+do_write_oss_pkg_info[doc] = "Collects oss package information of the image"
 do_write_oss_pkg_info[nostamp] = "1"
 
 python do_write_oss_pkg_info() {
-    pn           = d.getVar("PN")
+    imagename    = d.getVar("IMAGE_BASENAME")
+    machine      = d.getVar("MACHINE")
     oss_filename = d.getVar("OSS_FILENAME")
-    oss_path     = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), pn), oss_filename)
+    manifest     = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), "%s-%s" % (imagename, machine)), "license.manifest")
 
-    if os.path.isfile(oss_path):
-        with open(oss_path) as src:
-            datafile = os.path.join(d.getVar("TOPDIR", True), oss_filename)
-            lock = bb.utils.lockfile(datafile + '.lock')
-            with open(datafile, "a") as dest:
-                dest.write('%s:\n' % pn)
-                oss_string = src.read()
-                if oss_string.startswith("Open Source Software Package:"):
-                    dest.write("\n".join(oss_string.split("\n")[1:]))
-                else:
-                    bb.warn("There is no OSS item in the yaml file. :%s" % pn)
-                    dest.write(oss_string)
-            bb.utils.unlockfile(lock)
+    if os.path.isfile(manifest):
+        with open(os.path.join(d.getVar("DEPLOY_DIR_IMAGE"), imagename+'-'+oss_filename), "w") as output:
+            """ Extract recipe names from license manifest """
+            tmp = []
+            with open(manifest) as input:
+                for line in input:
+                    line = line.rstrip()
+                    if line.startswith("RECIPE NAME: "):
+                        tmp.append(line.split(":")[1].strip())
+
+            """ Remove duplicates """
+            pkgs = list(dict.fromkeys(tmp))
+
+            for pkg in pkgs:
+                oss = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), pkg), oss_filename)
+                if os.path.isfile(oss):
+                    with open(oss) as input:
+                        output.write('%s:\n' % pkg)
+                        oss_string = input.read()
+                        if oss_string.startswith("Open Source Software Package:"):
+                            output.write("\n".join(oss_string.split("\n")[1:]))
+                        else:
+                            bb.warn("There is no OSS item in the yaml file. :%s" % pkg)
+                            output.write(oss_string)
+    else:
+        bb.fatal("There is no %s" % manifest)
 }
