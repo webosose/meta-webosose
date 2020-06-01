@@ -4,7 +4,10 @@ SUMMARY = "Surface Manager for webOS Auto Reference UX"
 AUTHOR  = "Jaeyoon Jung <jaeyoon.jung@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=49b716ba64042488414ba9a376607b70 \
+"
 
 DEPENDS = "luna-surfacemanager qt-features-webos"
 RDEPENDS_${PN} = " \
@@ -12,7 +15,7 @@ RDEPENDS_${PN} = " \
 "
 
 WEBOS_VERSION = "0.0.1-23_8617b1fa9a069edcf66421c532699999b331bc23"
-PR = "r2"
+PR = "r3"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

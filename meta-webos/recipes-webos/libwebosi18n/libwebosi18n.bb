@@ -4,12 +4,15 @@ SUMMARY = "libwebosi18n library can be used by non-QT C++ components for localiz
 AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=77dec9bc8ed5c24759f44d19f53df540 \
+"
 
 DEPENDS = "libpbnjson boost"
 
 WEBOS_VERSION = "1.0.1-3_3df441675f74b5beeff8a45201d078986ad2c68b"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions

@@ -4,11 +4,14 @@ SUMMARY = "webOS localization tool"
 AUTHOR = "Seonmi Jin<seonmi1.jin@lge.com>"
 SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=de46369b0f26ca5ffafeaf4453f43277 \
+"
 
 WEBOS_VERSION = "1.0.0-3_3a6b4a3e827a1d5eb0cdded285367e7c081b7448"
 
-PR = "r0"
+PR = "r1"
 
 inherit webos_enhanced_submissions
 inherit native

@@ -4,12 +4,15 @@ SUMMARY = "The core of the Luna Surface Manager (compositor)"
 AUTHOR  = "Anupam Kaul <anupam.kaul@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=fb6b3024b363af54f0e0991e204a240a \
+"
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
 WEBOS_VERSION = "2.0.0-320_662e3a11db6e7e5b5d0817c52b8d0cadce226b2a"
-PR = "r46"
+PR = "r47"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

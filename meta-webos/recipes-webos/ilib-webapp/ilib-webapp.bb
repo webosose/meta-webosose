@@ -4,10 +4,13 @@ SUMMARY = "iLib code and locale data"
 AUTHOR = "Goun Lee <goun.lee@lge.com>"
 SECTION = "libs/javascript"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
+    file://oss-pkg-info.yaml;md5=77f228ff294e07cece452a7ba8cd4b08 \
+"
 
 WEBOS_VERSION = "14.6.0-9_2a4e325b6bec50592ce3f199e3c018dd3c47ce8f"
-PR = "r6"
+PR = "r7"
 
 inherit webos_arch_indep
 inherit webos_enhanced_submissions

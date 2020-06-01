@@ -4,12 +4,15 @@ SUMMARY = "webOS Bluetooth SIL API"
 AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=e07d738b032e6351a6608e81ea1b1b49 \
+"
 
 DEPENDS = "glib-2.0"
 
 WEBOS_VERSION = "1.0.0-8_d056cde989b78fe49189e81b96b59ad66645419f"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_public_repo
