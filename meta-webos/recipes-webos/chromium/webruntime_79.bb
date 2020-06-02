@@ -6,7 +6,7 @@ PROVIDES = "virtual/webruntime"
 
 PR = "${INC_PR}.1"
 
-WEBOS_VERSION = "79.0.3945.79-29_8cbdc0de709f593287e51ab015111baa9c1d0432"
+WEBOS_VERSION = "79.0.3945.79-30_c5dac9370c5cd74bd10f874ef51b0e3f3ed4de15"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium79"
 
