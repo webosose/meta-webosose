@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r28"
+INC_PR = "r29"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -142,6 +142,7 @@ GN_ARGS = "\
     use_custom_libcxx=false\
     use_custom_libcxx_for_host=true\
     use_kerberos=false\
+    use_local_storage_manager=true\
     use_ozone=true\
     use_pmlog=true\
     use_sysroot=false\
