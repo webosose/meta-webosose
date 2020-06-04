@@ -1,0 +1,123 @@
+From c06e2646343431db8e5b877841ad9c2d6e429f04 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 4 Jun 2020 23:20:35 +0000
+Subject: [PATCH] Fix build with boost-1.73.0
+
+* fixes:
+sam/2.0.0-31-r24/git/src/manager/PolicyManager.cpp:35:72: error: '_1' was not declared in this scope
+sam/2.0.0-31-r24/git/src/manager/PolicyManager.cpp:76:71: error: '_1' was not declared in this scope
+sam/2.0.0-31-r24/git/src/manager/PolicyManager.cpp:109:71: error: '_1' was not declared in this scope
+sam/2.0.0-31-r24/git/src/manager/PolicyManager.cpp:152:74: error: '_1' was not declared in this scope
+sam/2.0.0-31-r24/git/src/bus/service/ApplicationManager.cpp:152:101: error: '_1' was not declared in this scope
+---
+ src/bus/service/ApplicationManager.cpp | 56 +++++++++++++-------------
+ src/manager/PolicyManager.cpp          |  8 ++--
+ 2 files changed, 32 insertions(+), 32 deletions(-)
+
+diff --git a/src/bus/service/ApplicationManager.cpp b/src/bus/service/ApplicationManager.cpp
+index 2ec36df..0c24b0c 100644
+--- a/src/bus/service/ApplicationManager.cpp
++++ b/src/bus/service/ApplicationManager.cpp
+@@ -149,34 +149,34 @@ ApplicationManager::ApplicationManager()
+ {
+     setClassName("ApplicationManager");
+ 
+-    registerApiHandler(CATEGORY_ROOT, METHOD_LAUNCH, boost::bind(&ApplicationManager::launch, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_PAUSE, boost::bind(&ApplicationManager::pause, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_CLOSE, boost::bind(&ApplicationManager::close, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_CLOSE_BY_APPID, boost::bind(&ApplicationManager::close, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_RUNNING, boost::bind(&ApplicationManager::running, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_LIFE_EVENTS, boost::bind(&ApplicationManager::getAppLifeEvents, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_LIFE_STATUS, boost::bind(&ApplicationManager::getAppLifeStatus, this, _1));
+-
+-    registerApiHandler(CATEGORY_ROOT, METHOD_GET_FOREGROUND_APPINFO, boost::bind(&ApplicationManager::getForegroundAppInfo, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_LOCK_APP, boost::bind(&ApplicationManager::lockApp, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_REGISTER_APP, boost::bind(&ApplicationManager::registerApp, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_REGISTER_NATIVE_APP, boost::bind(&ApplicationManager::registerApp, this, _1));
+-
+-    registerApiHandler(CATEGORY_ROOT, METHOD_LIST_APPS, boost::bind(&ApplicationManager::listApps, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_STATUS, boost::bind(&ApplicationManager::getAppStatus, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_INFO, boost::bind(&ApplicationManager::getAppInfo, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_BASE_PATH, boost::bind(&ApplicationManager::getAppBasePath, this, _1));
+-
+-    registerApiHandler(CATEGORY_ROOT, METHOD_ADD_LAUNCHPOINT, boost::bind(&ApplicationManager::addLaunchPoint, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_UPDATE_LAUNCHPOINT, boost::bind(&ApplicationManager::updateLaunchPoint, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_REMOVE_LAUNCHPOINT, boost::bind(&ApplicationManager::removeLaunchPoint, this, _1));
+-    registerApiHandler(CATEGORY_ROOT, METHOD_LIST_LAUNCHPOINTS, boost::bind(&ApplicationManager::listLaunchPoints, this, _1));
+-
+-    registerApiHandler(CATEGORY_DEV, METHOD_CLOSE, boost::bind(&ApplicationManager::close, this, _1));
+-    registerApiHandler(CATEGORY_DEV, METHOD_CLOSE_BY_APPID, boost::bind(&ApplicationManager::close, this, _1));
+-    registerApiHandler(CATEGORY_DEV, METHOD_LIST_APPS, boost::bind(&ApplicationManager::listApps, this, _1));
+-    registerApiHandler(CATEGORY_DEV, METHOD_RUNNING, boost::bind(&ApplicationManager::running, this, _1));
+-    registerApiHandler(CATEGORY_DEV, METHOD_MANAGER_INFO, boost::bind(&ApplicationManager::managerInfo, this, _1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_LAUNCH, boost::bind(&ApplicationManager::launch, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_PAUSE, boost::bind(&ApplicationManager::pause, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_CLOSE, boost::bind(&ApplicationManager::close, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_CLOSE_BY_APPID, boost::bind(&ApplicationManager::close, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_RUNNING, boost::bind(&ApplicationManager::running, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_LIFE_EVENTS, boost::bind(&ApplicationManager::getAppLifeEvents, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_LIFE_STATUS, boost::bind(&ApplicationManager::getAppLifeStatus, this, boost::placeholders::_1));
++
++    registerApiHandler(CATEGORY_ROOT, METHOD_GET_FOREGROUND_APPINFO, boost::bind(&ApplicationManager::getForegroundAppInfo, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_LOCK_APP, boost::bind(&ApplicationManager::lockApp, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_REGISTER_APP, boost::bind(&ApplicationManager::registerApp, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_REGISTER_NATIVE_APP, boost::bind(&ApplicationManager::registerApp, this, boost::placeholders::_1));
++
++    registerApiHandler(CATEGORY_ROOT, METHOD_LIST_APPS, boost::bind(&ApplicationManager::listApps, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_STATUS, boost::bind(&ApplicationManager::getAppStatus, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_INFO, boost::bind(&ApplicationManager::getAppInfo, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_GET_APP_BASE_PATH, boost::bind(&ApplicationManager::getAppBasePath, this, boost::placeholders::_1));
++
++    registerApiHandler(CATEGORY_ROOT, METHOD_ADD_LAUNCHPOINT, boost::bind(&ApplicationManager::addLaunchPoint, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_UPDATE_LAUNCHPOINT, boost::bind(&ApplicationManager::updateLaunchPoint, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_REMOVE_LAUNCHPOINT, boost::bind(&ApplicationManager::removeLaunchPoint, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_ROOT, METHOD_LIST_LAUNCHPOINTS, boost::bind(&ApplicationManager::listLaunchPoints, this, boost::placeholders::_1));
++
++    registerApiHandler(CATEGORY_DEV, METHOD_CLOSE, boost::bind(&ApplicationManager::close, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_DEV, METHOD_CLOSE_BY_APPID, boost::bind(&ApplicationManager::close, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_DEV, METHOD_LIST_APPS, boost::bind(&ApplicationManager::listApps, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_DEV, METHOD_RUNNING, boost::bind(&ApplicationManager::running, this, boost::placeholders::_1));
++    registerApiHandler(CATEGORY_DEV, METHOD_MANAGER_INFO, boost::bind(&ApplicationManager::managerInfo, this, boost::placeholders::_1));
+ }
+ 
+ ApplicationManager::~ApplicationManager()
+diff --git a/src/manager/PolicyManager.cpp b/src/manager/PolicyManager.cpp
+index 4fd1c3e..545479a 100644
+--- a/src/manager/PolicyManager.cpp
++++ b/src/manager/PolicyManager.cpp
+@@ -32,7 +32,7 @@ PolicyManager::~PolicyManager()
+ 
+ void PolicyManager::launch(LunaTaskPtr lunaTask)
+ {
+-    lunaTask->setAPICallback(boost::bind(&PolicyManager::launch, this, _1));
++    lunaTask->setAPICallback(boost::bind(&PolicyManager::launch, this, boost::placeholders::_1));
+     if (!lunaTask->getNextStep().empty()) {
+         Logger::info(getClassName(), __FUNCTION__, lunaTask->getNextStep());
+     }
+@@ -73,7 +73,7 @@ void PolicyManager::launch(LunaTaskPtr lunaTask)
+ 
+ void PolicyManager::pause(LunaTaskPtr lunaTask)
+ {
+-    lunaTask->setAPICallback(boost::bind(&PolicyManager::pause, this, _1));
++    lunaTask->setAPICallback(boost::bind(&PolicyManager::pause, this, boost::placeholders::_1));
+     if (!lunaTask->getNextStep().empty()) {
+         Logger::info(getClassName(), __FUNCTION__, lunaTask->getNextStep());
+     }
+@@ -106,7 +106,7 @@ void PolicyManager::pause(LunaTaskPtr lunaTask)
+ 
+ void PolicyManager::close(LunaTaskPtr lunaTask)
+ {
+-    lunaTask->setAPICallback(boost::bind(&PolicyManager::close, this, _1));
++    lunaTask->setAPICallback(boost::bind(&PolicyManager::close, this, boost::placeholders::_1));
+     if (!lunaTask->getNextStep().empty()) {
+         Logger::info(getClassName(), __FUNCTION__, lunaTask->getNextStep());
+     }
+@@ -149,7 +149,7 @@ void PolicyManager::close(LunaTaskPtr lunaTask)
+ 
+ void PolicyManager::relaunch(LunaTaskPtr lunaTask)
+ {
+-    lunaTask->setAPICallback(boost::bind(&PolicyManager::relaunch, this, _1));
++    lunaTask->setAPICallback(boost::bind(&PolicyManager::relaunch, this, boost::placeholders::_1));
+     if (!lunaTask->getNextStep().empty()) {
+         Logger::info(getClassName(), __FUNCTION__, lunaTask->getNextStep());
+     }
