@@ -1,0 +1,66 @@
+From 3975cb3d62fbcd23b149387323df89a5e552c67c Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Thu, 4 Jun 2020 16:08:09 -0700
+Subject: [PATCH] Fix build with boost-1.73.0
+
+* fixes:
+umediaserver/1.0.0-24.gav.5-r11/git/src/resource_manager/AppLifeManager.cpp:79:13: error: 'find_if' was not declared in this scope; did you mean 'boost::mpl::find_if'?
+umediaserver/1.0.0-24.gav.5-r11/git/src/resource_manager/AppLifeManager.cpp:93:13: error: 'find_if' was not declared in this scope; did you mean 'boost::mpl::find_if'?
+umediaserver/1.0.0-24.gav.5-r11/git/src/resource_manager/AppLifeManager.cpp:238:13: error: 'find_if' was not declared in this scope; did you mean 'boost::mpl::find_if'?
+umediaserver/1.0.0-24.gav.5-r11/git/src/media_client/uMediaClient.cpp:68:8: error: 'replace_if' is not a member of 'std'
+---
+ src/media_client/uMediaClient.cpp       | 1 +
+ src/resource_manager/AppLifeManager.cpp | 7 ++++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/src/media_client/uMediaClient.cpp b/src/media_client/uMediaClient.cpp
+index 2955387..fa192d0 100644
+--- a/src/media_client/uMediaClient.cpp
++++ b/src/media_client/uMediaClient.cpp
+@@ -25,6 +25,7 @@
+ 
+ #include "uMediaClient.h"
+ 
++#include <algorithm>
+ #include <UMSConnector.h>
+ #include <Logger_macro.h>
+ #include <stdlib.h>
+diff --git a/src/resource_manager/AppLifeManager.cpp b/src/resource_manager/AppLifeManager.cpp
+index 582339b..92faa6d 100644
+--- a/src/resource_manager/AppLifeManager.cpp
++++ b/src/resource_manager/AppLifeManager.cpp
+@@ -15,6 +15,7 @@
+ // SPDX-License-Identifier: Apache-2.0
+ 
+ #include "AppLifeManager.h"
++#include <algorithm>
+ #include <Logger_id.h>
+ #include <Logger_macro.h>
+ 
+@@ -76,7 +77,7 @@ void AppLifeManager::unregisterConnection(const std::string& connection_id) {
+ 		return (p.second.connections.find(connection_id) != p.second.connections.end());
+ 	};
+ 
+-	auto itr = find_if(_apps.begin(), _apps.end(), func);
++	auto itr = std::find_if(_apps.begin(), _apps.end(), func);
+ 	if (itr != _apps.end()) {
+ 		itr->second.connections.erase(connection_id);
+ 	}
+@@ -90,7 +91,7 @@ AppLifeManager::application_connections_t* AppLifeManager::getAppConnection(cons
+ 		return (p.second.connections.find(connection_id) != p.second.connections.end());
+ 	};
+ 
+-	auto itr = find_if(_apps.begin(), _apps.end(), func);
++	auto itr = std::find_if(_apps.begin(), _apps.end(), func);
+ 	if (itr == _apps.end()) {
+ 		return nullptr;
+ 	}
+@@ -235,7 +236,7 @@ std::string AppLifeManager::getAppId(const std::string& connection_id)
+ 		return (p.second.connections.find(connection_id) != p.second.connections.end());
+ 	};
+ 
+-	auto itr = find_if(_apps.begin(), _apps.end(), func);
++	auto itr = std::find_if(_apps.begin(), _apps.end(), func);
+ 	if (itr != _apps.end()) {
+ 		ret = itr->second.app_id;
+ 	}

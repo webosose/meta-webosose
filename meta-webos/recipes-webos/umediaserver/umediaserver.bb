@@ -12,7 +12,7 @@ DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
 WEBOS_VERSION = "1.0.0-24_0407a711cbe8e747dfda50633d8b1c70b0ffc9ef"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -55,3 +55,5 @@ FILES_${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${dat
 #   char message[MAX_FT_SIZE]; snprintf(message, MAX_FT_SIZE, format, args...);
 #                              ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 SECURITY_STRINGFORMAT = ""
+
+SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"
