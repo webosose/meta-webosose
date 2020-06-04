@@ -21,7 +21,7 @@ RDEPENDS_${PN} = "\
 "
 
 WEBOS_VERSION = "1.0.0-13_d26c911e8bdfdbc4138b3d35eacaafde241a1e62"
-PR = "r26"
+PR = "r27"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -49,3 +49,5 @@ FILES_${PN} += "${webos_mediadir}/internal"
 
 # From http://gpro.lge.com/c/webosose/audiod-pro/+/266294
 SRC_URI += "file://0001-CMakeLists.txt-Drop-2nd-call-to-find_package-Boost.patch"
+
+SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"
