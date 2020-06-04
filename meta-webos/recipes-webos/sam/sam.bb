@@ -13,7 +13,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-31_107497d00e52200c839502aadf06cc7e4ea1f85b"
-PR = "r24"
+PR = "r25"
 
 inherit webos_component
 inherit webos_cmake
@@ -30,3 +30,5 @@ S = "${WORKDIR}/git"
 PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY_${PN}-tests = "1"
 FILES_${PN}-tests = "${libexecdir}/tests/*"
+
+SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"
