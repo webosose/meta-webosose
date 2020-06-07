@@ -1,0 +1,139 @@
+From 25069385e4e2e6dae597982081e06ee12b15f515 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Fri, 5 Jun 2020 08:04:53 +0200
+Subject: [PATCH] config.h: rename to sleepd_config.h to make sure the right
+ one is included
+
+* fails with json-c-0.14, because of how include paths are orderred it
+  includes the one from recipe-sysroot/usr/include/json-c/config.h
+
+/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-gcc -DPMLOG_TRACES_ENABLED -DPMLOG_TRACE_COMPONENT=\"sleepd\" -DWITHOUT_RTC_WATCHDOG -IConfigured/src -I/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot/usr/include/glib-2.0 -I/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot/usr/lib/glib-2.0/include -I/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot/usr/include/libxml2 -I/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot/usr/include/json-c -I/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/git/include/internal -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse  --sysroot=/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0=/usr/src/debug/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0                      -fdebug-prefix-map=/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0=/usr/src/debug/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0                      -fdebug-prefix-map=/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot=                      -fdebug-prefix-map=/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot-native=   -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse  --sysroot=/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/recipe-sysroot -DUSE_PMLOG_DECLARATION -DREBOOT_TAKES_REASON -Wall -Werror=implicit-function-declaration --std=gnu99 -Wl,--no-undefined -DNDEBUG -MD -MT CMakeFiles/sleepd.dir/src/utils/init.c.o -MF CMakeFiles/sleepd.dir/src/utils/init.c.o.d -o CMakeFiles/sleepd.dir/src/utils/init.c.o   -c /OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/git/src/utils/init.c
+/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/git/src/utils/init.c: In function 'TheOneInit':
+/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/git/src/utils/init.c:155:9: error: 'gSleepConfig' undeclared (first use in this function); did you mean 'GSliceConfig'?
+  155 |     if (gSleepConfig.debug)
+      |         ^~~~~~~~~~~~
+      |         GSliceConfig
+/OE/build/luneos-master/webos-ports/tmp-glibc/work/core2-64-webos-linux/sleepd/2.0.0-1+gitAUTOINC+805f724dd3-r0/git/src/utils/init.c:155:9: note: each undeclared identifier is reported only once for each function it appears in
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ include/internal/{config.h => sleepd_config.h} | 0
+ src/alarms/alarm.c                             | 2 +-
+ src/alarms/timeout_alarm.c                     | 2 +-
+ src/config.c                                   | 2 +-
+ src/pwrevents/machine.c                        | 2 +-
+ src/pwrevents/suspend.c                        | 2 +-
+ src/pwrevents/suspend_ipc.c                    | 2 +-
+ src/utils/init.c                               | 2 +-
+ src/utils/timesaver.c                          | 2 +-
+ 9 files changed, 8 insertions(+), 8 deletions(-)
+ rename include/internal/{config.h => sleepd_config.h} (100%)
+
+diff --git a/include/internal/config.h b/include/internal/sleepd_config.h
+similarity index 100%
+rename from include/internal/config.h
+rename to include/internal/sleepd_config.h
+diff --git a/src/alarms/alarm.c b/src/alarms/alarm.c
+index 0912b15..0109d55 100644
+--- a/src/alarms/alarm.c
++++ b/src/alarms/alarm.c
+@@ -37,7 +37,7 @@
+ 
+ #include "main.h"
+ #include "logging.h"
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "timeout_alarm.h"
+ #include "reference_time.h"
+ #include "timesaver.h"
+diff --git a/src/alarms/timeout_alarm.c b/src/alarms/timeout_alarm.c
+index 243fe34..5eaa544 100644
+--- a/src/alarms/timeout_alarm.c
++++ b/src/alarms/timeout_alarm.c
+@@ -42,7 +42,7 @@
+ #include "reference_time.h"
+ 
+ #include "timeout_alarm.h"
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "init.h"
+ #include "timesaver.h"
+ 
+diff --git a/src/config.c b/src/config.c
+index ab69a07..f670ed0 100644
+--- a/src/config.c
++++ b/src/config.c
+@@ -34,7 +34,7 @@
+ #include <string.h>
+ #include <unistd.h>
+ 
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "init.h"
+ #include "defines.h"
+ #include "logging.h"
+diff --git a/src/pwrevents/machine.c b/src/pwrevents/machine.c
+index 46d5e8e..f735bd4 100644
+--- a/src/pwrevents/machine.c
++++ b/src/pwrevents/machine.c
+@@ -38,7 +38,7 @@
+ #include "sleepd_debug.h"
+ #include "logging.h"
+ #include "suspend.h"
+-#include "config.h"
++#include "sleepd_config.h"
+ 
+ /**
+  * Holds the current state of whether or not we're being supplied with power from a charger of any sort.
+diff --git a/src/pwrevents/suspend.c b/src/pwrevents/suspend.c
+index 9e74fc6..86a33ea 100644
+--- a/src/pwrevents/suspend.c
++++ b/src/pwrevents/suspend.c
+@@ -47,7 +47,7 @@
+ #include "init.h"
+ #include "timeout_alarm.h"
+ #include "reference_time.h"
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "sawmill_logger.h"
+ #include "nyx/nyx_client.h"
+ 
+diff --git a/src/pwrevents/suspend_ipc.c b/src/pwrevents/suspend_ipc.c
+index f519801..2b89516 100644
+--- a/src/pwrevents/suspend_ipc.c
++++ b/src/pwrevents/suspend_ipc.c
+@@ -36,7 +36,7 @@
+ #include "activity.h"
+ #include "logging.h"
+ #include "lunaservice_utils.h"
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "json_utils.h"
+ 
+ #define LOG_DOMAIN "PWREVENT-SUSPEND: "
+diff --git a/src/utils/init.c b/src/utils/init.c
+index 9b78c34..544dbfe 100644
+--- a/src/utils/init.c
++++ b/src/utils/init.c
+@@ -19,7 +19,7 @@
+ #include <string.h>
+ 
+ #include "init.h"
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "machine.h"
+ #include "sleepd_debug.h"
+ #include "logging.h"
+diff --git a/src/utils/timesaver.c b/src/utils/timesaver.c
+index 320d4bd..b2ec534 100644
+--- a/src/utils/timesaver.c
++++ b/src/utils/timesaver.c
+@@ -25,7 +25,7 @@
+ #include <fcntl.h>
+ #include <string.h>
+ 
+-#include "config.h"
++#include "sleepd_config.h"
+ #include "logging.h"
+ #include "main.h"
+ #include <ctype.h>

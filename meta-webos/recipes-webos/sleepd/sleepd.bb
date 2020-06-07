@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "nyx-lib luna-service2 json-c libxml2 sqlite3 glib-2.0"
 
 WEBOS_VERSION = "2.0.0-6_bbd216210b874428747654dd3a7483af02ed84a3"
-PR = "r7"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -20,3 +20,5 @@ inherit webos_system_bus
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+SRC_URI += "file://0001-config.h-rename-to-sleepd_config.h-to-make-sure-the-.patch"
