@@ -1,13 +1,16 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 SUMMARY = "General Settings application"
 AUTHOR = "Anish TD <anish.td@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=82c76ba3ea1ed22d2b1b41add2fbdc19 \
+"
 
-WEBOS_VERSION = "1.1.0-8_a06f6619d3f2c0aa330f8c7471808e4e89623199"
-PR = "r1"
+WEBOS_VERSION = "1.1.0-10_bd9c05d2548e7b27682fffdcf8b23b553f62ec92"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
