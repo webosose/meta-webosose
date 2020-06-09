@@ -10,8 +10,8 @@ PREFERRED_PROVIDER_virtual/webruntime = "webruntime"
 VIRTUAL-RUNTIME_webruntime = "webruntime"
 
 WEBOS_PREFERRED_PROVIDER_FOR_BASH = "busybox"
-PREFERRED_PROVIDER_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'busybox', 'bash', d)}"
-VIRTUAL-RUNTIME_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'busybox', 'bash', d)}"
+PREFERRED_PROVIDER_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', '${MLPREFIX}busybox', '${MLPREFIX}bash', d)}"
+VIRTUAL-RUNTIME_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', '${MLPREFIX}busybox', '${MLPREFIX}bash', d)}"
 
 # Use the busybox Tar instead of GNU Tar
 WEBOS_PREFERRED_PROVIDER_FOR_TAR = "busybox"
