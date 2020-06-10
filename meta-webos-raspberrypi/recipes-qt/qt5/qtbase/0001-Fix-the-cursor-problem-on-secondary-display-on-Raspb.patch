@@ -1,4 +1,4 @@
-From b76a347a694d7d29f1bf642b3f991b580717d1e6 Mon Sep 17 00:00:00 2001
+From 69a70e6c88e11b928547b7bc0073ea820dfa7120 Mon Sep 17 00:00:00 2001
 From: Youngjin Kim <youngjin78.kim@lge.com>
 Date: Wed, 28 Aug 2019 11:10:14 +0900
 Subject: [PATCH] Fix the cursor problem on secondary display on Raspberry Pi 4

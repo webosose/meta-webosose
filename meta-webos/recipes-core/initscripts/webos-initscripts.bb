@@ -18,7 +18,7 @@ PROVIDES = "initscripts"
 DEPENDS = "systemd"
 
 WEBOS_VERSION = "3.0.0-50_8d4000079dcbcc018cb788849c20432178772a62"
-PR = "r14"
+PR = "r15"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -30,6 +30,6 @@ inherit webos_public_repo
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-EXTRA_OECMAKE += "-DWEBOS_QTTESTABILITY_ENABLED:BOOL=0"
+EXTRA_OECMAKE += "-DWEBOS_QTTESTABILITY_ENABLED:BOOL=${@ '1' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else '0'}"
 
 FILES_${PN} += "${base_libdir}"

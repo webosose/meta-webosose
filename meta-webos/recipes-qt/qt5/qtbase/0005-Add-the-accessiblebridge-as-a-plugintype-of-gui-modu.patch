@@ -1,0 +1,24 @@
+From 9f25f9fae72f208226b9bed409ff010198585fb5 Mon Sep 17 00:00:00 2001
+From: JeongBong Seo <jb.seo@lge.com>
+Date: Thu, 30 Apr 2015 15:04:57 +0900
+Subject: [PATCH] Add the 'accessiblebridge' as a plugintype of gui module
+
+This patch makes the 'accesiblebridge' plugin configurable.
+
+Upstream-Status: might be upstreamable
+---
+ src/gui/gui.pro | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/gui/gui.pro b/src/gui/gui.pro
+index 06c9cd3939..bbe9d44e66 100644
+--- a/src/gui/gui.pro
++++ b/src/gui/gui.pro
+@@ -8,6 +8,7 @@ DEFINES   += QT_NO_USING_NAMESPACE QT_NO_FOREACH
+ QMAKE_DOCS = $$PWD/doc/qtgui.qdocconf
+ 
+ MODULE_PLUGIN_TYPES = \
++    accessiblebridge \
+     platforms \
+     platforms/darwin \
+     xcbglintegrations \

@@ -1,0 +1,57 @@
+From a3852855f686ff3f0ee8049ce9cc38d3672a06c4 Mon Sep 17 00:00:00 2001
+From: Valery Volgutov <valery.volgutov@lge.com>
+Date: Tue, 12 Dec 2017 15:02:16 +0300
+Subject: [PATCH] Fix for possible crash in QSGDefaultLayer::grab
+
+When QQuickItem::setParentItem set to NULL, derefWindow can
+be called.  And for it item QSGNode will be destroyed.
+If this item used for QQuickEffectShaderSource we will have
+access to invalid QSGNode when "live" flag is enabled.
+
+Upstream-status: [Submitted]
+https://codereview.qt-project.org/#/c/214069/
+
+Change-Id: If785e5328a044ec9d2564a82361470f1b8091fc5
+---
+ src/quick/items/qquickshadereffectsource.cpp | 8 ++++++++
+ src/quick/items/qquickshadereffectsource_p.h | 1 +
+ 2 files changed, 9 insertions(+)
+
+diff --git a/src/quick/items/qquickshadereffectsource.cpp b/src/quick/items/qquickshadereffectsource.cpp
+index 505940e673..a02cb1407c 100644
+--- a/src/quick/items/qquickshadereffectsource.cpp
++++ b/src/quick/items/qquickshadereffectsource.cpp
+@@ -348,6 +348,7 @@ void QQuickShaderEffectSource::setSourceItem(QQuickItem *item)
+             d->refFromEffectItem(m_hideSource);
+             d->addItemChangeListener(this, QQuickItemPrivate::Geometry);
+             connect(m_sourceItem, SIGNAL(destroyed(QObject*)), this, SLOT(sourceItemDestroyed(QObject*)));
++            connect(m_sourceItem, SIGNAL(parentChanged(QQuickItem*)), this, SLOT(sourceItemParentChanged(QQuickItem*)));
+         } else {
+             qWarning("ShaderEffectSource: sourceItem and ShaderEffectSource must both be children of the same window.");
+             m_sourceItem = nullptr;
+@@ -367,6 +368,13 @@ void QQuickShaderEffectSource::sourceItemDestroyed(QObject *item)
+ }
+ 
+ 
++void QQuickShaderEffectSource::sourceItemParentChanged(QQuickItem *parent)
++{
++    if (!parent && m_texture)
++        m_texture->setItem(0);
++}
++
++
+ /*!
+     \qmlproperty rect QtQuick::ShaderEffectSource::sourceRect
+ 
+diff --git a/src/quick/items/qquickshadereffectsource_p.h b/src/quick/items/qquickshadereffectsource_p.h
+index d5bb33902a..102c89f75a 100644
+--- a/src/quick/items/qquickshadereffectsource_p.h
++++ b/src/quick/items/qquickshadereffectsource_p.h
+@@ -172,6 +172,7 @@ Q_SIGNALS:
+ private Q_SLOTS:
+     void sourceItemDestroyed(QObject *item);
+     void invalidateSceneGraph();
++    void sourceItemParentChanged(QQuickItem *parent);
+ 
+ protected:
+     void releaseResources() override;

@@ -1,10 +1,10 @@
 # Copyright (c) 2017-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi11"
+EXTENDPRAUTO_append_rpi = "webosrpi12"
 
 FILESEXTRAPATHS_prepend_rpi := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos-raspberrypi.16 based on 5.12.meta-webos.23 (specific to raspberrypi3)
+# Patches from 5.12.meta-webos-raspberrypi.18 based on 5.12.meta-webos.25 (specific to raspberrypi3)
 # Patches below are raspberrypi3 specific and even cause issues with raspberrypi4.
 #   1) Always use secondary display for launcher and applications.
 #   2) Duplicate the first display into second even if enable ensureModeSet.
@@ -15,7 +15,7 @@ SRC_URI_append_raspberrypi3 = " \
     file://0003-Update-eglfs-to-fix-composition-of-graphic-and-video.patch \
 "
 
-# Patches from 5.12.meta-webos-raspberrypi.17 based on 5.12.meta-webos.23 (specific to raspberrypi4)
+# Patches from 5.12.meta-webos-raspberrypi.19 based on 5.12.meta-webos.25 (specific to raspberrypi4)
 # The patch below addresses an issue where the cursor on the first display is duplicated
 # on the second at a very large magnification. Unlike other Raspberry Pi devices,
 # Raspberry Pi 4 must use FKMS. This may be the cause of the problem.

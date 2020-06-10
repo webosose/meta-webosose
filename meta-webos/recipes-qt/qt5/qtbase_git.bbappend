@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos78"
+EXTENDPRAUTO_append = "webos79"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -89,34 +89,26 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.24 based on 5.12.meta-qt5.2
+# Patches from 5.12.meta-webos.25 based on 5.12.meta-qt5.2
 SRC_URI_append = " \
-    file://0001-WebOS-platform-expects-filenames-in-UTF-8.patch \
-    file://0002-Decrease-the-size-of-QFontCache.patch \
-    file://0003-Fix-floating-point-clip-rectangle-rounding-in-OpenGL.patch \
-    file://0004-Fix-allocateTimerId.patch \
-    file://0005-LTTNG-tracing-support-in-QtGUI.patch \
-    file://0006-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
-    file://0007-Fix-HarfBuzz-NG-regression.patch \
-    file://0008-Check-if-combined-glyph-exists-in-font-s-charmap-tab.patch \
-    file://0009-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
-    file://0010-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
-    file://0011-Fix-bug-of-calculate-xsize-for-fonts.patch \
-    file://0012-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
-    file://0013-Modify-the-touch-event-for-emulator.patch \
-    file://0014-eglfs-kms-Choose-unique-primary-planes-for-each-crtc.patch \
-    file://0015-Allow-word-break-wrapping-in-Korean-text.patch \
+    file://0001-Decrease-the-size-of-QFontCache.patch \
+    file://0002-Fix-floating-point-clip-rectangle-rounding-in-OpenGL.patch \
+    file://0003-Fix-allocateTimerId.patch \
+    file://0004-LTTNG-tracing-support-in-QtGUI.patch \
+    file://0005-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
+    file://0006-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
+    file://0007-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
+    file://0008-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
+    file://0009-Modify-the-touch-event-for-emulator.patch \
+    file://0010-eglfs-kms-Choose-unique-primary-planes-for-each-crtc.patch \
+    file://0011-Allow-word-break-wrapping-in-Korean-text.patch \
 "
 
 SRC_URI_append_hardware = " \
-    file://0016-eglfs-Support-multiple-device-integration.patch \
-    file://0017-eglfs-Support-multiple-display.patch \
-    file://0018-eglfs-Associate-keyboard-touch-device-with-window.patch \
+    file://0012-eglfs-Support-multiple-device-integration.patch \
+    file://0013-eglfs-Support-multiple-display.patch \
+    file://0014-eglfs-Associate-keyboard-touch-device-with-window.patch \
 "
-
-# Do not include Qt testability patch for release
-inherit webos_prerelease_dep
-SRC_URI_append = "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else ' file://0099-Move-testability-loading-code-to-the-QGuiApplication.patch'}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"

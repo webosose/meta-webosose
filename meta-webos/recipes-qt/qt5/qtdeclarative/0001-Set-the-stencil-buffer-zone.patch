@@ -1,0 +1,98 @@
+From ba57a4c9a5a4338687def50ba60ffc9f368af316 Mon Sep 17 00:00:00 2001
+From: DH Kang <kdh.kang@lge.com>
+Date: Mon, 17 Nov 2014 16:03:01 +0900
+Subject: [PATCH] Set the stencil buffer zone
+
+This only clears the area that update stencil buffer for a better
+performance. The information that is to be updated utilizes
+information located in the following node's siccor area.
+
+Change-Id: I9a399667ec7ee0a1028e233c899ee49c98e4e622
+Task-number: QTBUG-83108
+
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/288653]
+---
+ .../scenegraph/coreapi/qsgbatchrenderer.cpp   | 42 +++++++++++++++----
+ 1 file changed, 33 insertions(+), 9 deletions(-)
+
+diff --git a/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp b/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
+index afe3380494..905d93ab18 100644
+--- a/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
++++ b/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
+@@ -2035,20 +2035,18 @@ Renderer::ClipType Renderer::updateStencilClip(const QSGClipNode *clip)
+         // TODO: Check for multisampling and pixel grid alignment.
+         bool isRectangleWithNoPerspective = clip->isRectangular()
+                 && qFuzzyIsNull(m(3, 0)) && qFuzzyIsNull(m(3, 1));
+-        bool noRotate = qFuzzyIsNull(m(0, 1)) && qFuzzyIsNull(m(1, 0));
+-        bool isRotate90 = qFuzzyIsNull(m(0, 0)) && qFuzzyIsNull(m(1, 1));
+-
+-        if (isRectangleWithNoPerspective && (noRotate || isRotate90)) {
+-            QRectF bbox = clip->clipRect();
++        auto noRotate = [] (auto &m) { return qFuzzyIsNull(m(0, 1)) && qFuzzyIsNull(m(1, 0)); };
++        auto isRotate90 = [] (auto &m) { return qFuzzyIsNull(m(0, 0)) && qFuzzyIsNull(m(1, 1)); } ;
++        auto scissorRect = [&] (auto bbox, auto &m) {
+             qreal invW = 1 / m(3, 3);
+             qreal fx1, fy1, fx2, fy2;
+-            if (noRotate) {
++            if (noRotate(m)) {
+                 fx1 = (bbox.left() * m(0, 0) + m(0, 3)) * invW;
+                 fy1 = (bbox.bottom() * m(1, 1) + m(1, 3)) * invW;
+                 fx2 = (bbox.right() * m(0, 0) + m(0, 3)) * invW;
+                 fy2 = (bbox.top() * m(1, 1) + m(1, 3)) * invW;
+             } else {
+-                Q_ASSERT(isRotate90);
++                Q_ASSERT(isRotate90(m));
+                 fx1 = (bbox.bottom() * m(0, 1) + m(0, 3)) * invW;
+                 fy1 = (bbox.left() * m(1, 0) + m(1, 3)) * invW;
+                 fx2 = (bbox.top() * m(0, 1) + m(0, 3)) * invW;
+@@ -2067,12 +2065,18 @@ Renderer::ClipType Renderer::updateStencilClip(const QSGClipNode *clip)
+             GLint ix2 = qRound((fx2 + 1) * deviceRect.width() * qreal(0.5));
+             GLint iy2 = qRound((fy2 + 1) * deviceRect.height() * qreal(0.5));
+ 
++            return QRect(ix1, iy1, ix2 - ix1, iy2 - iy1);
++        };
++
++        if (isRectangleWithNoPerspective && (noRotate(m) || isRotate90(m))) {
++            auto rect = scissorRect(clip->clipRect(), m);
++
+             if (!(clipType & ScissorClip)) {
+-                m_currentScissorRect = QRect(ix1, iy1, ix2 - ix1, iy2 - iy1);
++                m_currentScissorRect = rect;
+                 glEnable(GL_SCISSOR_TEST);
+                 clipType |= ScissorClip;
+             } else {
+-                m_currentScissorRect &= QRect(ix1, iy1, ix2 - ix1, iy2 - iy1);
++                m_currentScissorRect &= rect;
+             }
+             glScissor(m_currentScissorRect.x(), m_currentScissorRect.y(),
+                       m_currentScissorRect.width(), m_currentScissorRect.height());
+@@ -2087,9 +2091,29 @@ Renderer::ClipType Renderer::updateStencilClip(const QSGClipNode *clip)
+                     m_clipProgram.link();
+                     m_clipMatrixId = m_clipProgram.uniformLocation("matrix");
+                 }
++                const QSGClipNode *clipNext = clip->clipList();
++                QMatrix4x4 mNext = m_current_projection_matrix;
++                if (clipNext->matrix())
++                    mNext *= *clipNext->matrix();
++
++                auto rect = scissorRect(clipNext->clipRect(), mNext);
++
++                ClipType clipTypeNext = clipType ;
++                clipTypeNext |= StencilClip;
++                QRect m_next_scissor_rect = m_currentScissorRect;
++                if (!(clipTypeNext & ScissorClip)) {
++                    m_next_scissor_rect = rect;
++                    glEnable(GL_SCISSOR_TEST);
++                } else {
++                    m_next_scissor_rect =
++                       m_currentScissorRect & rect;
++                }
++                glScissor(m_next_scissor_rect.x(), m_next_scissor_rect.y(),
++                          m_next_scissor_rect.width(), m_next_scissor_rect.height());
+ 
+                 glClearStencil(0);
+                 glClear(GL_STENCIL_BUFFER_BIT);
++                glDisable(GL_SCISSOR_TEST);
+                 glEnable(GL_STENCIL_TEST);
+                 glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+                 glDepthMask(GL_FALSE);
