@@ -4,7 +4,10 @@ SUMMARY = "webOS Audiod daemon and utilities"
 AUTHOR = "Manohar Babu <manohar.babu@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib luna-prefs boost pulseaudio"
 RDEPENDS_${PN} = "\
@@ -20,8 +23,8 @@ RDEPENDS_${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-15_45cd4e7a5d7dd4b78795affc89ebd8c42e525089"
-PR = "r27"
+WEBOS_VERSION = "1.0.0-16_4adaec0cd3a322693adbf1162fc195987f2c5f64"
+PR = "r28"
 
 inherit webos_component
 inherit webos_enhanced_submissions
