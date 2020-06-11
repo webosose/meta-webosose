@@ -4,10 +4,13 @@ SUMMARY = "webOS LS2 security configuration"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
-WEBOS_VERSION = "1.0.2-14_eb18da78916cc1bf663442ab10c6351574a91ef7"
-PR = "r5"
+WEBOS_VERSION = "1.0.2-15_b6430839d44ff0496421ef6d41f453b8716b09bf"
+PR = "r6"
 
 inherit webos_component
 inherit webos_public_repo
