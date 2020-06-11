@@ -1,10 +1,13 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "A userspace service that provides access to the webOS database"
 SECTION = "webos/base"
 AUTHOR = "Maksym Sditanov <maxim.sditanov@lge.com>"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "icu glib-2.0 leveldb leveldb-tl boost"
 DEPENDS_append_class-target = " luna-service2 pmloglib jemalloc gtest curl"
@@ -18,8 +21,8 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.2.0-8_9de7f7dd93aa7a2b577fd12422404af540af060b"
-PR = "r33"
+WEBOS_VERSION = "3.2.0-9_ef49f9ed668ee9679d1382c2e6e3eb6f3a9232b7"
+PR = "r34"
 
 inherit webos_component
 inherit webos_public_repo

@@ -3,7 +3,10 @@
 SUMMARY = "webOS portability layer - library"
 AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 SECTION = "webos/libs"
 
 # nyx-lib needs nyx-modules at runtime, but a runtime dependency is not defined
@@ -19,8 +22,8 @@ SECTION = "webos/libs"
 
 DEPENDS = "glib-2.0 pmloglib"
 
-WEBOS_VERSION = "7.3.0-4_df496494544387e8e1dec53024ba91ae9f82099a"
-PR = "r7"
+WEBOS_VERSION = "7.3.0-5_7153567a03e50b5d9fe4c2c17c674ba5eaf4b728"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo

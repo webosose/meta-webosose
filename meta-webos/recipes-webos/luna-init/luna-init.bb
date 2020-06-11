@@ -4,12 +4,15 @@ SUMMARY = "Initialization, setup, and font files used by luna-sysmgr and luna-sy
 AUTHOR = "Alekseyev Oleksandr <alekseyev.oleksandr@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "tzdata python3-pytz-native"
 
-WEBOS_VERSION = "2.0.1-3_c214da90bb7b8289a06adb22cb935b1432c6e5c7"
-PR = "r17"
+WEBOS_VERSION = "2.0.1-4_9d55ebcbfd3041d591810bd4d94c329895354c95"
+PR = "r18"
 
 inherit webos_arch_indep
 inherit webos_public_repo
