@@ -1,4 +1,4 @@
-From ab9b96f9b2e406599ef762fd9444460315c87700 Mon Sep 17 00:00:00 2001
+From e4b551d9e9561f0a4035bad5bea5aba437630ec7 Mon Sep 17 00:00:00 2001
 From: YoungSun Park <cathy.park@lge.com>
 Date: Fri, 16 Aug 2019 21:32:22 +0900
 Subject: [PATCH] QQuickWindow: Consider z-order of children when delivering
@@ -17,7 +17,7 @@ Upstream-Status: Pending
  1 file changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index bb09d7cde5..309c7cbe8e 100644
+index 1a2f06b351..afa1556711 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -2400,16 +2400,24 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui

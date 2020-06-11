@@ -1,4 +1,4 @@
-From c00f4e48684e54168dc603db0e687b42ef4a6555 Mon Sep 17 00:00:00 2001
+From d2b4849f72e0fd416d0cb0fe06901776379fb31a Mon Sep 17 00:00:00 2001
 From: Fabian Kosmale <fabian.kosmale@qt.io>
 Date: Mon, 22 Jul 2019 13:41:11 +0200
 Subject: [PATCH] Fix nullptr handling in binding

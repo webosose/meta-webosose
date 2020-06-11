@@ -1,4 +1,4 @@
-From f17fef8911da989d7f63ca32715ce20b0cf71b88 Mon Sep 17 00:00:00 2001
+From 4bf72674cbb42cfff6254163459c53de2dab1f73 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 1 Jul 2019 12:18:11 +0900
 Subject: [PATCH] Add QQmlEngine to QQuickPixmapKey

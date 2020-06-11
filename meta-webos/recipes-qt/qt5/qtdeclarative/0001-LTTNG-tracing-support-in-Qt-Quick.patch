@@ -1,4 +1,4 @@
-From c87348bdb77c18a3e7fbcbf6d9630e86fbf436ee Mon Sep 17 00:00:00 2001
+From 5ebc328c2a76ab692ead9d7ec5cdec9fa2ce9221 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Sat, 14 Jun 2014 00:57:58 +0200
 Subject: [PATCH] LTTNG tracing support in Qt Quick
