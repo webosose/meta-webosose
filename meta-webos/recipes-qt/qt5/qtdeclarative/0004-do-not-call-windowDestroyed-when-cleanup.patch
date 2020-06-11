@@ -1,4 +1,4 @@
-From c370612d57f250d2f647bb464b6e27f704c2304d Mon Sep 17 00:00:00 2001
+From 2feb24cf44df393e3cdb5f5ccde3be7b15c6fb46 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Mon, 20 Apr 2015 17:24:14 +0900
 Subject: [PATCH] do not call windowDestroyed when cleanup

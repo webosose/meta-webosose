@@ -1,4 +1,4 @@
-From 867786c0da0636b8a762111cf441ce9237a362a9 Mon Sep 17 00:00:00 2001
+From e54aae512e4e81113519e7cdde8f8fd227d7afcb Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Wed, 1 Apr 2020 09:30:28 +0900
 Subject: [PATCH] Update eglfs to fix composition of graphic and video plane in

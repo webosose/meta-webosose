@@ -1,4 +1,4 @@
-From a441270cd3ac1adad6ae1aed6cde1598f35b29f0 Mon Sep 17 00:00:00 2001
+From 9d29adb47c13deece916460fce15e84a9502f3d0 Mon Sep 17 00:00:00 2001
 From: Gleb Manyagin <gleb.manyagin@lge.com>
 Date: Mon, 15 Jan 2018 15:19:17 +0300
 Subject: [PATCH] Fix for Hindi glyph break

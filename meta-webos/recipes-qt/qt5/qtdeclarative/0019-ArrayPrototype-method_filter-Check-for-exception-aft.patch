@@ -1,4 +1,4 @@
-From 3a32807c1f80be23f2e486c277e613d3a04f056e Mon Sep 17 00:00:00 2001
+From 15d8c599dde3b3a88f5900063e5aeac5cb7676b3 Mon Sep 17 00:00:00 2001
 From: Ulf Hermann <ulf.hermann@qt.io>
 Date: Thu, 23 Jan 2020 11:01:33 +0100
 Subject: [PATCH] ArrayPrototype::method_filter: Check for exception after

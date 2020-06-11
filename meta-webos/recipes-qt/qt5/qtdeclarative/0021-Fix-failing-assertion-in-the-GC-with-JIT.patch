@@ -1,4 +1,4 @@
-From 379d9f457e0cfa53ae2c96ac47efcc1b823d316d Mon Sep 17 00:00:00 2001
+From d46076644fd53d131dbaf76ed17994fa4d8b4180 Mon Sep 17 00:00:00 2001
 From: Simon Hausmann <simon.hausmann@qt.io>
 Date: Mon, 27 Apr 2020 09:06:44 +0200
 Subject: [PATCH] Fix failing assertion in the GC with JIT

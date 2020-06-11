@@ -10,7 +10,7 @@ DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-WEBOS_VERSION = "5.12.4-150_21fdcde05780c91d9f0bb8f97b2a1ce10ffe0473"
+WEBOS_VERSION = "5.12.4-151_b879f2659285a249435eaeed1e37ac73f748ac4b"
 EXTENDPRAUTO_append = "webos18"
 
 LIC_FILES_CHKSUM = " \
