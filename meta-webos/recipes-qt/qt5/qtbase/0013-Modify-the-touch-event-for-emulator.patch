@@ -1,4 +1,4 @@
-From 0bffdd9c0981773ecb0e4c2299f9e77bb78ca10a Mon Sep 17 00:00:00 2001
+From d1cb58c05c6a59b2560fd7859547c597e95dae12 Mon Sep 17 00:00:00 2001
 From: "wonsang.ryu" <wonsang.ryu@lge.com>
 Date: Fri, 20 Mar 2020 18:26:47 +0900
 Subject: [PATCH] Modify the touch event for emulator
@@ -3312,7 +3312,7 @@ index 0000000000..6531a1e687
 +#endif // QEMULATORMOUSEHANDLER_H
 diff --git a/src/plugins/platforms/eglfs/api/qemulatormousemanager.cpp b/src/plugins/platforms/eglfs/api/qemulatormousemanager.cpp
 new file mode 100644
-index 0000000000..b56edbdf30
+index 0000000000..605c17f7b9
 --- /dev/null
 +++ b/src/plugins/platforms/eglfs/api/qemulatormousemanager.cpp
 @@ -0,0 +1,456 @@
@@ -3376,7 +3376,7 @@ index 0000000000..b56edbdf30
 +QEmulatorMouseManager::QEmulatorMouseManager(const QString &key, const QString &specification, QObject *parent)
 +    : QObject(parent), m_x(0), m_y(0), m_xoffset(0), m_yoffset(0)
 +#if defined(WEBOS_EMULATOR)
-+    , m_touchState(0), m_isTouch(false), m_isMultiTouch(false)
++    , m_touchState(0), m_isTouch(true), m_isMultiTouch(false)
 +{
 +    enableVboxHostMousePointer();
 +    registerTouchDevice();
