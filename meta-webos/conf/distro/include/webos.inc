@@ -71,6 +71,8 @@ EXTRA_WEBOS_WERROR_pn-live555 = ""
 EXTRA_WEBOS_WERROR_pn-hdf5 = ""
 # ERROR: libev-4.31-r0 do_compile: oe_runmake failed: libev-4.31/ev_iouring.c:227:1: error: no return statement in function returning non-void [-Werror=return-type] libev-4.31/ev_iouring.c:261:1: error: no return statement in function returning non-void [-Werror=return-type]
 EXTRA_WEBOS_WERROR_pn-libev = ""
+# temporarily until https://lists.openembedded.org/g/openembedded-devel/message/85109 is resolved: git/meson.build:26:4: ERROR: C library 'argp' not found
+EXTRA_WEBOS_WERROR_pn-zchunk = ""
 
 TARGET_CC_ARCH_append = " ${EXTRA_WEBOS_WERROR}"
 
