@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r35"
+PR = "r36"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -32,6 +32,11 @@ VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4-64 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_qemux86 = "g-media-pipeline"
+
+VIRTUAL-RUNTIME_g-camera-pipeline ?= ""
+VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4-64 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline_qemux86 = ""
 
 VIRTUAL-RUNTIME_ai ?= ""
 VIRTUAL-RUNTIME_ai_raspberrypi3 = "com.webos.service.ai"
@@ -198,6 +203,7 @@ RDEPENDS_${PN}_append_webos = " \
     com.webos.service.swupdater \
     crda \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
+    ${VIRTUAL-RUNTIME_g-camera-pipeline} \
 "
 
 # XXX These FOSS components must be explicitly added because they are missing
