@@ -10,18 +10,21 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
 RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
-WEBOS_VERSION = "1.0.0-11_8f4114eec04643bbf7c0adc413323a8b27cd791e"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-12_8c08a15fa3039b674ac586e0ad4de815c827d111"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
 inherit webos_qmake5
 inherit webos_system_bus
 inherit webos_public_repo
+inherit webos_qt_localization
 
 WEBOS_REPO_NAME = "ime-manager"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+WEBOS_LOCALIZATION_XLIFF_BASENAME = "imemanager"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
