@@ -27,20 +27,6 @@ WEBOS_LOCALIZATION_XLIFF_BASENAME ?= "${@ '${BPN}'.split('.')[-1] }"
 # The default is in meta-webos/conf/distro/include/webos-localization-languages.inc
 #
 WEBOS_LOCALIZATION_TARGET_LOCALES ?= ""
-
-#
-# You can use this to specify your own list of subdirectories that will be localized by
-# localization-tool independently. The loc tool will produce a separate resources dir for
-# each subdirectory and strings from each directory will not appear in the other subdirectory's
-# resources unless they both happen to use the same string. You can specify relative paths to
-# localizable subdirectories which are relative to the root of your component. For example,
-# if you want to localize the directories 'legacy/version1' and 'legacy/version2' under a
-# component separately, you would simply specify:
-#
-# WEBOS_LOCALIZATION_SUBDIRS="legacy/version1 legacy/version2"
-#
-
-WEBOS_LOCALIZATION_SUBDIRS ??= ""
 WEBOS_LOCALIZATION_GENERATE_RESOURCES ?= "true"
 
 addtask do_generate_webos_localization after do_configure before do_install
@@ -50,33 +36,27 @@ do_generate_webos_localization[depends] += "localization-tool-native:do_populate
 # recdeptask and then in webos-bom.json
 WEBOS_LOCALIZATION_DEPENDS += "localization-tool-native"
 WEBOS_LOCALIZATION_DATA_PATH ?= "${S}"
-JAVANAME = "java-11-openjdk-amd64"
+WEBOS_LOCALIZATION_SOURCE_DIR ?= "${S}"
+
+WEBOS_NODE = "${STAGING_DIR_NATIVE}${bindir}/node"
+WEBOS_JS_LOCTOOL_PATH = "${STAGING_DIR_NATIVE}/opt/js-loctool"
+WEBOS_JS_LOCTOOL = "${WEBOS_JS_LOCTOOL_PATH}/node_modules/loctool/loctool.js"
 
 do_generate_webos_localization () {
     if "${WEBOS_LOCALIZATION_GENERATE_RESOURCES}" ; then
 
         translation_target_locales="$(echo ${WEBOS_LOCALIZATION_TARGET_LOCALES} | sed -e 's/^ *//g' -e 's/ *$//g' | sed -e 's/ \+/,/g')"
-        # Do not process for HTML files
-        webos_localization_options="--ignore-html ${WEBOS_LOCALIZATION_OPTIONS}"
+        webos_localization_options="-2 --localizeOnly --pseudo"
 
         local origdir=$PWD
-        cd ${S}
-
-        if [ ! -z "${WEBOS_LOCALIZATION_SUBDIRS}" ] ; then
-            subdirs="$(echo ${WEBOS_LOCALIZATION_SUBDIRS} | sed -e 's/^ *//g' -e 's/ *$//g' | sed -e 's/ \+/,/g')"
-            webos_localization_options="${webos_localization_options} --subdirs=${subdirs}"
-        fi
+        cd ${WEBOS_LOCALIZATION_SOURCE_DIR}
 
         bbnote "Generating localized files"
-        bbnote "- buildloc ${webos_localization_options}"
         bbnote "- xliff file name : ${WEBOS_LOCALIZATION_XLIFF_BASENAME}"
         bbnote "- locales to localization : ${translation_target_locales}"
-        bbnote "- Source location: ${S}"
 
-        bbnote "- Using JAVA_HOME=/usr/lib/jvm/${JAVANAME}"
+        ${WEBOS_NODE} ${WEBOS_JS_LOCTOOL} -x ${WEBOS_LOCALIZATION_DATA_PATH}/${WEBOS_LOCALIZATION_XLIFF_BASENAME} -l ${translation_target_locales} ${webos_localization_options}
 
-        JAVA_HOME=/usr/lib/jvm/${JAVANAME} \
-            buildloc ${webos_localization_options} -n ${WEBOS_LOCALIZATION_XLIFF_BASENAME} -x ${WEBOS_LOCALIZATION_DATA_PATH} --list-of-locales ${translation_target_locales}
     else
         bbnote "Generating localized files was disabled by WEBOS_LOCALIZATION_GENERATE_RESOURCES variable"
     fi
@@ -90,10 +70,10 @@ WEBOS_LOCALIZATION_INSTALL_RESOURCES ?= "true"
 
 do_install_append() {
     if "${WEBOS_LOCALIZATION_INSTALL_RESOURCES}" ; then
-        if ls ${S}/resources/* >/dev/null 2>/dev/null ; then
+        if ls ${WEBOS_LOCALIZATION_SOURCE_DIR}/resources/* >/dev/null 2>/dev/null ; then
             bbnote "Installing localized files"
             install -d ${D}${webos_localization_resources_dir}
-            cp -R --no-dereference --preserve=mode,links -v ${S}/resources/* ${D}${webos_localization_resources_dir}
+            cp -R --no-dereference --preserve=mode,links -v ${WEBOS_LOCALIZATION_SOURCE_DIR}/resources/* ${D}${webos_localization_resources_dir}
             find ${D}${webos_localization_resources_dir} -name \*.xliff -exec rm -vf {} \;
             find ${D}${webos_localization_resources_dir} -name \*.qm -exec rm -vf {} \;
             find ${D}${webos_localization_resources_dir} -name \*.ts -exec rm -vf {} \;
