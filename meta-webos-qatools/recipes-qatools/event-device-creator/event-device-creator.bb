@@ -5,9 +5,11 @@ AUTHOR = "Jikyun Byun <jk.byun@lgepartner.com>"
 SECTION = "webos/tools"
 LICENSE = "CLOSED"
 
-WEBOS_VERSION = "2.0.0-14_4f64149ed2f44b88ec3f83abf88fe4977020a305"
+DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson"
 
-PR = "r5"
+WEBOS_VERSION = "2.0.0-15_7c0a5ab2e4f92e0c445a523abc2798e228b716d6"
+
+PR = "r6"
 
 inherit webos_component
 inherit webos_enhanced_submissions
