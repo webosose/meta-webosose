@@ -200,6 +200,7 @@ RDEPENDS_${PN} = " \
 
 RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
+    com.webos.service.mediacontroller \
     com.webos.service.swupdater \
     crda \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
@@ -253,17 +254,18 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
 "
 
 RDEPENDS_${PN}_append_qemux86 = " \
-    v4l-utils \
-    dhcp-client \
-    vmwgfx-layout \
     com.webos.service.audiooutput \
     com.webos.service.camera \
     com.webos.service.location \
-    kernel-module-vboxguest \
-    kernel-module-snd-pcm \
+    com.webos.service.mediacontroller \
+    dhcp-client \
     kernel-module-ac97-bus \
     kernel-module-snd-ac97-codec \
     kernel-module-snd-intel8x0 \
+    kernel-module-snd-pcm \
+    kernel-module-vboxguest \
+    v4l-utils \
+    vmwgfx-layout \
 "
 
 RDEPENDS_${PN} += "${MACHINE_EXTRA_RDEPENDS}"
