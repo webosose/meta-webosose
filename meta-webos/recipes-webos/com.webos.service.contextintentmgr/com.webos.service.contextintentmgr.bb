@@ -4,7 +4,8 @@ SUMMARY = "Node-red based context intent manager (CIM)"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
 SECTION = "webos/extended-service"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=fe9bd85c6f789c8ada9c8b72c7454254"
 
 DEPENDS = "nodejs-module-node-red"
 
@@ -12,8 +13,8 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-10_e9a95ccce0f12254dd762b7ad552cf0f569ba02a"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-11_a51e8884ff6dae16cfd1ab7483b01565c6d873e4"
+PR = "r3"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"

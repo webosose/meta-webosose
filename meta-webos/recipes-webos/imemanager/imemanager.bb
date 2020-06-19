@@ -5,13 +5,14 @@ DESCRIPTION = "Mallit-based virtual keyboard and input method engine for open we
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=7c010a972eb989740843ee18e1577536"
 
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
 RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
-WEBOS_VERSION = "1.0.0-12_8c08a15fa3039b674ac586e0ad4de815c827d111"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-15_7cd1f04df1541e4ff62bc09cad94113094feb4b5"
+PR = "r5"
 
 inherit webos_component
 inherit webos_enhanced_submissions
