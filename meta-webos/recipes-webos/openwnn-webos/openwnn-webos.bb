@@ -1,17 +1,18 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 SUMMARY = "A Japanese IME library (input method editor for typing Japanese)"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 SECTION = "libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://COPYING;md5=34e549453b3e73c1d635e93b4a01b96b"
+LIC_FILES_CHKSUM = "file://COPYING;md5=34e549453b3e73c1d635e93b4a01b96b \
+                    file://oss-pkg-info.yaml;md5=9e866a0c61ba2b36863c702e9a4c9163"
 
 inherit pkgconfig
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 
-WEBOS_VERSION = "1.0.0-1_4eb6c58d44f596c6ac02d5e5e23a097a7ab41dbb"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-2_e9e72c84e6bb01a63ed395aeba2115b18ee15029"
+PR = "r1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
