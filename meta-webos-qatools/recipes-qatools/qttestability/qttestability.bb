@@ -7,7 +7,7 @@ LICENSE = "CLOSED"
 
 DEPENDS = "glibmm luna-service2 libpbnjson pmloglib qtdeclarative"
 
-WEBOS_VERSION = "1.0.1-21_38c2b0e2412a09737c4761414c445b4ae68476b4"
+WEBOS_VERSION = "1.0.1-22_ceee6cd85843ce887e95a0ea77bd99eeb30678fa"
 PR = "r2"
 
 inherit webos_cmake
