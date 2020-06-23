@@ -16,7 +16,7 @@ inherit webos_machine_dep
 inherit webos_pkgconfig
 
 WEBOS_VERSION = "1.0.0-13_f09fb1b2bd1ea40235d9dc6b66c94c9c85b45f08"
-PR = "r4"
+PR = "r5"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
 WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.3_43b95823c2493e1093b93db71726ece455b0b71c"
@@ -37,3 +37,5 @@ FILES_${PN} += "${libdir}/gstreamer-1.0/*.so"
 
 # From http://gpro.lge.com/250944
 SRC_URI += "file://0001-Fix-return-statement.patch"
+
+DEPENDS_append = " webos-wayland-extensions"
