@@ -9,6 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 PR = "r2"
 
 inherit native
+inherit pythonnative
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
 SRC_URI = "git://github.com/iLib-js/ilib-loctool-webos-dist.git;branch=master"
