@@ -5,7 +5,7 @@ AUTHOR = "Chanwoo Yoo <chanwoo.yoo@lge.com>"
 SECTION = "webos/tools"
 LICENSE = "CLOSED"
 
-WEBOS_VERSION = "2.2.6-12_bd5521839ffc632a3b1996f48b2bbf297330c8d1"
+WEBOS_VERSION = "2.2.6-11_ca517e1e55e6fc1cde7b86f4bc65b9c6dbf82427"
 PR = "r1"
 
 inherit webos_component
