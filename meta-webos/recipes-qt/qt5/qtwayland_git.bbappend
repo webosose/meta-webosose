@@ -10,8 +10,8 @@ DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-WEBOS_VERSION = "5.12.4-152_b665108408d6212316fa277d59f3faa52eb029b5"
-EXTENDPRAUTO_append = "webos18"
+WEBOS_VERSION = "5.12.4-153_f9f4fc575302677fc61bb9b1159894e5f0f87738"
+EXTENDPRAUTO_append = "webos19"
 
 LIC_FILES_CHKSUM = " \
     file://LICENSE.LGPL3;md5=e6a600fd5e1d9cbde2d983680233ad02 \
@@ -62,3 +62,6 @@ EXTRA_QMAKEVARS_CONFIGURE = ""
 # instead of old QT_WAYLAND_CONFIG and QT_WAYLAND_DEFINES used by meta-webos qtwayland bbappend
 EXTRA_QMAKEVARS_PRE += "CONFIG+=wayland-compositor CONFIG+=wayland_egl"
 EXTRA_QMAKEVARS_PRE += "DEFINES+=QT_COMPOSITOR_QUICK"
+
+# qtwayland-{plugins,qmlplugins} are not used in webOS
+RRECOMMENDS_${PN}_remove = "${PN}-plugins ${PN}-qmlplugins"

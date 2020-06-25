@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative pmloglib librdx qt-features-webos"
 
-WEBOS_VERSION = "1.0.0-47_2d45e4d13628625249d0908e541d6a817ea32b14"
+WEBOS_VERSION = "1.0.0-48_ecd3bd4611728a83bb35cd8e6df41cbb77999197"
 PR = "r13"
 
 inherit webos_qmake5
