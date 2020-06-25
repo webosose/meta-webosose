@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos51"
+EXTENDPRAUTO_append = "webos52"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -28,6 +28,16 @@ SRC_URI_append_class-target = " \
     file://0020-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
     file://0021-Fix-failing-assertion-in-the-GC-with-JIT.patch \
     file://0022-Fix-QQuickKeyNavigationAttached-issue.patch \
+"
+
+SRC_URI_remove_qemux86 = " \
+    file://0020-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
+    file://0021-Fix-failing-assertion-in-the-GC-with-JIT.patch \
+"
+
+SRC_URI_remove_qemux86-64 = " \
+    file://0020-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
+    file://0021-Fix-failing-assertion-in-the-GC-with-JIT.patch \
 "
 
 # Supplement tool for qmllint
