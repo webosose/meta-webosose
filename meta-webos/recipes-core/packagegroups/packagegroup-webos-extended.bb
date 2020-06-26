@@ -26,6 +26,12 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
     nyx-modules-qemux86 \
 "
 
+# Restricted to only these 3 MACHINEs by COMPATIBLE_MACHINE
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller ?= ""
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller_qemux86 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4-64 = "com.webos.service.mediacontroller"
+
 VIRTUAL-RUNTIME_g-media-pipeline ?= ""
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
@@ -201,9 +207,9 @@ RDEPENDS_${PN} = " \
 
 RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
-    com.webos.service.mediacontroller \
     com.webos.service.swupdater \
     crda \
+    ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_g-camera-pipeline} \
 "
@@ -258,7 +264,6 @@ RDEPENDS_${PN}_append_qemux86 = " \
     com.webos.service.audiooutput \
     com.webos.service.camera \
     com.webos.service.location \
-    com.webos.service.mediacontroller \
     dhcp-client \
     kernel-module-ac97-bus \
     kernel-module-snd-ac97-codec \
