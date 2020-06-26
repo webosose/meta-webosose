@@ -6,7 +6,7 @@ SECTION = "webos/tools"
 LICENSE = "CLOSED"
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib"
 
-WEBOS_VERSION = "2.0.0-16_b8fbcec31536a734f09ac2e7db72f6a70050613a"
+WEBOS_VERSION = "2.0.0-17_a6941334c6a8d3ed46d4f152c4f7245880c4ae11"
 PR = "r3"
 
 inherit webos_component
