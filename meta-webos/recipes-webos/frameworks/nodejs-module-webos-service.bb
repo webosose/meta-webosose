@@ -1,13 +1,14 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "Loadable Node.js module for webOS services"
 AUTHOR = "Sergiy Kryvonos <sergiy.kryvonos@lge.com>"
 SECTION = "webOS/frameworks"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=fd2307a91bcd8a2af8959dc45ad202f7"
 
-WEBOS_VERSION = "1.0.1-2_e30c057209ea90a06717a6e45986f1d14e790832"
-PR = "r3"
+WEBOS_VERSION = "1.0.1-4_3e28f26fac7b8a24bb4d52a9e988f2004d6e1ad2"
+PR = "r4"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus

@@ -1,15 +1,16 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "A module for nodejs that allows dynamic loading and execution of Javascript files"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/nodejs/module"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=d980a35955bef62f4f06ee11e344c4d0"
 
 DEPENDS = "boost node-gyp-native"
 
-WEBOS_VERSION = "3.0.2-1_33cd720ceba4141a837bbb4e498e2de00695af42"
-PR = "r6"
+WEBOS_VERSION = "3.0.2-2_c3299eec0fa197db7fe544183eb089e2425f4245"
+PR = "r7"
 
 inherit webos_component
 inherit webos_public_repo

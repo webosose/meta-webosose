@@ -1,13 +1,14 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "JavaScript loader for foundation frameworks and other loadable libraries"
 AUTHOR = "Suresh Arumugam <suresh.arumugam@lge.com>"
 SECTION = "webos/frameworks"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=3603ec4c4d5216855fff467ef39c1bb4"
 
-WEBOS_VERSION = "1.1-1_f84f3db7439cf59cbd53d3e835a98c703709081a"
-PR = "r5"
+WEBOS_VERSION = "1.1-2_50111629466816d64d9d86cbcbd7be28b28926e4"
+PR = "r6"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions

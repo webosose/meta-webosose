@@ -1,15 +1,16 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "A module for nodejs that allows Javascript access to the webOS logging system"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/nodejs/module"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=abbc2c32ca736a8d67501064544ff10a"
 
 DEPENDS = "pmloglib node-gyp-native vim-native"
 
-WEBOS_VERSION = "3.0.1-1_03fc1bc90518390eea0acd7639d6074c16c61195"
-PR = "r6"
+WEBOS_VERSION = "3.0.1-2_9a20ae958c3cb8be538f39107360aa1cf071ecfd"
+PR = "r7"
 
 inherit webos_component
 inherit webos_public_repo

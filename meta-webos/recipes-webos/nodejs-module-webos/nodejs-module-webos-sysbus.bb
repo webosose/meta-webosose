@@ -1,15 +1,16 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "A module for nodejs that allows Javascript access to the webOS system bus"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/nodejs/module"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=1fd56aa237c3723e167f475fe7c5f202"
 
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
-WEBOS_VERSION = "3.0.1-2_0f31cdf26ad9a4ea97a35643acb3abcbe0ac16c5"
-PR = "r10"
+WEBOS_VERSION = "3.0.1-3_58f0677e68d136b3f1304d8a23cd24556c3bc847"
+PR = "r11"
 
 inherit webos_component
 inherit webos_public_repo

@@ -1,10 +1,11 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2020 LG Electronics, Inc.
 
 SUMMARY = "webOS component responsible for launching the node.js services"
 AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
 SECTION = "webos/frameworks"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=bc052cc0f232b815569ebc81a4ef6490"
 
 DEPENDS = "boost libpbnjson"
 RDEPENDS_${PN} = "nodejs"
@@ -16,8 +17,8 @@ COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
 COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
 
-WEBOS_VERSION = "3.0.2-3_01e679f94ec73962846b0eba739182270ebb5a23"
-PR = "r7"
+WEBOS_VERSION = "3.0.2-5_e821b0256776b0131d6cf830953da96914932397"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
