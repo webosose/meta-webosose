@@ -1,6 +1,8 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi2"
+EXTENDPRAUTO_append_rpi = "webosrpi3"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 do_configure_append() {
     sed -i '/webapp-mgr\.env/a\# for using broadcom video hw codec\nExecStartPre=-\/bin\/chmod 777 \/dev\/vchiq' ${B}/webapp-mgr.service
@@ -9,3 +11,5 @@ do_configure_append() {
     sed -i 's/# setup 50 Mb limitation mse video buffer size/# setup 15 Mb limitation mse video buffer size/' ${B}/webapp-mgr.sh
     sed -i 's/export MSE_VIDEO_BUFFER_SIZE_LIMIT.*/export MSE_VIDEO_BUFFER_SIZE_LIMIT=15728640/' ${B}/webapp-mgr.sh
 }
+
+SRC_URI_append = " file://0001-disable-neva-media-for-use-software-codec.patch"
