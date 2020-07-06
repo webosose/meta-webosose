@@ -1,0 +1,45 @@
+From 6fced5abaaa9b8b624f05a20563c4cfe4deabff6 Mon Sep 17 00:00:00 2001
+From: Rakes Pani <rakes.pani@lge.com>
+Date: Mon, 6 Apr 2020 12:14:43 +0530
+Subject: [PATCH 2/2] Subject: [PATCH] Implementation to get connectedUuid's in
+ case of incoming connection
+
+:Release Notes:
+Implementation to get connectedUuid's in case of incoming connection
+
+:Detailed Notes:
+Modified device.c to update connectedUuid
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-102289] Implement connect for A2DP_SINK
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ src/device.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/device.c b/src/device.c
+index eecef05..5d21bca 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -6662,9 +6662,11 @@ static void service_state_changed(struct btd_service *service,
+ 				new_state == BTD_SERVICE_STATE_DISCONNECTING)
+ 		return;
+ 
+-	if (old_state == BTD_SERVICE_STATE_CONNECTING)
++	if ((old_state == BTD_SERVICE_STATE_CONNECTING) || 
++		(old_state == BTD_SERVICE_STATE_DISCONNECTED))
+ 		device_profile_connected(device, profile, err);
+-	else if (old_state == BTD_SERVICE_STATE_DISCONNECTING)
++	else if ((old_state == BTD_SERVICE_STATE_DISCONNECTING)||
++		 (old_state == BTD_SERVICE_STATE_CONNECTED))
+ 		device_profile_disconnected(device, profile, err);
+ }
+ 
+-- 
+2.17.1

@@ -1,8 +1,8 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos14"
+EXTENDPRAUTO_append = "webos15"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -22,6 +22,16 @@ SRC_URI += " \
     file://0011-avrcp-getting-remote-device-features-list.patch \
     file://0012-Fix-add-service-failure.patch \
     file://0013-Fix-device-discovery-for-broadcast-role.patch \
+    file://0014-Fix-volume-property-not-able-to-set.patch \
+    file://0015-Fix-volume-level-notification-not-appearing-after-127.patch \
+    file://0016-Support-enabling-avdtp-delayReport.patch \
+    file://0017-Subject-PATCH-Implementation-to-get-connectedUuid-s-.patch \
+    file://0018-Fix-for-updating-connected-uuids-when-profile-is-disconnected.patch \
+    file://0019-Fix-device-getStatus-not-updated-when-unpaired.patch \
+    file://0020-AVRCP-getting-supported-notification-events.patch \
+    file://0019-Set-default-pairing-capability-as-NoInputNoOutput.patch \
+    file://0021-Modified-MapInstanceName-MapInstanceProperties-parsi.patch \
+    file://0022-Enabled-EMAIL-support-based-on-MAPInstance-Name.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \

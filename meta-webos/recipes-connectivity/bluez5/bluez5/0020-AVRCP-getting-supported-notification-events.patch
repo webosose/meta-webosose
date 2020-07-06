@@ -1,0 +1,95 @@
+From 93ad237885c507f54118ea5716dcf95dd6532c97 Mon Sep 17 00:00:00 2001
+From: "ramya.hegde" <ramya.hegde@lge.com>
+Date: Mon, 11 May 2020 15:54:12 +0530
+Subject: [PATCH] AVRCP getting supported notification events
+
+:Release Notes:
+AVRCP getting supported notification events
+
+:Detailed Notes:
+Added property for supported notification events for controller
+in device interface
+
+:Testing Performed:
+Built and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-102247] [AVRCP CT] Implement
+              avrcp/internal/getSupportedNotificationEvents
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ profiles/audio/avrcp.c |  1 +
+ src/device.c           | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
+index 21e3366..43a5e53 100644
+--- a/profiles/audio/avrcp.c
++++ b/profiles/audio/avrcp.c
+@@ -3811,6 +3811,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
+ 			break;
+ 		}
+ 	}
++	set_avrcp_ct_supported_events(session->dev, events);
+ 
+ 	if (!session->controller || !session->controller->player)
+ 		return FALSE;
+diff --git a/src/device.c b/src/device.c
+index 37e8831..ce5d322 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -272,6 +272,7 @@ struct btd_device {
+ 	struct key_code passththough_key;
+ 	uint8_t		avrcp_ct_features;
+ 	uint8_t		avrcp_tg_features;
++	uint16_t	avrcp_ct_supported_events;
+ };
+ 
+ static const uint16_t uuid_list[] = {
+@@ -1348,6 +1349,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+ 	return TRUE;
+ }
+ 
++static gboolean dev_property_avrcp_ct_get_supported_events(const GDBusPropertyTable* property,
++	DBusMessageIter* iter, void* data)
++{
++	struct btd_device* device = data;
++	uint16_t supportedEvents = device->avrcp_ct_supported_events;
++
++	dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT16, &supportedEvents);
++	DBG("supportedEvents %d", supportedEvents);
++	return TRUE;
++}
++
+ static gboolean dev_property_get_avrcp_ct_feature(const GDBusPropertyTable *property,
+ 					DBusMessageIter *iter, void *data)
+ {
+@@ -1867,6 +1879,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
+ 	}
+ }
+ 
++void set_avrcp_ct_supported_events(struct btd_device* dev, uint16_t supportedEvents)
++{
++	dev->avrcp_ct_supported_events = supportedEvents;
++	DBG("avrcp_ct supported events %x", dev->avrcp_ct_supported_events);
++	g_dbus_emit_property_changed(dbus_conn, dev->path,
++		DEVICE_INTERFACE, "AvrcpCTSupportedEvents");
++}
++
+ static void add_service_data(void *data, void *user_data)
+ {
+ 	struct eir_sd *sd = data;
+@@ -2952,6 +2972,7 @@ static const GDBusPropertyTable device_properties[] = {
+ 				NULL, dev_property_avrcp_ct_feature_exist},
+ 	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
+ 				NULL, dev_property_avrcp_tg_feature_exist},
++	{ "AvrcpCTSupportedEvents", "q", dev_property_avrcp_ct_get_supported_events, NULL, NULL },
+ 	{ "ServiceData", "a{sv}", dev_property_get_service_data,
+ 				NULL, dev_property_service_data_exist },
+ 	{ "TxPower", "n", dev_property_get_tx_power, NULL,
+-- 
+2.17.1
+

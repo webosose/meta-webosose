@@ -1,0 +1,42 @@
+From b534c8c2113eb8dbbeadaa77caaa0064caebd617 Mon Sep 17 00:00:00 2001
+From: "sameer.mulla" <sameer.mulla@lge.com>
+Date: Mon, 21 Jan 2019 12:44:19 +0530
+Subject: [PATCH] Fix volume property not able to set
+
+:Release Notes:
+Fix volume property not able to set
+
+:Detailed Notes:
+volume is initialized to -1 so volume_exists
+function is always returning false and not able to set
+this property
+
+:Testing Performed:
+Built and tested
+
+:Issues Addressed:
+[PLAT-86691] Implement avrcp/setAbsoluteVolume supporting multiple
+             Adapters
+
+Upstream-status: Pending
+
+Change-Id: I183357a5de4b95a6e02d39d9d51c4af715bf0a54
+---
+ profiles/audio/transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
+index b9d357e..47747d0 100644
+--- a/profiles/audio/transport.c
++++ b/profiles/audio/transport.c
+@@ -802,7 +802,7 @@ static int media_transport_init_source(struct media_transport *transport)
+ 	transport->data = a2dp;
+ 	transport->destroy = destroy_a2dp;
+ 
+-	a2dp->volume = -1;
++	a2dp->volume = 0;
+ 	transport->sink_watch = sink_add_state_cb(service, sink_state_changed,
+ 								transport);
+ 
+-- 
+2.7.4

@@ -1,0 +1,54 @@
+From 201e050489cefda52e21e36ca18f173cc1be3560 Mon Sep 17 00:00:00 2001
+From: Sameer Mulla <sameer.mulla@lge.com>
+Date: Mon, 27 Apr 2020 11:56:21 +0530
+Subject: [PATCH] Fix device/getStatus not updated when unpaired
+
+:Release Notes:
+Fix device/getStatus not updated when remote device is upaired
+
+:Detailed Notes:
+hfp/getStatus is not updated properly in below scenario
+pair and connect remote smartphone, then unpair device
+still it shows as connected because connectedRole in bluetooth2 service
+device/getStatus is not updated
+Root cause is buez5 side connectedUuid are updates with all
+profiles connected. This commit fixes above scenario
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-102335] Test and fix hfp/getStatus for multiple adapter
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ src/device.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/device.c b/src/device.c
+index 8c1ce7f..37e8831 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -1707,13 +1707,13 @@ static void device_profile_connected(struct btd_device *dev,
+ 
+ 	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
+ 
+-	if (!err) {
++	if (!err && btd_device_is_connected(dev)) {
+ 		btd_device_set_temporary(dev, false);
+ 		dev->connected_uuids = g_slist_insert_sorted(dev->connected_uuids,
+-													g_strdup(profile->remote_uuid),
+-													bt_uuid_strcmp);
++							     g_strdup(profile->remote_uuid),
++							     bt_uuid_strcmp);
+ 		g_dbus_emit_property_changed(dbus_conn, dev->path,
+-									DEVICE_INTERFACE, "ConnectedUUIDS");
++					     DEVICE_INTERFACE, "ConnectedUUIDS");
+ 	}
+ 
+ 	if (dev->pending == NULL)
+-- 
+2.17.1
+

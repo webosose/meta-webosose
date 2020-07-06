@@ -31,7 +31,7 @@ RDEPENDS_${PN} = " \
 # classes. Note that including a particular service class might introduce
 # additional dependencies into the build image (which is why the setting must be
 # global).
-WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN ANCS PBAP"
+WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN ANCS PBAP MAP"
 
 # Set WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY in MACHINE.conf to configure the
 # Bluetooth pairing IO capability of the adapter. The capability is expected to
@@ -48,8 +48,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 # emulator), which means that the pairing should happen without user intervention.
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
-WEBOS_VERSION = "1.0.0-22_8d9ff52d8a3a6d1fdfe20de3cea4ca11ceb68c5c"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-25_1c7f1441ba086c9bc0c9524069f75a3315920501"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo

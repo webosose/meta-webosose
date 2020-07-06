@@ -1,0 +1,43 @@
+From 169f37ed37703f3a7bb8f3e569455f4ed8450c9c Mon Sep 17 00:00:00 2001
+From: "ramya.hegde" <ramya.hegde@lge.com>
+Date: Tue, 14 Apr 2020 15:28:07 +0530
+Subject: [PATCH] Fix for updating connected uuids when profile is disconnected
+
+:Release Notes:
+Fix to remove uuid of the profile disconnected from connectedUuids list
+
+:Detailed Notes:
+Modified device.c to update connectedUuid in device_profile_disconnected function
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-102923] Implement disconnect to AVRCP target
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ src/device.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/device.c b/src/device.c
+index eecef05..7c1d344 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -2208,7 +2208,10 @@ static void device_profile_disconnected(struct btd_device *dev,
+ 	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
+ 	if (!err) {
+ 		if (dev->connected_uuids)
+-		dev->connected_uuids = g_slist_remove (dev->connected_uuids, profile->remote_uuid);
++		{
++			GSList *temp = g_slist_find_custom(dev->connected_uuids, g_strdup(profile->remote_uuid), bt_uuid_strcmp);
++			dev->connected_uuids = g_slist_delete_link(dev->connected_uuids, temp);
++		}
+ 		g_dbus_emit_property_changed(dbus_conn, dev->path,
+ 						DEVICE_INTERFACE, "ConnectedUUIDS");
+ 	}
+-- 
+2.17.1
+
