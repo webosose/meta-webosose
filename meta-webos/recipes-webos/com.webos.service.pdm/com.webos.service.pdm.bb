@@ -5,7 +5,9 @@ DESCRIPTION = "Service for detecting and managing physical devices using netlink
 SECTION = "webos/services"
 AUTHOR = "Preetham Bhat <preetham.bhat@lge.com>"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 VIRTUAL-RUNTIME_pdm-plugin ?= "pdm-plugin"
 
@@ -14,8 +16,8 @@ RDEPENDS_${PN} = "fuse-utils gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
-WEBOS_VERSION = "1.0.0-10_94337142f8277ed6368b0c0ad93bec45c4b96dc1"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-11_14edcb67f2124413e7afaef96ca6c2b69106afc9"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions

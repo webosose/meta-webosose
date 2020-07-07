@@ -4,12 +4,14 @@ DESCRIPTION = "Notification Manager"
 AUTHOR = "Suresh Arumugam <suresh.arumugam@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib boost libxml++"
 
-WEBOS_VERSION = "1.0.0-11_4a2b5e156240fff41b2ad661565108f5ebb062b7"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-12_a8f9f20e90f4cba4cce9062c96d1e8ff70eddbae"
+PR = "r9"
 
 inherit webos_component
 inherit webos_cmake

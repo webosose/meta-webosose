@@ -4,13 +4,15 @@ SUMMARY = "Settings Service"
 AUTHOR = "Radhika S <radhika.s@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 glibmm luna-service2 libpbnjson pmloglib openssl libbson boost"
 RDEPENDS_${PN} = "settingsservice-conf python"
 
-WEBOS_VERSION = "1.0.22-4_76ceebe8f20ac0cf2e7955d5fc04ce13b7344d23"
-PR = "r22"
+WEBOS_VERSION = "1.0.22-5_2ce2fa3ae9d6bbe917d645a1c4567c6a78d03c52"
+PR = "r23"
 
 inherit webos_component
 inherit webos_enhanced_submissions

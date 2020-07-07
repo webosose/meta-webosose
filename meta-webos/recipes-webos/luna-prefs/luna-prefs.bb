@@ -4,13 +4,15 @@ SUMMARY = "webOS preferences manager"
 AUTHOR = "Oleksandr Ivanov <oleksandr.ivanov@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "luna-service2 json-c sqlite3 glib-2.0 nyx-lib"
 RDEPENDS_${PN} = "luna-prefs-data"
 
-WEBOS_VERSION = "3.0.0-4_1865a03ae8da054d792604ef478cae24d6f420e2"
-PR = "r13"
+WEBOS_VERSION = "3.0.0-5_02268399150a51f80dbf4f80706bb3bad138920e"
+PR = "r14"
 
 #inherit webos_component
 inherit webos_public_repo

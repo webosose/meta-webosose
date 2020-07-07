@@ -1,12 +1,12 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "Crash reporting daemon"
 AUTHOR = "Ed Chejlava <ed.chejlava@lge.com>"
 SECTION = "base"
 LICENSE = "LGPL-2.1+ & Apache-2.0"
-LIC_FILES_CHKSUM = "\
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://src/libSegFault/libSegFault.c.in;endline=20;md5=4c8f61c043fd7c3b78b738ca09bcfc35 \
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://src/libSegFault/libSegFault.c.in;endline=20;md5=4c8f61c043fd7c3b78b738ca09bcfc35 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 PNLIBSEGFAULT = "libsegfault-webos"
@@ -19,8 +19,8 @@ RPROVIDES_${PNLIBSEGFAULT} = "libsegfault"
 RREPLACES_${PNLIBSEGFAULT} = "libsegfault"
 RCONFLICTS_${PNLIBSEGFAULT} = "libsegfault"
 
-WEBOS_VERSION = "1.2.5-3_2cdb43fdf71c1b10738eaf2e45e909eb4de7c509"
-PR = "r11"
+WEBOS_VERSION = "1.2.5-4_bfc3dd73a27b474eaf6051bb358a40bd1593ddc2"
+PR = "r12"
 
 inherit webos_component
 inherit webos_enhanced_submissions

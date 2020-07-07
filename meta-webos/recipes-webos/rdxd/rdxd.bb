@@ -4,14 +4,16 @@ SUMMARY = "Remote diagnostics daemon and utilities"
 AUTHOR = "Gayathri Srinivasan <gayathri.srinivasan@lge.com>"
 SECTION = "base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 libpbnjson luna-prefs luna-service2 pmloglib"
 #Add tar dependency since --absolute-names support is missing in busybox tar
 RDEPENDS_${PN} = "nyx-utils tar"
 
-WEBOS_VERSION = "4.0.2-9_a94cc2e2624b19a0cb2807f47501e241a32c478a"
-PR = "r8"
+WEBOS_VERSION = "4.0.2-11_91537325c7f5b8c5a55efa2eeffa8c83002fa176"
+PR = "r9"
 
 PROVIDES = "librdx rdx-utils"
 

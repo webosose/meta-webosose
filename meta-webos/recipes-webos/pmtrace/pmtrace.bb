@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "lttng-ust tracepoints wrapper library and performance tools"
 AUTHOR = "Andre Rosa <andre.rosa@lge.com>"
@@ -6,7 +6,9 @@ SECTION = "webos/libs"
 LICENSE = "LGPLv2.1 & MIT & Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.LGPL;md5=e2aa4f66375a24019b0ff5e99cec40ad \
                     file://LICENSE.MIT;md5=19b5d9061141f7ab05cfcfdd4404ed08 \
-                    file://README.md;md5=35108c1521572d2a526926333b233cd7"
+                    file://README.md;md5=35108c1521572d2a526926333b233cd7 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "lttng-ust libpbnjson pmloglib glib-2.0"
 
@@ -23,8 +25,8 @@ RDEPENDS_${PN} += " \
     python-subprocess \
 "
 
-WEBOS_VERSION = "1.0.0-7_a8d1f2c481514edfbb62a0ed5ef161c384b555c4"
-PR = "r10"
+WEBOS_VERSION = "1.0.0-8_f13162fadda4dea25d9218850d4824385ff48963"
+PR = "r11"
 
 inherit webos_component
 inherit webos_cmake
