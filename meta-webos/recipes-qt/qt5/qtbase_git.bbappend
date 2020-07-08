@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos79"
+EXTENDPRAUTO_append = "webos80"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -89,7 +89,7 @@ inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.25 based on 5.12.meta-qt5.2
+# Patches from 5.12.meta-webos.28 based on 5.12.meta-qt5.3
 SRC_URI_append = " \
     file://0001-Decrease-the-size-of-QFontCache.patch \
     file://0002-Fix-floating-point-clip-rectangle-rounding-in-OpenGL.patch \

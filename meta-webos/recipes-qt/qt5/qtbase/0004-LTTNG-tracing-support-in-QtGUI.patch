@@ -1,4 +1,4 @@
-From b6b753c353f1eb3775ca80d594bf45be6cba4d99 Mon Sep 17 00:00:00 2001
+From e6a1ab8c1b47007e5a4bb82b5dae40605d301513 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Jos=C3=A9=20Dapena=20Paz?= <jdapena@igalia.com>
 Date: Fri, 13 Jun 2014 18:48:49 +0200
 Subject: [PATCH] LTTNG tracing support in QtGUI

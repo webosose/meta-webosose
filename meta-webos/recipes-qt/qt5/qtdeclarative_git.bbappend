@@ -1,10 +1,10 @@
 # Copyright (c) 2014-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos55"
+EXTENDPRAUTO_append = "webos56"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.27 based on 5.12.meta-qt5.1
+# Patches from 5.12.meta-webos.28 based on 5.12.meta-qt5.2
 SRC_URI_append_class-target = " \
     file://0001-Set-the-stencil-buffer-zone.patch \
     file://0002-Prevent-items-from-being-deleted-while-removing.patch \
@@ -18,21 +18,17 @@ SRC_URI_append_class-target = " \
     file://0010-QQuickWindow-Consider-z-order-of-children-when-deliv.patch \
     file://0011-Allow-to-have-activeFocus-for-each-window.patch \
     file://0012-Fix-nullptr-handling-in-binding.patch \
-    file://0013-V4-Check-for-exceptions-before-we-use-the-result-of-.patch \
-    file://0014-ArrayPrototype-method_filter-Check-for-exception-aft.patch \
-    file://0015-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
-    file://0016-Fix-failing-assertion-in-the-GC-with-JIT.patch \
-    file://0017-Fix-QQuickKeyNavigationAttached-issue.patch \
+    file://0013-Fix-QQuickKeyNavigationAttached-issue.patch \
 "
 
-SRC_URI_remove_qemux86 = " \
-    file://0015-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
-    file://0016-Fix-failing-assertion-in-the-GC-with-JIT.patch \
+SRC_URI_append_qemux86 = " \
+    file://0098-Revert-Fix-failing-assertion-in-the-GC-with-JIT.patch \
+    file://0099-Revert-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
 "
 
-SRC_URI_remove_qemux86-64 = " \
-    file://0015-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
-    file://0016-Fix-failing-assertion-in-the-GC-with-JIT.patch \
+SRC_URI_append_qemux86-64 = " \
+    file://0098-Revert-Fix-failing-assertion-in-the-GC-with-JIT.patch \
+    file://0099-Revert-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
 "
 
 # Supplement tool for qmllint

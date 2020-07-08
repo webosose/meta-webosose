@@ -1,0 +1,23 @@
+From 279553a179031919e24ef16a7f103e05823d9cfd Mon Sep 17 00:00:00 2001
+From: Valery Volgutov <valery.volgutov@lge.com>
+Date: Fri, 7 Aug 2020 08:25:49 +0300
+Subject: [PATCH] Revert "Fix failing assertion in the GC with JIT"
+
+This reverts commit ba047960a1af56249bd5f64883aaa70bddf48313.
+---
+ src/qml/jit/qv4baselinejit.cpp | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/qml/jit/qv4baselinejit.cpp b/src/qml/jit/qv4baselinejit.cpp
+index b106d62e8b..ff48c734db 100644
+--- a/src/qml/jit/qv4baselinejit.cpp
++++ b/src/qml/jit/qv4baselinejit.cpp
+@@ -66,8 +66,6 @@ void BaselineJIT::generate()
+     labels = collectLabelsInBytecode(code, len);
+ 
+     as->generatePrologue();
+-    // Make sure the ACC register is initialized and not clobbered by the caller.
+-    as->loadAccumulatorFromFrame();
+     decode(code, len);
+     as->generateEpilogue();
+ 

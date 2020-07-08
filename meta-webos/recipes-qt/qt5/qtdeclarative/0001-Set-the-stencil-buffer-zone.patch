@@ -1,4 +1,4 @@
-From ba57a4c9a5a4338687def50ba60ffc9f368af316 Mon Sep 17 00:00:00 2001
+From 6e923f14c1cd35b572e0f1e49488d7184359a402 Mon Sep 17 00:00:00 2001
 From: DH Kang <kdh.kang@lge.com>
 Date: Mon, 17 Nov 2014 16:03:01 +0900
 Subject: [PATCH] Set the stencil buffer zone

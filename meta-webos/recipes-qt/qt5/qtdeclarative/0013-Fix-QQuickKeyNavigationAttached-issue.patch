@@ -1,4 +1,4 @@
-From 4ff2e44ead00dd2c0977b8e4b7161020b9853d90 Mon Sep 17 00:00:00 2001
+From bbd29fa7414140289c3e4ee73e5ffd998a907b36 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Mon, 20 Apr 2020 20:42:56 +0300
 Subject: [PATCH] Fix QQuickKeyNavigationAttached issue

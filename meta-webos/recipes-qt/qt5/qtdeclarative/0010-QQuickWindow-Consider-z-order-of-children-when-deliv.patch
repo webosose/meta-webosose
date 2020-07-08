@@ -1,4 +1,4 @@
-From 967b4717532dece9f9966c48b108f092bfad5f42 Mon Sep 17 00:00:00 2001
+From 888261c8f425eace3affc107edb0d446986d6e7c Mon Sep 17 00:00:00 2001
 From: YoungSun Park <cathy.park@lge.com>
 Date: Fri, 16 Aug 2019 21:32:22 +0900
 Subject: [PATCH] QQuickWindow: Consider z-order of children when delivering
@@ -17,10 +17,10 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative
  1 file changed, 22 insertions(+), 14 deletions(-)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index cc4991984d..b2534fe0b0 100644
+index b481c1d569..eeec1ca6d4 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -2390,23 +2390,13 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
+@@ -2474,23 +2474,13 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
      QVector<QQuickItem *> targets;
      auto itemPrivate = QQuickItemPrivate::get(item);
      QPointF itemPos = item->mapFromScene(point->scenePosition());
@@ -46,7 +46,7 @@ index cc4991984d..b2534fe0b0 100644
      if (itemPrivate->hasPointerHandlers()) {
          if (!relevant)
              if (itemPrivate->anyPointerHandlerWants(point))
-@@ -2417,8 +2407,26 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
+@@ -2501,8 +2491,26 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
          if (relevant && checkAcceptsTouch && !(item->acceptTouchEvents() || item->acceptedMouseButtons()))
              relevant = false;
      }

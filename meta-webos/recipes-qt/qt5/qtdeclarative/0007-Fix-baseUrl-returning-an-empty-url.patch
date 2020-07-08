@@ -1,4 +1,4 @@
-From 696740fe355298e205eee63a0a9139b2110dc8d4 Mon Sep 17 00:00:00 2001
+From a3c41814b07c7c4191a7b369ea3ddf59fb2c23a9 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Fri, 23 Feb 2018 08:56:31 +0900
 Subject: [PATCH] Fix baseUrl returning an empty url

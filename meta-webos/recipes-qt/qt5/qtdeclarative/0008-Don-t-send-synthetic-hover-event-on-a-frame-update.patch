@@ -1,4 +1,4 @@
-From c5cb58ee0055e0b4289854c920dae46b6b6cd396 Mon Sep 17 00:00:00 2001
+From 4176f6c94e87b26f180ef56b0490c026f1568952 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 12 Jun 2018 20:25:29 +0900
 Subject: [PATCH] Don't send synthetic hover event on a frame update
@@ -14,10 +14,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 4 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index c55db04566..cc4991984d 100644
+index 3c97475e86..b481c1d569 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
-@@ -2243,6 +2243,9 @@ void QQuickWindowPrivate::flushFrameSynchronousEvents()
+@@ -2327,6 +2327,9 @@ void QQuickWindowPrivate::flushFrameSynchronousEvents()
              ut->startAnimations();
      }
  
@@ -27,7 +27,7 @@ index c55db04566..cc4991984d 100644
      // Once per frame, if any items are dirty, send a synthetic hover,
      // in case items have changed position, visibility, etc.
      // For instance, during animation (including the case of a ListView
-@@ -2254,6 +2257,7 @@ void QQuickWindowPrivate::flushFrameSynchronousEvents()
+@@ -2338,6 +2341,7 @@ void QQuickWindowPrivate::flushFrameSynchronousEvents()
          if (!delivered)
              clearHover(); // take care of any exits
      }

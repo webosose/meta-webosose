@@ -1,4 +1,4 @@
-From 5bc42351d5f52438e340a747ac46c2fb032b452d Mon Sep 17 00:00:00 2001
+From 6e4d313da3fcad07a3f87968825595a80c2a5111 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 10 Dec 2014 15:28:17 +0900
 Subject: [PATCH] Prevent items from being deleted while removing

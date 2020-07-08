@@ -1,4 +1,4 @@
-From 54c661f4f29322d93a4644a0d3a922b9cc9ed634 Mon Sep 17 00:00:00 2001
+From 41c295ec89235706abe8631e07c11cf0a723a241 Mon Sep 17 00:00:00 2001
 From: Jani Hautakangas <jani.hautakangas@lge.com>
 Date: Mon, 16 Jun 2014 00:32:15 +0300
 Subject: [PATCH] Fix allocateTimerId

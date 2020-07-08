@@ -1,4 +1,4 @@
-From e4cb36dca4460e7b1391d4ca67c27c869642ee43 Mon Sep 17 00:00:00 2001
+From 275fe3461a770f627674393ba15a1bd1894348d7 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 8 Feb 2018 14:24:20 +0900
 Subject: [PATCH] Warn circular dependency when loading types
