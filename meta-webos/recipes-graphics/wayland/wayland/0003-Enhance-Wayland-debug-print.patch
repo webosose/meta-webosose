@@ -1,0 +1,460 @@
+From dc5ad3922246a0a6fdce230bd95cc638d9f587c2 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Tue, 27 Jan 2015 16:45:01 +0900
+Subject: [PATCH] Enhance Wayland debug print
+
+1) Enable or disable print through the named pipe.
+2) Redirect logs into a file.
+3) Print additional information including PIDs.
+4) Output wl_log and wl_abort to PmLog if available.
+
+Signed-off-by: hyunsook.park <hyunsook.park@lge.com>
+Signed-off-by: cathy.park <cathy.park@lge.com>
+Signed-off-by: jaehak.lee <jaehak.lee@lge.com>
+Signed-off-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ Makefile.am           |  14 ++++++
+ configure.ac          |  12 +++++
+ src/connection.c      | 103 ++++++++++++++++++++++++++++++++++--------
+ src/wayland-client.c  |   6 +--
+ src/wayland-private.h |   2 +-
+ src/wayland-server.c  |  80 +++++++++++++++++++++++++++++++-
+ src/wayland-util.c    |  18 ++++++++
+ 7 files changed, 211 insertions(+), 24 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 697c517..a3d2b57 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -44,6 +44,12 @@ libwayland_util_la_CFLAGS = $(AM_CFLAGS)
+ libwayland_util_la_SOURCES =			\
+ 	src/wayland-util.c			\
+ 	src/wayland-util.h
++libwayland_util_la_CFLAGS = $(FFI_CFLAGS) $(GCC_CFLAGS) -pthread
++libwayland_util_la_LIBADD = $(FFI_LIBS) -lrt -lm
++if ENABLE_PMLOG
++libwayland_util_la_CFLAGS += $(PMLOG_CFLAGS)
++libwayland_util_la_LIBADD += $(PMLOG_LIBS)
++endif
+ 
+ noinst_LTLIBRARIES = libwayland-util.la
+ 
+@@ -72,6 +78,10 @@ nodist_include_HEADERS =			\
+ 
+ libwayland_server_la_CFLAGS = $(FFI_CFLAGS) $(AM_CFLAGS) -pthread
+ libwayland_server_la_LIBADD = $(FFI_LIBS) libwayland-private.la libwayland-util.la -lrt -lm
++if ENABLE_PMLOG
++libwayland_server_la_CFLAGS += $(PMLOG_CFLAGS)
++libwayland_server_la_LIBADD += $(PMLOG_LIBS)
++endif
+ libwayland_server_la_LDFLAGS = -version-info 1:0:1
+ libwayland_server_la_SOURCES =			\
+ 	src/wayland-server.c			\
+@@ -84,6 +94,10 @@ nodist_libwayland_server_la_SOURCES =		\
+ 
+ libwayland_client_la_CFLAGS = $(FFI_CFLAGS) $(AM_CFLAGS) -pthread
+ libwayland_client_la_LIBADD = $(FFI_LIBS) libwayland-private.la libwayland-util.la -lrt -lm
++if ENABLE_PMLOG
++libwayland_client_la_CFLAGS += $(PMLOG_CFLAGS)
++libwayland_client_la_LIBADD += $(PMLOG_LIBS)
++endif
+ libwayland_client_la_LDFLAGS = -version-info 3:0:3
+ libwayland_client_la_SOURCES =			\
+ 	src/wayland-client.c
+diff --git a/configure.ac b/configure.ac
+index f05fba4..f27a5d1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -93,6 +93,13 @@ AM_CONDITIONAL(USE_HOST_SCANNER, test "x$with_host_scanner" = xyes)
+ 
+ AM_CONDITIONAL(ENABLE_LIBRARIES, test "x$enable_libraries" = xyes)
+ 
++AC_ARG_ENABLE([pmlog],
++              [AC_HELP_STRING([--enable-pmlog],
++                              [Enable pmlog for stderr logging])],
++              [enable_pmlog=yes],
++              [])
++AM_CONDITIONAL(ENABLE_PMLOG, test "x$enable_pmlog" = xyes)
++
+ AC_ARG_WITH(icondir, [  --with-icondir=<dir>    Look for cursor icons here],
+ 		     [  ICONDIR=$withval],
+ 		     [  ICONDIR=${datadir}/icons])
+@@ -120,6 +127,11 @@ if test "x$enable_dtd_validation" = "xyes"; then
+ 	AC_CONFIG_LINKS([src/wayland.dtd.embed:protocol/wayland.dtd])
+ fi
+ 
++if test "x$enable_pmlog" = "xyes"; then
++	PKG_CHECK_MODULES(PMLOG, [PmLogLib])
++	AC_DEFINE(HAVE_PMLOG, 1, [PmLogLib is available])
++fi
++
+ AC_PATH_PROG(XSLTPROC, xsltproc)
+ AM_CONDITIONAL([HAVE_XSLTPROC], [test "x$XSLTPROC" != "x"])
+ 
+diff --git a/src/connection.c b/src/connection.c
+index f965210..29164be 100644
+--- a/src/connection.c
++++ b/src/connection.c
+@@ -64,6 +64,49 @@ struct wl_buffer {
+ #define MAX_FDS_OUT	28
+ #define CLEN		(CMSG_LEN(MAX_FDS_OUT * sizeof(int32_t)))
+ 
++#ifndef UNIX_PATH_MAX
++#define UNIX_PATH_MAX 1024
++#endif
++
++static FILE* open_file()
++{
++	char *debug_path;
++	char proc_name[UNIX_PATH_MAX] = {0,};
++	char proc_file[UNIX_PATH_MAX];
++	char filename[UNIX_PATH_MAX];
++	FILE *tmp_debug_fp = NULL;
++	extern char *program_invocation_short_name;
++
++	debug_path = getenv("WAYLAND_DEBUG_PATH");
++	if (program_invocation_short_name)
++		snprintf(proc_name, UNIX_PATH_MAX, "%s_%d", program_invocation_short_name, getpid());
++	else
++		snprintf(proc_name, UNIX_PATH_MAX, "%d", getpid());
++
++	if (!debug_path)
++		snprintf(filename, UNIX_PATH_MAX, "/tmp/wayland_%s.log",proc_name);
++	else
++		snprintf(filename, UNIX_PATH_MAX, "%s/wayland_%s.log",debug_path,proc_name);
++
++	tmp_debug_fp = fopen(filename, "a+");
++	if (!tmp_debug_fp) {
++		fprintf(stderr,"Error! Cannot open file...\n");
++		return NULL;
++	}
++	return tmp_debug_fp;
++}
++
++void get_time(struct timeval *now_Tv, struct tm *now_Tm)
++{
++	time_t now;
++
++	memset(now_Tv, 0, sizeof(struct timeval));
++	gettimeofday(now_Tv, NULL);
++	now = now_Tv->tv_sec;
++	memset(now_Tm, 0, sizeof(struct tm));
++	gmtime_r(&now, now_Tm);
++}
++
+ struct wl_connection {
+ 	struct wl_buffer in, out;
+ 	struct wl_buffer fds_in, fds_out;
+@@ -1244,18 +1287,41 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection)
+ }
+ 
+ void
+-wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send)
++wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send, const char *supplement)
+ {
+ 	int i;
+ 	struct argument_details arg;
+ 	const char *signature = closure->message->signature;
+ 	struct timespec tp;
+ 	unsigned int time;
++	static FILE *debug_fp = NULL;
++	struct timeval  nowTv;
++	struct tm       nowTm;
++	pid_t pid = getpid();
++	pthread_t tid = pthread_self();
++
++	if (!debug_fp) {
++		debug_fp = open_file();
++		if (!debug_fp) {
++			fprintf(stderr, "*** Warning: Cannot print debug message in file.");
++			debug_fp = stderr;
++		}
++	}
+ 
+-	clock_gettime(CLOCK_REALTIME, &tp);
++	get_time(&nowTv, &nowTm);
++	clock_gettime(CLOCK_MONOTONIC, &tp);
+ 	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
+ 
+-	fprintf(stderr, "[%10.3f] %s%s@%u.%s(",
++	fprintf(debug_fp, "[%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ][pid:%d][tid:0x%x]",
++			1900 + nowTm.tm_year, 1 + nowTm.tm_mon, nowTm.tm_mday,
++			nowTm.tm_hour, nowTm.tm_min, nowTm.tm_sec, nowTv.tv_usec,
++			pid,
++			tid);
++
++	if (supplement)
++	    fprintf(debug_fp, "%s", supplement);
++
++	fprintf(debug_fp, "[%10.3f] %s%s@%u.%s(",
+ 		time / 1000.0,
+ 		send ? " -> " : "",
+ 		target->interface->name, target->id,
+@@ -1264,50 +1330,51 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send)
+ 	for (i = 0; i < closure->count; i++) {
+ 		signature = get_next_argument(signature, &arg);
+ 		if (i > 0)
+-			fprintf(stderr, ", ");
++			fprintf(debug_fp, ", ");
+ 
+-		switch (arg.type) {
++	switch (arg.type) {
+ 		case 'u':
+-			fprintf(stderr, "%u", closure->args[i].u);
++			fprintf(debug_fp, "%u", closure->args[i].u);
+ 			break;
+ 		case 'i':
+-			fprintf(stderr, "%d", closure->args[i].i);
++			fprintf(debug_fp, "%d", closure->args[i].i);
+ 			break;
+ 		case 'f':
+-			fprintf(stderr, "%f",
++			fprintf(debug_fp, "%f",
+ 				wl_fixed_to_double(closure->args[i].f));
+ 			break;
+ 		case 's':
+-			fprintf(stderr, "\"%s\"", closure->args[i].s);
++			fprintf(debug_fp, "\"%s\"", closure->args[i].s);
+ 			break;
+ 		case 'o':
+ 			if (closure->args[i].o)
+-				fprintf(stderr, "%s@%u",
++				fprintf(debug_fp, "%s@%u",
+ 					closure->args[i].o->interface->name,
+ 					closure->args[i].o->id);
+ 			else
+-				fprintf(stderr, "nil");
++				fprintf(debug_fp, "nil");
+ 			break;
+ 		case 'n':
+-			fprintf(stderr, "new id %s@",
++			fprintf(debug_fp, "new id %s@",
+ 				(closure->message->types[i]) ?
+ 				 closure->message->types[i]->name :
+-				  "[unknown]");
++				"[unknown]");
+ 			if (closure->args[i].n != 0)
+-				fprintf(stderr, "%u", closure->args[i].n);
++				fprintf(debug_fp, "%u", closure->args[i].n);
+ 			else
+-				fprintf(stderr, "nil");
++				fprintf(debug_fp, "nil");
+ 			break;
+ 		case 'a':
+-			fprintf(stderr, "array");
++			fprintf(debug_fp, "array");
+ 			break;
+ 		case 'h':
+-			fprintf(stderr, "fd %d", closure->args[i].h);
++			fprintf(debug_fp, "fd %d", closure->args[i].h);
+ 			break;
+ 		}
+ 	}
+ 
+-	fprintf(stderr, ")\n");
++	fprintf(debug_fp, ")\n");
++	fflush(debug_fp);
+ }
+ 
+ static int
+diff --git a/src/wayland-client.c b/src/wayland-client.c
+index 4c0c46e..bf44b81 100644
+--- a/src/wayland-client.c
++++ b/src/wayland-client.c
+@@ -748,7 +748,7 @@ wl_proxy_marshal_array_constructor_versioned(struct wl_proxy *proxy,
+ 		wl_abort("Error marshalling request: %s\n", strerror(errno));
+ 
+ 	if (debug_client)
+-		wl_closure_print(closure, &proxy->object, true);
++		wl_closure_print(closure, &proxy->object, true, NULL);
+ 
+ 	if (wl_closure_send(closure, proxy->display->connection))
+ 		wl_abort("Error sending request: %s\n", strerror(errno));
+@@ -1423,13 +1423,13 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
+ 
+ 	if (proxy->dispatcher) {
+ 		if (debug_client)
+-			wl_closure_print(closure, &proxy->object, false);
++			wl_closure_print(closure, &proxy->object, false, NULL);
+ 
+ 		wl_closure_dispatch(closure, proxy->dispatcher,
+ 				    &proxy->object, opcode);
+ 	} else if (proxy->object.implementation) {
+ 		if (debug_client)
+-			wl_closure_print(closure, &proxy->object, false);
++			wl_closure_print(closure, &proxy->object, false, NULL);
+ 
+ 		wl_closure_invoke(closure, WL_CLOSURE_INVOKE_CLIENT,
+ 				  &proxy->object, opcode, proxy->user_data);
+diff --git a/src/wayland-private.h b/src/wayland-private.h
+index 29516ec..c6eaa60 100644
+--- a/src/wayland-private.h
++++ b/src/wayland-private.h
+@@ -215,7 +215,7 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection);
+ 
+ void
+ wl_closure_print(struct wl_closure *closure,
+-		 struct wl_object *target, int send);
++		 struct wl_object *target, int send, const char *supplement);
+ 
+ void
+ wl_closure_destroy(struct wl_closure *closure);
+diff --git a/src/wayland-server.c b/src/wayland-server.c
+index 0e07746..f8e27cb 100644
+--- a/src/wayland-server.c
++++ b/src/wayland-server.c
+@@ -137,6 +137,7 @@ struct wl_protocol_logger {
+ };
+ 
+ static int debug_server = 0;
++static char debug_fifo_path[UNIX_PATH_MAX];
+ 
+ static void
+ log_closure(struct wl_resource *resource,
+@@ -147,8 +148,14 @@ log_closure(struct wl_resource *resource,
+ 	struct wl_protocol_logger *protocol_logger;
+ 	struct wl_protocol_logger_message message;
+ 
+-	if (debug_server)
+-		wl_closure_print(closure, object, send);
++	if (debug_server) {
++		struct wl_client *client = resource->client;
++		pid_t pid;
++		char supplement[32];
++		wl_client_get_credentials(client, &pid, NULL, NULL);
++		snprintf(supplement, sizeof(supplement), "[client:%d(0x%x)]", pid, client);
++		wl_closure_print(closure, object, send, supplement);
++	}
+ 
+ 	if (!wl_list_empty(&display->protocol_loggers)) {
+ 		message.resource = resource;
+@@ -989,6 +996,71 @@ bind_display(struct wl_client *client, struct wl_display *display)
+ 	return 0;
+ }
+ 
++#define CMD_LINE_MAX_LEN 1024
++
++static int
++cmd_line_data(int fd, uint32_t mask, void *data)
++{
++	int len;
++	struct wl_display *display = data;
++	char cmd_buf[CMD_LINE_MAX_LEN];
++
++	len = read(fd, cmd_buf, sizeof(cmd_buf));
++	if (len < 0) {
++		wl_log("error:read file errno(%d), strerror(%s)",errno,strerror(errno));
++		close(fd);
++		return 1;
++	}
++
++	if (len > 2)
++		return 1;
++
++	if (cmd_buf[0] == '0')
++		debug_server = 0;
++	else if (cmd_buf[0] == '1')
++		debug_server = 1;
++	return 1;
++}
++
++static void
++create_cmd_line(struct wl_display *display)
++{
++	int fd;
++	const char *runtime_dir;
++	struct wl_event_source *cmd_source;
++
++	runtime_dir = getenv("XDG_RUNTIME_DIR");
++	if (!runtime_dir) {
++		return;
++	}
++
++	snprintf(debug_fifo_path, sizeof debug_fifo_path,
++			"%s/%s", runtime_dir, "wayland_debug");
++
++	unlink(debug_fifo_path);
++	if (mkfifo(debug_fifo_path, 0600) < 0) {
++		wl_log("error: failed to mkfifo %d\n", errno);
++		return;
++	}
++
++	fd = open(debug_fifo_path, O_RDWR|O_CLOEXEC);
++	if (fd < 0) {
++		wl_log("error: cannot open FIFO file for cmd line %d\n", errno);
++		unlink(debug_fifo_path);
++		return;
++	}
++
++	cmd_source = wl_event_loop_add_fd(display->loop, fd,
++			WL_EVENT_READABLE,
++			cmd_line_data, debug_fifo_path);
++	if (!cmd_source) {
++		wl_log("error: failed to wl_event_loop_add_fd %d %s\n", fd, debug_fifo_path);
++		unlink(debug_fifo_path);
++		close(fd);
++		return;
++	}
++}
++
+ /** Create Wayland display object.
+  *
+  * \return The Wayland display object. Null if failed to create
+@@ -1034,6 +1106,8 @@ wl_display_create(void)
+ 
+ 	wl_array_init(&display->additional_shm_formats);
+ 
++	create_cmd_line(display);
++
+ 	return display;
+ }
+ 
+@@ -1103,6 +1177,8 @@ wl_display_destroy(struct wl_display *display)
+ 
+ 	wl_list_remove(&display->protocol_loggers);
+ 
++	unlink(debug_fifo_path);
++
+ 	free(display);
+ }
+ 
+diff --git a/src/wayland-util.c b/src/wayland-util.c
+index 3a471a8..fcbb409 100644
+--- a/src/wayland-util.c
++++ b/src/wayland-util.c
+@@ -30,8 +30,12 @@
+ #include <string.h>
+ #include <stdarg.h>
+ 
++#include "../config.h"
+ #include "wayland-util.h"
+ #include "wayland-private.h"
++#ifdef HAVE_PMLOG
++#include <PmLogLib.h>
++#endif
+ 
+ WL_EXPORT void
+ wl_list_init(struct wl_list *list)
+@@ -390,6 +394,20 @@ wl_map_for_each(struct wl_map *map, wl_iterator_func_t func, void *data)
+ static void
+ wl_log_stderr_handler(const char *fmt, va_list arg)
+ {
++#ifdef HAVE_PMLOG
++	static bool contextCreated = false;
++	static PmLogContext ctx;
++	char szMessage[4096] = {0, };
++
++	if (!contextCreated) {
++		PmLogGetContext("wayland", &ctx);
++		contextCreated = true;
++	}
++
++	vsnprintf(szMessage, sizeof(szMessage), fmt, arg);
++	PmLogError(ctx, "WAYLAND", 0, "[pid:%d][tid:0x%x] %s", getpid(), pthread_self(), szMessage);
++#endif
++
+ 	vfprintf(stderr, fmt, arg);
+ }
+ 
