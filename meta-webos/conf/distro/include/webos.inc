@@ -72,9 +72,6 @@ EXTRA_WEBOS_WERROR_pn-hdf5 = ""
 # ERROR: libev-4.31-r0 do_compile: oe_runmake failed: libev-4.31/ev_iouring.c:227:1: error: no return statement in function returning non-void [-Werror=return-type] libev-4.31/ev_iouring.c:261:1: error: no return statement in function returning non-void [-Werror=return-type]
 EXTRA_WEBOS_WERROR_pn-libev = ""
 
-# Some remote git repositories has been beginning to change the default branch from master to main
-SRC_URI_append_pn-iso-codes = ";branch=main"
-
 TARGET_CC_ARCH_append = " ${EXTRA_WEBOS_WERROR}"
 
 #
