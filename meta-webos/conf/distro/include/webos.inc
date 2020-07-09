@@ -261,7 +261,6 @@ ICECC_DISABLED ??= "1"
 # $ bitbake -c write_oss_pkg_info <image>
 # Components can have oss-pkg-info file itself but it is forced to
 # add checksum in LIC_FILES_CHKSUM if it contain oss-pkg-info.yaml
-IMAGE_CLASSES += "webos_oss_pkg_info"
 do_populate_lic_append() {
     """ To check oss-pkg-info.yaml """
     oss_filename = "oss-pkg-info.yaml"
