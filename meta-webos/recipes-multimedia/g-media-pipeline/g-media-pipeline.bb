@@ -5,6 +5,7 @@ AUTHOR = "Jinwoo Ahn <jinwoo.ahn@lge.com>"
 SECTION = "webos/media"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM_raspberrypi4 += "file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519"
 
 inherit webos_component
 inherit webos_cmake
@@ -29,10 +30,10 @@ DEPENDS_append_rpi = " virtual/libomxil"
 DEPENDS_append_raspberrypi4 = " webos-wayland-extensions"
 
 WEBOS_VERSION = "1.0.0-21_ecd90bea31daca759dc40061749131f2a61b99c1"
-PR = "r7"
+PR = "r8"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.7_c01991c7c1679850ed8f9837146ca161b1bb0555"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.9_686a528d1e8ce3244d4410b5d01d16ef2b50007a"
 SRC_URI_append_raspberrypi4 = " file://0001-LunaServiceClient.cpp-include-string-to-fix-build-wi.patch"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
