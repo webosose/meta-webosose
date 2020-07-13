@@ -13,8 +13,6 @@ RDEPENDS_${PN}_remove = "update-rc.d"
 PACKAGECONFIG_remove = " \
     networkd    \
     resolved    \
-    timedated   \
-    timesyncd   \
 "
 # By default systemd's Predictable Network Interface Names policy configured for qemu
 # Currently we don't support this policy in qemu, so removing from systemd's configuration
