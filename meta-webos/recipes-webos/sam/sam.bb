@@ -4,7 +4,9 @@ DESCRIPTION = "System Application Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson boost icu pmloglib procps libwebosi18n"
 RDEPENDS_${PN} = "ecryptfs-utils"
@@ -12,8 +14,8 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
-WEBOS_VERSION = "2.0.0-31_107497d00e52200c839502aadf06cc7e4ea1f85b"
-PR = "r25"
+WEBOS_VERSION = "2.0.0-41_a2741ea0322626f48d2ca3df21c2e3474bcaae50"
+PR = "r26"
 
 inherit webos_component
 inherit webos_cmake
@@ -30,5 +32,3 @@ S = "${WORKDIR}/git"
 PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY_${PN}-tests = "1"
 FILES_${PN}-tests = "${libexecdir}/tests/*"
-
-SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"
