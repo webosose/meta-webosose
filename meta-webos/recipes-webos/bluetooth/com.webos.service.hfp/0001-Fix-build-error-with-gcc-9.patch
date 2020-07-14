@@ -1,0 +1,30 @@
+From 68fcacf8e5345f893c99d86ca3a1ad529e74009c Mon Sep 17 00:00:00 2001
+From: Minjae Kim <nate.kim@lge.com>
+Date: Tue, 14 Jul 2020 04:01:33 +0000
+Subject: [PATCH] Fix build error with gcc 10
+
+com.webos.service.hfp/1.0.0-2-r1/git/src/HF/hfpofononetworkregistration.h:33:50: error: 'string' in namespace 'std::__cxx11' does not name a type
+   33 |  HfpOfonoNetworkRegistration(const std::__cxx11::string& objectPath, HfpOfonoModem* modem);
+      |                                                  ^~~~~~
+com.webos.service.hfp/1.0.0-2-r1/git/src/HF/hfpofononetworkregistration.cpp:28:1: error: no declaration matches 'HfpOfonoNetworkRegistration::HfpOfonoNetworkRegistration(const string&, HfpOfonoModem*)'
+   28 | HfpOfonoNetworkRegistration::HfpOfonoNetworkRegistration(const std::string &objectPath, HfpOfonoModem *modem)
+---
+ src/HF/hfpofononetworkregistration.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/HF/hfpofononetworkregistration.h b/src/HF/hfpofononetworkregistration.h
+index 36f3d01..9a3d594 100644
+--- a/src/HF/hfpofononetworkregistration.h
++++ b/src/HF/hfpofononetworkregistration.h
+@@ -30,7 +30,7 @@ class HfpOfonoModem;
+ class HfpOfonoNetworkRegistration
+ {
+ public:
+-	HfpOfonoNetworkRegistration(const std::__cxx11::string& objectPath, HfpOfonoModem* modem);
++	HfpOfonoNetworkRegistration(const std::string& objectPath, HfpOfonoModem* modem);
+ 	~HfpOfonoNetworkRegistration();
+ 	HfpOfonoNetworkRegistration(const HfpOfonoNetworkRegistration&) = delete;
+ 	HfpOfonoNetworkRegistration& operator = (const HfpOfonoNetworkRegistration&) = delete;
+-- 
+2.17.1
+
