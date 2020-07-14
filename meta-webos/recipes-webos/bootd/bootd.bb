@@ -5,12 +5,14 @@ DESCRIPTION = "Bootd is a simplified upstart-like component. It provides automat
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost gtest pmtrace"
 
-WEBOS_VERSION = "2.0.0-10_ec492d1b9ecb61297dc329fc399f4529371b5690"
-PR = "r10"
+WEBOS_VERSION = "2.0.0-11_1c5e45b8e30e635242c4b68b8c4cf10922caa918"
+PR = "r11"
 
 inherit webos_component
 inherit webos_enhanced_submissions

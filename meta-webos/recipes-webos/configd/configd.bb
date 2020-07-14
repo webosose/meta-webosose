@@ -4,13 +4,15 @@ SUMMARY = "webOS Configuration Service"
 AUTHOR  = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
 RDEPENDS_${PN} += "configd-data"
 
-WEBOS_VERSION = "1.2.0-4_b431586058453dc933e2cfd28406bb1744e45e33"
-PR = "r17"
+WEBOS_VERSION = "1.2.0-6_3f1e062b566ce689d6fd5542f2ddfc46ff393edc"
+PR = "r18"
 
 inherit webos_component
 inherit webos_enhanced_submissions

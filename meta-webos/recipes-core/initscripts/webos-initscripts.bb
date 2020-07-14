@@ -4,7 +4,9 @@ SUMMARY = "Systemd service files for system services"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0 & MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
 RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_rdx-utils}"
@@ -15,8 +17,8 @@ PROVIDES = "initscripts"
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-WEBOS_VERSION = "3.0.0-47_b2b5af168b7322adee472aa8b69f46dfdd25f106"
-PR = "r12"
+WEBOS_VERSION = "3.0.0-48_aec7dbe279ea00c5ec4397b5d22128c66e8b0d36"
+PR = "r13"
 
 inherit webos_component
 inherit webos_enhanced_submissions

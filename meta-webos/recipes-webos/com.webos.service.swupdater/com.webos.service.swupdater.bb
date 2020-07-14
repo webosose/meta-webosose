@@ -4,12 +4,14 @@ DESCRIPTION = "webOS update agent"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/daemon"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2714381d01eb5a6e963e62a212e277be \
+"
 
 DEPENDS = "curl glib-2.0 libpbnjson luna-service2 pmloglib"
 
-WEBOS_VERSION = "1.0.0-20_dc7d4942598990c5a64681e9f7e72d9723021ad9"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-22_8be456173818ab6e1c9bcea6c88e8dc67b5dfce5"
+PR = "r3"
 
 inherit webos_cmake
 inherit webos_component
