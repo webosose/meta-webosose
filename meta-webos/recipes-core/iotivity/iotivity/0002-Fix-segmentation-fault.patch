@@ -1,0 +1,42 @@
+From 48b3d7567b7fec4b1a340ff2233b1279ddb6ca62 Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Tue, 21 Jul 2020 19:12:46 +0900
+Subject: [PATCH] Fix segmentation fault
+
+:Release Notes:
+Fix segmentation fault
+
+:Detailed Notes:
+Due to yocto 3.1 upgrade, nodejs is upgraded from v8.12.0 to v12.14.1
+which introduces compile error due to v8 API conflict in
+nodejs-module-webos-pmlog. pmlog is already replaced with journald in
+webOS Auto. Therefore, let us deprecated the pmloglib addon.
+This commit retires the usage of pmloglib addon from webos-service module.
+
+:Testing Performed:
+Verified that com.example.service.iotivity.server does not crash
+
+:Issues Addressed:
+[PLAT-113544] [webOS OSE]: 'File copy failed' popup is displayed.
+---
+ .../csdk/connectivity/src/ip_adapter/webos/caipnwmonitor.c    | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/resource/csdk/connectivity/src/ip_adapter/webos/caipnwmonitor.c b/resource/csdk/connectivity/src/ip_adapter/webos/caipnwmonitor.c
+index 535064fff..e5ff85fa5 100644
+--- a/resource/csdk/connectivity/src/ip_adapter/webos/caipnwmonitor.c
++++ b/resource/csdk/connectivity/src/ip_adapter/webos/caipnwmonitor.c
+@@ -283,10 +283,6 @@ static bool get_connection_status_cb(LSHandle *sh, LSMessage *message, void *ctx
+     if (jis_null(parsedObj))
+         return true;
+ 
+-    const char *payload = jvalue_tostring(parsedObj, input_schema);
+-
+-    OIC_LOG_V(DEBUG, TAG, "Paylod: %s", payload);
+-
+     jvalue_ref wiredObj={0}, wifiObj ={0}, wiredStateObj={0}, wifiStateObj={0};
+ 
+     if (jobject_get_exists(parsedObj, J_CSTR_TO_BUF("wired"), &wiredObj))
+-- 
+2.17.1
+

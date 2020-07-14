@@ -211,6 +211,7 @@ RDEPENDS_${PN}_append_webos = " \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_g-camera-pipeline} \
+    wireless-regdb-static \
 "
 
 # XXX These FOSS components must be explicitly added because they are missing
