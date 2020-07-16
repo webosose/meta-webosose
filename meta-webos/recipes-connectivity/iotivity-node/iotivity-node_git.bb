@@ -19,15 +19,13 @@ SRC_URI += "file://0001-Add-new-api-for-register-custom-cbor-files.patch \
     file://0002-Build-Do-not-purge-build-scripts-after-build.patch \
 "
 
+inherit pythonnative
+
 PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
 PR = "r4"
-
-inherit python3native
-
-export PYTHON = "python3"
 
 do_compile_prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
