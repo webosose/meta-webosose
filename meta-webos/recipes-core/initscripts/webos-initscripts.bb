@@ -17,8 +17,8 @@ PROVIDES = "initscripts"
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-WEBOS_VERSION = "3.0.0-48_aec7dbe279ea00c5ec4397b5d22128c66e8b0d36"
-PR = "r13"
+WEBOS_VERSION = "3.0.0-50_8d4000079dcbcc018cb788849c20432178772a62"
+PR = "r14"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -29,5 +29,7 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+EXTRA_OECMAKE += "-DWEBOS_QTTESTABILITY_ENABLED:BOOL=0"
 
 FILES_${PN} += "${base_libdir}"
