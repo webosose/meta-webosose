@@ -1,4 +1,4 @@
-From 26b2697ee38aca6953a899caf78ae012587525e1 Mon Sep 17 00:00:00 2001
+From da7681cf53cbb854f4136e24029bc3bd6169ef5a Mon Sep 17 00:00:00 2001
 From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Date: Wed, 23 Dec 2015 13:21:31 +0200
 Subject: [PATCH] Prevent creating /usr/etc in native sysroot
