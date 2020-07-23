@@ -1,4 +1,4 @@
-From 4ec46cad02673bd27ddafd6c1666bea277133880 Mon Sep 17 00:00:00 2001
+From c0565f841050a80ccdf897d536b5e6be5dbbfc90 Mon Sep 17 00:00:00 2001
 From: Andrii Koval <andrii.koval@lge.com>
 Date: Wed, 29 Jul 2015 11:15:52 +0300
 Subject: [PATCH] Optimize V8's JSON parser
@@ -35,10 +35,10 @@ Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
  2 files changed, 34 insertions(+), 1 deletion(-)
 
 diff --git a/deps/v8/src/json-parser.cc b/deps/v8/src/json-parser.cc
-index 7323b71..efba265 100644
+index 32e4187..75003d3 100644
 --- a/deps/v8/src/json-parser.cc
 +++ b/deps/v8/src/json-parser.cc
-@@ -723,7 +723,9 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
+@@ -687,7 +687,9 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
      Handle<String> prefix, int start, int end) {
    int count = end - start;
    int max_length = count + source_length_ - position_;
@@ -50,10 +50,10 @@ index 7323b71..efba265 100644
        NewRawString<StringType>(factory(), length, pretenure_);
    // Copy prefix into seq_str.
 diff --git a/deps/v8/src/json-parser.h b/deps/v8/src/json-parser.h
-index fc60e29..27d33a3 100644
+index 2d08fef..1565dca 100644
 --- a/deps/v8/src/json-parser.h
 +++ b/deps/v8/src/json-parser.h
-@@ -60,6 +60,37 @@ class JsonParser BASE_EMBEDDED {
+@@ -58,6 +58,37 @@ class JsonParser BASE_EMBEDDED {
  
    INLINE(void Advance());
  

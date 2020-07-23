@@ -1,4 +1,4 @@
-From e62756ea1ec0908f02c6ef312de0471229fb7a57 Mon Sep 17 00:00:00 2001
+From 7d5b5265004d2fd21eac9c53bbe592f00654f509 Mon Sep 17 00:00:00 2001
 From: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
 Date: Fri, 24 Jul 2015 16:04:29 +0300
 Subject: [PATCH] Implement initial test suit for forked node.js

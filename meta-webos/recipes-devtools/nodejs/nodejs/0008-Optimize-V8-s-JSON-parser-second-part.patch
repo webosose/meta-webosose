@@ -1,4 +1,4 @@
-From 8a4eb886c659da78bc88432dbce93c6b0cc8ff1b Mon Sep 17 00:00:00 2001
+From 43a32975bd6f8ecb7ed516c30302661351298d68 Mon Sep 17 00:00:00 2001
 From: Andrii Koval <andrii.koval@lge.com>
 Date: Wed, 29 Jul 2015 11:26:34 +0300
 Subject: [PATCH] Optimize V8's JSON parser (second part)
@@ -35,24 +35,24 @@ Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
 ---
  deps/v8/src/json-parser.cc | 14 ++++---
- deps/v8/src/json-parser.h  | 95 ++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+), 6 deletions(-)
+ deps/v8/src/json-parser.h  | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+), 6 deletions(-)
 
 diff --git a/deps/v8/src/json-parser.cc b/deps/v8/src/json-parser.cc
-index efba265..65410db 100644
+index 75003d3..ebd23ad 100644
 --- a/deps/v8/src/json-parser.cc
 +++ b/deps/v8/src/json-parser.cc
-@@ -142,7 +142,8 @@ JsonParser<seq_one_byte>::JsonParser(Isolate* isolate, Handle<String> source)
+@@ -110,7 +110,8 @@ JsonParser<seq_one_byte>::JsonParser(Isolate* isolate, Handle<String> source)
+       zone_(isolate_->allocator(), ZONE_NAME),
        object_constructor_(isolate_->native_context()->object_function(),
                            isolate_),
-       position_(-1),
--      properties_(&zone_) {
-+      properties_(&zone_),
+-      position_(-1) {
++      position_(-1),
 +      buf_manager_(isolate_) {
    source_ = String::Flatten(source_);
    pretenure_ = (source_length_ >= kPretenureTreshold) ? TENURED : NOT_TENURED;
  
-@@ -726,8 +727,7 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
+@@ -690,8 +691,7 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
    int string_end_position = FindEndOfStr(position_);
    int itput_str_length = string_end_position - position_ + count;
    int length = Min(max_length, itput_str_length);
@@ -62,7 +62,7 @@ index efba265..65410db 100644
    // Copy prefix into seq_str.
    SinkChar* dest = seq_string->GetChars();
    String::WriteToFlat(*prefix, dest, start, end);
-@@ -737,7 +737,8 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
+@@ -701,7 +701,8 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
      if (c0_ < 0x20) return Handle<String>::null();
      if (count >= length) {
        // We need to create a longer sequential string for the result.
@@ -72,7 +72,7 @@ index efba265..65410db 100644
      }
      if (c0_ != '\\') {
        // If the sink can contain UC16 characters, or source_ contains only
-@@ -794,7 +795,8 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
+@@ -758,7 +759,8 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
              // char.
              position_ -= 6;  // Rewind position_ to \ in \uxxxx.
              Advance();
@@ -82,7 +82,7 @@ index efba265..65410db 100644
                                                                count);
            }
          }
-@@ -810,7 +812,7 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
+@@ -774,7 +776,7 @@ Handle<String> JsonParser<seq_one_byte>::SlowScanJsonString(
    AdvanceSkipWhitespace();
  
    // Shrink seq_string length to count and return.
@@ -92,12 +92,12 @@ index efba265..65410db 100644
  
  template <bool seq_one_byte>
 diff --git a/deps/v8/src/json-parser.h b/deps/v8/src/json-parser.h
-index 27d33a3..39f9d92 100644
+index 1565dca..42c6b6e 100644
 --- a/deps/v8/src/json-parser.h
 +++ b/deps/v8/src/json-parser.h
-@@ -10,9 +10,102 @@
+@@ -8,9 +8,102 @@
+ #include "src/factory.h"
  #include "src/objects.h"
- #include "src/zone/zone-containers.h"
  
 +#include <memory>
 +
@@ -198,11 +198,10 @@ index 27d33a3..39f9d92 100644
  enum ParseElementResult { kElementFound, kElementNotFound, kNullHandle };
  
  class JsonParseInternalizer BASE_EMBEDDED {
-@@ -187,6 +280,8 @@ class JsonParser BASE_EMBEDDED {
- 
-   // Property handles are stored here inside ParseJsonObject.
-   ZoneVector<Handle<Object>> properties_;
-+
+@@ -188,6 +281,7 @@ class JsonParser BASE_EMBEDDED {
+   Handle<JSFunction> object_constructor_;
+   uc32 c0_;
+   int position_;
 +  SlowScanBufManager buf_manager_;
  };
  

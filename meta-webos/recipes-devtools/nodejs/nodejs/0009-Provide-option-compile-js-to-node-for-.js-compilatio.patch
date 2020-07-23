@@ -1,4 +1,4 @@
-From efb078b3604fad0ea5d47cc8e1d1e307d8bbde4b Mon Sep 17 00:00:00 2001
+From 6033eababbf722e473c341335ea4a9907df9f830 Mon Sep 17 00:00:00 2001
 From: Andrii Koval <andrii.koval@lge.com>
 Date: Fri, 31 Jul 2015 11:48:20 +0300
 Subject: [PATCH] Provide option "--compile-js" to node for .js compilation
@@ -32,21 +32,19 @@ Tested-by: Andrii Koval <andrii.koval@lge.com>
 Reviewed-by: Denys Romanchuk <denys.romanchuk@lge.com>
 Reviewed-by: Tigran Avanesov <tigran.avanesov@lge.com>
 ---
- node.gyp            |  1 +
- src/node.cc         | 18 +++++++++++
- src/node_options.cc |  2 ++
- src/node_options.h  |  1 +
- src/precompile.cc   | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/precompile.h    | 28 +++++++++++++++++
- 6 files changed, 136 insertions(+)
+ node.gyp          |  1 +
+ src/node.cc       | 23 ++++++++++++++-
+ src/precompile.cc | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/precompile.h  | 28 ++++++++++++++++++
+ 4 files changed, 137 insertions(+), 1 deletion(-)
  create mode 100644 src/precompile.cc
  create mode 100644 src/precompile.h
 
 diff --git a/node.gyp b/node.gyp
-index a8de196..85d537f 100644
+index 1f9d34b..0f5a513 100644
 --- a/node.gyp
 +++ b/node.gyp
-@@ -392,6 +392,7 @@
+@@ -324,6 +324,7 @@
          'src/udp_wrap.cc',
          'src/util.cc',
          'src/uv.cc',
@@ -55,26 +53,45 @@ index a8de196..85d537f 100644
          'src/aliased_buffer.h',
          'src/async_wrap.h',
 diff --git a/src/node.cc b/src/node.cc
-index 0b29a44..4dd8092 100644
+index fcad018..ab9b36e 100644
 --- a/src/node.cc
 +++ b/src/node.cc
-@@ -30,6 +30,7 @@
+@@ -28,6 +28,7 @@
+ #include "node_revert.h"
+ #include "node_debug_options.h"
  #include "node_perf.h"
- #include "node_context_data.h"
- #include "tracing/traced_value.h"
 +#include "precompile.h"
  
  #if defined HAVE_PERFCTR
  #include "node_counters.h"
-@@ -176,6 +177,7 @@ static bool v8_is_profiling = false;
+@@ -182,6 +183,7 @@ static int v8_thread_pool_size = v8_default_thread_pool_size;
+ static bool prof_process = false;
+ static bool v8_is_profiling = false;
  static bool node_is_initialized = false;
- static uv_once_t init_modpending_once = UV_ONCE_INIT;
- static uv_key_t thread_local_modpending;
 +static bool compile_mode = false;
+ static node_module* modpending;
  static node_module* modlist_builtin;
  static node_module* modlist_internal;
- static node_module* modlist_linked;
-@@ -2797,6 +2799,19 @@ Environment* CreateEnvironment(IsolateData* isolate_data,
+@@ -3190,7 +3192,8 @@ static void PrintHelp() {
+          "  --experimental-modules     experimental ES Module support\n"
+          "                             and caching modules\n"
+ #endif
+-         "\n"
++         "  --compile-js               compile JS to binary file\n"
++	 "\n"
+          "Environment variables:\n"
+          "NODE_DEBUG                   ','-separated list of core modules\n"
+          "                             that should print debug information\n"
+@@ -3501,6 +3504,8 @@ static void ParseArgs(int* argc,
+       config_expose_internals = true;
+     } else if (strcmp(arg, "--expose-http2") == 0 ||
+                strcmp(arg, "--expose_http2") == 0) {
++    } else if (strcmp(arg, "--compile-js") == 0) {
++      compile_mode = true;
+       // Intentional non-op
+     } else if (strcmp(arg, "-") == 0) {
+       break;
+@@ -4059,6 +4064,19 @@ Environment* CreateEnvironment(IsolateData* isolate_data,
    return env;
  }
  
@@ -94,41 +111,16 @@ index 0b29a44..4dd8092 100644
  
  void FreeEnvironment(Environment* env) {
    env->RunCleanup();
-@@ -2950,6 +2965,9 @@ inline int Start(uv_loop_t* event_loop,
-   if (isolate == nullptr)
-     return 12;  // Signal internal error.
+@@ -4169,6 +4187,9 @@ inline int Start(uv_loop_t* event_loop,
+   isolate->SetAutorunMicrotasks(false);
+   isolate->SetFatalErrorHandler(OnFatalError);
  
 +  if (compile_mode)
 +    CompileFile(argc, argv);
 +
-   {
-     Mutex::ScopedLock scoped_lock(node_isolate_mutex);
-     CHECK_NULL(node_isolate);
-diff --git a/src/node_options.cc b/src/node_options.cc
-index 79dff7a..6950da5 100644
---- a/src/node_options.cc
-+++ b/src/node_options.cc
-@@ -102,6 +102,8 @@ EnvironmentOptionsParser::EnvironmentOptionsParser() {
-             &EnvironmentOptions::experimental_worker,
-             kAllowedInEnvironment);
-   AddOption("--expose-internals", "", &EnvironmentOptions::expose_internals);
-+  AddOption("--compile-js", "", &EnvironmentOptions::compile_js);
-+
-   AddOption("--loader",
-             "(with --experimental-modules) use the specified file as a "
-             "custom loader",
-diff --git a/src/node_options.h b/src/node_options.h
-index 4edec11..6058706 100644
---- a/src/node_options.h
-+++ b/src/node_options.h
-@@ -72,6 +72,7 @@ class EnvironmentOptions : public Options {
-   bool experimental_vm_modules = false;
-   bool experimental_worker = false;
-   bool expose_internals = false;
-+  bool compile_js = false;
-   bool no_deprecation = false;
-   bool no_force_async_hooks_checks = false;
-   bool no_warnings = false;
+   if (track_heap_objects) {
+     isolate->GetHeapProfiler()->StartTrackingHeapObjects(true);
+   }
 diff --git a/src/precompile.cc b/src/precompile.cc
 new file mode 100644
 index 0000000..149a0d0

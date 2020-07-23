@@ -1,4 +1,4 @@
-From fcc7df4a1c862d18f9f4db9f216bec07ae397fe0 Mon Sep 17 00:00:00 2001
+From 11a3e08008899b7fe61c38610416cf52be23948d Mon Sep 17 00:00:00 2001
 From: Oleksandr Ivanov <oleksandr.ivanov@lge.com>
 Date: Thu, 24 Aug 2017 13:24:35 -0700
 Subject: [PATCH] Patch on Flush function for CPU ARM added
