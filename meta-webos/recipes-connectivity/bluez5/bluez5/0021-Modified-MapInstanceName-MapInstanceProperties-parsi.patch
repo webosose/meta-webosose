@@ -1,6 +1,6 @@
-From 8140f2105e47920446f92c91eae83b88f6624698 Mon Sep 17 00:00:00 2001
+From 04c2776f141c2f17a1604a29634c087e3be60e16 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
-Date: Tue, 14 Jul 2020 10:37:18 +0900
+Date: Thu, 9 Jul 2020 13:03:49 +0530
 Subject: [PATCH] Modified MapInstanceName & MapInstanceProperties parsing and
  type
 
@@ -24,19 +24,19 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 167 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index 675a7fb..a6ae27a 100644
+index ce5d322..5606d95 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -210,6 +210,8 @@ struct btd_device {
+@@ -211,6 +211,8 @@ struct btd_device {
  	char		*modalias;
  	struct btd_adapter	*adapter;
  	GSList		*uuids;
-+        GSList          *mapInstances;
-+        GSList          *mapInstancePropoerties;
++	GSList		*mapInstances;
++	GSList		*mapInstancePropoerties;
  	GSList		*connected_uuids;
  	GSList		*primaries;		/* List of primary services */
  	GSList		*services;		/* List of btd_service */
-@@ -384,6 +386,7 @@ static gboolean store_device_info_cb(gpointer user_data)
+@@ -385,6 +387,7 @@ static gboolean store_device_info_cb(gpointer user_data)
  	char *str;
  	char class[9];
  	char **uuids = NULL;
@@ -44,43 +44,43 @@ index 675a7fb..a6ae27a 100644
  	gsize length = 0;
  
  	device->store_id = 0;
-@@ -439,6 +442,35 @@ static gboolean store_device_info_cb(gpointer user_data)
+@@ -440,6 +443,35 @@ static gboolean store_device_info_cb(gpointer user_data)
  		g_key_file_remove_key(key_file, "General", "Services", NULL);
  	}
  
-+        if (device->mapInstances) {
-+               GSList *l;
-+               int i;
++	if (device->mapInstances) {
++		GSList *l;
++		int i;
 +
-+               mapInstances = g_new0(char *, g_slist_length(device->mapInstances) + 1);
-+               for (i = 0, l = device->mapInstances; l; l = g_slist_next(l), i++)
-+                       mapInstances[i] = l->data;
-+               g_key_file_set_string_list(key_file, "General", "MapInstances",
-+                                               (const char **)mapInstances, i);
-+        } else {
-+               g_key_file_remove_key(key_file, "General", "MapInstances", NULL);
-+        }
++		mapInstances = g_new0(char *, g_slist_length(device->mapInstances) + 1);
++		for (i = 0, l = device->mapInstances; l; l = g_slist_next(l), i++)
++			mapInstances[i] = l->data;
++		g_key_file_set_string_list(key_file, "General", "MapInstances",
++						(const char **)mapInstances, i);
++	} else {
++		g_key_file_remove_key(key_file, "General", "MapInstances", NULL);
++	}
 +
-+        if (device->mapInstancePropoerties) {
-+               GSList *l = NULL;
-+               int i;
-+               gint mapProperties[g_slist_length(device->mapInstancePropoerties)];
-+               for (i = 0, l = device->mapInstancePropoerties; l; l = g_slist_next(l), i++)
-+               {
-+                       int *p = (int *)l->data;
-+                       DBG("Storing %d", *p);
-+                       mapProperties[i] = *p;
-+               }
-+               g_key_file_set_integer_list(key_file, "General", "MapProperties",
-+                                               mapProperties, i);
-+        } else {
-+               g_key_file_remove_key(key_file, "General", "MapProperties", NULL);
-+        }
++	if (device->mapInstancePropoerties) {
++		GSList *l = NULL;
++		int i;
++		gint mapProperties[g_slist_length(device->mapInstancePropoerties)];
++		for (i = 0, l = device->mapInstancePropoerties; l; l = g_slist_next(l), i++)
++		{
++			int *p = (int *)l->data;
++			DBG("Storing %d", *p);
++			mapProperties[i] = *p;
++		}
++		g_key_file_set_integer_list(key_file, "General", "MapProperties",
++						mapProperties, i);
++	} else {
++		g_key_file_remove_key(key_file, "General", "MapProperties", NULL);
++	}
 +
  	if (device->vendor_src) {
  		g_key_file_set_integer(key_file, "DeviceID", "Source",
  					device->vendor_src);
-@@ -466,6 +498,7 @@ static gboolean store_device_info_cb(gpointer user_data)
+@@ -467,6 +499,7 @@ static gboolean store_device_info_cb(gpointer user_data)
  
  	g_key_file_free(key_file);
  	g_free(uuids);
@@ -88,107 +88,108 @@ index 675a7fb..a6ae27a 100644
  
  	return FALSE;
  }
-@@ -662,6 +695,10 @@ static void device_free(gpointer user_data)
+@@ -660,6 +693,10 @@ static void device_free(gpointer user_data)
  	g_slist_free_full(device->uuids, g_free);
  	g_slist_free_full(device->primaries, g_free);
  	g_slist_free_full(device->svc_callbacks, svc_dev_remove);
-+        if(device->mapInstances)
-+               g_slist_free_full(device->mapInstances, g_free);
-+        if(device->mapInstancePropoerties)
-+        g_slist_free_full(device->mapInstancePropoerties, g_free);
++	if(device->mapInstances)
++		g_slist_free_full(device->mapInstances, g_free);
++	if(device->mapInstancePropoerties)
++	g_slist_free_full(device->mapInstancePropoerties, g_free);
  
  	/* Reset callbacks since the device is going to be freed */
  	gatt_db_unregister(device->db, device->db_id);
-@@ -1211,6 +1248,46 @@ static gboolean dev_property_get_uuids(const GDBusPropertyTable *property,
+@@ -1209,6 +1246,46 @@ static gboolean dev_property_get_uuids(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
 +static gboolean dev_property_get_mapInstances(const GDBusPropertyTable *property,
-+                                       DBusMessageIter *iter, void *data)
++					DBusMessageIter *iter, void *data)
 +{
-+       struct btd_device *dev = data;
-+       DBusMessageIter entry;
-+       GSList *l;
++	struct btd_device *dev = data;
++	DBusMessageIter entry;
++	GSList *l;
 +
-+       dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
-+                               DBUS_TYPE_STRING_AS_STRING, &entry);
++	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
++				DBUS_TYPE_STRING_AS_STRING, &entry);
 +
-+       l = dev->mapInstances;
-+       for (; l != NULL; l = l->next)
-+               dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING,
-+                                                       &l->data);
++	l = dev->mapInstances;
++	for (; l != NULL; l = l->next)
++		dbus_message_iter_append_basic(&entry, DBUS_TYPE_STRING,
++							&l->data);
 +
-+       dbus_message_iter_close_container(iter, &entry);
++	dbus_message_iter_close_container(iter, &entry);
 +
-+       return TRUE;
++	return TRUE;
 +}
 +
 +static gboolean dev_property_get_mapInstanceProperties(const GDBusPropertyTable *property,
-+                                       DBusMessageIter *iter, void *data)
++					DBusMessageIter *iter, void *data)
 +{
-+       struct btd_device *dev = data;
-+       DBusMessageIter entry;
-+       GSList *l;
++	struct btd_device *dev = data;
++	DBusMessageIter entry;
++	GSList *l;
 +
-+       dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
-+                               DBUS_TYPE_INT32_AS_STRING, &entry);
++	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
++				DBUS_TYPE_INT32_AS_STRING, &entry);
 +
-+       l = dev->mapInstancePropoerties;
-+       for (; l != NULL; l = l->next)
-+               dbus_message_iter_append_basic(&entry, DBUS_TYPE_INT32,
-+                                                       l->data);
++	l = dev->mapInstancePropoerties;
++	for (; l != NULL; l = l->next)
++		dbus_message_iter_append_basic(&entry, DBUS_TYPE_INT32,
++							l->data);
 +
-+       dbus_message_iter_close_container(iter, &entry);
++	dbus_message_iter_close_container(iter, &entry);
 +
-+       return TRUE;
++	return TRUE;
 +}
 +
  static gboolean dev_property_get_modalias(const GDBusPropertyTable *property,
  					DBusMessageIter *iter, void *data)
  {
-@@ -3024,6 +3101,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -2984,6 +3061,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "AdvertisingData", "a{yv}", dev_property_get_advertising_data,
  				NULL, dev_property_advertising_data_exist,
  				G_DBUS_PROPERTY_FLAG_EXPERIMENTAL },
-+        { "MapInstances", "as", dev_property_get_mapInstances },
-+        { "MapInstanceProperties", "ai", dev_property_get_mapInstanceProperties },
++	{ "MapInstances", "as", dev_property_get_mapInstances },
++	{ "MapInstanceProperties", "ai", dev_property_get_mapInstanceProperties },
  	{ }
  };
  
-@@ -3240,6 +3319,32 @@ static void load_services(struct btd_device *device, char **uuids)
+@@ -3200,6 +3279,33 @@ static void load_services(struct btd_device *device, char **uuids)
  	g_strfreev(uuids);
  }
  
 +static void load_map_instances(struct btd_device *device, char **instanceNames)
 +{
-+       char **instanceName;
++	char **instanceName;
 +
-+       for (instanceName = instanceNames; *instanceName; instanceName++) {
-+               if (g_slist_find(device->mapInstances, *instanceName))
-+                       continue;
++	for (instanceName = instanceNames; *instanceName; instanceName++) {
++		if (g_slist_find(device->mapInstances, *instanceName))
++			continue;
 +
-+               device->mapInstances = g_slist_append (device->mapInstances,
-+                                                       g_strdup(*instanceName));
-+       }
++		device->mapInstances = g_slist_append (device->mapInstances,
++							g_strdup(*instanceName));
++	}
 +
-+       g_strfreev(instanceNames);
++	g_strfreev(instanceNames);
 +}
 +
 +static void load_map_properties(struct btd_device *device, int *instanceProperties, gsize len)
 +{
-+       for (int i = 0; i < len; i++) {
-+               DBG("load_map_properties %d ", instanceProperties[i]);
-+               int *instanceProperty = (int *)malloc(sizeof(int));
-+               *instanceProperty = instanceProperties[i];
-+               device->mapInstancePropoerties = g_slist_append(device->mapInstancePropoerties, instanceProperty);
-+       }
-+       g_free(instanceProperties);
++	for (int i = 0; i < len; i++) {
++		DBG("load_map_properties %d ", instanceProperties[i]);
++		int *instanceProperty = (int *)malloc(sizeof(int));
++		*instanceProperty = instanceProperties[i];
++		device->mapInstancePropoerties = g_slist_append(device->mapInstancePropoerties, instanceProperty);
++	}
++	g_free(instanceProperties);
 +}
++
 +
  static void convert_info(struct btd_device *device, GKeyFile *key_file)
  {
  	char filename[PATH_MAX];
-@@ -3285,7 +3390,7 @@ static void load_info(struct btd_device *device, const char *local,
+@@ -3245,7 +3351,7 @@ static void load_info(struct btd_device *device, const char *local,
  	char *str;
  	gboolean store_needed = FALSE;
  	gboolean blocked;
@@ -197,92 +198,91 @@ index 675a7fb..a6ae27a 100644
  	int source, vendor, product, version;
  	char **techno, **t;
  
-@@ -3381,6 +3486,23 @@ next:
+@@ -3341,6 +3447,22 @@ next:
  		device->bredr_state.svc_resolved = true;
  	}
  
-+       /* Load MAP instances */
-+        mapInstances =  g_key_file_get_string_list(key_file, "General", "MapInstances",
-+                                               NULL, NULL);
++	/* Load MAP instances */
++	mapInstances =  g_key_file_get_string_list(key_file, "General", "MapInstances",
++						NULL, NULL);
 +
-+        if (mapInstances) {
-+                load_map_instances(device, mapInstances);
-+        }
++	if (mapInstances) {
++		load_map_instances(device, mapInstances);
++	}
 +
-+        /* Load MAP instance Properties */
-+        int *mapInstanceProperties;
-+        gsize length = 0;
-+        mapInstanceProperties =  g_key_file_get_integer_list(key_file, "General", "MapProperties",
-+                                                &length, NULL);
-+        if (mapInstanceProperties) {
-+                load_map_properties(device, mapInstanceProperties, length);
-+        }
-+
++	/* Load MAP instance Properties */
++	int *mapInstanceProperties;
++	gsize length = 0;
++	mapInstanceProperties =  g_key_file_get_integer_list(key_file, "General", "MapProperties",
++						&length, NULL);
++	if (mapInstanceProperties) {
++		load_map_properties(device, mapInstanceProperties, length);
++	}
  	/* Load device id */
  	source = g_key_file_get_integer(key_file, "DeviceID", "Source", NULL);
  	if (source) {
-@@ -4816,6 +4938,29 @@ static int update_record(struct browse_req *req, const char *uuid,
+@@ -4746,6 +4868,29 @@ static int update_record(struct browse_req *req, const char *uuid,
  	return 0;
  }
  
 +static int update_mapInstanceName(struct browse_req *req, const char *instanceName)
 +{
-+       GSList *l;
++	GSList *l;
 +
-+       /* Check if UUID is duplicated */
-+       l = g_slist_find(req->device->mapInstances, instanceName);
-+       if (l == NULL) {
-+               req->device->mapInstances = g_slist_append(req->device->mapInstances,
-+                                                       g_strdup(instanceName));
-+               return 0;
-+       }
-+       return -EALREADY;
++	/* Check if UUID is duplicated */
++	l = g_slist_find(req->device->mapInstances, instanceName);
++	if (l == NULL) {
++		req->device->mapInstances = g_slist_append(req->device->mapInstances,
++							g_strdup(instanceName));
++		return 0;
++	}
++	return -EALREADY;
 +}
 +
 +static int update_mapInstanceProperties(struct browse_req *req, uint8_t supportedMessageType)
 +{
-+       int *p = (int *)malloc(sizeof(int));
-+       *p = supportedMessageType;
-+       req->device->mapInstancePropoerties = g_slist_append(req->device->mapInstancePropoerties,
-+                                                       p);
-+       return 0;
++	int *p = (int *)malloc(sizeof(int));
++	*p = supportedMessageType;
++	req->device->mapInstancePropoerties = g_slist_append(req->device->mapInstancePropoerties,
++							p);
++	return 0;
 +}
 +
  static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
  {
  	struct btd_device *device = req->device;
-@@ -4858,6 +5003,23 @@ static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
- 		if (!profile_uuid)
+@@ -4797,6 +4942,23 @@ static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
  			continue;
+ 		}
  
-+                if (bt_uuid_strcmp(profile_uuid, OBEX_MAS_UUID) == 0) {
-+                        sdp_data_t *mapInstanceData;
-+                        DBG("MAS Profile");
-+                        mapInstanceData = sdp_data_get(rec, 0x0100);
-+                        /* PSM must be odd and lsb of upper byte must be 0 */
-+                        if (mapInstanceData != NULL)
-+                        {
-+                                DBG("instance Name %s " ,mapInstanceData->val.str);
-+                                if(update_mapInstanceName(req,mapInstanceData->val.str) == 0)
-+                                {
-+                                        mapInstanceData = sdp_data_get(rec, SDP_ATTR_SUPPORTED_MESSAGE_TYPES);
-+                                        DBG("instance Properties %d " ,mapInstanceData->val.uint8);
-+                                        update_mapInstanceProperties(req,mapInstanceData->val.uint8);
-+                                }
-+                        }
-+                }
++		if (bt_uuid_strcmp(profile_uuid, OBEX_MAS_UUID) == 0) {
++			sdp_data_t *mapInstanceData;
++			DBG("MAS Profile");
++			mapInstanceData = sdp_data_get(rec, 0x0100);
++			/* PSM must be odd and lsb of upper byte must be 0 */
++			if (mapInstanceData != NULL)
++			{
++				DBG("instance Name %s " ,mapInstanceData->val.str);
++				if(update_mapInstanceName(req,mapInstanceData->val.str) == 0)
++				{
++					mapInstanceData = sdp_data_get(rec, SDP_ATTR_SUPPORTED_MESSAGE_TYPES);
++					DBG("instance Properties %d " ,mapInstanceData->val.uint8);
++					update_mapInstanceProperties(req,mapInstanceData->val.uint8);
++				}
++			}
++		}
 +
  		if (bt_uuid_strcmp(profile_uuid, PNP_UUID) == 0) {
  			uint16_t source, vendor, product, version;
  			sdp_data_t *pdlist;
-@@ -5027,6 +5189,10 @@ static void search_cb(sdp_list_t *recs, int err, gpointer user_data)
+@@ -4967,6 +5129,10 @@ static void search_cb(sdp_list_t *recs, int err, gpointer user_data)
  	/* Propagate services changes */
  	g_dbus_emit_property_changed(dbus_conn, req->device->path,
  						DEVICE_INTERFACE, "UUIDs");
-+        g_dbus_emit_property_changed(dbus_conn, req->device->path,
-+                                                DEVICE_INTERFACE, "MapInstances");
-+        g_dbus_emit_property_changed(dbus_conn, req->device->path,
-+                                                DEVICE_INTERFACE, "MapInstanceProperties");
++	g_dbus_emit_property_changed(dbus_conn, req->device->path,
++						DEVICE_INTERFACE, "MapInstances");
++	g_dbus_emit_property_changed(dbus_conn, req->device->path,
++						DEVICE_INTERFACE, "MapInstanceProperties");
  
  send_reply:
  	device_svc_resolved(device, BROWSE_SDP, BDADDR_BREDR, err);

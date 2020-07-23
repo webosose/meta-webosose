@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos15"
+EXTENDPRAUTO_append = "webos16"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -13,14 +13,15 @@ SRC_URI += " \
     file://0001-Fix-advertise-time-out-when-default-is-set-to-zero.patch \
     file://0002-Send-disconnect-signal-on-remote-device-disconnect.patch \
     file://0003-Fetching-device-type-like-BLE-BREDR-from-bluez.patch \
-    file://0004-Fix-Gatt-connect-when-device-address-type-is-BDADDR_.patch \
-    file://0005-Fix-obexd-segmentation-fault.patch \
-    file://0006-Use-system-bus-instead-of-session-for-obexd.patch \
-    file://0007-Implementation-to-get-connected-profiles-uuids.patch \
-    file://0008-recievePassThrough-commad-support-required-for-webos.patch \
-    file://0009-Added-dbus-signal-for-MediaPlayRequest.patch \
-    file://0010-avrcp-getting-remote-device-features-list.patch \
-    file://0011-Fix-add-service-failure.patch \
+    file://0005-Fix-Gatt-connect-when-device-address-type-is-BDADDR_.patch \
+    file://0006-Fix-obexd-segmentation-fault.patch \
+    file://0007-Use-system-bus-instead-of-session-for-obexd.patch \
+    file://0008-Implementation-to-get-connected-profiles-uuids.patch \
+    file://0009-recievePassThrough-commad-support-required-for-webos.patch \
+    file://0010-Added-dbus-signal-for-MediaPlayRequest.patch \
+    file://0011-avrcp-getting-remote-device-features-list.patch \
+    file://0012-Fix-add-service-failure.patch \
+    file://0013-Fix-device-discovery-for-broadcast-role.patch \
     file://0014-Fix-volume-property-not-able-to-set.patch \
     file://0015-Fix-volume-level-notification-not-appearing-after-127.patch \
     file://0016-Support-enabling-avdtp-delayReport.patch \
@@ -31,13 +32,20 @@ SRC_URI += " \
     file://0019-Set-default-pairing-capability-as-NoInputNoOutput.patch \
     file://0021-Modified-MapInstanceName-MapInstanceProperties-parsi.patch \
     file://0022-Enabled-EMAIL-support-based-on-MAPInstance-Name.patch \
+    file://0023-Fix-deprecated-SIOCGSTAMP-variable-by-newer-version-.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \
 "
+
+SRC_URI_append_raspberrypi4 = " ${BCM_BT_SOURCES}"
+
+RDEPENDS_${PN}_append_raspberrypi4 = " ${BCM_BT_RDEPENDS}"
 
 do_install_append () {
     install -d ${D}${sysconfdir}/systemd/system
     install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
     install -v -m 0644  ${WORKDIR}/obex.service ${D}${sysconfdir}/systemd/system/
 }
+
+INSANE_SKIP_${PN}-testtools = "file-rdeps"

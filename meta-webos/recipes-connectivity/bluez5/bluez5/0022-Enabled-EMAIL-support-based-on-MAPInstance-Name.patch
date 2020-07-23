@@ -1,4 +1,4 @@
-From df11e4d281552d28aa51f4df2a576a79beae47cd Mon Sep 17 00:00:00 2001
+From 86b5cd1e34750481b0dcaae8c18bcb6f5b33f247 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Wed, 3 Jun 2020 18:08:39 +0530
 Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
@@ -18,7 +18,6 @@ Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
     [PLAT-107882] Implement BlueZ API support for MAP connection support
 
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  obexd/client/bluetooth.c | 21 ++++++++++++++++++---
  obexd/client/manager.c   | 10 ++++++----
@@ -150,10 +149,10 @@ index fbcad6d..c24f009 100644
  					create_callback, data);
  	if (session != NULL) {
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 28e60fe..94e9d64 100644
+index 386ae8b..4f20d48 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
-@@ -1595,6 +1595,19 @@ static DBusMessage *map_list_filter_fields(DBusConnection *connection,
+@@ -1594,6 +1594,19 @@ static DBusMessage *map_list_filter_fields(DBusConnection *connection,
  	return reply;
  }
  
@@ -173,7 +172,7 @@ index 28e60fe..94e9d64 100644
  static void update_inbox_cb(struct obc_session *session,
  				struct obc_transfer *transfer,
  				GError *err, void *user_data)
-@@ -1831,6 +1844,10 @@ static const GDBusMethodTable map_methods[] = {
+@@ -1830,6 +1843,10 @@ static const GDBusMethodTable map_methods[] = {
  			GDBUS_ARGS({ "transfer", "o" },
  						{ "properties", "a{sv}" }),
  			map_push_message) },
@@ -265,10 +264,10 @@ index b035cfc..ff17edf 100644
  	int (*getpacketopt) (GIOChannel *io, int *tx_mtu, int *rx_mtu);
  	void (*disconnect) (guint id);
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index 9ed336a..275950a 100644
+index a190834..76565c9 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -127,6 +127,7 @@ static void connect_reply(DBusMessage *message, void *user_data)
+@@ -126,6 +126,7 @@ static void connect_reply(DBusMessage *message, void *user_data)
  struct connect_args {
  	char *dev;
  	char *target;
@@ -276,7 +275,7 @@ index 9ed336a..275950a 100644
  };
  
  static void connect_args_free(void *data)
-@@ -157,6 +158,8 @@ static void connect_setup(DBusMessageIter *iter, void *user_data)
+@@ -156,6 +157,8 @@ static void connect_setup(DBusMessageIter *iter, void *user_data)
  
  	g_dbus_dict_append_entry(&dict, "Target",
  					DBUS_TYPE_STRING, &args->target);
@@ -285,7 +284,7 @@ index 9ed336a..275950a 100644
  
  done:
  	dbus_message_iter_close_container(iter, &dict);
-@@ -166,6 +169,7 @@ static void cmd_connect(int argc, char *argv[])
+@@ -165,6 +168,7 @@ static void cmd_connect(int argc, char *argv[])
  {
  	struct connect_args *args;
  	const char *target = "opp";
@@ -293,7 +292,7 @@ index 9ed336a..275950a 100644
  
  	if (!client) {
  		bt_shell_printf("Client proxy not available\n");
-@@ -175,9 +179,13 @@ static void cmd_connect(int argc, char *argv[])
+@@ -174,9 +178,13 @@ static void cmd_connect(int argc, char *argv[])
  	if (argc > 2)
  		target = argv[2];
  
@@ -307,7 +306,7 @@ index 9ed336a..275950a 100644
  
  	if (g_dbus_proxy_method_call(client, "CreateSession", connect_setup,
  			connect_reply, args, connect_args_free) == FALSE) {
-@@ -1845,7 +1853,7 @@ static void cmd_mkdir(int argc, char *argv[])
+@@ -1844,7 +1852,7 @@ static void cmd_mkdir(int argc, char *argv[])
  static const struct bt_shell_menu main_menu = {
  	.name = "main",
  	.entries = {
@@ -316,7 +315,7 @@ index 9ed336a..275950a 100644
  	{ "disconnect",   "[session]", cmd_disconnect, "Disconnect session",
  						session_generator },
  	{ "list",         NULL,       cmd_list, "List available sessions" },
-@@ -1865,7 +1873,8 @@ static const struct bt_shell_menu main_menu = {
+@@ -1864,7 +1872,8 @@ static const struct bt_shell_menu main_menu = {
  	{ "pull",	  "<file>",   cmd_pull,
  					"Pull Vobject & stores in file" },
  	{ "cd",           "<path>",   cmd_cd, "Change current folder" },
@@ -326,3 +325,6 @@ index 9ed336a..275950a 100644
  	{ "cp",          "<source file> <destination file>",   cmd_cp,
  				"Copy source file to destination file" },
  	{ "mv",          "<source file> <destination file>",   cmd_mv,
+-- 
+2.17.1
+

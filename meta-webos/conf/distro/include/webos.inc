@@ -370,3 +370,6 @@ INHERIT += "reproducible_build_simple"
 # Override setting in upstream fontcache.bbclass and fontconfig recipe
 FONTCONFIG_CACHE_DIR = "${datadir}/fontconfig/cache"
 FONTCONFIG_CACHE_ENV = "FC_DEBUG=16"
+
+#Temporary downgrade bluez5 5.54 to 5.50
+BBMASK += "meta-raspberrypi/recipes-connectivity/bluez5/bluez5_%.bbappend"

@@ -1,4 +1,4 @@
-From 5fbf86a41d5bb226424c3d68b1e25a1e8d9f1ff0 Mon Sep 17 00:00:00 2001
+From 9cd02c35c83267a36ad351cd0af66c70bfad6791 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 22 Jul 2018 18:59:45 +0530
 Subject: [PATCH] Fix Gatt connect when device address type is BDADDR_LE_PUBLIC
@@ -24,15 +24,16 @@ Builded and Tested gatt connect from RPI to RPI
 
 Change-Id: I46a3a5fa56d055c54ed16167d6dc2a14ad473615
 Upstream-Status: Pending
+
 ---
  src/device.c | 28 ++++++++++++++++++++++++++++
  1 file changed, 28 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index 48ffb0bc9..7ab53be08 100644
+index c95bab6..efe71a6 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2003,6 +2003,33 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,
+@@ -2001,6 +2001,33 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,
  	return connect_profiles(dev, bdaddr_type, msg, NULL);
  }
  
@@ -66,7 +67,7 @@ index 48ffb0bc9..7ab53be08 100644
  static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
  							void *user_data)
  {
-@@ -2752,6 +2779,7 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -2712,6 +2739,7 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },

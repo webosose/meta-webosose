@@ -1,4 +1,4 @@
-From 27e3b7f4fa299dc57695518d09da33d568450673 Mon Sep 17 00:00:00 2001
+From 201e050489cefda52e21e36ca18f173cc1be3560 Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Mon, 27 Apr 2020 11:56:21 +0530
 Subject: [PATCH] Fix device/getStatus not updated when unpaired
@@ -23,16 +23,15 @@ Builded and Tested
 [PLAT-102335] Test and fix hfp/getStatus for multiple adapter
 
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  src/device.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/src/device.c b/src/device.c
-index ce0fc0a..5293d80 100644
+index 8c1ce7f..37e8831 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -1709,13 +1709,13 @@ static void device_profile_connected(struct btd_device *dev,
+@@ -1707,13 +1707,13 @@ static void device_profile_connected(struct btd_device *dev,
  
  	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
  
@@ -50,3 +49,6 @@ index ce0fc0a..5293d80 100644
  	}
  
  	if (dev->pending == NULL)
+-- 
+2.17.1
+

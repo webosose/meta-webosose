@@ -1,4 +1,4 @@
-From 128e279b936a0443b9bffd8b3969e1e1a7c65048 Mon Sep 17 00:00:00 2001
+From 169f37ed37703f3a7bb8f3e569455f4ed8450c9c Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 14 Apr 2020 15:28:07 +0530
 Subject: [PATCH] Fix for updating connected uuids when profile is disconnected
@@ -18,16 +18,15 @@ Builded and Tested
 [PLAT-102923] Implement disconnect to AVRCP target
 
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  src/device.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index a5f5cf5..ce0fc0a 100644
+index eecef05..7c1d344 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2210,7 +2210,10 @@ static void device_profile_disconnected(struct btd_device *dev,
+@@ -2208,7 +2208,10 @@ static void device_profile_disconnected(struct btd_device *dev,
  	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
  	if (!err) {
  		if (dev->connected_uuids)
@@ -39,3 +38,6 @@ index a5f5cf5..ce0fc0a 100644
  		g_dbus_emit_property_changed(dbus_conn, dev->path,
  						DEVICE_INTERFACE, "ConnectedUUIDS");
  	}
+-- 
+2.17.1
+

@@ -1,4 +1,4 @@
-From 8c76e6fd74ae6094f8130f02e3f08d8b3b041243 Mon Sep 17 00:00:00 2001
+From b534c8c2113eb8dbbeadaa77caaa0064caebd617 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Mon, 21 Jan 2019 12:44:19 +0530
 Subject: [PATCH] Fix volume property not able to set
@@ -21,16 +21,15 @@ Built and tested
 Upstream-status: Pending
 
 Change-Id: I183357a5de4b95a6e02d39d9d51c4af715bf0a54
-
 ---
  profiles/audio/transport.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
-index 48fabba..0b8f4fd 100644
+index b9d357e..47747d0 100644
 --- a/profiles/audio/transport.c
 +++ b/profiles/audio/transport.c
-@@ -824,7 +824,7 @@ static int media_transport_init_source(struct media_transport *transport)
+@@ -802,7 +802,7 @@ static int media_transport_init_source(struct media_transport *transport)
  	transport->data = a2dp;
  	transport->destroy = destroy_a2dp;
  
@@ -39,3 +38,5 @@ index 48fabba..0b8f4fd 100644
  	transport->sink_watch = sink_add_state_cb(service, sink_state_changed,
  								transport);
  
+-- 
+2.7.4
