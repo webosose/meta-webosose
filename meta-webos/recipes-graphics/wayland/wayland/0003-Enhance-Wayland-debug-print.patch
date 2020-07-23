@@ -1,4 +1,4 @@
-From dc5ad3922246a0a6fdce230bd95cc638d9f587c2 Mon Sep 17 00:00:00 2001
+From 67c72d6e95e9895363271b347b6670bd8d3fc53b Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 27 Jan 2015 16:45:01 +0900
 Subject: [PATCH] Enhance Wayland debug print
@@ -17,15 +17,15 @@ Upstream-Status: Inappropriate [webOS specific]
 ---
  Makefile.am           |  14 ++++++
  configure.ac          |  12 +++++
- src/connection.c      | 103 ++++++++++++++++++++++++++++++++++--------
+ src/connection.c      | 105 ++++++++++++++++++++++++++++++++++--------
  src/wayland-client.c  |   6 +--
  src/wayland-private.h |   2 +-
  src/wayland-server.c  |  80 +++++++++++++++++++++++++++++++-
  src/wayland-util.c    |  18 ++++++++
- 7 files changed, 211 insertions(+), 24 deletions(-)
+ 7 files changed, 212 insertions(+), 25 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 697c517..a3d2b57 100644
+index f47d055..c9c1678 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -44,6 +44,12 @@ libwayland_util_la_CFLAGS = $(AM_CFLAGS)
@@ -64,7 +64,7 @@ index 697c517..a3d2b57 100644
  libwayland_client_la_SOURCES =			\
  	src/wayland-client.c
 diff --git a/configure.ac b/configure.ac
-index f05fba4..f27a5d1 100644
+index 8d56f2b..9641445 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -93,6 +93,13 @@ AM_CONDITIONAL(USE_HOST_SCANNER, test "x$with_host_scanner" = xyes)
@@ -94,7 +94,7 @@ index f05fba4..f27a5d1 100644
  AM_CONDITIONAL([HAVE_XSLTPROC], [test "x$XSLTPROC" != "x"])
  
 diff --git a/src/connection.c b/src/connection.c
-index f965210..29164be 100644
+index 7fba999..0cf2e18 100644
 --- a/src/connection.c
 +++ b/src/connection.c
 @@ -64,6 +64,49 @@ struct wl_buffer {
@@ -147,7 +147,7 @@ index f965210..29164be 100644
  struct wl_connection {
  	struct wl_buffer in, out;
  	struct wl_buffer fds_in, fds_out;
-@@ -1244,18 +1287,41 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection)
+@@ -1252,18 +1295,41 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection)
  }
  
  void
@@ -192,7 +192,7 @@ index f965210..29164be 100644
  		time / 1000.0,
  		send ? " -> " : "",
  		target->interface->name, target->id,
-@@ -1264,50 +1330,51 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send)
+@@ -1272,53 +1338,54 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target, int send)
  	for (i = 0; i < closure->count; i++) {
  		signature = get_next_argument(signature, &arg);
  		if (i > 0)
@@ -215,8 +215,12 @@ index f965210..29164be 100644
  				wl_fixed_to_double(closure->args[i].f));
  			break;
  		case 's':
--			fprintf(stderr, "\"%s\"", closure->args[i].s);
-+			fprintf(debug_fp, "\"%s\"", closure->args[i].s);
+ 			if (closure->args[i].s)
+-				fprintf(stderr, "\"%s\"", closure->args[i].s);
++				fprintf(debug_fp, "\"%s\"", closure->args[i].s);
+ 			else
+-				fprintf(stderr, "nil");
++				fprintf(debug_fp, "nil");
  			break;
  		case 'o':
  			if (closure->args[i].o)
@@ -260,10 +264,10 @@ index f965210..29164be 100644
  
  static int
 diff --git a/src/wayland-client.c b/src/wayland-client.c
-index 4c0c46e..bf44b81 100644
+index 49b7df5..f66fb91 100644
 --- a/src/wayland-client.c
 +++ b/src/wayland-client.c
-@@ -748,7 +748,7 @@ wl_proxy_marshal_array_constructor_versioned(struct wl_proxy *proxy,
+@@ -751,7 +751,7 @@ wl_proxy_marshal_array_constructor_versioned(struct wl_proxy *proxy,
  		wl_abort("Error marshalling request: %s\n", strerror(errno));
  
  	if (debug_client)
@@ -272,7 +276,7 @@ index 4c0c46e..bf44b81 100644
  
  	if (wl_closure_send(closure, proxy->display->connection))
  		wl_abort("Error sending request: %s\n", strerror(errno));
-@@ -1423,13 +1423,13 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
+@@ -1426,13 +1426,13 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
  
  	if (proxy->dispatcher) {
  		if (debug_client)
@@ -302,7 +306,7 @@ index 29516ec..c6eaa60 100644
  void
  wl_closure_destroy(struct wl_closure *closure);
 diff --git a/src/wayland-server.c b/src/wayland-server.c
-index 0e07746..f8e27cb 100644
+index 20681e6..7567b23 100644
 --- a/src/wayland-server.c
 +++ b/src/wayland-server.c
 @@ -137,6 +137,7 @@ struct wl_protocol_logger {
@@ -330,7 +334,7 @@ index 0e07746..f8e27cb 100644
  
  	if (!wl_list_empty(&display->protocol_loggers)) {
  		message.resource = resource;
-@@ -989,6 +996,71 @@ bind_display(struct wl_client *client, struct wl_display *display)
+@@ -1022,6 +1029,71 @@ bind_display(struct wl_client *client, struct wl_display *display)
  	return 0;
  }
  
@@ -402,7 +406,7 @@ index 0e07746..f8e27cb 100644
  /** Create Wayland display object.
   *
   * \return The Wayland display object. Null if failed to create
-@@ -1034,6 +1106,8 @@ wl_display_create(void)
+@@ -1067,6 +1139,8 @@ wl_display_create(void)
  
  	wl_array_init(&display->additional_shm_formats);
  
@@ -411,7 +415,7 @@ index 0e07746..f8e27cb 100644
  	return display;
  }
  
-@@ -1103,6 +1177,8 @@ wl_display_destroy(struct wl_display *display)
+@@ -1136,6 +1210,8 @@ wl_display_destroy(struct wl_display *display)
  
  	wl_list_remove(&display->protocol_loggers);
  
