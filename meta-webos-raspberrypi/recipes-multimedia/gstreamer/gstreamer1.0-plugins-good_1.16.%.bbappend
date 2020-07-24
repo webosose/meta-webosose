@@ -1,8 +1,12 @@
 # Copyright (c) 2018-2020 LG Electronics, Inc.
-require gstreamer1.0-webos-common.inc
 
-EXTENDPRAUTO_append_rpi = "webosrpi1"
+EXTENDPRAUTO_append_rpi = "webosrpi2"
 
-WEBOS_REPO_NAME_rpi = "gst-plugins-good"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-WEBOS_VERSION_rpi = "1.14.4-2_9e2af695c462225d725c1b90494d08febbf33858"
+SRC_URI_append_raspberrypi4 = " \
+    file://0001-v4l2-fix-buffer-pool-poll-wait-after-flush.patch \
+    file://0002-v4l2videodec-Check-stop-in-flush-to-avoid-race-condi.patch \
+"
+
+PACKAGECONFIG_append_raspberrypi4 = " libv4l2"

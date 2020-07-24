@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi3"
+EXTENDPRAUTO_append_rpi = "webosrpi4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -12,4 +12,3 @@ do_configure_append() {
     sed -i 's/export MSE_VIDEO_BUFFER_SIZE_LIMIT.*/export MSE_VIDEO_BUFFER_SIZE_LIMIT=15728640/' ${B}/webapp-mgr.sh
 }
 
-SRC_URI_append = " file://0001-disable-neva-media-for-use-software-codec.patch"
