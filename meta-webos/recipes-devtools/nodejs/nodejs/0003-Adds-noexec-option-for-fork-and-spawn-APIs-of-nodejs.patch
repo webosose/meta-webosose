@@ -1,6 +1,6 @@
-From 74c81994b5f895a195c0cae58d70645dfbb9ecdb Mon Sep 17 00:00:00 2001
-From: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
-Date: Thu, 28 May 2015 21:12:34 +0300
+From 96d6a577160ae7c23a460c192344c72446214c5b Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Wed, 15 Jul 2020 15:08:14 +0900
 Subject: [PATCH] Adds noexec option for fork and spawn APIs of nodejs
 
 :Release Notes:
@@ -29,43 +29,34 @@ dynamic system services.
 [DRD-4340] Using fork for loading new node instance
 
 Change-Id: I66437f45c8134a0094ea2836e39ef9162ca0c058
-Open-webOS-DCO-1.0-Signed-off-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
-Reviewed-on: https://gpro.lgsvl.com/111236
-Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
-Tested-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
-Reviewed-by: Ievgen Sherstobitov <ievgen.sherstobitov@lge.com>
-Reviewed-by: Andrii Koval <andrii.koval@lge.com>
-Reviewed-by: Alexander Pryadka <alexander.pryadka@lge.com>
-Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
 ---
- deps/uv/include/uv.h          |  7 ++++++-
- deps/uv/src/unix/process.c    | 47 +++++++++++++++++++++++++++++++++++++------
- lib/child_process.js          |  3 ++-
- lib/internal/child_process.js |  4 ++++
- src/env.h                     |  1 +
- src/process_wrap.cc           |  6 ++++++
- 6 files changed, 60 insertions(+), 8 deletions(-)
+ deps/uv/include/uv.h          |  7 +++++-
+ deps/uv/src/unix/process.c    | 46 +++++++++++++++++++++++++++++++----
+ lib/internal/child_process.js |  4 +++
+ src/env.h                     |  3 ++-
+ src/process_wrap.cc           |  6 +++++
+ 5 files changed, 59 insertions(+), 7 deletions(-)
 
 diff --git a/deps/uv/include/uv.h b/deps/uv/include/uv.h
-index ca138e4..c22ec08 100644
+index 54048ab3..10976f82 100644
 --- a/deps/uv/include/uv.h
 +++ b/deps/uv/include/uv.h
-@@ -967,7 +967,12 @@ enum uv_process_flags {
+@@ -1018,7 +1018,12 @@ enum uv_process_flags {
     * option is only meaningful on Windows systems. On Unix it is silently
     * ignored.
     */
--  UV_PROCESS_WINDOWS_HIDE = (1 << 4)
-+  UV_PROCESS_WINDOWS_HIDE = (1 << 4),
+-  UV_PROCESS_WINDOWS_HIDE_GUI = (1 << 6)
++  UV_PROCESS_WINDOWS_HIDE_GUI = (1 << 6),
 +  /*
 +   * Fork new process without exec system call. This option is only meaningful
 +   * on Linux systems.
 +   */
-+  UV_PROCESS_NO_EXEC = (1 << 5)
++  UV_PROCESS_NO_EXEC = (1 << 7)
  };
  
  /*
 diff --git a/deps/uv/src/unix/process.c b/deps/uv/src/unix/process.c
-index 101c9c5..34a01d6 100644
+index bb6b76c9..68b039d4 100644
 --- a/deps/uv/src/unix/process.c
 +++ b/deps/uv/src/unix/process.c
 @@ -373,7 +373,29 @@ static void uv__process_child_init(const uv_process_options_t* options,
@@ -99,7 +90,7 @@ index 101c9c5..34a01d6 100644
    }
  
    /* Reset signal disposition.  Use a hard-coded limit because NSIG
-@@ -401,9 +423,11 @@ static void uv__process_child_init(const uv_process_options_t* options,
+@@ -406,9 +428,11 @@ static void uv__process_child_init(const uv_process_options_t* options,
      _exit(127);
    }
  
@@ -114,18 +105,17 @@ index 101c9c5..34a01d6 100644
  }
  #endif
  
-@@ -431,8 +455,8 @@ int uv_spawn(uv_loop_t* loop,
-                               UV_PROCESS_SETGID |
-                               UV_PROCESS_SETUID |
+@@ -438,7 +462,8 @@ int uv_spawn(uv_loop_t* loop,
                                UV_PROCESS_WINDOWS_HIDE |
+                               UV_PROCESS_WINDOWS_HIDE_CONSOLE |
+                               UV_PROCESS_WINDOWS_HIDE_GUI |
 -                              UV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS)));
--
 +                              UV_PROCESS_WINDOWS_VERBATIM_ARGUMENTS |
 +                              UV_PROCESS_NO_EXEC)));
+ 
    uv__handle_init(loop, (uv_handle_t*)process, UV_PROCESS);
    QUEUE_INIT(&process->queue);
- 
-@@ -499,6 +523,17 @@ int uv_spawn(uv_loop_t* loop,
+@@ -506,6 +531,17 @@ int uv_spawn(uv_loop_t* loop,
  
    if (pid == 0) {
      uv__process_child_init(options, stdio_count, pipes, signal_pipe[1]);
@@ -143,25 +133,11 @@ index 101c9c5..34a01d6 100644
      abort();
    }
  
-diff --git a/lib/child_process.js b/lib/child_process.js
-index f08acd7..360f974 100644
---- a/lib/child_process.js
-+++ b/lib/child_process.js
-@@ -545,7 +545,8 @@ var spawn = exports.spawn = function spawn(/* file, args, options */) {
-     envPairs: opts.envPairs,
-     stdio: options.stdio,
-     uid: options.uid,
--    gid: options.gid
-+    gid: options.gid,
-+    noexec: options.noexec
-   });
- 
-   return child;
 diff --git a/lib/internal/child_process.js b/lib/internal/child_process.js
-index b142237..738dca8 100644
+index 9872edca..3d48ac4c 100644
 --- a/lib/internal/child_process.js
 +++ b/lib/internal/child_process.js
-@@ -368,6 +368,10 @@ ChildProcess.prototype.spawn = function(options) {
+@@ -396,6 +396,10 @@ ChildProcess.prototype.spawn = function(options) {
  
    this.pid = this._handle.pid;
  
@@ -173,22 +149,24 @@ index b142237..738dca8 100644
      const stream = stdio[i];
      if (stream.type === 'ignore') continue;
 diff --git a/src/env.h b/src/env.h
-index 66c69e8..968c7ed 100644
+index 60cb1b6d..43bd2a11 100644
 --- a/src/env.h
 +++ b/src/env.h
-@@ -314,6 +314,7 @@ struct PackageConfig {
-   V(write_queue_size_string, "writeQueueSize")                                \
-   V(x_forwarded_string, "x-forwarded-for")                                    \
-   V(zero_return_string, "ZERO_RETURN")                                        \
-+  V(noexec_string, "noexec")                                                  \
+@@ -376,7 +376,8 @@ constexpr size_t kFsStatsBufferLength =
+   V(write_host_object_string, "_writeHostObject")                              \
+   V(write_queue_size_string, "writeQueueSize")                                 \
+   V(x_forwarded_string, "x-forwarded-for")                                     \
+-  V(zero_return_string, "ZERO_RETURN")
++  V(zero_return_string, "ZERO_RETURN")                                         \
++  V(noexec_string, "noexec")                                                   \
  
- #define ENVIRONMENT_STRONG_PERSISTENT_PROPERTIES(V)                           \
-   V(as_external, v8::External)                                                \
+ #define ENVIRONMENT_STRONG_PERSISTENT_TEMPLATES(V)                             \
+   V(as_callback_data_template, v8::FunctionTemplate)                           \
 diff --git a/src/process_wrap.cc b/src/process_wrap.cc
-index cd443b3..32e2410 100644
+index a75f271d..74634928 100644
 --- a/src/process_wrap.cc
 +++ b/src/process_wrap.cc
-@@ -180,6 +180,12 @@ class ProcessWrap : public HandleWrap {
+@@ -181,6 +181,12 @@ class ProcessWrap : public HandleWrap {
      node::Utf8Value file(env->isolate(), file_v);
      options.file = *file;
  
@@ -201,3 +179,6 @@ index cd443b3..32e2410 100644
      // options.args
      Local<Value> argv_v =
          js_options->Get(context, env->args_string()).ToLocalChecked();
+-- 
+2.17.1
+

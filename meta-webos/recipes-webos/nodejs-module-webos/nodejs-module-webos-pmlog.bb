@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "pmloglib node-gyp-native vim-native"
 
-WEBOS_VERSION = "3.0.1-2_9a20ae958c3cb8be538f39107360aa1cf071ecfd"
-PR = "r7"
+WEBOS_VERSION = "3.0.1-3_62c93c2b61f40225b5d88ee1aa331c46f5aa2b3d"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -21,40 +21,26 @@ inherit python3native
 
 export PYTHON = "python"
 
-NODE_VERSION = "8.12.0"
+NODE_VERSION = "12.14.1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.xz;name=node \
 "
-SRC_URI[node.md5sum] = "8b3abd033dae96b6fadcb6a872a44d3c"
-SRC_URI[node.sha256sum] = "5a9dff58016c18fb4bf902d963b124ff058a550ebcd9840c677757387bce419a"
+SRC_URI[node.md5sum] = "1c78a75f5c95321f533ecccca695e814"
+SRC_URI[node.sha256sum] = "877b4b842318b0e09bc754faf7343f2f097f0fc4f88ab9ae57cf9944e88e7adb"
+
 S = "${WORKDIR}/git"
-
-do_configure() {
-    export HOME=${WORKDIR}
-    export LD="${CXX}"
-    cd src
-    sh -c "xxd -i pmloglib.js > pmloglib.js.h"
-    cd ..
-    node-gyp --arch ${TARGET_ARCH} --nodedir "${WORKDIR}/node-v${NODE_VERSION}" configure
-}
-
-do_compile() {
-    export HOME=${WORKDIR}
-    export LD="${CXX}"
-    node-gyp --arch ${TARGET_ARCH} build
-}
 
 do_install() {
     install -d ${D}${libdir}/nodejs
-    install ${S}/build/Release/pmloglib.node ${D}${libdir}/nodejs/pmloglib.node
+    install ${S}/src/pmloglib_mock.js ${D}${libdir}/nodejs/pmloglib.js
 }
 
 # XXX Temporarily add symlink to old location until all users of it are changed
 FILES_${PN} += "${webos_prefix}/nodejs"
 do_install_append() {
     install -d ${D}${webos_prefix}/nodejs
-    ln -svnf ${libdir}/nodejs/pmloglib.node ${D}${webos_prefix}/nodejs/
+    ln -svnf ${libdir}/nodejs/pmloglib.js ${D}${webos_prefix}/nodejs/
 }
 
 FILES_${PN} += "${libdir}/nodejs"

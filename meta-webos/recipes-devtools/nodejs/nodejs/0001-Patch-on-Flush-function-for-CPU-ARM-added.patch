@@ -1,7 +1,7 @@
-From fcc7df4a1c862d18f9f4db9f216bec07ae397fe0 Mon Sep 17 00:00:00 2001
-From: Oleksandr Ivanov <oleksandr.ivanov@lge.com>
-Date: Thu, 24 Aug 2017 13:24:35 -0700
-Subject: [PATCH] Patch on Flush function for CPU ARM added
+From acb5c8d7ba023562ddc6eaf47575dee36fe3dcee Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Wed, 15 Jul 2020 12:43:00 +0900
+Subject: [PATCH 1/6] Patch on Flush function for CPU ARM added
 
 :Release Notes:
 Switch to nodejs v0.12.2
@@ -22,14 +22,14 @@ Ivanov<oleksandr.ivanov@lge.com>
 
 Change-Id: I5a5cd137beba13920077a2750acb728c9614b914
 ---
- deps/v8/src/arm/cpu-arm.cc | 22 ++++++++++++++++++++++
+ deps/v8/src/codegen/arm/cpu-arm.cc | 22 ++++++++++++++++++++++
  1 file changed, 22 insertions(+)
 
-diff --git a/deps/v8/src/arm/cpu-arm.cc b/deps/v8/src/arm/cpu-arm.cc
-index f5d2ab1..76aec01 100644
---- a/deps/v8/src/arm/cpu-arm.cc
-+++ b/deps/v8/src/arm/cpu-arm.cc
-@@ -20,11 +20,31 @@
+diff --git a/deps/v8/src/codegen/arm/cpu-arm.cc b/deps/v8/src/codegen/arm/cpu-arm.cc
+index 868f360d..b07c842b 100644
+--- a/deps/v8/src/codegen/arm/cpu-arm.cc
++++ b/deps/v8/src/codegen/arm/cpu-arm.cc
+@@ -19,6 +19,10 @@
  namespace v8 {
  namespace internal {
  
@@ -37,8 +37,10 @@ index f5d2ab1..76aec01 100644
 +  int flushICache(void* start, size_t size);    //forward declaration
 +}
 +
- void CpuFeatures::FlushICache(void* start, size_t size) {
- #if !defined(USE_SIMULATOR)
+ // The inlining of this seems to trigger an LTO bug that clobbers a register,
+ // see https://crbug.com/952759 and https://bugs.llvm.org/show_bug.cgi?id=41575.
+ V8_NOINLINE void CpuFeatures::FlushICache(void* start, size_t size) {
+@@ -26,6 +30,22 @@ V8_NOINLINE void CpuFeatures::FlushICache(void* start, size_t size) {
  #if V8_OS_QNX
    msync(start, size, MS_SYNC | MS_INVALIDATE_ICACHE);
  #else
@@ -61,12 +63,15 @@ index f5d2ab1..76aec01 100644
    register uint32_t beg asm("r0") = reinterpret_cast<uint32_t>(start);
    register uint32_t end asm("r1") = beg + size;
    register uint32_t flg asm("r2") = 0;
-@@ -57,6 +77,8 @@ void CpuFeatures::FlushICache(void* start, size_t size) {
-     :
-     : "r" (beg), "r" (end), "r" (flg), [scno] "i" (__ARM_NR_cacheflush)
-     : "memory");
+@@ -58,6 +78,8 @@ V8_NOINLINE void CpuFeatures::FlushICache(void* start, size_t size) {
+       :
+       : "r"(beg), "r"(end), "r"(flg), [scno] "i"(__ARM_NR_cacheflush)
+       : "memory");
 +  return (int) (beg);
 +}
  #endif
  #endif
  #endif  // !USE_SIMULATOR
+-- 
+2.17.1
+

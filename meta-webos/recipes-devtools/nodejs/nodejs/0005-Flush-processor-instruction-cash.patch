@@ -1,6 +1,6 @@
-From a55f1bf398ee20905aa115eca00456d6f93e15c9 Mon Sep 17 00:00:00 2001
-From: Alexander Pryadka <alexander.pryadka@lge.com>
-Date: Thu, 9 Jul 2015 12:46:14 +0300
+From f5f452c8314e864d3f8a4feeda76abb136a341d9 Mon Sep 17 00:00:00 2001
+From: "sungmok.shin" <sungmok.shin@lge.com>
+Date: Wed, 15 Jul 2020 15:21:08 +0900
 Subject: [PATCH] Flush processor instruction cash
 
 :Release Notes:
@@ -22,27 +22,23 @@ with apropriate functionality.
 [PLAT-493] Fix Patch on Flush function for CPU ARM
 
 Change-Id: Ifb819ef4ac7d16366e81bb4b0f3ca5eb8f0d3bb9
-Reviewed-on: https://gpro.lgsvl.com/112555
-Reviewed-by: Kostyantyn Ivanov <ivanov.kostyantyn@lge.com>
-Reviewed-by: Sergii Nikolaiev <sergii.nikolaiev@lge.com>
-Reviewed-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
-Tested-by: Sergiy Kryvonos <sergiy.kryvonos@lge.com>
-Open-webOS-DCO-1.0-Signed-off-by: Alexander Pryadka <alexander.pryadka@lge.com>
 ---
- deps/v8/src/arm/cpu-arm.cc | 3 +++
- 1 file changed, 3 insertions(+)
+ deps/v8/src/codegen/arm/cpu-arm.cc | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/deps/v8/src/arm/cpu-arm.cc b/deps/v8/src/arm/cpu-arm.cc
-index 76aec01..1db258d 100644
---- a/deps/v8/src/arm/cpu-arm.cc
-+++ b/deps/v8/src/arm/cpu-arm.cc
-@@ -28,6 +28,9 @@ void CpuFeatures::FlushICache(void* start, size_t size) {
+diff --git a/deps/v8/src/codegen/arm/cpu-arm.cc b/deps/v8/src/codegen/arm/cpu-arm.cc
+index b07c842b..fe402365 100644
+--- a/deps/v8/src/codegen/arm/cpu-arm.cc
++++ b/deps/v8/src/codegen/arm/cpu-arm.cc
+@@ -29,6 +29,8 @@ V8_NOINLINE void CpuFeatures::FlushICache(void* start, size_t size) {
  #if !defined(USE_SIMULATOR)
  #if V8_OS_QNX
    msync(start, size, MS_SYNC | MS_INVALIDATE_ICACHE);
-+
 +#elif defined(__GNUC__)
 +  __builtin___clear_cache(start, start+size);
  #else
    const int N_RETRIES = 100;
    int err = 0;
+-- 
+2.17.1
+

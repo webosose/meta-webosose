@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
-WEBOS_VERSION = "3.0.1-3_58f0677e68d136b3f1304d8a23cd24556c3bc847"
-PR = "r11"
+WEBOS_VERSION = "3.0.1-4_e2220cc994cf458e881a5992970ff3901b7ffea3"
+PR = "r12"
 
 inherit webos_component
 inherit webos_public_repo
@@ -21,13 +21,13 @@ inherit python3native
 
 export PYTHON = "python"
 
-NODE_VERSION = "8.12.0"
+NODE_VERSION = "12.14.1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.xz;name=node \
 "
-SRC_URI[node.md5sum] = "8b3abd033dae96b6fadcb6a872a44d3c"
-SRC_URI[node.sha256sum] = "5a9dff58016c18fb4bf902d963b124ff058a550ebcd9840c677757387bce419a"
+SRC_URI[node.md5sum] = "1c78a75f5c95321f533ecccca695e814"
+SRC_URI[node.sha256sum] = "877b4b842318b0e09bc754faf7343f2f097f0fc4f88ab9ae57cf9944e88e7adb"
 S = "${WORKDIR}/git"
 
 do_configure() {
