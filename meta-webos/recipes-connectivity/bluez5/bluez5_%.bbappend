@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos17"
+EXTENDPRAUTO_append = "webos18"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -31,6 +31,7 @@ SRC_URI += " \
     file://0019-Set-default-pairing-capability-as-NoInputNoOutput.patch \
     file://0021-Modified-MapInstanceName-MapInstanceProperties-parsi.patch \
     file://0022-Enabled-EMAIL-support-based-on-MAPInstance-Name.patch \
+    file://0023-Disabling-DB-Hash-for-Gatt.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \
