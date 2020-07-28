@@ -1,4 +1,4 @@
-From d1d1fde5bb7e651ca73965e47eb202ae7d825726 Mon Sep 17 00:00:00 2001
+From 518b49f66732daae348e9e3858db717a91c5a58c Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 21 Aug 2019 20:44:57 +0900
 Subject: [PATCH] Allow to have activeFocus for each window

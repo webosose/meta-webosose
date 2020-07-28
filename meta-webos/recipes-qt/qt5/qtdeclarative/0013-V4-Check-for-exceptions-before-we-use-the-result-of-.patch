@@ -1,4 +1,4 @@
-From 3b175b0c321e39e43304ef7142eed8b75725211f Mon Sep 17 00:00:00 2001
+From 1dc12035793cd9bcdfce38a11d46126a8f6502fd Mon Sep 17 00:00:00 2001
 From: Ulf Hermann <ulf.hermann@qt.io>
 Date: Thu, 23 Jan 2020 14:19:48 +0100
 Subject: [PATCH] V4: Check for exceptions before we use the result of a JS

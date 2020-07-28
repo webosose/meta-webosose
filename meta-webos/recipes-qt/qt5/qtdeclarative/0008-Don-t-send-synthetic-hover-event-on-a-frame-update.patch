@@ -1,4 +1,4 @@
-From e11bf255b6a0627c4d3bcd1e30cce2f53ad668e7 Mon Sep 17 00:00:00 2001
+From c5cb58ee0055e0b4289854c920dae46b6b6cd396 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 12 Jun 2018 20:25:29 +0900
 Subject: [PATCH] Don't send synthetic hover event on a frame update
