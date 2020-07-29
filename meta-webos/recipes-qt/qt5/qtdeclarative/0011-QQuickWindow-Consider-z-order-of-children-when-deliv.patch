@@ -1,0 +1,298 @@
+From 4bc2e968e9dbda9767ca8790e24f4dd9b3e3cbde Mon Sep 17 00:00:00 2001
+From: YoungSun Park <cathy.park@lge.com>
+Date: Fri, 16 Aug 2019 21:32:22 +0900
+Subject: [PATCH] QQuickWindow: Consider z-order of children when delivering
+ pointer events
+
+When creating a target item list for handling pointer events, put
+children after the parent item if they have negative z-order value.
+This fixes an issue where an item does not receive a pointer event if
+there is a child item that accepts the event even when that child item
+is shown under the parent item as per the stacking order.
+
+Fixes: QTBUG-83114
+Change-Id: I711faa22516f5c2396b1138dc507bcaa4ba22241
+Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+(cherry picked from commit 3ff11ceca37dcc4b6f0420332fa7f6aa007be7f3)
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/313819]
+---
+ src/quick/items/qquickwindow.cpp              | 36 ++++++-----
+ .../data/tapHandlersOverlapped.qml            | 60 +++++++++++++++++++
+ .../qquicktaphandler/tst_qquicktaphandler.cpp | 33 ++++++++++
+ .../data/mouseAreasOverlapped.qml             | 37 ++++++++++++
+ .../qquickmousearea/tst_qquickmousearea.cpp   | 34 +++++++++++
+ 5 files changed, 186 insertions(+), 14 deletions(-)
+ create mode 100644 tests/auto/quick/pointerhandlers/qquicktaphandler/data/tapHandlersOverlapped.qml
+ create mode 100644 tests/auto/quick/qquickmousearea/data/mouseAreasOverlapped.qml
+
+diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
+index a9bbfa5b74..827329ebd9 100644
+--- a/src/quick/items/qquickwindow.cpp
++++ b/src/quick/items/qquickwindow.cpp
+@@ -2474,23 +2474,13 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
+     QVector<QQuickItem *> targets;
+     auto itemPrivate = QQuickItemPrivate::get(item);
+     QPointF itemPos = item->mapFromScene(point->scenePosition());
++    bool relevant = item->contains(itemPos);
+     // if the item clips, we can potentially return early
+     if (itemPrivate->flags & QQuickItem::ItemClipsChildrenToShape) {
+-        if (!item->contains(itemPos))
++        if (!relevant)
+             return targets;
+     }
+ 
+-    // recurse for children
+-    QList<QQuickItem *> children = itemPrivate->paintOrderChildItems();
+-    for (int ii = children.count() - 1; ii >= 0; --ii) {
+-        QQuickItem *child = children.at(ii);
+-        auto childPrivate = QQuickItemPrivate::get(child);
+-        if (!child->isVisible() || !child->isEnabled() || childPrivate->culled)
+-            continue;
+-        targets << pointerTargets(child, point, checkMouseButtons, checkAcceptsTouch);
+-    }
+-
+-    bool relevant = item->contains(itemPos);
+     if (itemPrivate->hasPointerHandlers()) {
+         if (!relevant)
+             if (itemPrivate->anyPointerHandlerWants(point))
+@@ -2501,8 +2491,26 @@ QVector<QQuickItem *> QQuickWindowPrivate::pointerTargets(QQuickItem *item, QQui
+         if (relevant && checkAcceptsTouch && !(item->acceptTouchEvents() || item->acceptedMouseButtons()))
+             relevant = false;
+     }
+-    if (relevant)
+-        targets << item; // add this item last: children take precedence
++
++    QList<QQuickItem *> children = itemPrivate->paintOrderChildItems();
++    if (relevant) {
++        auto it = std::lower_bound(children.begin(), children.end(), 0,
++           [](auto lhs, auto rhs) -> bool { return lhs->z() < rhs; });
++        children.insert(it, item);
++    }
++
++    for (int ii = children.count() - 1; ii >= 0; --ii) {
++        QQuickItem *child = children.at(ii);
++        auto childPrivate = QQuickItemPrivate::get(child);
++        if (!child->isVisible() || !child->isEnabled() || childPrivate->culled)
++            continue;
++
++        if (child != item)
++            targets << pointerTargets(child, point, checkMouseButtons, checkAcceptsTouch);
++        else
++            targets << child;
++    }
++
+     return targets;
+ }
+ 
+diff --git a/tests/auto/quick/pointerhandlers/qquicktaphandler/data/tapHandlersOverlapped.qml b/tests/auto/quick/pointerhandlers/qquicktaphandler/data/tapHandlersOverlapped.qml
+new file mode 100644
+index 0000000000..8d2e36d921
+--- /dev/null
++++ b/tests/auto/quick/pointerhandlers/qquicktaphandler/data/tapHandlersOverlapped.qml
+@@ -0,0 +1,60 @@
++/****************************************************************************
++**
++** Copyright (C) 2020 The Qt Company Ltd.
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the test suite of the Qt Toolkit.
++**
++** $QT_BEGIN_LICENSE:GPL-EXCEPT$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 3 as published by the Free Software
++** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
++** included in the packaging of this file. Please review the following
++** information to ensure the GNU General Public License requirements will
++** be met: https://www.gnu.org/licenses/gpl-3.0.html.
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++import QtQuick 2.12
++
++Item {
++    width: 300
++    height: 200
++    property var taps: []
++
++    Rectangle {
++        x: 25
++        y: 25
++        width: 200
++        height: 100
++        color: "salmon"
++
++        TapHandler {
++            objectName: "parentTapHandler"
++            onTapped: taps.push(objectName)
++        }
++
++        Rectangle {
++            x: 25
++            y: 25
++            width: 200
++            height: 100
++            color: "lightsteelblue"
++
++            TapHandler {
++                objectName: "childTapHandler"
++                onTapped: taps.push(objectName)
++            }
++        }
++    }
++}
+diff --git a/tests/auto/quick/pointerhandlers/qquicktaphandler/tst_qquicktaphandler.cpp b/tests/auto/quick/pointerhandlers/qquicktaphandler/tst_qquicktaphandler.cpp
+index 419afed3ac..294a1a79fd 100644
+--- a/tests/auto/quick/pointerhandlers/qquicktaphandler/tst_qquicktaphandler.cpp
++++ b/tests/auto/quick/pointerhandlers/qquicktaphandler/tst_qquicktaphandler.cpp
+@@ -71,6 +71,7 @@ private slots:
+     void buttonsMultiTouch();
+     void componentUserBehavioralOverride();
+     void rightLongPressIgnoreWheel();
++    void negativeZStackingOrder();
+ 
+ private:
+     void createView(QScopedPointer<QQuickView> &window, const char *fileName);
+@@ -745,6 +746,38 @@ void tst_TapHandler::rightLongPressIgnoreWheel()
+     QCOMPARE(tappedSpy.count(), 0);
+ }
+ 
++void tst_TapHandler::negativeZStackingOrder() // QTBUG-83114
++{
++    QScopedPointer<QQuickView> windowPtr;
++    createView(windowPtr, "tapHandlersOverlapped.qml");
++    QQuickView *window = windowPtr.data();
++    QQuickItem *root = window->rootObject();
++
++    QQuickTapHandler *parentTapHandler = window->rootObject()->findChild<QQuickTapHandler*>("parentTapHandler");
++    QVERIFY(parentTapHandler != nullptr);
++    QSignalSpy clickSpyParent(parentTapHandler, &QQuickTapHandler::tapped);
++    QQuickTapHandler *childTapHandler = window->rootObject()->findChild<QQuickTapHandler*>("childTapHandler");
++    QVERIFY(childTapHandler != nullptr);
++    QSignalSpy clickSpyChild(childTapHandler, &QQuickTapHandler::tapped);
++
++    QTest::mouseClick(window, Qt::LeftButton, Qt::NoModifier, QPoint(150, 100));
++    QCOMPARE(clickSpyChild.count(), 1);
++    QCOMPARE(clickSpyParent.count(), 1);
++    auto order = root->property("taps").toList();
++    QVERIFY(order.at(0) == "childTapHandler");
++    QVERIFY(order.at(1) == "parentTapHandler");
++
++    // Now change stacking order and try again.
++    childTapHandler->parentItem()->setZ(-1);
++    root->setProperty("taps", QVariantList());
++    QTest::mouseClick(window, Qt::LeftButton, Qt::NoModifier, QPoint(150, 100));
++    QCOMPARE(clickSpyChild.count(), 2);
++    QCOMPARE(clickSpyParent.count(), 2);
++    order = root->property("taps").toList();
++    QVERIFY(order.at(0) == "parentTapHandler");
++    QVERIFY(order.at(1) == "childTapHandler");
++}
++
+ QTEST_MAIN(tst_TapHandler)
+ 
+ #include "tst_qquicktaphandler.moc"
+diff --git a/tests/auto/quick/qquickmousearea/data/mouseAreasOverlapped.qml b/tests/auto/quick/qquickmousearea/data/mouseAreasOverlapped.qml
+new file mode 100644
+index 0000000000..aba574283b
+--- /dev/null
++++ b/tests/auto/quick/qquickmousearea/data/mouseAreasOverlapped.qml
+@@ -0,0 +1,37 @@
++
++import QtQuick 2.0
++
++Item {
++    width: 300
++    height:200
++    property var clicks: []
++    
++    Rectangle {
++        x: 75
++        y: 75
++        width: 200
++        height: 100
++        color: "salmon"
++
++        MouseArea {
++            objectName: "parentMouseArea"
++            anchors.fill: parent
++            onClicked: clicks.push(objectName)
++        }
++        
++        Rectangle {
++            x: 25
++            y: 25
++            width: 200
++            height: 100
++            color: "lightsteelblue"
++
++            MouseArea {
++                id: mouseArea
++                objectName: "childMouseArea"
++                anchors.fill: parent
++                onClicked: clicks.push(objectName)
++            }
++        }
++    }
++}
+diff --git a/tests/auto/quick/qquickmousearea/tst_qquickmousearea.cpp b/tests/auto/quick/qquickmousearea/tst_qquickmousearea.cpp
+index 0c44121830..bfc42bbe08 100644
+--- a/tests/auto/quick/qquickmousearea/tst_qquickmousearea.cpp
++++ b/tests/auto/quick/qquickmousearea/tst_qquickmousearea.cpp
+@@ -159,6 +159,7 @@ private slots:
+     void mask();
+     void nestedEventDelivery();
+     void settingHiddenInPressUngrabs();
++    void negativeZStackingOrder();
+ 
+ private:
+     int startDragDistance() const {
+@@ -2344,6 +2345,39 @@ void tst_QQuickMouseArea::settingHiddenInPressUngrabs()
+     QVERIFY(!mouseArea->pressed());
+ }
+ 
++void tst_QQuickMouseArea::negativeZStackingOrder() // QTBUG-83114
++{
++    QQuickView window;
++    QByteArray errorMessage;
++    QVERIFY2(QQuickTest::initView(window, testFileUrl("mouseAreasOverlapped.qml"), true, &errorMessage), errorMessage.constData());
++    window.show();
++    QVERIFY(QTest::qWaitForWindowExposed(&window));
++    QVERIFY(window.rootObject() != nullptr);
++    QQuickItem *root = window.rootObject();
++
++    QQuickMouseArea *parentMouseArea = root->findChild<QQuickMouseArea*>("parentMouseArea");
++    QVERIFY(parentMouseArea != nullptr);
++    QSignalSpy clickSpyParent(parentMouseArea, &QQuickMouseArea::clicked);
++    QQuickMouseArea *childMouseArea = root->findChild<QQuickMouseArea*>("childMouseArea");
++    QVERIFY(childMouseArea != nullptr);
++    QSignalSpy clickSpyChild(childMouseArea, &QQuickMouseArea::clicked);
++
++    QTest::mouseClick(&window, Qt::LeftButton, Qt::NoModifier, QPoint(150, 100));
++    QCOMPARE(clickSpyChild.count(), 1);
++    QCOMPARE(clickSpyParent.count(), 0);
++    auto order = root->property("clicks").toList();
++    QVERIFY(order.at(0) == "childMouseArea");
++
++    // Now change stacking order and try again.
++    childMouseArea->parentItem()->setZ(-1);
++    root->setProperty("clicks", QVariantList());
++    QTest::mouseClick(&window, Qt::LeftButton, Qt::NoModifier, QPoint(150, 100));
++    QCOMPARE(clickSpyChild.count(), 1);
++    QCOMPARE(clickSpyParent.count(), 1);
++    order = root->property("clicks").toList();
++    QVERIFY(order.at(0) == "parentMouseArea");
++}
++
+ QTEST_MAIN(tst_QQuickMouseArea)
+ 
+ #include "tst_qquickmousearea.moc"

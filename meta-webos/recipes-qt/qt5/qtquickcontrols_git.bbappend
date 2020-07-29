@@ -1,6 +1,8 @@
-# Copyright (c) 2015-2019 LG Electronics, Inc.
+# Copyright (c) 2015-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos6"
+inherit webos_qmake5
+
+EXTENDPRAUTO_append = "webos7"
 
 DEPENDS += "qtdeclarative-native"
 

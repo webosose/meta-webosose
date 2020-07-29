@@ -1,4 +1,4 @@
-From 8bf5dea6b3a8c7f58c2325e7923a8a6a17f5aeef Mon Sep 17 00:00:00 2001
+From 2ef992ed66fb0cd1550aad259ed2b22ea718fc44 Mon Sep 17 00:00:00 2001
 From: Fabian Kosmale <fabian.kosmale@qt.io>
 Date: Mon, 22 Jul 2019 13:41:11 +0200
 Subject: [PATCH] Fix nullptr handling in binding
@@ -6,6 +6,7 @@ Subject: [PATCH] Fix nullptr handling in binding
 Fixes: QTBUG-77027
 Change-Id: I61d5a20329ffe95af810b89e338eee2bc10bfe04
 Reviewed-by: Simon Hausmann <simon.hausmann@qt.io>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/268297]
 ---
  src/qml/qml/qqmlproperty.cpp                  | 12 ++++++++--
  .../qqmlproperty/data/nullPropertyBinding.qml | 22 +++++++++++++++++++

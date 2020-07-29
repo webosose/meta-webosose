@@ -1,0 +1,73 @@
+From 4f406e41d8117431f3269e4404dc74cf7c13c53e Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Wed, 16 Sep 2020 09:47:01 +0900
+Subject: [PATCH] Add webos-oe-g++ and webos-oe-clang platforms
+
+This inherits qmake.conf and qplatformdefs.h from linux-oe-g++ and
+linux-oe-clang and adds extra flags for webOS.
+
+Change-Id: Ib3b463212adf32a08459e98bca43291e3f2c6556
+Upstream-Status: Inappropriate [webOS specific]
+---
+ mkspecs/webos-oe-clang/qmake.conf      | 13 +++++++++++++
+ mkspecs/webos-oe-clang/qplatformdefs.h |  1 +
+ mkspecs/webos-oe-g++/qmake.conf        | 13 +++++++++++++
+ mkspecs/webos-oe-g++/qplatformdefs.h   |  1 +
+ 4 files changed, 28 insertions(+)
+ create mode 100644 mkspecs/webos-oe-clang/qmake.conf
+ create mode 100644 mkspecs/webos-oe-clang/qplatformdefs.h
+ create mode 100644 mkspecs/webos-oe-g++/qmake.conf
+ create mode 100644 mkspecs/webos-oe-g++/qplatformdefs.h
+
+diff --git a/mkspecs/webos-oe-clang/qmake.conf b/mkspecs/webos-oe-clang/qmake.conf
+new file mode 100644
+index 0000000000..2a3cfe8e6e
+--- /dev/null
++++ b/mkspecs/webos-oe-clang/qmake.conf
+@@ -0,0 +1,13 @@
++#
++# qmake configuration for webOS based on linux-oe-clang
++#
++
++WEBOS_EXTRA_CFLAGS = -DQ_OS_WEBOS
++WEBOS_EXTRA_CFLAGS += -DQFONTCACHE_MIN_COST=512
++
++WEBOS_EXTRA_CXXFLAGS = $$WEBOS_EXTRA_CFLAGS
++
++QMAKE_CFLAGS   += $$WEBOS_EXTRA_CFLAGS
++QMAKE_CXXFLAGS += $$WEBOS_EXTRA_CXXFLAGS
++
++include(../linux-oe-g++/qmake.conf)
+diff --git a/mkspecs/webos-oe-clang/qplatformdefs.h b/mkspecs/webos-oe-clang/qplatformdefs.h
+new file mode 100644
+index 0000000000..3f327c161f
+--- /dev/null
++++ b/mkspecs/webos-oe-clang/qplatformdefs.h
+@@ -0,0 +1 @@
++#include "../linux-oe-clang/qplatformdefs.h"
+diff --git a/mkspecs/webos-oe-g++/qmake.conf b/mkspecs/webos-oe-g++/qmake.conf
+new file mode 100644
+index 0000000000..9ca58927c2
+--- /dev/null
++++ b/mkspecs/webos-oe-g++/qmake.conf
+@@ -0,0 +1,13 @@
++#
++# qmake configuration for webOS based on linux-oe-g++
++#
++
++WEBOS_EXTRA_CFLAGS = -DQ_OS_WEBOS
++WEBOS_EXTRA_CFLAGS += -DQFONTCACHE_MIN_COST=512
++
++WEBOS_EXTRA_CXXFLAGS = $$WEBOS_EXTRA_CFLAGS
++
++QMAKE_CFLAGS   += $$WEBOS_EXTRA_CFLAGS
++QMAKE_CXXFLAGS += $$WEBOS_EXTRA_CXXFLAGS
++
++include(../linux-oe-g++/qmake.conf)
+diff --git a/mkspecs/webos-oe-g++/qplatformdefs.h b/mkspecs/webos-oe-g++/qplatformdefs.h
+new file mode 100644
+index 0000000000..b10b546bfa
+--- /dev/null
++++ b/mkspecs/webos-oe-g++/qplatformdefs.h
+@@ -0,0 +1 @@
++#include "../linux-oe-g++/qplatformdefs.h"

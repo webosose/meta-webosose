@@ -1,4 +1,4 @@
-From 8af1db18d35392586509c60148e09fe2d63de552 Mon Sep 17 00:00:00 2001
+From 7564d2b26985e83342becbc9ab89cccc24d2ae1b Mon Sep 17 00:00:00 2001
 From: "wonsang.ryu" <wonsang.ryu@lge.com>
 Date: Fri, 20 Mar 2020 18:26:47 +0900
 Subject: [PATCH] Modify the touch event for emulator
@@ -27,6 +27,7 @@ This is only for emulator
 [PLAT-103216] CCC: qtbase=webos71
 
 Change-Id: Iba52da6cffe83e90b7589503bc3e9f51694ee1aa
+Upstream-Status : Inappropriate [webOS specific]
 ---
  src/plugins/platforms/eglfs/api/api.pri       |    4 +
  .../platforms/eglfs/api/qeglfsintegration.cpp |    7 +-

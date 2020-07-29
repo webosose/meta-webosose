@@ -1,0 +1,186 @@
+From abd4a1c304978de862abe092e6548b3b2b5953c1 Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Thu, 12 Dec 2013 21:48:35 +0200
+Subject: [PATCH] Fix floating point clip rectangle rounding in raster and
+ opengl paint engine
+
+Fixes: QTBUG-83229
+Change-Id: If94028f27c9085e391acb9c423cde1b7c12bca36
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+(cherry picked from commit d9cc1499954829faf9486fb72056e29f1bad58e3)
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/306723]
+---
+ src/gui/opengl/qopenglpaintengine.cpp         |  2 +-
+ src/gui/painting/qpaintengine_raster.cpp      |  2 +-
+ .../gui/painting/qpainter/tst_qpainter.cpp    | 37 ++++++++++
+ tests/auto/gui/qopengl/tst_qopengl.cpp        | 69 +++++++++++++++++++
+ 4 files changed, 108 insertions(+), 2 deletions(-)
+
+diff --git a/src/gui/opengl/qopenglpaintengine.cpp b/src/gui/opengl/qopenglpaintengine.cpp
+index 001cb839fa..dc086d4074 100644
+--- a/src/gui/opengl/qopenglpaintengine.cpp
++++ b/src/gui/opengl/qopenglpaintengine.cpp
+@@ -2491,7 +2491,7 @@ void QOpenGL2PaintEngineEx::clip(const QVectorPath &path, Qt::ClipOperation op)
+                 && qFuzzyIsNull(state()->matrix.m11())
+                 && qFuzzyIsNull(state()->matrix.m22())))
+         {
+-            state()->rectangleClip = state()->rectangleClip.intersected(state()->matrix.mapRect(rect).toRect());
++            state()->rectangleClip = state()->rectangleClip.intersected(state()->matrix.mapRect(rect).toAlignedRect());
+             d->updateClipScissorTest();
+             return;
+         }
+diff --git a/src/gui/painting/qpaintengine_raster.cpp b/src/gui/painting/qpaintengine_raster.cpp
+index 885c46e121..2b52d9c480 100644
+--- a/src/gui/painting/qpaintengine_raster.cpp
++++ b/src/gui/painting/qpaintengine_raster.cpp
+@@ -1282,7 +1282,7 @@ void QRasterPaintEngine::clip(const QVectorPath &path, Qt::ClipOperation op)
+ #endif
+             const qreal *points = path.points();
+             QRectF r(points[0], points[1], points[4]-points[0], points[5]-points[1]);
+-            if (setClipRectInDeviceCoords(s->matrix.mapRect(r).toRect(), op))
++            if (setClipRectInDeviceCoords(s->matrix.mapRect(r).toAlignedRect(), op))
+                 return;
+         }
+     }
+diff --git a/tests/auto/gui/painting/qpainter/tst_qpainter.cpp b/tests/auto/gui/painting/qpainter/tst_qpainter.cpp
+index bc0baed15c..308549a6a3 100644
+--- a/tests/auto/gui/painting/qpainter/tst_qpainter.cpp
++++ b/tests/auto/gui/painting/qpainter/tst_qpainter.cpp
+@@ -141,6 +141,7 @@ private slots:
+ 
+     void disableEnableClipping();
+     void setClipRect();
++    void clipRect();
+     void setEqualClipRegionAndPath_data();
+     void setEqualClipRegionAndPath();
+ 
+@@ -1780,6 +1781,42 @@ void tst_QPainter::setClipRect()
+     }
+ }
+ 
++/*
++    Verify that the clipping works correctly.
++    The red outline should be covered by the blue rect on top and left,
++    while it should be clipped on the right and bottom and thus the red outline be visible
++
++    See: QTBUG-83229
++*/
++void tst_QPainter::clipRect()
++{
++    int width = 654;
++    int height = 480;
++    QRect rect(0, 0, width, height);
++
++    QImage image(width, height, QImage::Format_ARGB32);
++    QPainter p(&image);
++    qreal halfWidth = width / 2.0;
++    qreal halfHeight = height / 2.0;
++
++    QRectF clipRect = QRectF(halfWidth - halfWidth / 2.0, halfHeight - halfHeight / 2.0,
++                             halfWidth / 2.0, halfHeight / 2.0);
++
++    p.fillRect(rect, Qt::white);
++    p.setPen(Qt::red);
++    p.drawRect(clipRect);
++
++    p.setClipRect(clipRect, Qt::ReplaceClip);
++    p.fillRect(rect, Qt::blue);
++
++    p.end();
++
++    QCOMPARE(image.pixelColor(clipRect.left() + 1, clipRect.top()), QColor(Qt::blue));
++    QCOMPARE(image.pixelColor(clipRect.left(), clipRect.top() + 1), QColor(Qt::blue));
++    QCOMPARE(image.pixelColor(clipRect.left() + 1, clipRect.bottom()), QColor(Qt::red));
++    QCOMPARE(image.pixelColor(clipRect.right(), clipRect.top() + 1), QColor(Qt::red));
++}
++
+ /*
+     This tests the two different clipping approaches in QRasterPaintEngine,
+     one when using a QRegion and one when using a QPainterPath. They should
+diff --git a/tests/auto/gui/qopengl/tst_qopengl.cpp b/tests/auto/gui/qopengl/tst_qopengl.cpp
+index ede1e58a53..58ed46be1d 100644
+--- a/tests/auto/gui/qopengl/tst_qopengl.cpp
++++ b/tests/auto/gui/qopengl/tst_qopengl.cpp
+@@ -101,6 +101,7 @@ private slots:
+     void defaultSurfaceFormat();
+     void imageFormatPainting();
+     void nullTextureInitializtion();
++    void clipRect();
+ 
+ #ifdef USE_GLX
+     void glxContextWrap();
+@@ -1697,6 +1698,74 @@ void tst_QOpenGL::nullTextureInitializtion()
+     QVERIFY(!t.isCreated());
+ }
+ 
++/*
++    Verify that the clipping works correctly.
++    The red outline should be covered by the blue rect on top and left,
++    while it should be clipped on the right and bottom and thus the red outline be visible
++
++    See: QTBUG-83229
++*/
++void tst_QOpenGL::clipRect()
++{
++#if defined(Q_OS_LINUX) && defined(Q_CC_GNU) && !defined(__x86_64__)
++    QSKIP("QTBUG-22617");
++#endif
++
++    QScopedPointer<QSurface> surface(createSurface(int(QSurface::Window)));
++
++    QOpenGLContext ctx;
++    QVERIFY(ctx.create());
++
++    QVERIFY(ctx.makeCurrent(surface.data()));
++
++    if (!QOpenGLFramebufferObject::hasOpenGLFramebufferObjects())
++        QSKIP("QOpenGLFramebufferObject not supported on this platform");
++
++    // No multisample with combined depth/stencil attachment:
++    QOpenGLFramebufferObjectFormat fboFormat;
++    fboFormat.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
++
++    // Uncomplicate things by using POT:
++    const QSize size(654, 480);
++    const QRect rect(QPoint(0, 0), size);
++    QOpenGLFramebufferObject fbo(size, fboFormat);
++
++    if (fbo.attachment() != QOpenGLFramebufferObject::CombinedDepthStencil)
++        QSKIP("FBOs missing combined depth~stencil support");
++
++    QVERIFY(fbo.bind());
++
++    QPainter fboPainter;
++    QOpenGLPaintDevice device(fbo.width(), fbo.height());
++    bool painterBegun = fboPainter.begin(&device);
++    QVERIFY(painterBegun);
++
++    qreal halfWidth = size.width() / 2.0;
++    qreal halfHeight = size.height() / 2.0;
++
++    QRectF clipRect = QRectF(halfWidth - halfWidth / 2.0, halfHeight - halfHeight / 2.0,
++                             halfWidth / 2.0, halfHeight / 2.0);
++
++    fboPainter.fillRect(rect, Qt::white);
++    fboPainter.setPen(Qt::red);
++    fboPainter.drawRect(clipRect);
++
++    fboPainter.setClipRect(clipRect, Qt::ReplaceClip);
++    fboPainter.fillRect(rect, Qt::blue);
++
++    fboPainter.end();
++
++    const QImage fb = fbo.toImage().convertToFormat(QImage::Format_RGB32);
++    QCOMPARE(fb.size(), size);
++
++    QCOMPARE(fb.pixelColor(clipRect.left() + 1, clipRect.top()), QColor(Qt::blue));
++    QCOMPARE(fb.pixelColor(clipRect.left(), clipRect.top() + 1), QColor(Qt::blue));
++    QCOMPARE(fb.pixelColor(clipRect.left() + 1, clipRect.bottom()), QColor(Qt::red));
++
++    // Enable this once QTBUG-85286 is fixed
++    //QCOMPARE(fb.pixelColor(clipRect.right(), clipRect.top() + 1), QColor(Qt::red));
++}
++
+ QTEST_MAIN(tst_QOpenGL)
+ 
+ #include "tst_qopengl.moc"

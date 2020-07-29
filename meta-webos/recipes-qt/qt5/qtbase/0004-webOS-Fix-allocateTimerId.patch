@@ -1,0 +1,37 @@
+From bdbad406e615a63ba7f572ba11e145f712a86829 Mon Sep 17 00:00:00 2001
+From: Jani Hautakangas <jani.hautakangas@lge.com>
+Date: Mon, 16 Jun 2014 00:32:15 +0300
+Subject: [PATCH] webOS: Fix allocateTimerId
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I8b3777f4035401763d86b0245de43b63573b9ea6
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Mårten Nordheim <marten.nordheim@qt.io>
+(cherry picked from commit 4683b0b57f0571e400ab0ed48530ad8c6171d9f6)
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/302973]
+---
+ src/corelib/kernel/qabstracteventdispatcher.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/corelib/kernel/qabstracteventdispatcher.cpp b/src/corelib/kernel/qabstracteventdispatcher.cpp
+index ea08ff571f..66c18a2562 100644
+--- a/src/corelib/kernel/qabstracteventdispatcher.cpp
++++ b/src/corelib/kernel/qabstracteventdispatcher.cpp
+@@ -90,7 +90,14 @@ Q_GLOBAL_STATIC(QtTimerIdFreeList, timerIdFreeList)
+ 
+ int QAbstractEventDispatcherPrivate::allocateTimerId()
+ {
+-    return timerIdFreeList()->next();
++    // This function may be called after timerIdFreeList() has been destructed
++    // for example in case when application exits without waiting for
++    // running threads to exit and running thread finished() has been connected
++    // to a slot which triggers a sequence that registers new timer.
++    // See https://bugreports.qt-project.org/browse/QTBUG-38957.
++    if (QtTimerIdFreeList *fl = timerIdFreeList())
++        return fl->next();
++    return 0; // Note! returning 0 generates a warning
+ }
+ 
+ void QAbstractEventDispatcherPrivate::releaseTimerId(int timerId)

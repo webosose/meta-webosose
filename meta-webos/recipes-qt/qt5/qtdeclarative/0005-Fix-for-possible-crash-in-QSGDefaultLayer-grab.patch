@@ -1,4 +1,4 @@
-From 133ff86cec89707c70b08e8b2c578c4b30631553 Mon Sep 17 00:00:00 2001
+From c6bdb275e27eeb655351c7abf43d8532fe2b860e Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Tue, 12 Dec 2017 15:02:16 +0300
 Subject: [PATCH] Fix for possible crash in QSGDefaultLayer::grab
@@ -8,10 +8,11 @@ be called.  And for it item QSGNode will be destroyed.
 If this item used for QQuickEffectShaderSource we will have
 access to invalid QSGNode when "live" flag is enabled.
 
-Upstream-status: [Submitted]
-https://codereview.qt-project.org/#/c/214069/
-
 Change-Id: If785e5328a044ec9d2564a82361470f1b8091fc5
+Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
+Reviewed-by: Andy Nichols <andy.nichols@qt.io>
+(cherry picked from commit 1c5de027d0c31d1d6697bd0557128d92207763d8)
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/303269]
 ---
  src/quick/items/qquickshadereffectsource.cpp | 8 ++++++++
  src/quick/items/qquickshadereffectsource_p.h | 1 +

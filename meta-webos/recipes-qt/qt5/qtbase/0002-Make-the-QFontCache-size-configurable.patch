@@ -1,0 +1,36 @@
+From e8de0c5d17a420e049161312d67c8682c9f25741 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Fri, 7 Feb 2014 04:58:14 +0100
+Subject: [PATCH] Make the QFontCache size configurable
+
+It can be configured using the QFONTCACHE_MIN_COST
+define when configuring Qt.
+
+Change-Id: I41fb781099c4c0f03c378f10c8db4ea06ef4e9ff
+Task-number: QTBUG-83127
+Reviewed-by: Risto Avila <risto.avila@qt.io>
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+(cherry picked from commit a85c7342ad7592f44727cfc4b9a4ed3b1442bb2a)
+Reviewed-by: Martin Jansa <Martin.Jansa@gmail.com>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/303537]
+---
+ src/gui/text/qfont.cpp | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/gui/text/qfont.cpp b/src/gui/text/qfont.cpp
+index fe4fa4929a..c76200877f 100644
+--- a/src/gui/text/qfont.cpp
++++ b/src/gui/text/qfont.cpp
+@@ -2701,8 +2701,10 @@ static const int fast_timeout =  10000; // 10s
+ static const int slow_timeout = 300000; //  5m
+ #endif // QFONTCACHE_DEBUG
+ 
+-const uint QFontCache::min_cost = 4*1024; // 4mb
+-
++#ifndef QFONTCACHE_MIN_COST
++#  define QFONTCACHE_MIN_COST 4*1024 // 4mb
++#endif
++const uint QFontCache::min_cost = QFONTCACHE_MIN_COST;
+ Q_GLOBAL_STATIC(QThreadStorage<QFontCache *>, theFontCache)
+ 
+ QFontCache *QFontCache::instance()

@@ -1,30 +1,32 @@
-From bbd29fa7414140289c3e4ee73e5ffd998a907b36 Mon Sep 17 00:00:00 2001
+From fe6302ebeed15ed732f2f165ef7ff2a7a6a00322 Mon Sep 17 00:00:00 2001
 From: Valery Volgutov <valery.volgutov@lge.com>
 Date: Mon, 20 Apr 2020 20:42:56 +0300
 Subject: [PATCH] Fix QQuickKeyNavigationAttached issue
 
-When Repeater used for Item creation,
-we have following issue:
+When Repeater used for Item creation, we have following issue:
 
-When Repeater create new item and this item tried to
-use keyboard.left or keyboard.right to other Repeater's item -
-these items don't create yet, and we have issue with
+When Repeater creates a new item and this item tries to
+set keyboard.left or keyboard.right to another Repeater-created
+sibling, these items haven't been created yet, and we have issue with
 navigation keys.
 
 Set rightSet to true if right really changed.
-When object call KeboardNavigation::setRight with null item.
-rightSet field = true, but right field did not changed (null).
-After that navigation keys works incorrect.
+When object calls KeyboardNavigation::setRight(null),
+rightSet = true, but right field did not change (null).
+After that, navigation keys work incorrectly.
 The same for other cases.
 
 Task-number: QTBUG-83356
 Change-Id: I9ea6d6a7d13ff989aac3d9e2d22467b48080de13
-Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/299468]
+Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+(cherry picked from commit f07641b47a7c479894472e933d202bfcec0e222e)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/303942]
 ---
  src/quick/items/qquickitem.cpp                | 12 +++---
  .../data/keynavigationtest_repeater.qml       | 37 +++++++++++++++++++
- .../auto/quick/qquickitem2/tst_qquickitem.cpp | 19 ++++++++++
- 3 files changed, 62 insertions(+), 6 deletions(-)
+ .../auto/quick/qquickitem2/tst_qquickitem.cpp | 17 +++++++++
+ 3 files changed, 60 insertions(+), 6 deletions(-)
  create mode 100644 tests/auto/quick/qquickitem2/data/keynavigationtest_repeater.qml
 
 diff --git a/src/quick/items/qquickitem.cpp b/src/quick/items/qquickitem.cpp
@@ -135,7 +137,7 @@ index 0000000000..12ce10e139
 +}
 +
 diff --git a/tests/auto/quick/qquickitem2/tst_qquickitem.cpp b/tests/auto/quick/qquickitem2/tst_qquickitem.cpp
-index 399535cfa6..db473d1ea1 100644
+index 399535cfa6..c88f3129ea 100644
 --- a/tests/auto/quick/qquickitem2/tst_qquickitem.cpp
 +++ b/tests/auto/quick/qquickitem2/tst_qquickitem.cpp
 @@ -89,6 +89,7 @@ private slots:
@@ -146,14 +148,14 @@ index 399535cfa6..db473d1ea1 100644
      void layoutMirroring();
      void layoutMirroringWindow();
      void layoutMirroringIllegalParent();
-@@ -2273,6 +2274,24 @@ void tst_QQuickItem::keyNavigation_loop()
+@@ -2273,6 +2274,22 @@ void tst_QQuickItem::keyNavigation_loop()
      delete window;
  }
  
 +void tst_QQuickItem::keyNavigation_repeater()
 +{
 +    // QTBUG-83356
-+    QQuickView *window = new QQuickView(nullptr);
++    QScopedPointer<QQuickView> window(new QQuickView());
 +    window->setBaseSize(QSize(240,320));
 +
 +    window->setSource(testFileUrl("keynavigationtest_repeater.qml"));
@@ -164,8 +166,6 @@ index 399535cfa6..db473d1ea1 100644
 +    QVERIFY(QMetaObject::invokeMethod(window->rootObject(), "verify",
 +            Q_RETURN_ARG(QVariant, result)));
 +    QVERIFY(result.toBool());
-+
-+    delete window;
 +}
 +
  void tst_QQuickItem::smooth()

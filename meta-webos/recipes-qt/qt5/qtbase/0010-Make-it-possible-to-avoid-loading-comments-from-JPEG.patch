@@ -1,67 +1,74 @@
-From c7dbac74d6144abedb1ced37fd4b9b4c0b255e8d Mon Sep 17 00:00:00 2001
+From 2800a4059c4295f4052c143c59e90b7599e84e83 Mon Sep 17 00:00:00 2001
 From: Elvis Lee <kwangwoong.lee@lge.com>
 Date: Wed, 26 Apr 2017 12:29:24 +0900
-Subject: [PATCH] Avoid loading comments from JPEG and PNG files
+Subject: [PATCH] Make it possible to avoid loading comments from JPEG and PNG
+ files
 
-:Release Notes:
 Skip reading JPEG and PNG comments information from the header to save
 the memory.
 
-:Detailed Notes:
-JPEG or PNG file may have very large comments information in its header
-and there exist actual cases in webOS. (Some splash images require
-4MB+ each for comments information.)
-Assuming that there is no use case of this information in webOS, we'd
-better to skip reading the comments information and save the memory.
-Details are described in the issue addressed.
-
-:Testing Performed:
-GLD 1321, 1339
-1. long run launch test by script.
-2. manual launch test to check images are shown as before.
-
-:QA Notes:
-
-:Issues Addressed:
-[PLAT-38674] LSM memory increased after some tests compare to DRD4TV
-
-Upstream-Status : Inappropriate [webOS specific]
+This can now be configured through the feature system.
 
 Change-Id: I3744312f69aa3201d5188776cbd99fe690b75d32
+Task-number: QTBUG-83123
+Reviewed-by: Eirik Aavitsland <eirik.aavitsland@qt.io>
+(cherry picked from commit ab6fd84c62ff4a72696798dcf6598dd6a44389f6)
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtbase/+/303934]
 ---
- src/gui/image/qpnghandler.cpp                  | 2 ++
+ src/gui/configure.json                         | 7 +++++++
+ src/gui/image/qpnghandler.cpp                  | 4 ++++
  src/plugins/imageformats/jpeg/qjpeghandler.cpp | 2 ++
- 2 files changed, 4 insertions(+)
+ 3 files changed, 13 insertions(+)
 
+diff --git a/src/gui/configure.json b/src/gui/configure.json
+index 6dd6f5b16c..325b9091dc 100644
+--- a/src/gui/configure.json
++++ b/src/gui/configure.json
+@@ -1488,6 +1488,13 @@
+             "condition": "features.png && libs.libpng",
+             "output": [ "privateFeature" ]
+         },
++        "imageio-text-loading": {
++            "label": "Image Text section loading",
++            "output": [
++                "privateFeature",
++                { "type": "define", "negative": true, "name": "QT_NO_IMAGEIO_TEXT_LOADING" }
++            ]
++        },
+         "qpa_default_platform": {
+             "label": "QPA default platform",
+             "condition": "features.gui",
 diff --git a/src/gui/image/qpnghandler.cpp b/src/gui/image/qpnghandler.cpp
-index e7e998efd1..3628926663 100644
+index e7e998efd1..d58e531842 100644
 --- a/src/gui/image/qpnghandler.cpp
 +++ b/src/gui/image/qpnghandler.cpp
 @@ -508,6 +508,7 @@ static void qt_png_warning(png_structp /*png_ptr*/, png_const_charp message)
  
  void QPngHandlerPrivate::readPngTexts(png_info *info)
  {
-+#ifdef WEBOS_SUPPORT_IMAGE_TEXT
++#ifndef QT_NO_IMAGEIO_TEXT_LOADING
      png_textp text_ptr;
      int num_text=0;
      png_get_text(png_ptr, info, &text_ptr, &num_text);
-@@ -530,6 +531,7 @@ void QPngHandlerPrivate::readPngTexts(png_info *info)
+@@ -530,6 +531,9 @@ void QPngHandlerPrivate::readPngTexts(png_info *info)
          readTexts.append(value);
          text_ptr++;
      }
++#else
++    Q_UNUSED(info)
 +#endif
  }
  
  
 diff --git a/src/plugins/imageformats/jpeg/qjpeghandler.cpp b/src/plugins/imageformats/jpeg/qjpeghandler.cpp
-index 54fe857908..76e7916b7f 100644
+index 54fe857908..cee3b0c28d 100644
 --- a/src/plugins/imageformats/jpeg/qjpeghandler.cpp
 +++ b/src/plugins/imageformats/jpeg/qjpeghandler.cpp
 @@ -902,6 +902,7 @@ bool QJpegHandlerPrivate::readJpegHeader(QIODevice *device)
  
              for (jpeg_saved_marker_ptr marker = info.marker_list; marker != NULL; marker = marker->next) {
                  if (marker->marker == JPEG_COM) {
-+#ifdef WEBOS_SUPPORT_IMAGE_TEXT
++#ifndef QT_NO_IMAGEIO_TEXT_LOADING
                      QString key, value;
                      QString s = QString::fromUtf8((const char *)marker->data, marker->data_length);
                      int index = s.indexOf(QLatin1String(": "));

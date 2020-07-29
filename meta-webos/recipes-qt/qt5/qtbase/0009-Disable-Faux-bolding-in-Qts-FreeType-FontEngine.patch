@@ -1,0 +1,34 @@
+From 719c2f707a8c2fbdcc4b7282e8afd9a22783df00 Mon Sep 17 00:00:00 2001
+From: Roman Genhel <roman.genhel@lge.com>
+Date: Fri, 18 Sep 2020 11:56:37 +0300
+Subject: [PATCH] Disable Faux bolding in Qts FreeType FontEngine
+
+When Text is set to be bold, the original font glyph is displayed only.
+webOS doesn't want to apply the bolden effect by Freetype engine.
+
+Change-Id: I8cae71928f0b44526b345cc72403ccce6c7feeac
+Upstream-Status : Inappropriate [webOS specific]
+---
+ src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
+index cfc2eb1b12..f175f77374 100644
+--- a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
++++ b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
+@@ -823,6 +823,7 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+             obliquen = true;
+         FT_Set_Transform(face, &matrix, 0);
+         freetype->matrix = matrix;
++#ifndef Q_OS_WEBOS
+         // fake bold
+         if ((fontDef.weight >= QFont::Bold) && !(face->style_flags & FT_STYLE_FLAG_BOLD) && !FT_IS_FIXED_WIDTH(face) && !qEnvironmentVariableIsSet("QT_NO_SYNTHESIZED_BOLD")) {
+             if (const TT_OS2 *os2 = reinterpret_cast<const TT_OS2 *>(FT_Get_Sfnt_Table(face, ft_sfnt_os2))) {
+@@ -830,6 +831,7 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+                     embolden = true;
+             }
+         }
++#endif
+         // underline metrics
+         line_thickness =  QFixed::fromFixed(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale));
+         underline_position = QFixed::fromFixed(-FT_MulFix(face->underline_position, face->size->metrics.y_scale));

@@ -1,20 +1,24 @@
-From 4176f6c94e87b26f180ef56b0490c026f1568952 Mon Sep 17 00:00:00 2001
+From cf4f9e038829cd6e8f60f871511eece50f509923 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 12 Jun 2018 20:25:29 +0900
-Subject: [PATCH] Don't send synthetic hover event on a frame update
+Subject: [PATCH] webOS: Don't send synthetic hover event on a frame update
 
 This reverts the commit 6f84a09 partially which generates a synthetic
 hover event on a frame update. Such hover event has never been expected
 in webOS and messes up the existing logic.
 
 Change-Id: I7b855d27d1d44f2fab240707ef1ec79cdbcff6e5
-Upstream-Status: Inappropriate [webOS specific]
+Task-number: QTBUG-83119
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+(cherry picked from commit a06e873a1e80eda2f8e946ebe4e2f7631c78f53d)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/305716]
 ---
  src/quick/items/qquickwindow.cpp | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/src/quick/items/qquickwindow.cpp b/src/quick/items/qquickwindow.cpp
-index 3c97475e86..b481c1d569 100644
+index 3c97475e86..a9bbfa5b74 100644
 --- a/src/quick/items/qquickwindow.cpp
 +++ b/src/quick/items/qquickwindow.cpp
 @@ -2327,6 +2327,9 @@ void QQuickWindowPrivate::flushFrameSynchronousEvents()
@@ -23,7 +27,7 @@ index 3c97475e86..b481c1d569 100644
  
 +    // In webOS we already have the alternative to the issue that this
 +    // wanted to address and thus skipping this part won't break anything.
-+#if 0
++#if !defined(Q_OS_WEBOS)
      // Once per frame, if any items are dirty, send a synthetic hover,
      // in case items have changed position, visibility, etc.
      // For instance, during animation (including the case of a ListView

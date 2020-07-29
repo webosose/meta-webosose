@@ -1,4 +1,4 @@
-From 062df18a5b4d9f65d09a1901577396e2377072c1 Mon Sep 17 00:00:00 2001
+From 89af2dfc9ec2be30d50608f2fc64ba66715dd592 Mon Sep 17 00:00:00 2001
 From: Junil Kim <jjunil79.kim@lge.com>
 Date: Thu, 10 Aug 2017 14:40:15 +0530
 Subject: [PATCH] Keyboard/Mouse eglfs patch for Emulator
@@ -36,6 +36,9 @@ N/A
 [PLAT-38161] Configure mouse with QEMU input device.
 [PLAT-49529] Update qtbase emulator integration to work with Qt 5.9
 [PLAT-77793] Support Multi Display on Virtualbox.
+
+Change-Id: I33438d7e52249f3482355703992a9f34b06718b1
+Upstream-Status : Inappropriate [webOS specific]
 ---
  config_help.txt                               |   1 +
  src/gui/configure.json                        |  14 +-
@@ -83,7 +86,7 @@ index 63ba289941..8a82489a1d 100644
    Input backends:
      -libudev............ Enable udev support [auto]
 diff --git a/src/gui/configure.json b/src/gui/configure.json
-index 6dd6f5b16c..6b6e6507ab 100644
+index 325b9091dc..798a10ac34 100644
 --- a/src/gui/configure.json
 +++ b/src/gui/configure.json
 @@ -41,6 +41,7 @@
@@ -107,7 +110,7 @@ index 6dd6f5b16c..6b6e6507ab 100644
          "wayland_server": {
              "label": "Wayland Server",
              "test": {
-@@ -1514,6 +1521,10 @@
+@@ -1521,6 +1528,10 @@
              "condition": "features.network && features.udpsocket",
              "output": [ "privateFeature" ]
          },
@@ -118,7 +121,7 @@ index 6dd6f5b16c..6b6e6507ab 100644
          "xcb": {
              "label": "XCB",
              "section": "Platform plugins",
-@@ -1929,7 +1940,8 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
+@@ -1936,7 +1947,8 @@ QMAKE_LIBDIR_OPENGL[_ES2] and QMAKE_LIBS_OPENGL[_ES2] in the mkspec for your pla
                          "xcb-xlib",
                          "egl_x11"
                      ]

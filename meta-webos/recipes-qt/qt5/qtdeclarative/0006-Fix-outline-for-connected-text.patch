@@ -1,0 +1,221 @@
+From 8ec353d5e3016ea7f52de92d373cd9389d87b10a Mon Sep 17 00:00:00 2001
+From: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+Date: Tue, 16 Jun 2020 09:03:43 +0200
+Subject: [PATCH] Fix outline for connected text
+
+For any font where glyphs are connected (any font could
+have this, but specifically Arabic and Indic fonts will
+typically always connect glyphs, as it is required to
+express the language correctly), we would draw the outline
+on a per-glyph basis, thus getting outlines that disconnect
+the glyphs.
+
+In order to fix this, we have to draw the fill of the glyphs
+in a separate pass after the outline has been drawn.
+
+Note that in order for this to look correct, we have to
+disable subpixel antialiasing on the fill, which required
+some plumbing in the native rendering glyph node. The
+outline shaders have also been changed to only draw the
+outline and not the fill.
+
+Also contains back-port of d46c406cc67f12e6a0798ef509abbb973b34d39d
+in addition to e8d9bc1bcada7d94af5a33d64a9afc860ede5b84.
+
+[ChangeLog][QtQuick][Text] Fixed Outline style on connected glyphs,
+especially visible in e.g. Arabic and Indic writing systems.
+
+Fixes: QTBUG-69301
+Fixes: QTBUG-83358
+Change-Id: If52a940bfb0267384ea002120655aed1310458a1
+Reviewed-by: Lars Knoll <lars.knoll@qt.io>
+Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
+(cherry picked from commit e8d9bc1bcada7d94af5a33d64a9afc860ede5b84)
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/304566]
+---
+ src/quick/items/qquicktextnode.cpp            | 16 ++++++++++
+ src/quick/scenegraph/qsgadaptationlayer_p.h   |  1 +
+ src/quick/scenegraph/qsgdefaultglyphnode.cpp  | 30 ++++++++++++++++++-
+ src/quick/scenegraph/qsgdefaultglyphnode_p.h  |  3 ++
+ .../shaders/distancefieldoutlinetext.frag     |  6 ++--
+ .../distancefieldoutlinetext_core.frag        |  6 ++--
+ .../scenegraph/shaders/outlinedtext.frag      |  4 +--
+ .../scenegraph/shaders/outlinedtext_core.frag |  4 +--
+ 8 files changed, 59 insertions(+), 11 deletions(-)
+
+diff --git a/src/quick/items/qquicktextnode.cpp b/src/quick/items/qquicktextnode.cpp
+index 0dd12207b7..d468d3ee40 100644
+--- a/src/quick/items/qquicktextnode.cpp
++++ b/src/quick/items/qquicktextnode.cpp
+@@ -129,6 +129,22 @@ QSGGlyphNode *QQuickTextNode::addGlyphs(const QPointF &position, const QGlyphRun
+         parentNode = this;
+     parentNode->appendChildNode(node);
+ 
++    if (style == QQuickText::Outline && color.alpha() > 0 && styleColor != color) {
++        QSGGlyphNode *fillNode = sg->sceneGraphContext()->createGlyphNode(sg, preferNativeGlyphNode);
++        fillNode->setOwnerElement(m_ownerElement);
++        fillNode->setGlyphs(position + QPointF(0, glyphs.rawFont().ascent()), glyphs);
++        fillNode->setStyle(QQuickText::Normal);
++        fillNode->setPreferredAntialiasingMode(QSGGlyphNode::GrayAntialiasing);
++        fillNode->setColor(color);
++        fillNode->update();
++
++        fillNode->geometry()->setIndexDataPattern(QSGGeometry::StaticPattern);
++        fillNode->geometry()->setVertexDataPattern(QSGGeometry::StaticPattern);
++
++        parentNode->appendChildNode(fillNode);
++        fillNode->setRenderOrder(node->renderOrder() + 1);
++    }
++
+     return node;
+ }
+ 
+diff --git a/src/quick/scenegraph/qsgadaptationlayer_p.h b/src/quick/scenegraph/qsgadaptationlayer_p.h
+index 58ecae94e7..f3b6bc2855 100644
+--- a/src/quick/scenegraph/qsgadaptationlayer_p.h
++++ b/src/quick/scenegraph/qsgadaptationlayer_p.h
+@@ -369,6 +369,7 @@ class Q_QUICK_PRIVATE_EXPORT QSGGlyphNode : public QSGVisitableNode
+ public:
+     enum AntialiasingMode
+     {
++        DefaultAntialiasing = -1,
+         GrayAntialiasing,
+         LowQualitySubPixelAntialiasing,
+         HighQualitySubPixelAntialiasing
+diff --git a/src/quick/scenegraph/qsgdefaultglyphnode.cpp b/src/quick/scenegraph/qsgdefaultglyphnode.cpp
+index cae0eda3f4..b291192f41 100644
+--- a/src/quick/scenegraph/qsgdefaultglyphnode.cpp
++++ b/src/quick/scenegraph/qsgdefaultglyphnode.cpp
+@@ -40,11 +40,14 @@
+ #include "qsgdefaultglyphnode_p.h"
+ #include "qsgdefaultglyphnode_p_p.h"
+ 
++#include <private/qrawfont_p.h>
++
+ QT_BEGIN_NAMESPACE
+ 
+ QSGDefaultGlyphNode::QSGDefaultGlyphNode()
+     : m_glyphNodeType(RootGlyphNode)
+     , m_dirtyGeometry(false)
++    , m_preferredAntialiasingMode(DefaultAntialiasing)
+ {
+     setFlag(UsePreprocess);
+ }
+@@ -58,6 +61,11 @@ QSGDefaultGlyphNode::~QSGDefaultGlyphNode()
+     m_nodesToDelete.clear();
+ }
+ 
++void QSGDefaultGlyphNode::setPreferredAntialiasingMode(AntialiasingMode mode)
++{
++    m_preferredAntialiasingMode = mode;
++}
++
+ void QSGDefaultGlyphNode::setMaterialColor(const QColor &color)
+ {
+     static_cast<QSGTextMaskMaterial *>(m_material)->setColor(color);
+@@ -75,7 +83,27 @@ void QSGDefaultGlyphNode::update()
+     QMargins margins(0, 0, 0, 0);
+ 
+     if (m_style == QQuickText::Normal) {
+-        m_material = new QSGTextMaskMaterial(QVector4D(m_color.redF(), m_color.greenF(), m_color.blueF(), m_color.alphaF()), font);
++        QFontEngine::GlyphFormat glyphFormat;
++
++        // Don't try to override glyph format of color fonts
++        if (QRawFontPrivate::get(font)->fontEngine->glyphFormat == QFontEngine::Format_ARGB) {
++            glyphFormat = QFontEngine::Format_None;
++        } else {
++            switch (m_preferredAntialiasingMode) {
++            case GrayAntialiasing:
++                glyphFormat = QFontEngine::Format_A8;
++                break;
++            case HighQualitySubPixelAntialiasing:
++            case LowQualitySubPixelAntialiasing:
++                glyphFormat = QFontEngine::Format_A32;
++                break;
++            default:
++                glyphFormat = QFontEngine::Format_None;
++                break;
++            }
++        }
++
++        m_material = new QSGTextMaskMaterial(QVector4D(m_color.redF(), m_color.greenF(), m_color.blueF(), m_color.alphaF()), font, glyphFormat);
+     } else if (m_style == QQuickText::Outline) {
+         QSGOutlinedTextMaterial *material = new QSGOutlinedTextMaterial(font);
+         material->setStyleColor(m_styleColor);
+diff --git a/src/quick/scenegraph/qsgdefaultglyphnode_p.h b/src/quick/scenegraph/qsgdefaultglyphnode_p.h
+index 37a89c70b9..b161a6a572 100644
+--- a/src/quick/scenegraph/qsgdefaultglyphnode_p.h
++++ b/src/quick/scenegraph/qsgdefaultglyphnode_p.h
+@@ -65,6 +65,7 @@ public:
+     void setGlyphs(const QPointF &position, const QGlyphRun &glyphs) override;
+     void update() override;
+     void preprocess() override;
++    void setPreferredAntialiasingMode(AntialiasingMode) override;
+     void updateGeometry();
+ 
+ private:
+@@ -84,6 +85,8 @@ private:
+     };
+ 
+     uint m_dirtyGeometry: 1;
++
++    AntialiasingMode m_preferredAntialiasingMode;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/quick/scenegraph/shaders/distancefieldoutlinetext.frag b/src/quick/scenegraph/shaders/distancefieldoutlinetext.frag
+index 250ed322a1..f7cdeb9064 100644
+--- a/src/quick/scenegraph/shaders/distancefieldoutlinetext.frag
++++ b/src/quick/scenegraph/shaders/distancefieldoutlinetext.frag
+@@ -11,6 +11,6 @@ uniform mediump float outlineAlphaMax1;
+ void main()
+ {
+     mediump float d = texture2D(_qt_texture, sampleCoord).a;
+-    gl_FragColor = mix(styleColor, color, smoothstep(alphaMin, alphaMax, d))
+-                       * smoothstep(outlineAlphaMax0, outlineAlphaMax1, d);
+-}
+\ No newline at end of file
++    mediump float a = smoothstep(alphaMin, alphaMax, d);
++    gl_FragColor = (1.0 - a) * styleColor * smoothstep(outlineAlphaMax0, outlineAlphaMax1, d);
++}
+diff --git a/src/quick/scenegraph/shaders/distancefieldoutlinetext_core.frag b/src/quick/scenegraph/shaders/distancefieldoutlinetext_core.frag
+index 80fa05ca3c..622e353019 100644
+--- a/src/quick/scenegraph/shaders/distancefieldoutlinetext_core.frag
++++ b/src/quick/scenegraph/shaders/distancefieldoutlinetext_core.frag
+@@ -15,6 +15,6 @@ uniform float outlineAlphaMax1;
+ void main()
+ {
+     float d = texture(_qt_texture, sampleCoord).r;
+-    fragColor = mix(styleColor, color, smoothstep(alphaMin, alphaMax, d))
+-                    * smoothstep(outlineAlphaMax0, outlineAlphaMax1, d);
+-}
+\ No newline at end of file
++    float a = smoothstep(alphaMin, alphaMax, d);
++    fragColor = (1.0 - a) * styleColor * smoothstep(outlineAlphaMax0, outlineAlphaMax1, d);
++}
+diff --git a/src/quick/scenegraph/shaders/outlinedtext.frag b/src/quick/scenegraph/shaders/outlinedtext.frag
+index b3e5475d5d..5fe2b14e24 100644
+--- a/src/quick/scenegraph/shaders/outlinedtext.frag
++++ b/src/quick/scenegraph/shaders/outlinedtext.frag
+@@ -17,5 +17,5 @@ void main()
+                                      texture2D(_qt_texture, sCoordRight).a,
+                                      0.0, 1.0) - glyph,
+                                0.0, 1.0);
+-    gl_FragColor = outline * styleColor + glyph * color;
+-}
+\ No newline at end of file
++    gl_FragColor = outline * styleColor;
++}
+diff --git a/src/quick/scenegraph/shaders/outlinedtext_core.frag b/src/quick/scenegraph/shaders/outlinedtext_core.frag
+index e19c8937f9..4d7c614185 100644
+--- a/src/quick/scenegraph/shaders/outlinedtext_core.frag
++++ b/src/quick/scenegraph/shaders/outlinedtext_core.frag
+@@ -21,5 +21,5 @@ void main()
+                                 texture(_qt_texture, sCoordRight).r,
+                                 0.0, 1.0) - glyph,
+                           0.0, 1.0);
+-    fragColor = outline * styleColor + glyph * color;
+-}
+\ No newline at end of file
++    fragColor = outline * styleColor;
++}

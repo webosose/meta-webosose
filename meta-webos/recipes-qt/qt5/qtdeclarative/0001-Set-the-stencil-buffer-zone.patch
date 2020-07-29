@@ -1,4 +1,4 @@
-From 6e923f14c1cd35b572e0f1e49488d7184359a402 Mon Sep 17 00:00:00 2001
+From d1bfd8a595ff331c07ee156ba3026d2a1edcd3c3 Mon Sep 17 00:00:00 2001
 From: DH Kang <kdh.kang@lge.com>
 Date: Mon, 17 Nov 2014 16:03:01 +0900
 Subject: [PATCH] Set the stencil buffer zone
@@ -9,14 +9,14 @@ information located in the following node's siccor area.
 
 Change-Id: I9a399667ec7ee0a1028e233c899ee49c98e4e622
 Task-number: QTBUG-83108
-
-Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/288653]
+Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
+Upstream-Status: Backported [https://codereview.qt-project.org/c/qt/qtdeclarative/+/288653]
 ---
  .../scenegraph/coreapi/qsgbatchrenderer.cpp   | 42 +++++++++++++++----
  1 file changed, 33 insertions(+), 9 deletions(-)
 
 diff --git a/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp b/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
-index afe3380494..905d93ab18 100644
+index afe3380494..369a32ec09 100644
 --- a/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
 +++ b/src/quick/scenegraph/coreapi/qsgbatchrenderer.cpp
 @@ -2035,20 +2035,18 @@ Renderer::ClipType Renderer::updateStencilClip(const QSGClipNode *clip)
@@ -28,9 +28,9 @@ index afe3380494..905d93ab18 100644
 -
 -        if (isRectangleWithNoPerspective && (noRotate || isRotate90)) {
 -            QRectF bbox = clip->clipRect();
-+        auto noRotate = [] (auto &m) { return qFuzzyIsNull(m(0, 1)) && qFuzzyIsNull(m(1, 0)); };
-+        auto isRotate90 = [] (auto &m) { return qFuzzyIsNull(m(0, 0)) && qFuzzyIsNull(m(1, 1)); } ;
-+        auto scissorRect = [&] (auto bbox, auto &m) {
++        auto noRotate = [] (const QMatrix4x4 &m) { return qFuzzyIsNull(m(0, 1)) && qFuzzyIsNull(m(1, 0)); };
++        auto isRotate90 = [] (const QMatrix4x4 &m) { return qFuzzyIsNull(m(0, 0)) && qFuzzyIsNull(m(1, 1)); };
++        auto scissorRect = [&] (const QRectF &bbox, const QMatrix4x4 &m) {
              qreal invW = 1 / m(3, 3);
              qreal fx1, fy1, fx2, fy2;
 -            if (noRotate) {

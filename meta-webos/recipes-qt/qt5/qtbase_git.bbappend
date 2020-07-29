@@ -1,6 +1,8 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos80"
+inherit webos_qmake5
+
+EXTENDPRAUTO_append = "webos81"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -44,6 +46,9 @@ PACKAGECONFIG_append = " sql-sqlite"
 PACKAGECONFIG_append = " gif"
 # Needed since qtwayland 5.12
 PACKAGECONFIG_append = " xkbcommon"
+# Disable loading text in image metadata
+PACKAGECONFIG[no-image-text] = "-no-feature-imageio-text-loading,,"
+PACKAGECONFIG_append = " no-image-text"
 
 # XXX Change --linuxfb => -no-linuxfb
 # PACKAGECONFIG_append = " linuxfb"
@@ -82,32 +87,35 @@ PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' 
 #    ${PACKAGECONFIG_DISTRO} \
 #"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/qtbase:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 # Emulator eglfs support with NYX input subsystem
 inherit webos_machine_impl_dep
 PACKAGECONFIG[webos-emulator] = "-webos-emulator,-no-webos-emulator,nyx-lib"
 PACKAGECONFIG_append_emulator = " gbm kms eglfs webos-emulator"
 
-# Patches from 5.12.meta-webos.28 based on 5.12.meta-qt5.3
+# Patches from 5.12.meta-webos.30 based on 5.12.meta-qt5.3
 SRC_URI_append = " \
-    file://0001-Decrease-the-size-of-QFontCache.patch \
-    file://0002-Fix-floating-point-clip-rectangle-rounding-in-OpenGL.patch \
-    file://0003-Fix-allocateTimerId.patch \
-    file://0004-LTTNG-tracing-support-in-QtGUI.patch \
-    file://0005-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
-    file://0006-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
-    file://0007-Avoid-loading-comments-from-JPEG-and-PNG-files.patch \
-    file://0008-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
-    file://0009-Modify-the-touch-event-for-emulator.patch \
-    file://0010-eglfs-kms-Choose-unique-primary-planes-for-each-crtc.patch \
-    file://0011-Allow-word-break-wrapping-in-Korean-text.patch \
+    file://0001-Add-webos-oe-g-and-webos-oe-clang-platforms.patch \
+    file://0002-Make-the-QFontCache-size-configurable.patch \
+    file://0003-Fix-floating-point-clip-rectangle-rounding-in-raster.patch \
+    file://0004-webOS-Fix-allocateTimerId.patch \
+    file://0005-Add-more-LTTNG-tracing-points.patch \
+    file://0006-Fix-build-with-trace-lttng.patch \
+    file://0007-Add-the-accessiblebridge-as-a-plugintype-of-gui-modu.patch \
+    file://0008-Add-a-way-to-disable-syntethesized-bold-and-italic-s.patch \
+    file://0009-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
+    file://0010-Make-it-possible-to-avoid-loading-comments-from-JPEG.patch \
+    file://0011-Keyboard-Mouse-eglfs-patch-for-Emulator.patch \
+    file://0012-Modify-the-touch-event-for-emulator.patch \
+    file://0013-eglfs-kms-Choose-unique-primary-planes-for-each-crtc.patch \
+    file://0014-Allow-word-break-wrapping-in-Korean-text.patch \
 "
 
 SRC_URI_append_hardware = " \
-    file://0012-eglfs-Support-multiple-device-integration.patch \
-    file://0013-eglfs-Support-multiple-display.patch \
-    file://0014-eglfs-Associate-keyboard-touch-device-with-window.patch \
+    file://0015-eglfs-Support-multiple-device-integration.patch \
+    file://0016-eglfs-Support-multiple-display.patch \
+    file://0017-eglfs-Associate-keyboard-touch-device-with-window.patch \
 "
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
