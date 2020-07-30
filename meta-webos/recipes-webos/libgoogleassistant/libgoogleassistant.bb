@@ -67,5 +67,3 @@ FILES_${PN}-dev += "${libdir}/libgoogleassistant.so"
 
 # From http://gpro.lge.com/254812
 SRC_URI += "file://0001-CMakeLists.txt-install-libtatlas.so-in-regular-libdi.patch"
-
-PNBLACKLIST[libgoogleassistant] ?= "Needs to be updated for new protobuf"
