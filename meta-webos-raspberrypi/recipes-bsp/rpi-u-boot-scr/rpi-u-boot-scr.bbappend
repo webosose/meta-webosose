@@ -1,6 +1,6 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi1"
+EXTENDPRAUTO_append = "webosrpi2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -15,6 +15,6 @@ do_compile_sota() {
 }
 
 do_deploy_append_sota() {
-    install -d ${DEPLOYDIR}/bcm2835-bootfiles
-    install -m 0755 ${WORKDIR}/uEnv.sota.txt ${DEPLOYDIR}/bcm2835-bootfiles/uEnv.txt
+    install -d ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}
+    install -m 0755 ${WORKDIR}/uEnv.sota.txt ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/uEnv.txt
 }
