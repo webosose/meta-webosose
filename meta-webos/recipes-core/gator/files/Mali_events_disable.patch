@@ -1,0 +1,26 @@
+From 681bc1b8c6e9a0fa6e6602889d599da0045a308d Mon Sep 17 00:00:00 2001
+From: "phanendra.yarra" <phanendra.yarra@lge.com>
+Date: Tue, 9 Jun 2020 15:13:46 +0530
+Subject: [PATCH] malisupport_disable_from_gator
+
+---
+ driver/gator_main.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/driver/gator_main.c b/driver/gator_main.c
+index abe52ab..a7506bd 100644
+--- a/driver/gator_main.c
++++ b/driver/gator_main.c
+@@ -234,9 +234,6 @@ static DEFINE_PER_CPU(u64, gator_buffer_commit_time);
+     GATOR_EVENT(gator_events_ccn504_init) \
+     GATOR_EVENT(gator_events_irq_init) \
+     GATOR_EVENT(gator_events_l2c310_init) \
+-    GATOR_EVENT(gator_events_mali_init) \
+-    GATOR_EVENT(gator_events_mali_midgard_hw_init) \
+-    GATOR_EVENT(gator_events_mali_midgard_init) \
+     GATOR_EVENT(gator_events_meminfo_init) \
+     GATOR_EVENT(gator_events_mmapped_init) \
+     GATOR_EVENT(gator_events_net_init) \
+-- 
+2.17.1
+
