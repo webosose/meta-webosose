@@ -1,4 +1,4 @@
-From 0bdf3119f1610a6cdc3f53545810d965eb0490ea Mon Sep 17 00:00:00 2001
+From 86491f471200d5007c8aff0e0a9ac2c20f8ffdc2 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Mon, 1 Oct 2018 10:49:38 +0530
 Subject: [PATCH] Fix obexd segmentation fault
@@ -33,13 +33,12 @@ Tested all obexctl commands
              of opp transfer
 
 Change-Id: Ic3fbb37fc52cb84ee32286dc5edb88a20eba3d67
-
 ---
  gobex/gobex-transfer.c | 7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/gobex/gobex-transfer.c b/gobex/gobex-transfer.c
-index bc99306..36d4a1c 100644
+index bc9930679..36d4a1c45 100644
 --- a/gobex/gobex-transfer.c
 +++ b/gobex/gobex-transfer.c
 @@ -100,10 +100,11 @@ static void transfer_complete(struct transfer *transfer, GError *err)

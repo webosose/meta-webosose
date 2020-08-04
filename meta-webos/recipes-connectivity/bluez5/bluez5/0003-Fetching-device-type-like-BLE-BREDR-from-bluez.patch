@@ -1,4 +1,4 @@
-From b0ef78a75ffe1a44ccd467b82c47ef8cc33db026 Mon Sep 17 00:00:00 2001
+From 97b38627b1efa540177c56ec931730df4a25dac5 Mon Sep 17 00:00:00 2001
 From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
 Date: Fri, 1 Jun 2018 11:43:15 +0530
 Subject: [PATCH] Fetching device type like BLE, BREDR from bluez
@@ -19,16 +19,15 @@ device/getStatus luna command for device type property as ble, bredr
              not working, always Unknown
 
 Upstream-Status : Pending
-
 ---
  src/device.c | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index 4f1af70..c95bab6 100644
+index 263f60aea..48ffb0bc9 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -197,6 +197,7 @@ struct btd_device {
+@@ -196,6 +196,7 @@ struct btd_device {
  	char		name[MAX_NAME_LENGTH + 1];
  	char		*alias;
  	uint32_t	class;
@@ -36,7 +35,7 @@ index 4f1af70..c95bab6 100644
  	uint16_t	vendor_src;
  	uint16_t	vendor;
  	uint16_t	product;
-@@ -847,6 +848,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
+@@ -849,6 +850,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -58,7 +57,7 @@ index 4f1af70..c95bab6 100644
  static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
  							uint16_t *appearance)
  {
-@@ -2708,6 +2724,7 @@ static const GDBusMethodTable device_methods[] = {
+@@ -2748,6 +2764,7 @@ static const GDBusMethodTable device_methods[] = {
  static const GDBusPropertyTable device_properties[] = {
  	{ "Address", "s", dev_property_get_address },
  	{ "AddressType", "s", property_get_address_type },

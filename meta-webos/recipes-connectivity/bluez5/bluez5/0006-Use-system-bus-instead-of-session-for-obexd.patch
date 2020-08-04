@@ -1,4 +1,4 @@
-From b654351d0451848ee88d88c34dbad42b0bb203eb Mon Sep 17 00:00:00 2001
+From 1a860f9cdf0b8784d0d0ece5dbef6e02da3e770c Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd
@@ -20,7 +20,6 @@ Tested with obexctl command line tool, all commands are working fine
 [PLAT-66305] Modify bluez to use system bus instead of session bus
              for obexd
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  obexd/client/ftp.c      |  3 ++-
  obexd/client/map.c      |  2 +-
@@ -35,10 +34,10 @@ Upstream-Status: Inappropriate[webos specific]
  10 files changed, 22 insertions(+), 9 deletions(-)
 
 diff --git a/obexd/client/ftp.c b/obexd/client/ftp.c
-index d799821..894e402 100644
+index 5e30654af..eb7213760 100644
 --- a/obexd/client/ftp.c
 +++ b/obexd/client/ftp.c
-@@ -475,7 +475,8 @@ int ftp_init(void)
+@@ -476,7 +476,8 @@ int ftp_init(void)
  
  	DBG("");
  
@@ -49,10 +48,10 @@ index d799821..894e402 100644
  		return -EIO;
  
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 3e581c8..386ae8b 100644
+index 550c5afb4..d2f1c8793 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
-@@ -2074,7 +2074,7 @@ int map_init(void)
+@@ -2075,7 +2075,7 @@ int map_init(void)
  
  	DBG("");
  
@@ -62,7 +61,7 @@ index 3e581c8..386ae8b 100644
  		return -EIO;
  
 diff --git a/obexd/client/opp.c b/obexd/client/opp.c
-index 92785f6..36fd4db 100644
+index 92785f66e..36fd4db16 100644
 --- a/obexd/client/opp.c
 +++ b/obexd/client/opp.c
 @@ -191,7 +191,7 @@ int opp_init(void)
@@ -75,10 +74,10 @@ index 92785f6..36fd4db 100644
  		return -EIO;
  
 diff --git a/obexd/client/pbap.c b/obexd/client/pbap.c
-index 1ab34a7..793408b 100644
+index 3f5665fcd..e4b7d5959 100644
 --- a/obexd/client/pbap.c
 +++ b/obexd/client/pbap.c
-@@ -1313,7 +1313,7 @@ int pbap_init(void)
+@@ -1314,7 +1314,7 @@ int pbap_init(void)
  
  	DBG("");
  
@@ -88,7 +87,7 @@ index 1ab34a7..793408b 100644
  		return -EIO;
  
 diff --git a/obexd/client/session.c b/obexd/client/session.c
-index 5bd2d26..cf4cb2c 100644
+index 5bd2d2670..cf4cb2c5f 100644
 --- a/obexd/client/session.c
 +++ b/obexd/client/session.c
 @@ -596,7 +596,7 @@ struct obc_session *obc_session_create(const char *source,
@@ -101,7 +100,7 @@ index 5bd2d26..cf4cb2c 100644
  		return NULL;
  
 diff --git a/obexd/client/sync.c b/obexd/client/sync.c
-index 548c318..8c30908 100644
+index 548c318c3..8c3090879 100644
 --- a/obexd/client/sync.c
 +++ b/obexd/client/sync.c
 @@ -237,7 +237,7 @@ int sync_init(void)
@@ -114,7 +113,7 @@ index 548c318..8c30908 100644
  		return -EIO;
  
 diff --git a/obexd/plugins/pcsuite.c b/obexd/plugins/pcsuite.c
-index 43ab409..3ea5963 100644
+index 43ab409e9..3ea5963c3 100644
 --- a/obexd/plugins/pcsuite.c
 +++ b/obexd/plugins/pcsuite.c
 @@ -333,7 +333,7 @@ static gboolean send_backup_dbus_message(const char *oper,
@@ -127,7 +126,7 @@ index 43ab409..3ea5963 100644
  	if (conn == NULL)
  		return FALSE;
 diff --git a/obexd/src/manager.c b/obexd/src/manager.c
-index a4af627..61f3417 100644
+index a4af627cb..61f341711 100644
 --- a/obexd/src/manager.c
 +++ b/obexd/src/manager.c
 @@ -499,7 +499,7 @@ gboolean manager_init(void)
@@ -140,13 +139,13 @@ index a4af627..61f3417 100644
  		if (dbus_error_is_set(&err) == TRUE) {
  			fprintf(stderr, "%s\n", err.message);
 diff --git a/src/bluetooth.conf b/src/bluetooth.conf
-index 0c0b221..48ba45e 100644
+index 8a1e25801..582f492ce 100644
 --- a/src/bluetooth.conf
 +++ b/src/bluetooth.conf
-@@ -19,10 +19,22 @@
-     <allow send_interface="org.bluez.LEAdvertisement1"/>
+@@ -20,10 +20,22 @@
      <allow send_interface="org.freedesktop.DBus.ObjectManager"/>
      <allow send_interface="org.freedesktop.DBus.Properties"/>
+     <allow send_interface="org.mpris.MediaPlayer2.Player"/>
 +    <allow own="org.bluez.obex"/>
 +    <allow send_destination="org.bluez.obex"/>
 +    <allow send_interface="org.bluez.obex.Agent1"/>
@@ -160,17 +159,17 @@ index 0c0b221..48ba45e 100644
 +    <allow send_interface="org.bluez.obex.Message1"/>
    </policy>
  
-   <policy at_console="true">
+   <policy context="default">
      <allow send_destination="org.bluez"/>
 +    <allow send_destination="org.bluez.obex"/>
    </policy>
  
-   <!-- allow users of lp group (printing subsystem) to 
+ </busconfig>
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index f839ab0..a190834 100644
+index 0709f692c..9ed336aa5 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -2151,7 +2151,7 @@ int main(int argc, char *argv[])
+@@ -2152,7 +2152,7 @@ int main(int argc, char *argv[])
  	bt_shell_set_menu(&main_menu);
  	bt_shell_set_prompt(PROMPT_OFF);
  

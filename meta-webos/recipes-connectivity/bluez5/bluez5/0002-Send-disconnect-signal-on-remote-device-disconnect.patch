@@ -1,4 +1,4 @@
-From 58ded007a048bf811f33266ca93e25234e80b5c9 Mon Sep 17 00:00:00 2001
+From 843673f28a6915ed0fc623d42720c68133546da5 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Thu, 17 May 2018 18:15:48 +0530
 Subject: [PATCH] Send disconnect signal on remote device disconnect
@@ -21,16 +21,15 @@ Builded and tested
              Bluez Sil
 
 Upstream-Status : Pending
-
 ---
  src/profile.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/src/profile.c b/src/profile.c
-index 1e9c585..178441e 100644
+index 192fd0245..bdce217fb 100644
 --- a/src/profile.c
 +++ b/src/profile.c
-@@ -695,6 +695,8 @@ static GSList *custom_props = NULL;
+@@ -696,6 +696,8 @@ static GSList *custom_props = NULL;
  static GSList *profiles = NULL;
  static GSList *ext_profiles = NULL;
  
@@ -39,7 +38,7 @@ index 1e9c585..178441e 100644
  void btd_profile_foreach(void (*func)(struct btd_profile *p, void *data),
  								void *data)
  {
-@@ -811,6 +813,8 @@ drop:
+@@ -812,6 +814,8 @@ drop:
  			btd_service_disconnecting_complete(conn->service, 0);
  	}
  

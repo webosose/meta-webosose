@@ -1,4 +1,4 @@
-From b9e591e8ffe277ca9cd5ee2f3e49c0ef9d917e2f Mon Sep 17 00:00:00 2001
+From 2ec141b8a904ea6de9a3ee85baad9a363efd804e Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 11 Apr 2018 11:03:20 +0530
 Subject: [PATCH] Fix advertise time out when default is set to zero
@@ -20,16 +20,15 @@ Builded and tested
 
 Upstream-Status : Pending
 Change-Id: I60cb0c22991efa61a800b1483e232e42beff2da2
-
 ---
- src/advertising.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ src/advertising.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/src/advertising.c b/src/advertising.c
-index 625750c..2339327 100644
+index 3ed13766c..bb3b9f3a5 100644
 --- a/src/advertising.c
 +++ b/src/advertising.c
-@@ -500,13 +500,18 @@ static bool parse_local_name(DBusMessageIter *iter,
+@@ -505,13 +505,18 @@ static bool parse_local_name(DBusMessageIter *iter,
  	if (dbus_message_iter_get_arg_type(iter) != DBUS_TYPE_STRING)
  		return false;
  
@@ -50,13 +49,3 @@ index 625750c..2339327 100644
  	free(client->name);
  	client->name = strdup(name);
  
-@@ -582,7 +587,8 @@ static bool parse_timeout(DBusMessageIter *iter,
- 	if (client->to_id)
- 		g_source_remove(client->to_id);
- 
--	client->to_id = g_timeout_add_seconds(client->timeout, client_timeout,
-+	if (client->timeout)
-+		client->to_id = g_timeout_add_seconds(client->timeout, client_timeout,
- 								client);
- 
- 	return true;
