@@ -221,7 +221,3 @@ PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson
 
 # meta-virtualization/recipes-extended/ceph/ceph_15.2.0.bb
 PNBLACKLIST[ceph] ?= "Depends on blacklisted xfsprogs"
-
-PNBLACKLIST[python3-protobuf] ?= "Not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb google/protobuf/pyext/message.cc:70:10: fatal error: google/protobuf/stubs/map_util.h: No such file or directory"
-PNBLACKLIST[python3-grpcio] ?= "Depends on blacklisted python3-protobuf which is not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb"
-PNBLACKLIST[python3-grpcio-tools] ?= "Depends on blacklisted python3-protobuf which is not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb"
