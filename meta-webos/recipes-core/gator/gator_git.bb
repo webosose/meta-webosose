@@ -10,10 +10,11 @@ PV = "6.7+git${SRCPV}"
 SRC_URI = "git://github.com/ARM-software/gator.git;protocol=http;branch=master \
            file://0001-disable-stripping-debug-info.patch \
            file://Mali_events_disable.patch \
+           file://git/gcc-wrapper.py \
 "
 
 S = "${WORKDIR}/git"
-PR = "r0"
+PR = "r1"
 
 inherit module
 
@@ -27,7 +28,9 @@ do_compile() {
   oe_runmake -C daemon CROSS_COMPILE=${TARGET_PREFIX} CC='${CC}' CXX='${CXX}'
 
   #Build gator.ko
-  oe_runmake -C ${STAGING_KERNEL_BUILDDIR} ARCH=${ARCH} CONFIG_GATOR=m M=${S}/driver modules
+  #copy python3 compatible gcc-wrapper.py to kernel source
+  cp ${S}/gcc-wrapper.py ${STAGING_KERNEL_DIR}/scripts/
+  oe_runmake -C ${STAGING_KERNEL_BUILDDIR} ARCH=${ARCH} PYTHON='python3' CONFIG_GATOR=m M=${S}/driver modules
 }
 
 do_install() {
