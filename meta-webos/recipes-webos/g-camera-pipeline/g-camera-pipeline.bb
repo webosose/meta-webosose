@@ -4,7 +4,10 @@ SUMMARY = "g-camera-pipeline is a player which uses GStreamer"
 AUTHOR = "Praveen P <praveen.p@lge.com>"
 SECTION = "webos/media"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+  file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 inherit webos_component
 inherit webos_cmake
@@ -15,11 +18,11 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-13_f09fb1b2bd1ea40235d9dc6b66c94c9c85b45f08"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-14_3fcb28de403687e6f514e723bc850a8694a8650d"
+PR = "r6"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.3_43b95823c2493e1093b93db71726ece455b0b71c"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.4_bf91c0cb022b526328e981c445ec12b141f915b1"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
 DEPENDS_append_rpi = " userland"

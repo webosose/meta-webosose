@@ -4,12 +4,15 @@ SUMMARY = "Camera service framework to control camera devices"
 AUTHOR = "Gururaj Patil"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+  file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
 
-WEBOS_VERSION = "1.0.0-10_7f1e69507d00d02c437cdf496aa9290884845a70"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-11_c0d41ee3d91608e89cd770d48e81dc7287eb74bb"
+PR = "r2"
 
 inherit webos_component
 inherit webos_cmake
