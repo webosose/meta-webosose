@@ -119,6 +119,7 @@ IMAGE_CMD_ota_append_sota() {
     # Copy /var that was ignored by ostree
     cp -av ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
     cp -av ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
+    cp -av ${IMAGE_ROOTFS}/var/PMS ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
     # Copy /media /opt that were ignored by ostree
     cp -av ${IMAGE_ROOTFS}/media ${OTA_SYSROOT} || true
     cp -av ${IMAGE_ROOTFS}/opt ${OTA_SYSROOT} || true
