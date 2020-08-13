@@ -1,0 +1,196 @@
+From 610e6e594229117ada31cf99e5e46eb6f17f5de7 Mon Sep 17 00:00:00 2001
+From: Rakes Pani <rakes.pani@lge.com>
+Date: Mon, 10 Aug 2020 13:27:14 +0530
+Subject: [PATCH 2/3] Added MessageHandle property in org.bluez.obex.Transfer1
+
+:Release Notes:
+Added MessageHandle property in org.bluez.obex.Transfer1
+
+:Detailed Notes:
+Added MessageHandle property in org.bluez.obex.Transfer1.
+This property will be available for map pushmessage API.
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-107873] Add MessageHandle for pushMessage transfer in Bluez5
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ gobex/gobex-transfer.c  | 10 ++++++---
+ gobex/gobex.h           |  7 ++++--
+ obexd/client/transfer.c | 48 +++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 58 insertions(+), 7 deletions(-)
+
+diff --git a/gobex/gobex-transfer.c b/gobex/gobex-transfer.c
+index 36d4a1c..ecd9c38 100644
+--- a/gobex/gobex-transfer.c
++++ b/gobex/gobex-transfer.c
+@@ -51,6 +51,7 @@ struct transfer {
+ 
+ 	GObexDataProducer data_producer;
+ 	GObexDataConsumer data_consumer;
++	GObexPutFirstResponseFunc first_response;
+ 	GObexFunc complete_func;
+ 
+ 	gpointer user_data;
+@@ -224,6 +225,8 @@ static void transfer_response(GObex *obex, GError *err, GObexPacket *rsp,
+ 	}
+ 
+ 	if (transfer->opcode == G_OBEX_OP_PUT) {
++		if(transfer->first_response)
++			transfer->first_response(obex, &err, rsp, transfer->user_data);
+ 		req = g_obex_packet_new(transfer->opcode, FALSE,
+ 							G_OBEX_HDR_INVALID);
+ 		g_obex_packet_add_body(req, put_get_data, transfer);
+@@ -268,8 +271,8 @@ static struct transfer *transfer_new(GObex *obex, guint8 opcode,
+ }
+ 
+ guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
+-			GObexDataProducer data_func, GObexFunc complete_func,
+-			gpointer user_data, GError **err)
++			GObexDataProducer data_func, GObexPutFirstResponseFunc resp_func,
++			GObexFunc complete_func, gpointer user_data, GError **err)
+ {
+ 	struct transfer *transfer;
+ 
+@@ -280,6 +283,7 @@ guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
+ 
+ 	transfer = transfer_new(obex, G_OBEX_OP_PUT, complete_func, user_data);
+ 	transfer->data_producer = data_func;
++	transfer->first_response = resp_func;
+ 
+ 	g_obex_packet_add_body(req, put_get_data, transfer);
+ 
+@@ -309,7 +313,7 @@ guint g_obex_put_req(GObex *obex, GObexDataProducer data_func,
+ 							first_hdr_id, args);
+ 	va_end(args);
+ 
+-	return g_obex_put_req_pkt(obex, req, data_func, complete_func,
++	return g_obex_put_req_pkt(obex, req, data_func, NULL,complete_func,
+ 							user_data, err);
+ }
+ 
+diff --git a/gobex/gobex.h b/gobex/gobex.h
+index b223a2f..aba7d93 100644
+--- a/gobex/gobex.h
++++ b/gobex/gobex.h
+@@ -41,6 +41,9 @@ typedef void (*GObexRequestFunc) (GObex *obex, GObexPacket *req,
+ 							gpointer user_data);
+ typedef void (*GObexResponseFunc) (GObex *obex, GError *err, GObexPacket *rsp,
+ 							gpointer user_data);
++typedef void (*GObexPutFirstResponseFunc) (GObex *obex, GError *err, GObexPacket *rsp,
++							gpointer user_data);
++
+ 
+ gboolean g_obex_send(GObex *obex, GObexPacket *pkt, GError **err);
+ 
+@@ -105,8 +108,8 @@ guint g_obex_put_req(GObex *obex, GObexDataProducer data_func,
+ 			GError **err, guint first_hdr_id, ...);
+ 
+ guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
+-			GObexDataProducer data_func, GObexFunc complete_func,
+-			gpointer user_data, GError **err);
++			GObexDataProducer data_func,GObexPutFirstResponseFunc resp_func,
++			GObexFunc complete_func, gpointer user_data, GError **err);
+ 
+ guint g_obex_get_req(GObex *obex, GObexDataConsumer data_func,
+ 			GObexFunc complete_func, gpointer user_data,
+diff --git a/obexd/client/transfer.c b/obexd/client/transfer.c
+index b53dffa..b251fbb 100644
+--- a/obexd/client/transfer.c
++++ b/obexd/client/transfer.c
+@@ -80,6 +80,7 @@ struct obc_transfer {
+ 	char *filename;		/* Transfer file location */
+ 	char *name;		/* Transfer object name */
+ 	char *type;		/* Transfer object type */
++	char *messageHandle;		/* Transfer object type */
+ 	int fd;
+ 	guint req;
+ 	guint xfer;
+@@ -391,6 +392,25 @@ static gboolean get_session(const GDBusPropertyTable *property,
+ 
+ 	dbus_message_iter_append_basic(iter, DBUS_TYPE_OBJECT_PATH,
+ 							&transfer->session);
++	return TRUE;
++}
++
++static gboolean messageHandle_exists(const GDBusPropertyTable *property, void *data)
++{
++	struct obc_transfer *transfer = data;
++
++	return transfer->messageHandle != NULL;
++}
++
++static gboolean get_messageHandle(const GDBusPropertyTable *property,
++					DBusMessageIter *iter, void *data)
++{
++	struct obc_transfer *transfer = data;
++
++	if (transfer->messageHandle == NULL)
++		return FALSE;
++	DBG("%s",transfer->messageHandle);
++	dbus_message_iter_append_basic(iter, DBUS_TYPE_STRING, &transfer->messageHandle);
+ 
+ 	return TRUE;
+ }
+@@ -410,6 +430,7 @@ static const GDBusPropertyTable obc_transfer_properties[] = {
+ 	{ "Filename", "s", get_filename, NULL, filename_exists },
+ 	{ "Transferred", "t", get_transferred, NULL, transferred_exists },
+ 	{ "Session", "o", get_session },
++	{ "MessageHandle", "s", get_messageHandle, NULL , messageHandle_exists },
+ 	{ }
+ };
+ 
+@@ -458,6 +479,7 @@ static void obc_transfer_free(struct obc_transfer *transfer)
+ 	g_free(transfer->type);
+ 	g_free(transfer->session);
+ 	g_free(transfer->path);
++	g_free(transfer->messageHandle);
+ 	g_free(transfer);
+ }
+ 
+@@ -677,6 +699,28 @@ static void xfer_complete(GObex *obex, GError *err, gpointer user_data)
+ 		callback->func(transfer, err, callback->data);
+ }
+ 
++static void get_first_put_response(GObex *obex, GError *err, GObexPacket *rsp,
++							gpointer user_data)
++{
++	struct obc_transfer *transfer = user_data;
++	guint8 rspcode;
++	GObexHeader *hdr;
++	gboolean final;
++	rspcode = g_obex_packet_get_operation(rsp, &final);
++	if (rspcode == G_OBEX_RSP_CONTINUE) {
++		hdr = g_obex_packet_get_header(rsp, G_OBEX_HDR_NAME);
++		if (hdr) {
++			const char *name;
++			g_obex_header_get_unicode(hdr, &name);
++			uint64_t handle = strtoull(name, NULL, 16);
++			transfer->messageHandle = g_strdup_printf("message%"PRIu64,handle);
++			DBG("%s", transfer->messageHandle);
++			g_dbus_emit_property_changed(transfer->conn, transfer->path,
++						TRANSFER_INTERFACE, "MessageHandle");
++		}
++	}
++}
++
+ static void get_xfer_progress_first(GObex *obex, GError *err, GObexPacket *rsp,
+ 							gpointer user_data)
+ {
+@@ -875,8 +919,8 @@ static gboolean transfer_start_put(struct obc_transfer *transfer, GError **err)
+ 	}
+ 
+ 	transfer->xfer = g_obex_put_req_pkt(transfer->obex, req,
+-					put_xfer_progress, xfer_complete,
+-					transfer, err);
++					put_xfer_progress, get_first_put_response,
++					xfer_complete,transfer, err);
+ 	if (transfer->xfer == 0)
+ 		return FALSE;
+ 
+-- 
+2.17.1
+

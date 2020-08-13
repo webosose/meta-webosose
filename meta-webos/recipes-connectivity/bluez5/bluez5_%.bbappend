@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos18"
+EXTENDPRAUTO_append = "webos19"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -32,6 +32,10 @@ SRC_URI += " \
     file://0021-Modified-MapInstanceName-MapInstanceProperties-parsi.patch \
     file://0022-Enabled-EMAIL-support-based-on-MAPInstance-Name.patch \
     file://0023-Disabling-DB-Hash-for-Gatt.patch \
+    file://0024-Added-Notification-property-in-org.bluez.obex.Messag.patch \
+    file://0025-Added-MessageHandle-property-in-org.bluez.obex.Trans.patch \
+    file://0026-Create-Message-interface-for-sent-message-related-no.patch \
+    file://0027-AVRCP-addToNowPlaying-return-error-when-player-not-s.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \

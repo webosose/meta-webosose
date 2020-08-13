@@ -1,0 +1,94 @@
+From 9bf125f706c64eab8da8ed250d8aaa34f1e9d120 Mon Sep 17 00:00:00 2001
+From: "ramya.hegde" <ramya.hegde@lge.com>
+Date: Tue, 11 Aug 2020 15:18:43 +0530
+Subject: [PATCH] AVRCP addToNowPlaying return error when player not supports
+
+:Release Notes:
+Fix for addToNowPlaying when player does not support the
+feature
+
+:Detailed Notes:
+Added check if the player supports addToNowPlaying before
+sending the command to target device
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-110696] Analyze and fix addToNowPlaying support in
+              bluez5 stack
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ profiles/audio/avrcp.c  |  3 +++
+ profiles/audio/player.c | 13 ++++++++++++-
+ profiles/audio/player.h |  1 +
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
+index 885d707..59d4ada 100644
+--- a/profiles/audio/avrcp.c
++++ b/profiles/audio/avrcp.c
+@@ -2768,6 +2768,9 @@ static void avrcp_player_parse_features(struct avrcp_player *player,
+ 	if (features[7] & 0x10)
+ 		media_player_set_searchable(mp, true);
+ 
++	if (features[7] & 0x20)
++		media_player_set_add_to_now_playing(mp, true);
++
+ 	if (features[8] & 0x02) {
+ 		media_player_create_folder(mp, "/NowPlaying",
+ 						PLAYER_FOLDER_TYPE_MIXED, 0);
+diff --git a/profiles/audio/player.c b/profiles/audio/player.c
+index 09ee979..86271fc 100644
+--- a/profiles/audio/player.c
++++ b/profiles/audio/player.c
+@@ -88,6 +88,7 @@ struct media_player {
+ 	char			*subtype;	/* Player subtype */
+ 	bool			browsable;	/* Player browsing feature */
+ 	bool			searchable;	/* Player searching feature */
++	bool			addToNowPlaying; /* Player addToNowPlaying feature */
+ 	struct media_folder	*scope;		/* Player current scope */
+ 	struct media_folder	*folder;	/* Player current folder */
+ 	struct media_folder	*search;	/* Player search folder */
+@@ -1449,6 +1450,16 @@ bool media_player_get_browsable(struct media_player *mp)
+ 	return mp->browsable;
+ }
+ 
++void media_player_set_add_to_now_playing(struct media_player *mp, bool enabled)
++{
++	if (mp->addToNowPlaying == enabled)
++		return;
++
++	DBG("%s", enabled ? "true" : "false");
++
++	mp->addToNowPlaying = enabled;
++}
++
+ void media_player_set_searchable(struct media_player *mp, bool enabled)
+ {
+ 	if (mp->searchable == enabled)
+@@ -1552,7 +1563,7 @@ static DBusMessage *media_item_add_to_nowplaying(DBusConnection *conn,
+ 	struct player_callback *cb = mp->cb;
+ 	int err;
+ 
+-	if (!item->playable || !cb->cbs->play_item)
++	if (!item->playable || !cb->cbs->add_to_nowplaying || !mp->addToNowPlaying)
+ 		return btd_error_not_supported(msg);
+ 
+ 	err = cb->cbs->add_to_nowplaying(mp, item->path, item->uid,
+diff --git a/profiles/audio/player.h b/profiles/audio/player.h
+index 536394c..1465a92 100644
+--- a/profiles/audio/player.h
++++ b/profiles/audio/player.h
+@@ -86,6 +86,7 @@ void media_player_set_subtype(struct media_player *mp, const char *subtype);
+ void media_player_set_name(struct media_player *mp, const char *name);
+ void media_player_set_browsable(struct media_player *mp, bool enabled);
+ bool media_player_get_browsable(struct media_player *mp);
++void media_player_set_add_to_now_playing(struct media_player *mp, bool enabled);
+ void media_player_set_searchable(struct media_player *mp, bool enabled);
+ void media_player_set_folder(struct media_player *mp, const char *path,
+ 								uint32_t items);
+-- 
+2.17.1
+

@@ -1,0 +1,313 @@
+From ed7113d18f47d0d6a524b726c0d100d2951d2e57 Mon Sep 17 00:00:00 2001
+From: Rakes Pani <rakes.pani@lge.com>
+Date: Fri, 7 Aug 2020 18:32:03 +0530
+Subject: [PATCH] Added Notification property in org.bluez.obex.MessageAccess1
+
+:Release Notes:
+Added Notification property in org.bluez.obex.MessageAccess1
+
+:Detailed Notes:
+New Properties Notification is added for MAP.
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-107891] Implement BlueZ API for getMessageNotificationEvent
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ doc/obex-api.txt   |  48 ++++++++++++++
+ obexd/client/map.c | 153 ++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 198 insertions(+), 3 deletions(-)
+
+diff --git a/doc/obex-api.txt b/doc/obex-api.txt
+index f39355a..85301dc 100644
+--- a/doc/obex-api.txt
++++ b/doc/obex-api.txt
+@@ -799,6 +799,54 @@ Filter:		uint16 Offset:
+ 			Possible values: True for high priority or False for
+ 			non-high priority
+ 
++Properties dict Notification [readonly]
++
++			Notification data contains list of below property
++
++			String ObjectPath :
++
++				Object path of the message.
++
++			string EventType :
++
++				Notification Event Type.
++
++				Possible values : "NewMessage" , "DeliverySuccess",
++				"SendingSuccess", "DeliveryFailure", "SendingFailure",
++				"MessageDeleted", "MessageShift".
++
++			string Folder :
++
++				Folder which the message belongs to.
++
++			string Type :
++
++				Message type
++
++				Possible values: "email", "sms-gsm",
++				"sms-cdma" and "mms"
++
++			string Subject :
++
++				Message subject, only available for "NewMessage".
++
++			string Timestamp :
++
++				Message timestamp, only available for "NewMessage".
++
++			string Sender :
++
++				Message sender name, only available for "NewMessage".
++
++			string OldFolder :
++
++				Folder which message is shifted, only available for
++				"MessageShift".
++
++			boolean Priority:
++
++				Message Priority, only available for "NewMessage"
++
+ Message hierarchy
+ =================
+ 
+diff --git a/obexd/client/map.c b/obexd/client/map.c
+index 94e9d64..6340f90 100644
+--- a/obexd/client/map.c
++++ b/obexd/client/map.c
+@@ -98,12 +98,25 @@ static const char * const filter_list[] = {
+ #define STATUS_DELETE 1
+ #define FILLER_BYTE 0x30
+ 
++struct map_notification {
++	char *eventType;
++	char *path;
++	char *folder;
++	char *old_folder;
++	char *msg_type;
++	char *datetime;
++	char *subject;
++	char *sender_name;
++	gboolean priority;
++};
++
+ struct map_data {
+ 	struct obc_session *session;
+ 	GHashTable *messages;
+ 	int16_t mas_instance_id;
+ 	uint8_t supported_message_types;
+ 	uint32_t supported_features;
++	struct map_notification *notification;
+ };
+ 
+ struct pending_request {
+@@ -433,6 +446,20 @@ static void map_msg_free(void *data)
+ 	g_free(msg);
+ }
+ 
++static void map_notification_free(void *data)
++{
++	struct map_notification *notification = data;
++
++	g_free(notification->eventType);
++	g_free(notification->path);
++	g_free(notification->subject);
++	g_free(notification->folder);
++	g_free(notification->old_folder);
++	g_free(notification->datetime);
++	g_free(notification->sender_name);
++	g_free(notification->msg_type);
++}
++
+ static DBusMessage *map_msg_get(DBusConnection *connection,
+ 					DBusMessage *message, void *user_data)
+ {
+@@ -1862,6 +1889,62 @@ static void map_msg_remove(void *data)
+ 	g_free(path);
+ }
+ 
++static void update_event_type(struct map_data *map, struct map_event *event)
++{
++	switch (event->type) {
++	case MAP_ET_NEW_MESSAGE:
++		map->notification->eventType = g_strdup("NewMessage");
++		break;
++	case MAP_ET_DELIVERY_SUCCESS:
++		map->notification->eventType = g_strdup("DeliverySuccess");
++		break;
++	case MAP_ET_SENDING_SUCCESS:
++		map->notification->eventType = g_strdup("SendingSuccess");
++		break;
++	case MAP_ET_DELIVERY_FAILURE:
++		map->notification->eventType = g_strdup("DeliveryFailure");
++		break;
++	case MAP_ET_SENDING_FAILURE:
++		map->notification->eventType = g_strdup("SendingFailure");
++		break;
++	case MAP_ET_MESSAGE_DELETED:
++		map->notification->eventType = g_strdup("MessageDeleted");
++		break;
++	case MAP_ET_MESSAGE_SHIFT:
++		map->notification->eventType = g_strdup("MessageShift");
++		break;
++	case MAP_ET_MEMORY_FULL:
++	case MAP_ET_MEMORY_AVAILABLE:
++	default:
++		break;
++	}
++}
++
++static void map_update_notification(struct map_data *map,
++							struct map_event *event, struct map_msg *msg)
++{
++	if(map->notification)
++	{
++		map_notification_free(map->notification);
++		update_event_type(map, event);
++		map->notification->path = g_strdup_printf("%s",msg->path);
++		map->notification->folder = g_strdup(event->folder);
++		map->notification->sender_name = g_strdup(event->sender_name);
++		map->notification->subject = g_strdup(event->subject);
++		map->notification->msg_type = g_strdup(msg->type);
++		map->notification->datetime = g_strdup(event->datetime);
++		map->notification->old_folder = g_strdup(event->old_folder);
++		if(event->priority)
++		{
++			map->notification->priority = FALSE;
++			if(!strcasecmp(event->priority, "yes"))
++				map->notification->priority = TRUE;
++		}
++		g_dbus_emit_property_changed(conn, obc_session_get_path(map->session), MAP_INTERFACE,
++									"Notification");
++	}
++}
++
+ static void map_handle_new_message(struct map_data *map,
+ 							struct map_event *event)
+ {
+@@ -1872,7 +1955,15 @@ static void map_handle_new_message(struct map_data *map,
+ 	if (msg)
+ 		g_hash_table_remove(map->messages, &event->handle);
+ 
+-	map_msg_create(map, event->handle, event->folder, event->msg_type);
++	msg = map_msg_create(map, event->handle, event->folder, event->msg_type);
++	if (msg)
++	{
++		msg->subject = g_strdup(event->subject);
++		msg->sender = g_strdup(event->sender_name);
++		msg->timestamp = g_strdup(event->datetime);
++		if(event->priority)
++			parse_priority(msg,event->priority);
++	}
+ }
+ 
+ static void map_handle_status_changed(struct map_data *map,
+@@ -1893,6 +1984,8 @@ static void map_handle_status_changed(struct map_data *map,
+ 
+ 	g_dbus_emit_property_changed(conn, msg->path, MAP_MSG_INTERFACE,
+ 								"Status");
++
++	map_update_notification(map, event, msg);
+ }
+ 
+ static void map_handle_folder_changed(struct map_data *map,
+@@ -1916,6 +2009,8 @@ static void map_handle_folder_changed(struct map_data *map,
+ 
+ 	g_dbus_emit_property_changed(conn, msg->path, MAP_MSG_INTERFACE,
+ 								"Folder");
++
++	map_update_notification(map, event, msg);
+ }
+ 
+ static void map_handle_notification(struct map_event *event, void *user_data)
+@@ -1958,6 +2053,49 @@ static void map_handle_notification(struct map_event *event, void *user_data)
+ 	}
+ }
+ 
++static gboolean map_get_msg_notification(const GDBusPropertyTable *property,
++					DBusMessageIter *iter, void *data)
++{
++	struct map_data *map = data;
++
++	if(!map->notification)
++		return FALSE;
++
++	DBusMessageIter dict;
++	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
++					DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING
++					DBUS_TYPE_STRING_AS_STRING
++					DBUS_TYPE_VARIANT_AS_STRING
++					DBUS_DICT_ENTRY_END_CHAR_AS_STRING,
++					&dict);
++
++	g_dbus_dict_append_entry(&dict, "ObjectPath", DBUS_TYPE_STRING, &map->notification->path);
++	g_dbus_dict_append_entry(&dict, "EventType", DBUS_TYPE_STRING, &map->notification->eventType);
++	g_dbus_dict_append_entry(&dict, "Folder", DBUS_TYPE_STRING, &map->notification->folder);
++	g_dbus_dict_append_entry(&dict, "Type", DBUS_TYPE_STRING, &map->notification->msg_type);
++
++	if(!g_strcmp0(map->notification->eventType,"NewMessage"))
++	{
++		g_dbus_dict_append_entry(&dict, "Subject", DBUS_TYPE_STRING, &map->notification->subject);
++		g_dbus_dict_append_entry(&dict, "Timestamp", DBUS_TYPE_STRING, &map->notification->datetime);
++		g_dbus_dict_append_entry(&dict, "Sender", DBUS_TYPE_STRING, &map->notification->sender_name);
++		g_dbus_dict_append_entry(&dict, "Priority", DBUS_TYPE_BOOLEAN, &map->notification->priority);
++	}
++	else if (!g_strcmp0(map->notification->eventType,"MessageShift"))
++	{
++		g_dbus_dict_append_entry(&dict, "OldFolder", DBUS_TYPE_STRING, &map->notification->old_folder);
++	}
++
++	dbus_message_iter_close_container(iter, &dict);
++
++	return TRUE;
++}
++
++static const GDBusPropertyTable map_properties[] = {
++	{ "Notification", "a{sv}", map_get_msg_notification },
++	{ }
++};
++
+ static bool set_notification_registration(struct map_data *map, bool status)
+ {
+ 	struct obc_transfer *transfer;
+@@ -2005,6 +2143,8 @@ static void map_free(void *data)
+ 
+ 	obc_session_unref(map->session);
+ 	g_hash_table_unref(map->messages);
++	map_notification_free(map->notification);
++	g_free(map->notification);
+ 	g_free(map);
+ }
+ 
+@@ -2057,10 +2197,17 @@ static int map_probe(struct obc_session *session)
+ 
+ 	DBG("%s, instance id %d", path, map->mas_instance_id);
+ 
+-	set_notification_registration(map, true);
++	if(set_notification_registration(map, true)){
++		map->notification = g_try_new0(struct map_notification, 1);
++		if(!map->notification)
++		{
++			map_free(map);
++			return -ENOMEM;
++		}
++	}
+ 
+ 	if (!g_dbus_register_interface(conn, path, MAP_INTERFACE, map_methods,
+-					NULL, NULL, map, map_free)) {
++					NULL, map_properties, map, map_free)) {
+ 		map_free(map);
+ 
+ 		return -ENOMEM;
+-- 
+2.17.1
+

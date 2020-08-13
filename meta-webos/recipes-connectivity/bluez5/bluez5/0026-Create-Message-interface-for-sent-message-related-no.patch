@@ -1,0 +1,77 @@
+From bea1dfdda1873c03ead9f24d13c6328852650038 Mon Sep 17 00:00:00 2001
+From: Rakes Pani <rakes.pani@lge.com>
+Date: Mon, 10 Aug 2020 16:21:17 +0530
+Subject: [PATCH] Create Message interface for sent message related
+ notification
+
+:Release Notes:
+Create Message interface for sent message related notification
+
+:Detailed Notes:
+If message object is not present , when sent message related
+event is received from MSE , create Message object
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-107873] Add MessageHandle for pushMessage transfer in Bluez5
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ obexd/client/map.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/obexd/client/map.c b/obexd/client/map.c
+index 6340f90..8a2fa99 100644
+--- a/obexd/client/map.c
++++ b/obexd/client/map.c
+@@ -1951,6 +1951,7 @@ static void map_handle_new_message(struct map_data *map,
+ 	struct map_msg *msg;
+ 
+ 	msg = g_hash_table_lookup(map->messages, &event->handle);
++
+ 	/* New message event can be used if a new message replaces an old one */
+ 	if (msg)
+ 		g_hash_table_remove(map->messages, &event->handle);
+@@ -1966,6 +1967,17 @@ static void map_handle_new_message(struct map_data *map,
+ 	}
+ }
+ 
++static void map_handle_sent_message(struct map_data *map,
++							struct map_event *event)
++{
++	struct map_msg *msg;
++
++	msg = g_hash_table_lookup(map->messages, &event->handle);
++
++	if(msg == NULL)
++		msg = map_msg_create(map, event->handle, event->folder, event->msg_type);
++}
++
+ static void map_handle_status_changed(struct map_data *map,
+ 							struct map_event *event,
+ 							const char *status)
+@@ -2029,15 +2041,19 @@ static void map_handle_notification(struct map_event *event, void *user_data)
+ 		map_handle_status_changed(map, event, "notification");
+ 		break;
+ 	case MAP_ET_DELIVERY_SUCCESS:
++		map_handle_sent_message(map, event);
+ 		map_handle_status_changed(map, event, "delivery-success");
+ 		break;
+ 	case MAP_ET_SENDING_SUCCESS:
++		map_handle_sent_message(map, event);
+ 		map_handle_status_changed(map, event, "sending-success");
+ 		break;
+ 	case MAP_ET_DELIVERY_FAILURE:
++		map_handle_sent_message(map, event);
+ 		map_handle_status_changed(map, event, "delivery-failure");
+ 		break;
+ 	case MAP_ET_SENDING_FAILURE:
++		map_handle_sent_message(map, event);
+ 		map_handle_status_changed(map, event, "sending-failure");
+ 		break;
+ 	case MAP_ET_MESSAGE_DELETED:
+-- 
+2.17.1
+
