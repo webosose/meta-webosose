@@ -11,7 +11,7 @@ inherit pkgconfig
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 
-WEBOS_VERSION = "1.0.0-2_e9e72c84e6bb01a63ed395aeba2115b18ee15029"
+WEBOS_VERSION = "1.0.0-3_1f3545329b357facd864a42d47a75389e932ebbe"
 PR = "r1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
