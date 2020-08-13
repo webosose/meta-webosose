@@ -23,8 +23,8 @@ RDEPENDS_${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-17_674cc0a2121ddea38f65513b1f1c8c63b7f1c2f9"
-PR = "r28"
+WEBOS_VERSION = "1.0.0-19_b5a06151c3f52ce80f4d5fedb50f65a9dbaafcf7"
+PR = "r29"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -49,8 +49,3 @@ EXTRA_OECMAKE += "-DAUDIOD_TEST_API:BOOLEAN=True"
 FILES_${PN} += "${datadir}/alsa/"
 FILES_${PN} += "/data"
 FILES_${PN} += "${webos_mediadir}/internal"
-
-# From http://gpro.lge.com/c/webosose/audiod-pro/+/266294
-SRC_URI += "file://0001-CMakeLists.txt-Drop-2nd-call-to-find_package-Boost.patch"
-
-SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"

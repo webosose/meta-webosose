@@ -36,8 +36,8 @@ DEPENDS_remove = "libatomic-ops"
 
 DEPENDS += "pmloglib"
 
-WEBOS_VERSION = "9.0-20_9b71d3986616e6330ebf6ea81ac6c317091d8d52"
-PR = "r22"
+WEBOS_VERSION = "9.0-22_f81e62ac54b951f997aefcbe0521ba290ab687ec"
+PR = "r23"
 
 inherit webos_enhanced_submissions
 
@@ -45,7 +45,6 @@ inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-          file://0001-change-alsa_ucm-header-path.patch \
           file://pulseaudio.service \
 "
 
