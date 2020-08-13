@@ -1,0 +1,12 @@
+diff -ruN a/config/rpi/gstomx.conf b/config/rpi/gstomx.conf
+--- a/config/rpi/gstomx.conf	2020-08-13 15:29:07.501920678 +0000
++++ b/config/rpi/gstomx.conf	2020-08-13 15:22:35.858037217 +0000
+@@ -29,7 +29,7 @@
+ type-name=GstOMXH264Dec
+ core-name=/usr/lib/libopenmaxil.so
+ component-name=OMX.broadcom.video_decode
+-rank=257
++rank=256
+ in-port-index=130
+ out-port-index=131
+ hacks=no-component-role;signals-premature-eos

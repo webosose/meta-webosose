@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi5"
+EXTENDPRAUTO_append_rpi = "webosrpi6"
 
 CPPFLAGS_append_rpi = " -I${STAGING_INCDIR}/IL \
     -I${STAGING_INCDIR}/interface/vcos/pthreads \
@@ -27,5 +27,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 SRC_URI_append_rpi = " \
     file://0001-fix-adaptive-resolution-change-in-seek-issue.patch \
     file://0002-fix-brcmegl-dependencies-from-configure.patch \
+    file://0003-decrease-ranking-of-omxh264dec.patch \
 "
 
