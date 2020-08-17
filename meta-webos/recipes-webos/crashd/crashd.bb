@@ -20,7 +20,7 @@ RREPLACES_${PNLIBSEGFAULT} = "libsegfault"
 RCONFLICTS_${PNLIBSEGFAULT} = "libsegfault"
 
 WEBOS_VERSION = "1.2.5-4_bfc3dd73a27b474eaf6051bb358a40bd1593ddc2"
-PR = "r12"
+PR = "r13"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -94,3 +94,5 @@ pkg_prerm_${PNLIBSEGFAULT}() {
         rm -f $D${sysconfdir}/ld.so.preload
     fi
 }
+
+SRC_URI += "file://0001-Fix-build-with-glibc-2.32.patch"
