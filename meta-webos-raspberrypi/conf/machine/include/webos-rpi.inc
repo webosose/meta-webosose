@@ -11,11 +11,6 @@ WEBOS_TARGET_MACHINE_IMPL = "hardware"
 # [EXIT]: EGL Error : Could not create the egl surface: error = 0x3003
 GPU_MEM = "128"
 
-# Backport from:
-# https://github.com/agherzan/meta-raspberrypi/commit/aaa0d0b708437a396f194dcc2953c8e6b533f4fd
-# can be dropped when upgrading to Yocto 2.7 Warrior
-PREFERRED_VERSION_linux-raspberrypi = "4.19.%"
-
 PREFERRED_PROVIDER_aval-impl = "avoutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_aval-impl = "avoutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_alsa-state = "avoutput-adaptation-layer-rpi"
