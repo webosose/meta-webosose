@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://README.md;beginline=94;md5=b159f6c7121460dba2c5965602
 "
 
 WEBOS_VERSION = "0.20080828a-0webos9-2_1155ed6a90c04c6d0349cc1184744254d5d37949"
-PR = "r2"
+PR = "r3"
 
 inherit webos_upstream_from_repo
 inherit webos_public_repo
@@ -19,3 +19,5 @@ inherit webos_library
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+SRC_URI += "file://0001-Fix-build-with-glibc-2.32.patch"
