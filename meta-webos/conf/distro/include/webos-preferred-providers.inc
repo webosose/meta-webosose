@@ -97,10 +97,3 @@ VIRTUAL-RUNTIME_ntp = "ntp sntp"
 VIRTUAL-RUNTIME_surface-manager = "luna-surfacemanager-base"
 VIRTUAL-RUNTIME_surface-manager-conf = "auto-luna-surface-manager"
 VIRTUAL-RUNTIME_surface-manager-extension = "auto-luna-surface-manager"
-
-# Backport from Yocto 2.7 Warrior:
-# 25e835f568 default-providers: set mesa as default provider for nativesdk-mesa
-PREFERRED_PROVIDER_nativesdk-mesa ?= "nativesdk-mesa"
-# 83432f5767 default-providers.inc: set mesa as the provider for native(sdk) virtual/libgl
-PREFERRED_PROVIDER_virtual/libgl-native ?= "mesa-native"
-PREFERRED_PROVIDER_virtual/nativesdk-libgl ?= "nativesdk-mesa"
