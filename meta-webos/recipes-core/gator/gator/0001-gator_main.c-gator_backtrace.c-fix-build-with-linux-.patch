@@ -1,0 +1,56 @@
+From 80444adae0a649b50f62b80c0c5d2baaf85d039c Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Tue, 18 Aug 2020 03:28:32 -0700
+Subject: [PATCH] gator_main.c, gator_backtrace.c: fix build with linux-5.0 and
+ newer
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ driver/gator_backtrace.c | 5 +++++
+ driver/gator_main.c      | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/driver/gator_backtrace.c b/driver/gator_backtrace.c
+index 92b2860..37c1dc3 100644
+--- a/driver/gator_backtrace.c
++++ b/driver/gator_backtrace.c
+@@ -257,7 +257,12 @@ static void arm_backtrace_eabi(int cpu, struct pt_regs *const regs, unsigned int
+         return;
+ 
+     while (depth-- && curr) {
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)
+         if (!access_ok(VERIFY_READ, curr, sizeof(struct stack_frame_eabi)) ||
++#else
++        /* https://lkml.org/lkml/2019/1/4/418 */
++        if (!access_ok(curr, sizeof(struct stack_frame_eabi)) ||
++#endif
+                 __copy_from_user_inatomic(&bufcurr, curr, sizeof(struct stack_frame_eabi))) {
+             return;
+         }
+diff --git a/driver/gator_main.c b/driver/gator_main.c
+index a7506bd..43f15b8 100644
+--- a/driver/gator_main.c
++++ b/driver/gator_main.c
+@@ -779,6 +779,9 @@ static void gator_summary(void)
+ {
+     u64 timestamp, uptime;
+     struct timespec ts;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    struct timespec64 ts64;
++#endif
+     char uname_buf[100];
+ 
+     snprintf(uname_buf, sizeof(uname_buf), "%s %s %s %s %s GNU/Linux", utsname()->sysname, utsname()->nodename, utsname()->release, utsname()->version, utsname()->machine);
+@@ -797,8 +800,11 @@ static void gator_summary(void)
+         if (m2b)
+             m2b(&ts);
+     }
+-#else
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)
+     get_monotonic_boottime(&ts);
++#else
++    ktime_get_boottime_ts64(&ts64);
++    ts = timespec64_to_timespec(ts64);
+ #endif
+     uptime = timespec_to_ns(&ts);
+ 
