@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
 
-WEBOS_VERSION = "1.0.0-14_594197bf0537fd762b5662e5dcb6652387810c90"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-15_b33f0ee099c539c511e4c8c7aa31e830ddb405e1"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -32,5 +32,3 @@ EXTRA_OECMAKE += "-DWEBOS_HFP_ENABLED_ROLE:STRING='${WEBOS_HFP_ENABLED_ROLE}'"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-SRC_URI_append = " file://0001-Fix-build-error-with-gcc-9.patch"
