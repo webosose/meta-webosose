@@ -19,8 +19,8 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-46_0d18213230117ee4594d9f7659daf11c4a44f71c"
-PR = "r36"
+WEBOS_VERSION = "1.0.2-47_348c5a09fd0886782479cb190ad6d458f7e75607"
+PR = "r37"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -100,7 +100,7 @@ do_configure_append() {
        sed -i '/--enable-aggressive-release-policy \\/a\   --ignore-touch-devices \\' ${B}/webapp-mgr.sh
     fi
 
-    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-pal-media-service \\' ${B}/webapp-mgr.sh
+    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-neva-media-service \\' ${B}/webapp-mgr.sh
 
     # enable platform decoding if PLATFORM_DECODER_ENABLED is true
     if ${PLATFORM_DECODER_ENABLED}; then
@@ -113,6 +113,8 @@ do_configure_append() {
        # enable h/w encoding for webrtc
        sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-encoder \\' ${B}/webapp-mgr.sh
     fi
+
+    sed -i '/--enable-aggressive-release-policy \\/a\    --local-storage-limit-per-second-level-domain=10 \\' ${B}/webapp-mgr.sh
 }
 
 do_configure_append_qemux86() {

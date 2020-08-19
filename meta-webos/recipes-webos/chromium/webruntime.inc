@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r40"
+INC_PR = "r41"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -58,8 +58,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 
 SRC_URI_append = "\
     ${WEBOSOSE_GIT_REPO_COMPLETE_V8};destsuffix=git/src/v8;name=v8 \
-    file://0001-GCC-fix-includes-for-gcc-10.patch \
-    file://0001-Fix-bison-3.7.patch \
 "
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
@@ -206,13 +204,15 @@ GN_ARGS_append_armv6 += 'use_allocator="none"'
 # https://bugs.chromium.org/p/webrtc/issues/detail?id=6574
 GN_ARGS_append_armv6 += 'arm_use_neon=false'
 
+TARGET_CPU = "${@gn_arch_name(TARGET_ARCH)}"
+
 GN_ARGS_append_qemux86 = "\
     is_host_clang=false\
-    v8_snapshot_toolchain=\"//build/toolchain/cros:host\" \
+    cros_host_is_clang=false\
+    v8_snapshot_toolchain=\"//build/toolchain/cros:v8_snapshot_clang_${TARGET_CPU}\"\
     host_toolchain=\"//build/toolchain/cros:host\" \
     use_custom_libcxx=false \
     use_custom_libcxx_for_host=false \
-    v8_enable_embedded_builtins=false \
 "
 
 # Doesn't build for armv[45]*
@@ -318,7 +318,7 @@ modify_run_app_shell_append_qemux86() {
 MKSNAPSHOT_PATH = ""
 MKSNAPSHOT_PATH_arm = "clang_x86_v8_arm/"
 MKSNAPSHOT_PATH_aarch64 = "clang_x64_v8_arm64/"
-MKSNAPSHOT_PATH_qemux86 = "host/"
+MKSNAPSHOT_PATH_qemux86 = "v8_snapshot_clang_${TARGET_CPU}/"
 
 WINDOW_SIZE ?= "1920,1080"
 CACHE_DIR ?= "${webos_homedir}/webbrowser"
@@ -334,7 +334,6 @@ do_install() {
 
     install -d ${D}${CBE_DATA_PATH}
     install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/icudtl.dat ${D}${CBE_DATA_PATH}
-    install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/natives_blob.bin ${D}${CBE_DATA_PATH}
     install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/snapshot_blob.bin ${D}${CBE_DATA_PATH}
     # app_runtime_content.pak, webos_content.pak, extensions_shell_and_test.pak
     install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/*.pak ${D}${CBE_DATA_PATH}

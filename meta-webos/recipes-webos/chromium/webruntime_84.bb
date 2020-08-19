@@ -4,24 +4,17 @@ require webruntime.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.5"
+PR = "${INC_PR}.1"
 
-LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=07465c3c8b4402803a26b207674ca122"
+WEBOS_VERSION = "84.0.4147.89-4_2d76965c04cce0db98188a3529cf5a382ee32ba9"
 
-WEBOS_VERSION = "79.0.3945.79-52_bee0eaf001556e3bc66c8bbe4386efb3bd4fca9f"
+WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium84"
 
-WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium79"
-
-WEBOS_REPO_NAME = "chromium79"
+WEBOS_REPO_NAME = "chromium84"
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 
-WEBOS_VERSION_V8 = "7.9.317.31-chromium79.5_f187e079dfbaadb3d2a573bac25a4f4d09d21a93"
-SRCREV_v8 = "e876fd0e28bd3bda5815394874183b7e6079d440"
-
-SRC_URI_append = "\
-    file://0001-GCC-fix-includes-for-gcc-10.patch \
-    file://0001-Fix-bison-3.7.patch \
-"
+WEBOS_VERSION_V8 = "8.4.371.19-chromium84.2_9ea4957fd61303416e2dc36235c5776240472d44"
+SRCREV_v8 = "5c1d89dd2945a10cf7a6a3458050b3177a870b09"
 
 # Since _remove is always applied LAST, we cannot implement
 # GN_ARGS_remove = "ozone_platform_wayland_external=true" here
@@ -33,11 +26,25 @@ PACKAGECONFIG[google_ozone_wayland] = "\
 
 PACKAGECONFIG[v8_lite] = "v8_enable_lite_mode=true,v8_enable_lite_mode=false"
 
+PACKAGECONFIG_remove="jumbo"
+
+GN_ARGS_append = " \
+  use_system_minigbm=false \
+    use_wayland_gbm=false \
+"
+
 GN_ARGS_append = " \
   libdir=\"${libdir}\"\
   includedir=\"${includedir}\"\
 "
 
 # TODO: qemux86 build fails
-PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media neva-webrtc gav"
+PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav neva-webrtc"
 #END TODO
+
+# Fix build error for OSE RPi4-64
+SRC_URI_append_raspberrypi4-64 = "\
+    file://0001-op-ds-build-Fix-build-error-when-target-is-arm64.patch \
+"
+
+D = "${OUT_DIR}/${BUILD_TYPE}/image"
