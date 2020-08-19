@@ -1,9 +1,9 @@
-From ce1334a066cfc1173505081134f5bd5fffdebc66 Mon Sep 17 00:00:00 2001
+From 275cd4f3257f19fb4dbcf730fb4734c4bb91b435 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
-Date: Mon, 9 Dec 2019 22:15:55 +0900
+Date: Wed, 19 Aug 2020 09:50:56 +0900
 Subject: [PATCH] Use human readable process name for chrome inspector
 
-:Release Notes:
+Release Notes:
 Use human readable process name for chrome inspector
 
 :Detailed Notes:
@@ -32,10 +32,10 @@ human readable process name.
  3 files changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/src/inspector_io.cc b/src/inspector_io.cc
-index 539cdb5501..478cf08985 100644
+index 76e481c..49a3c42 100644
 --- a/src/inspector_io.cc
 +++ b/src/inspector_io.cc
-@@ -474,7 +474,11 @@ std::vector<std::string> InspectorIoDelegate::GetTargetIds() {
+@@ -353,7 +353,11 @@ std::vector<std::string> InspectorIoDelegate::GetTargetIds() {
  }
  
  std::string InspectorIoDelegate::GetTargetTitle(const std::string& id) {
@@ -49,24 +49,24 @@ index 539cdb5501..478cf08985 100644
  
  std::string InspectorIoDelegate::GetTargetUrl(const std::string& id) {
 diff --git a/src/node_internals.h b/src/node_internals.h
-index 778205e3c9..d786441c04 100644
+index 0fff2e6..273c303 100644
 --- a/src/node_internals.h
 +++ b/src/node_internals.h
-@@ -233,7 +233,9 @@ void RegisterSignalHandler(int signal,
- bool SafeGetenv(const char* key, std::string* text);
+@@ -99,7 +99,9 @@ void RegisterSignalHandler(int signal,
+ #endif
  
  std::string GetHumanReadableProcessName();
 +std::string GetHumanReadableProcessNameWithoutPID();
  void GetHumanReadableProcessName(char (*name)[1024]);
 +void GetHumanReadableProcessNameWithoutPID(char (*name)[1024]);
  
- template <typename T, size_t N>
- constexpr size_t arraysize(const T(&)[N]) { return N; }
+ void InitializeContextRuntime(v8::Local<v8::Context>);
+ 
 diff --git a/src/util.cc b/src/util.cc
-index 77824acb03..5b5f745159 100644
+index 26dbfe8..820ee9b 100644
 --- a/src/util.cc
 +++ b/src/util.cc
-@@ -112,10 +112,26 @@ std::string GetHumanReadableProcessName() {
+@@ -139,6 +139,12 @@ std::string GetHumanReadableProcessName() {
    return name;
  }
  
@@ -77,9 +77,10 @@ index 77824acb03..5b5f745159 100644
 +}
 +
  void GetHumanReadableProcessName(char (*name)[1024]) {
-   char title[1024] = "Node.js";
-   uv_get_process_title(title, sizeof(title));
-   snprintf(*name, sizeof(*name), "%s[%u]", title, uv_os_getpid());
+   // Leave room after title for pid, which can be up to 20 digits for 64 bit.
+   char title[1000] = "Node.js";
+@@ -146,6 +152,16 @@ void GetHumanReadableProcessName(char (*name)[1024]) {
+   snprintf(*name, sizeof(*name), "%s[%d]", title, uv_os_getpid());
  }
  
 +void GetHumanReadableProcessNameWithoutPID(char (*name)[1024]) {
@@ -92,7 +93,9 @@ index 77824acb03..5b5f745159 100644
 +  snprintf(*name, sizeof(*name), "%s", title);
 +}
 +
- }  // namespace node
+ std::vector<std::string> SplitString(const std::string& in, char delim) {
+   std::vector<std::string> out;
+   if (in.empty())
 -- 
 2.17.1
 
