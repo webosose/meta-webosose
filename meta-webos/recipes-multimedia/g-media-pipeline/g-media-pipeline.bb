@@ -33,7 +33,7 @@ WEBOS_VERSION = "1.0.0-21_ecd90bea31daca759dc40061749131f2a61b99c1"
 PR = "r8"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.9_686a528d1e8ce3244d4410b5d01d16ef2b50007a"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-21.gav.10_d971add87b3674c3a2abd7839cda48d83333336f"
 SRC_URI_append_raspberrypi4 = " file://0001-LunaServiceClient.cpp-include-string-to-fix-build-wi.patch"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
