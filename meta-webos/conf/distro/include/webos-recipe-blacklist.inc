@@ -52,6 +52,10 @@ PNBLACKLIST[man-db] ?= "BROKEN: without --disable-cache-owner: chown: invalid us
 
 # meta-oe/recipes-core/packagegroups/packagegroup-meta-oe.bb
 PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted libsmi, phonet-utils, gradm, scsirastools, tomoyo-tools, s-suite, .."
+# meta-oe/recipes-support/libssh2/libssh2_1.9.0.bb
+PNBLACKLIST[libssh2] ?= "Depends on blacklisted man-db since https://git.openembedded.org/meta-openembedded/commit/?id=b3e9b51c9ba58b01e55c5b0a9a9bec3f7f06d07a"
+# meta-oe/recipes-support/libgit2/libgit2_1.0.1.bb
+PNBLACKLIST[libgit2] ?= "Depends on blacklisted libssh2 which depends on blacklisted man-db since https://git.openembedded.org/meta-openembedded/commit/?id=b3e9b51c9ba58b01e55c5b0a9a9bec3f7f06d07a"
 # meta-oe/recipes-benchmark/s-suite/s-suite_git.bb
 PNBLACKLIST[s-suite] ?= "rdepends on blacklisted sysstat"
 
@@ -161,6 +165,9 @@ PNBLACKLIST[sysdig] ?= "Doesn't build with jsoncpp with exceptions disabled, met
 PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
 # meta-virtualization/recipes-extended/xen/xen_git.bb
 PNBLACKLIST[xen] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
+
+# meta-oe/meta-multimedia/recipes-multimedia/packagegroups/packagegroup-meta-multimedia.bb
+PNBLACKLIST[packagegroup-meta-multimedia] ?= "ERROR: depends on x265 without respecting LICENSE_FLAGS, fixed in kirkstone https://lists.openembedded.org/g/openembedded-devel/message/94141"
 
 # meta-openembedded/meta-oe/recipes-multimedia/pipewire/pipewire_git.bb
 PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson.build:234:2: ERROR: Invalid version of dependency, need 'libpulse' ['>= 11.1'] found '9.0-14-gdf81'."
