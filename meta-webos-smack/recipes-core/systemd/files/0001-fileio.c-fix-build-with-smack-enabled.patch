@@ -1,0 +1,39 @@
+From ba4607c9bc28fd2f93d49f5c60174994fb597bd8 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Fri, 21 Aug 2020 13:50:06 -0700
+Subject: [PATCH] fileio.c: fix build with smack enabled
+
+FAILED: src/basic/libbasic.a.p/fileio.c.o
+aarch64-webos-linux-gcc -march=armv8-a+crc -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type --sysroot=/jenkins/mjansa/build/webos-auto/gatesgarth/BUILD/work/sa8155-webos-linux/systemd/1_246-r0-lg1/recipe-sysroot -Isrc/basic/libbasic.a.p -Isrc/basic -I../git/src/basic -Isrc/boot -I../git/src/boot -Isrc/home -I../git/src/home -Isrc/shared -I../git/src/shared -Isrc/systemd -I../git/src/systemd -Isrc/journal -I../git/src/journal -Isrc/journal-remote -I../git/src/journal-remote -Isrc/nspawn -I../git/src/nspawn -Isrc/resolve -I../git/src/resolve -Isrc/timesync -I../git/src/timesync -I../git/src/time-wait-sync -Isrc/login -I../git/src/login -Isrc/udev -I../git/src/udev -Isrc/libudev -I../git/src/libudev -Isrc/core -I../git/src/core -Isrc/shutdown -I../git/src/shutdown -I../git/src/xdg-autostart-generator -I../git/src/libsystemd/sd-bus -I../git/src/libsystemd/sd-device -I../git/src/libsystemd/sd-event -I../git/src/libsystemd/sd-hwdb -I../git/src/libsystemd/sd-id128 -I../git/src/libsystemd/sd-netlink -I../git/src/libsystemd/sd-network -I../git/src/libsystemd/sd-resolve -Isrc/libsystemd-network -I../git/src/libsystemd-network -I. -I../git -fdiagnostics-color=always -pipe -D_FILE_OFFSET_BITS=64 -std=gnu99 -Wno-unused-parameter -Wno-missing-field-initializers -Wno-unused-result -Wno-format-signedness -Werror=undef -Wlogical-op -Wmissing-include-dirs -Wold-style-definition -Wpointer-arith -Winit-self -Wfloat-equal -Wsuggest-attribute=noreturn -Werror=missing-prototypes -Werror=implicit-function-declaration -Werror=missing-declarations -Werror=return-type -Werror=incompatible-pointer-types -Werror=format=2 -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wimplicit-fallthrough=5 -Wshadow -Wendif-labels -Wstrict-aliasing=2 -Wwrite-strings -Werror=overflow -Werror=shift-count-overflow -Werror=shift-overflow=2 -Wdate-time -Wnested-externs -Wno-maybe-uninitialized -ffast-math -fno-common -fdiagnostics-show-option -fno-strict-aliasing -fvisibility=hidden -fstack-protector -fstack-protector-strong --param=ssp-buffer-size=4 -ffunction-sections -fdata-sections -Werror=shadow -include config.h -O2 -fexpensive-optimizations -frename-registers -fomit-frame-pointer -ftree-vectorize -fPIC -fPIC -pthread -fvisibility=default -MD -MQ src/basic/libbasic.a.p/fileio.c.o -MF src/basic/libbasic.a.p/fileio.c.o.d -o src/basic/libbasic.a.p/fileio.c.o -c ../git/src/basic/fileio.c
+../git/src/basic/fileio.c: In function 'rename_and_apply_smack_floor_label':
+../git/src/basic/fileio.c:1258:13: error: implicit declaration of function 'mac_smack_apply' [-Werror=implicit-function-declaration]
+ 1258 |         r = mac_smack_apply(to, SMACK_ATTR_ACCESS, SMACK_FLOOR_LABEL);
+      |             ^~~~~~~~~~~~~~~
+../git/src/basic/fileio.c:1258:13: warning: nested extern declaration of 'mac_smack_apply' [-Wnested-externs]
+../git/src/basic/fileio.c:1258:33: error: 'SMACK_ATTR_ACCESS' undeclared (first use in this function)
+ 1258 |         r = mac_smack_apply(to, SMACK_ATTR_ACCESS, SMACK_FLOOR_LABEL);
+      |                                 ^~~~~~~~~~~~~~~~~
+../git/src/basic/fileio.c:1258:33: note: each undeclared identifier is reported only once for each function it appears in
+../git/src/basic/fileio.c:1258:52: error: 'SMACK_FLOOR_LABEL' undeclared (first use in this function); did you mean 'SMACK_RUN_LABEL'?
+ 1258 |         r = mac_smack_apply(to, SMACK_ATTR_ACCESS, SMACK_FLOOR_LABEL);
+      |                                                    ^~~~~~~~~~~~~~~~~
+      |                                                    SMACK_RUN_LABEL
+cc1: some warnings being treated as errors
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ src/basic/fileio.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/basic/fileio.c b/src/basic/fileio.c
+index c3d55d209a..d94fee9234 100644
+--- a/src/basic/fileio.c
++++ b/src/basic/fileio.c
+@@ -23,6 +23,7 @@
+ #include "parse-util.h"
+ #include "path-util.h"
+ #include "socket-util.h"
++#include "smack-util.h"
+ #include "stdio-util.h"
+ #include "string-util.h"
+ #include "tmpfile-util.h"

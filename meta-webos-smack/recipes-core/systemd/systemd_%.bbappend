@@ -1,12 +1,13 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack1', '', d)}"
+EXTENDPRAUTO_append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI += "${@bb.utils.contains('DISTRO_FEATURES', 'smack', '\
     file://0001-SMACK-add-loading-unconfined-label.patch \
     file://0001-meson-add-smack-default-process-label-option.patch \
+    file://0001-fileio.c-fix-build-with-smack-enabled.patch \
 ', '', d)}"
 
 SYSTEMD_SMACK_RUN_LABEL = "System"
