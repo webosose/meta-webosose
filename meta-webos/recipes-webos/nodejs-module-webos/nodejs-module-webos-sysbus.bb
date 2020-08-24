@@ -5,11 +5,11 @@ AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/nodejs/module"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=1fd56aa237c3723e167f475fe7c5f202"
+                    file://oss-pkg-info.yaml;md5=ab2a5dc5745e5204bf0926e2d6ccf877"
 
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
-WEBOS_VERSION = "3.0.1-4_e2220cc994cf458e881a5992970ff3901b7ffea3"
+WEBOS_VERSION = "3.0.1-6_855889b1c0c344baed15bd8d69f05d661bd67d01"
 PR = "r12"
 
 inherit webos_component

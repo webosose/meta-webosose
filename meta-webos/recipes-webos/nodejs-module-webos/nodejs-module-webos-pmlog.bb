@@ -5,11 +5,11 @@ AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/nodejs/module"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=abbc2c32ca736a8d67501064544ff10a"
+                    file://oss-pkg-info.yaml;md5=d486dd326df35bb9d577c353691f0455"
 
 DEPENDS = "pmloglib node-gyp-native vim-native"
 
-WEBOS_VERSION = "3.0.1-3_62c93c2b61f40225b5d88ee1aa331c46f5aa2b3d"
+WEBOS_VERSION = "3.0.1-5_b5ee1f75bf45bf2628a81933dfc4f286f19e5d62"
 PR = "r8"
 
 inherit webos_component
