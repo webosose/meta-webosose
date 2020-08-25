@@ -11,13 +11,13 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 VIRTUAL-RUNTIME_pdm-plugin ?= "pdm-plugin"
 
-DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib udev libwebosi18n"
-RDEPENDS_${PN} = "fuse-utils gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e2fsck e2fsprogs-tune2fs ntfs-3g ntfs-3g-ntfsprogs dosfstools simple-mtpfs lsof smartmontools"
+DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib udev libwebosi18n libusb"
+RDEPENDS_${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e2fsck e2fsprogs-tune2fs ntfs-3g ntfs-3g-ntfsprogs dosfstools simple-mtpfs lsof smartmontools"
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
-WEBOS_VERSION = "1.0.0-12_798c0b9a24b45d88840199f80d03de5b4fb023ee"
-PR = "r2"
+WEBOS_VERSION = "1.0.1-20_c69499631f9167955c6383aadde332be6befb13c"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,6 +27,8 @@ inherit webos_daemon
 inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_public_repo
+inherit webos_localizable
+inherit webos_distro_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
