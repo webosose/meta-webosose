@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0"
 
-WEBOS_VERSION = "1.0.0-17_a2f6934878a42586aea811c81e2d6ab06a25bfd1"
+WEBOS_VERSION = "1.0.0-18_80edc659a50aa26ab89545b520b2912c976c15af"
 PR = "r2"
 
 inherit webos_component
