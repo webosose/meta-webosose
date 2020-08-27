@@ -1,0 +1,35 @@
+diff -ruN a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
+--- a/sys/v4l2/gstv4l2videodec.c	2020-08-27 04:51:28.899239646 +0000
++++ b/sys/v4l2/gstv4l2videodec.c	2020-08-27 06:30:40.402241041 +0000
+@@ -676,6 +676,31 @@
+ 
+     GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
+ 
++    /*Fix : Seeting caps to RGB16 if chosen caps are I420*/
++    GstStructure *s = gst_caps_get_structure(caps, 0);
++
++    const gchar *format = gst_structure_get_string (s, "format");
++    if (g_strcmp0 (format, "I420") == 0) {
++      gint width;
++      gst_structure_get_int(s, "width",&width);
++      gint height;
++      gst_structure_get_int(s,"height", &height);
++
++      GstCaps *new_caps = gst_caps_new_simple ("video/x-raw",
++        "format", G_TYPE_STRING, "RGB16",
++        "framerate", GST_TYPE_FRACTION, 0, 1,
++        "pixel-aspect-ratio", GST_TYPE_FRACTION, 1, 1,
++        "width", G_TYPE_INT, width,
++        "height", G_TYPE_INT, height,
++			  "interlace-mode", G_TYPE_STRING, "progressive",
++			  "colorimetry", G_TYPE_STRING, "1:1:5:4",
++        NULL);
++
++      caps = gst_caps_fixate(new_caps);
++
++      GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
++    }
++
+     /* Try to set negotiated format, on success replace acquired format */
+     if (gst_v4l2_object_set_format (self->v4l2capture, caps, &error))
+       gst_video_info_from_caps (&info, caps);
