@@ -4,12 +4,15 @@ SUMMARY = "Mediacontroller service"
 AUTHOR = "Sapna Kumari"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+  file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib"
 
-WEBOS_VERSION = "1.0.0-11_ec367318b2a8181e154f1b81450f31a9cbffed52"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-12_a44be3cb67fb38fb04a78175065b2dd485be9c6c"
+PR = "r2"
 
 inherit webos_component
 inherit webos_cmake

@@ -1,16 +1,19 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2020 LG Electronics, Inc.
 
 SUMMARY = "Service which controls video output"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
+LIC_FILES_CHKSUM = " \
+  file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 VIRTUAL-RUNTIME_val-impl ??= "videooutput-adaptation-layer-mock"
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson val-impl"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_val-impl}"
-WEBOS_VERSION = "1.0.0-12_e6c8365b64b9460902f1ddd98bea5bac57defb73"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-13_931b3e59260a97ea0741ebbd1d84fd30b405b484"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions

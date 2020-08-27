@@ -4,7 +4,10 @@ SUMMARY = "VAL API implementation library Raspberry Pi"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
+LIC_FILES_CHKSUM = " \
+  file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 PROVIDES = "val-impl"
 
@@ -21,7 +24,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "udev glib-2.0 pmloglib libpbnjson libdrm videooutput-adaptation-layer-api"
 
-WEBOS_VERSION = "1.0.0-11_52a6d0fd1088e173aef481023c8c06d5ad64d34a"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-12_d32af7a8b7db1bbb855f6dee61cc9f8db9a3ec4a"
+PR = "r2"
 
 COMPATIBLE_MACHINE = "^rpi$"
