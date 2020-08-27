@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2016 LG Electronics, Inc.
+# Copyright (c) 2013-2020 LG Electronics, Inc.
 
 SUMMARY = "A collection of memory usage monitoring tools and scripts"
 LICENSE = "GPL-2.0"
@@ -8,7 +8,7 @@ DEPENDS = "sp-measure"
 RDEPENDS_${PN} = "sp-measure"
 
 SRCREV = "65e6a729ce04cd90206689ae28fbabc4baf801f6"
-PR = "r5"
+PR = "r6"
 PV = "1.3.2+git${SRCPV}"
 
 inherit autotools-brokensep
@@ -19,3 +19,7 @@ SRC_URI = "git://github.com/maemo-tools-old/${BPN}.git \
 S = "${WORKDIR}/git"
 
 FILES_${PN} += "${datadir}/sp-memusage-tests"
+
+# | /jenkins/mjansa/build/webos/gatesgarth/BUILD/work/qemux86-webos-linux/sp-memusage/1.3.2+gitAUTOINC+65e6a729ce-r5/recipe-sysroot-native/usr/bin/i686-webos-linux/../../libexec/i686-webos-linux/gcc/i686-webos-linux/10.2.0/ld: error: /tmp/cclzkt11.o: multiple definition of 'sp_report_alignment_t'
+# | /jenkins/mjansa/build/webos/gatesgarth/BUILD/work/qemux86-webos-linux/sp-memusage/1.3.2+gitAUTOINC+65e6a729ce-r5/recipe-sysroot-native/usr/bin/i686-webos-linux/../../libexec/i686-webos-linux/gcc/i686-webos-linux/10.2.0/ld: /tmp/ccYygIT3.o: previous definition here
+CC += "-fcommon"
