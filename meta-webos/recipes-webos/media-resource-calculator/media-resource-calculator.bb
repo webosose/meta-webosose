@@ -4,14 +4,17 @@ DESCRIPTION = "Media Resource Calculator for webOS"
 AUTHOR = "Bhooshan Supe <bhooshan.supe@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+  file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+  "
 
 DEPENDS = "libpbnjson"
 
 EXTRA_OECMAKE += "-DNO_TEST=1"
 
-WEBOS_VERSION = "1.0.0-4_3711202dc9e4eac10241b63d5f2baac876083421"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-5_3e38b833cb65d6e8b86ff38c4ad65399ba9c81bd"
+PR = "r5"
 
 inherit webos_component
 inherit webos_enhanced_submissions
