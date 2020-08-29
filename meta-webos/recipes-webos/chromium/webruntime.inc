@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r36"
+INC_PR = "r37"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -285,14 +285,7 @@ install_chromium_browser() {
     install -d ${D_DIR}
 
     # Install browser files
-    if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/default_browser
-    else
-         cd ${OUT_DIR}/${BUILD_TYPE}
-         xargs --arg-file=${SRC_DIR}/webos/install/default_browser/binary.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
-         cd ${SRC_DIR}
-         xargs --arg-file=${SRC_DIR}/webos/install/default_browser/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
-    fi
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/default_browser
 
     install_ls2_roles ${BROWSER_APPLICATION}
 
@@ -322,15 +315,7 @@ install_app_shell() {
     install -d ${A_DIR}
 
     # Install app-shell files
-    if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/app_shell
-    else
-        cd ${OUT_DIR}/${BUILD_TYPE}
-        xargs --arg-file=${SRC_DIR}/webos/install/app_shell/binary.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${A_DIR}
-        xargs --arg-file=${SRC_DIR}/webos/install/app_shell/cbe_data.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
-        cd ${SRC_DIR}
-        xargs --arg-file=${SRC_DIR}/webos/install/app_shell/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${A_DIR}
-    fi
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/app_shell
 
     # To execute chromium in JAILER, Security Part needs permissions change
     # run_appshell: Script file for launching chromium
@@ -375,22 +360,7 @@ install_webruntime() {
     install -d ${D}${CBE_DATA_LOCALES_PATH}
 
     # Install webos webview files
-    if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/weboswebruntime
-    else
-        cd ${SRC_DIR}
-        xargs --arg-file=${SRC_DIR}/webos/install/weboswebruntime/staging_inc.list cp --parents --target-directory=${D}${includedir}/${BPN}
-
-        cd ${OUT_DIR}/${BUILD_TYPE}
-
-        cp libcbe.so ${D}${libdir}/
-        if [ "${WEBOS_LTTNG_ENABLED}" = "1" ]; then
-          # use bindir if building non-cbe
-          cp ${LTTNG_PROVIDER} ${D}${libdir}/
-        fi
-        xargs --arg-file=${SRC_DIR}/webos/install/weboswebruntime/binary.list cp --parents --target-directory=${D}${CBE_DATA_PATH}
-        cat ${SRC_DIR}/webos/install/weboswebruntime/data_locales.list | xargs -I{} install -m 755 -p {} ${D}${CBE_DATA_LOCALES_PATH}
-    fi
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/weboswebruntime
 
     # move this to separate mksnapshot-cross recipe once we figure out how to build just cross mksnapshot from chromium repository
     install -d ${D}${base_bindir}
@@ -401,12 +371,7 @@ install_chromedriver() {
     install -d ${D}${CHROMEDRIVER_RUNTIME_DIR}
 
     # Install browser files
-    if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/chromedriver
-    else
-         cd ${OUT_DIR}/${BUILD_TYPE}
-         cp -R --no-dereference --preserve=mode,links -v --target-directory=${D}${CHROMEDRIVER_RUNTIME_DIR} ${CHROMEDRIVER_RUNTIME}
-    fi
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/chromedriver
 
     # To execute chromium in JAILER, Security Part needs permissions change
     # run_webbrowser: Script file for launching chromium
@@ -418,14 +383,7 @@ install_wam_demo() {
     install -d ${D_DIR}
 
     # Install wam demo files
-    if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/wam_demo
-    else
-         cd ${OUT_DIR}/${BUILD_TYPE}
-         xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/binary.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
-         cd ${SRC_DIR}
-         xargs --arg-file=${SRC_DIR}/webos/install/wam_demo/runtime.list cp -R --no-dereference --preserve=mode,links -v --target-directory=${D_DIR}
-     fi
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/wam_demo
 
     install_ls2_roles ${WAM_DEMO_APPLICATION}
 
