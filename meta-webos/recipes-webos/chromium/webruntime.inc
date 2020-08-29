@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r38"
+INC_PR = "r39"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -67,10 +67,11 @@ do_fetch[vardeps] += "SRCREV_v8"
 SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
+B = "${WORKDIR}/build"
 
-SRC_DIR = "${S}/src"
-OUT_DIR = "${WORKDIR}/build"
 BUILD_TYPE = "Release"
+OUT_DIR = "${B}/${BUILD_TYPE}"
+OUT_IMAGE_DIR = "${OUT_DIR}/image"
 
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
@@ -218,47 +219,46 @@ COMPATIBLE_MACHINE_x86-64 = "(.*)"
 CBE_DATA_PATH = "${libdir}/cbe"
 CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/neva_locales"
 
-# The text relocations are intentional -- see comments in [GF-52468]
-# TODO: check if we need INSANE_SKIP on ldflags
-INSANE_SKIP_${PN} = "textrel ldflags"
-INSANE_SKIP_${PN}-dbg += "libdir"
-
-do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
-do_compile() {
-    if [ ! -f ${OUT_DIR}/${BUILD_TYPE}/build.ninja ]; then
-         do_configure
-    fi
-
-    export PATH="${S}/depot_tools:$PATH"
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} ${TARGET}
-}
-
 do_configure() {
-    configure_env
-}
-
-configure_env() {
     export GYP_CHROMIUM_NO_ACTION=1
     export PATH="${S}/depot_tools:$PATH"
 
     GN_ARGS="${GN_ARGS}"
     echo GN_ARGS is ${GN_ARGS}
     echo BUILD_TARGETS are ${TARGET}
-    cd ${SRC_DIR}
-    gn gen ${OUT_DIR}/${BUILD_TYPE} --args="${GN_ARGS}"
+    cd ${S}/src
+    gn gen ${OUT_DIR} --args="${GN_ARGS}"
+}
+
+do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
+do_compile() {
+    if [ ! -f ${OUT_DIR}/build.ninja ]; then
+        do_configure
+    fi
+
+    export PATH="${S}/depot_tools:$PATH"
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} ${TARGET}
+
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/weboswebruntime
+
+    if ${DEPLOY_BROWSER} ; then
+        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/default_browser
+    fi
+
+    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/app_shell
+    install_app_shell
+
+    if ${DEPLOY_CHROMEDRIVER} ; then
+        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/chromedriver
+    fi
+
+    if ${DEPLOY_WAM_DEMO} ; then
+        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/wam_demo
+    fi
 }
 
 WINDOW_SIZE ?= "1920,1080"
 CACHE_DIR ?= "${webos_homedir}/webbrowser"
-
-configure_browser_settings() {
-    USER_AGENT="Mozilla/5.0 (Linux; NetCast; U) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/${CHROMIUM_VERSION} Safari/537.31"
-    echo "${USER_AGENT}" > ${D_DIR}/user_agent_conf
-    # TODO: Check if we need next 2 settings
-    #echo "${CACHE_DIR}" > ${D_DIR}/user_cachedir_conf
-    #We can replace below WINDOW_SIZE values from build configuration if available
-    #echo "${WINDOW_SIZE}" > ${D_DIR}/window_size_conf
-}
 
 install_ls2_roles() {
     #sysbus files *.service
@@ -280,24 +280,6 @@ install_ls2_roles() {
     fi
 }
 
-install_chromium_browser() {
-    D_DIR=${D}${BROWSER_APPLICATION_DIR}
-    install -d ${D_DIR}
-
-    # Install browser files
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/default_browser
-
-    install_ls2_roles ${BROWSER_APPLICATION}
-
-    # To execute chromium in JAILER, Security Part needs permissions change
-    # run_webbrowser: Script file for launching chromium
-    chmod -v 755 ${D_DIR}/chrome
-    chmod -v 755 ${D_DIR}/kill_webbrowser
-    chmod -v 755 ${D_DIR}/run_webbrowser
-
-    configure_browser_settings
-}
-
 install_ls2_roles_acg() {
     #sysbus files *.service
     install -d ${D}${webos_sysbus_servicedir}
@@ -311,16 +293,10 @@ install_ls2_roles_acg() {
 }
 
 install_app_shell() {
-    A_DIR=${D}${APP_SHELL_RUNTIME_DIR}
-    install -d ${A_DIR}
-
-    # Install app-shell files
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/app_shell
-
-    # To execute chromium in JAILER, Security Part needs permissions change
-    # run_appshell: Script file for launching chromium
-    chmod -v 755 ${A_DIR}/app_shell
-    chmod -v 755 ${A_DIR}/run_app_shell
+    # Used by various .bbappends to call "sed" to "configure" various features in ${A_DIR}/run_app_shell
+    # Define A_DIR just because existing .bbappends expects it to be set
+    # The function doesn't install anything to ${D} except of install_ls2_roles_acg call for webos
+    A_DIR=${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}
 }
 
 install_app_shell_append_webos() {
@@ -329,7 +305,7 @@ install_app_shell_append_webos() {
 
 install_app_shell_append_qemux86() {
     # Disable media hardware acceleration
-    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_DIR}/run_app_shell
+    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${A_DIR}/run_app_shell
 }
 
 install_chromium_manifest() {
@@ -353,58 +329,65 @@ GN_ARGS_append_qemux86 = "\
     v8_enable_embedded_builtins=false \
 "
 
-install_webruntime() {
-    install -d ${D}${libdir}
-    install -d ${D}${includedir}/${BPN}
-    install -d ${D}${CBE_DATA_PATH}
-    install -d ${D}${CBE_DATA_LOCALES_PATH}
-
-    # Install webos webview files
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/weboswebruntime
-
+do_install() {
     # move this to separate mksnapshot-cross recipe once we figure out how to build just cross mksnapshot from chromium repository
     install -d ${D}${base_bindir}
-    gzip -c ${OUT_DIR}/${BUILD_TYPE}/${MKSNAPSHOT_PATH}mksnapshot > ${D}${base_bindir}/${HOST_SYS}-mksnapshot.gz
-}
+    gzip -c ${OUT_DIR}/${MKSNAPSHOT_PATH}mksnapshot > ${D}${base_bindir}/${HOST_SYS}-mksnapshot.gz
 
-install_chromedriver() {
-    install -d ${D}${CHROMEDRIVER_RUNTIME_DIR}
+    install -d ${D}${libdir}
+    # libcbe.so, libminigbm.so, liblttng_provider.so
+    install -v -m 0644 ${OUT_IMAGE_DIR}/${libdir}/*.so ${D}${libdir}
 
-    # Install browser files
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/chromedriver
+    install -d ${D}${CBE_DATA_PATH}
+    install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/icudtl.dat ${D}${CBE_DATA_PATH}
+    install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/natives_blob.bin ${D}${CBE_DATA_PATH}
+    install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/snapshot_blob.bin ${D}${CBE_DATA_PATH}
+    # app_runtime_content.pak, webos_content.pak, extensions_shell_and_test.pak
+    install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/*.pak ${D}${CBE_DATA_PATH}
 
-    # To execute chromium in JAILER, Security Part needs permissions change
-    # run_webbrowser: Script file for launching chromium
-    chmod -v 755 ${D}${CHROMEDRIVER_RUNTIME_DIR}/${CHROMEDRIVER_RUNTIME}
-}
+    install -d ${D}${CBE_DATA_LOCALES_PATH}
+    cp -R --no-dereference --preserve=mode,links -v ${OUT_IMAGE_DIR}/${CBE_DATA_LOCALES_PATH}/*.pak ${D}${CBE_DATA_LOCALES_PATH}
+    chown root:root -R ${D}${CBE_DATA_LOCALES_PATH}
 
-install_wam_demo() {
-    D_DIR=${D}${WAM_DEMO_APPLICATION_DIR}
-    install -d ${D_DIR}
+    install -d ${D}${includedir}/${BPN}
+    cp -R --no-dereference --preserve=mode,links -v ${OUT_IMAGE_DIR}/${includedir}/${BPN}/* ${D}${includedir}/${BPN}/
+    chown root:root -R ${D}${includedir}/${BPN}
 
-    # Install wam demo files
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR}/${BUILD_TYPE} webos/install/wam_demo
+    install -d ${D}${APP_SHELL_RUNTIME_DIR}
+    install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/app_shell ${D}${APP_SHELL_RUNTIME_DIR}
+    install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/run_app_shell ${D}${APP_SHELL_RUNTIME_DIR}
 
-    install_ls2_roles ${WAM_DEMO_APPLICATION}
+    ln -f ${D}${CBE_DATA_PATH}/snapshot_blob.bin ${D}${APP_SHELL_RUNTIME_DIR}/snapshot_blob.bin
 
-    # To execute chromium in JAILER, Security Part needs permissions change
-    # run_webbrowser: Script file for launching chromium
-    chmod -v 755 ${D_DIR}/wam_demo
-    chmod -v 755 ${D_DIR}/run_wam_demo
-}
-
-do_install() {
-    install_webruntime
     if ${DEPLOY_BROWSER} ; then
-      install_chromium_browser
+        install_ls2_roles ${BROWSER_APPLICATION}
+
+        install -d ${D}${BROWSER_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${BROWSER_APPLICATION_DIR}/chrome ${D}${BROWSER_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${BROWSER_APPLICATION_DIR}/kill_webbrowser ${D}${BROWSER_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${BROWSER_APPLICATION_DIR}/run_webbrowser ${D}${BROWSER_APPLICATION_DIR}
+
+        USER_AGENT="Mozilla/5.0 (Linux; NetCast; U) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/${CHROMIUM_VERSION} Safari/537.31"
+        echo "${USER_AGENT}" > ${D}${BROWSER_APPLICATION_DIR}/user_agent_conf
+        # TODO: Check if we need next 2 settings
+        #echo "${CACHE_DIR}" > ${D}${BROWSER_APPLICATION_DIR}/user_cachedir_conf
+        # We can replace below WINDOW_SIZE values from build configuration if available
+        #echo "${WINDOW_SIZE}" > ${D}${BROWSER_APPLICATION_DIR}/window_size_conf
     fi
-    install_app_shell
+
     if ${DEPLOY_CHROMEDRIVER} ; then
-      install_chromedriver
+        install -d ${D}${CHROMEDRIVER_RUNTIME_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${CHROMEDRIVER_RUNTIME_DIR}/${CHROMEDRIVER_RUNTIME} ${D}${CHROMEDRIVER_RUNTIME_DIR}
     fi
+
     if ${DEPLOY_WAM_DEMO} ; then
-      install_wam_demo
+        install_ls2_roles ${WAM_DEMO_APPLICATION}
+
+        install -d ${D}${WAM_DEMO_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${WAM_DEMO_APPLICATION_DIR}/wam_demo ${D}${WAM_DEMO_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${WAM_DEMO_APPLICATION_DIR}/run_wam_demo ${D}${WAM_DEMO_APPLICATION_DIR}
     fi
+
     install_chromium_manifest
 }
 
@@ -475,6 +458,8 @@ RDEPENDS_${WAM_DEMO_APPLICATION} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
 # The text relocations are intentional -- see comments in [GF-52468]
 # TODO: check if we need INSANE_SKIP on ldflags
+INSANE_SKIP_${PN} = "textrel ldflags"
+INSANE_SKIP_${PN}-dbg += "libdir"
 INSANE_SKIP_${MLPREFIX}${BROWSER_APPLICATION} += "libdir ldflags textrel"
 INSANE_SKIP_${MLPREFIX}${APP_SHELL_RUNTIME} += "libdir ldflags textrel"
 INSANE_SKIP_${MLPREFIX}${CHROMEDRIVER_RUNTIME} += "libdir ldflags textrel"

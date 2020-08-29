@@ -4,7 +4,7 @@ require webruntime.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.3"
+PR = "${INC_PR}.4"
 
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=07465c3c8b4402803a26b207674ca122"
 
@@ -36,5 +36,3 @@ GN_ARGS_append = " \
 # TODO: qemux86 build fails
 PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media neva-webrtc gav"
 #END TODO
-
-D = "${OUT_DIR}/${BUILD_TYPE}/image"
