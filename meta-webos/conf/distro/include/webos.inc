@@ -193,10 +193,6 @@ WEBOS_DEFAULT_EXTRA_RRECOMMENDS = ""
 DISTRO_EXTRA_RDEPENDS += " ${WEBOS_DEFAULT_EXTRA_RDEPENDS}"
 DISTRO_EXTRA_RRECOMMENDS += " ${WEBOS_DEFAULT_EXTRA_RRECOMMENDS}"
 
-WEBOSQEMUDEPS = "${@bb.utils.contains("INCOMPATIBLE_LICENSE", "GPLv3", "", "qemu-config",d)}"
-DISTRO_EXTRA_RDEPENDS:append:qemuarm = " ${WEBOSQEMUDEPS}"
-DISTRO_EXTRA_RDEPENDS:append:qemux86 = " ${WEBOSQEMUDEPS}"
-
 # Undo:
 # https://git.openembedded.org/openembedded-core/commit/?id=a98188e83b2c027d99cc38e3367e1ec2a98efbb0
 # https://git.openembedded.org/openembedded-core/commit/?h=dunfell&id=93796b2787c410385d3176495e5307327449d2f7
