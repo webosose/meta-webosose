@@ -1,6 +1,6 @@
-# Copyright (c) 2014-2019 LG Electronics, Inc.
+# Copyright (c) 2014-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos5"
+EXTENDPRAUTO_append = "webos6"
 
 LICENSE += "& BSD"
 
@@ -19,3 +19,9 @@ do_install_append() {
     # It's harmless in this case, because AFAIK nothing directly links with libSegFault.so.
     rm -f ${D}${base_libdir}/libSegFault.so
 }
+
+# don't pull libsegfault into every build with glibc, because we
+# use libsegfault-webos which is provided by crashd, but crashd has
+# quite a few of dependencies and we don't want to build them in
+# each build which contains glibc and catchsegv
+RDEPENDS_catchsegv_remove = "libsegfault"
