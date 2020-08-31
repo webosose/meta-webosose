@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=c05a4b7c2c9b0aed0d7c1cd8d1af63c3 \
+    file://oss-pkg-info.yaml;md5=9e100013a76448cbe7c14134b0974453 \
 "
 
 DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2"
@@ -17,8 +17,8 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-148_8802ead63e3e5080d12ea0b1ef3245b95afefdcd"
-PR = "r29"
+WEBOS_VERSION = "1.0.0-149_fba01df00eb406308e3d0434e3dfb31a881b6a22"
+PR = "r30"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

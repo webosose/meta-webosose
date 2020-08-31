@@ -10,8 +10,8 @@ DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-WEBOS_VERSION = "5.12.4-156_1357ef42997dd8ee0e57e9019e926d4d54d42a12"
-EXTENDPRAUTO_append = "webos19"
+WEBOS_VERSION = "5.12.4-157_5c8c553c66a713d55712f6b717e0420d7b4cf8ee"
+EXTENDPRAUTO_append = "webos20"
 
 LIC_FILES_CHKSUM = " \
     file://LICENSE.LGPL3;md5=e6a600fd5e1d9cbde2d983680233ad02 \
@@ -19,7 +19,7 @@ LIC_FILES_CHKSUM = " \
     file://LICENSE.GPL3;md5=d32239bcb673463ab874e80d47fae504 \
     file://LICENSE.GPL3-EXCEPT;md5=763d8c535a234d9a3fb682c7ecb6c073 \
     file://LICENSE.FDL;md5=6d9f2a9af4c8b8c3c769f6cc1b6aaf7e \
-    file://oss-pkg-info.yaml;md5=f842cf40d771265aa0218110ab79eb47 \
+    file://oss-pkg-info.yaml;md5=ae1ac1ddbf8c4ad76d038d8f811750dc \
 "
 
 inherit webos_enhanced_submissions

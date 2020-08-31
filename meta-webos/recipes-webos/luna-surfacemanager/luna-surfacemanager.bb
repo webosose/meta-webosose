@@ -6,13 +6,13 @@ SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=fb6b3024b363af54f0e0991e204a240a \
+    file://oss-pkg-info.yaml;md5=2c7c706c6a586a6abec428c64006d86b \
 "
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
-WEBOS_VERSION = "2.0.0-331_6721c2364e563057c5223a1cf20a6574bdb88f1e"
-PR = "r47"
+WEBOS_VERSION = "2.0.0-332_9b10f892a0055a983c68fa6df45ddfa78479f87e"
+PR = "r48"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

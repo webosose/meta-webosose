@@ -7,7 +7,7 @@ SECTION = "webos/base"
 LICENSE = "LGPLv2"
 LIC_FILES_CHKSUM = " \
     file://LICENSE.LGPL;md5=5c917f6ce94ceb8d8d5e16e2fca5b9ad \
-    file://oss-pkg-info.yaml;md5=08fbd1f453eb64b01cd466196cb27922 \
+    file://oss-pkg-info.yaml;md5=1b633545a82af651ad37b9f03288651e \
 "
 
 DEPENDS = "qtbase qtdeclarative qtwayland-webos libxkbcommon pmloglib luna-service2 glib-2.0 udev wayland"
@@ -15,8 +15,8 @@ RDEPENDS_${PN} = "qtbase-plugins configd"
 
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
-WEBOS_VERSION = "0.99.0+20-94_e324656d211e494dfdcda4f41d08adbe781770ce"
-PR = "r32"
+WEBOS_VERSION = "0.99.0+20-95_c1a85c31ada391062985c61f3bbe8cfbb5920b80"
+PR = "r33"
 
 inherit webos_daemon
 inherit webos_enhanced_submissions

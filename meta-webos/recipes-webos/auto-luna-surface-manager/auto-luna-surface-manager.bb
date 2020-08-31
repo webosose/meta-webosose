@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=49b716ba64042488414ba9a376607b70 \
+    file://oss-pkg-info.yaml;md5=1bbf047e5c70344c074aaaa58a668952 \
 "
 
 DEPENDS = "luna-surfacemanager qt-features-webos"
@@ -14,8 +14,8 @@ RDEPENDS_${PN} = " \
     luna-surfacemanager-base \
 "
 
-WEBOS_VERSION = "0.0.1-27_20ed52a5757e58976ee4508f4176690a8ce1baeb"
-PR = "r3"
+WEBOS_VERSION = "0.0.1-28_904bff2c49e4cc8acf38ca97b63a975649f1d3d2"
+PR = "r4"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

@@ -6,13 +6,13 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=37b39c3b46a59a4e2436b172ca90faaf \
+    file://oss-pkg-info.yaml;md5=3b9914d0b76f24145c4c707c66c944bc \
 "
 
 DEPENDS = "wayland wayland-native"
 
-WEBOS_VERSION = "1.0.0-39_a3edca138feb4176c3666136f5e87471f0f06572"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-40_c3cc8b299c01d1b28b171b0e35af94c7650e9500"
+PR = "r4"
 
 inherit webos_component
 inherit webos_cmake

@@ -6,13 +6,13 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=dde818f688de6d09c7b5bb1e381809d9 \
+    file://oss-pkg-info.yaml;md5=35b2f0d27bf4833f2764dfe176fa1e9c \
 "
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-44_36ce250804c8a179d5d5cd695b0c21dc26f1b042"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-45_3dc6514caffe88ee07537222ef53b43bc151bf70"
+PR = "r6"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

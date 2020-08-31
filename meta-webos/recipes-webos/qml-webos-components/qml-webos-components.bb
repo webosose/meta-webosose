@@ -6,13 +6,13 @@ SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=8d7d6fea6be45a14509f17e9554cd2e8 \
+    file://oss-pkg-info.yaml;md5=9dc14fd8aee1928cb4947063ac388f74 \
 "
 
 DEPENDS = "qtdeclarative pmloglib librdx qt-features-webos"
 
-WEBOS_VERSION = "1.0.0-48_ecd3bd4611728a83bb35cd8e6df41cbb77999197"
-PR = "r13"
+WEBOS_VERSION = "1.0.0-49_de424a4fbcb2e98e6f78b9d72fb13108e00c4e89"
+PR = "r14"
 
 inherit webos_qmake5
 inherit webos_machine_impl_dep
