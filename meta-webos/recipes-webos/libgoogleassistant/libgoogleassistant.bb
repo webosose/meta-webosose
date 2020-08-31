@@ -6,7 +6,7 @@ SECTION = "webos/library"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
-    file://oss-pkg-info.yaml;md5=91fd0da57419cfbc105ec49414d1b96d \
+    file://oss-pkg-info.yaml;md5=9e4744182d366ff5258e3268c575afe2 \
 "
 
 DEPENDS = "glib-2.0 googleapis grpc json-c pmloglib pulseaudio patchelf-native"
@@ -14,8 +14,8 @@ DEPENDS = "glib-2.0 googleapis grpc json-c pmloglib pulseaudio patchelf-native"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target = "${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "1.0.0-6_d0bdd167ff1633c869b9529d54ee6245943f7a0f"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-7_19876ce8d906d4f102afb08a678909bee7622972"
+PR = "r4"
 
 inherit webos_library
 inherit webos_cmake

@@ -6,7 +6,7 @@ SECTION = "webos/extended-service"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
-    file://oss-pkg-info.yaml;md5=f07cdfcb12635449320b9ebfc272b61f \
+    file://oss-pkg-info.yaml;md5=5e240f6c8ed6312f22c06e00a91dd340 \
 "
 
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libgoogleassistant"
@@ -16,8 +16,8 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-7_7064b5f113091677cf19a68f8260860b31215f48"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-8_95eb8b4675c408a7d6811aa835d38b7485946b21"
+PR = "r4"
 
 inherit systemd
 inherit webos_public_repo
