@@ -126,6 +126,14 @@ VIRTUAL-RUNTIME_com.webos.app.home ?= "com.webos.app.home"
 VIRTUAL-RUNTIME_com.webos.app.home_armv4 = ""
 VIRTUAL-RUNTIME_com.webos.app.home_armv5 = ""
 
+VIRTUAL-RUNTIME_com.webos.app.notification ?= "com.webos.app.notification"
+VIRTUAL-RUNTIME_com.webos.app.notification_armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.notification_armv5 = ""
+
+VIRTUAL-RUNTIME_com.webos.app.volume ?= "com.webos.app.volume"
+VIRTUAL-RUNTIME_com.webos.app.volume_armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.volume_armv5 = ""
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
@@ -186,6 +194,8 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_com.example.service.iotivity} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
     ${VIRTUAL-RUNTIME_com.webos.app.home} \
+    ${VIRTUAL-RUNTIME_com.webos.app.notification} \
+    ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_iotivity-node} \
