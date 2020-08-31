@@ -18,5 +18,3 @@ PACKAGE_ARCH_pn-linux-libc-headers = "${TUNE_PKGARCH}"
 PACKAGE_ARCH_pn-libgcc-initial = "${TUNE_PKGARCH}"
 
 LIBC_DEPENDENCIES_remove = "libsegfault"
-
-BINUVERSION_sa8155 = ""
