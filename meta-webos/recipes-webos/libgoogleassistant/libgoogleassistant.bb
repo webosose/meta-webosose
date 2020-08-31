@@ -4,15 +4,18 @@ SUMMARY = "Google assistant engine library"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
 SECTION = "webos/library"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
+    file://oss-pkg-info.yaml;md5=91fd0da57419cfbc105ec49414d1b96d \
+"
 
 DEPENDS = "glib-2.0 googleapis grpc json-c pmloglib pulseaudio patchelf-native"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target = "${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "1.0.0-5_62d5e78e4368a079baacb7c1cbb9eca84328dd43"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-6_d0bdd167ff1633c869b9529d54ee6245943f7a0f"
+PR = "r3"
 
 inherit webos_library
 inherit webos_cmake
