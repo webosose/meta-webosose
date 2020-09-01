@@ -36,8 +36,8 @@ DEPENDS_remove = "libatomic-ops"
 
 DEPENDS += "pmloglib"
 
-WEBOS_VERSION = "9.0-22_f81e62ac54b951f997aefcbe0521ba290ab687ec"
-PR = "r23"
+WEBOS_VERSION = "9.0-23_11cccecd9618273e875db4f60e65c4eda16acc27"
+PR = "r24"
 
 inherit webos_enhanced_submissions
 
@@ -62,6 +62,10 @@ EXTRA_OECONF_remove = "--disable-gsettings"
 # Added to oe-core pulseaudio.inc to improve build reproducibility with 12.2 version
 # but our old 9.* version doesn't support it
 EXTRA_OECONF_remove = "--disable-running-from-build-tree"
+
+EXTRA_OECONF_remove += "--disable-bluez5-ofono-headset"
+
+EXTRA_OECONF += "--enable-bluez5-ofono-headset"
 
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
@@ -96,6 +100,7 @@ RDEPENDS_pulseaudio-server_append = "\
     pulseaudio-module-null-source \
     pulseaudio-module-rtp-send \
     pulseaudio-module-rtp-recv \
+    pulseaudio-module-loopback \
 "
 
 python populate_packages_prepend() {
