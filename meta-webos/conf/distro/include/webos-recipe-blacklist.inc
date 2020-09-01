@@ -206,8 +206,6 @@ PNBLACKLIST[libgusb] ?= "ERROR: libgusb-0.3.0+gitAUTOINC+636efc0624-r0 do_config
 PNBLACKLIST[libpeas] ?= "ERROR: libpeas-1.25.3-r0 do_configure: meson failed: tests/libpeas/introspection/meson.build:52:0: ERROR: Unknown variable libpeas_gir."
 # meta-openembedded/meta-networking/recipes-connectivity/netplan/netplan_0.98.bb:do_compile
 PNBLACKLIST[netplan] ?= "ERROR: netplan-0.98+gitAUTOINC+5d22e9d22c-r0 do_compile: oe_runmake failed: src/generate.c:24:10: fatal error: glib.h: No such file or directory"
-# meta-webosose/meta-webos/recipes-upstreamable/nodejs-module/nodejs-module-usocket_0.0.4.bb:do_compile
-PNBLACKLIST[nodejs-module-usocket] ?= "ERROR: nodejs-module-usocket-0.0.4-r2 do_compile: nan/nan_implementation_12_inl.h:103:42: error: cannot convert 'v8::Isolate*' to 'v8::Local<v8::Context>'"
 # meta-virtualization/recipes-extended/xen/xen-tools_git.bb
 PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, details in https://lists.yoctoproject.org/g/meta-virtualization/message/5202', '', d)}"
 
