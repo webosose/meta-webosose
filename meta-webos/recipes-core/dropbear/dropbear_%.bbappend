@@ -27,6 +27,6 @@ do_install:append() {
 
 # Remove runtime dependency on separate dropbear-upstart package with Upstart 0.3 job file.
 RDEPENDS:${PN} = ""
-RDEPENDS:${PN}:emulator = "dhcp-client"
+RDEPENDS:${PN}:emulator = "dhcpcd"
 
 FILES:${PN} += "${base_libdir}"
