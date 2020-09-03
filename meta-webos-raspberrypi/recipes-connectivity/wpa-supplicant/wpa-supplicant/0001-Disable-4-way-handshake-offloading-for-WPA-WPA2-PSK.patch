@@ -1,0 +1,75 @@
+From 2ef5be71d2fdcb817c6d6e3b1c4aaa404433cd70 Mon Sep 17 00:00:00 2001
+From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
+Date: Thu, 3 Sep 2020 12:45:44 +0530
+Subject: [PATCH] Disable 4-way handshake offloading for WPA/WPA2-PSK
+
+:Release Notes:
+Disable 4-way handshake offloading to driver
+
+:Detailed Notes:
+Offloading 4-way handshake to driver creates issues for OSE when we
+try to connect the SSID with invalid-key we gets event ASSOC_REJECT
+with error code. Which cannot be understood correctly in Connman and
+we get connect-failed error connect-failed which is not the correct
+error code in case of invalid key.
+
+These changes were added in the wpa-supplicant 2.7 version.
+https://w1.fi/cgit/hostap/commit/?h=hostap_2_9&
+id=436ee2fd9330111da9c53f9c6d02242a9197593e
+
+:Testing Performed:
+Build successfully.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[PLAT-118498] "Could not establish a connection to access point" Error
+              popup displayed for wrong password
+
+Upstream-Status: Inappropriate[webOS specific]
+---
+ src/drivers/driver_nl80211_capa.c | 4 ++--
+ src/drivers/driver_wext.c         | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/drivers/driver_nl80211_capa.c b/src/drivers/driver_nl80211_capa.c
+index 8318b10..efa06ba 100644
+--- a/src/drivers/driver_nl80211_capa.c
++++ b/src/drivers/driver_nl80211_capa.c
+@@ -401,14 +401,14 @@ static void wiphy_info_ext_feature_flags(struct wiphy_info_data *info,
+ 	if (ext_feature_isset(ext_features, len,
+ 			      NL80211_EXT_FEATURE_FILS_SK_OFFLOAD))
+ 		capa->flags |= WPA_DRIVER_FLAGS_FILS_SK_OFFLOAD;
+-
++/*
+ 	if (ext_feature_isset(ext_features, len,
+ 			      NL80211_EXT_FEATURE_4WAY_HANDSHAKE_STA_PSK))
+ 		capa->flags |= WPA_DRIVER_FLAGS_4WAY_HANDSHAKE_PSK;
+ 	if (ext_feature_isset(ext_features, len,
+ 			      NL80211_EXT_FEATURE_4WAY_HANDSHAKE_STA_1X))
+ 		capa->flags |= WPA_DRIVER_FLAGS_4WAY_HANDSHAKE_8021X;
+-
++*/
+ 	if (ext_feature_isset(ext_features, len,
+ 			      NL80211_EXT_FEATURE_MFP_OPTIONAL))
+ 		capa->flags |= WPA_DRIVER_FLAGS_MFP_OPTIONAL;
+diff --git a/src/drivers/driver_wext.c b/src/drivers/driver_wext.c
+index 4d4a05d..cdb6832 100644
+--- a/src/drivers/driver_wext.c
++++ b/src/drivers/driver_wext.c
+@@ -1646,9 +1646,9 @@ static int wpa_driver_wext_get_range(void *priv)
+ 			drv->capa.enc |= WPA_DRIVER_CAPA_ENC_TKIP;
+ 		if (range->enc_capa & IW_ENC_CAPA_CIPHER_CCMP)
+ 			drv->capa.enc |= WPA_DRIVER_CAPA_ENC_CCMP;
+-		if (range->enc_capa & IW_ENC_CAPA_4WAY_HANDSHAKE)
++/*		if (range->enc_capa & IW_ENC_CAPA_4WAY_HANDSHAKE)
+ 			drv->capa.flags |= WPA_DRIVER_FLAGS_4WAY_HANDSHAKE_PSK |
+-				WPA_DRIVER_FLAGS_4WAY_HANDSHAKE_8021X;
++				WPA_DRIVER_FLAGS_4WAY_HANDSHAKE_8021X;*/
+ 		drv->capa.auth = WPA_DRIVER_AUTH_OPEN |
+ 			WPA_DRIVER_AUTH_SHARED |
+ 			WPA_DRIVER_AUTH_LEAP;
+-- 
+2.17.1
+
