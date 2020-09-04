@@ -19,9 +19,17 @@ python do_write_oss_pkg_info() {
     machine      = d.getVar("MACHINE")
     oss_filename = d.getVar("OSS_FILENAME")
     manifest     = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), "%s-%s" % (imagename, machine)), "license.manifest")
+    default_oss  = os.path.join(d.getVar("TOPDIR")+'/build-templates', "%s-%s-%s" % (imagename, machine, oss_filename))
+    target_oss   = os.path.join(d.getVar("DEPLOY_DIR_IMAGE"), "%s-%s" % (imagename, oss_filename))
 
     if os.path.isfile(manifest):
-        with open(os.path.join(d.getVar("DEPLOY_DIR_IMAGE"), imagename+'-'+oss_filename), "w") as output:
+        with open(target_oss, "w") as output:
+            """ Paste the default oss-pkg-input.yaml contents at the front of final oss file """
+            if os.path.isfile(default_oss):
+                with open(default_oss) as input:
+                    oss_string = input.read()
+                    output.write(oss_string)
+
             """ Extract recipe names from license manifest """
             tmp = []
             with open(manifest) as input:
@@ -41,6 +49,9 @@ python do_write_oss_pkg_info() {
                         oss_string = input.read()
                         if oss_string.startswith("Open Source Software Package:"):
                             output.write("\n".join(oss_string.split("\n")[1:]))
+                            """ if the oss-pkg-file.yaml doesn't have 0x0a(EOF), we should handle it """
+                            if not oss_string.endswith("\n"):
+                                output.write("\n")
                         else:
                             bb.warn("There is no OSS item in the yaml file. :%s" % pkg)
                             output.write(oss_string)
