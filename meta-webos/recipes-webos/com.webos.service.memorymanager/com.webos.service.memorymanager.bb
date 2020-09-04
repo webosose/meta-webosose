@@ -4,12 +4,15 @@ SUMMARY = "Memory Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
 
-WEBOS_VERSION = "1.0.0-28_e1a930f3d31c7fd69fa22f2408a831eac1c4dc9c"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-38_ecc8ecdaa146b736a8032ceb720757d284a14480"
+PR = "r5"
 
 inherit webos_component
 inherit webos_cmake
