@@ -17,3 +17,5 @@ PREFERRED_VERSION_gdbm = "1.8.3"
 # readline-5.2 isn't compatible with gdb, use bundled version - gdb shouldn't be installed in end-user images
 # http://lists.openembedded.org/pipermail/openembedded-core/2016-January/116409.html
 PACKAGECONFIG_remove_pn-gdb = "readline"
+
+PREFERRED_VERSION_webruntime ?= "84.%"
