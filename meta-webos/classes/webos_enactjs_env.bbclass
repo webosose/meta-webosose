@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 #
 # webos_enactjs_env
 #
@@ -19,6 +19,11 @@ ENACT_DEV ??= "${ENACT_NODE} ${WEBOS_ENACTJS_TOOL_PATH}/bin/enact.js"
 ENACT_NPM ??= "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/${BUILD_ARCH}/npm"
 
 do_compile_prepend() {
+    # this is needed to use user's gitconfig even after changing the HOME directory bellow
+    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
+    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
+    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
+
     # changing the home directory to the working directory, the .npmrc will be created in this directory
     export HOME=${WORKDIR}
 
