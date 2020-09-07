@@ -65,6 +65,9 @@ EXTRA_WEBOS_WERROR:pn-webruntime = ""
 EXTRA_WEBOS_WERROR:pn-ntop = ""
 # ERROR: python3-twofish-0.3.0-r0 do_compile: Function failed: do_compile: twofish.c:45:1: error: control reaches end of non-void function [-Werror=return-type]
 EXTRA_WEBOS_WERROR:pn-python3-twofish = ""
+# python3-gevent/20.6.2-r0/gevent-20.6.2/deps/libev/ev_iouring.c:227:1: error: no return statement in function returning non-void [-Werror=return-type]
+# python3-gevent/20.6.2-r0/gevent-20.6.2/deps/libev/ev_iouring.c:261:1: error: no return statement in function returning non-void [-Werror=return-type]
+EXTRA_WEBOS_WERROR:pn-python3-gevent = ""
 # ERROR: live555-20190828-r0 do_compile: oe_runmake failed: MPEG2TransportStreamParser.cpp:302:1: error: control reaches end of non-void function [-Werror=return-type]
 EXTRA_WEBOS_WERROR:pn-live555 = ""
 # ERROR: hdf5-1.8.21-r0 do_compile: hdf5/1.8.21-r0/hdf5-1.8.21/c++/src/H5Location.cpp:258:34: error: control reaches end of non-void function [-Werror=return-type]
@@ -73,6 +76,8 @@ EXTRA_WEBOS_WERROR:pn-hdf5 = ""
 EXTRA_WEBOS_WERROR:pn-libev = ""
 # temporarily until https://lists.openembedded.org/g/openembedded-devel/message/85109 is resolved: git/meson.build:26:4: ERROR: C library 'argp' not found
 EXTRA_WEBOS_WERROR:pn-zchunk = ""
+# ERROR: python3-yarl-1.6.2-r0 do_compile: 'python3 setup.py build ' execution failed.; yarl/_quoting_c.c:10703:1: error: control reaches end of non-void function [-Werror=return-type]
+EXTRA_WEBOS_WERROR:pn-python3-yarl = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
