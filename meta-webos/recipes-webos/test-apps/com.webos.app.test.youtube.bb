@@ -1,7 +1,11 @@
-# Copyright (c) 2016-2019 LG Electronics, Inc.
+# Copyright (c) 2016-2020 LG Electronics, Inc.
 
 require webos-open-test-apps.inc
-PR = "${INC_PR}.2"
+
+LIC_FILES_CHKSUM += " \
+file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
+PR = "${INC_PR}.3"
 
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED = "0"
 
