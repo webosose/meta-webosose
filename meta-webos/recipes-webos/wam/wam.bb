@@ -22,7 +22,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 WEBOS_VERSION_MASTER = "1.0.2-43_2a3b866030e32ff8ee65b5471f3e434793017481"
 WEBOS_VERSION_CHR72 = "1.0.1-33.ose.chr72.1_df17aefedb696b1e9f69962a28aed7c69f0f1283"
 WEBOS_VERSION = "${@oe.utils.conditional('PREFERRED_VERSION_webruntime', '72.%', '${WEBOS_VERSION_CHR72}', '${WEBOS_VERSION_MASTER}', d)}"
-PR = "r32"
+PR = "r33"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -70,6 +70,9 @@ WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 # Flag to control runtime flags for touch
 TOUCH_ENABLED ?= "true"
 
+# Flag to control runtime flag for platform encoder
+PLATFORM_ENCODER_ENABLED ?= "true"
+
 do_configure_prepend() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
       cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
@@ -99,6 +102,12 @@ do_configure_append() {
     # Extra added for chromium79
     if [ "${PREFERRED_VERSION_webruntime}" = "79.%" ]; then
         sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-pal-media-service \\' ${B}/webapp-mgr.sh
+    fi
+
+    # enable platform encoding if PLATFORM_ENCODING_ENABLED is true
+    if ${PLATFORM_ENCODER_ENABLED}; then
+       # enable h/w encoding for webrtc
+       sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-encoder \\' ${B}/webapp-mgr.sh
     fi
 }
 

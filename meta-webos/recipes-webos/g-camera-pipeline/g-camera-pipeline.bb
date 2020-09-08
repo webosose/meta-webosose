@@ -18,11 +18,11 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-14_3fcb28de403687e6f514e723bc850a8694a8650d"
-PR = "r6"
+WEBOS_VERSION = "1.0.0-15_e9d8253132f6745c6cbff49a6e7fdd345b50aad9"
+PR = "r7"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.4_bf91c0cb022b526328e981c445ec12b141f915b1"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.6_c3f0644277fc4c3a423ca042d147b735d77f80fa"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
 DEPENDS_append_rpi = " userland"
@@ -37,8 +37,5 @@ COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/*.so"
 FILES_${PN} += "${libdir}/gstreamer-1.0/*.so"
-
-# From http://gpro.lge.com/250944
-SRC_URI += "file://0001-Fix-return-statement.patch"
 
 DEPENDS_append = " webos-wayland-extensions"
