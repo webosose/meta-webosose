@@ -6,11 +6,11 @@ SECTION = "libs/javascript"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
-    file://oss-pkg-info.yaml;md5=77f228ff294e07cece452a7ba8cd4b08 \
+    file://oss-pkg-info.yaml;md5=be4f2e45a1215076318af43f833aa178 \
 "
 
-WEBOS_VERSION = "14.6.0-9_2a4e325b6bec50592ce3f199e3c018dd3c47ce8f"
-PR = "r7"
+WEBOS_VERSION = "14.6.0-11_d666c8888b12207758431c01ec3ea18202dafdcd"
+PR = "r8"
 
 inherit webos_arch_indep
 inherit webos_enhanced_submissions

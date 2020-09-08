@@ -6,13 +6,13 @@ SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-    file://oss-pkg-info.yaml;md5=77dec9bc8ed5c24759f44d19f53df540 \
+    file://oss-pkg-info.yaml;md5=70ae4f5a391a0b9df4abb7d3eb86aa27 \
 "
 
 DEPENDS = "libpbnjson boost"
 
-WEBOS_VERSION = "1.0.1-3_3df441675f74b5beeff8a45201d078986ad2c68b"
-PR = "r2"
+WEBOS_VERSION = "1.0.1-4_c315f95234dba3e1ef8581f5225b72ec95707eed"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
