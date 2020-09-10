@@ -4,12 +4,15 @@ SUMMARY = "General System Launcher application"
 AUTHOR = "Kiho Choi<kiho.choi@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+    file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
+"
 
-WEBOS_VERSION = "0.1.0-10_8d5f76f0ee7019996cbb5586eac679b52b90c678"
+WEBOS_VERSION = "0.1.0-11_2d4274715cc5071f598452b7e6c3fe8ad8134656"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r2"
+PR = "r3"
 
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app

@@ -4,9 +4,12 @@ SUMMARY = "General System Launcher application"
 AUTHOR = "Kiho Choi<kiho.choi@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+    file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
+"
 
-WEBOS_VERSION = "0.1.0-3_7f0d1b6ad2d291c8663c01102df29f2932600ba8"
+WEBOS_VERSION = "0.1.0-4_10e9f399e4bee6a3c56996e1d9dd2f62f1e990ac"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r1"
