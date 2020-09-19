@@ -1,4 +1,4 @@
-From b42f3c8e8afca4526bddcb80a0244e46cac14df3 Mon Sep 17 00:00:00 2001
+From 31325f0eae04f9260f103ac4f1e52e0b4318dd83 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 7 Feb 2020 07:10:42 -0800
 Subject: [PATCH] implement drm_create_linear_prime_buffer
@@ -12,12 +12,12 @@ Signed-off-by: Martin Jansa <martin.jansa@lge.com>
  src/egl/wayland/wayland-drm/wayland-drm.c   | 28 +++++++++++++++++----
  src/egl/wayland/wayland-drm/wayland-drm.h   |  2 +-
  src/egl/wayland/wayland-drm/wayland-drm.xml | 12 +++++++++
- src/gallium/state_trackers/dri/dri2.c       |  7 +++---
+ src/gallium/state_trackers/dri/dri2.c       | 19 +++++++++++---
  src/gbm/backends/dri/gbm_dri.c              |  1 +
  src/loader/loader_dri3_helper.c             |  1 +
  src/mesa/drivers/dri/i915/intel_screen.c    |  2 +-
  src/mesa/drivers/dri/i965/intel_screen.c    |  2 +-
- 12 files changed, 48 insertions(+), 13 deletions(-)
+ 12 files changed, 61 insertions(+), 12 deletions(-)
 
 diff --git a/include/GL/internal/dri_interface.h b/include/GL/internal/dri_interface.h
 index e40106575c0..6e0ac60cd18 100644
@@ -198,11 +198,17 @@ index eaf2654ab26..d6913d680ba 100644
  
  </protocol>
 diff --git a/src/gallium/state_trackers/dri/dri2.c b/src/gallium/state_trackers/dri/dri2.c
-index 0dc5a23dc4f..7f587ddb807 100644
+index 8b4402a74aa..65d920627d4 100644
 --- a/src/gallium/state_trackers/dri/dri2.c
 +++ b/src/gallium/state_trackers/dri/dri2.c
-@@ -1372,10 +1372,9 @@ dri2_query_dma_buf_modifiers(__DRIscreen *_screen, int fourcc, int max,
-                              int *count);
+@@ -1366,13 +1366,26 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
+    return img;
+ }
+ 
++static boolean
++dri2_query_dma_buf_modifiers(__DRIscreen *_screen, int fourcc, int max,
++                             uint64_t *modifiers, unsigned int *external_only,
++                             int *count);
  static __DRIimage *
  dri2_from_fds(__DRIscreen *screen, int width, int height, int fourcc,
 -              int *fds, int num_fds, int *strides, int *offsets,
@@ -210,19 +216,21 @@ index 0dc5a23dc4f..7f587ddb807 100644
 +              uint64_t modifier, int *fds, int num_fds, int *strides,
 +              int *offsets, void *loaderPrivate)
  {
--   uint64_t modifier= DRM_FORMAT_MOD_INVALID;
-    unsigned int external_only= 0;
-    int count= 0;
-    boolean result;
-@@ -1385,7 +1384,7 @@ dri2_from_fds(__DRIscreen *screen, int width, int height, int fourcc,
-                                    strides, offsets, NULL, loaderPrivate);
-    #if 0
++   if (modifier != DRM_FORMAT_MOD_LINEAR) {
++      /* For RGB16 format data since we are getting correct value of modifer
++       * as DRM_FORMAT_MOD_LINEAR no need for query of modifiers
++       */
++      unsigned int external_only= 0;
++      int count= 0;
++      boolean result;
++      result = dri2_query_dma_buf_modifiers( screen, fourcc, 1, &modifier, &external_only, &count);
++   }
     return dri2_create_image_from_fd(screen, width, height, fourcc,
 -                                   DRM_FORMAT_MOD_INVALID, fds, num_fds,
 +                                   modifier, fds, num_fds,
                                     strides, offsets, NULL, loaderPrivate);
-    #endif
  }
+ 
 diff --git a/src/gbm/backends/dri/gbm_dri.c b/src/gbm/backends/dri/gbm_dri.c
 index 8fe6a0265fb..1c184eedbfd 100644
 --- a/src/gbm/backends/dri/gbm_dri.c
