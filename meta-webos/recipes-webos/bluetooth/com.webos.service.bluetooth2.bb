@@ -48,7 +48,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 # emulator), which means that the pairing should happen without user intervention.
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
-WEBOS_VERSION = "1.0.0-42_27f938343e60523b9f244fb27c1beb429e281438"
+WEBOS_VERSION = "1.0.0-43_ecbde0ea1c74a5859e2019b1c0448d8a3233f50b"
 PR = "r3"
 
 inherit webos_component
