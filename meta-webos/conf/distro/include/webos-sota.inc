@@ -8,6 +8,8 @@
 # this file and that's why I use 'include' directive rather than 'require'.
 include conf/distro/sota.conf.inc
 
+inherit image-artifact-names
+
 # override OSTREE variables
 OSTREE_OSNAME = "${DISTRO}"
 OSTREE_BRANCHNAME = "${IMAGE_BASENAME}-${WEBOS_DISTRO_BUILD_CODENAME}"
