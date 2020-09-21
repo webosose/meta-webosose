@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost gtest pmtrace"
 
 WEBOS_VERSION = "2.0.0-13_7bdffe52b7f2d21b195d7df4ce11f17e644cae1d"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -28,6 +28,12 @@ inherit webos_prerelease_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+
+SRC_URI_append_qemux86 = " \
+    file://0001-display-count-check-for-emulator.patch \
+"
 
 # LTTNG option
 # WEBOS_LTTNG_ENABLED = "0"

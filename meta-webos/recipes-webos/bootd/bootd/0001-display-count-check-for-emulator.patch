@@ -1,0 +1,39 @@
+From 82df7303fc7421fb4c5372c1b6f82cf1ddbfb555 Mon Sep 17 00:00:00 2001
+From: Heegoo Han <heegoo.han@lge.com>
+Date: Wed, 16 Sep 2020 13:13:23 +0900
+Subject: [PATCH] display count check for emulator
+
+---
+ src/bootd/event/StaticEventDB.cpp | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/src/bootd/event/StaticEventDB.cpp b/src/bootd/event/StaticEventDB.cpp
+index 80aca92..2210669 100644
+--- a/src/bootd/event/StaticEventDB.cpp
++++ b/src/bootd/event/StaticEventDB.cpp
+@@ -61,10 +61,18 @@ void StaticEventDB::printInformation()
+ 
+ int StaticEventDB::getDisplayCnt()
+ {
+-    if (isFileExist("/sys/class/drm/card0-HDMI-A-2"))
+-        return 2;
+-    else
+-        return 1;
++    // Emulator should check the card0-Virtual-*
++    ifstream file;
++    string status;
++    file.open("/sys/class/drm/card0-Virtual-2/status");
++    if (!file.fail()) {
++        status.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
++        file.close();
++        if (std::string::npos != status.find("disconnected")) {
++            return 1;
++        }
++    }
++    return 2;
+ }
+ 
+ void StaticEventDB::updateConf(pbnjson::JValue jsonConf)
+-- 
+2.25.1
+
