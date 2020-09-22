@@ -1,8 +1,8 @@
-# Copyright (c) 2019-2020 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS SDK Toolchain including qt host tools"
 
-PR = "r2"
+PR = "r3"
 
 TOOLCHAIN_HOST_TASK = "nativesdk-packagegroup-sdk-host"
 TOOLCHAIN_HOST_TASK += "nativesdk-packagegroup-qt5-toolchain-host"
@@ -25,7 +25,7 @@ TOOLCHAIN_OUTPUTNAME = "${SDK_NAME}-${WEBOS_DISTRO_BUILD_ID}"
 # By default, populate_sdk puts the toolchain in TOOLCHAIN_TARGET_TASK (which
 # controls what the bbclass packages).
 inherit populate_sdk
-inherit populate_sdk_qt5_base
+inherit populate_sdk_qt6_base
 
 inherit webos_image
 

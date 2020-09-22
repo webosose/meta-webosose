@@ -1,8 +1,9 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
-inherit qmake5
-inherit webos_qmake5_base
+inherit qt6-qmake
 inherit webos_filesystem_paths
+# To use OE_QMAKE_PATH_QT_* under meta-lg-webos/
+inherit webos_qmake5_paths
 
 # These are used in the luna-sysmgr recipe
 export QT_CONFIGURE_PREFIX_PATH = "${OE_QMAKE_PATH_PREFIX}"
@@ -72,10 +73,14 @@ EXPORT_WEBOS_QMAKE_TARGET[vardepvalue] = "${EXPORT_WEBOS_QMAKE_TARGET}"
 
 EXTRA_OEMAKE += "${EXPORT_WEBOS_QMAKE_TARGET}"
 
-# Add the the native tool in the paths as some project require rcc
-# to be available
-WEBOS_EXTRA_PATH .= "${OE_QMAKE_PATH_EXTERNAL_HOST_BINS}:"
+# Add the the native tool in the paths as some project require rcc to be available.
+# Since 6.1 rcc is located in libexec. (QTBUG-92245)
+WEBOS_EXTRA_PATH .= "${OE_QMAKE_PATH_EXTERNAL_HOST_BINS}:${STAGING_LIBEXECDIR_NATIVE}:"
 
 do_configure_prepend() {
+  ${EXPORT_WEBOS_QMAKE_MACHINE}
+}
+
+do_compile_prepend() {
   ${EXPORT_WEBOS_QMAKE_MACHINE}
 }
