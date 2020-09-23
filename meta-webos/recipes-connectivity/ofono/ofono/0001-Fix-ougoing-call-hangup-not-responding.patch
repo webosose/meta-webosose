@@ -1,0 +1,194 @@
+From 24cbf044e0ffc831e07aac64f219e78b95935af9 Mon Sep 17 00:00:00 2001
+From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
+Date: Fri, 25 Sep 2020 11:16:27 +0530
+Subject: [PATCH] Fix ougoing call hangup not responding
+
+:Release Notes:
+Fix ougoing call hangup not responding
+
+:Detailed Notes:
+Randomly during call hangup, sound card state is going into
+invalid state, added logic to recover from it by resetting
+card state in such case
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[PLAT-117073] Does not immediately dismiss the
+              outgoing call pop-up.
+
+Upstream-Status: Pending
+---
+ drivers/hfpmodem/voicecall.c |   1 +
+ src/handsfree-audio.c        | 101 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 97 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/hfpmodem/voicecall.c b/drivers/hfpmodem/voicecall.c
+index 69667f1..10d90bb 100644
+--- a/drivers/hfpmodem/voicecall.c
++++ b/drivers/hfpmodem/voicecall.c
+@@ -1077,6 +1077,7 @@ static void ciev_callsetup_notify(struct ofono_voicecall *vc,
+ 		 * from HF: query and sync the phone number.
+ 		 * from AG: query and create call.
+ 		 */
++		usleep(100000);
+ 		g_at_chat_send(vd->chat, "AT+CLCC", clcc_prefix,
+ 				clcc_poll_cb, vc, NULL);
+ 		break;
+diff --git a/src/handsfree-audio.c b/src/handsfree-audio.c
+index 5ca8702..7b44809 100644
+--- a/src/handsfree-audio.c
++++ b/src/handsfree-audio.c
+@@ -61,6 +61,12 @@ struct agent {
+ 	guint watch;
+ };
+ 
++struct new_connection_data {
++	char *local;
++	char *remote;
++	struct ofono_handsfree_card * card;
++};
++
+ static struct agent *agent = NULL;
+ static int ref_count = 0;
+ static GSList *card_list = 0;
+@@ -69,6 +75,10 @@ static GSList *drivers = 0;
+ static ofono_bool_t has_wideband = FALSE;
+ static int defer_setup = 1;
+ static ofono_bool_t transparent_sco = FALSE;
++static gint connection_reconnect_timeout = 0;
++
++static void emit_card_added(struct ofono_handsfree_card *card);
++static void emit_card_removed(struct ofono_handsfree_card *card);
+ 
+ static const char *card_type_to_string(enum ofono_handsfree_card_type type)
+ {
+@@ -108,12 +118,67 @@ static ofono_bool_t apply_settings_from_codec(int fd, uint8_t codec)
+ 	return TRUE;
+ }
+ 
+-static void send_new_connection(const char *card, int fd, uint8_t codec)
++static void send_new_connection_free(gpointer user_data)
++{
++	DBG("disconnect fun: %s Line: %d", __FUNCTION__, __LINE__);
++	struct new_connection_data *data = user_data;
++
++	g_free(data->local);
++	g_free(data->remote);
++	g_free(data);
++}
++
++static gboolean try_reconnect(gpointer user_data)
++{
++       DBG("Calling Fun: %s Line: %d\n", __FUNCTION__, __LINE__);
++       struct new_connection_data *data = user_data;
++       if (connection_reconnect_timeout)
++       {
++               DBG("Calling Fun: %s Line: %d\n", __FUNCTION__, __LINE__);
++               g_source_remove(connection_reconnect_timeout);
++	       connection_reconnect_timeout = 0;
++       }
++
++       if (data == NULL)
++	       return TRUE;
++
++       //Recover from unstable state by resetting card state
++       emit_card_removed(data->card);
++       usleep(1000000);
++       emit_card_added(data->card);
++
++       DBG("Calling Fun: %s Line: %d\n", __FUNCTION__, __LINE__);
++
++       send_new_connection_free(data);
++       return TRUE;
++}
++
++static void send_new_connection_reply(DBusPendingCall *call, void *user_data)
++{
++	DBG("disconnect fun: %s Line: %d", __FUNCTION__, __LINE__);
++	DBusMessage *reply = dbus_pending_call_steal_reply(call);
++	DBusError error;
++
++	dbus_error_init(&error);
++
++	if (dbus_set_error_from_message(&error, reply) == TRUE) {
++		ofono_error("NewConnection error from audio agent error: %s, %s", error.name,
++				error.message);
++		dbus_error_free(&error);
++		if (connection_reconnect_timeout == 0)
++			connection_reconnect_timeout = g_timeout_add_seconds(2, try_reconnect, user_data);
++	}
++
++	dbus_message_unref(reply);
++}
++
++static void send_new_connection(const char *card, int fd, uint8_t codec, struct new_connection_data *data)
+ {
+ 	DBusMessage *msg;
+ 	DBusMessageIter iter;
++        DBusPendingCall *call;
+ 
+-	DBG("%p, fd: %d, codec: %hu", card, fd, codec);
++	DBG("Debug %p, fd: %d, codec: %hu", card, fd, codec);
+ 
+ 	msg = dbus_message_new_method_call(agent->owner, agent->path,
+ 				HFP_AUDIO_AGENT_INTERFACE, "NewConnection");
+@@ -125,7 +190,25 @@ static void send_new_connection(const char *card, int fd, uint8_t codec)
+ 	dbus_message_iter_append_basic(&iter, DBUS_TYPE_UNIX_FD, &fd);
+ 	dbus_message_iter_append_basic(&iter, DBUS_TYPE_BYTE, &codec);
+ 
+-	g_dbus_send_message(ofono_dbus_get_connection(), msg);
++	DBG("disconnect fun: %s Line: %d", __FUNCTION__, __LINE__);
++	if (data == NULL) {
++	DBG("disconnect fun: %s Line: %d", __FUNCTION__, __LINE__);
++		g_dbus_send_message(ofono_dbus_get_connection(), msg);
++	} else {
++	DBG("disconnect fun: %s Line: %d", __FUNCTION__, __LINE__);
++		if (g_dbus_send_message_with_reply(ofono_dbus_get_connection(), msg,
++					&call, -1) == FALSE) {
++			dbus_message_unref(msg);
++                        send_new_connection_free(data);
++			return;
++		}
++
++		dbus_pending_call_set_notify(call, send_new_connection_reply, data, NULL);
++		dbus_pending_call_unref(call);
++
++		dbus_message_unref(msg);
++	}
++	DBG("disconnect fun: %s Line: %d", __FUNCTION__, __LINE__);
+ }
+ 
+ static struct ofono_handsfree_card *card_find(const char *remote,
+@@ -200,7 +283,15 @@ static gboolean sco_accept(GIOChannel *io, GIOCondition cond,
+ 	DBG("SCO connection setup between local: %s and remote: %s",
+ 		local, remote);
+ 
+-	send_new_connection(card->path, nsk, card->selected_codec);
++	struct new_connection_data *data = dbus_malloc0(sizeof(*data));
++	if (!data)
++		return TRUE;
++
++	data->local = g_strdup(local);
++	data->remote = g_strdup(remote);
++	data->card = card;
++
++	send_new_connection(card->path, nsk, card->selected_codec, data);
+ 	close(nsk);
+ 
+ 	if (card->driver && card->driver->sco_connected_hint)
+@@ -333,7 +424,7 @@ static gboolean sco_connect_cb(GIOChannel *io, GIOCondition cond,
+ 		goto done;
+ 	}
+ 
+-	send_new_connection(card->path, sk, card->selected_codec);
++	send_new_connection(card->path, sk, card->selected_codec, NULL);
+ 
+ 	close(sk);
+ 
+-- 
+2.17.1
+
