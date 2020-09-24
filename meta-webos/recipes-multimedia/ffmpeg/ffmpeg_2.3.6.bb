@@ -42,7 +42,7 @@ FFMPEG_CONF = ' \
     --disable-pthreads \
     --disable-w32threads \
     --disable-os2threads \
-    --enable-thumb \
+     ${@bb.utils.contains('TUNE_FEATURES', 'thumb', ' --enable-thumb', '', d)} \
     --enable-shared \
     --disable-decoder=msmpeg4v3 \
     '
