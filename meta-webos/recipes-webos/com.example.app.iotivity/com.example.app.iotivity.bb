@@ -17,7 +17,7 @@ SRCREV = "ff1837a569494cb9613c3b6c961fcf26f0014515"
 
 S = "${WORKDIR}/git"
 
-PR = "r2"
+PR = "r3"
 PV = "1.3.99+git${SRCPV}"
 
 inherit pkgconfig webos_enactjs_app webos_component
@@ -39,3 +39,5 @@ COMPATIBLE_MACHINE_armv7a = "(.*)"
 COMPATIBLE_MACHINE_armv7ve = "(.*)"
 COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
+
+SRC_URI += "file://0001-webOS-Fix-UI-bug-in-iotivity-sampler.patch"
