@@ -4,11 +4,11 @@ require webruntime.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
 
-LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=392a1bd783afbb4f57e038c7d1af5611"
+LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=07465c3c8b4402803a26b207674ca122"
 
-WEBOS_VERSION = "79.0.3945.79-46_55ac25885fa73a9b62fd749e575776885a9f9a54"
+WEBOS_VERSION = "79.0.3945.79-47_f71187b412111ac26789f73c230f33cd1b09ada0"
 
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium79"
 
