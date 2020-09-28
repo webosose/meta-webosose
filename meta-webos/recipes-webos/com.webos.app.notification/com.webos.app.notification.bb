@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 WEBOS_VERSION = "0.1.0-3_7f0d1b6ad2d291c8663c01102df29f2932600ba8"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r0"
+PR = "r1"
 
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
@@ -18,3 +18,5 @@ inherit webos_public_repo
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.notification"
+
+SRC_URI_append = " file://0001-Merge-service-module-code-in-com.webos.app.notificat.patch"
