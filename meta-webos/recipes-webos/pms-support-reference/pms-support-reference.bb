@@ -7,10 +7,10 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 SECTION = "webos/libs"
 
 DEPENDS = "luna-service2 glib-2.0 pmloglib libpbnjson nyx-lib libpmscore"
-PROVIDES += "virtual/pmssupport"
+PROVIDES = "virtual/pmssupportreference"
 
 WEBOS_VERSION = "1.0.0-2_16446829a183c43359ab8d6bd76e42acaf1b6898"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions
