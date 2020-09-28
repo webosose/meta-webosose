@@ -219,3 +219,14 @@ PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson
 PNBLACKLIST[python3-protobuf] ?= "Not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb google/protobuf/pyext/message.cc:70:10: fatal error: google/protobuf/stubs/map_util.h: No such file or directory"
 PNBLACKLIST[python3-grpcio] ?= "Depends on blacklisted python3-protobuf which is not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb"
 PNBLACKLIST[python3-grpcio-tools] ?= "Depends on blacklisted python3-protobuf which is not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb"
+
+# GPL 3.0 downgrade
+PNBLACKLIST[mpfr] ?= "depends on newer GMP, GMP 5.0.0 or newer is required http://caprica.lgsvl.com:8080/Errors/Details/1104304 and we prefer 4.2.1 because of license"
+PNBLACKLIST[libmpc] ?= "depends on newer GMP >= 4.3.2 and we prefer 4.2.1 because of license"
+PNBLACKLIST[gcc] ?= "depends on blacklisted libmpc"
+PNBLACKLIST[packagegroup-core-buildessential] ?= "rdepends on blacklisted gcc (to provide cpp, cpp-symlinks, gcc, gcc-symlinks, g++, g++-symlinks)"
+PNBLACKLIST[libmodule-build-perl] ?= "depends on blacklisted gcc"
+PNBLACKLIST[systemtap] ?= "broken: not compatible with old elfutils used in webos-pro"
+PNBLACKLIST[systemtap-uprobes] ?= "depends on blacklisted systemtap"
+PNBLACKLIST[ltrace] ?= "broken: not compatible with old elfutils used in webos-pro"
+PNBLACKLIST[packagegroup-cli-tools] ?= "rdepends on broken ltrace"

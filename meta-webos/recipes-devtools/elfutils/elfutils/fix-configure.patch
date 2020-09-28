@@ -1,0 +1,12 @@
+--- a/configure.ac	2019-06-05 18:51:21.972431416 +0900
++++ b/configure.ac	2019-06-05 18:52:28.312436188 +0900
+@@ -67,7 +67,7 @@
+ old_CFLAGS="$CFLAGS"
+ CFLAGS="$CFLAGS -std=gnu99"
+ AC_COMPILE_IFELSE([dnl
+-int foo (int a) { for (int i = 0; i < a; ++i) if (i % 4) break; int s = a; }],
++void foo (int a) { for (int i = 0; i < a; ++i) if (i % 4) break; int s = a; }],
+ 		  ac_cv_c99=yes, ac_cv_c99=no)
+ CFLAGS="$old_CFLAGS"])
+ AS_IF([test "x$ac_cv_c99" != xyes],
+

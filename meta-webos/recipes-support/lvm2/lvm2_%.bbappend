@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2020 LG Electronics, Inc.
 
 EXTENDPRAUTO_append = "webos1"
 
@@ -7,3 +7,7 @@ RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 RDEPENDS_${PN}-scripts_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-scripts_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+
+# thin-provisioning-tools is GPLv3
+PACKAGECONFIG_remove = "thin-provisioning-tools"
+
