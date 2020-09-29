@@ -40,13 +40,6 @@ do_compile_prepend() {
 do_install() {
     install -d ${D}${libdir}/nodejs
     install ${S}/build/Release/${WEBOS_NODE} ${D}${libdir}/nodejs/${WEBOS_NODE}
-
-    # XXX Temporarily add symlink to old location until all users of it are changed
-    install -d ${D}${webos_prefix}/nodejs
-    ln -svnf ${libdir}/nodejs/${WEBOS_NODE} ${D}${webos_prefix}/nodejs/
 }
-
-# XXX Temporarily add symlink to old location until all users of it are changed
-FILES_${PN} += "${webos_prefix}/nodejs"
 
 FILES_${PN} += "${libdir}/nodejs"
