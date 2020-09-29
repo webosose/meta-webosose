@@ -1,6 +1,6 @@
 # Copyright (c) 2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack1', '', d)}"
+EXTENDPRAUTO_append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
