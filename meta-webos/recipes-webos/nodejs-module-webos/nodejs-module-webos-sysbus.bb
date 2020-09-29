@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "glib-2.0 luna-service2 node-gyp-native"
 
 WEBOS_VERSION = "3.0.1-6_855889b1c0c344baed15bd8d69f05d661bd67d01"
-PR = "r12"
+PR = "r13"
 
 inherit webos_component
 inherit webos_public_repo
@@ -19,7 +19,7 @@ inherit webos_library
 inherit webos_system_bus
 inherit python3native
 
-export PYTHON = "python"
+export PYTHON = "python3"
 
 NODE_VERSION = "12.14.1"
 

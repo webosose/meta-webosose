@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "pmloglib node-gyp-native vim-native"
 
 WEBOS_VERSION = "3.0.1-5_b5ee1f75bf45bf2628a81933dfc4f286f19e5d62"
-PR = "r8"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
@@ -19,7 +19,7 @@ inherit webos_library
 inherit webos_filesystem_paths
 inherit python3native
 
-export PYTHON = "python"
+export PYTHON = "python3"
 
 NODE_VERSION = "12.14.1"
 
