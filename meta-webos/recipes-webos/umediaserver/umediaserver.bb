@@ -13,7 +13,7 @@ DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
 WEBOS_VERSION = "1.0.0-24_0407a711cbe8e747dfda50633d8b1c70b0ffc9ef"
-PR = "r14"
+PR = "r15"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -41,7 +41,7 @@ COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-24.gav.6_fcfd919e817e6787b6e83d059d9e0bbc91b5a0e8"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-24.gav.7_6b767aceec239373640eb5909b45d2507e560556"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -61,5 +61,4 @@ FILES_${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${dat
 #                              ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 SECURITY_STRINGFORMAT = ""
 
-SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch \
-            file://0002-Fix-single-instance-crash-on-web-application.patch"
+SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"
