@@ -49,6 +49,7 @@ RDEPENDS_${PN}_append_rpi = " \
     com.webos.service.audiooutput \
     com.webos.service.hfp \
     com.webos.service.location \
+    com.webos.service.mediaindexer \
     ofono \
     resize-rootfs \
     ${CAMERASERVICE} \
