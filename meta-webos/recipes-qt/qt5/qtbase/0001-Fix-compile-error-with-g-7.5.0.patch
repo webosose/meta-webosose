@@ -1,0 +1,27 @@
+From 0723662a7a4d2d2edcda7fc0972a7b501f7c5aa1 Mon Sep 17 00:00:00 2001
+From: Hyungchan Kim <hyungchan2.kim@lge.com>
+Date: Wed, 26 May 2021 17:45:05 +0900
+Subject: [PATCH] Fix compile error with g++ 7.5.0
+
+git/src/corelib/kernel/qproperty_p.h:540:30: error: '(QItemSelectionModelPrivate::modelChanged != 0)' is not a constant expression
+         if constexpr (Signal != nullptr) {
+                       ~~~~~~~^~~~~~~~~~
+
+Upstream-Status : Inappropriate [workaround]
+---
+ src/corelib/kernel/qproperty_p.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/corelib/kernel/qproperty_p.h b/src/corelib/kernel/qproperty_p.h
+index d00094c54f..2ada23f5f9 100644
+--- a/src/corelib/kernel/qproperty_p.h
++++ b/src/corelib/kernel/qproperty_p.h
+@@ -537,7 +537,7 @@ public:
+         const bool inWrapper = inBindingWrapper(storage);
+         if (bd && !inWrapper)
+             notify(bd);
+-        if constexpr (Signal != nullptr) {
++        if constexpr (!std::is_same_v<decltype(Signal), nullptr_t>) {
+             if constexpr (SignalTakesValue::value)
+                 (owner()->*Signal)(value());
+             else

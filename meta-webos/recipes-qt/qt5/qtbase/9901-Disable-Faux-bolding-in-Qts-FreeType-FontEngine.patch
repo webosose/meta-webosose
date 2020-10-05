@@ -9,22 +9,21 @@ webOS doesn't want to apply the bolden effect by Freetype engine.
 Change-Id: I8cae71928f0b44526b345cc72403ccce6c7feeac
 Upstream-Status : Inappropriate [webOS specific]
 ---
- src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp | 2 ++
+ src/gui/text/freetype/qfontengine_ft.cpp | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-index cfc2eb1b12..f175f77374 100644
---- a/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-+++ b/src/platformsupport/fontdatabases/freetype/qfontengine_ft.cpp
-@@ -823,6 +823,7 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
-             obliquen = true;
-         FT_Set_Transform(face, &matrix, 0);
+diff --git a/src/gui/text/freetype/qfontengine_ft.cpp b/src/gui/text/freetype/qfontengine_ft.cpp
+index 42cf147901..ac214812ae 100644
+--- a/src/gui/text/freetype/qfontengine_ft.cpp
++++ b/src/gui/text/freetype/qfontengine_ft.cpp
+@@ -748,12 +748,14 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+         FT_Set_Transform(face, &matrix, nullptr);
          freetype->matrix = matrix;
-+#ifndef Q_OS_WEBOS
          // fake bold
-         if ((fontDef.weight >= QFont::Bold) && !(face->style_flags & FT_STYLE_FLAG_BOLD) && !FT_IS_FIXED_WIDTH(face) && !qEnvironmentVariableIsSet("QT_NO_SYNTHESIZED_BOLD")) {
++#ifndef Q_OS_WEBOS
+         if ((fontDef.weight >= QFont::Bold) && !(face->style_flags & FT_STYLE_FLAG_BOLD) && !FT_IS_FIXED_WIDTH(face)  && !qEnvironmentVariableIsSet("QT_NO_SYNTHESIZED_BOLD")) {
              if (const TT_OS2 *os2 = reinterpret_cast<const TT_OS2 *>(FT_Get_Sfnt_Table(face, ft_sfnt_os2))) {
-@@ -830,6 +831,7 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+                 if (os2->usWeightClass < 700 && fontDef.pixelSize < 64)
                      embolden = true;
              }
          }
