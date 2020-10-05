@@ -8,7 +8,12 @@ DESCRIPTION = "Target-side daemon gathering data for ARM Streamline Performance 
 
 PR = "${INC_PR}.5"
 
-RDEPENDS:${PN} += "kernel-module-gator"
+# Fails to build with 5.10 kernel
+# http://gecko.lge.com:8000/Errors/Details/456083
+# RDEPENDS:${PN} += "kernel-module-gator"
+# whole timespec use was removed in 7.2 version with:
+# Gatord 7.2 for Arm DS 2020.0 and Arm Mobile Studio 2020.0
+# https://github.com/ARM-software/gator/commit/fc2b7126b15caf818f377dae911af0a3c29c65f6
 
 SRC_URI += " \
     file://0001-disable-stripping-debug-info.patch \
