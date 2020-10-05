@@ -215,3 +215,5 @@ PNBLACKLIST[mosquitto] ?= "Depends on blacklisted dlt-daemon"
 
 # meta-openembedded/meta-oe/recipes-multimedia/pipewire/pipewire_git.bb
 PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson.build:234:2: ERROR: Invalid version of dependency, need 'libpulse' ['>= 11.1'] found '9.0-14-gdf81'."
+
+PNBLACKLIST[python3-protobuf] ?= "Not compatible with old protobuf from meta-webos/recipes-devtools/protobuf/protobuf_3.6.1.bb google/protobuf/pyext/message.cc:70:10: fatal error: google/protobuf/stubs/map_util.h: No such file or directory"
