@@ -1,8 +1,8 @@
 # Copyright (c) 2017-2020 LG Electronics, Inc.
 
-inherit native webos_qmake5_base
+inherit webos_qmake5_base
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO_append = "webos4"
 
 QT_CONFIG_FLAGS_remove = "-no-gui -no-libpng"
 QT_CONFIG_FLAGS_append = " -no-widgets -evdev"

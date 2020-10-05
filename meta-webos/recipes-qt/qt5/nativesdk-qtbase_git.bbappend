@@ -1,8 +1,8 @@
 # Copyright (c) 2020 LG Electronics, Inc.
 
-inherit nativesdk webos_qmake5_base
+inherit webos_qmake5_base
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos2"
 
 # ${BPN} does not get "qtbase" for some reason
 FILESEXTRAPATHS_prepend := "${THISDIR}/qtbase:"
