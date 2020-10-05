@@ -1,4 +1,4 @@
-From 80444adae0a649b50f62b80c0c5d2baaf85d039c Mon Sep 17 00:00:00 2001
+From f37766ecfc8063d8c07786f1a369b92f44037d64 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Tue, 18 Aug 2020 03:28:32 -0700
 Subject: [PATCH] gator_main.c, gator_backtrace.c: fix build with linux-5.0 and
@@ -6,9 +6,9 @@ Subject: [PATCH] gator_main.c, gator_backtrace.c: fix build with linux-5.0 and
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
- driver/gator_backtrace.c | 5 +++++
- driver/gator_main.c      | 8 +++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ driver/gator_backtrace.c |  5 +++++
+ driver/gator_main.c      | 10 +++++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/driver/gator_backtrace.c b/driver/gator_backtrace.c
 index 92b2860..37c1dc3 100644
@@ -28,10 +28,10 @@ index 92b2860..37c1dc3 100644
              return;
          }
 diff --git a/driver/gator_main.c b/driver/gator_main.c
-index a7506bd..43f15b8 100644
+index 69487b5..c031c77 100644
 --- a/driver/gator_main.c
 +++ b/driver/gator_main.c
-@@ -779,6 +779,9 @@ static void gator_summary(void)
+@@ -781,6 +781,9 @@ static void gator_summary(void)
  {
      u64 timestamp, uptime;
      struct timespec ts;
@@ -41,16 +41,16 @@ index a7506bd..43f15b8 100644
      char uname_buf[100];
  
      snprintf(uname_buf, sizeof(uname_buf), "%s %s %s %s %s GNU/Linux", utsname()->sysname, utsname()->nodename, utsname()->release, utsname()->version, utsname()->machine);
-@@ -797,8 +800,11 @@ static void gator_summary(void)
-         if (m2b)
-             m2b(&ts);
-     }
+@@ -803,8 +808,11 @@ static void gator_summary(void)
+ #elif LINUX_VERSION_CODE < KERNEL_VERSION(4, 20, 0)
+     get_monotonic_boottime(&ts);
+     uptime = timespec_to_ns(&ts);
 -#else
 +#elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0)
-     get_monotonic_boottime(&ts);
+     uptime = ktime_to_ns(ktime_get_boottime());
 +#else
 +    ktime_get_boottime_ts64(&ts64);
 +    ts = timespec64_to_timespec(ts64);
  #endif
-     uptime = timespec_to_ns(&ts);
  
+     /* Disable preemption as gator_get_time calls smp_processor_id to verify time is monotonic */
