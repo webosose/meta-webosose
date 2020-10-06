@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
 "
 
-WEBOS_VERSION = "0.1.0-5_c3cbc7b0e936d0f66e2035697dbccec25b79dee7"
+WEBOS_VERSION = "0.1.0-6_2c1eef9146061e1d5e334ab93dce27e63216f739"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r1"
@@ -21,5 +21,3 @@ inherit webos_public_repo
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.volume"
-
-SRC_URI_append = " file://0001-Merge-service-module-code-in-com.webos.app.volume.patch"
