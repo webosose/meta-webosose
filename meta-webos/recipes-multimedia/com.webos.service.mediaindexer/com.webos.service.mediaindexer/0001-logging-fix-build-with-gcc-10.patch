@@ -1,0 +1,23 @@
+From a4135eb185d45a92a90847cb21276187eb6d9686 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Tue, 6 Oct 2020 04:51:50 -0700
+Subject: [PATCH] logging: fix build with gcc-10
+
+* include stdlib to fix:
+  /jenkins/mjansa/build/webos-auto/gatesgarth/BUILD/work/sa8155-webos-linux/com.webos.service.mediaindexer/1.0.0-auto.7-r0/git/src/./log/logging.h:38:13: error: 'free' was not declared in this scope
+---
+ src/log/logging.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/log/logging.h b/src/log/logging.h
+index 0dfb0f8..2e84f28 100644
+--- a/src/log/logging.h
++++ b/src/log/logging.h
+@@ -20,6 +20,7 @@
+ #include <libgen.h>
+ #include <ctype.h>
+ #include <unistd.h>
++#include <stdlib.h>
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+ 
