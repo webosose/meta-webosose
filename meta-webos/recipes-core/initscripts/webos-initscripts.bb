@@ -17,7 +17,7 @@ PROVIDES = "initscripts"
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-WEBOS_VERSION = "3.0.0-52_fea7d3844989121a940f05d24ff7db66b95f053b"
+WEBOS_VERSION = "3.0.0-53_a21ffb607eb352211e0686810dbf38f6beb3fc66"
 PR = "r15"
 
 inherit webos_component
