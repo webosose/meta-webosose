@@ -4,7 +4,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 WEBOS_VERSION = "1.0.0-1_91bcc8d0485bc4d65cadcc1c0f1ff8d501b7648e"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -21,6 +21,7 @@ RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-logging-fix-build-with-gcc-10.patch \
+    file://0002-upnp-fix-build-with-libupnp-1.14.0-and-fix-CVE-2020-.patch \
 "
 S = "${WORKDIR}/git"
 
