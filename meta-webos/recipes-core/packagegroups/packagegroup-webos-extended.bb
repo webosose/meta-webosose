@@ -10,6 +10,7 @@ PR = "r37"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 inherit webos_machine_impl_dep
+inherit webos_prerelease_dep
 
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
@@ -218,7 +219,7 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_unifiedsearch} \
     ${VIRTUAL-RUNTIME_webappmanager} \
     ${VIRTUAL-RUNTIME_webos-ime} \
-    ${WEBOS_PACKAGESET_TESTAPPS} \
+    ${@ '' if '${WEBOS_DISTRO_PRERELEASE}' == '' else '${WEBOS_PACKAGESET_TESTAPPS}'} \
     ${WEBOS_PACKAGESET_TZDATA} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
