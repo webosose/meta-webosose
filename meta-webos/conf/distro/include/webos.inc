@@ -97,6 +97,12 @@ WEBOS_DISTRO_VERSION_CODENAME ?= "${@base_get_metadata_git_branch('.', None).str
 WEBOS_DISTRO_RELEASE_EPOCH ?= ""
 WEBOS_DISTRO_RELEASE_CODENAME ?= "${WEBOS_DISTRO_PLATFORM_CODENAME}${WEBOS_DISTRO_RELEASE_EPOCH}-${WEBOS_DISTRO_VERSION_CODENAME}"
 
+#
+# Indicate webOS Platform version to programmatically evaluate if it's higher
+# than another.
+#
+WEBOS_DISTRO_RELEASE_PLATFORMCODE ?= ""
+
 # This is the codename for the series of builds that are made from a branch.
 # It appears in the image filenames. It is expected that other distros will
 # override this based on their codename schemes.
