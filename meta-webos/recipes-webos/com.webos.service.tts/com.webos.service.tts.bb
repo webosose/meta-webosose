@@ -13,7 +13,7 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-13_5276aa3acedae2a0cbb2121cc27b88ae81116017"
+WEBOS_VERSION = "1.0.0-14_a9fd72659cbd69a01eca3ce3e6760211a8c07eb3"
 PR = "r3"
 
 inherit webos_component
