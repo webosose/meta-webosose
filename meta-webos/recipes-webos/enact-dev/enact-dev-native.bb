@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2019 LG Electronics, Inc.
+# Copyright (c) 2016-2020 LG Electronics, Inc.
 
 DESCRIPTION = "enact-dev command-line tools used by webOS"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -26,8 +26,8 @@ do_fetch[vardeps] += "SRCREV"
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "2.5.1"
-SRCREV = "cf6d2d2f84028a6ad6093c0fb4084d86031cd6c0"
+PV = "2.7.1"
+SRCREV = "db9e4ebfa4766e3973ea549f8fdcf2db923c3de4"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
