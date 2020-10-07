@@ -2,7 +2,7 @@
 
 SUMMARY = "webOS SDK Toolchain including qt host tools"
 
-PR = "r1"
+PR = "r2"
 
 TOOLCHAIN_HOST_TASK = "nativesdk-packagegroup-sdk-host"
 TOOLCHAIN_HOST_TASK += "nativesdk-packagegroup-qt5-toolchain-host"
@@ -37,3 +37,8 @@ IMAGE_FSTYPES_qemux86 = ""
 IMAGE_FSTYPES_qemux86-64 = ""
 
 SDK_NAME = "${BPN}-${DISTRO}-${SDK_ARCH}-${WEBOS_DISTRO_BUILD_CODENAME}-${MACHINE_ARCH}"
+
+# Often triggers:
+# Exception: bb.process.ExecutionError: Execution of 'webos-qt-sdk/1.0-r1/temp/run.archive_sdk.41476' failed with exit code 1:
+# xz: (stdin): Cannot allocate memory
+XZ_MEMLIMIT = "10%"
