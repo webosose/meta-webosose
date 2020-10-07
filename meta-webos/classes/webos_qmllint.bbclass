@@ -19,7 +19,7 @@ do_compile_prepend () {
             if [ -f "${_dirname_}/${file}" ]; then
                 ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint "${_dirname_}/${file}" \
                     || echo "Found syntax error in ${_dirname_}/${file}" >> ${WEBOS_QMLLINT_ERROR_LOG}
-                if [ "${WEBOS_QMLLINT_EXTRA_VALIDATION}" == "1" ]; then
+                if [ "${WEBOS_QMLLINT_EXTRA_VALIDATION}" = "1" ]; then
                     PATH=${STAGING_BINDIR_NATIVE}/python3-native:${PATH} \
                         ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint-supplement.py "${_dirname_}/${file}" \
                         || echo "Found problematic code pattern in ${_dirname_}/${file}" >> ${WEBOS_QMLLINT_ERROR_LOG}
@@ -40,7 +40,7 @@ do_install_append () {
     find ${D} -type f -name "*.qml" -o -name "*.js" | while read file; do
         ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint "${file}" \
             || echo "Found syntax error in ${file}" >> ${WEBOS_QMLLINT_ERROR_LOG}
-        if [ "${WEBOS_QMLLINT_EXTRA_VALIDATION}" == "1" ]; then
+        if [ "${WEBOS_QMLLINT_EXTRA_VALIDATION}" = "1" ]; then
             PATH=${STAGING_BINDIR_NATIVE}/python3-native:${PATH} \
                 ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint-supplement.py "${file}" \
                 || echo "Found problematic code pattern in ${file}" >> ${WEBOS_QMLLINT_ERROR_LOG}
