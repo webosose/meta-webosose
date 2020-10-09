@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-34_02467951acaffa87c6aabcb4a1443fcb5bba9503"
-PR = "r11"
+PR = "r12"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -65,6 +65,10 @@ install_acg_configuration() {
 
 do_install_append() {
     install_acg_configuration
+
+    # Enact does something wrong in this case, chown to prevent host-user-contaminated QA issue
+    # but should be fixed in enactjs
+    chown root:root -R ${D}
 }
 
 FILES_${PN} += "${webos_applicationsdir}"
