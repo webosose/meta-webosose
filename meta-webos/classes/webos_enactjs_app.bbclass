@@ -217,6 +217,15 @@ do_install() {
     if [ -f ${STAGING_DIR_HOST}${base_bindir}/${HOST_SYS}-mksnapshot.gz ]; then
         gzip -cd ${STAGING_DIR_HOST}${base_bindir}/${HOST_SYS}-mksnapshot.gz > ${B}/${HOST_SYS}-mksnapshot
         chmod +x ${B}/${HOST_SYS}-mksnapshot
+        if ! ${B}/${HOST_SYS}-mksnapshot --help >/dev/null && [ -n "${UNINATIVE_LOADER}" ] ; then
+            bbwarn "'${B}/${HOST_SYS}-mksnapshot --help' fails to run, if the previous error in log.do_install says 'dash: ... *-mksnapshot: not found' or 'bash: ... *-mksnapshot: No such file or directory', then it's probably failing because of interpreter pointing to loader in different build directory when reused webruntime from sstate, changing it to ${UNINATIVE_LOADER}"
+            bbnote "'file ${B}/${HOST_SYS}-mksnapshot':"
+            file ${B}/${HOST_SYS}-mksnapshot
+            bbnote "'patchelf-uninative --set-interpreter ${UNINATIVE_LOADER} ${B}/${HOST_SYS}-mksnapshot':"
+            patchelf-uninative --set-interpreter ${UNINATIVE_LOADER} ${B}/${HOST_SYS}-mksnapshot
+            bbnote "testing '${B}/${HOST_SYS}-mksnapshot --help >/dev/null' again"
+            ${B}/${HOST_SYS}-mksnapshot --help >/dev/null || bberror "'${B}/${HOST_SYS}-mksnapshot --help' still fails to run, check log.do_install"
+        fi
         export V8_MKSNAPSHOT="${B}/${HOST_SYS}-mksnapshot"
         export V8_SNAPSHOT_ARGS="--random-seed=314159265 --startup-blob=snapshot_blob.bin --abort_on_uncaught_exception${V8_SNAPSHOT_EXTRA_ARGS}"
     fi
