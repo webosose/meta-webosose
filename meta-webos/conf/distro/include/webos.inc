@@ -283,6 +283,8 @@ DEFAULT_WARN_QA = "\
     pn-overrides infodir build-deps src-uri-bad \
     unknown-configure-option symlink-to-sysroot multilib \
     invalid-packageconfig host-user-contaminated uppercase-pn patch-fuzz \
+    mime mime-xdg unlisted-pkg-lics unhandled-features-check \
+    missing-update-alternatives \
 "
 ERROR_QA_append = " ${DEFAULT_WARN_QA}"
 WARN_QA_remove = "${DEFAULT_WARN_QA}"
