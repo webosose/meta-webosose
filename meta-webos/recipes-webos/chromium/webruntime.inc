@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r39"
+INC_PR = "r40"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -206,6 +206,15 @@ GN_ARGS_append_armv6 += 'use_allocator="none"'
 # https://bugs.chromium.org/p/webrtc/issues/detail?id=6574
 GN_ARGS_append_armv6 += 'arm_use_neon=false'
 
+GN_ARGS_append_qemux86 = "\
+    is_host_clang=false\
+    v8_snapshot_toolchain=\"//build/toolchain/cros:host\" \
+    host_toolchain=\"//build/toolchain/cros:host\" \
+    use_custom_libcxx=false \
+    use_custom_libcxx_for_host=false \
+    v8_enable_embedded_builtins=false \
+"
+
 # Doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
 COMPATIBLE_MACHINE_aarch64 = "(.*)"
@@ -246,7 +255,6 @@ do_compile() {
     fi
 
     ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/app_shell
-    install_app_shell
 
     if ${DEPLOY_CHROMEDRIVER} ; then
         ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/chromedriver
@@ -256,9 +264,6 @@ do_compile() {
         ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/wam_demo
     fi
 }
-
-WINDOW_SIZE ?= "1920,1080"
-CACHE_DIR ?= "${webos_homedir}/webbrowser"
 
 install_ls2_roles() {
     #sysbus files *.service
@@ -292,42 +297,31 @@ install_ls2_roles_acg() {
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/$1.role.json ${D}${webos_sysbus_rolesdir}/$1.role.json
 }
 
-install_app_shell() {
-    # Used by various .bbappends to call "sed" to "configure" various features in ${A_DIR}/run_app_shell
-    # Define A_DIR just because existing .bbappends expects it to be set
-    # The function doesn't install anything to ${D} except of install_ls2_roles_acg call for webos
-    A_DIR=${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}
-}
-
-install_app_shell_append_webos() {
-    install_ls2_roles_acg ${APP_SHELL_RUNTIME}
-}
-
-install_app_shell_append_qemux86() {
-    # Disable media hardware acceleration
-    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${A_DIR}/run_app_shell
-}
-
 install_chromium_manifest() {
     install -d ${D}${webos_sysbus_manifestsdir}
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.manifest.json
 }
 
+modify_run_app_shell() {
+    # Used by various .bbappends to call "sed" to "configure" various features in ${APP_SHELL_RUNTIME_RUN_SCRIPT}
+    # Define APP_SHELL_RUNTIME_RUN_SCRIPT for convenience, so that .bbappends don't need to know it's name and location. just because existing .bbappends expects it to be set
+    # The function is called from do_install after it always gets "fresh" run_app_shell from OUT_IMAGE_DIR
+    # so you don't need to worry much about "sed" calls being re-entrant when do_install task gets re-executed.
+    true
+}
+
+modify_run_app_shell_append_qemux86() {
+    # Disable media hardware acceleration
+    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
+}
+
 MKSNAPSHOT_PATH = ""
 MKSNAPSHOT_PATH_arm = "clang_x86_v8_arm/"
 MKSNAPSHOT_PATH_aarch64 = "clang_x64_v8_arm64/"
-LTTNG_PROVIDER = "liblttng_provider.so"
-
 MKSNAPSHOT_PATH_qemux86 = "host/"
 
-GN_ARGS_append_qemux86 = "\
-    is_host_clang=false\
-    v8_snapshot_toolchain=\"//build/toolchain/cros:host\" \
-    host_toolchain=\"//build/toolchain/cros:host\" \
-    use_custom_libcxx=false \
-    use_custom_libcxx_for_host=false \
-    v8_enable_embedded_builtins=false \
-"
+WINDOW_SIZE ?= "1920,1080"
+CACHE_DIR ?= "${webos_homedir}/webbrowser"
 
 do_install() {
     # move this to separate mksnapshot-cross recipe once we figure out how to build just cross mksnapshot from chromium repository
@@ -356,6 +350,7 @@ do_install() {
     install -d ${D}${APP_SHELL_RUNTIME_DIR}
     install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/app_shell ${D}${APP_SHELL_RUNTIME_DIR}
     install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/run_app_shell ${D}${APP_SHELL_RUNTIME_DIR}
+    modify_run_app_shell
 
     ln -f ${D}${CBE_DATA_PATH}/snapshot_blob.bin ${D}${APP_SHELL_RUNTIME_DIR}/snapshot_blob.bin
 
@@ -389,6 +384,10 @@ do_install() {
     fi
 
     install_chromium_manifest
+}
+
+do_install_append_webos() {
+    install_ls2_roles_acg ${APP_SHELL_RUNTIME}
 }
 
 WEBOS_SYSTEM_BUS_DIRS_LEGACY_BROWSER_APPLICATION = " \
