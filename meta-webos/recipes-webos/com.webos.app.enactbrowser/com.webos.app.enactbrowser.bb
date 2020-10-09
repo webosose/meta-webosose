@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-34_02467951acaffa87c6aabcb4a1443fcb5bba9503"
-PR = "r12"
+PR = "r13"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -18,7 +18,7 @@ inherit webos_enactjs_app
 inherit webos_filesystem_paths
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
-WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}files/sysbus"
+WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
@@ -27,7 +27,7 @@ WEBOS_ENACTJS_ILIB_OVERRIDE = ""
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED="0"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-S = "${WORKDIR}/git/"
+S = "${WORKDIR}/git"
 WEBOS_ENACTJS_PROJECT_PATH = "./samples/enact-based"
 WEBOS_ENACTJS_PACK_OVERRIDE = "\
     ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} && \
