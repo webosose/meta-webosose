@@ -19,7 +19,7 @@ inherit webos_machine_dep
 inherit webos_pkgconfig
 
 WEBOS_VERSION = "1.0.0-15_e9d8253132f6745c6cbff49a6e7fdd345b50aad9"
-PR = "r7"
+PR = "r8"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
 WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.9_33a5a2fc7769ef61b441a05e86082c00e49e96d1"
@@ -28,7 +28,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS_append_rpi = " userland"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-S = "${WORKDIR}/git/"
+S = "${WORKDIR}/git"
 
 # See the restrictions in CMakeLists.txt
 COMPATIBLE_MACHINE = "^raspberrypi3$"
