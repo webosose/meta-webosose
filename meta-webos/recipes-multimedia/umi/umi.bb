@@ -18,7 +18,7 @@ inherit webos_public_repo
 
 DEPENDS = "glib-2.0 pmloglib libpbnjson alsa-lib"
 
-WEBOS_VERSION = "1.0.0-9_d85b792873c4d239c2b9351de2efb85486a6237b"
+WEBOS_VERSION = "1.0.0-10_5562fabff79cce1fcd85034ff0273fc56cb806cd"
 PR = "r3"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
