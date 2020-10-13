@@ -1,10 +1,11 @@
+# Copyright (c) 2020 LG Electronics, Inc.
 SUMMARY = "Media indexer service"
 AUTHOR = "Jaehoon Lee <jaehoon85.lee@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-2_b7b47af7b2ba883f6195c968b33e513821b3c173"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-3_0544a10898737fdd41b11ddccfe0db1028ad05c3"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -19,10 +20,7 @@ DEPENDS += "luna-service2 pmloglib libpbnjson"
 # webos runtime dependencies
 RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-logging-fix-build-with-gcc-10.patch \
-    file://0002-upnp-fix-build-with-libupnp-1.14.0-and-fix-CVE-2020-.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 # uncomment next line to use mediaindexer in shell/interactive mode
