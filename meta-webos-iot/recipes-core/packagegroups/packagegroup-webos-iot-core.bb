@@ -11,6 +11,11 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 inherit webos_machine_impl_dep
 
+VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
+    nyx-modules \
+    nyx-modules-qemux86 \
+"
+
 RDEPENDS_${PN} = " \
     pmklogd \
     pmlogctl \
