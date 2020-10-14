@@ -134,6 +134,10 @@ VIRTUAL-RUNTIME_com.webos.app.volume ?= "com.webos.app.volume"
 VIRTUAL-RUNTIME_com.webos.app.volume_armv4 = ""
 VIRTUAL-RUNTIME_com.webos.app.volume_armv5 = ""
 
+VIRTUAL-RUNTIME_bluetooth_service ?= "com.webos.service.bluetooth2"
+
+VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
