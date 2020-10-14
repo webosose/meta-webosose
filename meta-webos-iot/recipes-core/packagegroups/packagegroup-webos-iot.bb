@@ -25,12 +25,15 @@ VIRTUAL-RUNTIME_com.example.service.iotivity ?= "com.example.service.iotivity"
 VIRTUAL-RUNTIME_com.example.service.iotivity_armv4 = ""
 VIRTUAL-RUNTIME_com.example.service.iotivity_armv5 = ""
 
+VIRTUAL-RUNTIME_org.ocf.webossample ?= "org.ocf.webossample.occlientbasicops org.ocf.webossample.ocserverbasicops"
+VIRTUAL-RUNTIME_org.ocf.webossample_armv4 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample_armv5 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample_x86-64 = ""
+
 RDEPENDS_${PN} = " \
     bootd \
     webos-connman-adapter \
     iotivity \
-    org.ocf.webossample.ocserverbasicops \
-    org.ocf.webossample.occlientbasicops \
     procps \
     ${VIRTUAL-RUNTIME_ai} \
     audiod \
