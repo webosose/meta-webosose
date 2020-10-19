@@ -14,8 +14,8 @@ DEPENDS = "glib-2.0 googleapis grpc json-c pmloglib pulseaudio patchelf-native"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target = "${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "1.0.0-7_19876ce8d906d4f102afb08a678909bee7622972"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-8_b1e75f002708602247d6a2e234d85a72008a3d6f"
+PR = "r5"
 
 inherit webos_library
 inherit webos_cmake
@@ -67,6 +67,3 @@ INSANE_SKIP_${PN} = "ldflags textrel"
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/libtatlas.so"
 FILES_${PN}-dev += "${libdir}/libgoogleassistant.so"
-
-# From http://gpro.lge.com/254812
-SRC_URI += "file://0001-CMakeLists.txt-install-libtatlas.so-in-regular-libdi.patch"
