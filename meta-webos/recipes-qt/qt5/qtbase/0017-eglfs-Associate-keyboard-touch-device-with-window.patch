@@ -1,4 +1,4 @@
-From 75f223499ab3fa51f319f8addda5eb973e7bdf7f Mon Sep 17 00:00:00 2001
+From 520ca131926682c5583182dfce64db4160938e4b Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Mon, 14 Oct 2019 18:58:04 +0900
 Subject: [PATCH] eglfs: Associate keyboard, touch device with window
@@ -84,7 +84,7 @@ index 881ec4d41e..b5943aea24 100644
 +
  load(qt_module)
 diff --git a/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp b/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp
-index f601a196ca..01ce5aff3e 100644
+index f601a196ca..6ae9f1cfdb 100644
 --- a/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp
 +++ b/src/platformsupport/devicediscovery/qdevicediscovery_udev.cpp
 @@ -52,6 +52,8 @@ QT_BEGIN_NAMESPACE
@@ -92,7 +92,7 @@ index f601a196ca..01ce5aff3e 100644
  Q_LOGGING_CATEGORY(lcDD, "qt.qpa.input")
  
 +// Use the one in qdevicediscovery_udev_sorted.cpp instead
-+#if defined(Q_OS_WEBOS)
++#if !defined(Q_OS_WEBOS)
  QDeviceDiscovery *QDeviceDiscovery::create(QDeviceTypes types, QObject *parent)
  {
      qCDebug(lcDD) << "udev device discovery for type" << types;
