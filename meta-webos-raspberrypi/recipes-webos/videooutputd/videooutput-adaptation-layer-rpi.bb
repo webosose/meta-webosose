@@ -24,7 +24,7 @@ S = "${WORKDIR}/git"
 
 DEPENDS = "udev glib-2.0 pmloglib libpbnjson libdrm videooutput-adaptation-layer-api"
 
-WEBOS_VERSION = "1.0.0-13_7855a9597af06368417cbb5acecfaf3983f3f379"
+WEBOS_VERSION = "1.0.0-14_2e001e70db354ee73c8625d2243115475b8e6024"
 PR = "r2"
 
 COMPATIBLE_MACHINE = "^rpi$"
