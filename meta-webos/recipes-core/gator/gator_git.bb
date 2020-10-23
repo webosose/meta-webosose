@@ -1,3 +1,6 @@
+# Imported from
+# https://github.com/kratsg/meta-l1calo/blob/master/recipes-kernel/gator/gator_git.bb
+
 SUMMARY = "DS-5 Gator daemon"
 DESCRIPTION = "Target-side daemon gathering data for ARM Streamline Performance Analyzer."
 
@@ -6,7 +9,7 @@ LIC_FILES_CHKSUM = "file://driver/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 SRCREV = "3ff46fedd4d097813156069edab9704cc65e0a42"
 PV = "6.7+git${SRCPV}"
-PR = "r2"
+PR = "r3"
 
 SRC_URI = "git://github.com/ARM-software/gator.git;protocol=http;branch=master \
            file://0001-disable-stripping-debug-info.patch \
@@ -21,27 +24,32 @@ inherit module
 
 INHIBIT_PACKAGE_STRIP  = "1"
 
-do_compile() {
-  unset LDFLAGS
-  export LDFLAGS=''
-  # The regular makefile tries to be 'smart' by hardcoding ABI assumptions, let's use the clean makefile for everything.
-  cp ${S}/daemon/Makefile_aarch64 ${S}/daemon/Makefile
-  oe_runmake -C daemon CROSS_COMPILE=${TARGET_PREFIX} CC='${CC}' CXX='${CXX}'
+# since "gator=r3,v6.9" commit was reverted, it's failing for e.g. x86 MACHINEs
+COMPATIBLE_MACHINE = "^raspberrypi4$"
+# But it also fails on aarch64 raspberrypi4-64 (which as raspberrypi4 in MACHINEOVERRIDES), so we need to explicitly disable it
+COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-  #Build gator.ko
-  #copy python3 compatible gcc-wrapper.py to kernel source
-  cp ${S}/gcc-wrapper.py ${STAGING_KERNEL_DIR}/scripts/
-  oe_runmake -C ${STAGING_KERNEL_BUILDDIR} ARCH=${ARCH} PYTHON='python3' CONFIG_GATOR=m M=${S}/driver modules
+do_compile() {
+    unset LDFLAGS
+    export LDFLAGS=''
+    # The regular makefile tries to be 'smart' by hardcoding ABI assumptions, let's use the clean makefile for everything.
+    cp ${S}/daemon/Makefile_aarch64 ${S}/daemon/Makefile
+    oe_runmake -C daemon CROSS_COMPILE=${TARGET_PREFIX} CC='${CC}' CXX='${CXX}'
+
+    #Build gator.ko
+    #copy python3 compatible gcc-wrapper.py to kernel source
+    cp ${S}/gcc-wrapper.py ${STAGING_KERNEL_DIR}/scripts/
+    oe_runmake -C ${STAGING_KERNEL_BUILDDIR} ARCH=${ARCH} PYTHON='python3' CONFIG_GATOR=m M=${S}/driver modules
 }
 
 do_install() {
-  install -d ${D}${sbindir}
-  install -m 0755 ${S}/daemon/gatord  ${D}${sbindir}/gatord
-  install -m 0755 ${S}/driver/gator.ko ${D}${sbindir}/gator.ko
+    install -d ${D}${sbindir}
+    install -m 0755 ${S}/daemon/gatord  ${D}${sbindir}/gatord
+    install -m 0755 ${S}/driver/gator.ko ${D}${sbindir}/gator.ko
 }
 
 FILES_${PN} = " \
-  ${sbindir}/gatord \
-  ${sbindir}/gator.ko \
+    ${sbindir}/gatord \
+    ${sbindir}/gator.ko \
 "
 do_package_qa[noexec] = "1"
