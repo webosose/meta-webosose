@@ -19,8 +19,8 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-45_7eba80b3b3d0066e73992bec5d7cec5021d38121"
-PR = "r35"
+WEBOS_VERSION = "1.0.2-46_0d18213230117ee4594d9f7659daf11c4a44f71c"
+PR = "r36"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -68,6 +68,9 @@ WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 # Flag to control runtime flags for touch
 TOUCH_ENABLED ?= "true"
 
+# Flag to control runtime flag for platform decoder
+PLATFORM_DECODER_ENABLED ?= "true"
+
 # Flag to control runtime flag for platform encoder
 PLATFORM_ENCODER_ENABLED ?= "true"
 
@@ -99,7 +102,13 @@ do_configure_append() {
 
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-pal-media-service \\' ${B}/webapp-mgr.sh
 
-    # enable platform encoding if PLATFORM_ENCODING_ENABLED is true
+    # enable platform decoding if PLATFORM_DECODER_ENABLED is true
+    if ${PLATFORM_DECODER_ENABLED}; then
+       # enable h/w decoding for webrtc
+       sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-decoder \\' ${B}/webapp-mgr.sh
+    fi
+
+    # enable platform encoding if PLATFORM_ENCODER_ENABLED is true
     if ${PLATFORM_ENCODER_ENABLED}; then
        # enable h/w encoding for webrtc
        sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-encoder \\' ${B}/webapp-mgr.sh
