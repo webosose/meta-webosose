@@ -1,4 +1,4 @@
-From 8d103544076e1f4fc28cb1f6403e1c8fb02940b1 Mon Sep 17 00:00:00 2001
+From 16daf4b283cd348df051b7a3b0d130d501d9eb07 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 3 Nov 2020 11:32:38 +0530
 Subject: [PATCH] AVRCP MediaItem object path fix
@@ -26,10 +26,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 33 insertions(+), 5 deletions(-)
 
 diff --git a/profiles/audio/player.c b/profiles/audio/player.c
-index 86271fc..5b94ac0 100644
+index 3f6e60ed8..6286c2ff0 100644
 --- a/profiles/audio/player.c
 +++ b/profiles/audio/player.c
-@@ -664,6 +664,12 @@ void media_player_search_complete(struct media_player *mp, int ret)
+@@ -725,6 +725,12 @@ void media_player_search_complete(struct media_player *mp, int ret)
  	if (search == NULL) {
  		search = g_new0(struct media_folder, 1);
  		search->item = media_player_create_subfolder(mp, "search", 0);
@@ -42,7 +42,7 @@ index 86271fc..5b94ac0 100644
  		mp->search = search;
  		mp->folders = g_slist_prepend(mp->folders, search);
  	}
-@@ -1789,6 +1795,17 @@ void media_item_set_playable(struct media_item *item, bool value)
+@@ -1855,6 +1861,17 @@ void media_item_set_playable(struct media_item *item, bool value)
  					MEDIA_ITEM_INTERFACE, "Playable");
  }
  
@@ -60,7 +60,7 @@ index 86271fc..5b94ac0 100644
  static struct media_item *media_folder_create_item(struct media_player *mp,
  						struct media_folder *folder,
  						const char *name,
-@@ -1797,6 +1814,7 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
+@@ -1863,6 +1880,7 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
  {
  	struct media_item *item;
  	const char *strtype;
@@ -68,7 +68,7 @@ index 86271fc..5b94ac0 100644
  
  	item = media_folder_find_item(folder, uid);
  	if (item != NULL)
-@@ -1811,14 +1829,24 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
+@@ -1877,14 +1895,24 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
  	item = g_new0(struct media_item, 1);
  	item->player = mp;
  	item->uid = uid;
@@ -98,6 +98,3 @@ index 86271fc..5b94ac0 100644
  	item->type = type;
  	item->folder_type = PLAYER_FOLDER_TYPE_INVALID;
  
--- 
-2.26.0
-

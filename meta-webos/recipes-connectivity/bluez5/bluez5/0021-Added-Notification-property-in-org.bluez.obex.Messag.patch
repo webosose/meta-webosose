@@ -1,4 +1,4 @@
-From ed7113d18f47d0d6a524b726c0d100d2951d2e57 Mon Sep 17 00:00:00 2001
+From 991daedc62b0bd86893e1e6fa6c3fe7fa94f92b4 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 7 Aug 2020 18:32:03 +0530
 Subject: [PATCH] Added Notification property in org.bluez.obex.MessageAccess1
@@ -22,7 +22,7 @@ Upstream-Status: Inappropriate[webos specific]
  2 files changed, 198 insertions(+), 3 deletions(-)
 
 diff --git a/doc/obex-api.txt b/doc/obex-api.txt
-index f39355a..85301dc 100644
+index f39355af0..85301dcda 100644
 --- a/doc/obex-api.txt
 +++ b/doc/obex-api.txt
 @@ -799,6 +799,54 @@ Filter:		uint16 Offset:
@@ -81,7 +81,7 @@ index f39355a..85301dc 100644
  =================
  
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 94e9d64..6340f90 100644
+index 94e9d6467..6340f906b 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
 @@ -98,12 +98,25 @@ static const char * const filter_list[] = {
@@ -308,6 +308,3 @@ index 94e9d64..6340f90 100644
  		map_free(map);
  
  		return -ENOMEM;
--- 
-2.17.1
-

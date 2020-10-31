@@ -1,4 +1,4 @@
-From bea1dfdda1873c03ead9f24d13c6328852650038 Mon Sep 17 00:00:00 2001
+From b2f89270c1823a261e29d3ecc9fdd8ad951939fb Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 16:21:17 +0530
 Subject: [PATCH] Create Message interface for sent message related
@@ -23,7 +23,7 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 16 insertions(+)
 
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 6340f90..8a2fa99 100644
+index 6340f906b..8a2fa99e7 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
 @@ -1951,6 +1951,7 @@ static void map_handle_new_message(struct map_data *map,
@@ -72,6 +72,3 @@ index 6340f90..8a2fa99 100644
  		map_handle_status_changed(map, event, "sending-failure");
  		break;
  	case MAP_ET_MESSAGE_DELETED:
--- 
-2.17.1
-

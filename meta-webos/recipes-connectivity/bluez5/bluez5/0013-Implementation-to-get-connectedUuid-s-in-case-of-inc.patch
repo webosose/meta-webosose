@@ -1,8 +1,8 @@
-From 6a1f42fa92a3f72a7eba177891b517429a5174e5 Mon Sep 17 00:00:00 2001
+From 3cb015f191e8328f5d73f099e8b5981c79ddbb7a Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 6 Apr 2020 12:14:43 +0530
-Subject: [PATCH] Subject: [PATCH] Implementation to get connectedUuid's in
- case of incoming connection
+Subject: [PATCH] Implementation to get connectedUuid's in case of incoming
+ connection
 
 :Release Notes:
 Implementation to get connectedUuid's in case of incoming connection
@@ -19,16 +19,15 @@ Builded and Tested
 [PLAT-102289] Implement connect for A2DP_SINK
 
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  src/device.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/src/device.c b/src/device.c
-index 3a17f34..a5f5cf5 100644
+index 46ae3c288..2df41b1ab 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -6786,9 +6786,11 @@ static void service_state_changed(struct btd_service *service,
+@@ -7096,9 +7096,11 @@ static void service_state_changed(struct btd_service *service,
  				new_state == BTD_SERVICE_STATE_DISCONNECTING)
  		return;
  

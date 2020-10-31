@@ -1,4 +1,4 @@
-From 28e13af7a80bbe35112cd573b56c9805ffde5776 Mon Sep 17 00:00:00 2001
+From 19dbabe1276d9566975bacb38c4bf38220fd2f11 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -30,10 +30,10 @@ Change-Id: I9c07aa27f242247b5c3df85e0b3605d2ba055cad
  3 files changed, 62 insertions(+), 1 deletion(-)
 
 diff --git a/profiles/audio/avctp.c b/profiles/audio/avctp.c
-index 70a3e40b2..6ded1d814 100644
+index f096d22b0..b04ddb943 100644
 --- a/profiles/audio/avctp.c
 +++ b/profiles/audio/avctp.c
-@@ -413,6 +413,7 @@ static size_t handle_panel_passthrough(struct avctp *session,
+@@ -416,6 +416,7 @@ static size_t handle_panel_passthrough(struct avctp *session,
  
  		DBG("AV/C: %s %s", key_map[i].name, status);
  
@@ -41,7 +41,7 @@ index 70a3e40b2..6ded1d814 100644
  		key_quirks = session->key_quirks[key_map[i].avc];
  
  		if (key_quirks & QUIRK_NO_RELEASE) {
-@@ -428,9 +429,13 @@ static size_t handle_panel_passthrough(struct avctp *session,
+@@ -431,9 +432,13 @@ static size_t handle_panel_passthrough(struct avctp *session,
  		}
  
  		if (pressed)
@@ -56,11 +56,11 @@ index 70a3e40b2..6ded1d814 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index acfc42894..fec718288 100644
+index 2dca3da12..237500478 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -177,6 +177,11 @@ struct csrk_info {
- 	uint32_t counter;
+@@ -183,6 +183,11 @@ enum {
+ 	WAKE_FLAG_DISABLED,
  };
  
 +struct key_code {
@@ -71,7 +71,7 @@ index acfc42894..fec718288 100644
  struct btd_device {
  	int ref_count;
  
-@@ -263,6 +268,7 @@ struct btd_device {
+@@ -286,6 +291,7 @@ struct btd_device {
  
  	GIOChannel	*att_io;
  	guint		store_id;
@@ -79,7 +79,7 @@ index acfc42894..fec718288 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1276,6 +1282,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
+@@ -1308,6 +1314,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
  	return bt_ad_has_manufacturer_data(device->ad, NULL);
  }
  
@@ -98,7 +98,7 @@ index acfc42894..fec718288 100644
  static void append_service_data(void *data, void *user_data)
  {
  	struct bt_ad_service_data *sd = data;
-@@ -1294,13 +1312,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1326,13 +1344,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	struct btd_device *device = data;
  	DBusMessageIter dict;
  
@@ -113,7 +113,7 @@ index acfc42894..fec718288 100644
  	bt_ad_foreach_service_data(device->ad, append_service_data, &dict);
  
  	dbus_message_iter_close_container(iter, &dict);
-@@ -1308,6 +1326,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1340,6 +1358,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -142,7 +142,7 @@ index acfc42894..fec718288 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -1743,6 +1783,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -1902,6 +1942,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -158,7 +158,7 @@ index acfc42894..fec718288 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -2851,6 +2900,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3022,6 +3071,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -167,7 +167,7 @@ index acfc42894..fec718288 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -3970,6 +4021,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4179,6 +4230,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->adapter = adapter;
  	device->temporary = true;
  
@@ -178,10 +178,10 @@ index acfc42894..fec718288 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 06b100499..9c2178b78 100644
+index 3cd090786..7a22c34ca 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -178,3 +178,5 @@ int btd_device_connect_services(struct btd_device *dev, GSList *services);
+@@ -190,3 +190,5 @@ void btd_device_flags_changed(struct btd_device *dev, uint32_t supported_flags,
  
  void btd_device_init(void);
  void btd_device_cleanup(void);

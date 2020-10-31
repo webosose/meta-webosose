@@ -1,4 +1,4 @@
-From 1a860f9cdf0b8784d0d0ece5dbef6e02da3e770c Mon Sep 17 00:00:00 2001
+From 9aea505c51974098acd70f011c6088c45b7a6d5f Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd
@@ -48,10 +48,10 @@ index 5e30654af..eb7213760 100644
  		return -EIO;
  
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 550c5afb4..d2f1c8793 100644
+index 23be2d6b2..28e60fe4c 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
-@@ -2075,7 +2075,7 @@ int map_init(void)
+@@ -2076,7 +2076,7 @@ int map_init(void)
  
  	DBG("");
  

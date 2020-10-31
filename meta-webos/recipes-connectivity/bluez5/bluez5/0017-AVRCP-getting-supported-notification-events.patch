@@ -1,4 +1,4 @@
-From 8d5f367451bc0fea03cd96501f057e9bf8f99765 Mon Sep 17 00:00:00 2001
+From 07a141ab36999d125a59c8c4129fd7bcd1be2571 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -20,17 +20,16 @@ Built and Tested
               avrcp/internal/getSupportedNotificationEvents
 
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  profiles/audio/avrcp.c |  1 +
  src/device.c           | 21 +++++++++++++++++++++
  2 files changed, 22 insertions(+)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 6bcc99a..885d707 100644
+index c81a1825d..333b96a4f 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -3812,6 +3812,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
+@@ -3929,6 +3929,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
  			break;
  		}
  	}
@@ -39,10 +38,10 @@ index 6bcc99a..885d707 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index 5293d80..675a7fb 100644
+index f728657a3..a8de13509 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -271,6 +271,7 @@ struct btd_device {
+@@ -294,6 +294,7 @@ struct btd_device {
  	struct key_code passththough_key;
  	uint8_t		avrcp_ct_features;
  	uint8_t		avrcp_tg_features;
@@ -50,7 +49,7 @@ index 5293d80..675a7fb 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1350,6 +1351,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+@@ -1382,6 +1383,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -68,7 +67,7 @@ index 5293d80..675a7fb 100644
  static gboolean dev_property_get_avrcp_ct_feature(const GDBusPropertyTable *property,
  					DBusMessageIter *iter, void *data)
  {
-@@ -1869,6 +1881,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
+@@ -2028,6 +2040,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
  	}
  }
  
@@ -83,7 +82,7 @@ index 5293d80..675a7fb 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -2992,6 +3012,7 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3163,6 +3183,7 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_avrcp_ct_feature_exist},
  	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
  				NULL, dev_property_avrcp_tg_feature_exist},

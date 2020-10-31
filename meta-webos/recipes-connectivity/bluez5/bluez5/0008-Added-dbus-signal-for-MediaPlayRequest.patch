@@ -1,4 +1,4 @@
-From c7a6870b3f4db492f31ecdedcdab2ffa8f02e42f Mon Sep 17 00:00:00 2001
+From 9bdcff0ea70fd4f8d640599fa3502d6e77fb1cd2 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 30 Jan 2019 15:17:11 +0530
 Subject: [PATCH] Added dbus signal for MediaPlayRequest
@@ -29,10 +29,10 @@ Change-Id: Ib225395809a3b53f1c494ac4e21beabc47f7f906
  4 files changed, 29 insertions(+), 2 deletions(-)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 6b3f685d2..a006e9112 100644
+index d9471c083..308a27061 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -1145,6 +1145,7 @@ static uint8_t avrcp_handle_get_element_attributes(struct avrcp *session,
+@@ -1238,6 +1238,7 @@ static uint8_t avrcp_handle_get_element_attributes(struct avrcp *session,
  		 */
  		attr_ids = player_list_metadata(player);
  		len = g_list_length(attr_ids);
@@ -40,7 +40,7 @@ index 6b3f685d2..a006e9112 100644
  	} else {
  		unsigned int i;
  		for (i = 0, len = 0, attr_ids = NULL; i < nattr; i++) {
-@@ -1411,6 +1412,7 @@ static uint8_t avrcp_handle_get_play_status(struct avrcp *session,
+@@ -1504,6 +1505,7 @@ static uint8_t avrcp_handle_get_play_status(struct avrcp *session,
  
  	pdu->params_len = htons(9);
  
@@ -49,10 +49,10 @@ index 6b3f685d2..a006e9112 100644
  }
  
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 993ecb3b3..19d942748 100644
+index 02bf82a49..137bc5d2d 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1189,7 +1189,7 @@ static uint32_t get_position(void *user_data)
+@@ -1220,7 +1220,7 @@ static uint32_t get_position(void *user_data)
  	sec = (uint32_t) timedelta;
  	msec = (uint32_t) ((timedelta - sec) * 1000);
  
@@ -62,10 +62,10 @@ index 993ecb3b3..19d942748 100644
  
  static uint32_t get_duration(void *user_data)
 diff --git a/src/device.c b/src/device.c
-index fec718288..40fe79690 100644
+index 237500478..3c619936d 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -1792,6 +1792,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -1951,6 +1951,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  					DEVICE_INTERFACE, "KeyCode");
  }
  
@@ -88,7 +88,7 @@ index fec718288..40fe79690 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -2862,6 +2878,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -3033,6 +3049,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  	return dbus_message_new_method_return(msg);
  }
  
@@ -101,7 +101,7 @@ index fec718288..40fe79690 100644
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
-@@ -4010,7 +4032,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4219,7 +4241,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  
  	if (g_dbus_register_interface(dbus_conn,
  					device->path, DEVICE_INTERFACE,
@@ -111,10 +111,10 @@ index fec718288..40fe79690 100644
  					device_free) == FALSE) {
  		error("Unable to register device interface for %s", address);
 diff --git a/src/device.h b/src/device.h
-index 9c2178b78..863ecc70a 100644
+index 7a22c34ca..2069ba9e6 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -180,3 +180,6 @@ void btd_device_init(void);
+@@ -192,3 +192,6 @@ void btd_device_init(void);
  void btd_device_cleanup(void);
  
  void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);

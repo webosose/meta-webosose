@@ -1,4 +1,4 @@
-From 3c96a1e41bd1c4254195e92407e3ddd1ee7bb23c Mon Sep 17 00:00:00 2001
+From 7dc9a627cb6e80f9cd202a0e175b7f82e39e52fa Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Thu, 12 Nov 2020 15:04:36 +0530
 Subject: [PATCH] Revert "a2dp: Add reverse discovery"
@@ -28,10 +28,10 @@ Upstream Status: Pending
  1 file changed, 1 insertion(+), 13 deletions(-)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index 4001ea0ea..ff384cd23 100644
+index 19ea2b4f7..69ad93ad8 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
-@@ -583,12 +583,6 @@ static gboolean endpoint_match_codec_ind(struct avdtp *session,
+@@ -593,12 +593,6 @@ static gboolean endpoint_match_codec_ind(struct avdtp *session,
  	return TRUE;
  }
  
@@ -44,12 +44,12 @@ index 4001ea0ea..ff384cd23 100644
  static gboolean endpoint_setconf_ind(struct avdtp *session,
  						struct avdtp_local_sep *sep,
  						struct avdtp_stream *stream,
-@@ -644,14 +638,8 @@ static gboolean endpoint_setconf_ind(struct avdtp *session,
+@@ -654,14 +648,8 @@ static gboolean endpoint_setconf_ind(struct avdtp *session,
  						setup_ref(setup),
  						endpoint_setconf_cb,
  						a2dp_sep->user_data);
 -		if (ret == 0) {
--			/* Attempt to reverve discover if there are no remote
+-			/* Attempt to reverse discover if there are no remote
 -			 * SEPs.
 -			 */
 -			if (queue_isempty(setup->chan->seps))
@@ -60,6 +60,3 @@ index 4001ea0ea..ff384cd23 100644
  
  		setup_unref(setup);
  		setup->err = g_new(struct avdtp_error, 1);
--- 
-2.26.0
-
