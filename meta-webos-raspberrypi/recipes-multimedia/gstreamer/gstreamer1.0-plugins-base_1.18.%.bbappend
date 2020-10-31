@@ -19,5 +19,4 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:rpi = " \
     file://0001-discoverer-Add-force-sw-decoders-property.patch \
-    file://0001-playbin2-handle-GST-PLAY-FLAG-FORCE-SW-DECODERS.patch \
 "

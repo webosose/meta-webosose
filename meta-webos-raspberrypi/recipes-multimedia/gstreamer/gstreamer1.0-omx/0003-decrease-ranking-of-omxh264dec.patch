@@ -1,7 +1,17 @@
-diff -ruN a/config/rpi/gstomx.conf b/config/rpi/gstomx.conf
---- a/config/rpi/gstomx.conf	2020-08-13 15:29:07.501920678 +0000
-+++ b/config/rpi/gstomx.conf	2020-08-13 15:22:35.858037217 +0000
-@@ -29,7 +29,7 @@
+From 06988b1e2c29937fbcc4a85f6693e1b0e8726682 Mon Sep 17 00:00:00 2001
+From: "divvya.rosna" <divvya.rosna@lge.com>
+Date: Thu, 13 Aug 2020 05:42:37 +0000
+Subject: [PATCH] rpi : mesa=webosrpi3 webruntime=webosrpi6
+
+---
+ config/rpi/gstomx.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/rpi/gstomx.conf b/config/rpi/gstomx.conf
+index 2508dae..da24611 100644
+--- a/config/rpi/gstomx.conf
++++ b/config/rpi/gstomx.conf
+@@ -29,7 +29,7 @@ hacks=no-component-role
  type-name=GstOMXH264Dec
  core-name=/usr/lib/libopenmaxil.so
  component-name=OMX.broadcom.video_decode

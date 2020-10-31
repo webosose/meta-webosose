@@ -1,7 +1,20 @@
-diff -ruN a/gst/gstpipeline.c b/gst/gstpipeline.c
---- a/gst/gstpipeline.c	2020-08-06 09:59:25.481041707 +0000
-+++ b/gst/gstpipeline.c	2020-08-06 09:58:51.195687907 +0000
-@@ -308,6 +308,13 @@
+From d4a7d3fba32afb21fe8c96bec64de1a5be78dcc4 Mon Sep 17 00:00:00 2001
+From: "sapna.kumari" <sapna.kumari@lge.com>
+Date: Wed, 19 Aug 2020 06:52:43 +0000
+Subject: [PATCH] rpi : gstreamer1.0=webosrpi2 g-media-pipeline=21.gav.10
+
+---
+ gst/gstpipeline.c           | 153 ++++++++++++++++++++++++++++++++++++
+ gst/gstpipeline.h           |   9 +++
+ libs/gst/base/gstbasesink.c | 150 +++++++++++++++++++++++++++++++++++
+ libs/gst/base/gstbasesink.h |   3 +
+ 4 files changed, 315 insertions(+)
+
+diff --git a/gst/gstpipeline.c b/gst/gstpipeline.c
+index 032fe69..026596f 100644
+--- a/gst/gstpipeline.c
++++ b/gst/gstpipeline.c
+@@ -328,6 +328,13 @@ reset_start_time (GstPipeline * pipeline, GstClockTime start_time)
    GST_OBJECT_UNLOCK (pipeline);
  }
  
@@ -15,7 +28,7 @@ diff -ruN a/gst/gstpipeline.c b/gst/gstpipeline.c
  /**
   * gst_pipeline_new:
   * @name: (allow-none): name of new pipeline
-@@ -368,6 +375,152 @@
+@@ -388,6 +395,152 @@ pipeline_update_start_time (GstElement * element)
    GST_OBJECT_UNLOCK (element);
  }
  
@@ -168,10 +181,11 @@ diff -ruN a/gst/gstpipeline.c b/gst/gstpipeline.c
  /* MT safe */
  static GstStateChangeReturn
  gst_pipeline_change_state (GstElement * element, GstStateChange transition)
-diff -ruN a/gst/gstpipeline.h b/gst/gstpipeline.h
---- a/gst/gstpipeline.h	2020-08-06 09:59:25.481041707 +0000
-+++ b/gst/gstpipeline.h	2020-08-06 09:58:51.195687907 +0000
-@@ -130,6 +130,15 @@
+diff --git a/gst/gstpipeline.h b/gst/gstpipeline.h
+index 6406fb8..c87da57 100644
+--- a/gst/gstpipeline.h
++++ b/gst/gstpipeline.h
+@@ -130,6 +130,15 @@ void            gst_pipeline_set_auto_flush_bus (GstPipeline *pipeline, gboolean
  GST_API
  gboolean        gst_pipeline_get_auto_flush_bus (GstPipeline *pipeline);
  
@@ -184,13 +198,14 @@ diff -ruN a/gst/gstpipeline.h b/gst/gstpipeline.h
 +GST_API
 +gboolean        gst_pipeline_update_base_time   (GstPipeline *pipeline, GstClockTime base_time);
 +
- #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
  G_DEFINE_AUTOPTR_CLEANUP_FUNC(GstPipeline, gst_object_unref)
- #endif
-diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
---- a/libs/gst/base/gstbasesink.c	2020-08-06 10:18:02.181275530 +0000
-+++ b/libs/gst/base/gstbasesink.c	2020-08-06 10:18:27.906295706 +0000
-@@ -259,6 +259,8 @@
+ 
+ G_END_DECLS
+diff --git a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
+index 8bfc495..48ca987 100644
+--- a/libs/gst/base/gstbasesink.c
++++ b/libs/gst/base/gstbasesink.c
+@@ -278,6 +278,8 @@ struct _GstBaseSinkPrivate
    gsize rc_accumulated;
  
    gboolean drop_out_of_segment;
@@ -199,7 +214,7 @@ diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
  };
  
  #define DO_RUNNING_AVG(avg,val,size) (((val) + ((size)-1) * (avg)) / (size))
-@@ -688,6 +690,8 @@
+@@ -726,6 +728,8 @@ gst_base_sink_init (GstBaseSink * basesink, gpointer g_class)
  
    priv->drop_out_of_segment = DEFAULT_DROP_OUT_OF_SEGMENT;
  
@@ -208,7 +223,7 @@ diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
    GST_OBJECT_FLAG_SET (basesink, GST_ELEMENT_FLAG_SINK);
  }
  
-@@ -2267,6 +2271,8 @@
+@@ -2323,6 +2327,8 @@ gst_base_sink_wait_clock (GstBaseSink * sink, GstClockTime time,
    GstClock *clock;
    GstClockTime base_time;
  
@@ -217,7 +232,7 @@ diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
    if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (time)))
      goto invalid_time;
  
-@@ -2277,6 +2283,12 @@
+@@ -2333,6 +2339,12 @@ gst_base_sink_wait_clock (GstBaseSink * sink, GstClockTime time,
    if (G_UNLIKELY ((clock = GST_ELEMENT_CLOCK (sink)) == NULL))
      goto no_clock;
  
@@ -230,7 +245,7 @@ diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
    base_time = GST_ELEMENT_CAST (sink)->base_time;
    GST_LOG_OBJECT (sink,
        "time %" GST_TIME_FORMAT ", base_time %" GST_TIME_FORMAT,
-@@ -4037,6 +4049,92 @@
+@@ -4329,6 +4341,92 @@ gst_base_sink_perform_seek (GstBaseSink * sink, GstPad * pad, GstEvent * event)
    return res;
  }
  
@@ -323,7 +338,7 @@ diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
  static void
  set_step_info (GstBaseSink * sink, GstStepInfo * current, GstStepInfo * pending,
      guint seqnum, GstFormat format, guint64 amount, gdouble rate,
-@@ -4603,6 +4701,58 @@
+@@ -5015,6 +5113,58 @@ gst_base_sink_send_event (GstElement * element, GstEvent * event)
        result = gst_base_sink_perform_step (basesink, pad, event);
        forward = FALSE;
        break;
@@ -382,10 +397,11 @@ diff -ruN a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
      default:
        break;
    }
-diff -ruN a/libs/gst/base/gstbasesink.h b/libs/gst/base/gstbasesink.h
---- a/libs/gst/base/gstbasesink.h	2020-08-06 10:18:02.181275530 +0000
-+++ b/libs/gst/base/gstbasesink.h	2020-08-06 10:18:27.906295706 +0000
-@@ -198,6 +198,9 @@
+diff --git a/libs/gst/base/gstbasesink.h b/libs/gst/base/gstbasesink.h
+index 7ce8650..0f05421 100644
+--- a/libs/gst/base/gstbasesink.h
++++ b/libs/gst/base/gstbasesink.h
+@@ -203,6 +203,9 @@ struct _GstBaseSinkClass {
    /* Render a BufferList */
    GstFlowReturn (*render_list)  (GstBaseSink *sink, GstBufferList *buffer_list);
  

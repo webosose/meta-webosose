@@ -1,4 +1,4 @@
-From 3381f78b7482f35695a58843b18a9ef48ffd5b40 Mon Sep 17 00:00:00 2001
+From d8e81ff9b9be0c66a68980621c2ceb3b079130bb Mon Sep 17 00:00:00 2001
 From: Pankaj Maharana <pankaj.maharana@lge.com>
 Date: Wed, 8 Aug 2018 12:01:02 +0530
 Subject: [PATCH] fix adaptive resolution change in seek issue
@@ -29,10 +29,10 @@ Upstream-Status: Inappropriate
  2 files changed, 31 insertions(+), 13 deletions(-)
 
 diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
-index 812eb29..9e347b3 100644
+index dc39c4c..e54e83a 100644
 --- a/omx/gstomxvideodec.c
 +++ b/omx/gstomxvideodec.c
-@@ -86,6 +86,7 @@ enum
+@@ -88,6 +88,7 @@ enum
  {
    PROP_0,
    PROP_INTERNAL_ENTROPY_BUFFERS,
@@ -40,7 +40,7 @@ index 812eb29..9e347b3 100644
  };
  
  #define GST_OMX_VIDEO_DEC_INTERNAL_ENTROPY_BUFFERS_DEFAULT (5)
-@@ -104,16 +105,16 @@ static void
+@@ -106,16 +107,16 @@ static void
  gst_omx_video_dec_set_property (GObject * object, guint prop_id,
      const GValue * value, GParamSpec * pspec)
  {
@@ -60,7 +60,7 @@ index 812eb29..9e347b3 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
        break;
-@@ -124,16 +125,16 @@ static void
+@@ -126,16 +127,16 @@ static void
  gst_omx_video_dec_get_property (GObject * object, guint prop_id,
      GValue * value, GParamSpec * pspec)
  {
@@ -80,7 +80,7 @@ index 812eb29..9e347b3 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
        break;
-@@ -162,6 +163,11 @@ gst_omx_video_dec_class_init (GstOMXVideoDecClass * klass)
+@@ -164,6 +165,11 @@ gst_omx_video_dec_class_init (GstOMXVideoDecClass * klass)
            GST_PARAM_MUTABLE_READY));
  #endif
  
@@ -92,7 +92,7 @@ index 812eb29..9e347b3 100644
    element_class->change_state =
        GST_DEBUG_FUNCPTR (gst_omx_video_dec_change_state);
  
-@@ -2538,15 +2544,17 @@ gst_omx_video_dec_set_format (GstVideoDecoder * decoder,
+@@ -2786,15 +2792,17 @@ gst_omx_video_dec_set_format (GstVideoDecoder * decoder,
    }
  
    if (needs_disable && is_format_change) {
@@ -112,9 +112,9 @@ index 812eb29..9e347b3 100644
  
 +skip_disable:
    port_def.format.video.nFrameWidth = info->width;
-   port_def.format.video.nFrameHeight = info->height;
+   port_def.format.video.nFrameHeight = GST_VIDEO_INFO_FIELD_HEIGHT (info);
    port_def.format.video.xFramerate = framerate_q16;
-@@ -2731,7 +2739,8 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
+@@ -2984,7 +2992,8 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
        return GST_FLOW_OK;
      }
  
@@ -124,7 +124,7 @@ index 812eb29..9e347b3 100644
        if (!gst_omx_video_dec_enable (self, frame->input_buffer))
          goto enable_error;
      }
-@@ -3052,9 +3061,16 @@ release_error:
+@@ -3297,9 +3306,16 @@ release_error:
  static GstFlowReturn
  gst_omx_video_dec_drain (GstVideoDecoder * decoder)
  {
@@ -144,7 +144,7 @@ index 812eb29..9e347b3 100644
  }
  
 diff --git a/omx/gstomxvideodec.h b/omx/gstomxvideodec.h
-index cb70e02..9f69130 100644
+index df441d9..4c188c7 100644
 --- a/omx/gstomxvideodec.h
 +++ b/omx/gstomxvideodec.h
 @@ -100,6 +100,8 @@ struct _GstOMXVideoDec

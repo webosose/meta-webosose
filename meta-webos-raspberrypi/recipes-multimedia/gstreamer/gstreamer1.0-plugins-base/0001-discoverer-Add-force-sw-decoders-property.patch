@@ -1,4 +1,4 @@
-From 33bc6e2bb547168b7ea143c47fa14bbbbb4df2cf Mon Sep 17 00:00:00 2001
+From 3f01fa06fa77a42bcdf7b07b89655d3d99283952 Mon Sep 17 00:00:00 2001
 From: Jimmy Ohn <yongjin.ohn@lge.com>
 Date: Mon, 5 Oct 2020 15:12:24 +0900
 Subject: [PATCH] ose: com.webos.service.mediaindexer=2 webos-initscript=54
@@ -9,7 +9,7 @@ Subject: [PATCH] ose: com.webos.service.mediaindexer=2 webos-initscript=54
  2 files changed, 38 insertions(+), 2 deletions(-)
 
 diff --git a/gst-libs/gst/pbutils/gstdiscoverer.c b/gst-libs/gst/pbutils/gstdiscoverer.c
-index ea4b009..1ee2eda 100644
+index 60e54127b..3b51545da 100644
 --- a/gst-libs/gst/pbutils/gstdiscoverer.c
 +++ b/gst-libs/gst/pbutils/gstdiscoverer.c
 @@ -143,6 +143,7 @@ struct _GstDiscovererPrivate
@@ -57,7 +57,7 @@ index ea4b009..1ee2eda 100644
    /* signals */
    /**
     * GstDiscoverer::finished:
-@@ -348,6 +365,7 @@ gst_discoverer_init (GstDiscoverer * dc)
+@@ -347,6 +364,7 @@ gst_discoverer_init (GstDiscoverer * dc)
  
    dc->priv->timeout = DEFAULT_PROP_TIMEOUT;
    dc->priv->use_cache = DEFAULT_PROP_USE_CACHE;
@@ -65,7 +65,7 @@ index ea4b009..1ee2eda 100644
    dc->priv->async = FALSE;
  
    g_mutex_init (&dc->priv->lock);
-@@ -490,6 +508,11 @@ gst_discoverer_set_property (GObject * object, guint prop_id,
+@@ -489,6 +507,11 @@ gst_discoverer_set_property (GObject * object, guint prop_id,
        dc->priv->use_cache = g_value_get_boolean (value);
        DISCO_UNLOCK (dc);
        break;
@@ -77,7 +77,7 @@ index ea4b009..1ee2eda 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
        break;
-@@ -513,6 +536,11 @@ gst_discoverer_get_property (GObject * object, guint prop_id,
+@@ -512,6 +535,11 @@ gst_discoverer_get_property (GObject * object, guint prop_id,
        g_value_set_boolean (value, dc->priv->use_cache);
        DISCO_UNLOCK (dc);
        break;
@@ -89,7 +89,7 @@ index ea4b009..1ee2eda 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
        break;
-@@ -1898,6 +1926,11 @@ _setup_locked (GstDiscoverer * dc)
+@@ -1900,6 +1928,11 @@ _setup_locked (GstDiscoverer * dc)
  
    GST_DEBUG ("Current is now %s", dc->priv->current_info->uri);
  
@@ -102,10 +102,10 @@ index ea4b009..1ee2eda 100644
  
    dc->priv->target_state = GST_STATE_PAUSED;
 diff --git a/tools/gst-discoverer.c b/tools/gst-discoverer.c
-index 21ff363..eb9f16e 100644
+index 5bd27ac9f..2171f10b3 100644
 --- a/tools/gst-discoverer.c
 +++ b/tools/gst-discoverer.c
-@@ -582,12 +582,14 @@ main (int argc, char **argv)
+@@ -633,12 +633,14 @@ main (int argc, char **argv)
    GError *err = NULL;
    GstDiscoverer *dc;
    gint timeout = 10;
@@ -114,14 +114,14 @@ index 21ff363..eb9f16e 100644
    GOptionEntry options[] = {
      {"async", 'a', 0, G_OPTION_ARG_NONE, &async,
          "Run asynchronously", NULL},
-     {"use-cache", 'a', 0, G_OPTION_ARG_NONE, &use_cache,
+     {"use-cache", 0, 0, G_OPTION_ARG_NONE, &use_cache,
          "Use GstDiscovererInfo from our cache.", NULL},
 +    {"force-sw-decoders", 0, 0, G_OPTION_ARG_NONE, &force_sw_decoders,
 +        "Use only software decoders to process streams", NULL},
      {"print-cache-dir", 0, 0, G_OPTION_ARG_NONE, &print_cache_dir,
          "Print the directory of the discoverer cache.", NULL},
      {"timeout", 't', 0, G_OPTION_ARG_INT, &timeout,
-@@ -641,6 +643,7 @@ main (int argc, char **argv)
+@@ -692,6 +694,7 @@ main (int argc, char **argv)
    }
  
    g_object_set (dc, "use-cache", use_cache, NULL);

@@ -26,7 +26,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:rpi = " \
     file://0001-fix-adaptive-resolution-change-in-seek-issue.patch \
-    file://0002-fix-brcmegl-dependencies-from-configure.patch \
     file://0003-decrease-ranking-of-omxh264dec.patch \
 "
 
