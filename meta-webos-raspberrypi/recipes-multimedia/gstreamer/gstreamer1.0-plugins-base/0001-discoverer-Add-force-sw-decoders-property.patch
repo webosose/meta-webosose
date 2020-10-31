@@ -1,5 +1,15 @@
+From 33bc6e2bb547168b7ea143c47fa14bbbbb4df2cf Mon Sep 17 00:00:00 2001
+From: Jimmy Ohn <yongjin.ohn@lge.com>
+Date: Mon, 5 Oct 2020 15:12:24 +0900
+Subject: [PATCH] ose: com.webos.service.mediaindexer=2 webos-initscript=54
+
+---
+ gst-libs/gst/pbutils/gstdiscoverer.c | 35 +++++++++++++++++++++++++++-
+ tools/gst-discoverer.c               |  5 +++-
+ 2 files changed, 38 insertions(+), 2 deletions(-)
+
 diff --git a/gst-libs/gst/pbutils/gstdiscoverer.c b/gst-libs/gst/pbutils/gstdiscoverer.c
-index 5d19912..3d596ae 100644
+index ea4b009..1ee2eda 100644
 --- a/gst-libs/gst/pbutils/gstdiscoverer.c
 +++ b/gst-libs/gst/pbutils/gstdiscoverer.c
 @@ -143,6 +143,7 @@ struct _GstDiscovererPrivate
@@ -79,7 +89,7 @@ index 5d19912..3d596ae 100644
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
        break;
-@@ -1891,6 +1919,11 @@ _setup_locked (GstDiscoverer * dc)
+@@ -1898,6 +1926,11 @@ _setup_locked (GstDiscoverer * dc)
  
    GST_DEBUG ("Current is now %s", dc->priv->current_info->uri);
  

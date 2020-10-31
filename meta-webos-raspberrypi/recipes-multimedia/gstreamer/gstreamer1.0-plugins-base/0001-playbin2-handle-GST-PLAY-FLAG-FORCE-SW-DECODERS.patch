@@ -1,3 +1,33 @@
+From f3182a88b169653aff10b97f730fbf5f7cb655c2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADctor=20Manuel=20J=C3=A1quez=20Leal?=
+ <vjaquez@igalia.com>
+Date: Sun, 3 Nov 2019 15:37:44 +0100
+Subject: [PATCH] playbin2: handle GST_PLAY_FLAG_FORCE_SW_DECODERS
+
+Added `force-sw-decoders` boolean property in decodebin2 and
+uridecodebin. By default the property is %FALSE and it bypass the new
+code. Otherwise the factory list is filtered removing decoders
+within 'Hardware' class.
+
+uridecodebin sets the `force-sw-decoders` property in its internal
+decodebin, and also filters out Hardware class in the
+autoplug-factories default signal handler.
+
+playbin2 adds by default GST_PLAY_FLAG_FORCE_SW_DECODERS it its flags
+property, and depending on it playbin2 sets the `force-sw-decoders`
+property on its internal uridecodebin, also filters out the Hardware
+class decoding decoders at the autoplug-factories signal handler.
+
+Upstream-Status: Backport [1.17.1]
+
+---
+ gst/playback/gstdecodebin2.c   | 44 ++++++++++++++++++++++++++++++-
+ gst/playback/gstplay-enum.c    |  2 ++
+ gst/playback/gstplay-enum.h    |  3 +++
+ gst/playback/gstplaybin2.c     | 22 ++++++++++++----
+ gst/playback/gsturidecodebin.c | 48 +++++++++++++++++++++++++++++++++-
+ 5 files changed, 112 insertions(+), 7 deletions(-)
+
 diff --git a/gst/playback/gstdecodebin2.c b/gst/playback/gstdecodebin2.c
 index 38ef398..c0a2e77 100644
 --- a/gst/playback/gstdecodebin2.c
@@ -26,10 +56,11 @@ index 38ef398..c0a2e77 100644
    PROP_LOW_PERCENT,
    PROP_HIGH_PERCENT,
    PROP_MAX_SIZE_BYTES,
-@@ -913,6 +916,20 @@ gst_decode_bin_class_init (GstDecodeBinClass * klass)
+@@ -912,6 +915,20 @@ gst_decode_bin_class_init (GstDecodeBinClass * klass)
+           "Emit GST_MESSAGE_BUFFERING based on low-/high-percent thresholds",
            DEFAULT_USE_BUFFERING, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
  
-   /**
++  /**
 +   * GstDecodeBin::force-sw-decoders:
 +   *
 +   * While auto-plugging, if set to %TRUE, those decoders within
@@ -43,10 +74,9 @@ index 38ef398..c0a2e77 100644
 +          DEFAULT_FORCE_SW_DECODERS,
 +          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 +
-+  /**
+   /**
     * GstDecodeBin:low-percent
     *
-    * Low threshold percent for buffering to start.
 @@ -1038,14 +1055,32 @@ static void
  gst_decode_bin_update_factories_list (GstDecodeBin * dbin)
  {
@@ -144,10 +174,10 @@ index 1e0ed37..122b67e 100644
  
  #define GST_TYPE_PLAY_FLAGS (gst_play_flags_get_type())
 diff --git a/gst/playback/gstplaybin2.c b/gst/playback/gstplaybin2.c
-index 1f3d9fa..ebebfec 100644
+index cec4b36..632538a 100644
 --- a/gst/playback/gstplaybin2.c
 +++ b/gst/playback/gstplaybin2.c
-@@ -2400,8 +2400,11 @@ gst_play_bin_set_property (GObject * object, guint prop_id,
+@@ -2404,8 +2404,11 @@ gst_play_bin_set_property (GObject * object, guint prop_id,
        if (playbin->curr_group) {
          GST_SOURCE_GROUP_LOCK (playbin->curr_group);
          if (playbin->curr_group->uridecodebin) {
@@ -161,7 +191,7 @@ index 1f3d9fa..ebebfec 100644
          }
          GST_SOURCE_GROUP_UNLOCK (playbin->curr_group);
        }
-@@ -4071,7 +4074,8 @@ avelement_iter_is_equal (GSequenceIter * iter, GstElementFactory * factory)
+@@ -4111,7 +4114,8 @@ avelement_iter_is_equal (GSequenceIter * iter, GstElementFactory * factory)
  }
  
  static GList *
@@ -171,7 +201,7 @@ index 1f3d9fa..ebebfec 100644
  {
    GList *dec_list = NULL, *tmp;
    GList *ave_list = NULL;
-@@ -4090,7 +4094,9 @@ create_decoders_list (GList * factory_list, GSequence * avelements)
+@@ -4130,7 +4134,9 @@ create_decoders_list (GList * factory_list, GSequence * avelements)
          gst_element_factory_list_is_type (factory,
              GST_ELEMENT_FACTORY_TYPE_SINK)) {
        dec_list = g_list_prepend (dec_list, gst_object_ref (factory));
@@ -182,7 +212,7 @@ index 1f3d9fa..ebebfec 100644
        GSequenceIter *seq_iter;
  
        seq_iter =
-@@ -4212,14 +4218,18 @@ autoplug_factories_cb (GstElement * decodebin, GstPad * pad,
+@@ -4252,14 +4258,18 @@ autoplug_factories_cb (GstElement * decodebin, GstPad * pad,
  
    if (isaudiodeclist || isvideodeclist) {
      GSequence **ave_list;
@@ -202,7 +232,7 @@ index 1f3d9fa..ebebfec 100644
      g_mutex_unlock (&playbin->elements_lock);
    }
  
-@@ -5306,6 +5316,8 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
+@@ -5346,6 +5356,8 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
        "download", ((flags & GST_PLAY_FLAG_DOWNLOAD) != 0),
        /* configure buffering of demuxed/parsed data */
        "use-buffering", ((flags & GST_PLAY_FLAG_BUFFERING) != 0),
@@ -274,10 +304,11 @@ index f19f69a..06b48f9 100644
      dec->factories =
          g_list_sort (dec->factories, gst_playback_utils_compare_factories_func);
      dec->factories_cookie = cookie;
-@@ -462,6 +484,20 @@ gst_uri_decode_bin_class_init (GstURIDecodeBinClass * klass)
+@@ -461,6 +483,20 @@ gst_uri_decode_bin_class_init (GstURIDecodeBinClass * klass)
+           "Perform buffering on demuxed/parsed media",
            DEFAULT_USE_BUFFERING, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
  
-   /**
++  /**
 +   * GstURIDecodeBin::force-sw-decoders:
 +   *
 +   * While auto-plugging, if set to %TRUE, those decoders within
@@ -291,10 +322,9 @@ index f19f69a..06b48f9 100644
 +          DEFAULT_FORCE_SW_DECODERS,
 +          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 +
-+  /**
+   /**
     * GstURIDecodeBin::expose-all-streams
     *
-    * Expose streams of unknown type.
 @@ -719,6 +755,7 @@ gst_uri_decode_bin_init (GstURIDecodeBin * dec)
    dec->buffer_size = DEFAULT_BUFFER_SIZE;
    dec->download = DEFAULT_DOWNLOAD;

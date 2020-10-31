@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi3"
+EXTENDPRAUTO_append_rpi = "webosrpi4"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 

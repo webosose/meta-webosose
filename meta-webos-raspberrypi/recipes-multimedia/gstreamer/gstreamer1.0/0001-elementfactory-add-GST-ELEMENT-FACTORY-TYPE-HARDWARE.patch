@@ -1,8 +1,23 @@
+From 9707db909d1438d9a1bc85554be8a2a741be4771 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADctor=20Manuel=20J=C3=A1quez=20Leal?=
+ <vjaquez@igalia.com>
+Date: Sat, 2 Nov 2019 15:06:28 +0100
+Subject: [PATCH] elementfactory: add GST_ELEMENT_FACTORY_TYPE_HARDWARE
+
+This new symbol matches with the elements within "Hardware" class.
+
+Upstream-Status: Backport [1.17.1]
+
+---
+ gst/gstelementfactory.c | 3 +++
+ gst/gstelementfactory.h | 2 ++
+ 2 files changed, 5 insertions(+)
+
 diff --git a/gst/gstelementfactory.c b/gst/gstelementfactory.c
-index 3ccfc14..547fbd5 100644
+index fc96984..62d34cc 100644
 --- a/gst/gstelementfactory.c
 +++ b/gst/gstelementfactory.c
-@@ -743,6 +743,9 @@ gst_element_factory_list_is_type (GstElementFactory * factory,
+@@ -739,6 +739,9 @@ gst_element_factory_list_is_type (GstElementFactory * factory,
    if (!res && (type & GST_ELEMENT_FACTORY_TYPE_ENCRYPTOR))
      res = (strstr (klass, "Encryptor") != NULL);
  
