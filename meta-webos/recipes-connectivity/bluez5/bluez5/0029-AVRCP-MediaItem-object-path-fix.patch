@@ -1,0 +1,103 @@
+From 8d103544076e1f4fc28cb1f6403e1c8fb02940b1 Mon Sep 17 00:00:00 2001
+From: "ramya.hegde" <ramya.hegde@lge.com>
+Date: Tue, 3 Nov 2020 11:32:38 +0530
+Subject: [PATCH] AVRCP MediaItem object path fix
+
+:Release Notes:
+AVRCP MediaItem object path fix
+
+:Detailed Notes:
+Object path cannot have spaces in them. So replacing the spaces
+with '_' if any in the object path.
+
+:Testing Performed:
+Built and Tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-124915] Calling AVRCP search API results in
+              icom.webos.service.bluetooth2 crash
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ profiles/audio/player.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
+
+diff --git a/profiles/audio/player.c b/profiles/audio/player.c
+index 86271fc..5b94ac0 100644
+--- a/profiles/audio/player.c
++++ b/profiles/audio/player.c
+@@ -664,6 +664,12 @@ void media_player_search_complete(struct media_player *mp, int ret)
+ 	if (search == NULL) {
+ 		search = g_new0(struct media_folder, 1);
+ 		search->item = media_player_create_subfolder(mp, "search", 0);
++		if (!search->item)
++		{
++			g_free(search);
++			reply = btd_error_failed(folder->msg, strerror(-ret));
++			goto done;
++		}
+ 		mp->search = search;
+ 		mp->folders = g_slist_prepend(mp->folders, search);
+ 	}
+@@ -1789,6 +1795,17 @@ void media_item_set_playable(struct media_item *item, bool value)
+ 					MEDIA_ITEM_INTERFACE, "Playable");
+ }
+ 
++static void replaceCharacter(char *str, char srcChar, char destChar)
++{
++    for (int i = 0; str[i]; i++)
++	{
++		if (str[i] == srcChar)
++		{
++			str[i] = destChar;
++		}
++	}
++}
++
+ static struct media_item *media_folder_create_item(struct media_player *mp,
+ 						struct media_folder *folder,
+ 						const char *name,
+@@ -1797,6 +1814,7 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
+ {
+ 	struct media_item *item;
+ 	const char *strtype;
++	char *folderName = NULL;
+ 
+ 	item = media_folder_find_item(folder, uid);
+ 	if (item != NULL)
+@@ -1811,14 +1829,24 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
+ 	item = g_new0(struct media_item, 1);
+ 	item->player = mp;
+ 	item->uid = uid;
+-
+-	if (!uid && name[0] == '/')
+-		item->path = g_strdup_printf("%s%s", mp->path, name);
++	folderName = g_strdup(name);
++
++	if (!uid && folderName[0] == '/')
++	{
++		/* Spaces are not allowed in the object path. So replace all the
++		 * spaces with '_' */
++		if (strstr(folderName, " "))
++		{
++			replaceCharacter(folderName, ' ', '_');
++		}
++		item->path = g_strdup_printf("%s%s", mp->path, folderName);
++	}
+ 	else
+ 		item->path = g_strdup_printf("%s/item%" PRIu64 "",
+-						folder->item->path, uid);
++									 folder->item->path, uid);
+ 
+-	item->name = g_strdup(name);
++	item->name = g_strdup(folderName);
++	g_free(folderName);
+ 	item->type = type;
+ 	item->folder_type = PLAYER_FOLDER_TYPE_INVALID;
+ 
+-- 
+2.26.0
+
