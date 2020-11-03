@@ -1,4 +1,4 @@
-From d8e81ff9b9be0c66a68980621c2ceb3b079130bb Mon Sep 17 00:00:00 2001
+From cb4fb27496bed1ff61d3207fbc51973576c11d12 Mon Sep 17 00:00:00 2001
 From: Pankaj Maharana <pankaj.maharana@lge.com>
 Date: Wed, 8 Aug 2018 12:01:02 +0530
 Subject: [PATCH] fix adaptive resolution change in seek issue
@@ -29,7 +29,7 @@ Upstream-Status: Inappropriate
  2 files changed, 31 insertions(+), 13 deletions(-)
 
 diff --git a/omx/gstomxvideodec.c b/omx/gstomxvideodec.c
-index dc39c4c..e54e83a 100644
+index ee41fa9..c4c166d 100644
 --- a/omx/gstomxvideodec.c
 +++ b/omx/gstomxvideodec.c
 @@ -88,6 +88,7 @@ enum
@@ -92,7 +92,7 @@ index dc39c4c..e54e83a 100644
    element_class->change_state =
        GST_DEBUG_FUNCPTR (gst_omx_video_dec_change_state);
  
-@@ -2786,15 +2792,17 @@ gst_omx_video_dec_set_format (GstVideoDecoder * decoder,
+@@ -2795,15 +2801,17 @@ gst_omx_video_dec_set_format (GstVideoDecoder * decoder,
    }
  
    if (needs_disable && is_format_change) {
@@ -112,9 +112,9 @@ index dc39c4c..e54e83a 100644
  
 +skip_disable:
    port_def.format.video.nFrameWidth = info->width;
-   port_def.format.video.nFrameHeight = GST_VIDEO_INFO_FIELD_HEIGHT (info);
-   port_def.format.video.xFramerate = framerate_q16;
-@@ -2984,7 +2992,8 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
+   port_def.format.video.nFrameHeight = GST_VIDEO_INFO_HEIGHT (info);
+   /*We cannot use GST_VIDEO_INFO_FIELD_HEIGHT() as encoded content may use either
+@@ -2999,7 +3007,8 @@ gst_omx_video_dec_handle_frame (GstVideoDecoder * decoder,
        return GST_FLOW_OK;
      }
  
@@ -124,7 +124,7 @@ index dc39c4c..e54e83a 100644
        if (!gst_omx_video_dec_enable (self, frame->input_buffer))
          goto enable_error;
      }
-@@ -3297,9 +3306,16 @@ release_error:
+@@ -3312,9 +3321,16 @@ release_error:
  static GstFlowReturn
  gst_omx_video_dec_drain (GstVideoDecoder * decoder)
  {

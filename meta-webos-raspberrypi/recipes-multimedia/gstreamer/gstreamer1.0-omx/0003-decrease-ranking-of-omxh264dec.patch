@@ -1,4 +1,4 @@
-From 06988b1e2c29937fbcc4a85f6693e1b0e8726682 Mon Sep 17 00:00:00 2001
+From a0f0d71c80cb77c7fca5660f28ad49067405de7d Mon Sep 17 00:00:00 2001
 From: "divvya.rosna" <divvya.rosna@lge.com>
 Date: Thu, 13 Aug 2020 05:42:37 +0000
 Subject: [PATCH] rpi : mesa=webosrpi3 webruntime=webosrpi6
