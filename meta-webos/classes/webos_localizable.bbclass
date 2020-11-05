@@ -46,7 +46,7 @@ do_generate_webos_localization () {
     if "${WEBOS_LOCALIZATION_GENERATE_RESOURCES}" ; then
 
         translation_target_locales="$(echo ${WEBOS_LOCALIZATION_TARGET_LOCALES} | sed -e 's/^ *//g' -e 's/ *$//g' | sed -e 's/ \+/,/g')"
-        webos_localization_options="-2 --localizeOnly --pseudo"
+        webos_localization_options="-2 --localizeOnly --pseudo --quiet"
 
         local origdir=$PWD
         cd ${WEBOS_LOCALIZATION_SOURCE_DIR}
