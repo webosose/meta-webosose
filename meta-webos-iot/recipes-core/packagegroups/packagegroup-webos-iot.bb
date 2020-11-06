@@ -31,20 +31,21 @@ VIRTUAL-RUNTIME_org.ocf.webossample_armv5 = ""
 VIRTUAL-RUNTIME_org.ocf.webossample_x86-64 = ""
 
 RDEPENDS_${PN} = " \
-    bootd \
-    webos-connman-adapter \
-    iotivity \
-    procps \
-    ${VIRTUAL-RUNTIME_ai} \
+    activitymanager \
     audiod \
-    rng-tools \
-    ${VIRTUAL-RUNTIME_com.example.service.iotivity} \
+    bootd \
+    configurator \
+    iotivity \
+    iotivity-node \
+    luna-downloadmgr \
+    luna-init \
+    luna-sysservice \
     mojoservicelauncher \
     nodejs-module-webos-service \
-    iotivity-node \
-    activitymanager \
-    configurator \
-    luna-sysservice \
-    luna-init \
-    luna-downloadmgr \
+    procps \
+    rng-tools \
+    webos-connman-adapter \
+    ${VIRTUAL-RUNTIME_ai} \
+    ${VIRTUAL-RUNTIME_com.example.service.iotivity} \
+    ${VIRTUAL-RUNTIME_org.ocf.webossample} \
 "
