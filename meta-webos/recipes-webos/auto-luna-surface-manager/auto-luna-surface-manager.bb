@@ -12,10 +12,11 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-surfacemanager qt-features-webos"
 RDEPENDS_${PN} = " \
     luna-surfacemanager-base \
+    qtbase-plugins-webos \
 "
 
-WEBOS_VERSION = "0.0.1-29_32fe95e32fe1bdbcdc37953e9328a96d75e65894"
-PR = "r4"
+WEBOS_VERSION = "0.0.1-30_cfb24ea2cdd0b6d5fdfd2a4cb30b927ee0ba8d64"
+PR = "r5"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
