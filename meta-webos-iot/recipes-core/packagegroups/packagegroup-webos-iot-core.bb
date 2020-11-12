@@ -20,7 +20,6 @@ RDEPENDS_${PN} = " \
     pmklogd \
     pmlogctl \
     pmlogdaemon \
-    crda \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
