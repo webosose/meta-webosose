@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos21"
+EXTENDPRAUTO_append = "webos22"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -38,6 +38,7 @@ SRC_URI += " \
     file://0027-AVRCP-addToNowPlaying-return-error-when-player-not-s.patch \
     file://0028-caching-of-avdtp-delay-reporting.patch \
     file://0029-AVRCP-MediaItem-object-path-fix.patch \
+    file://0030-Revert-a2dp-Add-reverse-discovery.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \

@@ -1,0 +1,65 @@
+From 3c96a1e41bd1c4254195e92407e3ddd1ee7bb23c Mon Sep 17 00:00:00 2001
+From: Sameer Mulla <sameer.mulla@lge.com>
+Date: Thu, 12 Nov 2020 15:04:36 +0530
+Subject: [PATCH] Revert "a2dp: Add reverse discovery"
+
+This reverts commit 02877c5e98b81655c0a369c5cffbf975b431ec7a.
+
+:Release Notes:
+This reverts commit 02877c5e98b81655c0a369c5cffbf975b431ec7a
+
+:Detailed Notes:
+reverse discovery failing to connect to remote a2dp profile
+first time and reverse discovery is not mandatory procedure as
+specification so reverting commit of bluez 5.54 of reverse discovery
+
+:Testing Performed:
+Builded and Tested
+
+:Issues Addressed:
+[PLAT-124140] Audio heard from phone instead of lineout earphone
+
+:QA Notes:
+NA
+
+Upstream Status: Pending
+---
+ profiles/audio/a2dp.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
+
+diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
+index 4001ea0ea..ff384cd23 100644
+--- a/profiles/audio/a2dp.c
++++ b/profiles/audio/a2dp.c
+@@ -583,12 +583,6 @@ static gboolean endpoint_match_codec_ind(struct avdtp *session,
+ 	return TRUE;
+ }
+ 
+-static void reverse_discover(struct avdtp *session, GSList *seps, int err,
+-							void *user_data)
+-{
+-	DBG("err %d", err);
+-}
+-
+ static gboolean endpoint_setconf_ind(struct avdtp *session,
+ 						struct avdtp_local_sep *sep,
+ 						struct avdtp_stream *stream,
+@@ -644,14 +638,8 @@ static gboolean endpoint_setconf_ind(struct avdtp *session,
+ 						setup_ref(setup),
+ 						endpoint_setconf_cb,
+ 						a2dp_sep->user_data);
+-		if (ret == 0) {
+-			/* Attempt to reverve discover if there are no remote
+-			 * SEPs.
+-			 */
+-			if (queue_isempty(setup->chan->seps))
+-				a2dp_discover(session, reverse_discover, NULL);
++		if (ret == 0)
+ 			return TRUE;
+-		}
+ 
+ 		setup_unref(setup);
+ 		setup->err = g_new(struct avdtp_error, 1);
+-- 
+2.26.0
+
