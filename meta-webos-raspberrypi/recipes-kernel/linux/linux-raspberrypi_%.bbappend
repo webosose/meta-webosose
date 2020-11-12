@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi24"
+EXTENDPRAUTO_append = "webosrpi25"
 
 CMDLINE_append = " rw cgroup_memory=1 cgroup_enable=memory"
 CMDLINE_remove_sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
@@ -16,6 +16,7 @@ SRC_URI += "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://vswitch.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://xt-checksum.cfg', '', d)} \
     file://bridge.cfg \
+    file://gps.cfg \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \
