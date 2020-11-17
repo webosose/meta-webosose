@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
 # Enable SOTA common setting
 #
@@ -14,7 +14,7 @@ OSTREE_BRANCHNAME = "${IMAGE_BASENAME}-${WEBOS_DISTRO_BUILD_CODENAME}"
 OSTREE_COMMIT_SUBJECT ?= "${IMAGE_BASENAME}${IMAGE_VERSION_SUFFIX}"
 
 # Don't use aktualizr as a SOTA_CLIENT (will create new one)
-SOTA_CLIENT = ""
+IMAGE_INSTALL_remove_sota = "aktualizr aktualizr-info"
 SOTA_CLIENT_PROV = ""
 
 # Disable sota when target is qemu
