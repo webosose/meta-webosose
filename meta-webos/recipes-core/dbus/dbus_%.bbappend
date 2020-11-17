@@ -6,10 +6,7 @@ PACKAGES =+ "${PN}-gpl"
 LICENSE += "& GPL-2.0-only"
 LICENSE:${PN}-gpl = "GPL-2.0-only"
 
-# using "dbus" instead of "${PN}" due to:
-# WARNING: Variable key RDEPENDS:${PN} ( ${PN}-gpl) replaces original key RDEPENDS:dbus
-# (${@bb.utils.contains('DISTRO_FEATURES', 'ptest', 'dbus-ptest-ptest', '', d)}).
-RDEPENDS:dbus += "${PN}-gpl"
+RDEPENDS:${PN} += "${PN}-gpl"
 
 FILES:${PN}-gpl = " \
     ${bindir}/dbus-cleanup-sockets \
