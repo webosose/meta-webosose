@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos63"
+EXTENDPRAUTO_append = "webos64"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 

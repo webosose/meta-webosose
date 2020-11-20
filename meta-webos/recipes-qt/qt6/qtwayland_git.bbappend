@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos21"
+EXTENDPRAUTO_append = "webos22"
 
 # qtwayland-{plugins,qmlplugins} are not used in webOS
 RRECOMMENDS_${PN}_remove = "${PN}-plugins ${PN}-qmlplugins"

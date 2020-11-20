@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos86"
+EXTENDPRAUTO_append = "webos87"
 
 # Remove LGPL3-only files
 python do_patch_append() {

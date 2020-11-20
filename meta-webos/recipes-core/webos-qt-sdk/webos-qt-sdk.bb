@@ -2,10 +2,10 @@
 
 SUMMARY = "webOS SDK Toolchain including qt host tools"
 
-PR = "r3"
+PR = "r4"
 
 TOOLCHAIN_HOST_TASK = "nativesdk-packagegroup-sdk-host"
-TOOLCHAIN_HOST_TASK += "nativesdk-packagegroup-qt5-toolchain-host"
+TOOLCHAIN_HOST_TASK += "nativesdk-packagegroup-qt6-toolchain-host"
 # Only add packagegroup-cross-canadian-${MACHINE} to TOOLCHAIN_HOST_TASK when
 # not using an external toolchain. Once we can figure out how to package up the
 # native portion of external-lg-toolchain, the recipe that implements it will
