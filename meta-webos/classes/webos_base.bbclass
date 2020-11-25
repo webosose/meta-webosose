@@ -10,17 +10,18 @@ do_write_bom_data[nostamp] = "1"
 addtask write_bom_data
 python do_write_bom_data() {
     import json
-    # We want one recipe per line, starting with arch and recipe keys,
+    # We want one recipe per line, starting with arch and recipe and section keys,
     # so that it's easy to sort and compare them
     class WebosBomJSONEncoder(json.JSONEncoder):
         def iterencode(self, obj, _one_shot=True):
             if isinstance(obj, dict):
                 output = []
-                if "arch" in obj.keys() and "recipe" in obj.keys():
+                if "arch" in obj.keys() and "recipe" in obj.keys() and "section" in obj.keys():
                     output.append(json.dumps("arch") + ": " + self.encode(obj["arch"]))
                     output.append(json.dumps("recipe") + ": " + self.encode(obj["recipe"]))
+                    output.append(json.dumps("section") + ": " + self.encode(obj["section"]))
                 for key, value in sorted(obj.items()):
-                    if key == "arch" or key == "recipe":
+                    if key == "arch" or key == "recipe" or key == "section":
                         continue
                     output.append(json.dumps(key) + ": " + self.encode(value))
                 return "{" + ",".join(output) + "}"
@@ -28,6 +29,7 @@ python do_write_bom_data() {
                 return json.JSONEncoder().iterencode(obj, _one_shot)
 
     jsondata = {}
+    jsondata["section"] = d.getVar("SECTION", True)
     jsondata["src_uri"] = d.getVar("SRC_URI", True)
     jsondata["srcrev"] = "".join(d.getVar("SRCREV", True).split())
     jsondata["recipe"] = d.getVar("PN", True)
