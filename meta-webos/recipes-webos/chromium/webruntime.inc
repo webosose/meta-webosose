@@ -1,45 +1,19 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 SUMMARY = "Chromium webruntime for webOS"
 AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
 SECTION = "webos/apps"
-LICENSE = "Apache-2.0 & BSD-3-Clause & LGPL-2.0 & LGPL-2.1"
-LIC_FILES_CHKSUM = "\
-    file://src/LICENSE;md5=0fca02217a5d49a14dfe2d11837bb34d \
-    file://src/third_party/blink/renderer/core/LICENSE-LGPL-2;md5=36357ffde2b64ae177b2494445b79d21 \
-    file://src/third_party/blink/renderer/core/LICENSE-LGPL-2.1;md5=a778a33ef338abbaf8b8a7c36b6eec80 \
-"
 
-require gn-utils.inc
+require webruntime-common.inc
 
 inherit gettext
 inherit webruntime_apps
-inherit webos_enhanced_submissions
 inherit webos_filesystem_paths
 inherit webos_lttng
 inherit webos_machine_dep
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 inherit webos_system_bus
-inherit webos_public_repo
-
-# make sure that python(2) is available, otherwise gn fails to execute python after it was removed from HOSTTOOLS in:
-# http://git.openembedded.org/openembedded-core/commit/?id=5f8f16b17f66966ae91aeabc23e97de5ecd17447
-#
-# /jenkins/mjansa/build-ros-v3/artifacts/BUILD-webos-melodic-master.mcf/work/qemux86-webos-linux/webruntime/68.0.3440.106-75-r24.1/git/depot_tools/gn: line 8: exec: python: not found
-# using python3 isn't supported in this old gn, it fails e.g. in gclient_utils.py because of invalid syntax for python3:
-# Traceback (most recent call last):
-#  File "/jenkins/mjansa/build-ros-v3/artifacts/BUILD-webos-melodic-master.mcf/work/qemux86-webos-linux/webruntime/68.0.3440.106-75-r24.1/git/depot_tools/gn.py", line 15, in <module>
-#    import gclient_utils
-#  File "/jenkins/mjansa/build-ros-v3/artifacts/BUILD-webos-melodic-master.mcf/work/qemux86-webos-linux/webruntime/68.0.3440.106-75-r24.1/git/depot_tools/gclient_utils.py", line 271
-#    except OSError, e:
-#                  ^
-# SyntaxError: invalid syntax
-# most (maybe all) of these issues were already fixed upstream in:
-# https://chromium-review.googlesource.com/c/chromium/tools/depot_tools/+/1854900
-# but there is a lot of conflicts in old gn used by this webruntime and there are many other places also still using python(2) here
-# so lets use native python2 for now
-inherit pythonnative
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python-six-native python-beautifulsoup4-native python-lxml-native python-html5lib-native python-webencodings-native"
 
@@ -48,29 +22,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r42"
-WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
-WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
-WEBOS_REPO_NAME_V8 ?= "v8"
-WEBOSOSE_GIT_REPO_COMPLETE_V8 ?= "${WEBOSOSE_GIT_REPO}/${WEBOS_REPO_NAME_V8}${WEBOS_GIT_BRANCH_V8}${WEBOSOSE_GIT_PROTOCOL}"
-
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
-
-SRC_URI_append = "\
-    ${WEBOSOSE_GIT_REPO_COMPLETE_V8};destsuffix=git/src/v8;name=v8 \
-"
-
-## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_FORMAT = "main_v8"
-
-S = "${WORKDIR}/git"
-B = "${WORKDIR}/build"
-
-BUILD_TYPE = "Release"
-OUT_DIR = "${B}/${BUILD_TYPE}"
-OUT_IMAGE_DIR = "${OUT_DIR}/image"
-
+INC_PR = "r43"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -115,42 +67,20 @@ PACKAGECONFIG[jumbo] = "use_jumbo_build=true jumbo_file_merge_limit=${JUMBO_FILE
 PACKAGECONFIG_append = " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', 'lttng', '', d)}"
 PACKAGECONFIG[lttng] = "use_lttng=true,use_lttng=false,lttng-ust,lttng-tools lttng-modules babeltrace"
 
-GN_ARGS = "\
-    cros_host_ar=\"${BUILD_AR}\"\
-    cros_host_cc=\"${BUILD_CC}\"\
-    cros_host_cxx=\"${BUILD_CXX}\"\
-    cros_host_extra_ldflags=\"${BUILD_LDFLAGS}\"\
-    cros_target_ar=\"${AR}\"\
-    cros_target_cc=\"${CC}\"\
-    cros_target_cxx=\"${CXX}\"\
-    host_pkg_config=\"pkg-config-native\"\
+GN_ARGS_append = " \
     enable_memorymanager_webapi=true\
     ffmpeg_branding=\"Chrome\"\
-    host_os=\"linux\"\
     is_app_shell_cbe=true\
-    is_clang=false\
-    is_cross_linux_build=true\
-    is_webos=true\
-    is_debug=false\
-    is_component_build=false\
     ozone_auto_platforms=false\
-    ozone_platform_wayland_external=true\
     proprietary_codecs=true\
-    target_os=\"linux\"\
-    target_sysroot=\"${STAGING_DIR_HOST}\"\
-    treat_warnings_as_errors=false\
     use_bundled_fontconfig=false\
     use_cbe=true\
     use_cups=false\
-    use_custom_libcxx=false\
-    use_custom_libcxx_for_host=true\
     use_kerberos=false\
     use_local_storage_manager=true\
     use_ozone=true\
     use_pmlog=true\
-    use_sysroot=false\
     use_system_debugger_abort=true\
-    use_webos_v8_snapshot=true\
     use_xkbcommon=true\
     ${WAM_DEMO_CONFARGS}\
     ${PACKAGECONFIG_CONFARGS}\
@@ -172,7 +102,6 @@ GN_ARGS_append = " closure_compile=false"
 
 # TODO: drop this after we migrate to ubuntu 16.04 or above
 GN_ARGS += "\
-    is_host_clang=true\
     fatal_linker_warnings=false\
 "
 
@@ -182,72 +111,13 @@ GN_ARGS += "\
     use_debug_fission=false\
 "
 
-# Respect ld-is-gold in DISTRO_FEATURES when enabling gold
-# Similar patch applied in meta-browser
-# http://patchwork.openembedded.org/patch/77755/
-EXTRA_OEGN_GOLD = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'use_gold=true', 'use_gold=false', d)}"
-GN_ARGS += "${EXTRA_OEGN_GOLD}"
-
-GN_ARGS_append_arm = " target_cpu=\"arm\""
-GN_ARGS_append_qemux86 = " target_cpu=\"x86\""
-GN_ARGS_append_aarch64 = " target_cpu=\"arm64\""
-
-# ARM builds need special additional flags (see ${S}/build/config/arm.gni).
-ARM_FLOAT_ABI = "${@bb.utils.contains('TUNE_FEATURES', 'callconvention-hard', 'hard', 'softfp', d)}"
-GN_ARGS_append_armv6 = " arm_arch=\"armv6\" arm_version=6 arm_float_abi=\"${ARM_FLOAT_ABI}\""
-GN_ARGS_append_armv7a = " arm_arch=\"armv7-a\" arm_version=7 arm_float_abi=\"${ARM_FLOAT_ABI}\""
-GN_ARGS_append_armv7ve = " arm_arch=\"armv7ve\" arm_version=7 arm_float_abi=\"${ARM_FLOAT_ABI}\""
-# tcmalloc's atomicops-internals-arm-v6plus.h uses the "dmb" instruction that
-# is not available on (some?) ARMv6 models, which causes the build to fail.
-GN_ARGS_append_armv6 += 'use_allocator="none"'
-# The WebRTC code fails to build on ARMv6 when NEON is enabled.
-# https://bugs.chromium.org/p/webrtc/issues/detail?id=6574
-GN_ARGS_append_armv6 += 'arm_use_neon=false'
-
-TARGET_CPU = "${@gn_arch_name(TARGET_ARCH)}"
-
-GN_ARGS_append_qemux86 = "\
-    is_host_clang=false\
-    cros_host_is_clang=false\
-    v8_snapshot_toolchain=\"//build/toolchain/cros:v8_snapshot_clang_${TARGET_CPU}\"\
-    host_toolchain=\"//build/toolchain/cros:host\" \
-    use_custom_libcxx=false \
-    use_custom_libcxx_for_host=false \
-"
-
-# Doesn't build for armv[45]*
-COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 #CHROMIUM_PLUGINS_PATH = "${libdir}"
 CBE_DATA_PATH = "${libdir}/cbe"
 CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/neva_locales"
 
-do_configure() {
-    export GYP_CHROMIUM_NO_ACTION=1
-    export PATH="${S}/depot_tools:$PATH"
 
-    GN_ARGS="${GN_ARGS}"
-    echo GN_ARGS is ${GN_ARGS}
-    echo BUILD_TARGETS are ${TARGET}
-    cd ${S}/src
-    gn gen ${OUT_DIR} --args="${GN_ARGS}"
-}
-
-do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
-do_compile() {
-    if [ ! -f ${OUT_DIR}/build.ninja ]; then
-        do_configure
-    fi
-
-    export PATH="${S}/depot_tools:$PATH"
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} ${TARGET}
-
+do_compile_append() {
     ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/weboswebruntime
 
     if ${DEPLOY_BROWSER} ; then
@@ -315,19 +185,10 @@ modify_run_app_shell_append_qemux86() {
     sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
 
-MKSNAPSHOT_PATH = ""
-MKSNAPSHOT_PATH_arm = "clang_x86_v8_arm/"
-MKSNAPSHOT_PATH_aarch64 = "clang_x64_v8_arm64/"
-MKSNAPSHOT_PATH_qemux86 = "v8_snapshot_clang_${TARGET_CPU}/"
-
 WINDOW_SIZE ?= "1920,1080"
 CACHE_DIR ?= "${webos_homedir}/webbrowser"
 
 do_install() {
-    # move this to separate mksnapshot-cross recipe once we figure out how to build just cross mksnapshot from chromium repository
-    install -d ${D}${base_bindir}
-    gzip -c ${OUT_DIR}/${MKSNAPSHOT_PATH}mksnapshot > ${D}${base_bindir}/${HOST_SYS}-mksnapshot.gz
-
     install -d ${D}${libdir}
     # libcbe.so, libminigbm.so, liblttng_provider.so
     install -v -m 0644 ${OUT_IMAGE_DIR}/${libdir}/*.so ${D}${libdir}
@@ -421,7 +282,6 @@ WEBOS_SYSTEM_BUS_DIRS_LEGACY_WAM_DEMO_APPLICATION = " \
 SYSROOT_DIRS_append = " ${base_bindir}"
 
 PACKAGES_prepend = " \
-    ${PN}-cross-mksnapshot \
     ${BROWSER_APPLICATION} \
     ${APP_SHELL_RUNTIME} \
     ${CHROMEDRIVER_RUNTIME} \
@@ -474,5 +334,3 @@ FILES_${PN} = " \
 FILES_${PN}-dev = " \
     ${includedir} \
 "
-
-FILES_${PN}-cross-mksnapshot = "${base_bindir}/${HOST_SYS}-mksnapshot.gz"
