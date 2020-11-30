@@ -44,7 +44,8 @@ GN_ARGS_append = " \
 PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav neva-webrtc"
 #END TODO
 
-# Fix build error for OSE RPi4-64
-SRC_URI_append_raspberrypi4-64 = "\
+# Fix build error for aarch64
+# http://gpro.lge.com/c/webosauto/chromium84/+/285079
+SRC_URI_append_aarch64 = "\
     file://0001-op-ds-build-Fix-build-error-when-target-is-arm64.patch \
 "
