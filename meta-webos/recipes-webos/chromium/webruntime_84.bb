@@ -46,5 +46,3 @@ PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav neva-webrt
 SRC_URI_append_raspberrypi4-64 = "\
     file://0001-op-ds-build-Fix-build-error-when-target-is-arm64.patch \
 "
-
-D = "${OUT_DIR}/${BUILD_TYPE}/image"
