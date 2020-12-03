@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r36"
+PR = "r37"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -138,6 +138,8 @@ VIRTUAL-RUNTIME_bluetooth_service ?= "com.webos.service.bluetooth2"
 
 VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
 
+VIRTUAL-RUNTIME_unifiedsearch ?= "com.webos.service.unifiedsearch com.webos.service.unifiedsearch-plugins"
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
@@ -213,6 +215,7 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_surface-manager-conf} \
     ${VIRTUAL-RUNTIME_surface-manager-extension} \
     ${VIRTUAL-RUNTIME_umediaserver} \
+    ${VIRTUAL-RUNTIME_unifiedsearch} \
     ${VIRTUAL-RUNTIME_webappmanager} \
     ${VIRTUAL-RUNTIME_webos-ime} \
     ${WEBOS_PACKAGESET_TESTAPPS} \
