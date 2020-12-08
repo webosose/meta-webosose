@@ -9,7 +9,7 @@ file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.2-16_af5e176e77b56fc63f5650d343e60fdf035d37a0"
+WEBOS_VERSION = "1.0.2-17_b1a557577b7f135c1fd1609f0e9acd1418eee311"
 PR = "r6"
 
 inherit webos_component

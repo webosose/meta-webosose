@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2019 LG Electronics, Inc.
+# Copyright (c) 2015-2020 LG Electronics, Inc.
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE ??= "PACKAGE"
 
@@ -85,6 +85,9 @@ def webos_configure_manifest_service(d):
 
                 requires = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_permissionsdir", srv_name, ".perm.json")
                 if requires: manifest["clientPermissionFiles"] = [requires]
+
+                groups = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_groupsdir", srv_name, ".groups.json")
+                if groups: manifest["groupsFiles"] = [groups]
 
             if role:
                 manifests.append(manifest)
@@ -203,6 +206,10 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
 
                 requires = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_permissionsdir", app_info["id"], ".json")
                 if requires: manifest["clientPermissionFiles"] = [requires]
+
+                groups = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_groupsdir", app_info["id"], ".json")
+                if groups: manifest["groupsFiles"] = [groups]
+
                 return manifest
 
             if warn_mismatch(d, "webos_sysbus_rolesdir"):
@@ -296,6 +303,9 @@ def webos_configure_manifest_package(d):
 
     requires = webos_configure_manifest_lookup_files_by_ext(d, "webos_sysbus_permissionsdir", ".json")
     if requires: manifest["clientPermissionFiles"] = requires
+
+    groups = webos_configure_manifest_lookup_files_by_ext(d, "webos_sysbus_groupsdir", ".json")
+    if groups: manifest["groupsFiles"] = groups
 
     return [manifest]
 
