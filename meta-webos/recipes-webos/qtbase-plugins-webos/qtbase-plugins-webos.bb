@@ -12,12 +12,13 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtbase"
 
 WEBOS_VERSION = "1.0.0-6_eca39a5ef783ecc28065f23539e0c0e4d2c924b1"
-PR = "r0"
+PR = "r1"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_machine_impl_dep
+inherit webos_qt_global
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -31,6 +32,9 @@ PACKAGECONFIG_append_emulator = " emulator"
 
 # Multi-plane composition
 PACKAGECONFIG[plane-composition] = "CONFIG+=plane_composition,,"
+
+# EGL Protected content
+PACKAGECONFIG[egl-protected-content] = "CONFIG+=egl_protected_content,,"
 
 FILES_${PN} += " \
     ${OE_QMAKE_PATH_PLUGINS}/ \
