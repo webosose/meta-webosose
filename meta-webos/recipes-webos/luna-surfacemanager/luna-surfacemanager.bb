@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
-WEBOS_VERSION = "2.0.0-342_ea642b256fe54139843c482827e11d7021f6aa51"
-PR = "r48"
+WEBOS_VERSION = "2.0.0-343_ab405d34238cecbaeb38986282944347e6660852"
+PR = "r49"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -70,7 +70,12 @@ PACKAGES =+ "${PN}-conf ${PN}-base ${PN}-base-tests"
 
 FILES_${PN}-conf += " \
     ${sysconfdir}/surface-manager.d/ \
-    ${WEBOS_SYSTEM_BUS_DIRS} \
+    ${webos_sysbus_apipermissionsdir} \
+    ${webos_sysbus_groupsdir} \
+    ${webos_sysbus_servicedir} \
+    ${webos_sysbus_manifestsdir}/luna-surfacemanager.manifest.json \
+    ${webos_sysbus_permissionsdir}/com.webos.surfacemanager.perm.json \
+    ${webos_sysbus_rolesdir}/com.webos.surfacemanager.role.json \
 "
 
 FILES_${PN}-base += " \
@@ -82,6 +87,10 @@ FILES_${PN}-base += " \
 "
 
 FILES_${PN}-base-tests += " \
+    ${webos_applicationsdir}/ \
+    ${webos_sysbus_manifestsdir}/ \
+    ${webos_sysbus_permissionsdir}/ \
+    ${webos_sysbus_rolesdir}/ \
     ${webos_testsdir}/${BPN}/ \
 "
 

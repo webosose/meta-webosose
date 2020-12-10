@@ -10,6 +10,7 @@ PR = "r15"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
+VIRTUAL-RUNTIME_surface-manager-tests ?= ""
 VIRTUAL-RUNTIME_umediaserver-python ?= ""
 VIRTUAL-RUNTIME_umediaserver-python_armv4 = ""
 VIRTUAL-RUNTIME_umediaserver-python_armv5 = ""
@@ -94,6 +95,7 @@ RDEPENDS_${PN} = "\
     make \
     ptest-runner \
     sam-tests \
+    ${VIRTUAL-RUNTIME_surface-manager-tests} \
     ${VIRTUAL-RUNTIME_umediaserver-python} \
     ${PYTHON} \
 "

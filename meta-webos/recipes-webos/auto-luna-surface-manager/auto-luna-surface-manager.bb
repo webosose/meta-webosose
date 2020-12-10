@@ -15,7 +15,7 @@ RDEPENDS_${PN} = " \
     qtbase-plugins-webos \
 "
 
-WEBOS_VERSION = "0.0.1-30_cfb24ea2cdd0b6d5fdfd2a4cb30b927ee0ba8d64"
+WEBOS_VERSION = "0.0.1-31_5b0d1fbc18eeacbf9577fbe15b2faa3dd3051244"
 PR = "r5"
 
 inherit webos_qmake5
