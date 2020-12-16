@@ -1,0 +1,65 @@
+From 99734dce8a82c2b876f4cc2de7896d0d0ce3ccb2 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Tue, 15 Jun 2021 13:49:55 +0900
+Subject: [PATCH] Check if a device in knownPointingDevices is destroyed before
+ use
+
+Use QPointer for QPointingDevice pointers in knownPointingDevices and
+check if it is null before use. QPointingDevice objects destroyed are
+removed after knownPointingDevices is scanned. This fixes a crash issue
+where the commit b567c38 wanted to address. It actually takes no effect
+in case a QPointingDevice is destroyed in a different thread.
+
+Pick-to: 6.2 6.1
+Change-Id: I8690e71d897021e63af6d452ceae6176a99cb716
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/354315]
+---
+ src/quick/util/qquickdeliveryagent.cpp   | 14 ++++++++++----
+ src/quick/util/qquickdeliveryagent_p_p.h |  2 +-
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/src/quick/util/qquickdeliveryagent.cpp b/src/quick/util/qquickdeliveryagent.cpp
+index 2b649d01cf..cd5f6cb901 100644
+--- a/src/quick/util/qquickdeliveryagent.cpp
++++ b/src/quick/util/qquickdeliveryagent.cpp
+@@ -273,9 +273,16 @@ void QQuickDeliveryAgentPrivate::removeGrabber(QQuickItem *grabber, bool mouse,
+     Q_Q(QQuickDeliveryAgent);
+     if (eventsInDelivery.isEmpty()) {
+         // do it the expensive way
+-        for (auto dev : knownPointingDevices) {
+-            auto devPriv = QPointingDevicePrivate::get(const_cast<QPointingDevice *>(dev));
+-            devPriv->removeGrabber(grabber, cancel);
++        for (auto dev : qAsConst(knownPointingDevices)) {
++            if (!dev.isNull()) {
++                auto devPriv = QPointingDevicePrivate::get(const_cast<QPointingDevice *>(dev.get()));
++                devPriv->removeGrabber(grabber, cancel);
++            }
++        }
++        // clean up destroyed devices
++        for (int i = knownPointingDevices.size() - 1; i >= 0; --i) {
++            if (knownPointingDevices.at(i).isNull())
++                knownPointingDevices.removeAt(i);
+         }
+         return;
+     }
+@@ -1543,7 +1550,6 @@ void QQuickDeliveryAgentPrivate::ensureDeviceConnected(const QPointingDevice *de
+         return;
+     knownPointingDevices.append(dev);
+     connect(dev, &QPointingDevice::grabChanged, this, &QQuickDeliveryAgentPrivate::onGrabChanged);
+-    QObject::connect(dev, &QObject::destroyed, q, [this, dev] {this->knownPointingDevices.removeAll(dev);});
+ }
+ 
+ void QQuickDeliveryAgentPrivate::deliverPointerEvent(QPointerEvent *event)
+diff --git a/src/quick/util/qquickdeliveryagent_p_p.h b/src/quick/util/qquickdeliveryagent_p_p.h
+index 0d7d5fb71d..39ce1a364a 100644
+--- a/src/quick/util/qquickdeliveryagent_p_p.h
++++ b/src/quick/util/qquickdeliveryagent_p_p.h
+@@ -110,7 +110,7 @@ public:
+     QVector<QQuickItem *> skipDelivery; // during delivery of one event to all receivers, Items to which we know delivery is no longer necessary
+ 
+     QScopedPointer<QMutableTouchEvent> delayedTouch;
+-    QList<const QPointingDevice *> knownPointingDevices;
++    QList<QPointer<const QPointingDevice> > knownPointingDevices;
+ 
+ #if QT_CONFIG(wheelevent)
+     uint lastWheelEventAccepted = 0;

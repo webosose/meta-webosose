@@ -1,0 +1,156 @@
+From fa0d1427e2de4bc3c1e114240a2f17e950ffaf3a Mon Sep 17 00:00:00 2001
+From: Hyungchan Kim <hyungchan2.kim@lge.com>
+Date: Fri, 2 Apr 2021 09:50:32 +0900
+Subject: [PATCH] Revert "use boolean for when property"
+
+This reverts commit 64c1fbe96c68b1286a70242ff4922be140128cb2.
+It breaks State::when behavior as reported in QTBUG-86695.
+
+Upstream-Status: Inappropriate [workaround]
+---
+ src/quick/util/qquickstate.cpp                     |  9 ++++-----
+ src/quick/util/qquickstate_p.h                     |  8 +++++---
+ src/quick/util/qquickstate_p_p.h                   |  5 ++---
+ src/quick/util/qquickstategroup.cpp                |  5 +++--
+ tests/auto/quick/qquickstates/data/trivialWhen.qml |  5 -----
+ tests/auto/quick/qquickstates/tst_qquickstates.cpp | 11 -----------
+ 6 files changed, 14 insertions(+), 29 deletions(-)
+ delete mode 100644 tests/auto/quick/qquickstates/data/trivialWhen.qml
+
+diff --git a/src/quick/util/qquickstate.cpp b/src/quick/util/qquickstate.cpp
+index b67de72105..685d0df716 100644
+--- a/src/quick/util/qquickstate.cpp
++++ b/src/quick/util/qquickstate.cpp
+@@ -192,7 +192,7 @@ bool QQuickState::isNamed() const
+ bool QQuickState::isWhenKnown() const
+ {
+     Q_D(const QQuickState);
+-    return d->whenKnown;
++    return d->when != nullptr;
+ }
+ 
+ /*!
+@@ -219,16 +219,15 @@ bool QQuickState::isWhenKnown() const
+     }
+     \endqml
+ */
+-bool QQuickState::when() const
++QQmlBinding *QQuickState::when() const
+ {
+     Q_D(const QQuickState);
+-    return d->when;
++    return d->when.data();
+ }
+ 
+-void QQuickState::setWhen(bool when)
++void QQuickState::setWhen(QQmlBinding *when)
+ {
+     Q_D(QQuickState);
+-    d->whenKnown = true;
+     d->when = when;
+     if (d->group)
+         d->group->updateAutoState();
+diff --git a/src/quick/util/qquickstate_p.h b/src/quick/util/qquickstate_p.h
+index a6c3f68bb1..292fa431f0 100644
+--- a/src/quick/util/qquickstate_p.h
++++ b/src/quick/util/qquickstate_p.h
+@@ -157,7 +157,7 @@ class Q_QUICK_PRIVATE_EXPORT QQuickState : public QObject
+     Q_OBJECT
+ 
+     Q_PROPERTY(QString name READ name WRITE setName)
+-    Q_PROPERTY(bool when READ when WRITE setWhen)
++    Q_PROPERTY(QQmlBinding *when READ when WRITE setWhen)
+     Q_PROPERTY(QString extend READ extends WRITE setExtends)
+     Q_PROPERTY(QQmlListProperty<QQuickStateOperation> changes READ changes)
+     Q_CLASSINFO("DefaultProperty", "changes")
+@@ -173,9 +173,11 @@ public:
+     void setName(const QString &);
+     bool isNamed() const;
+ 
++    /*'when' is a QQmlBinding to limit state changes oscillation
++     due to the unpredictable order of evaluation of bound expressions*/
+     bool isWhenKnown() const;
+-    bool when() const;
+-    void setWhen(bool);
++    QQmlBinding *when() const;
++    void setWhen(QQmlBinding *);
+ 
+     QString extends() const;
+     void setExtends(const QString &);
+diff --git a/src/quick/util/qquickstate_p_p.h b/src/quick/util/qquickstate_p_p.h
+index d75cfc32ee..2eea67f644 100644
+--- a/src/quick/util/qquickstate_p_p.h
++++ b/src/quick/util/qquickstate_p_p.h
+@@ -201,13 +201,12 @@ class QQuickStatePrivate : public QObjectPrivate
+ 
+ public:
+     QQuickStatePrivate()
+-        : when(false), whenKnown(false), named(false), inState(false), group(nullptr) {}
++    : named(false), inState(false), group(nullptr) {}
+ 
+     typedef QList<QQuickSimpleAction> SimpleActionList;
+ 
+     QString name;
+-    bool when;
+-    bool whenKnown;
++    QQmlBinding::Ptr when;
+     bool named;
+ 
+     struct OperationGuard : public QQmlGuard<QQuickStateOperation>
+diff --git a/src/quick/util/qquickstategroup.cpp b/src/quick/util/qquickstategroup.cpp
+index b86333943c..e7d456cb02 100644
+--- a/src/quick/util/qquickstategroup.cpp
++++ b/src/quick/util/qquickstategroup.cpp
+@@ -376,9 +376,10 @@ bool QQuickStateGroupPrivate::updateAutoState()
+         QQuickState *state = states.at(ii);
+         if (state->isWhenKnown()) {
+             if (state->isNamed()) {
+-                if (state->when()) {
++                if (state->when() && state->when()->evaluate().toBool()) {
+                     if (stateChangeDebug())
+-                        qWarning() << "Setting auto state due to expression";
++                        qWarning() << "Setting auto state due to:"
++                                   << state->when()->expression();
+                     if (currentState != state->name()) {
+                         q->setState(state->name());
+                         return true;
+diff --git a/tests/auto/quick/qquickstates/data/trivialWhen.qml b/tests/auto/quick/qquickstates/data/trivialWhen.qml
+deleted file mode 100644
+index 9f7f3161e9..0000000000
+--- a/tests/auto/quick/qquickstates/data/trivialWhen.qml
++++ /dev/null
+@@ -1,5 +0,0 @@
+-import QtQuick 2.12
+-
+-State {
+-    when: true
+-}
+diff --git a/tests/auto/quick/qquickstates/tst_qquickstates.cpp b/tests/auto/quick/qquickstates/tst_qquickstates.cpp
+index cbc36ad1b5..12890a24d7 100644
+--- a/tests/auto/quick/qquickstates/tst_qquickstates.cpp
++++ b/tests/auto/quick/qquickstates/tst_qquickstates.cpp
+@@ -198,7 +198,6 @@ private slots:
+     void QTBUG_38492();
+     void revertListMemoryLeak();
+     void duplicateStateName();
+-    void trivialWhen();
+     void parentChangeCorrectReversal();
+     void revertNullObjectBinding();
+     void bindableProperties();
+@@ -1692,16 +1691,6 @@ void tst_qquickstates::duplicateStateName()
+     QVERIFY(!item.isNull());
+ }
+ 
+-// QTBUG-76838
+-void tst_qquickstates::trivialWhen()
+-{
+-    QQmlEngine engine;
+-
+-    QQmlComponent c(&engine, testFileUrl("trivialWhen.qml"));
+-    QScopedPointer<QObject> root(c.create());
+-    QVERIFY(root);
+-}
+-
+ void tst_qquickstates::parentChangeCorrectReversal()
+ {
+     QQmlEngine engine;
