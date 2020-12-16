@@ -1,0 +1,68 @@
+From 294f022026e6fc58d26a8a8fcebfb0dea0470667 Mon Sep 17 00:00:00 2001
+From: Elvis Lee <kwangwoong.lee@lge.com>
+Date: Tue, 25 May 2021 19:52:09 +0900
+Subject: [PATCH] Enhance QWaylandQuickHardwareLayer support
+
+1. method to re-enable scenegraph painting
+2. method to initialize in native level
+
+Change-Id: Ia680c25d327608fd9163b46f3d1051d44dc759a8
+Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtwayland/+/338225]
+---
+ .../compositor_api/qwaylandquickhardwarelayer.cpp     | 11 +++++++++--
+ .../compositor_api/qwaylandquickhardwarelayer_p.h     |  3 ++-
+ .../vsp2/vsp2hardwarelayerintegration.cpp             |  2 +-
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/src/compositor/compositor_api/qwaylandquickhardwarelayer.cpp b/src/compositor/compositor_api/qwaylandquickhardwarelayer.cpp
+index 55ac61cf..0c5b2f0a 100644
+--- a/src/compositor/compositor_api/qwaylandquickhardwarelayer.cpp
++++ b/src/compositor/compositor_api/qwaylandquickhardwarelayer.cpp
+@@ -160,9 +160,16 @@ void QWaylandQuickHardwareLayer::componentComplete()
+         qWarning() << "No hardware layer integration. WaylandHarwareLayer has no effect.";
+ }
+ 
+-void QWaylandQuickHardwareLayer::disableSceneGraphPainting()
++void QWaylandQuickHardwareLayer::setSceneGraphPainting(bool enable)
+ {
+-    waylandItem()->setPaintEnabled(false);
++    waylandItem()->setPaintEnabled(enable);
++}
++
++// This should be called if QWaylandQuickHardwareLayer used as a native instance, not a qml component.
++void QWaylandQuickHardwareLayer::initialize()
++{
++    classBegin();
++    componentComplete();
+ }
+ 
+ QT_END_NAMESPACE
+diff --git a/src/compositor/compositor_api/qwaylandquickhardwarelayer_p.h b/src/compositor/compositor_api/qwaylandquickhardwarelayer_p.h
+index 90eaf85b..6b6a3f9a 100644
+--- a/src/compositor/compositor_api/qwaylandquickhardwarelayer_p.h
++++ b/src/compositor/compositor_api/qwaylandquickhardwarelayer_p.h
+@@ -67,7 +67,8 @@ public:
+     void classBegin() override;
+     void componentComplete() override;
+ 
+-    void disableSceneGraphPainting();
++    void setSceneGraphPainting(bool);
++    void initialize();
+ 
+ Q_SIGNALS:
+     void stackingLevelChanged();
+diff --git a/src/hardwareintegration/compositor/hardwarelayer/vsp2/vsp2hardwarelayerintegration.cpp b/src/hardwareintegration/compositor/hardwarelayer/vsp2/vsp2hardwarelayerintegration.cpp
+index e527e1a0..a01b2798 100644
+--- a/src/hardwareintegration/compositor/hardwarelayer/vsp2/vsp2hardwarelayerintegration.cpp
++++ b/src/hardwareintegration/compositor/hardwarelayer/vsp2/vsp2hardwarelayerintegration.cpp
+@@ -68,7 +68,7 @@ Vsp2Layer::Vsp2Layer(QWaylandQuickHardwareLayer *hwLayer, Vsp2HardwareLayerInteg
+     connect(hwLayer->waylandItem(), &QWaylandQuickItem::surfaceChanged, this, &Vsp2Layer::handleSurfaceChanged);
+     connect(hwLayer->waylandItem(), &QQuickItem::opacityChanged, this, &Vsp2Layer::updateOpacity);
+     connect(hwLayer->waylandItem()->window(), &QQuickWindow::afterSynchronizing, this, &Vsp2Layer::updatePosition);
+-    hwLayer->disableSceneGraphPainting();
++    hwLayer->setSceneGraphPainting(false);
+     QWaylandViewPrivate::get(hwLayer->waylandItem()->view())->independentFrameCallback = true;
+     handleSurfaceChanged();
+ }
