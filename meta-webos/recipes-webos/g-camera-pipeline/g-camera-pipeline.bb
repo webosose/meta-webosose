@@ -22,7 +22,7 @@ WEBOS_VERSION = "1.0.0-15_e9d8253132f6745c6cbff49a6e7fdd345b50aad9"
 PR = "r8"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.9_33a5a2fc7769ef61b441a05e86082c00e49e96d1"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.10_9edda6b0bbac1c5ad5fd86881242bc8e54a1b436"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
 DEPENDS_append_rpi = " userland"
