@@ -16,7 +16,7 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-8_95eb8b4675c408a7d6811aa835d38b7485946b21"
+WEBOS_VERSION = "1.0.0-9_c71d039ef8a7f81e8b594fcced1e87411982538b"
 PR = "r4"
 
 inherit systemd
