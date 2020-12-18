@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "nyx-lib luna-service2 json-c libxml2 sqlite3 glib-2.0"
 
-WEBOS_VERSION = "2.0.0-7_672040ca7bff4a9279af70c56e39dd9973603208"
+WEBOS_VERSION = "2.0.0-8_a831cafc09d10b5b4fe7c293ecd1683c714af664"
 PR = "r9"
 
 inherit webos_component
