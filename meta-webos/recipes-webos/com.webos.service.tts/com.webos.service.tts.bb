@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS text to speech service"
 SECTION = "webos/base"
@@ -13,7 +13,7 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-15_f327fe6b0cf5e63b6a4b41b7c68b05c7f589c538"
+WEBOS_VERSION = "1.0.0-17_a9ed72e469f9782df4aa8d692d52ba9dd838a0c6"
 PR = "r3"
 
 inherit webos_component
