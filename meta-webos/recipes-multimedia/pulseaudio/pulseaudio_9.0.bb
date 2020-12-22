@@ -37,7 +37,7 @@ DEPENDS_remove = "libatomic-ops"
 DEPENDS += "pmloglib"
 
 WEBOS_VERSION = "9.0-25_eb8044af1165efa8f5335965b64b4096b0877e70"
-PR = "r25"
+PR = "r26"
 
 inherit webos_enhanced_submissions
 
@@ -63,15 +63,14 @@ EXTRA_OECONF_remove = "--disable-gsettings"
 # but our old 9.* version doesn't support it
 EXTRA_OECONF_remove = "--disable-running-from-build-tree"
 
-EXTRA_OECONF_remove += "--disable-bluez5-ofono-headset"
-
-EXTRA_OECONF += "--enable-bluez5-ofono-headset"
-
-PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
-                   ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
-                   ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11', '', d)} \
-                   palm-resampler \
-                   dbus \
+# Compared to oe-core default, remove gsettings, add palm-resampler and add ofono even without 3g in DISTRO_FEATURES
+PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', '3g', 'ofono', '', d)} \
+    ${@bb.utils.filter('DISTRO_FEATURES', 'ipv6 systemd x11', d)} \
+    dbus \
+    palm-resampler \
+    ofono \
 "
 
 PACKAGECONFIG[palm-resampler] = "--enable-palm-resampler,--disable-palm-resampler"
@@ -101,6 +100,14 @@ RDEPENDS_pulseaudio-server_append = "\
     pulseaudio-module-rtp-send \
     pulseaudio-module-rtp-recv \
     pulseaudio-module-loopback \
+    pulseaudio-module-combine-sink \
+    ${@bb.utils.contains('PACKAGECONFIG', 'bluez5', '\
+            pulseaudio-lib-bluez5-util \
+            pulseaudio-module-bluetooth-discover \
+            pulseaudio-module-bluetooth-policy \
+            pulseaudio-module-bluez5-device \
+            pulseaudio-module-bluez5-discover \
+    ', '', d)} \
 "
 
 python populate_packages_prepend() {
