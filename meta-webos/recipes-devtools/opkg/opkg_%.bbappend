@@ -7,7 +7,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 SRC_URI:append = " \
     file://0001-Load-installed-files-before-update-file-ownership.patch \
     file://0002-Sort-opkg-list-file-content-to-speed-package-removal.patch \
-    file://0005-Add-symlink-path-validity.patch \
+    file://0003-Add-symlink-path-validity.patch \
 "
 SRC_URI:append:class-target = " \
     file://0004-Mask-S_ISUID-and-S_ISGID-permission-bits.patch \

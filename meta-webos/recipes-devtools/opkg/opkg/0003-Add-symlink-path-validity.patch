@@ -1,4 +1,4 @@
-From 699f146acaf40e83450a295b8c866e8426b2113d Mon Sep 17 00:00:00 2001
+From b8fbeb83238303d7472d9d6e9201cd89de1bbefa Mon Sep 17 00:00:00 2001
 From: Soonwon Hong <soonwon.hong@lge.com>
 Date: Fri, 19 May 2017 09:47:01 +0900
 Subject: [PATCH] Add symlink path validity
@@ -11,10 +11,10 @@ Subject: [PATCH] Add symlink path validity
  4 files changed, 10 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index e2a63a6..26f256c 100644
+index f19cece..c149f5c 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
-@@ -906,6 +906,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
+@@ -883,6 +883,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
      ar->extract_flags = ARCHIVE_EXTRACT_OWNER | ARCHIVE_EXTRACT_PERM |
          ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_UNLINK | ARCHIVE_EXTRACT_NO_OVERWRITE;
  
@@ -25,7 +25,7 @@ index e2a63a6..26f256c 100644
          ar->extract_flags &= ~ARCHIVE_EXTRACT_OWNER;
  
 diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
-index 06880a1..2511f71 100644
+index b49f5fb..5dcdc3d 100644
 --- a/libopkg/opkg_conf.c
 +++ b/libopkg/opkg_conf.c
 @@ -75,6 +75,7 @@ static opkg_option_t options[] = {
@@ -37,10 +37,10 @@ index 06880a1..2511f71 100644
      {"offline_root", OPKG_OPT_TYPE_STRING, &_conf.offline_root},
      {"overlay_root", OPKG_OPT_TYPE_STRING, &_conf.overlay_root},
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 31a8cb9..56fbef7 100644
+index 28e0624..4936cc4 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -105,6 +105,7 @@ typedef struct opkg_conf {
+@@ -107,6 +107,7 @@ typedef struct opkg_conf {
      char *gpg_trust_level;
      char *signature_type;
      int nodeps;             /* do not follow dependencies */
@@ -49,10 +49,10 @@ index 31a8cb9..56fbef7 100644
      char *offline_root;
      char *overlay_root;
 diff --git a/src/opkg.c b/src/opkg.c
-index 267b2f5..f018f3d 100644
+index 7510fe8..80a52f1 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -57,6 +57,7 @@ enum {
+@@ -60,6 +60,7 @@ enum {
      ARGS_OPT_AUTOREMOVE,
      ARGS_OPT_VOLATILE_CACHE,
      ARGS_OPT_COMBINE,
@@ -60,15 +60,15 @@ index 267b2f5..f018f3d 100644
      ARGS_OPT_NO_INSTALL_RECOMMENDS,
      ARGS_OPT_CACHE_DIR,
      ARGS_OPT_HOST_CACHE_DIR,
-@@ -105,6 +106,7 @@ static struct option long_options[] = {
+@@ -107,6 +108,7 @@ static struct option long_options[] = {
      {"noaction", 0, 0, ARGS_OPT_NOACTION},
      {"download-only", 0, 0, ARGS_OPT_DOWNLOAD_ONLY},
      {"nodeps", 0, 0, ARGS_OPT_NODEPS},
 +    {"no-install-insecure-symlink", 0, 0, ARGS_OPT_NO_INSTALL_INSECURE_SYMLINK},
      {"no-install-recommends", 0, 0, ARGS_OPT_NO_INSTALL_RECOMMENDS},
-     {"offline", 1, 0, 'o'},
      {"offline-root", 1, 0, 'o'},
-@@ -253,6 +255,9 @@ static int args_parse(int argc, char *argv[])
+     {"add-arch", 1, 0, ARGS_OPT_ADD_ARCH},
+@@ -256,6 +258,9 @@ static int args_parse(int argc, char *argv[])
          case ARGS_OPT_VOLATILE_CACHE:
              opkg_config->volatile_cache = 1;
              break;

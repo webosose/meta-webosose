@@ -1,4 +1,4 @@
-From 8f86794097052cfb17ab256825b8d21a7070df23 Mon Sep 17 00:00:00 2001
+From 4e4458d33ffb3c052791bfbf421bb0162d5fdff9 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
 Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
@@ -10,10 +10,10 @@ Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
  3 files changed, 11 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 9921f80..e2a63a6 100644
+index c149f5c..4d41260 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
-@@ -25,6 +25,7 @@
+@@ -27,6 +27,7 @@
  #include "opkg_conf.h"
  #include "opkg_message.h"
  #include "opkg_archive.h"
@@ -21,7 +21,7 @@ index 9921f80..e2a63a6 100644
  #include "file_util.h"
  #include "sprintf_alloc.h"
  #include "xfuncs.h"
-@@ -668,6 +669,14 @@ static int find_inner(struct archive *outer, const char *arname)
+@@ -654,6 +655,14 @@ static int find_inner(struct archive *outer, const char *arname)
          if (!entry)
              return -1;
  
@@ -37,10 +37,10 @@ index 9921f80..e2a63a6 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 0734067..31a8cb9 100644
+index 4936cc4..f04518f 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -122,6 +122,7 @@ typedef struct opkg_conf {
+@@ -125,6 +125,7 @@ typedef struct opkg_conf {
      int verbose_status_file;
      int compress_list_files;
      int short_description;
@@ -49,10 +49,10 @@ index 0734067..31a8cb9 100644
      /* ssl options: used only when opkg is configured with '--enable-curl',
       * otherwise always NULL or 0.
 diff --git a/src/opkg.c b/src/opkg.c
-index 650e278..267b2f5 100644
+index 80a52f1..3839932 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -153,6 +153,7 @@ static int args_parse(int argc, char *argv[])
+@@ -156,6 +156,7 @@ static int args_parse(int argc, char *argv[])
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
