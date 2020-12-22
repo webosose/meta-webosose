@@ -37,7 +37,7 @@ DEPENDS_remove = "libatomic-ops"
 DEPENDS += "pmloglib"
 
 WEBOS_VERSION = "9.0-25_eb8044af1165efa8f5335965b64b4096b0877e70"
-PR = "r26"
+PR = "r27"
 
 inherit webos_enhanced_submissions
 
@@ -72,8 +72,10 @@ PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5'
     palm-resampler \
     ofono \
 "
+PACKAGECONFIG_append_rpi = " rpi"
 
 PACKAGECONFIG[palm-resampler] = "--enable-palm-resampler,--disable-palm-resampler"
+PACKAGECONFIG[rpi] = "--enable-rpi,--disable-rpi"
 
 do_install_prepend() {
     install -v -m 0644 ${S}/volatiles.04_pulse ${WORKDIR}/volatiles.04_pulse
