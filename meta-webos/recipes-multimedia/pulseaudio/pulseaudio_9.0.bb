@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2020 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 require recipes-multimedia/pulseaudio/pulseaudio.inc
 
@@ -37,7 +37,7 @@ DEPENDS_remove = "libatomic-ops"
 DEPENDS += "pmloglib"
 
 WEBOS_VERSION = "9.0-25_eb8044af1165efa8f5335965b64b4096b0877e70"
-PR = "r24"
+PR = "r25"
 
 inherit webos_enhanced_submissions
 
@@ -45,7 +45,7 @@ inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-          file://pulseaudio.service \
+    file://pulseaudio.service \
 "
 
 S = "${WORKDIR}/git"
@@ -77,17 +77,17 @@ PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd',
 PACKAGECONFIG[palm-resampler] = "--enable-palm-resampler,--disable-palm-resampler"
 
 do_install_prepend() {
-   install -v -m 0644 ${S}/volatiles.04_pulse ${WORKDIR}/volatiles.04_pulse
+    install -v -m 0644 ${S}/volatiles.04_pulse ${WORKDIR}/volatiles.04_pulse
 }
 
 do_install_append() {
-   install -v -d ${D}${sysconfdir}/systemd/system
-   install -v -m 644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system/
-   install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
-   install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
+    install -v -d ${D}${sysconfdir}/systemd/system
+    install -v -m 644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system/
+    install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
+    install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
 }
 do_install_append_webos() {
-   install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
+    install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
 }
 do_install_append_qemuall() {
     install -v -m 644 ${S}/palm/qemux86_system.pa ${D}${sysconfdir}/pulse/system.pa
@@ -104,7 +104,6 @@ RDEPENDS_pulseaudio-server_append = "\
 "
 
 python populate_packages_prepend() {
-
     plugindir = d.expand('${libdir}/pulse-9.0/modules/')
     do_split_packages(d, plugindir, '^module-(.*)\.so$', 'pulseaudio-module-%s', 'PulseAudio module for %s', extra_depends='', prepend=True)
     do_split_packages(d, plugindir, '^lib(.*)\.so$', 'pulseaudio-lib-%s', 'PulseAudio library for %s', extra_depends='', prepend=True)
