@@ -48,7 +48,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r41"
+INC_PR = "r42"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "master"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "v8"
@@ -415,6 +415,7 @@ WEBOS_SYSTEM_BUS_DIRS_LEGACY_WAM_DEMO_APPLICATION = " \
     ${webos_sysbus_pubservicesdir}/${WAM_DEMO_APPLICATION}.service \
     ${webos_sysbus_prvrolesdir}/${WAM_DEMO_APPLICATION}.json \
     ${webos_sysbus_pubrolesdir}/${WAM_DEMO_APPLICATION}.json \
+    ${webos_sysbus_containersdir}/${WAM_DEMO_APPLICATION}.container.json \
 "
 
 SYSROOT_DIRS_append = " ${base_bindir}"
