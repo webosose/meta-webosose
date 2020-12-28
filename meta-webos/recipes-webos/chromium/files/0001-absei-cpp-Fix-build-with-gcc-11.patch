@@ -1,0 +1,39 @@
+From f0e4a8dcbe9663255f1aece1fe107c6ec9c09a02 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Mon, 3 May 2021 12:56:57 -0700
+Subject: [PATCH] absei-cpp: Fix build with gcc-11
+
+* fixes:
+http://gecko.lge.com/Errors/Details/165922
+
+FAILED: obj/third_party/abseil-cpp/absl/synchronization/graphcycles_internal/graphcycles.o
+i686-webos-linux-g++  -m32 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security  --sysroot=TOPDIR/BUILD/work/qemux86-webos-linux/webruntime/87.0.4280.88-16-r47.2/recipe-sysroot -MMD -MF obj/third_party/abseil-cpp/absl/synchronization/graphcycles_internal/graphcycles.o.d -DENABLE_BROWSER_CONTROL_WEBAPI=1 -DENABLE_SAMPLE_WEBAPI=1 -DENABLE_MEMORYMANAGER_WEBAPI=1 -DENABLE_NETWORK_ERROR_PAGE_CONTROLLER_WEBAPI=1 -DOZONE_PLATFORM_WAYLAND_EXTERNAL=1 -DOS_WEBOS=1 -DNEVA_VIDEO_HOLE=1 -DUSE_NEVA_APPRUNTIME=1 -DENABLE_WEBM_VIDEO_CODECS=1 -DUSE_CBE=1 -DUSE_PMLOG=1 -DUSE_NEVA_SUSPEND_MEDIA_CAPTURE=1 -DUSE_FILESCHEME_CODECACHE=1 -DUSE_LOCAL_STORAGE_MANAGER=1 -DWEBOS_SUBMISSION_NUMBER=16 -DUSE_LTTNG=1 -DUSE_UDEV -DUSE_AURA=1 -DUSE_GLIB=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DCR_SYSROOT_HASH=d967bcef40477dbc39acef141ff22bf73f3e7cdb -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -DABSL_ALLOCATOR_NOTHROW=1 -I../../git/src/neva -Igen/neva -I../../git/src -Igen -I../../git/src/third_party/abseil-cpp -Wno-unused-variable -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -pthread -m32 -msse2 -mfpmath=sse -mmmx -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -O2 -fno-ident -fdata-sections -ffunction-sections -fno-omit-frame-pointer -g0 -fvisibility=hidden -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-comments -Wno-packed-not-aligned -Wno-attributes -Wno-missing-field-initializers -Wno-unused-parameter -std=gnu++14 -fno-exceptions -fno-rtti --sysroot=../../recipe-sysroot -fvisibility-inlines-hidden -Wno-narrowing -Wno-class-memaccess -c ../../git/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc -o obj/third_party/abseil-cpp/absl/synchronization/graphcycles_internal/graphcycles.o
+../../git/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc: In member function 'void absl::synchronization_internal::GraphCycles::RemoveNode(void*)':
+../../git/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc:451:26: error: 'numeric_limits' is not a member of 'std'
+  451 |   if (x->version == std::numeric_limits<uint32_t>::max()) {
+      |                          ^~~~~~~~~~~~~~
+../../git/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc:451:49: error: expected primary-expression before '>' token
+  451 |   if (x->version == std::numeric_limits<uint32_t>::max()) {
+      |                                                 ^
+../../git/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc:451:52: error: '::max' has not been declared; did you mean 'std::max'?
+  451 |   if (x->version == std::numeric_limits<uint32_t>::max()) {
+      |                                                    ^~~
+      |                                                    std::max
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ .../abseil-cpp/absl/synchronization/internal/graphcycles.cc      | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc b/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
+index 19f9aab5b1..ab9d7f80bc 100644
+--- a/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
++++ b/src/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
+@@ -36,6 +36,7 @@
+ #include "absl/synchronization/internal/graphcycles.h"
+ 
+ #include <algorithm>
++#include <limits>
+ #include <array>
+ #include "absl/base/internal/hide_ptr.h"
+ #include "absl/base/internal/raw_logging.h"

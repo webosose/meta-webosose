@@ -22,7 +22,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r47"
+INC_PR = "r48"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -106,7 +106,6 @@ GN_ARGS += "\
 
 # Following options help build with icecc
 GN_ARGS += "\
-    linux_use_bundled_binutils=false\
     use_debug_fission=false\
 "
 

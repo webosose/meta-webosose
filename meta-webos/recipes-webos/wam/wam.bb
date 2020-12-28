@@ -20,7 +20,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-51_aa61db4d5d16060fc50018b9d0c56252259837c5"
-PR = "r38"
+PR = "r39"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -114,7 +114,13 @@ do_configure_append() {
        sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-encoder \\' ${B}/webapp-mgr.sh
     fi
 
-    sed -i '/--enable-aggressive-release-policy \\/a\    --local-storage-limit-per-second-level-domain=10 \\' ${B}/webapp-mgr.sh
+    sed -i '/export WAM_MEM_FLAGS=\" \\/a\    --local-storage-limit-per-second-level-domain=10 \\' ${B}/webapp-mgr.sh
+
+    # Extra added for chromium87
+    sed -i '/--ozone-platform/d' ${B}/webapp-mgr.sh
+    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-gpu-vsync \\' ${B}/webapp-mgr.sh
+    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --alsa-input-device=pulse \\' ${B}/webapp-mgr.sh
+    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-accurate-seek \\' ${B}/webapp-mgr.sh
 }
 
 do_configure_append_qemux86() {

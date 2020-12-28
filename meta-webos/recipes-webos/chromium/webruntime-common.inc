@@ -34,7 +34,6 @@ inherit webos_prerelease_dep
 inherit pythonnative
 
 REPO_VERSION := "${@['','_${WEBRUNTIME_REPO_VERSION}'][d.getVar('WEBRUNTIME_REPO_VERSION').strip() != '']}"
-require webruntime-repo${REPO_VERSION}.inc
 
 WEBOS_REPO_NAME ?= "chromium84"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "@chromium84"
@@ -97,6 +96,11 @@ GN_ARGS = "\
 # http://patchwork.openembedded.org/patch/77755/
 EXTRA_OEGN_GOLD = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'use_gold=true', 'use_gold=false', d)}"
 GN_ARGS += "${EXTRA_OEGN_GOLD}"
+
+# The last digits in the submission format are used for typical submissions number.
+# The submission formats; submissions/[number] or submissions/[branch name].[number]
+WEBOS_SUBMISSION_NUMBER="${@ '${WEBOS_SUBMISSION}'.split('.')[-1] }"
+GN_ARGS_append = " webos_submission_number=${WEBOS_SUBMISSION_NUMBER}"
 
 TARGET_CPU = "${@gn_arch_name(TARGET_ARCH)}"
 GN_ARGS_append = " target_cpu=\"${TARGET_CPU}\""
