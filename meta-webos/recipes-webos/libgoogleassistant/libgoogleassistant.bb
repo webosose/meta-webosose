@@ -67,5 +67,3 @@ INSANE_SKIP_${PN} = "ldflags textrel"
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/libtatlas.so"
 FILES_${PN}-dev += "${libdir}/libgoogleassistant.so"
-
-PNBLACKLIST[libgoogleassistant] ?= "Needs to be updated for new protobuf"

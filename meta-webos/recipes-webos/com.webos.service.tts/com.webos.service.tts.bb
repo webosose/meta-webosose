@@ -28,7 +28,3 @@ S = "${WORKDIR}/git"
 EXTRA_OECMAKE += "-DGOOGLEAPIS_PATH=${STAGING_INCDIR}/google"
 
 FILES_${PN} += "${webos_sysbus_datadir}"
-
-LDFLAGS_append = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd', '', d)}"
-
-PNBLACKLIST[com.webos.service.tts] ?= "Needs to be updated for new protobuf"

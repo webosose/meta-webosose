@@ -12,6 +12,7 @@ MEDIA_raspberrypi3-64 = ""
 MEDIA_raspberrypi4-64 = ""
 
 TTSSERVICE = " \
+    com.webos.service.tts \
 "
 
 CIMSERVICE = " \
