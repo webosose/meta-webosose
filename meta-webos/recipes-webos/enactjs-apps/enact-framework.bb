@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
 SUMMARY = "Enact moonstone standard override used for Enact apps"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -69,14 +69,14 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     parse-headers@2.0.3 \
     xtend@4.0.2 \
     xhr@2.5.0 \
-    ilib@14.6.0 \
+    ilib@14.6.2 \
     direction@1.0.4 \
 "
 
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r7"
+PR = "r8"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
