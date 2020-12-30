@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Unified search service"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 libpbnjson glib-2.0 procps sqlite3"
 
-WEBOS_VERSION = "1.0.0-1_3839125533d2a477fa27301b4936af6500aae954"
+WEBOS_VERSION = "1.0.0-2_99419b8ff02f6c165cfc50b4d4fed1e640e22a32"
 PR = "r0"
 
 inherit webos_component
