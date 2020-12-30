@@ -1,0 +1,87 @@
+From 5261cbe065cce858d0507dd1598988ea8275c2c9 Mon Sep 17 00:00:00 2001
+From: "cathy.park" <cathy.park@lge.com>
+Date: Wed, 27 Jan 2021 10:53:26 +0900
+Subject: [PATCH] Fix build error for qtmultimedia dev branch
+
+---
+ src/imports/multimedia/qdeclarativeplaylist_p.h        | 2 +-
+ src/plugins/gstreamer/camerabin/camerabincontainer.cpp | 1 +
+ src/qtmultimediaquicktools/qdeclarativevideooutput.cpp | 4 ++--
+ src/qtmultimediaquicktools/qdeclarativevideooutput_p.h | 4 ++--
+ tests/tests.pro                                        | 2 +-
+ 5 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/src/imports/multimedia/qdeclarativeplaylist_p.h b/src/imports/multimedia/qdeclarativeplaylist_p.h
+index fa221a05..d086f26b 100644
+--- a/src/imports/multimedia/qdeclarativeplaylist_p.h
++++ b/src/imports/multimedia/qdeclarativeplaylist_p.h
+@@ -141,7 +141,7 @@ public:
+                             QDeclarativePlaylistItem* item) {
+         static_cast<QDeclarativePlaylist*>(list->object)->addItem(item->source());
+     }
+-    static int item_count(QQmlListProperty<QDeclarativePlaylistItem> *list) {
++    static qsizetype item_count(QQmlListProperty<QDeclarativePlaylistItem> *list) {
+         return static_cast<QDeclarativePlaylist*>(list->object)->itemCount();
+     }
+     static void item_clear(QQmlListProperty<QDeclarativePlaylistItem> *list) {
+diff --git a/src/plugins/gstreamer/camerabin/camerabincontainer.cpp b/src/plugins/gstreamer/camerabin/camerabincontainer.cpp
+index 0de9b25d..842956af 100644
+--- a/src/plugins/gstreamer/camerabin/camerabincontainer.cpp
++++ b/src/plugins/gstreamer/camerabin/camerabincontainer.cpp
+@@ -39,6 +39,7 @@
+ 
+ #include <QtMultimedia/private/qtmultimediaglobal_p.h>
+ #include "camerabincontainer.h"
++#include <QtCore/qregularexpression.h>
+ #include <private/qgstutils_p.h>
+ 
+ #include <QtCore/qdebug.h>
+diff --git a/src/qtmultimediaquicktools/qdeclarativevideooutput.cpp b/src/qtmultimediaquicktools/qdeclarativevideooutput.cpp
+index 5f5b2f2a..0a58a328 100644
+--- a/src/qtmultimediaquicktools/qdeclarativevideooutput.cpp
++++ b/src/qtmultimediaquicktools/qdeclarativevideooutput.cpp
+@@ -865,13 +865,13 @@ void QDeclarativeVideoOutput::filter_append(QQmlListProperty<QAbstractVideoFilte
+         self->m_backend->appendFilter(value);
+ }
+ 
+-int QDeclarativeVideoOutput::filter_count(QQmlListProperty<QAbstractVideoFilter> *property)
++qsizetype QDeclarativeVideoOutput::filter_count(QQmlListProperty<QAbstractVideoFilter> *property)
+ {
+     QDeclarativeVideoOutput *self = static_cast<QDeclarativeVideoOutput *>(property->object);
+     return self->m_filters.count();
+ }
+ 
+-QAbstractVideoFilter *QDeclarativeVideoOutput::filter_at(QQmlListProperty<QAbstractVideoFilter> *property, int index)
++QAbstractVideoFilter *QDeclarativeVideoOutput::filter_at(QQmlListProperty<QAbstractVideoFilter> *property, qsizetype index)
+ {
+     QDeclarativeVideoOutput *self = static_cast<QDeclarativeVideoOutput *>(property->object);
+     return self->m_filters.at(index);
+diff --git a/src/qtmultimediaquicktools/qdeclarativevideooutput_p.h b/src/qtmultimediaquicktools/qdeclarativevideooutput_p.h
+index a7ed5c36..4046c275 100644
+--- a/src/qtmultimediaquicktools/qdeclarativevideooutput_p.h
++++ b/src/qtmultimediaquicktools/qdeclarativevideooutput_p.h
+@@ -171,8 +171,8 @@ private:
+     bool createBackend(QMediaService *service);
+ 
+     static void filter_append(QQmlListProperty<QAbstractVideoFilter> *property, QAbstractVideoFilter *value);
+-    static int filter_count(QQmlListProperty<QAbstractVideoFilter> *property);
+-    static QAbstractVideoFilter *filter_at(QQmlListProperty<QAbstractVideoFilter> *property, int index);
++    static qsizetype filter_count(QQmlListProperty<QAbstractVideoFilter> *property);
++    static QAbstractVideoFilter *filter_at(QQmlListProperty<QAbstractVideoFilter> *property, qsizetype index);
+     static void filter_clear(QQmlListProperty<QAbstractVideoFilter> *property);
+ 
+     SourceType m_sourceType;
+diff --git a/tests/tests.pro b/tests/tests.pro
+index 2bd49bd9..085b2238 100644
+--- a/tests/tests.pro
++++ b/tests/tests.pro
+@@ -1,5 +1,5 @@
+ TEMPLATE = subdirs
+-SUBDIRS += auto
++#SUBDIRS += auto
+ 
+ # Disabled since we don't have any source.
+ # SUBDIRS +=  benchmarks manual
+-- 
+2.25.1
+

@@ -1,8 +1,6 @@
-# Copyright (c) 2016-2020 LG Electronics, Inc.
+# Copyright (c) 2016-2021 LG Electronics, Inc.
 
-inherit webos_qmake5
-
-EXTENDPRAUTO_append = "webos5"
+EXTENDPRAUTO_append = "webos6"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
