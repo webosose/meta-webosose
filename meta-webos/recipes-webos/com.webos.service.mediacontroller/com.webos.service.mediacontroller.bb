@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Mediacontroller service"
 AUTHOR = "Sapna Kumari"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib"
 
-WEBOS_VERSION = "1.0.0-18_111b173460b396bd08ec85f2ccd99efd90691770"
+WEBOS_VERSION = "1.0.0-19_48edff6c16ba27d0f782264c847588594f8d9517"
 PR = "r2"
 
 inherit webos_component
