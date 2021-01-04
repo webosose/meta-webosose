@@ -1,15 +1,26 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 # webOS system should be ready to have read-only /etc folder
 # thus we move timezone/localtime to other place (in volatile partition)
 
-EXTENDPRAUTO_append = "webos6"
+EXTENDPRAUTO_append = "webos7"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += "file://etcetera.patch"
 
 inherit webos_filesystem_paths
+
+do_compile () {
+        for zone in ${TZONES}; do \
+            ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo -L /dev/null \
+                ${S}/${zone} ; \
+            ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo/posix -L /dev/null \
+                ${S}/${zone} ; \
+            ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo/right -L ${S}/leapseconds \
+                ${S}/${zone} ; \
+        done
+}
 
 do_install_append() {
     install -d "${D}/${webos_sysmgr_localstatedir}/preferences"

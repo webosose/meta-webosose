@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "libwebosi18n library can be used by non-QT C++ components for localization"
 AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "libpbnjson boost"
 
-WEBOS_VERSION = "1.0.1-4_c315f95234dba3e1ef8581f5225b72ec95707eed"
+WEBOS_VERSION = "1.0.1-5_98bbb3b27b73a79be1bf0d22527f5ebf9457ef9e"
 PR = "r3"
 
 inherit webos_component
