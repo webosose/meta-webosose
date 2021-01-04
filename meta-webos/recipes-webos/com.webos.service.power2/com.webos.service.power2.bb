@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Power manager service handles device suspend/resume/display states"
 AUTHOR = "Abhsiehk Srivastava <abhishek.srivastava@lge.com>"
@@ -8,7 +8,7 @@ SECTION = "webos/libs"
 
 DEPENDS = "luna-service2 glib-2.0 libpmscore virtual/pmssupportreference pmloglib libpbnjson nyx-lib"
 
-WEBOS_VERSION = "1.0.0-7_8f890aebf8d7834e3efe1c2b5fcd62fb1cbdf56c"
+WEBOS_VERSION = "1.0.0-8_de73b2ccafb37df2b0dcc4658fa3bede3586bb88"
 PR = "r1"
 
 inherit webos_component
