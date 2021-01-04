@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "Shareable QML components for webOS"
 AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative pmloglib librdx qt-features-webos"
 
-WEBOS_VERSION = "1.0.0-50_1cd7d2c25b19f61579d069c10fc61010054e1bdb"
+WEBOS_VERSION = "1.0.0-51_b60d74abb3591e86d8fa84531350bedff7a34c28"
 PR = "r14"
 
 inherit webos_qmake5

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "luna-surfacemanager qtwayland "
 AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
@@ -10,7 +10,7 @@ DEPENDS_append_class-target = " webos-wayland-extensions qt-features-webos"
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-WEBOS_VERSION = "5.12.4-162_84428b39d3e82bc8fff79b3691bb6b237619aaa8"
+WEBOS_VERSION = "5.12.4-163_d59c34ef84c28508972616bcce288c75c750db50"
 EXTENDPRAUTO_append = "webos20"
 
 LIC_FILES_CHKSUM = " \
