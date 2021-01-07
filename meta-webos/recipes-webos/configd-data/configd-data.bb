@@ -1,13 +1,15 @@
-# Copyright (c) 2014-2018 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS Configuration Service data"
 AUTHOR  = "SangWook Han <sangwook.han@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
-WEBOS_VERSION = "1.0.0-1_eddb4920091287b38b6415984bfbcc85a6934b22"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-2_26762505fae3b2b7c2603d85ee05712abd647897"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
