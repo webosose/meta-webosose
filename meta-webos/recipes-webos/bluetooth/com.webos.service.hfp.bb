@@ -1,15 +1,17 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Bluetooth HFP(Hands Free Profile) support service"
 AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+                    file://oss-pkg-info.yaml;md5=63319cd2c369569050a7c0cc246fc8ba \
+"
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
 
-WEBOS_VERSION = "1.0.0-25_222b99bdfad6b8aaa82e1b5e9a81629655fd32dc"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-26_e5dbe7ae6b7d2c85697aaceb05384de95c1b112e"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
