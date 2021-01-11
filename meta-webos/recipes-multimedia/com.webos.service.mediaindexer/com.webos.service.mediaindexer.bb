@@ -1,12 +1,12 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Media indexer service"
 AUTHOR = "Jaehoon Lee <jaehoon85.lee@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-4_2de2d7ab05a696f4f72072f9e001163dce6e6381"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-8_19f052fb8c2041a3d9ae36a396ed6c0efe1f64b9"
+PR = "r5"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -15,7 +15,7 @@ inherit webos_system_bus
 inherit webos_public_repo
 
 # third party libraries
-DEPENDS = "glib-2.0 libmtp libupnp libedit gstreamer1.0 gstreamer1.0-plugins-base taglib libpng libjpeg-turbo gdk-pixbuf"
+DEPENDS = "glib-2.0 libmtp libupnp libedit gstreamer1.0 gstreamer1.0-plugins-base taglib libpng libjpeg-turbo gdk-pixbuf jpeg libexif giflib"
 # webos dependencies
 DEPENDS += "luna-service2 pmloglib libpbnjson"
 # webos runtime dependencies
