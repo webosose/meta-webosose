@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2018 LG Electronics, Inc.
+# Copyright (c) 2015-2021 LG Electronics, Inc.
 #
 # webos_app_generate_security_files
 #
@@ -82,6 +82,7 @@ def webos_app_generate_security_files_write_role_file(d, app_info):
 
     app_id = app_info["id"]
     type = app_info["type"]
+    trustLevelKey = "oem"
 
     role = {}
     if type == "native":
@@ -91,11 +92,13 @@ def webos_app_generate_security_files_write_role_file(d, app_info):
         role["type"]  = "regular"
         role["allowedNames"] = [app_id + "*"]
         role["permissions"] = [{"service": app_id, "outbound": ["*"] }]
+        role["trustLevel"] = trustLevelKey
     else:
         role["appId"] = app_id
         role["type"]  = "regular"
         role["allowedNames"] = [app_id + "-*"]
         role["permissions"] = [{"service": app_id + "-*", "outbound": ["*"] }]
+        role["trustLevel"] = trustLevelKey
 
     dst_dir   = d.getVar("D", True)
     roles_dir = d.getVar("webos_sysbus_rolesdir", True)
