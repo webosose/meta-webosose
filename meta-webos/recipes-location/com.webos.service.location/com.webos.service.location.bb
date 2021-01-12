@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 DESCRIPTION = "location framework which provides location based services implementing location handlers, plugins, and Luna location service"
 AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 libpbnjson libxml2 pmloglib luna-service2 luna-prefs loc-utils boost"
 
-WEBOS_VERSION = "1.0.0-87_7a9800418ed1e502fefb6cf789359af19858ff14"
+WEBOS_VERSION = "1.0.0-88_fc42b2fa2c5f6837f2349ec3b35a97821f29eb89"
 PR = "r1"
 
 inherit webos_component
