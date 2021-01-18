@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS Flow manager"
 AUTHOR  = "Namsu Kim <namsu81.kim@lge.com>"
@@ -17,7 +17,7 @@ inherit webos_system_bus
 inherit webos_enhanced_submissions
 
 require flowmanager.inc
-PR = "r3"
+PR = "r4"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
@@ -65,7 +65,6 @@ do_npm_install() {
 
 addtask npm_install after do_configure before do_compile
 
-#SYSTEMD_SERVICE_${PN} = "flowmgr.service"
 S = "${WORKDIR}/git"
 
 do_compile_append() {
@@ -75,6 +74,3 @@ do_compile_append() {
 }
 
 FILES_${PN} += "${webos_servicesdir}"
-
-# From http://gpro.lge.com/250943
-SRC_URI += "file://0001-CMakeLists.txt-fix-systemd-service-file-installation.patch"

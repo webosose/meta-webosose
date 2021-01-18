@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 DESCRIPTION = "webOS update agent"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 
 DEPENDS = "curl glib-2.0 libpbnjson luna-service2 pmloglib"
 
-WEBOS_VERSION = "1.0.0-22_8be456173818ab6e1c9bcea6c88e8dc67b5dfce5"
+WEBOS_VERSION = "1.0.0-23_e00bf9b9fb23241b0f4dce06ca5a787932f04bee"
 PR = "r3"
 
 inherit webos_cmake

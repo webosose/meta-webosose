@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Intent Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson"
 
-WEBOS_VERSION = "1.0.0-13_c63c237bf6904eddd7145d8e92bad1fc5b644f96"
+WEBOS_VERSION = "1.0.0-14_0f957aec5a8661b6f045e47f408df4485d5e2f46"
 PR = "r1"
 
 inherit webos_component
