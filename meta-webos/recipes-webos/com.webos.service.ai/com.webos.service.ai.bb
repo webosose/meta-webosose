@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 SUMMARY = "Ai service for voice/face/gesture recognition"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -16,7 +16,7 @@ COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-9_c71d039ef8a7f81e8b594fcced1e87411982538b"
+WEBOS_VERSION = "1.0.0-10_bca8a9b3669caae7173ea6196cdbfd86a88bb666"
 PR = "r4"
 
 inherit systemd
