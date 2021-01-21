@@ -1,0 +1,130 @@
+From 843c5b855f8776d17139725401195ba3ab0d1fea Mon Sep 17 00:00:00 2001
+From: "jonghen.han" <jonghen.han@lge.com>
+Date: Wed, 20 Jan 2021 19:40:59 +0900
+Subject: [PATCH] webOS: Apply new ACG policy in test applications
+
+:Release Notes:
+Apply new ACG policy in test applications
+
+:Detailed Notes:
+This commit support to new ACG policy.
+
+:Testing Performed:
+- Build is successfully done.
+- Verified that local build version.
+
+:Issues Addressed:
+[PLAT-132421] [ACG] ocserverbasicops - ACG Migration not done
+[PLAT-132419] [ACG] occlientbasicops - ACG Migration not done
+[PLAT-132310] [ACG]com.example.service.iotivity.server- No TrustLevel
+[PLAT-132309] [ACG]com.example.service.iotivity.client - No TrustLevel
+[PLAT-132886] [ACG] Migrate com.example.app.iotivity to enhanced ACG
+---
+ .../stack/samples/webos/com.example.app.iotivity/appinfo.json  | 2 +-
+ .../files/sysbus/com.example.service.iotivity.client.perm.json | 2 +-
+ .../files/sysbus/com.example.service.iotivity.client.role.json | 1 +
+ .../files/sysbus/com.example.service.iotivity.server.perm.json | 2 +-
+ .../files/sysbus/com.example.service.iotivity.server.role.json | 1 +
+ .../webos/secure/files/sysbus/occlientbasicops.perm.json       | 3 ++-
+ .../webos/secure/files/sysbus/occlientbasicops.role.json       | 1 +
+ .../webos/secure/files/sysbus/ocserverbasicops.perm.json       | 3 ++-
+ .../webos/secure/files/sysbus/ocserverbasicops.role.json       | 1 +
+ 9 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json
+index 69e10e393..3797b4cd3 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json
+@@ -7,5 +7,5 @@
+     "title": "IoTivity Sampler",
+     "icon": "icon.png",
+     "uiRevision": 2,
+-    "requiredPermissions": ["all"]
++    "requiredPermissions":[]
+ }
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.perm.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.perm.json
+index 35fcfd965..b8f185f24 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.perm.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.perm.json
+@@ -1,3 +1,3 @@
+ {
+-  "com.example.service.iotivity.client*" : ["activities.manage", "networking.internal"]
++  "com.example.service.iotivity.client*" : ["activity.query", "activity.operation", "networkconnection.query", "networkconnection.management"]
+ }
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.role.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.role.json
+index 527f6a337..93cdf5cdf 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.role.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.role.json
+@@ -1,5 +1,6 @@
+ {
+     "appId" : "com.example.service.iotivity.client",
++    "trustLevel": "oem",
+     "allowedNames" : ["com.example.service.iotivity.client*"],
+     "type" : "regular",
+     "permissions" : [
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.perm.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.perm.json
+index d16dc7691..e08c74c91 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.perm.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.perm.json
+@@ -1,3 +1,3 @@
+ {
+-  "com.example.service.iotivity.server*" : ["activities.manage", "networking.internal"]
++  "com.example.service.iotivity.server*" : ["activity.query", "activity.operation", "networkconnection.query", "networkconnection.management"]
+ }
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.role.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.role.json
+index 95b5ee3d6..49ca6eecd 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.role.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.role.json
+@@ -1,5 +1,6 @@
+ {
+     "appId" : "com.example.service.iotivity.server",
++    "trustLevel": "oem",
+     "allowedNames" : ["com.example.service.iotivity.server*"],
+     "type" : "regular",
+     "permissions" : [
+diff --git a/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json b/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json
+index 37aab837f..94eb2cc44 100644
+--- a/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json
++++ b/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json
+@@ -1,5 +1,6 @@
+ {
+     "org.ocf.webossample.occlientbasicops*": [
+-        "networking.internal"
++        "networkconnection.query",
++        "networkconnection.management"
+     ]
+ }
+diff --git a/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.role.json b/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.role.json
+index 53606eb6d..1c4ba40e1 100644
+--- a/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.role.json
++++ b/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.role.json
+@@ -1,5 +1,6 @@
+ {
+     "exeName":"/usr/palm/services/org.ocf.webossample.occlientbasicops/occlientbasicops",
++    "trustLevel":"oem",
+     "type":"regular",
+     "allowedNames":["org.ocf.webossample.occlientbasicops*"],
+     "permissions": [
+diff --git a/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json b/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json
+index 212f0cd9c..529cb1d12 100644
+--- a/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json
++++ b/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json
+@@ -1,5 +1,6 @@
+ {
+     "org.ocf.webossample.ocserverbasicops*": [
+-        "networking.internal"
++        "networkconnection.query",
++        "networkconnection.management"
+     ]
+ }
+diff --git a/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.role.json b/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.role.json
+index be1346bc8..d87fa2214 100644
+--- a/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.role.json
++++ b/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.role.json
+@@ -1,5 +1,6 @@
+ {
+     "exeName":"/usr/palm/services/org.ocf.webossample.ocserverbasicops/ocserverbasicops",
++    "trustLevel":"oem",
+     "type":"regular",
+     "allowedNames":["org.ocf.webossample.ocserverbasicops*"],
+     "permissions": [

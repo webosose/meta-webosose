@@ -23,7 +23,7 @@ SRCREV_FORMAT = "main"
 do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/iotivity"
-PR = "r1"
+PR = "r2"
 
 inherit scons pkgconfig webos_component webos_filesystem_paths
 
@@ -32,6 +32,7 @@ IOTIVITY_TARGET_ARCH = "${TARGET_ARCH}"
 SRC_URI += " \
     file://0001-Do-independent-build-of-csdk-samples.patch \
     file://0002-webOS-Fix-build-error-detected-by-gcc8.patch \
+    file://0001-webOS-Apply-new-ACG-policy-in-test-applications.patch \
 "
 
 EXTRA_OESCONS += " \
