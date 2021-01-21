@@ -1,6 +1,6 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos11"
+EXTENDPRAUTO_append = "webos10"
 
 # Enable c-ares for DNS lookup
 PACKAGECONFIG[c-ares] = "--enable-ares,--disable-ares,c-ares"
@@ -18,6 +18,3 @@ PACKAGECONFIG_append = " ssl"
 PACKAGECONFIG_append = " rtsp"
 
 PACKAGECONFIG_append = " dict gopher imap pop3 smtp telnet tftp"
-
-# libidn2 is LGPLv3, remove support for it
-PACKAGECONFIG_remove = "libidn"
