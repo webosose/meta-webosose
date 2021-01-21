@@ -17,12 +17,12 @@ inherit python3native
 
 export PYTHON = "python3"
 
-NODE_VERSION = "12.18.3"
+NODE_VERSION = "12.20.1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.xz;name=node \
 "
-SRC_URI[node.sha256sum] = "71158026579487422fd13cc2553b34cddb76519098aa6030faab52f88c6e0d0e"
+SRC_URI[node.sha256sum] = "e00eee325d705b2bfa9929b7d061eb2315402d7e8548945eac9870bf84321853"
 
 S = "${WORKDIR}/git"
 
