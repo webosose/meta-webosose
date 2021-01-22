@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Memory Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
 
-WEBOS_VERSION = "1.0.0-44_3ab26f18ee24afc44a3d29ddca54e48b0ee2c713"
+WEBOS_VERSION = "1.0.0-45_52ffebacc92cff5108f11d5d1dbd3246efbddc24"
 PR = "r5"
 
 inherit webos_component
