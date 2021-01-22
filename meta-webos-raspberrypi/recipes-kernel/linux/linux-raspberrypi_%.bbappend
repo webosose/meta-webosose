@@ -1,6 +1,6 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi25"
+EXTENDPRAUTO_append = "webosrpi26"
 
 CMDLINE_append = " rw cgroup_memory=1 cgroup_enable=memory"
 CMDLINE_remove_sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"

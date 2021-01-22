@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
 # The MACHINE.conf for every MACHINE that has an Raspberry Pi BSP must require this
 # file.
@@ -56,6 +56,7 @@ RPI_KERNEL_MODULES_append_raspberrypi4 = " \
     kernel-module-bcm2835-codec \
     kernel-module-bcm2835-v4l2 \
     kernel-module-bnep \
+    kernel-module-cdc-ether \
     kernel-module-cmac \
     kernel-module-fixed \
     kernel-module-joydev \

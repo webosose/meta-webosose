@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2020 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 SUMMARY = "Systemd service files for system services"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -17,7 +17,7 @@ PROVIDES = "initscripts"
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-WEBOS_VERSION = "3.0.0-57_a3ccb23bee4faea2345c3cec632a13a0c444f20a"
+WEBOS_VERSION = "3.0.0-58_47dd96dde5923d58a166effd569abd06aa67f5d5"
 PR = "r15"
 
 inherit webos_component
