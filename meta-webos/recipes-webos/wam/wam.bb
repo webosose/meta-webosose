@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2020 LG Electronics, Inc.
+# Copyright (c) 2015-2021 LG Electronics, Inc.
 
 SUMMARY = "WebAppMgr is responsible for running web applications on webOS"
 AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
@@ -19,7 +19,7 @@ RDEPENDS_${PN} += "qtbase-plugins"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-48_7429e16be8098562618c325f5c327dca24162d70"
+WEBOS_VERSION = "1.0.2-49_0ec7ab93aa6e91c901443b3c1334e137e739bacf"
 PR = "r37"
 
 inherit webos_enhanced_submissions
