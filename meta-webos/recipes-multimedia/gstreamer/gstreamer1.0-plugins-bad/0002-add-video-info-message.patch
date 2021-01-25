@@ -1,9 +1,21 @@
---- a/ext/wayland/gstwaylandsink.c	2019-04-19 18:16:36.000000000 +0900
-+++ b/ext/wayland/gstwaylandsink.c	2020-12-07 22:34:22.000000000 +0900
-@@ -541,6 +541,34 @@
+From a12b2fa0d9c7b2a654a3225b146d4eed8b99ae9a Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Mon, 25 Jan 2021 14:17:35 -0800
+Subject: [PATCH] add video info message
+
+---
+ ext/wayland/gstwaylandsink.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
+index f10582a46..4caf0d32c 100644
+--- a/ext/wayland/gstwaylandsink.c
++++ b/ext/wayland/gstwaylandsink.c
+@@ -540,6 +540,34 @@ gst_wayland_create_pool (GstWaylandSink * sink, GstCaps * caps)
+   return pool;
  }
  
- static gboolean
++static gboolean
 +gst_wayland_sink_post_video_info_message (GstWaylandSink * sink)
 +{
 +  g_return_val_if_fail (sink != NULL, FALSE);
@@ -31,11 +43,10 @@
 +  return ret;
 +}
 +
-+static gboolean
+ static gboolean
  gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
  {
-   GstWaylandSink *sink;
-@@ -558,6 +586,11 @@
+@@ -558,6 +586,11 @@ gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
    format = GST_VIDEO_INFO_FORMAT (&sink->video_info);
    sink->video_info_changed = TRUE;
  

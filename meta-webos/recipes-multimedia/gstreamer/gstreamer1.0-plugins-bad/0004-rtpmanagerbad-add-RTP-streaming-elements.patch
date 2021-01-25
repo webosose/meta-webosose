@@ -1,4 +1,4 @@
-From 3ef737605a3df19c4d52736203038037bcaf4ae2 Mon Sep 17 00:00:00 2001
+From f03dee860e8224d3370c5d9d08c2e431c6ee078b Mon Sep 17 00:00:00 2001
 From: Marc Leeman <marc.leeman@gmail.com>
 Date: Mon, 3 Jun 2019 20:08:23 +0000
 Subject: [PATCH] rtpmanagerbad: add RTP streaming elements
@@ -98,25 +98,27 @@ rtpmanagerbad: nit URI notation correction
 
 In an URI, the first key/value pair should not have an ampersand, the
 parser did not die though.
+
+Upstream-Status: Backport [3ef737605a3df19c4d52736203038037bcaf4ae2 from 1.17.1]
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
- configure.ac                    |   2 +
- gst/meson.build                 |   2 +-
- gst/rtp/Makefile.am             |  17 +
- gst/rtp/gstrtp-utils.c          |  39 ++
- gst/rtp/gstrtp-utils.h          |   8 +
- gst/rtp/gstrtpsink.c            | 581 +++++++++++++++++++++++++
- gst/rtp/gstrtpsink.h            |  72 ++++
- gst/rtp/gstrtpsrc.c             | 731 ++++++++++++++++++++++++++++++++
- gst/rtp/gstrtpsrc.h             |  76 ++++
- gst/rtp/meson.build             |  15 +
- gst/rtp/plugin.c                |  28 ++
- meson_options.txt               |   1 +
- tests/check/Makefile.am         |   8 +
- tests/check/elements/.gitignore |   2 +
- tests/check/elements/rtpsink.c  |  56 +++
- tests/check/elements/rtpsrc.c   |  58 +++
- tests/check/meson.build         |   2 +
- 17 files changed, 1697 insertions(+), 1 deletion(-)
+ configure.ac                   |   2 +
+ gst/meson.build                |   2 +-
+ gst/rtp/Makefile.am            |  17 +
+ gst/rtp/gstrtp-utils.c         |  39 ++
+ gst/rtp/gstrtp-utils.h         |   8 +
+ gst/rtp/gstrtpsink.c           | 581 ++++++++++++++++++++++++++
+ gst/rtp/gstrtpsink.h           |  72 ++++
+ gst/rtp/gstrtpsrc.c            | 731 +++++++++++++++++++++++++++++++++
+ gst/rtp/gstrtpsrc.h            |  76 ++++
+ gst/rtp/meson.build            |  15 +
+ gst/rtp/plugin.c               |  28 ++
+ meson_options.txt              |   1 +
+ tests/check/Makefile.am        |   8 +
+ tests/check/elements/rtpsink.c |  56 +++
+ tests/check/elements/rtpsrc.c  |  58 +++
+ tests/check/meson.build        |   2 +
+ 16 files changed, 1695 insertions(+), 1 deletion(-)
  create mode 100644 gst/rtp/Makefile.am
  create mode 100644 gst/rtp/gstrtp-utils.c
  create mode 100644 gst/rtp/gstrtp-utils.h
@@ -150,7 +152,7 @@ index 5712e739c..8f4b741af 100644
  gst/segmentclip/Makefile
  gst/siren/Makefile
 diff --git a/gst/meson.build b/gst/meson.build
-index f6b306c1e..3266c6e20 100644
+index 8c8349802..4a3c372fc 100644
 --- a/gst/meson.build
 +++ b/gst/meson.build
 @@ -8,7 +8,7 @@ foreach plugin : ['accurip', 'adpcmdec', 'adpcmenc', 'aiff', 'asfmux',
@@ -1784,10 +1786,10 @@ index 000000000..8c1d71f8b
 +    "GStreamer RTP Plugins",
 +    plugin_init, VERSION, "LGPL", GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
 diff --git a/meson_options.txt b/meson_options.txt
-index 111679ec9..0c30c253d 100644
+index 3a9aa93aa..840dd7271 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -49,6 +49,7 @@ option('pnm', type : 'feature', value : 'auto')
+@@ -48,6 +48,7 @@ option('pnm', type : 'feature', value : 'auto')
  option('proxy', type : 'feature', value : 'auto')
  option('rawparse', type : 'feature', value : 'auto')
  option('removesilence', type : 'feature', value : 'auto')
@@ -1948,7 +1950,7 @@ index 000000000..6e1f1327c
 +
 +GST_CHECK_MAIN (rtpsrc);
 diff --git a/tests/check/meson.build b/tests/check/meson.build
-index cd77fb4b3..5eb401d42 100644
+index 85a733045..5835b2547 100644
 --- a/tests/check/meson.build
 +++ b/tests/check/meson.build
 @@ -47,6 +47,8 @@ base_tests = [
@@ -1960,6 +1962,3 @@ index cd77fb4b3..5eb401d42 100644
    [['elements/videoframe-audiolevel.c']],
    [['elements/viewfinderbin.c']],
    [['libs/h264parser.c'], false, [gstcodecparsers_dep]],
--- 
-2.17.1
-
