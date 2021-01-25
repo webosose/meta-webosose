@@ -1,4 +1,4 @@
-From 7e589526f4013e0a2d5039e7f32c120a567c1cac Mon Sep 17 00:00:00 2001
+From b12fabac290e41825454c2d1cf556b2765ad0d77 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 25 Jan 2021 14:17:07 -0800
 Subject: [PATCH] set initial window size
@@ -8,10 +8,10 @@ Subject: [PATCH] set initial window size
  1 file changed, 8 insertions(+)
 
 diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
-index 78dd294a0..f10582a46 100644
+index 8c6fdd0e7..ea7c0a65d 100644
 --- a/ext/wayland/gstwaylandsink.c
 +++ b/ext/wayland/gstwaylandsink.c
-@@ -700,6 +700,14 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+@@ -710,6 +710,14 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
            &sink->video_info, sink->fullscreen, &sink->render_lock);
        g_signal_connect_object (sink->window, "closed",
            G_CALLBACK (on_window_closed), sink, 0);
