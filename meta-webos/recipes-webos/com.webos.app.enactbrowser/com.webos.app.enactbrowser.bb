@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
 AUTHOR = "Mikyung Kim <mikyung27.kim@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-36_d9b2cc8f3792a6d2521077af5046ef59ea4608fa"
+WEBOS_VERSION = "1.0.0-39_9a5d047d0cc256cde575e37e49c120661ad3ba58"
 PR = "r13"
 
 inherit webos_public_repo
