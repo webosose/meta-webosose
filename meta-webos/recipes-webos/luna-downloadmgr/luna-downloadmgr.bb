@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 SUMMARY="The Download Manager service supports the downloading and uploading of files to and from a HP webOS device."
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 DEPENDS = "libpbnjson luna-service2 sqlite3 curl uriparser pmloglib jemalloc luna-prefs boost glib-2.0"
 RDEPENDS_${PN} = "applicationinstallerutility"
 
-WEBOS_VERSION = "4.0.0-7_4078b6b7fdb115f519d029f007c0bb044c618c56"
+WEBOS_VERSION = "4.0.0-10_377c6231315315aa1389fe66f2fe1af32d51a06d"
 PR = "r11"
 
 inherit webos_component

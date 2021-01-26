@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2020 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS Configuration Service"
 AUTHOR  = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
 RDEPENDS_${PN} += "configd-data"
 
-WEBOS_VERSION = "1.2.0-8_2e6424d1baf9c917c04ccbd708a8d17911c33c7a"
+WEBOS_VERSION = "1.2.0-14_0c8c61a3285f11e8e285a33d71280964967fa019"
 PR = "r18"
 
 inherit webos_component

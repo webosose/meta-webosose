@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 DESCRIPTION = "System Application Manager"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -14,7 +14,7 @@ RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
-WEBOS_VERSION = "2.0.0-55_08af2620254def25b88c047debe7d9b0d81cd084"
+WEBOS_VERSION = "2.0.0-60_abfe48e537990e72d9d52ad9a5de8df3189bf3bc"
 PR = "r26"
 
 inherit webos_component
