@@ -6,10 +6,10 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r3"
+PR = "r4"
 
-inherit native
 inherit pythonnative
+inherit native
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
 SRC_URI = "git://github.com/iLib-js/ilib-loctool-webos-dist.git;branch=master"
