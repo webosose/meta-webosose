@@ -13,8 +13,6 @@ require gn-utils.inc
 
 inherit webos_enhanced_submissions
 inherit webos_public_repo
-inherit webos_machine_dep
-inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
 # make sure that python(2) is available, otherwise gn fails to execute python after it was removed from HOSTTOOLS in:

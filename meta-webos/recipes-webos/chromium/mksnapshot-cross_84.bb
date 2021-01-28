@@ -12,7 +12,7 @@ UNINATIVE_LOADER = ""
 PROVIDES = "mksnapshot-cross-${TARGET_ARCH}"
 PN = "mksnapshot-cross-${TARGET_ARCH}"
 BPN = "mksnapshot"
-PR = "r1"
+PR = "r2"
 
 TARGET = "v8_snapshot_clang_${TARGET_CPU}/mksnapshot"
 
