@@ -1,0 +1,141 @@
+From 0034ba7a5e774cc3ec335ecea73d4d03aabd67fb Mon Sep 17 00:00:00 2001
+From: Rakes Pani <rakes.pani@lge.com>
+Date: Tue, 19 Jan 2021 17:53:14 +0530
+Subject: [PATCH] Pick gateway from gateway_hash if it is not updated in ipv4
+
+:Release Notes:
+Pick gateway from gateway_hash if it is not updated in ipv4
+
+:Detailed Notes:
+Pick gateway from gateway_hash if it is not updated in ipv4
+
+:Testing Performed:
+Built and Tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-123931] Implementation for addition of ip rules to
+              maintain multiple Wired interfaces list in connman
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ src/connection.c | 14 ++++++++++++++
+ src/connman.h    |  4 +++-
+ src/ipconfig.c   |  9 ++++++++-
+ src/service.c    |  3 ++-
+ src/session.c    |  2 +-
+ 5 files changed, 28 insertions(+), 4 deletions(-)
+
+diff --git a/src/connection.c b/src/connection.c
+index 7a1fbce..e785f8a 100644
+--- a/src/connection.c
++++ b/src/connection.c
+@@ -568,6 +568,20 @@ static struct gateway_data *find_default_gateway(void)
+ 	return g_hash_table_lookup(gateway_hash, service);
+ }
+ 
++char *find_service_gateway(struct connman_service *service)
++{
++	DBG("find_service_gateway");
++	if (!service)
++		return NULL;
++	struct gateway_data *service_gateway;
++
++	service_gateway = g_hash_table_lookup(gateway_hash, service);
++
++	if((service_gateway) && (service_gateway->ipv4_gateway) && (service_gateway->ipv4_gateway->gateway))
++			return service_gateway->ipv4_gateway->gateway;
++	return NULL;
++}
++
+ static bool choose_default_gateway(struct gateway_data *data,
+ 					struct gateway_data *candidate)
+ {
+diff --git a/src/connman.h b/src/connman.h
+index 3d26e59..336b26d 100644
+--- a/src/connman.h
++++ b/src/connman.h
+@@ -391,7 +391,7 @@ const char *__connman_ipconfig_type2string(enum connman_ipconfig_type type);
+ enum connman_ipconfig_method __connman_ipconfig_string2method(const char *method);
+ 
+ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
+-							DBusMessageIter *iter);
++							DBusMessageIter *iter, struct connman_service *service);
+ void __connman_ipconfig_append_ipv4config(struct connman_ipconfig *ipconfig,
+ 							DBusMessageIter *iter);
+ void __connman_ipconfig_append_ipv6(struct connman_ipconfig *ipconfig,
+@@ -502,6 +502,8 @@ int __connman_connection_gateway_add(struct connman_service *service,
+ 					const char *peer);
+ void __connman_connection_gateway_remove(struct connman_service *service,
+ 					enum connman_ipconfig_type type);
++char *find_service_gateway(struct connman_service *service);
++
+ int __connman_connection_get_vpn_index(int phy_index);
+ 
+ bool __connman_connection_update_gateway(void);
+diff --git a/src/ipconfig.c b/src/ipconfig.c
+index 2565773..104ae88 100644
+--- a/src/ipconfig.c
++++ b/src/ipconfig.c
+@@ -1745,7 +1745,7 @@ int __connman_ipconfig_ipv6_set_privacy(struct connman_ipconfig *ipconfig,
+ }
+ 
+ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
+-							DBusMessageIter *iter)
++							DBusMessageIter *iter, struct connman_service *service)
+ {
+ 	struct connman_ipaddress *append_addr = NULL;
+ 	const char *str;
+@@ -1796,6 +1796,13 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
+ 	if (append_addr->gateway)
+ 		connman_dbus_dict_append_basic(iter, "Gateway",
+ 				DBUS_TYPE_STRING, &append_addr->gateway);
++	else if(service)
++	{
++		char* tempgateway = find_service_gateway(service);
++		if(tempgateway)
++			connman_dbus_dict_append_basic(iter, "Gateway",
++					DBUS_TYPE_STRING, &tempgateway);
++	}
+ }
+ 
+ void __connman_ipconfig_append_ipv6(struct connman_ipconfig *ipconfig,
+diff --git a/src/service.c b/src/service.c
+index bf5c219..6e903de 100644
+--- a/src/service.c
++++ b/src/service.c
+@@ -35,6 +35,7 @@
+ #include <connman/setting.h>
+ #include <connman/agent.h>
+ 
++
+ #include "connman.h"
+ 
+ #define CONNECT_TIMEOUT		120
+@@ -1720,7 +1721,7 @@ static void append_ipv4(DBusMessageIter *iter, void *user_data)
+ 		return;
+ 
+ 	if (service->ipconfig_ipv4)
+-		__connman_ipconfig_append_ipv4(service->ipconfig_ipv4, iter);
++		__connman_ipconfig_append_ipv4(service->ipconfig_ipv4, iter, service);
+ }
+ 
+ static void append_ipv6(DBusMessageIter *iter, void *user_data)
+diff --git a/src/session.c b/src/session.c
+index 2a1dd9a..4814d39 100644
+--- a/src/session.c
++++ b/src/session.c
+@@ -836,7 +836,7 @@ static void append_ipconfig_ipv4(DBusMessageIter *iter, void *user_data)
+ 	if (!ipconfig_ipv4)
+ 		return;
+ 
+-	__connman_ipconfig_append_ipv4(ipconfig_ipv4, iter);
++	__connman_ipconfig_append_ipv4(ipconfig_ipv4, iter , service);
+ }
+ 
+ static void append_ipconfig_ipv6(DBusMessageIter *iter, void *user_data)
+-- 
+2.26.0
+

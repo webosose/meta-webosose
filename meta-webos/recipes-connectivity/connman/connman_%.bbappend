@@ -1,8 +1,8 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos11"
+EXTENDPRAUTO_append = "webos12"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -17,6 +17,10 @@ SRC_URI += " \
     file://0009-Fix-the-wifi-connection-failure.patch \
     file://0014-Implementing-the-configuration-options-related-to-P2.patch \
     file://0015-Read-WpaSupplicantConfigFile-from-main-configuration.patch \
+    file://0016-Send-properties-changed-signal-in-case-of-interface-.patch \
+    file://0017-Added-new-method-SetDefault-for-Interface-net.connma.patch \
+    file://0018-Pick-gateway-from-gateway_hash-if-it-is-not-updated-.patch \
+    file://0019-Add-CIDR-prefix-length-as-ipv4-property.patch \
 "
 
 do_install_append() {

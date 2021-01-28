@@ -1,0 +1,102 @@
+From c036b3f43900d34b448968fecdcf4b28699f39bb Mon Sep 17 00:00:00 2001
+From: Rakes Pani <rakes.pani@lge.com>
+Date: Fri, 4 Dec 2020 14:31:45 +0530
+Subject: [PATCH] Send properties changed signal in case of interface change
+ for ethernet
+
+:Release Notes:
+Send properties changed signal in case of ethernet interface change
+
+:Detailed Notes:
+Send properties changed signal in case of ethernet interface change
+
+:Testing Performed:
+Built and Tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-123934] Implementation for handling multiple Wired interfaces
+              for getinfo API in connman
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ include/technology.h |  1 +
+ plugins/ethernet.c   |  3 +++
+ src/technology.c     | 19 +++++++++++++++++--
+ 3 files changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/include/technology.h b/include/technology.h
+index 6068690..8b4f159 100644
+--- a/include/technology.h
++++ b/include/technology.h
+@@ -38,6 +38,7 @@ struct connman_technology;
+ 
+ int connman_technology_tethering_notify(struct connman_technology *technology,
+ 							bool enabled);
++void connman_technology_interface_changed(struct connman_technology *technology);
+ int connman_technology_add_station(enum connman_service_type type, const char *mac);
+ int connman_technology_remove_station(char *mac);
+ int connman_technology_set_regdom(const char *alpha2);
+diff --git a/plugins/ethernet.c b/plugins/ethernet.c
+index b0395c8..6bed7de 100644
+--- a/plugins/ethernet.c
++++ b/plugins/ethernet.c
+@@ -345,6 +345,8 @@ static void eth_tech_add_interface(struct connman_technology *technology,
+ 
+ 	eth_interface_list = g_list_prepend(eth_interface_list,
+ 					(GINT_TO_POINTER((int) index)));
++
++	connman_technology_interface_changed(technology);
+ }
+ 
+ static void eth_tech_remove_interface(struct connman_technology *technology,
+@@ -354,6 +356,7 @@ static void eth_tech_remove_interface(struct connman_technology *technology,
+ 
+ 	eth_interface_list = g_list_remove(eth_interface_list,
+ 					GINT_TO_POINTER((int) index));
++	connman_technology_interface_changed(technology);
+ }
+ 
+ static void eth_tech_enable_tethering(struct connman_technology *technology,
+diff --git a/src/technology.c b/src/technology.c
+index 54a32b3..5bfc1c5 100644
+--- a/src/technology.c
++++ b/src/technology.c
+@@ -554,6 +554,21 @@ static void append_interfaces(DBusMessageIter *iter, void *user_data)
+ 	}
+ }
+ 
++static void interface_changed(struct connman_technology *technology)
++{
++	DBG("interface_changed for path  %s", technology->path);
++	connman_dbus_property_changed_array(technology->path,
++						CONNMAN_TECHNOLOGY_INTERFACE,
++						"Interfaces",
++						DBUS_TYPE_STRING,
++						append_interfaces, technology);
++}
++
++void connman_technology_interface_changed(struct connman_technology *technology)
++{
++	interface_changed(technology);
++}
++
+ static void append_properties(DBusMessageIter *iter,
+ 		struct connman_technology *technology)
+ {
+@@ -1642,8 +1657,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
+ 	}
+ 
+ 	name = connman_inet_ifname(index);
+-	connman_info("Remove interface %s [ %s ]", name,
+-				__connman_service_type2string(type));
++	connman_info("Remove interface %s [ %s ] index %d", name,
++				__connman_service_type2string(type), index);
+ 	g_free(name);
+ 
+ 	technology = technology_find(type);
+-- 
+2.26.0
+

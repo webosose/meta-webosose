@@ -13,8 +13,8 @@ SECTION = "webos/services"
 DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support"
 RDEPENDS_${PN} = "connman connman-client"
 
-WEBOS_VERSION = "1.1.0-28_72354a1106c8f80315436be0fbe59d2bba2dd57b"
-PR = "r7"
+WEBOS_VERSION = "1.1.0-30_38d52714a70707751db14ea278eda2b136e812b9"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -28,6 +28,9 @@ inherit webos_machine_dep
 # EXTRA_OECMAKE += "-DWIFI_IFACE_NAME=wlan0 -DWIRED_IFACE_NAME=eth1"
 
 EXTRA_OECMAKE += "-DENABLE_SCAN_ON_SOFTAP=true"
+
+PACKAGECONFIG[enable-multiple-routing-table] = "-DMULTIPLE_ROUTING_TABLE:BOOL=true,-DMULTIPLE_ROUTING_TABLE:BOOL=false,"
+PACKAGECONFIG = "enable-multiple-routing-table"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 SRC_URI_append_raspberrypi4 = " file://blacklistcdc_ether.conf"
