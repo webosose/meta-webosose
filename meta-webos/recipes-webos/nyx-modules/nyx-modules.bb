@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - ${MACHINE}-specific modules"
 AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
@@ -14,9 +14,10 @@ DEPENDS = "nyx-lib glib-2.0 luna-service2 openssl udev"
 RDEPENDS_${PN} = "lsb-release gzip"
 
 WEBOS_VERSION = "7.1.0-15_b055930a48ed3bdb63c353553e1152adc3c03b82"
-PR = "r16"
+PR = "r17"
 
 EXTRA_OECMAKE += "-DDISTRO_VERSION:STRING='${DISTRO_VERSION}' -DDISTRO_NAME:STRING='${DISTRO_NAME}${WEBOS_DISTRO_NAME_SUFFIX}' \
+                  -DWEBOS_DISTRO_RELEASE_PLATFORMCODE:STRING='${WEBOS_DISTRO_RELEASE_PLATFORMCODE}' \
                   -DWEBOS_DISTRO_RELEASE_CODENAME:STRING='${WEBOS_DISTRO_RELEASE_CODENAME}' \
                   -DWEBOS_DISTRO_BUILD_ID:STRING='${WEBOS_DISTRO_BUILD_ID}'"
 
