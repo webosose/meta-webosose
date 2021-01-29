@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 DESCRIPTION = "Utility library used in Location Framework"
 AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 curl pmloglib"
 
-WEBOS_VERSION = "1.0.0-14_6f748ede0c32fe73ce9593a4947360d90937567f"
+WEBOS_VERSION = "1.0.0-17_92feb4b35ff72e0efb1967794ed0999747b1a2c6"
 PR = "r2"
 
 inherit webos_component
