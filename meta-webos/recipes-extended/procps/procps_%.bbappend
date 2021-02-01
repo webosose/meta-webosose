@@ -1,14 +1,15 @@
-# Copyright (c) 2015-2020 LG Electronics, Inc.
+# Copyright (c) 2015-2021 LG Electronics, Inc.
 
 AUTHOR  = "Viesturs Zarins <viesturs.zarins@lge.com>"
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos2"
 
 CRASHD = "crashd"
 # crashd depends on libunwind which depends on blacklisted libatomics-ops when building for armv[45]"
 CRASHD_armv4 = ""
 CRASHD_armv5 = ""
 
-RDEPENDS_${PN} += "${CRASHD}"
+# In webos, systemd-coredump will replace the crashd.
+RDEPENDS_${PN} += "${@bb.utils.contains('DISTRO', 'webos', '', '${CRASHD}', d)}"
 
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
@@ -51,7 +52,11 @@ do_install_append_hardware() {
     if ${@oe.utils.conditional('WEBOS_DISTRO_PRERELEASE', 'devel', 'true', 'false', d)}; then
         echo "" >> ${D}${sysconfdir}/sysctl.conf
         echo "# Generate core dumps" >> ${D}${sysconfdir}/sysctl.conf
-        echo "kernel.core_pattern = |/usr/sbin/save-core-dump.sh %e %p" >> ${D}${sysconfdir}/sysctl.conf
+        if ${@oe.utils.conditional('DISTRO', 'webos', 'true', 'false', d)} ; then
+            echo "kernel.core_pattern = |/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %e" >> ${D}${sysconfdir}/sysctl.conf
+        else
+            echo "kernel.core_pattern = |/usr/sbin/save-core-dump.sh %e %p" >> ${D}${sysconfdir}/sysctl.conf
+        fi
         echo "fs.suid_dumpable = 1" >> ${D}${sysconfdir}/sysctl.conf
     fi
 }

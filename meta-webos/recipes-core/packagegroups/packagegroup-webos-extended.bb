@@ -175,6 +175,7 @@ RDEPENDS_${PN} = " \
     com.webos.service.power2 \
     event-monitor \
     filecache \
+    fluentbit \
     fontconfig-utils \
     ilib-qml-plugin \
     ilib-webapp \

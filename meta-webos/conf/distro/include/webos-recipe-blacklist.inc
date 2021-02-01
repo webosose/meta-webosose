@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 # A blacklisted recipe is ignored by bitbake. The reason it is useful to be able
 # to have bitbake ignore a recipe is because, although PREFERRED_PROVIDER can be
@@ -136,8 +136,8 @@ PNBLACKLIST[lirc] ?= "ERROR: lirc-0.9.4d-r0 do_package: SYSTEMD_SERVICE_lirc val
 PNBLACKLIST[phonet-utils] ?= "ERROR: phonet-utils-0.0.0+gitrAUTOINC+4acfa720fd-r2 do_package_qa: QA Issue: phonet-utils package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-oe/recipes-extended/boinc/boinc-client_7.12.bb:do_package
 PNBLACKLIST[boinc-client] ?= "ERROR: boinc-client-7.12-r0 do_package: SYSTEMD_SERVICE_boinc-client value boinc-client.service does not exist"
-# meta-openembedded/meta-oe/recipes-extended/fluentbit/fluentbit_0.12.1.bb:do_package
-PNBLACKLIST[fluentbit] ?= "ERROR: fluentbit-0.12.1-r0 do_package: SYSTEMD_SERVICE_fluentbit value td-agent-bit.service does not exist"
+# meta-oe/meta-oe/recipes-extended/fluentbit/fluentbit_1.3.5.bb:do_package
+PNBLACKLIST[fluentbit] ?= ""
 # meta-openembedded/meta-oe/recipes-extended/scsirastools/scsirastools_1.6.6.bb:do_package
 PNBLACKLIST[scsirastools] ?= "ERROR: scsirastools-1.6.6-r0 do_package: QA Issue: scsirastools: Files/directories were installed but not shipped in any package"
 # meta-openembedded/meta-oe/recipes-extended/uml-utilities/uml-utilities_20040406.bb:do_package

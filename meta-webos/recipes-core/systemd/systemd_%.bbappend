@@ -1,6 +1,6 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos4"
+EXTENDPRAUTO_append = "webos5"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}-kernel-install_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
@@ -17,6 +17,9 @@ PACKAGECONFIG_remove = " \
     timedated   \
     timesyncd   \
 "
+
+PACKAGECONFIG_append = "${@bb.utils.contains('DISTRO', 'webos', ' coredump', '', d)}"
+
 # By default systemd's Predictable Network Interface Names policy configured for qemu
 # Currently we don't support this policy in qemu, so removing from systemd's configuration
 do_install_append_qemuall() {

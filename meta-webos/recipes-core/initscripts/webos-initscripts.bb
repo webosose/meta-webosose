@@ -8,17 +8,19 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
-RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_rdx-utils}"
-RPROVIDES_${PN} = "initscripts initd-functions"
-PROVIDES = "initscripts"
-
 # TODO: systemd dependency is for fake initctl.
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-WEBOS_VERSION = "3.0.0-61_92cf51011fd50ff065529eba754e9c6327072e29"
-PR = "r15"
+VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_rdx-utils} ${VIRTUAL-RUNTIME_bash} python3"
+
+PROVIDES = "initscripts"
+RPROVIDES_${PN} = "initscripts initd-functions"
+
+WEBOS_VERSION = "3.0.0-62_8036ebe63baefaefff70c9328ca989a2a80d76aa"
+PR = "r16"
 
 inherit webos_component
 inherit webos_enhanced_submissions
