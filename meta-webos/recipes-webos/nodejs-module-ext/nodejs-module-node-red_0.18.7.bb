@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 SUMMARY = "Loadable node-red module for nodejs services"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webOS/modules"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d6f37569f5013072e9490d2194d10ae6"
 
-PR = "r1"
+PR = "r2"
 
 DEPENDS += "nodejs-native"
 RDEPENDS_${PN} = "nodejs"
@@ -50,6 +50,14 @@ NPM_INSTALL_FLAGS ?= "--production --without-ssl --insecure --no-optional --verb
 
 do_compile() {
     cd ${S}
+
+    # this is needed to use user's gitconfig even after changing the HOME directory bellow
+    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
+    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
+    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
+
+    export HOME=${WORKDIR}
+
     # configure cache to be in working directory
     ${STAGING_BINDIR_NATIVE}/npm set cache ${NPM_CACHE_DIR}
 
