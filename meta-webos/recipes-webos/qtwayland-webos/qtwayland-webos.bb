@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
-WEBOS_VERSION = "2.0.0-61_dec61483141c9a149890b15dbcb09bbe69608860"
-PR = "r11"
+WEBOS_VERSION = "2.0.0-62_43ddb2d7af08784d81aca42a7ccb46b1d7d83238"
+PR = "r12"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions
@@ -40,6 +40,11 @@ EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 
 FILES_${PN} += " \
     ${OE_QMAKE_PATH_PLUGINS}/*/*${SOLIBSDEV} \
+"
+
+FILES_${PN}-dev += " \
+    ${OE_QMAKE_PATH_LIBS}/*.prl \
+    ${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/* \
 "
 
 # FIXME: weboscompositorextensionclient is deprecated and merged into
