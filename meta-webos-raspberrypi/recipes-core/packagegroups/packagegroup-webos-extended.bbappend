@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS_${PN} variable.
 EXTENDPRAUTO_append_rpi = "webosrpi7"
@@ -50,6 +50,7 @@ RDEPENDS_${PN}_append_rpi = " \
     com.webos.service.hfp \
     com.webos.service.location \
     com.webos.service.mediaindexer \
+    com.webos.service.peripheralmanager \
     ofono \
     resize-rootfs \
     ${CAMERASERVICE} \
