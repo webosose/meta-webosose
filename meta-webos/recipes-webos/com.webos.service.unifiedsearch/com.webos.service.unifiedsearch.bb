@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 libpbnjson glib-2.0 procps sqlite3"
 
-WEBOS_VERSION = "1.0.0-4_d7e92d59bd8a355e7f1e9a44352f5ba09dc5ae76"
+WEBOS_VERSION = "1.0.0-5_70025b4c633845bae908bc18b6b51aea2d991b34"
 PR = "r0"
 
 inherit webos_component
