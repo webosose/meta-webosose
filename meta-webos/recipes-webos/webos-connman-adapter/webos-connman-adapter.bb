@@ -13,7 +13,7 @@ SECTION = "webos/services"
 DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support"
 RDEPENDS_${PN} = "connman connman-client"
 
-WEBOS_VERSION = "1.1.0-32_bb723207a3fa3bb9d4d54cb650128336a4d7c87b"
+WEBOS_VERSION = "1.1.0-33_9bf9e0076db745d45a4a780b3c99ede014ebff62"
 PR = "r8"
 
 inherit webos_component
