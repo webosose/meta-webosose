@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "A localization tool is written in JavaScript"
 AUTHOR = "Goun Lee<goun.lee@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r2"
+PR = "r3"
 
 inherit native
 inherit pythonnative
@@ -19,8 +19,8 @@ S = "${WORKDIR}/git"
 # iLib-js/ilib-loctool-webos-dist repository on GitHub. This version should correspond to the
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
-PV = "1.2.0"
-SRCREV = "958d583480540b579f59c5533af524783397eb7f"
+PV = "1.2.1"
+SRCREV = "29b07b1ec01ab81667eb4b946446693983b1711b"
 
 # Skip the unwanted tasks
 do_configure[noexec] = "1"
@@ -31,6 +31,7 @@ do_install() {
     install -d ${D}${base_prefix}/opt/js-loctool
     cp -R --no-dereference --preserve=mode,links -v ${S}/* ${D}${base_prefix}/opt/js-loctool
     cd ${D}${base_prefix}/opt/js-loctool
+    rm -fr node_modules
     npm install
 }
 
