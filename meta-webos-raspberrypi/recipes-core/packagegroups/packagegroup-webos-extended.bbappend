@@ -46,6 +46,7 @@ CAMERASERVICE_raspberrypi3-64 = ""
 CAMERASERVICE_raspberrypi4-64 = ""
 
 RDEPENDS_${PN}_append_rpi = " \
+    com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.hfp \
     com.webos.service.location \
