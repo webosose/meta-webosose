@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
@@ -193,6 +193,7 @@ RDEPENDS_${PN} = " \
     sleepd \
     webos-connman-adapter \
     webos-fontconfig-files \
+    webos-nettools \
     ${MEDIA} \
     ${VIRTUAL-RUNTIME_ai} \
     ${VIRTUAL-RUNTIME_appinstalld} \
