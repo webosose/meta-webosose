@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-9_0ffd5c96f8c7d271f662cac1a97d2e443a763b5b"
+WEBOS_VERSION = "1.0.0-10_182786bf4501501763dfd41d27cefe111578851c"
 PR = "r7"
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
