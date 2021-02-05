@@ -1,14 +1,15 @@
-From c490c3f87522c01374e6e9c38ce422f966e3780d Mon Sep 17 00:00:00 2001
+From d0eed762a38260d16abb1da2acf4174743d51297 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 25 Jan 2021 14:18:13 -0800
 Subject: [PATCH] disable using subsurface subcompositor
 
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
- ext/wayland/gstwaylandsink.c |   6 +--
- ext/wayland/wldisplay.c      |   3 ++
- ext/wayland/wlwindow.c       | 101 ++++++++---------------------------
+ ext/wayland/gstwaylandsink.c |   6 +-
+ ext/wayland/wldisplay.c      |   3 +
+ ext/wayland/wlwindow.c       | 103 ++++++++---------------------------
  ext/wayland/wlwindow.h       |   5 --
- 4 files changed, 26 insertions(+), 89 deletions(-)
+ 4 files changed, 27 insertions(+), 90 deletions(-)
 
 diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
 index bdc0882ce..0837f8e7f 100644
@@ -62,7 +63,7 @@ index 0bb9dc729..4dd69adfe 100644
  
  #undef VERIFY_INTERFACE_EXISTS
 diff --git a/ext/wayland/wlwindow.c b/ext/wayland/wlwindow.c
-index 0cf85aa62..6e69ba8a0 100644
+index 66a05be97..6e69ba8a0 100644
 --- a/ext/wayland/wlwindow.c
 +++ b/ext/wayland/wlwindow.c
 @@ -157,8 +157,11 @@ gst_wl_window_finalize (GObject * gobject)
@@ -165,6 +166,15 @@ index 0cf85aa62..6e69ba8a0 100644
      if (!window->xdg_surface) {
        GST_ERROR ("Unable to get xdg_surface");
        goto error;
+@@ -289,7 +265,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+ 
+     /* Finally, commit the xdg_surface state as toplevel */
+     window->configured = FALSE;
+-    wl_surface_commit (window->area_surface);
++    wl_surface_commit (window->video_surface);
+     wl_display_flush (display->display);
+ 
+     g_mutex_lock (&window->configure_mutex);
 @@ -305,7 +281,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
    } else if (display->wl_shell) {
      /* go toplevel */
