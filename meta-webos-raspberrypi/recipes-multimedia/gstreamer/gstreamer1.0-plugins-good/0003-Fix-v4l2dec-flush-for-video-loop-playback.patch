@@ -1,4 +1,4 @@
-From 6104aacf88e9e98af2dec10c62dda74b348b378a Mon Sep 17 00:00:00 2001
+From 4e5e8ac16aa4849ec986763ffeae138ad7fe38d8 Mon Sep 17 00:00:00 2001
 From: Jaehoon Lee <jaehoon85.lee@lge.com>
 Date: Thu, 28 Jan 2021 15:02:02 +0900
 Subject: [PATCH] Fix v4l2dec flush for video loop playback
@@ -24,10 +24,10 @@ Tested in raspberrypi4
  1 file changed, 7 insertions(+), 15 deletions(-)
 
 diff --git a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
-index 497d3a1..8a7d1e5 100644
+index ea1bf6168..3a8d31b43 100644
 --- a/sys/v4l2/gstv4l2videodec.c
 +++ b/sys/v4l2/gstv4l2videodec.c
-@@ -292,37 +292,29 @@ gst_v4l2_video_dec_flush (GstVideoDecoder * decoder)
+@@ -331,37 +331,29 @@ gst_v4l2_video_dec_flush (GstVideoDecoder * decoder)
  
    GST_DEBUG_OBJECT (self, "Flushed");
  

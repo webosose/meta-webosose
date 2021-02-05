@@ -1,7 +1,18 @@
-diff -ruN a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
---- a/sys/v4l2/gstv4l2videodec.c	2020-08-27 04:51:28.899239646 +0000
-+++ b/sys/v4l2/gstv4l2videodec.c	2020-08-27 06:30:40.402241041 +0000
-@@ -676,6 +676,31 @@
+From 5265c6c37c21d0d07b5224c937f3996fad5a8a81 Mon Sep 17 00:00:00 2001
+From: "sapna.kumari" <sapna.kumari@lge.com>
+Date: Thu, 27 Aug 2020 06:39:27 +0000
+Subject: [PATCH] Fix v4l2h264dec output caps to RGB16
+
+gstreamer1.0-plugins-good=webosrpi3
+---
+ sys/v4l2/gstv4l2videodec.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
+index 735464698..ea1bf6168 100644
+--- a/sys/v4l2/gstv4l2videodec.c
++++ b/sys/v4l2/gstv4l2videodec.c
+@@ -719,6 +719,31 @@ gst_v4l2_video_dec_handle_frame (GstVideoDecoder * decoder,
  
      GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
  
