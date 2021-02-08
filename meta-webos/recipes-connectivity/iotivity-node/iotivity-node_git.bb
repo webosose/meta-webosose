@@ -23,7 +23,7 @@ PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PR = "r5"
+PR = "r6"
 
 inherit python3native
 
@@ -38,6 +38,11 @@ do_compile_prepend() {
 }
 
 do_compile () {
+    # this is needed to use user's gitconfig even after changing the HOME directory bellow
+    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
+    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
+    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
+
     # changing the home directory to the working directory, the .npmrc will be created in this directory
     export HOME=${WORKDIR}
 
