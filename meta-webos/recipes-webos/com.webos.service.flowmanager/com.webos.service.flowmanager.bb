@@ -17,7 +17,7 @@ inherit webos_system_bus
 inherit webos_enhanced_submissions
 
 require flowmanager.inc
-PR = "r4"
+PR = "r5"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
@@ -50,6 +50,13 @@ NPM_INSTALL_FLAGS ?= "--without-ssl --insecure --no-optional --verbose"
 
 do_npm_install() {
     cd ${S}
+
+    # this is needed to use user's gitconfig even after changing the HOME directory bellow
+    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
+    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
+    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
+
+    export HOME=${WORKDIR}
 
     # remove old npm_modules folder
     rm -rf node_modules
