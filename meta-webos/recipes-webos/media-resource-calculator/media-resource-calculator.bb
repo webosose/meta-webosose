@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
 DESCRIPTION = "Media Resource Calculator for webOS"
 AUTHOR = "Bhooshan Supe <bhooshan.supe@lge.com>"
@@ -13,7 +13,7 @@ DEPENDS = "libpbnjson"
 
 EXTRA_OECMAKE += "-DNO_TEST=1"
 
-WEBOS_VERSION = "1.0.0-5_3e38b833cb65d6e8b86ff38c4ad65399ba9c81bd"
+WEBOS_VERSION = "1.0.0-7_5261da96d50455809a839eb61e70d669fd554d56"
 PR = "r5"
 
 inherit webos_component
