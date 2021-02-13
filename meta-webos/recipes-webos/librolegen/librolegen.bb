@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 SUMMARY = "Library for dynamically generating webOS system bus role files for webOS JavaScript services"
 SECTION = "webos/libs"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0"
 
-WEBOS_VERSION = "2.1.0-3_f33e19aba6aa82cfb993e2d869e02d875f313a27"
+WEBOS_VERSION = "2.1.0-4_13e80012a96329af4581062a1984921bd6ed7e8e"
 PR = "r6"
 
 inherit webos_component
