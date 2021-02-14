@@ -1,4 +1,4 @@
-From 720cf6ccf77e579c6b55d422971290b5b18b366b Mon Sep 17 00:00:00 2001
+From a60120b77c093a23c7d31ec64ee814d334e284e8 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 17 Feb 2021 14:12:35 +0530
 Subject: [PATCH] Fix crash in p2p/addservice and p2p/settethering
@@ -24,10 +24,10 @@ N/A
  3 files changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 22696291..44a2fe10 100644
+index 287c5789..7107fab3 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -1506,7 +1506,7 @@ static void register_peer_service_cb(int result,
+@@ -1513,7 +1513,7 @@ static void register_peer_service_cb(int result,
  
  	DBG("");
  

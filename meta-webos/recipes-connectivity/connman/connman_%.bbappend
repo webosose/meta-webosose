@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos14"
+EXTENDPRAUTO_append = "webos15"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \

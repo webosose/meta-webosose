@@ -1,4 +1,4 @@
-From 6c6e94ec215b04014862adaf65d7ca55c1c3d3ea Mon Sep 17 00:00:00 2001
+From fdf31f0cf943a76d2222ea313412e8142228a47f Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Tue, 5 Jan 2021 13:55:12 +0530
 Subject: [PATCH] Added new method SetDefault for Interface net.connman.Service
@@ -8,6 +8,13 @@ Added new method SetDefault for Interface net.connman.Service
 
 :Detailed Notes:
 Added new method SetDefault for Interface net.connman.Service
+
+MJ: set_split_routing was changed in 1.39 with:
+commit cc32d1aae11ee79dd5dcf92bf4691952792531ad
+Author: Jussi Laakkonen <jussi.laakkonen@jolla.com>
+Date:   Tue Dec 8 12:17:53 2020 +0200
+
+    service: Expose set_split_routing() for internal use
 
 :Testing Performed:
 Built and Tested
@@ -25,10 +32,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 111 insertions(+)
 
 diff --git a/src/service.c b/src/service.c
-index ac7a140f..c463d9f7 100644
+index 1de32aee..f90416a3 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -4946,6 +4946,108 @@ static DBusMessage *move_service(DBusConnection *conn,
+@@ -5016,6 +5016,108 @@ static DBusMessage *move_service(DBusConnection *conn,
  	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
  }
  
@@ -59,11 +66,11 @@ index ac7a140f..c463d9f7 100644
 +			return __connman_error_invalid_service(msg);
 +		}
 +
-+		set_split_routing(target, true);
++		__connman_service_set_split_routing(target, true);
 +	} else
-+		set_split_routing(target, false);
++		__connman_service_set_split_routing(target, false);
 +
-+	set_split_routing(service, false);
++	__connman_service_set_split_routing(service, false);
 +
 +	target4 = __connman_ipconfig_get_method(target->ipconfig_ipv4);
 +	target6 = __connman_ipconfig_get_method(target->ipconfig_ipv6);
@@ -137,7 +144,7 @@ index ac7a140f..c463d9f7 100644
  static DBusMessage *move_before(DBusConnection *conn,
  					DBusMessage *msg, void *user_data)
  {
-@@ -4968,6 +5070,13 @@ static DBusMessage *reset_counters(DBusConnection *conn,
+@@ -5038,6 +5140,13 @@ static DBusMessage *reset_counters(DBusConnection *conn,
  	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
  }
  
@@ -151,7 +158,7 @@ index ac7a140f..c463d9f7 100644
  static void service_schedule_added(struct connman_service *service)
  {
  	DBG("service %p", service);
-@@ -5025,6 +5134,8 @@ static const GDBusMethodTable service_methods[] = {
+@@ -5095,6 +5204,8 @@ static const GDBusMethodTable service_methods[] = {
  			GDBUS_ARGS({ "service", "o" }), NULL,
  			move_after) },
  	{ GDBUS_METHOD("ResetCounters", NULL, NULL, reset_counters) },

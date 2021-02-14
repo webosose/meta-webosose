@@ -1,4 +1,4 @@
-From d1c441a09e73f5afb3c9869b67ef753d7c989adb Mon Sep 17 00:00:00 2001
+From bf962500a95cc23399678eda17a5c5d92efc882b Mon Sep 17 00:00:00 2001
 From: Vasu Kantubukta <vasu.kantubukta@lge.com>
 Date: Wed, 19 Dec 2018 21:02:59 +0530
 Subject: [PATCH] Fix for wifi network switching and unable to connect to open
@@ -32,10 +32,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index ce761dad..246d7335 100644
+index 0917eaf5..a9dd35c4 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -2903,7 +2903,7 @@ static void interface_state(GSupplicantInterface *interface)
+@@ -2954,7 +2954,7 @@ static void interface_state(GSupplicantInterface *interface)
  		}
  		wifi->disconnecting = false;
  

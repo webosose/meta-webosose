@@ -1,4 +1,4 @@
-From c29db794384aeaa87b800756d8f42ccc320ceed3 Mon Sep 17 00:00:00 2001
+From 3f94033062d820a722be30a6afbe41e2e39f84f4 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 4 Dec 2020 14:31:45 +0530
 Subject: [PATCH] Send properties changed signal in case of interface change
@@ -61,10 +61,10 @@ index ed4208ad..fc8cd433 100644
  
  static void eth_tech_enable_tethering(struct connman_technology *technology,
 diff --git a/src/technology.c b/src/technology.c
-index 54a32b33..5bfc1c5f 100644
+index 499ec452..252701e9 100644
 --- a/src/technology.c
 +++ b/src/technology.c
-@@ -554,6 +554,21 @@ static void append_interfaces(DBusMessageIter *iter, void *user_data)
+@@ -558,6 +558,21 @@ static void append_interfaces(DBusMessageIter *iter, void *user_data)
  	}
  }
  
@@ -86,7 +86,7 @@ index 54a32b33..5bfc1c5f 100644
  static void append_properties(DBusMessageIter *iter,
  		struct connman_technology *technology)
  {
-@@ -1642,8 +1657,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
+@@ -1646,8 +1661,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
  	}
  
  	name = connman_inet_ifname(index);

@@ -1,4 +1,4 @@
-From 0f9973fd0187fd5fb44e4b4f09a1d16eed5a2bcb Mon Sep 17 00:00:00 2001
+From 8720cc006772f7c32e249a6268f500db43dc886d Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 25 Jun 2019 13:11:11 +0900
 Subject: [PATCH] Support additional feature for tethering
@@ -9,12 +9,12 @@ Support additional feature for tethering
  include/technology.h |   1 +
  plugins/wifi.c       |  11 +++-
  src/connman.h        |   1 +
- src/technology.c     | 119 +++++++++++++++++++++++++++++++++++++---
+ src/technology.c     | 118 +++++++++++++++++++++++++++++++++++++---
  src/tethering.c      | 125 +++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 252 insertions(+), 8 deletions(-)
+ 6 files changed, 251 insertions(+), 8 deletions(-)
 
 diff --git a/gdhcp/server.c b/gdhcp/server.c
-index 85405f19..2a400692 100644
+index 52ea2a55..f82c4bbd 100644
 --- a/gdhcp/server.c
 +++ b/gdhcp/server.c
 @@ -255,6 +255,9 @@ static uint32_t find_free_or_expired_nip(GDHCPServer *dhcp_server,
@@ -40,10 +40,10 @@ index a3095fb7..1d78649c 100644
  
  void connman_technology_wps_failed_notify(struct connman_technology *technology);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 246d7335..fb9f064f 100644
+index a9dd35c4..314d3126 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3606,16 +3606,25 @@ static void tech_remove(struct connman_technology *technology)
+@@ -3657,16 +3657,25 @@ static void tech_remove(struct connman_technology *technology)
  static GSupplicantSSID *ssid_ap_init(const char *ssid, const char *passphrase)
  {
  	GSupplicantSSID *ap;
@@ -71,10 +71,10 @@ index 246d7335..fb9f064f 100644
  	if (!passphrase || strlen(passphrase) == 0) {
  		ap->security = G_SUPPLICANT_SECURITY_NONE;
 diff --git a/src/connman.h b/src/connman.h
-index 86e481e6..57f218f9 100644
+index b8de7bd1..8c2aebce 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -641,6 +641,7 @@ const char *__connman_tethering_get_bridge(void);
+@@ -648,6 +648,7 @@ const char *__connman_tethering_get_bridge(void);
  int __connman_tethering_set_enabled(void);
  void __connman_tethering_set_disabled(void);
  void __connman_tethering_list_clients(DBusMessageIter *array);
@@ -83,7 +83,7 @@ index 86e481e6..57f218f9 100644
  int __connman_private_network_request(DBusMessage *msg, const char *owner);
  int __connman_private_network_release(const char *path);
 diff --git a/src/technology.c b/src/technology.c
-index 0119c2d5..ae494c00 100644
+index 817d9753..d5855640 100644
 --- a/src/technology.c
 +++ b/src/technology.c
 @@ -66,6 +66,8 @@ struct connman_technology {
@@ -95,9 +95,9 @@ index 0119c2d5..ae494c00 100644
  
  	bool enable_persistent; /* Save the tech state */
  
-@@ -190,6 +192,16 @@ static void technology_save(struct connman_technology *technology)
- 					"Tethering.Passphrase",
- 					technology->tethering_passphrase);
+@@ -192,6 +194,16 @@ static void technology_save(struct connman_technology *technology)
+ 		g_free(enc);
+ 	}
  
 +	if (technology->tethering_channel)
 +		g_key_file_set_integer(keyfile, identifier,
@@ -112,7 +112,7 @@ index 0119c2d5..ae494c00 100644
  done:
  	g_free(identifier);
  
-@@ -213,14 +225,21 @@ int connman_technology_tethering_notify(struct connman_technology *technology,
+@@ -215,14 +227,21 @@ int connman_technology_tethering_notify(struct connman_technology *technology,
  							bool enabled)
  {
  	int err;
@@ -135,7 +135,7 @@ index 0119c2d5..ae494c00 100644
  		if (err < 0)
  			return err;
  	} else
-@@ -251,8 +270,7 @@ static int set_tethering(struct connman_technology *technology,
+@@ -253,8 +272,7 @@ static int set_tethering(struct connman_technology *technology,
  	if (!bridge)
  		return -EOPNOTSUPP;
  
@@ -145,7 +145,7 @@ index 0119c2d5..ae494c00 100644
  		return -EINVAL;
  
  	for (tech_drivers = technology->driver_list; tech_drivers;
-@@ -377,6 +395,17 @@ bool connman_technology_get_wifi_tethering(const char **ssid,
+@@ -379,6 +397,17 @@ bool connman_technology_get_wifi_tethering(const char **ssid,
  	return true;
  }
  
@@ -163,21 +163,20 @@ index 0119c2d5..ae494c00 100644
  static void free_rfkill(gpointer data)
  {
  	struct connman_rfkill *rfkill = data;
-@@ -438,6 +467,13 @@ static void technology_load(struct connman_technology *technology)
- 
- 	technology->tethering_passphrase = g_key_file_get_string(keyfile,
+@@ -443,6 +472,12 @@ static void technology_load(struct connman_technology *technology)
  				identifier, "Tethering.Passphrase", NULL);
+ 	if (enc)
+ 		technology->tethering_passphrase = g_strcompress(enc);
 +
 +	technology->tethering_channel = g_key_file_get_integer(keyfile,
 +				identifier, "Tethering.Channel", NULL);
 +
 +	technology->tethering_ipaddress = g_key_file_get_string(keyfile,
 +				identifier, "Tethering.IP", NULL);
-+
  done:
  	g_free(identifier);
  
-@@ -549,6 +585,16 @@ static void append_properties(DBusMessageIter *iter,
+@@ -554,6 +589,16 @@ static void append_properties(DBusMessageIter *iter,
  					DBUS_TYPE_STRING,
  					&technology->tethering_passphrase);
  
@@ -194,7 +193,7 @@ index 0119c2d5..ae494c00 100644
  	connman_dbus_dict_close(iter, &dict);
  }
  
-@@ -947,10 +993,19 @@ static DBusMessage *set_property(DBusConnection *conn,
+@@ -952,10 +997,19 @@ static DBusMessage *set_property(DBusConnection *conn,
  		if (technology->type != CONNMAN_SERVICE_TYPE_WIFI)
  			return __connman_error_not_supported(msg);
  
@@ -218,7 +217,7 @@ index 0119c2d5..ae494c00 100644
  
  		if (g_strcmp0(technology->tethering_passphrase, str) != 0) {
  			g_free(technology->tethering_passphrase);
-@@ -963,6 +1018,55 @@ static DBusMessage *set_property(DBusConnection *conn,
+@@ -968,6 +1022,55 @@ static DBusMessage *set_property(DBusConnection *conn,
  					DBUS_TYPE_STRING,
  					&technology->tethering_passphrase);
  		}
@@ -274,7 +273,7 @@ index 0119c2d5..ae494c00 100644
  	} else if (g_str_equal(name, "Powered")) {
  		dbus_bool_t enable;
  
-@@ -1232,6 +1336,7 @@ static void technology_put(struct connman_technology *technology)
+@@ -1237,6 +1340,7 @@ static void technology_put(struct connman_technology *technology)
  	g_free(technology->regdom);
  	g_free(technology->tethering_ident);
  	g_free(technology->tethering_passphrase);
@@ -283,7 +282,7 @@ index 0119c2d5..ae494c00 100644
  }
  
 diff --git a/src/tethering.c b/src/tethering.c
-index e2687b6e..b465bdd3 100644
+index f930a26b..52baebdd 100644
 --- a/src/tethering.c
 +++ b/src/tethering.c
 @@ -49,6 +49,7 @@

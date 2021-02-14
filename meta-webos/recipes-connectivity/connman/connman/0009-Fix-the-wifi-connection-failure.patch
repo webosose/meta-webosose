@@ -1,4 +1,4 @@
-From 384a72d7c0c98f13ed3af32f09a75a68493c1de0 Mon Sep 17 00:00:00 2001
+From 28304b2c78286a4d04faf588e900a75c48effe19 Mon Sep 17 00:00:00 2001
 From: Seungwoo Yang <ysw.yang@lge.com>
 Date: Wed, 22 Jun 2016 12:35:12 +0900
 Subject: [PATCH] Fix the wifi connection failure
@@ -32,10 +32,10 @@ Tested-by: Rajesh Kanna <rajesh.kanna@lge.com>
  1 file changed, 5 insertions(+)
 
 diff --git a/src/service.c b/src/service.c
-index 66160cc7..ac7a140f 100644
+index ce51034e..1de32aee 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -6728,6 +6728,11 @@ int __connman_service_disconnect(struct connman_service *service)
+@@ -6802,6 +6802,11 @@ int __connman_service_disconnect(struct connman_service *service)
  		__connman_ipconfig_set_proxy_autoconfig(service->ipconfig_ipv6,
  							NULL);
  

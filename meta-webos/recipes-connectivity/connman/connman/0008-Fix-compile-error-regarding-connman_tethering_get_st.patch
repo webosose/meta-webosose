@@ -1,4 +1,4 @@
-From 299e98276bb43d74d26d0356556c283e3b4bb962 Mon Sep 17 00:00:00 2001
+From b31e240fcff5098a2f1153e02ced6e82cae2dbec Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Mon, 23 Sep 2019 23:08:32 +0900
 Subject: [PATCH] Fix compile error regarding connman_tethering_get_sta_hash
@@ -10,10 +10,10 @@ Fix compile error regarding connman_tethering_get_sta_hash
  2 files changed, 5 insertions(+)
 
 diff --git a/src/technology.c b/src/technology.c
-index aa4a1c69..54a32b33 100644
+index c18080df..499ec452 100644
 --- a/src/technology.c
 +++ b/src/technology.c
-@@ -2081,6 +2081,9 @@ static void append_station_mac(DBusMessageIter *iter, void *user_data)
+@@ -2085,6 +2085,9 @@ static void append_station_mac(DBusMessageIter *iter, void *user_data)
  {
  	GHashTable *sta_hash = __connman_tethering_get_sta_hash();
  
@@ -24,7 +24,7 @@ index aa4a1c69..54a32b33 100644
  	gpointer key, value;
  	g_hash_table_iter_init (&iterator, sta_hash);
 diff --git a/src/tethering.c b/src/tethering.c
-index 83df2896..1392137c 100644
+index 7922a5d2..331e8dfe 100644
 --- a/src/tethering.c
 +++ b/src/tethering.c
 @@ -170,6 +170,8 @@ GHashTable *__connman_tethering_get_sta_hash()

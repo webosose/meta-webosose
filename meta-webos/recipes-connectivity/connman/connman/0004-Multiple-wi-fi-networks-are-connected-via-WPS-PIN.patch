@@ -1,4 +1,4 @@
-From 7983e2d7280ca45b4177d0ad1a965b51d058cd2f Mon Sep 17 00:00:00 2001
+From 37f53d5931b0827e1ec645853f1342f1baa1ff80 Mon Sep 17 00:00:00 2001
 From: "sachin.shetty" <sachin.shetty@lge.com>
 Date: Mon, 24 Jun 2019 16:55:43 +0530
 Subject: [PATCH] Multiple wi-fi networks are connected via WPS PIN.
