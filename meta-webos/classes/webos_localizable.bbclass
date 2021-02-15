@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 #
 # Localization-related settings and tasks
 #
@@ -46,7 +46,12 @@ do_generate_webos_localization () {
     if "${WEBOS_LOCALIZATION_GENERATE_RESOURCES}" ; then
 
         translation_target_locales="$(echo ${WEBOS_LOCALIZATION_TARGET_LOCALES} | sed -e 's/^ *//g' -e 's/ *$//g' | sed -e 's/ \+/,/g')"
-        webos_localization_options="-2 --localizeOnly --pseudo --quiet"
+
+        if ${@ 'true' if bb.data.inherits_class('webos_qt_localization', d) else 'false' } ; then
+            webos_localization_options="-2 --localizeOnly --quiet --pseudo"
+        else
+            webos_localization_options="-2 --localizeOnly --quiet"
+        fi
 
         local origdir=$PWD
         cd ${WEBOS_LOCALIZATION_SOURCE_DIR}
