@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos13"
+EXTENDPRAUTO_append = "webos14"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -22,6 +22,7 @@ SRC_URI += " \
     file://0018-Pick-gateway-from-gateway_hash-if-it-is-not-updated-.patch \
     file://0019-Add-CIDR-prefix-length-as-ipv4-property.patch \
     file://0020-Add-p2p-changes.patch \
+    file://0021-Fix-crash-when-wifi-tethering-set-false.patch \
 "
 
 do_install_append() {
