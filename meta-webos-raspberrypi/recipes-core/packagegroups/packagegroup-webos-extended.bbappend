@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2021 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS_${PN} variable.
-EXTENDPRAUTO_append_rpi = "webosrpi7"
+EXTENDPRAUTO_append_rpi = "webosrpi8"
 
 # gst omx is used only for raspberrypi3 builds
 MEDIA_append_rpi = " \
@@ -10,6 +10,10 @@ MEDIA_append_rpi = " \
 # Until build issues caused by PLAT-44962 are fixed in PLAT-45700
 MEDIA_raspberrypi3-64 = ""
 MEDIA_raspberrypi4-64 = ""
+
+SAFSERVICE_raspberrypi4 = " \
+    com.webos.service.storageaccess \
+"
 
 TTSSERVICE = " \
     com.webos.service.tts \
@@ -33,6 +37,9 @@ CAMERASERVICE_raspberrypi4 = " \
     com.webos.service.camera \
 "
 
+# SAF service functionality cannot be verified on webOS rpi64 which cannot boot yet
+SAFSERVICE_raspberrypi4-64 = ""
+
 # TTS service functionality cannot be verified on webOS rpi64 which cannot boot yet
 TTSSERVICE_raspberrypi3-64 = ""
 TTSSERVICE_raspberrypi4-64 = ""
@@ -55,6 +62,7 @@ RDEPENDS_${PN}_append_rpi = " \
     ofono \
     resize-rootfs \
     ${CAMERASERVICE} \
+    ${SAFSERVICE} \
     ${TTSSERVICE} \
     ${CIMSERVICE} \
 "
