@@ -1,0 +1,1674 @@
+From ad78d796f81abcd64e2923a9c245682859e472f1 Mon Sep 17 00:00:00 2001
+From: Roman Genhel <roman.genhel@lge.com>
+Date: Fri, 19 Feb 2021 07:41:42 +0900
+Subject: [PATCH] Implement DropShadow with GaussianBlur
+
+Improve DropShadow using GaussianBlur that was in QtGraphicalEffects 5.
+
+:Issues Addressed:
+[PLAT-141754] Improve DropShadow in QtGraphicalEffects 6
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ src/effects/CMakeLists.txt                    |   5 +
+ src/effects/DropShadow.qml                    |  53 ++-
+ src/effects/GaussianBlurFixedRadius.qml       | 370 ++++++++++++++++++
+ .../shaders_ng/gaussianblur_fixedradius.frag  | 144 +++++++
+ .../gaussianblur_fixedradius.frag.qsb         | Bin 0 -> 6538 bytes
+ .../gaussianblur_fixedradius_alphaOnly.frag   | 146 +++++++
+ ...aussianblur_fixedradius_alphaOnly.frag.qsb | Bin 0 -> 6992 bytes
+ .../gaussianblur_fixedradius_masked.frag      | 146 +++++++
+ .../gaussianblur_fixedradius_masked.frag.qsb  | Bin 0 -> 6706 bytes
+ ...sianblur_fixedradius_masked_alphaOnly.frag | 148 +++++++
+ ...blur_fixedradius_masked_alphaOnly.frag.qsb | Bin 0 -> 7283 bytes
+ 11 files changed, 985 insertions(+), 27 deletions(-)
+ create mode 100644 src/effects/GaussianBlurFixedRadius.qml
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius.frag
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius.frag.qsb
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag.qsb
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag.qsb
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag
+ create mode 100644 src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb
+
+diff --git a/src/effects/CMakeLists.txt b/src/effects/CMakeLists.txt
+index cf66a9c..a080d07 100644
+--- a/src/effects/CMakeLists.txt
++++ b/src/effects/CMakeLists.txt
+@@ -45,6 +45,10 @@ set(qtgraphicaleffectsshaders_resource_files
+     "shaders_ng/radialgradient_nomask.frag.qsb"
+     "shaders_ng/rectangularglow.frag.qsb"
+     "shaders_ng/thresholdmask.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius_alphaOnly.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius_masked.frag.qsb"
+ )
+ 
+ qt_internal_add_resource(qtgraphicaleffectsplugin "qtgraphicaleffectsshaders"
+@@ -79,6 +83,7 @@ set(qml_files
+     "RadialGradient.qml"
+     "RectangularGlow.qml"
+     "ThresholdMask.qml"
++    "GaussianBlurFixedRadius.qml"
+ )
+ set_source_files_properties(BrightnessContrast.qml PROPERTIES
+     QT_QML_SOURCE_VERSION "1.0"
+diff --git a/src/effects/DropShadow.qml b/src/effects/DropShadow.qml
+index 66c7a33..d1d4e00 100644
+--- a/src/effects/DropShadow.qml
++++ b/src/effects/DropShadow.qml
+@@ -128,7 +128,7 @@ Item {
+         \endtable
+ 
+     */
+-    property real radius: 0.0
++    property real radius: Math.floor(samples / 2)
+ 
+     /*!
+         This property defines the RGBA color value which is used for the shadow.
+@@ -291,36 +291,35 @@ Item {
+ 
+         \image DropShadow-transparentBorder.png
+     */
+-    property bool transparentBorder: false
++    property bool transparentBorder: true
+ 
+-    Loader {
++
++     GaussianBlurFixedRadius {
++        id: blur
+         x: rootItem.horizontalOffset
+         y: rootItem.verticalOffset
+-        width: parent.width
+-        height: parent.height
+-        sourceComponent: fastGlow
+-    }
+-
+-    Component {
+-        id: fastGlow
+-        FastGlow {
+-            anchors.fill: parent
+-            source: sourceProxy.output
+-            blur: Math.pow(rootItem.radius / 64.0, 0.4)
+-            color: rootItem.color
+-            cached: rootItem.cached
+-            spread: rootItem.spread
+-            transparentBorder: rootItem.transparentBorder
++        width: rootItem.width
++        height: rootItem.height
++        source: rootItem.source//sourceProxy.output
++        radius: rootItem.radius * Screen.devicePixelRatio
++        samples: rootItem.samples * Screen.devicePixelRatio
++        _thickness: rootItem.spread
++        transparentBorder: rootItem.transparentBorder
++        _color: rootItem.color;
++        _alphaOnly: true
++        // ignoreDevicePixelRatio: root.ignoreDevicePixelRatio
++
++        ShaderEffect {
++            x: blur._outputRect.x - parent.x
++            y: blur._outputRect.y - parent.y
++            width: transparentBorder ? blur._outputRect.width : blur.width
++            height: transparentBorder ? blur._outputRect.height : blur.height
++            property variant source: blur._output;
+         }
+-    }
+ 
+-    SourceProxy {
+-        id: sourceProxy
+-        input: rootItem.source
+-        sourceRect: rootItem.transparentBorder ? Qt.rect(-1, -1, parent.width + 2.0, parent.height + 2.0) : Qt.rect(0, 0, 0, 0)
+-    }
+-    ShaderEffect {
+-        anchors.fill: parent
+-        property variant source: sourceProxy.output
+     }
++
++    // Added for backward compatibility
++    property bool fast: false
++    property real samples: 9.0
+ }
+diff --git a/src/effects/GaussianBlurFixedRadius.qml b/src/effects/GaussianBlurFixedRadius.qml
+new file mode 100644
+index 0000000..187d68e
+--- /dev/null
++++ b/src/effects/GaussianBlurFixedRadius.qml
+@@ -0,0 +1,370 @@
++/****************************************************************************
++**
++** Copyright (C) 2017 The Qt Company Ltd.
++** Copyright (C) 2017 Jolla Ltd, author: <gunnar.sletta@jollamobile.com>
++** Contact: https://www.qt.io/licensing/
++**
++** This file is part of the Qt Graphical Effects module.
++**
++** $QT_BEGIN_LICENSE:LGPL$
++** Commercial License Usage
++** Licensees holding valid commercial Qt licenses may use this file in
++** accordance with the commercial license agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and The Qt Company. For licensing terms
++** and conditions see https://www.qt.io/terms-conditions. For further
++** information use the contact form at https://www.qt.io/contact-us.
++**
++** GNU Lesser General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU Lesser
++** General Public License version 3 as published by the Free Software
++** Foundation and appearing in the file LICENSE.LGPL3 included in the
++** packaging of this file. Please review the following information to
++** ensure the GNU Lesser General Public License version 3 requirements
++** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
++**
++** GNU General Public License Usage
++** Alternatively, this file may be used under the terms of the GNU
++** General Public License version 2.0 or (at your option) the GNU General
++** Public license version 3 or any later version approved by the KDE Free
++** Qt Foundation. The licenses are as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
++** included in the packaging of this file. Please review the following
++** information to ensure the GNU General Public License requirements will
++** be met: https://www.gnu.org/licenses/gpl-2.0.html and
++** https://www.gnu.org/licenses/gpl-3.0.html.
++**
++** $QT_END_LICENSE$
++**
++****************************************************************************/
++
++import QtQuick 2.12
++import QtQuick.Window 2.12
++import QtGraphicalEffects.private 1.12
++
++/*!
++    \qmltype GaussianBlur
++    \inqmlmodule QtGraphicalEffects
++    \since QtGraphicalEffects 1.0
++    \inherits QtQuick2::Item
++    \ingroup qtgraphicaleffects-blur
++    \brief Applies a higher quality blur effect.
++
++    GaussianBlur effect softens the image by blurring it with an algorithm that
++    uses the Gaussian function to calculate the effect. The effect produces
++    higher quality than \l{QtGraphicalEffects::FastBlur}{FastBlur}, but is
++    slower to render.
++
++    \table
++    \header
++        \li Source
++        \li Effect applied
++    \row
++        \li \image Original_bug.png
++        \li \image GaussianBlur_bug.png
++    \endtable
++
++    \note This effect is available when running with OpenGL.
++
++    \section1 Example
++
++    The following example shows how to apply the effect.
++    \snippet GaussianBlur-example.qml example
++
++    Performing blur live is a costly operation. Fullscreen gaussian blur
++    with even a moderate number of samples will only run at 60 fps on highend
++    graphics hardware.
++
++*/
++Item {
++    id: root
++
++    /*!
++        This property defines the source item that is going to be blurred.
++
++        \note It is not supported to let the effect include itself, for
++        instance by setting source to the effect's parent.
++    */
++    property variant source
++
++    /*!
++        This property defines the distance of the neighboring pixels which
++        affect the blurring of an individual pixel. A larger radius increases
++        the blur effect.
++
++        The ideal blur is achieved by selecting \c samples and \c radius such
++        that \c {samples = 1 + radius * 2}, such as:
++
++        \table
++        \header \li Radius             \li Samples
++        \row    \li 0 \e{(no blur)}    \li 1
++        \row    \li 1                  \li 3
++        \row    \li 2                  \li 5
++        \row    \li 3                  \li 7
++        \endtable
++
++        The value ranges from 0.0 (no blur) to inf. By default, the property is
++        set to \c floor(samples / 2.0).
++
++        \table
++        \header
++        \li Output examples with different radius values
++        \li
++        \li
++        \row
++            \li \image GaussianBlur_radius1.png
++            \li \image GaussianBlur_radius2.png
++            \li \image GaussianBlur_radius3.png
++        \row
++            \li \b { radius: 0 }
++            \li \b { radius: 4 }
++            \li \b { radius: 8 }
++        \row
++            \li \l samples: 16
++            \li \l samples: 16
++            \li \l samples: 16
++        \row
++            \li \l deviation: 3
++            \li \l deviation: 3
++            \li \l deviation: 3
++        \endtable
++
++    */
++    property real radius: Math.floor(samples / 2);
++
++    /*!
++        This property defines how many samples are taken per pixel when blur
++        calculation is done. Larger value produces better quality, but is slower
++        to render.
++
++        Ideally, this value should be twice as large as the highest required
++        radius value plus 1, for example, if the radius is animated between 0.0
++        and 4.0, samples should be set to 9.
++
++        By default, the property is set to \c 9.
++
++        \note This property is not intended to be animated. Changing this property may
++        cause the underlying OpenGL shaders to be recompiled.
++
++    */
++    property int samples: 9
++
++    /*!
++        This property is a parameter to the gaussian function that is used when
++        calculating neighboring pixel weights for the blurring. A larger
++        deviation causes image to appear more blurry, but it also reduces the
++        quality of the blur. A very large deviation value causes the effect to
++        look a bit similar to what, for exmple, a box blur algorithm produces. A
++        too small deviation values makes the effect insignificant for the pixels
++        near the radius.
++
++        \inlineimage GaussianBlur_deviation_graph.png
++        \caption The image above shows the Gaussian function with two different
++        deviation values, yellow (1) and cyan (2.7). The y-axis shows the
++        weights, the x-axis shows the pixel distance.
++
++        The value ranges from 0.0 (no deviation) to inf (maximum deviation). By
++        default, devaition is binded to radius. When radius increases, deviation
++        is automatically increased linearly. With the radius value of 8, the
++        deviation default value becomes approximately 2.7034. This value
++        produces a compromise between the blur quality and overall blurriness.
++
++        \table
++        \header
++        \li Output examples with different deviation values
++        \li
++        \li
++        \row
++            \li \image GaussianBlur_deviation1.png
++            \li \image GaussianBlur_deviation2.png
++            \li \image GaussianBlur_deviation3.png
++        \row
++            \li \b { deviation: 1 }
++            \li \b { deviation: 2 }
++            \li \b { deviation: 4 }
++        \row
++            \li \l radius: 8
++            \li \l radius: 8
++            \li \l radius: 8
++        \row
++            \li \l samples: 16
++            \li \l samples: 16
++            \li \l samples: 16
++        \endtable
++
++    */
++    property real deviation: (radius + 1) / 3.3333
++
++    /*!
++        This property defines the blur behavior near the edges of the item,
++        where the pixel blurring is affected by the pixels outside the source
++        edges.
++
++        If the property is set to \c true, the pixels outside the source are
++        interpreted to be transparent, which is similar to OpenGL
++        clamp-to-border extension. The blur is expanded slightly outside the
++        effect item area.
++
++        If the property is set to \c false, the pixels outside the source are
++        interpreted to contain the same color as the pixels at the edge of the
++        item, which is similar to OpenGL clamp-to-edge behavior. The blur does
++        not expand outside the effect item area.
++
++        By default, the property is set to \c false.
++
++        \table
++        \header
++        \li Output examples with different transparentBorder values
++        \li
++        \li
++        \row
++            \li \image GaussianBlur_transparentBorder1.png
++            \li \image GaussianBlur_transparentBorder2.png
++        \row
++            \li \b { transparentBorder: false }
++            \li \b { transparentBorder: true }
++        \row
++            \li \l radius: 8
++            \li \l radius: 8
++        \row
++            \li \l samples: 16
++            \li \l samples: 16
++        \row
++            \li \l deviation: 2.7
++            \li \l deviation: 2.7
++        \endtable
++    */
++    property bool transparentBorder: false
++
++    /*!
++        This property allows the effect output pixels to be cached in order to
++        improve the rendering performance.
++        Every time the source or effect properties are changed, the pixels in
++        the cache must be updated. Memory consumption is increased, because an
++        extra buffer of memory is required for storing the effect output.
++
++        It is recommended to disable the cache when the source or the effect
++        properties are animated.
++
++        By default, the property is set to \c false.
++
++    */
++    property bool cached: false
++
++
++    // private members...
++    /*! \internal */
++    property int _paddedTexWidth: transparentBorder ? width + 2 * radius: width;
++    /*! \internal */
++    property int _paddedTexHeight: transparentBorder ? height  + 2 * radius: height;
++    /*! \internal */
++    property int _kernelRadius: Math.max(0, samples / 2);
++    /*! \internal */
++    property int _kernelSize: _kernelRadius * 2 + 1;
++    /*! \internal */
++    property int _dpr: Screen.devicePixelRatio;
++    /*! \internal */
++    property bool _alphaOnly: false;
++    /*! \internal */
++    property var _maskSource: undefined
++
++    /*! \internal */
++    property alias _output: sourceProxy.output;
++    /*! \internal */
++    property alias _outputRect: sourceProxy.sourceRect;
++    /*! \internal */
++    property alias _color: verticalBlur.color;
++    /*! \internal */
++    property real _thickness: 0;
++
++    onSamplesChanged: _rebuildShaders();
++    on_KernelSizeChanged: _rebuildShaders();
++    onDeviationChanged: _rebuildShaders();
++    on_DprChanged: _rebuildShaders();
++    on_MaskSourceChanged: _rebuildShaders();
++
++    Component.onCompleted: {
++         _rebuildShaders();
++    }
++
++    /*! \internal */
++    function _rebuildShaders() {
++        var s = "qrc:/qt-project.org/imports/QtGraphicalEffects/shaders_ng/gaussianblur_fixedradius";
++        if (_maskSource != undefined)
++            s += "_masked";
++        if (root._alphaOnly)
++            s += "_alphaOnly";
++        horizontalBlur.fragmentShader = s + ".frag.qsb";
++    }
++
++    SourceProxy {
++        id: sourceProxy
++        interpolation: SourceProxy.LinearInterpolation
++        input: root.source
++        sourceRect: root.transparentBorder
++                    ? Qt.rect(-root.radius, 0, root._paddedTexWidth, parent.height)
++                    : Qt.rect(0, 0, 0, 0)
++    }
++
++    ShaderEffect {
++        id: horizontalBlur
++        width: root.transparentBorder ? root._paddedTexWidth : root.width
++        height: root.height;
++
++        // Used by all shaders
++        property Item source: sourceProxy.output;
++        property real spread: root.radius / root._kernelRadius;
++        property vector2d dirstep: Qt.vector2d(1 / (root._paddedTexWidth * root._dpr), 0);
++
++        // Used by fallback shader (sampleCount exceeds number of varyings)
++        property real deviation: root.deviation
++
++        // Only in use for DropShadow and Glow
++        property color color: "white"
++        property real thickness: Math.max(0, Math.min(0.98, 1 - root._thickness * 0.98));
++
++        // Only in use for MaskedBlur
++        property var mask: root._maskSource;
++
++        layer.enabled: true
++        layer.smooth: true
++        layer.sourceRect: root.transparentBorder
++                          ? Qt.rect(0, -root.radius, width, root._paddedTexHeight)
++                          : Qt.rect(0, 0, 0, 0)
++        visible: false
++        blending: false
++    }
++
++    ShaderEffect {
++        id: verticalBlur
++        x: transparentBorder ? -root.radius : 0
++        y: x;
++        width: root.transparentBorder ? root._paddedTexWidth: root.width
++        height: root.transparentBorder ? root._paddedTexHeight : root.height;
++        fragmentShader: horizontalBlur.fragmentShader
++        //vertexShader: horizontalBlur.vertexShader
++
++        property Item source: horizontalBlur
++        property real spread: horizontalBlur.spread
++        property vector2d dirstep: Qt.vector2d(0, 1 / (root._paddedTexHeight * root._dpr));
++
++        property real deviation: horizontalBlur.deviation
++
++        property color color: "black"
++        property real thickness: horizontalBlur.thickness;
++
++        property var mask: horizontalBlur.mask;
++
++        visible: true
++    }
++
++    ShaderEffectSource {
++        id: cacheItem
++        anchors.fill: verticalBlur
++        visible: root.cached
++        smooth: true
++        sourceItem: verticalBlur
++        hideSource: visible
++    }
++
++}
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius.frag b/src/effects/shaders_ng/gaussianblur_fixedradius.frag
+new file mode 100644
+index 0000000..fae9914
+--- /dev/null
++++ b/src/effects/shaders_ng/gaussianblur_fixedradius.frag
+@@ -0,0 +1,144 @@
++#version 440
++layout(binding = 1) uniform sampler2D source;
++layout(location = 0) in vec2 qt_TexCoord0;
++layout(location = 0) out vec4 fragColor;
++
++layout(std140, binding = 0) uniform buf {
++mat4 qt_Matrix;
++float qt_Opacity;
++float spread;
++float deviation;
++vec2 dirstep;
++};
++
++void main() {
++    vec4 result = vec4(0);
++    vec2 pixelStep = dirstep * spread;
++    float w = 0.0;
++    float wSum = 0.0;
++    float k = 2.0 * deviation * deviation;
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-20));
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-19));
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-18));
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-17));
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-16));
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-15));
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-14));
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-13));
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-12));
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-11));
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-10));
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-9));
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-8));
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-7));
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-6));
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-5));
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-4));
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-3));
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-2));
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-1));
++    w = exp(-0.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(0));
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(1));
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(2));
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(3));
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(4));
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(5));
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(6));
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(7));
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(8));
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(9));
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(10));
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(11));
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(12));
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(13));
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(14));
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(15));
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(16));
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(17));
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(18));
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(19));
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(20));
++    fragColor = (qt_Opacity / wSum) * result;
++}
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius.frag.qsb b/src/effects/shaders_ng/gaussianblur_fixedradius.frag.qsb
+new file mode 100644
+index 0000000000000000000000000000000000000000..856ccec12996f5b464fd8ae318a77abe7a985ec5
+GIT binary patch
+literal 6538
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag b/src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag
+new file mode 100644
+index 0000000..ecf59f2
+--- /dev/null
++++ b/src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag
+@@ -0,0 +1,146 @@
++#version 440
++layout(binding = 1) uniform sampler2D source;
++layout(location = 0) in vec2 qt_TexCoord0;
++layout(location = 0) out vec4 fragColor;
++
++layout(std140, binding = 0) uniform buf {
++mat4 qt_Matrix;
++float qt_Opacity;
++float spread;
++float deviation;
++vec2 dirstep;
++vec4 color;
++float thickness;
++};
++
++void main() {
++    float result = 0.0;
++    vec2 pixelStep = dirstep * spread;
++    float w = 0.0;
++    float wSum = 0.0;
++    float k = 2.0 * deviation * deviation;
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-20)).a;
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-19)).a;
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-18)).a;
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-17)).a;
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-16)).a;
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-15)).a;
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-14)).a;
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-13)).a;
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-12)).a;
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-11)).a;
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-10)).a;
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-9)).a;
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-8)).a;
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-7)).a;
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-6)).a;
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-5)).a;
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-4)).a;
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-3)).a;
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-2)).a;
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-1)).a;
++    w = exp(-0.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(0)).a;
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(1)).a;
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(2)).a;
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(3)).a;
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(4)).a;
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(5)).a;
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(6)).a;
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(7)).a;
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(8)).a;
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(9)).a;
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(10)).a;
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(11)).a;
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(12)).a;
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(13)).a;
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(14)).a;
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(15)).a;
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(16)).a;
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(17)).a;
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(18)).a;
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(19)).a;
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(20)).a;
++    fragColor = mix(vec4(0), color, clamp((result / wSum) / thickness, 0.0, 1.0)) * qt_Opacity;
++}
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag.qsb b/src/effects/shaders_ng/gaussianblur_fixedradius_alphaOnly.frag.qsb
+new file mode 100644
+index 0000000000000000000000000000000000000000..21c4babdd1b04380a4941a2edb193a414dfb54e3
+GIT binary patch
+literal 6992
+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
+UPIY`8y!<bV&e8gHR8RDO0H~jJ(EtDd
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag b/src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag
+new file mode 100644
+index 0000000..b44607b
+--- /dev/null
++++ b/src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag
+@@ -0,0 +1,146 @@
++#version 440
++layout(binding = 1) uniform sampler2D source;
++layout(binding = 2) uniform sampler2D mask;
++layout(location = 0) in vec2 qt_TexCoord0;
++layout(location = 0) out vec4 fragColor;
++
++layout(std140, binding = 0) uniform buf {
++mat4 qt_Matrix;
++float qt_Opacity;
++float spread;
++float deviation;
++vec2 dirstep;
++};
++
++void main() {
++    vec4 result = vec4(0);
++    vec2 pixelStep = dirstep * spread;
++    pixelStep *= texture(mask, qt_TexCoord0).a;
++    float w = 0.0;
++    float wSum = 0.0;
++    float k = 2.0 * deviation * deviation;
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-20));
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-19));
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-18));
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-17));
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-16));
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-15));
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-14));
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-13));
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-12));
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-11));
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-10));
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-9));
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-8));
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-7));
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-6));
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-5));
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-4));
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-3));
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-2));
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-1));
++    w = exp(-0.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(0));
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(1));
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(2));
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(3));
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(4));
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(5));
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(6));
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(7));
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(8));
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(9));
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(10));
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(11));
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(12));
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(13));
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(14));
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(15));
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(16));
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(17));
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(18));
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(19));
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(20));
++    fragColor = (qt_Opacity / wSum) * result;
++}
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag.qsb b/src/effects/shaders_ng/gaussianblur_fixedradius_masked.frag.qsb
+new file mode 100644
+index 0000000000000000000000000000000000000000..5e86d71d6b8f9eb3805b868785e7d535c9beda6c
+GIT binary patch
+literal 6706
+zcmZXYc{Ei2AOGz_s7U16${JZBZbp_$OeKVDMVai|++@i%=o6K3F(oRIU9x;+8Cj=d
+zuB9Qe6H~WOBGlN|ncsZR@BIGyopbNG?{lB$eb4K4?(6xu&vQ9As`(?b7hdv5h!061
+zGgCHt`SSVSYbx?v&&l7?zi(QI-Dk5;dyh~1K9ZFa78ic@U`OI;RPbobXq4kVp*80G
+zqZWhtUE0eK@3pq1`RMk(md&Ykr9b9tJAY2k<ZROB$G+-5bMAR-==yZ1Yx7`laIim|
+z@$a#UuB+|OgHvjsXR|uW535g0J?^bq&16<zAv_7Telz^c)pO`w>}sWoxyaI-2d&lx
+zuwE@4cw2E`re81X%UH@K=ale#mF!Ym6@#AfbA6H`HBk|wk-nJ%S8GuFg$BiP-pH<R
+zZZ10|FAjzmBiVsfx9guNXBNGf{POHT^-sfehby+;A<}g{S$8yFoYJ&aiJgQVfa?3d
+zJna2*zQSrfwh)u|-dQDx7A8C6^W+3gS?`o7u2<jUM&%wCQ`Vh+osU@G7ezz5u73VU
+ztJ9XPeekLhual`_=}x_$b|&Y|#}sB%hV`o6=FO!QJC)YAzCLCPwrSh@X4>~+?cu5m
+z?fJ_xRX@w-#;oe<7?wv$3{A*`p&=?!x+<V<{zKjXzi*LtD6QJkK{)p*`9{mblj-mJ
+z%g)ulhFabUK|xu{7VKh9*1R_FZSN==8+&|oS?qYVWkZ1Icxzr>V%bK(t#q3Sd$*y_
+z*W?~%sFWQ@w<&slMM_1WggP|1dX)OY#bYS_N!D7Vj_;K>wnIPW8+4DmECgnq9dh=*
+zWoK8e+@|MQu5B;<rc8Rwep)=F#pC$ULz~U^>TRpnfRz6uL><xBCo8T@1u8wSS^8o7
+z<^1KWf8Cvp75tQ_|2*Xp;_5Nn-(6yVx$@DF`2oZB$zq=r%zLv#fuFjpR*B}{kFP%b
+zoMsd278^JfJ)`2OqHi%{G1oJs36S2N4Ntn42#|Ec<-RW>MjqLZ-y&N@0l`62Mn=s)
+zXZ5bsE<H`W`eO`!Di(I`<wJt~&)f0M_P;uJer9Jg?{6Nv8suZ@Q*Z3{RcT8^VD_5c
+zev8gL^uu)8;77$!yE8FoPsPbU`C>9(`S{I&=b1e<s;c$0TQ@}oyN_J+QB5YrX?#$+
+zx7SlgTQxb~<E*ndzvq6<6Hm--O(oXk?KA}My;ao@y(Z4%Y3nn0>VQc1k$^I{Q8VYP
+zvX@~t3mQ8A94WmmA#JFdFz1z*S7Ko^q@iuE%H?02N0M^V5r+1ZWhROwz4Gw=<-FfX
+zP1vC{PMj!?ElXQSqFiokO)rqoj*U5L{Z9f1^ZX;Tn_E1e?A!BK1hVcrtBQa;DF8S3
+z7nK`7h0kEwO7q3T;(s-?m%aK$j{V~`b#j8U?(=7aAM*-0yajmjJDk&%Q(buV+^1M|
+zoYSG-Ci%TcX>wxZ@i0?Qy}>(gx%~?A7GKEN$OzXdeEjWz+<Fu7fSkA-`}E~;NxE0T
+z_{!MW@AaIsK}YYlw1%nXl$IsipC7_i^<<MK_GPDMj-Ow@^2N&UfQ$3<BYN-ntj;Kj
+zl0_mJJbL{H{BLnec)!uT;Aa)%_1bl5uhpL=<9_Pg*3;*fKB<Y8`DLvqa!OyP_5#me
+z4x;^u&pGEz?$#uFd6U}<QbO~nWr>!PoKgbs+`2TGpPr6C`MJIGA&sC}qW3z9gyC`s
+zsDJz+a<b90%5_C;Ms$$x=bMzv;p4CJ^IdjdJkG_$M5^cXQ{x^>96WfOVX0Bl`npkP
+zw(^X@xx+VoBcGtWdrz^dO8<&HnEkSSzwE_fnVSCpYG3$$$Dnr}eX@GvuA0}kIQV%?
+zCZ@48|IF`MuUR|OuDkV^KFmZx!V`?>L7s|P%c;GBl$lc1shc^Ima7=WS|3R5_L}wE
+zw3n!nnq6N;^%sr1Y9-D~3Dz|>#;2HGD<Pf5M(<oqdPqk$Rh(^Bd#itGY^XhLrrT)*
+z9t(_==D5>lBQil8?)&!#U(QXPw118*%|5oN3RNbl3Rr%Kp&6vNQ(h?!M#+g`#rc);
+zrnsM5=BvsJthfC8P*Lz6Nmc*OC2<}lTc2NJ`$aAs2`IfhYKE08%L=pU(9q#NQtBr0
+z;*@+snP=WJmGd?g8rpX9T<S&7&PX|_&}{aUk-S9izdGRib90}Q98J79ZttZh=gX28
+z_}IhP{O~Ay81IT%$0u-XC_gg2xwV=y_&$H-xAa{#_AqW;nrFq&ju<Q@zEa%XIzJ^Q
+zEC@1FnssXLb?2t9BVnezddoWRMN|{KjE|3*g?{c#I*%zma9HhrnCWr7FK7PcF3Wp%
+z`H_r`C{6FleB2|S;wmrx!E?F`9e*QFRzG~{Zh0z-G%`LW)=fRV@cEp#^x$k_ZxGoj
+z_f{!3Cs=YEb8&69OjC8Nb90*NTo@FDT|e;Hs$6ritpLeL?MYVgTM|rOn(aRHyp-DL
+zdj0ET$vMZ|FaK_pR%?XrUVi!pBjkk3wwPKqdU?I6CV0J{m0uhk8K=C`{OuLCA|w83
+zQJv1K(1GWT`rfs=AD3koh%0xPU!ALF$1w3S9;m|U#mzSj7|MpWJ|QbdtG1#cVwsH3
+zw+uJxp}C%(>b_g3`PKG!z``d-pz&AWo>Q!^mNm9*F*2?xp1&h@fx0*5BUe0Y+z-Ba
+zk<qMS*)eX9*hU5;i<JwP7xhC!Plb*cPX!w+G`)ihem?PQDjBZ7Gk<(Vf6vR3w^8rI
+z0$$IA-D6CpP3Uh`yM##l<NTv`v)s3Sj7=C$ijOSRv0#^Jvl((hFEW5){HKE=uZ_jj
+z7B5W;|6CthYddb(`h?(4D-)Ve;?#?2AfMihY&9_cEaO%)-s3IV?uZ_}?!S4gZ_4%A
+z#UR&(vF#>wW((zix8})=c<G-zm)c}aRVvv+g(exE%#8yhZr@XLP3ui!8~q(O(L?XT
+zYD{A9`)6*V290Zb2|FSqy{m}hyR~zK=oJ6;zlghHG;`y3Wy_*MAM<nF@-9Q`L5T@d
+zY~ea#$ND>(8aywnae9X#TiMbsH~myZnGo$gqPdK0H?56l<XpF8>@aRtwhYKk_tcGS
+zFqGe|-6ljUSNxfPMr0Q!EbNS1W4LI9&ox?w45geHl@!tCc}KM=d>``(HD=qf8zCD&
+zRc6;_CnnylxlAuwkEp_b=kqGRek7|jgmsd=8^T(H`=EtytuclE)+-CT*P;@G-M@{~
+zT4S30wHON)*Q1^Vw|yTk*;-SnjHwJ}eIM_!D4nT_^eCGtjugrCbG@aMTQ#?-UQ;S7
+zj;T7@J=C<<p0+t=Yv}Lp@Yo>HsjM=HufFWyZr0b_vAg54bLSkZ?S<vOmA{(%aaCgI
+zs)I?=FT>Wl;UU05omDimG8{6AI{#L|ggogB8xMAE>Gg84TXuM9UuCD@ggcb%_uU?G
+z|F8Z{PQeNmE*|dekCfQ>Z*F0I`0I85Q~xe5ZdHFLRmiQ6q_zaUUDf~ZqyGK6SfX1S
+zCBIRcukFLtokz8cn+N@;kF<p43^#8oMdoUJS>|`PZ_AjX**?)9%|~&rrxyeJZalCn
+zTW|6HlefOR-*9nXMF!VB1#N=r#+w+u$@~%F)YUyLsYX%O)YeP>M^~R;kS^NozA?R6
+zgi9T0y&zq&nrCR-l3IY<-E-QzeE7U;7cN}mN1G@L_U4b&#l)czbWj9@lfdm0u$UzB
+z&}HHfc=?~r$CAjdByyVyoj^fz|7~vM^?0x#KD!ua%?tDU#2mmIr9tJN$2lq0TuZsV
+zplm?@Z`K{UlK>#f2WRZ_=0lx2z}~^}y>w9Qr=u=>l8E~UD)$7ueJe!3^L5i2^oR$r
+z3@=<$=OzsNmO}U{Xne468bJ&#t(*uRY(yXtd;lLDB7d0(5p`jKijFuO*H5xG93q9>
+zC8E((C~sJT12G>DR=^wCBW^svA^#R$P?ieHR@QY;82C=s9xB5!dCFRr6G-KPEx3>Z
+z`QCmaszXGtRLBSenICp=QivxJg@`DFh(2_|aDq97yO()jmEWT(oQPd*tOnjF12VGm
+zFX2GG$g^}M5#8gF(=mK_BOx$H0O(5qy>;OkZFt6SA%GsC`N<>|GRlRT<Dlj=sM*Q?
+z5GQi6cDjQCy@O)}@XhwWXE>1_Nu;MPOby=*EVYrK=I;DH6-O@QO+4yAVfZ}=5k@!U
+zsL=i4N={h)2D6Tch7!?LA}UNotz4S+gHz?ZL0mBT*QfzE;#wDb9N(M*HDC89b0HH7
+zEQ}P=q_G8rtKgfZ!6{zgPa?Rk4X>Yo*L@dc=@D|D+H#@jI4C*|y4D367uGpYpt`lF
+zJ)m(pu8I#%_1TT3Z>XXhS;MlNaH<(IRTs8)TDiLp(Ki(F(OjUh0F>ha<az<Q{o{5N
+zhEx_y1Kj}74I^}e3*8_MyYawU{%x6YC?Rw{GaglUAxMC&-C%2Ronsv8pT?3VqAw&?
+zd8atwU{1s!9(CO}6G&yqP@#(9DL&Z$CbNl%MiJ3%BFaxhEnK$ufwASg#$0gjuTeQ}
+z#JY~DiQgeYJJ<YkxsW~umX;J!r7@QqEdaFf!S0+$l|rup5hW8*!-^PgVC4PIA4%ko
+z6e1^y$Vnl&b!%ey9rNwoy#QgTn!pLS`R-!q8yIvWX*iY}CYUk_I<VkquFE<onEs<w
+zHUh|4>_|V7fqQEC-zYXs*_?z^`TIxX%BisZuYsmV_OSFrdw48CZ%Awz3_8+jopKjw
+z5_nWWHG*FV4q%cM5!$(9$YMgR6?<cNCm|%gySn66Z1%uu*p&mxp+G_pz9d7FBxv$N
+z+OQB9#LINmg<GVMKuLsM$ArK@Juf^Vv@{_CF3PK}tx+Hgv#nu@PCK}$XgRSTT;$nY
+zzX^ozA0*Fn1L3@I69;l#p*M(#wn-s?*?15|hku7{lCM%oD-mZx)v-<+mIFoh{mA48
+zmU%m5Ie<X3NKO1+U6?mPPa2dkWttOl)vuUA`|-dYAUPg2ePH(i6!8G~g$6Ffp*Q|&
+zc>?P<fFy1BtQ7Jsq4p*P`bWO)8wIj9tG3`k(i2v$(4D9te4sFe2QH9ju`MQP7W22C
+z0%_m@ZU8xx&2BA55`hwGTjEjhuUsFv*aKd^0jQjSw*>~2Ig#6DvD=(TSAs_-H?qq+
+zi^ikkRH#fokU$3yF6FWfE&oe*PLCcTk2m4~W%oeGB$0cP$ZSHbARUz15%mJpr4T71
+z?jY)P-13D0;Lo$^z>Pe3HF}a#eKjps8()qCyafjQ;!%xGlWtJ<$gh)Hf`B(SayAYP
+zcwpBD>TAO(3AK^*(LGEnB2E_tlOUoFEMVpWfc1NpE^;965<JKp$lZh$WjdG(U6Z$b
+z!4DiVWeQ0l=8?IYJa7^hVoqV$JgCWnjEIoYwX}LkP*#L_Q4%@IKBSNWNd(8^Yr%~a
+zCG5bQFe3P<MI6)=E7W4Ibznqj;3+49DzL<)kjFePM=<-roV|cG7p!tN+fEX(lS01m
+z`2G(;6xJOoV=t9)iOSHRG6KxT1t<)_ESB9#2ycfmKbWIpX(9vW^nq^jmKagcjbqcj
+z9dy(975$4{-2r-p4!)V^yM{NwexX`og~$2f%y`y+MD!pL%^;!<M06;jHbA|Lao8-@
+zksD#{c@!gzzouZ>27qoopqq-ND<@EOZ>P!|2>!gi5=oCZif`rwr}jWW9zd`c5WK(e
+zD-RIN$#RuKCM1ywDFh>lH1YU`e_%wA<=dL#(9;PX)55@?gN4(Az#km&=TPBSA>dEa
+zj@%7EPTXEjjssSYNAFP}rFQ2I(6}9}lqjs=g5SJn-J~-1QyI2Yh7J`<kq_hmQd5PN
+zT)BbVed60}JQd3C-lT7cqZ_sI3t0Mw-VfGZbff&$$ZzjBG=#!%rf&f4cXOcVcqrO7
+zZOsTDy?@8u190~OSUq6t2e4JyGU_0VjPP!@@B!28M~2cjisg5e=o=E~M!o!k6@5eh
+z2TKHPxcYe;36DdYD9~|y^r7#~2-w;O#>!hpiGr~lOt}-VoDM9f3+HOXxdH>myl}42
+z()M03RzY=bhQhdLwv|L-s8bpKX5*O@hJPnZn#yoB%k^&Mgn!4OWC|qHz6nD+Ina(-
+z+L{c0hjWK;3m|v^1TTPa6Cj8c?g|2gLqFD~@jGX2=BMM)+=Lamc+{O(u*EG^v?~B)
+z{QOVr)-emU+2uMmXq-=U*``DRHS(8Lo^@B(T>5X+oHUG8J{88vsyvZ_o@bxb6B)RA
+zwqQjnW?t<^8(u4#ocsw*Ub+&%zRYW4{~UV^M0MK3FD?!=_OO|zz{(+_5~Quur{i&2
+z^afu1JTFv#3m|&{<fny!0sxthHAO`A*&LEY0;P}zCEp27L`HElP!tG%A|Az0mn0Rg
+z^T8M$7;|yp3<dJ;WM`0u<U%G+j^3b-pX3D>1)(q;z@mXaEeFE5;ZyY79&oW2T=N9B
+zb>O?CS|$aGQ*1M$XKAUeanOA(4ur(xvLKDL!ZAuU$CB19AX#zsqfk6f2d}{eckJ_)
+zN1fOtBNYns!1pKwZPck7Tzn6T+ys)a1BqP7H_}cbC$gX9A<7R&T^Qi!M$(D6XNrN=
+zbSJ*eR1aXCbSKtJ91jQs>s)YwLa!th(m)%?ih+CalhQkE2D8nJve_nuJS5c$P#}_G
+z+d~Ruf~{t!huhdKV+uPuHMA*K0N|qNru9vr<bt6)$O~TPhV9}}y$2y2Xau`L1uTXG
+zyc)+cBcg13-=J2LpmI_njRV$I+H~MV{IJ#DT*zVUmKjCo12}wPz%LGW{D(UN_LA-}
+z8`)8cjWxRDeUQ!P8Yv_aJFY;fmfew-M9x#IA3_0M0FG39ilU?0rNsw`kvx!iT(V*d
+zC)n!=%wPvx;!vYbf-%})Ixubbi60h<N4e+?`@U;<0HU72p^F0&oJa?qAc;nRXv05{
+zQ37OiffS~QH*z6O+fo>k*y>b1_@dHm5+{OVXDL!`5e1U^K>*N*=EAl=r$oRUwpsaM
+z71Qkhu}u<rtmLc0g*<-G5~niksSG_TgWd8a?6?$#p@EHM_gSOVVayI!N3kZnU``L4
+zXjlxJYy6wJ|AX4>A6hRze25DXibL=3n>j*dcu*M!u;c%u+h6xy(5)MEqk?Yig&MYr
+z3v^TJ`g4IEQCB$X$cgwX&i2Hk1WDu|sn$OZ73^fWP#K1+*FHBQ3^vPT@XfN{Cn?}m
+zCpe{uZDMnchiRY-v*RZD1WeX}!z~Ab_~GyiOHJJ1l#<%oO9~?hyG5fgWT^}{?D$s-
+z!>yBLOl8Dk38_(X_-GDrN)(Wb14U23?2nTJsg^$;J@%LI0J=s4jX#0LA3$SeY?L@y
+znf_y45+8l-%KS+RLjb#VmcqbN8EV*ZF$zPiljTcgNMQ+bOg((G1Zd1A-hHr72kz5_
+zwJZm6xM8h0Rx%O2NJM*xC_xHwRPwFjKt>cdTLc03O!4iL^o>NtU32<|GP?0paY2|(
+zv>z;ebOSE@eei#oD;~wLS=N3x6N*lSqTNYrn)qnB9g`b?$t}Rd12FLdOfm{%xB!#K
+zKi1XoJM1F+;?P5+711~}lZZN!YPI4}$28Um5j7xH=58JaV}*b=PI&rEb|?`IC!*`5
+z+E5B3>MtuE+DV6Y9zr|MpdAO&nh<`+iZoqCVT5C=3GDb~IY8im2`69zc7VwNUs$g6
+z?Cu^I8S*j{)kwb6#{bm(lF{(>w?3C=%6~LoukpFAMNWBZX%{loI5%!kwEJy7{Xk>c
+zaFa#FiNPYit&)*P#vw<m8@3FMG1=4IFTJD(cP&_5O`m#G>}#Sv)$5)2f8im#xGs5h
+zT<O&>*P_IpNleDm`us0Sn{%#nWgbF<w2-fVUz7QYga5s_xn$@qG3nsojJI|$XrFE_
+zC<|X6J+U5JCcP9Gs&=L6tHsG@2K&FJX_ajAFaG^J?0GNf_vb`c*V?;daof(d-*RLF
+z-Sp|_Wdj?YVP9klH{R<?obD*1_3%wL773H9e3##Hu9y3MjENd=4){!q)Za-oXK(nW
+zX)YaGQmn5feJ85;lf&y*+gAcNUcMV|^fOHv|2vUh7up{uSodxHhX3z;GlRq3qhk7{
+zhMwgh?@%!@(AU(ndsI_c^`aCe?4I8h>V>mgCw1-NNtau<k1o^-dHGl;e$mXz`&cJ`
+zdSLHqHK8w+S+B?Ko`iK=${78=f><T4p_E#6uQ}ct#f3-DBHguBcdMVjHZTn{?dlqg
+zI*o}L>KdJJ!Nh#)8pT9lUaj4l`^f%#6m!BMc7A151t({=uyRlpms`KEa#9tS!i$MH
+z*zF|RaoIiT#IUB|vZ1}B`#Z<-vdZ#fwhrkgG53P*W67=UnqDdYO>6%<64j;Y6&o8C
+zqH#qgw8FW+(U~@QUj4c?tgq~{9aIsv5OKw8b}J{kwqSd#e|P>@Ec0Ve*c}s0V=n9O
+zTbZwY@S?ZHdd>e6|F81@-Dc7jXU6^-Wb2Z?_T{r?+P)F>>xU@;epnl1fVEf{=Ih5K
+z)ay+Y<&9}Bd<ygRs=ugSbN%qMg#l_nrm|O4t@cDwJX`8n^Kq*``}?iT;mn24^#Mu6
+zo|sw<nt=w5tWGmfr;(2d8ypiRs|g#ZS&>z(3{<ViDpm$6R%B%>1LYL563sw~MpmR5
+zDALGBX$D7W<RdhLBQ&xC%|L-hmS?$fzYTOhlQSOmWXm9X-o(YZQALeJNcVLnoHB{5
+UTrX(7UFYh$%jEYpDR}#T0OcuD!vFvP
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag b/src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag
+new file mode 100644
+index 0000000..0d5b9c9
+--- /dev/null
++++ b/src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag
+@@ -0,0 +1,148 @@
++#version 440
++layout(binding = 1) uniform sampler2D source;
++layout(binding = 2) uniform sampler2D mask;
++layout(location = 0) in vec2 qt_TexCoord0;
++layout(location = 0) out vec4 fragColor;
++
++layout(std140, binding = 0) uniform buf {
++mat4 qt_Matrix;
++float qt_Opacity;
++float spread;
++float deviation;
++vec2 dirstep;
++vec4 color;
++float thickness;
++};
++
++void main() {
++    float result = 0.0;
++    vec2 pixelStep = dirstep * spread;
++    pixelStep *= texture(mask, qt_TexCoord0).a;
++    float w = 0.0;
++    float wSum = 0.0;
++    float k = 2.0 * deviation * deviation;
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-20)).a;
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-19)).a;
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-18)).a;
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-17)).a;
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-16)).a;
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-15)).a;
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-14)).a;
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-13)).a;
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-12)).a;
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-11)).a;
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-10)).a;
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-9)).a;
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-8)).a;
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-7)).a;
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-6)).a;
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-5)).a;
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-4)).a;
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-3)).a;
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-2)).a;
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(-1)).a;
++    w = exp(-0.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(0)).a;
++    w = exp(-1.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(1)).a;
++    w = exp(-4.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(2)).a;
++    w = exp(-9.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(3)).a;
++    w = exp(-16.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(4)).a;
++    w = exp(-25.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(5)).a;
++    w = exp(-36.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(6)).a;
++    w = exp(-49.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(7)).a;
++    w = exp(-64.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(8)).a;
++    w = exp(-81.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(9)).a;
++    w = exp(-100.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(10)).a;
++    w = exp(-121.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(11)).a;
++    w = exp(-144.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(12)).a;
++    w = exp(-169.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(13)).a;
++    w = exp(-196.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(14)).a;
++    w = exp(-225.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(15)).a;
++    w = exp(-256.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(16)).a;
++    w = exp(-289.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(17)).a;
++    w = exp(-324.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(18)).a;
++    w = exp(-361.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(19)).a;
++    w = exp(-400.000000 / k);
++    wSum += w;
++    result += w * texture(source, qt_TexCoord0 + pixelStep * float(20)).a;
++    fragColor = mix(vec4(0), color, clamp((result / wSum) / thickness, 0.0, 1.0)) * qt_Opacity;
++}
+diff --git a/src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb b/src/effects/shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb
+new file mode 100644
+index 0000000000000000000000000000000000000000..1f18c0c2ff1a5135c877f511e21f05212693da32
+GIT binary patch
+literal 7283
+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
+LUX{DCbs_kF0kyhw
+
+literal 0
+HcmV?d00001
+
