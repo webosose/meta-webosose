@@ -5,7 +5,7 @@ AUTHOR = "Jaehoon Lee <jaehoon85.lee@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-9_0ca6e4344066a16811eb16ab12ee98e30c18b3e6"
+WEBOS_VERSION = "1.0.0-11_07f73cdd9cd342d23f35473924e7e68fbd01a828"
 PR = "r5"
 
 inherit webos_component
