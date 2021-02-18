@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 LG Electronics, Inc.
+# Copyright (c) 2016-2021 LG Electronics, Inc.
 
 DESCRIPTION = "enact-dev command-line tools used by webOS"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -11,7 +11,7 @@ inherit native
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r6"
+PR = "r7"
 
 S = "${WORKDIR}/git"
 
@@ -40,8 +40,6 @@ do_install() {
 }
 
 sysroot_stage_all_append() {
-    # clear any existing npm cache
-    rm -fr ${TMPDIR}/npm_cache
     # files installed to /opt don't get staged by default so we must force /opt to be staged
     sysroot_stage_dir ${D}${base_prefix}/opt ${SYSROOT_DESTDIR}${base_prefix}/opt
 }

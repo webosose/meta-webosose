@@ -6,7 +6,7 @@ SECTION = "webOS/modules"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d6f37569f5013072e9490d2194d10ae6"
 
-PR = "r2"
+PR = "r3"
 
 DEPENDS += "nodejs-native"
 RDEPENDS_${PN} = "nodejs"
@@ -25,51 +25,15 @@ SRC_URI[sha256sum] = "796cf5ce6446a9a77299b88c25f94703a5977ff90b067ed68c50e5c6bb
 
 S = "${WORKDIR}/node-red-${PV}"
 
-TARGET_DIR = "${D}${libdir}/node_modules"
-
-def get_nodejs_arch(d):
-    target_arch = d.getVar('TRANSLATED_TARGET_ARCH', True)
-
-    if target_arch == "x86-64":
-        target_arch = "x64"
-    elif target_arch == "aarch64":
-        target_arch = "arm64"
-    elif target_arch == "powerpc":
-        target_arch = "ppc"
-    elif target_arch == "powerpc64":
-        target_arch = "ppc64"
-    elif (target_arch == "i486" or target_arch == "i586" or target_arch == "i686"):
-        target_arch = "ia32"
-
-    return target_arch
-
-NPM_CACHE_DIR ?= "${WORKDIR}/npm_cache"
-NPM_REGISTRY ?= "http://registry.npmjs.org/"
-NPM_ARCH = "${@get_nodejs_arch(d)}"
-NPM_INSTALL_FLAGS ?= "--production --without-ssl --insecure --no-optional --verbose"
+inherit webos_npm_env
 
 do_compile() {
-    cd ${S}
-
-    # this is needed to use user's gitconfig even after changing the HOME directory bellow
-    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
-    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
-    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
-
-    export HOME=${WORKDIR}
-
-    # configure cache to be in working directory
-    ${STAGING_BINDIR_NATIVE}/npm set cache ${NPM_CACHE_DIR}
-
-    # clear local cache prior to each compile
-    ${STAGING_BINDIR_NATIVE}/npm cache clear --force
-
-    ${STAGING_BINDIR_NATIVE}/npm --registry=${NPM_REGISTRY} --arch=${NPM_ARCH} --target_arch=${NPM_ARCH} ${NPM_INSTALL_FLAGS} install
+    ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
 }
 
 do_install() {
-    install -d ${TARGET_DIR}/node-red
-    cp -R --no-dereference --preserve=mode,links -v ${S}/* ${TARGET_DIR}/node-red
+    install -d ${D}${libdir}/node_modules/node-red
+    cp -R --no-dereference --preserve=mode,links -v ${S}/* ${D}${libdir}/node_modules/node-red
 
     # TODO Move dependent packages to top node_modules dir
     # mv ${TARGET_DIR}/node-red/node_modules/* ${TARGET_DIR}

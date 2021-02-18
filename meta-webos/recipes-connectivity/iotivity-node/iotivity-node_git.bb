@@ -23,9 +23,10 @@ PV = "1.3.1+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PR = "r6"
+PR = "r7"
 
 inherit python3native
+inherit webos_npm_env
 
 export PYTHON = "python3"
 
@@ -38,60 +39,11 @@ do_compile_prepend() {
 }
 
 do_compile () {
-    # this is needed to use user's gitconfig even after changing the HOME directory bellow
-    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
-    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
-    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
-
-    # changing the home directory to the working directory, the .npmrc will be created in this directory
-    export HOME=${WORKDIR}
-
-    ${STAGING_BINDIR_NATIVE}/npm update
-    ${STAGING_BINDIR_NATIVE}/npm shrinkwrap
-
-    # does not build dev packages
-    ${STAGING_BINDIR_NATIVE}/npm config set dev false
-
-    # access npm registry using http
-    ${STAGING_BINDIR_NATIVE}/npm set strict-ssl false
-    ${STAGING_BINDIR_NATIVE}/npm config set registry http://registry.npmjs.org/
-
-    # configure http proxy if neccessary
-    if [ -n "${http_proxy}" ]; then
-        ${STAGING_BINDIR_NATIVE}/npm config set proxy ${http_proxy}
-    fi
-    if [ -n "${HTTP_PROXY}" ]; then
-        ${STAGING_BINDIR_NATIVE}/npm config set proxy ${HTTP_PROXY}
-    fi
-
-    # configure cache to be in working directory
-    ${STAGING_BINDIR_NATIVE}/npm set cache ${WORKDIR}/npm_cache
-
-    # clear local cache prior to each compile
-    ${STAGING_BINDIR_NATIVE}/npm cache clear --force
-
-    case ${TARGET_ARCH} in
-        i?86) targetArch="ia32"
-            echo "targetArch = 32"
-            ;;
-        x86_64) targetArch="x64"
-            echo "targetArch = 64"
-            ;;
-        arm) targetArch="arm"
-            ;;
-        aarch64) targetArch="arm64"
-            ;;
-        mips) targetArch="mips"
-            ;;
-        sparc) targetArch="sparc"
-            ;;
-        *) echo "unknown architecture"
-           exit 1
-            ;;
-    esac
+    ${WEBOS_NPM_BIN} update
+    ${WEBOS_NPM_BIN} shrinkwrap
 
     # Compile and install node modules in source directory
-    ${STAGING_BINDIR_NATIVE}/npm --arch=${targetArch} --production --verbose install
+    ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
 }
 
 do_install () {
@@ -109,8 +61,7 @@ do_install () {
     install -m 0755 ${S}/build/Release/iotivity.node ${D}${libdir}/node_modules/iotivity-node/build/Release/
 }
 
-FILES_${PN} = "${libdir}/node_modules/iotivity-node/ \
-"
+FILES_${PN} = "${libdir}/node_modules/iotivity-node/"
 
 # COMPATIBLE_MACHINE is set because iotivity on which the iotivity-node doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"

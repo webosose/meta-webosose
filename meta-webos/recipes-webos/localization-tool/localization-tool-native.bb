@@ -6,9 +6,10 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r4"
+PR = "r5"
 
 inherit pythonnative
+inherit webos_npm_env
 inherit native
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
@@ -24,20 +25,19 @@ SRCREV = "29b07b1ec01ab81667eb4b946446693983b1711b"
 
 # Skip the unwanted tasks
 do_configure[noexec] = "1"
-do_compile[noexec] = "1"
+
+do_compile() {
+    ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
+}
 
 # Install js-loctool in sysroot for use in localization recipes
 do_install() {
     install -d ${D}${base_prefix}/opt/js-loctool
     cp -R --no-dereference --preserve=mode,links -v ${S}/* ${D}${base_prefix}/opt/js-loctool
     cd ${D}${base_prefix}/opt/js-loctool
-    rm -fr node_modules
-    npm install
 }
 
 sysroot_stage_all_append() {
-    # clear any existing npm cache
-    rm -fr ${TMPDIR}/npm_cache
     # files installed to /opt don't get staged by default so we must force /opt to be staged
     sysroot_stage_dir ${D}${base_prefix}/opt ${SYSROOT_DESTDIR}${base_prefix}/opt
 }

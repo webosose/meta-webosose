@@ -10,12 +10,13 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-43_b44080a2564387a4cb0eb1aa46b85487ca64b1f2"
-PR = "r14"
+PR = "r15"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
 inherit webos_filesystem_paths
+inherit webos_npm_env
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
@@ -43,18 +44,14 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
     ${ENACT_NODE} extract-inline.js ./dist \
 "
 
-do_compile_prepend() {
-    # this is needed to use user's gitconfig even after changing the HOME directory bellow
-    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
-    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
-    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
+# Remove --production, because that causes
+# http://gecko.lge.com/Errors/Details/119724
+# Error: Cannot find module 'glob'
+WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional --verbose"
 
-    # Portion of do_compile_prepend of webos_enactjs_env.bbclass,
-    # since this prepend occurs before that and we need NPM usage
-    export HOME=${WORKDIR}
-    ${ENACT_NPM} set cache ${TMPDIR}/npm_cache
-    ${ENACT_NPM} config set prefer-offline true
-    ${ENACT_NPM} install
+WEBOS_NPM_BIN = "${ENACT_NPM}"
+do_compile_append() {
+    ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
     ${ENACT_NODE} ./scripts/cli.js transpile
 }
 
