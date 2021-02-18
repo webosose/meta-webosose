@@ -1,0 +1,122 @@
+From 943685f3fc574d27d8040142d5f870a8a5aa88dc Mon Sep 17 00:00:00 2001
+From: "jonghen.han" <jonghen.han@lge.com>
+Date: Thu, 18 Feb 2021 15:17:25 +0900
+Subject: [PATCH] webOS: Apply proper ACG group name in test
+ applications
+
+:Release Notes:
+Apply proper ACG group name in test applications
+
+:Detailed Notes:
+This commit support to new ACG policy.
+
+:Testing Performed:
+- Build is successfully done.
+- Verified that local build version.
+
+:Issues Addressed:
+[PLAT-135356] ACG review for iotivity services
+---
+ .../samples/webos/com.example.app.iotivity/appinfo.json  | 2 +-
+ .../sysbus/com.example.service.iotivity.client.api.json  | 9 +++++++++
+ .../com.example.service.iotivity.client.groups.json      | 4 ++++
+ .../sysbus/com.example.service.iotivity.server.api.json  | 8 ++++++++
+ .../com.example.service.iotivity.server.groups.json      | 4 ++++
+ .../webos/secure/files/sysbus/occlientbasicops.perm.json | 3 ++-
+ .../webos/secure/files/sysbus/ocserverbasicops.perm.json | 3 ++-
+ 7 files changed, 30 insertions(+), 3 deletions(-)
+ create mode 100644 resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.groups.json
+ create mode 100644 resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.groups.json
+
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json
+index 3797b4cd3..9f46b8fe1 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/appinfo.json
+@@ -7,5 +7,5 @@
+     "title": "IoTivity Sampler",
+     "icon": "icon.png",
+     "uiRevision": 2,
+-    "requiredPermissions":[]
++    "requiredPermissions":["com.example.service.iotivity.client.group", "com.example.service.iotivity.server.group"]
+ }
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.api.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.api.json
+index 7a73a41bf..752ccf82b 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.api.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.api.json
+@@ -1,2 +1,11 @@
+ {
++    "com.example.service.iotivity.client.group": [
++        "com.example.service.iotivity.client/startClient",
++        "com.example.service.iotivity.client/discoverResources",
++        "com.example.service.iotivity.client/getResource",
++        "com.example.service.iotivity.client/postResource",
++        "com.example.service.iotivity.client/deleteResource",
++        "com.example.service.iotivity.client/observeResource",
++        "com.example.service.iotivity.client/copyFile"
++    ]
+ }
+\ No newline at end of file
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.groups.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.groups.json
+new file mode 100644
+index 000000000..d5eb05a40
+--- /dev/null
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.groups.json
+@@ -0,0 +1,4 @@
++{
++    "allowedNames" : ["com.example.service.iotivity.client"],
++    "com.example.service.iotivity.client.group": ["oem"]
++}
+\ No newline at end of file
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.api.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.api.json
+index 7a73a41bf..f189f9d54 100644
+--- a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.api.json
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.api.json
+@@ -1,2 +1,10 @@
+ {
++    "com.example.service.iotivity.server.group":[
++        "com.example.service.iotivity.server/startServer",
++        "com.example.service.iotivity.server/createResource",
++        "com.example.service.iotivity.server/deleteResource",
++        "com.example.service.iotivity.server/setBinarySwitchValue",
++        "com.example.service.iotivity.server/observeBinarySwitchValue",
++        "com.example.service.iotivity.server/copyFile"
++    ]
+ }
+\ No newline at end of file
+diff --git a/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.groups.json b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.groups.json
+new file mode 100644
+index 000000000..d83af3f4a
+--- /dev/null
++++ b/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.groups.json
+@@ -0,0 +1,4 @@
++{
++    "allowedNames" : ["com.example.service.iotivity.server"],
++    "com.example.service.iotivity.server.group": ["oem"]
++}
+\ No newline at end of file
+diff --git a/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json b/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json
+index 94eb2cc44..74cf87499 100644
+--- a/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json
++++ b/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.perm.json
+@@ -1,6 +1,7 @@
+ {
+     "org.ocf.webossample.occlientbasicops*": [
+         "networkconnection.query",
+-        "networkconnection.management"
++        "networkconnection.management",
++        "com.example.service.iotivity.client.group"
+     ]
+ }
+diff --git a/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json b/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json
+index 529cb1d12..554c3409c 100644
+--- a/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json
++++ b/resource/csdk/stack/samples/webos/secure/files/sysbus/ocserverbasicops.perm.json
+@@ -1,6 +1,7 @@
+ {
+     "org.ocf.webossample.ocserverbasicops*": [
+         "networkconnection.query",
+-        "networkconnection.management"
++        "networkconnection.management",
++        "com.example.service.iotivity.server.group"
+     ]
+ }

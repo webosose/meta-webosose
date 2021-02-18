@@ -12,13 +12,14 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=86d3f3a95c324c9479bd8986968f4327"
 SRC_URI = " \
     git://github.com/iotivity/iotivity.git;branch=webos;protocol=http;name=main \
     file://0001-webOS-Apply-new-ACG-policy-in-test-applications.patch \
+    file://0001-webOS-Apply-proper-ACG-group-name-in-test-appl.patch \
 "
 
 SRCREV = "ff1837a569494cb9613c3b6c961fcf26f0014515"
 
 S = "${WORKDIR}/git"
 
-PR = "r4"
+PR = "r5"
 PV = "1.3.99+git${SRCPV}"
 
 inherit pkgconfig webos_enactjs_app webos_component
