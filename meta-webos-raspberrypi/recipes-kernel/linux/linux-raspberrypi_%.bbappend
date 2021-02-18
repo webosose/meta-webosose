@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi26"
+EXTENDPRAUTO_append = "webosrpi27"
 
 CMDLINE_append = " rw cgroup_memory=1 cgroup_enable=memory"
 CMDLINE_remove_sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
@@ -20,6 +20,9 @@ SRC_URI += "\
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \
+    i2c-dev \
+    spidev \
+    spi_bcm2835 \
     media \
     snd-usb-audio \
     uinput \
