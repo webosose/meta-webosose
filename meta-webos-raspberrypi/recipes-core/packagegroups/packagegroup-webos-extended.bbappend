@@ -11,6 +11,7 @@ MEDIA_append_rpi = " \
 MEDIA_raspberrypi3-64 = ""
 MEDIA_raspberrypi4-64 = ""
 
+SAFSERVICE = ""
 SAFSERVICE_raspberrypi4 = " \
     com.webos.service.storageaccess \
 "
