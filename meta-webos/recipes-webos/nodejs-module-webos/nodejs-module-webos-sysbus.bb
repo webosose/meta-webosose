@@ -9,7 +9,7 @@ DEPENDS += "glib-2.0 luna-service2"
 
 inherit webos_system_bus
 
-WEBOS_VERSION = "3.0.1-11_e376d214678167e3e99e83c9b9c5a5d043daf188"
+WEBOS_VERSION = "3.0.1-12_1c9251d79d7e8453506968fad595e246e5aee1e3"
 PR = "r15"
 
 do_configure() {
