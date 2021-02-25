@@ -2,6 +2,10 @@
 
 EXTENDPRAUTO_append = "webos5"
 
+SRC_URI_append_qemuall = " \
+          file://0001-Preventing-a-zero-data-length-command-case.patch \
+          "
+
 # Add gallium, gallium-llvmpipe, opengl and enable wayland even without wayland in DISTRO_FEATURES
 PACKAGECONFIG_qemuall = "opengl gbm egl gles dri wayland gallium gallium-llvm"
 
