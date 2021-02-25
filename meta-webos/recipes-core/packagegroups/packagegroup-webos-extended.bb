@@ -170,6 +170,7 @@ RDEPENDS_${PN} = " \
     configd \
     configurator \
     com.palm.service.devmode \
+    com.webos.app.mediagallery\
     com.webos.service.intent \
     com.webos.service.power2 \
     event-monitor \
