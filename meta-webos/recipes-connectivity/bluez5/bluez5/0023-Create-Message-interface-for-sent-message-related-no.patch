@@ -1,4 +1,4 @@
-From b2f89270c1823a261e29d3ecc9fdd8ad951939fb Mon Sep 17 00:00:00 2001
+From 2bb192090af19adeefcb6b06fead6ec5b2f2aeff Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 16:21:17 +0530
 Subject: [PATCH] Create Message interface for sent message related
@@ -23,10 +23,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 16 insertions(+)
 
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 6340f906b..8a2fa99e7 100644
+index ada9377b8..713de34c2 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
-@@ -1951,6 +1951,7 @@ static void map_handle_new_message(struct map_data *map,
+@@ -1938,6 +1938,7 @@ static void map_handle_new_message(struct map_data *map,
  	struct map_msg *msg;
  
  	msg = g_hash_table_lookup(map->messages, &event->handle);
@@ -34,7 +34,7 @@ index 6340f906b..8a2fa99e7 100644
  	/* New message event can be used if a new message replaces an old one */
  	if (msg)
  		g_hash_table_remove(map->messages, &event->handle);
-@@ -1966,6 +1967,17 @@ static void map_handle_new_message(struct map_data *map,
+@@ -1953,6 +1954,17 @@ static void map_handle_new_message(struct map_data *map,
  	}
  }
  
@@ -52,7 +52,7 @@ index 6340f906b..8a2fa99e7 100644
  static void map_handle_status_changed(struct map_data *map,
  							struct map_event *event,
  							const char *status)
-@@ -2029,15 +2041,19 @@ static void map_handle_notification(struct map_event *event, void *user_data)
+@@ -2016,15 +2028,19 @@ static void map_handle_notification(struct map_event *event, void *user_data)
  		map_handle_status_changed(map, event, "notification");
  		break;
  	case MAP_ET_DELIVERY_SUCCESS:

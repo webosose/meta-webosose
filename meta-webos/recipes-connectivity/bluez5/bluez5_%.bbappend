@@ -38,7 +38,6 @@ SRC_URI += " \
     file://0026-Revert-a2dp-Add-reverse-discovery.patch \
     file://0027-Add-support-for-meshd-to-use-RAW-channel.patch \
     file://0028-Enable-mesh-fixed-ell-undefined-symbol-error.patch \
-    file://0029-Fix-provision-failed-issue.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \

@@ -1,4 +1,4 @@
-From 16daf4b283cd348df051b7a3b0d130d501d9eb07 Mon Sep 17 00:00:00 2001
+From 4c77d30d70aa614561dfea0aea0c1cc3813a1639 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 3 Nov 2020 11:32:38 +0530
 Subject: [PATCH] AVRCP MediaItem object path fix
@@ -26,10 +26,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 33 insertions(+), 5 deletions(-)
 
 diff --git a/profiles/audio/player.c b/profiles/audio/player.c
-index 3f6e60ed8..6286c2ff0 100644
+index c74039f95..8eeb26c61 100644
 --- a/profiles/audio/player.c
 +++ b/profiles/audio/player.c
-@@ -725,6 +725,12 @@ void media_player_search_complete(struct media_player *mp, int ret)
+@@ -712,6 +712,12 @@ void media_player_search_complete(struct media_player *mp, int ret)
  	if (search == NULL) {
  		search = g_new0(struct media_folder, 1);
  		search->item = media_player_create_subfolder(mp, "search", 0);
@@ -42,7 +42,7 @@ index 3f6e60ed8..6286c2ff0 100644
  		mp->search = search;
  		mp->folders = g_slist_prepend(mp->folders, search);
  	}
-@@ -1855,6 +1861,17 @@ void media_item_set_playable(struct media_item *item, bool value)
+@@ -1842,6 +1848,17 @@ void media_item_set_playable(struct media_item *item, bool value)
  					MEDIA_ITEM_INTERFACE, "Playable");
  }
  
@@ -60,7 +60,7 @@ index 3f6e60ed8..6286c2ff0 100644
  static struct media_item *media_folder_create_item(struct media_player *mp,
  						struct media_folder *folder,
  						const char *name,
-@@ -1863,6 +1880,7 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
+@@ -1850,6 +1867,7 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
  {
  	struct media_item *item;
  	const char *strtype;
@@ -68,7 +68,7 @@ index 3f6e60ed8..6286c2ff0 100644
  
  	item = media_folder_find_item(folder, uid);
  	if (item != NULL)
-@@ -1877,14 +1895,24 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
+@@ -1864,14 +1882,24 @@ static struct media_item *media_folder_create_item(struct media_player *mp,
  	item = g_new0(struct media_item, 1);
  	item->player = mp;
  	item->uid = uid;

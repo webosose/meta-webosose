@@ -1,4 +1,4 @@
-From 962ee15076cd26c84c134b5b38e35ecf79f78951 Mon Sep 17 00:00:00 2001
+From bedf226950c8888be11e64a97dd79d9226e3aa38 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 14 Apr 2020 15:28:07 +0530
 Subject: [PATCH] Fix for updating connected uuids when profile is disconnected
@@ -23,10 +23,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index 2df41b1ab..dc714d54b 100644
+index 88d423041..a1303448b 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2371,7 +2371,10 @@ static void device_profile_disconnected(struct btd_device *dev,
+@@ -2367,7 +2367,10 @@ static void device_profile_disconnected(struct btd_device *dev,
  	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
  	if (!err) {
  		if (dev->connected_uuids)

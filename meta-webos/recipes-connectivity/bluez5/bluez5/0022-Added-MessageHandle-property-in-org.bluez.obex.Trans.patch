@@ -1,4 +1,4 @@
-From d4f3113e90bb474b80cb4c0e6e404105a72bf52f Mon Sep 17 00:00:00 2001
+From ad939769feef3ab64ae5a59bb5c0a90f88b37be5 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 13:27:14 +0530
 Subject: [PATCH] Added MessageHandle property in org.bluez.obex.Transfer1
@@ -24,10 +24,10 @@ Upstream-Status: Inappropriate[webos specific]
  3 files changed, 58 insertions(+), 7 deletions(-)
 
 diff --git a/gobex/gobex-transfer.c b/gobex/gobex-transfer.c
-index e96e61fbc..c77b4f81c 100644
+index c94d018b2..e93cf79d6 100644
 --- a/gobex/gobex-transfer.c
 +++ b/gobex/gobex-transfer.c
-@@ -51,6 +51,7 @@ struct transfer {
+@@ -38,6 +38,7 @@ struct transfer {
  
  	GObexDataProducer data_producer;
  	GObexDataConsumer data_consumer;
@@ -35,7 +35,7 @@ index e96e61fbc..c77b4f81c 100644
  	GObexFunc complete_func;
  
  	gpointer user_data;
-@@ -228,6 +229,8 @@ static void transfer_response(GObex *obex, GError *err, GObexPacket *rsp,
+@@ -215,6 +216,8 @@ static void transfer_response(GObex *obex, GError *err, GObexPacket *rsp,
  	}
  
  	if (transfer->opcode == G_OBEX_OP_PUT) {
@@ -44,7 +44,7 @@ index e96e61fbc..c77b4f81c 100644
  		req = g_obex_packet_new(transfer->opcode, FALSE,
  							G_OBEX_HDR_INVALID);
  		g_obex_packet_add_body(req, put_get_data, transfer);
-@@ -272,8 +275,8 @@ static struct transfer *transfer_new(GObex *obex, guint8 opcode,
+@@ -259,8 +262,8 @@ static struct transfer *transfer_new(GObex *obex, guint8 opcode,
  }
  
  guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
@@ -55,7 +55,7 @@ index e96e61fbc..c77b4f81c 100644
  {
  	struct transfer *transfer;
  
-@@ -284,6 +287,7 @@ guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
+@@ -271,6 +274,7 @@ guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
  
  	transfer = transfer_new(obex, G_OBEX_OP_PUT, complete_func, user_data);
  	transfer->data_producer = data_func;
@@ -63,7 +63,7 @@ index e96e61fbc..c77b4f81c 100644
  
  	g_obex_packet_add_body(req, put_get_data, transfer);
  
-@@ -313,7 +317,7 @@ guint g_obex_put_req(GObex *obex, GObexDataProducer data_func,
+@@ -300,7 +304,7 @@ guint g_obex_put_req(GObex *obex, GObexDataProducer data_func,
  							first_hdr_id, args);
  	va_end(args);
  
@@ -73,10 +73,10 @@ index e96e61fbc..c77b4f81c 100644
  }
  
 diff --git a/gobex/gobex.h b/gobex/gobex.h
-index a94d9246e..2e3cbf542 100644
+index f16e4426c..434beecf8 100644
 --- a/gobex/gobex.h
 +++ b/gobex/gobex.h
-@@ -41,6 +41,9 @@ typedef void (*GObexRequestFunc) (GObex *obex, GObexPacket *req,
+@@ -28,6 +28,9 @@ typedef void (*GObexRequestFunc) (GObex *obex, GObexPacket *req,
  							gpointer user_data);
  typedef void (*GObexResponseFunc) (GObex *obex, GError *err, GObexPacket *rsp,
  							gpointer user_data);
@@ -86,7 +86,7 @@ index a94d9246e..2e3cbf542 100644
  
  gboolean g_obex_send(GObex *obex, GObexPacket *pkt, GError **err);
  
-@@ -106,8 +109,8 @@ guint g_obex_put_req(GObex *obex, GObexDataProducer data_func,
+@@ -93,8 +96,8 @@ guint g_obex_put_req(GObex *obex, GObexDataProducer data_func,
  			GError **err, guint first_hdr_id, ...);
  
  guint g_obex_put_req_pkt(GObex *obex, GObexPacket *req,
@@ -98,10 +98,10 @@ index a94d9246e..2e3cbf542 100644
  guint g_obex_get_req(GObex *obex, GObexDataConsumer data_func,
  			GObexFunc complete_func, gpointer user_data,
 diff --git a/obexd/client/transfer.c b/obexd/client/transfer.c
-index b53dffa21..b251fbbce 100644
+index 744d8f106..ab06dbac7 100644
 --- a/obexd/client/transfer.c
 +++ b/obexd/client/transfer.c
-@@ -80,6 +80,7 @@ struct obc_transfer {
+@@ -67,6 +67,7 @@ struct obc_transfer {
  	char *filename;		/* Transfer file location */
  	char *name;		/* Transfer object name */
  	char *type;		/* Transfer object type */
@@ -109,7 +109,7 @@ index b53dffa21..b251fbbce 100644
  	int fd;
  	guint req;
  	guint xfer;
-@@ -391,6 +392,25 @@ static gboolean get_session(const GDBusPropertyTable *property,
+@@ -378,6 +379,25 @@ static gboolean get_session(const GDBusPropertyTable *property,
  
  	dbus_message_iter_append_basic(iter, DBUS_TYPE_OBJECT_PATH,
  							&transfer->session);
@@ -135,7 +135,7 @@ index b53dffa21..b251fbbce 100644
  
  	return TRUE;
  }
-@@ -410,6 +430,7 @@ static const GDBusPropertyTable obc_transfer_properties[] = {
+@@ -397,6 +417,7 @@ static const GDBusPropertyTable obc_transfer_properties[] = {
  	{ "Filename", "s", get_filename, NULL, filename_exists },
  	{ "Transferred", "t", get_transferred, NULL, transferred_exists },
  	{ "Session", "o", get_session },
@@ -143,7 +143,7 @@ index b53dffa21..b251fbbce 100644
  	{ }
  };
  
-@@ -458,6 +479,7 @@ static void obc_transfer_free(struct obc_transfer *transfer)
+@@ -445,6 +466,7 @@ static void obc_transfer_free(struct obc_transfer *transfer)
  	g_free(transfer->type);
  	g_free(transfer->session);
  	g_free(transfer->path);
@@ -151,7 +151,7 @@ index b53dffa21..b251fbbce 100644
  	g_free(transfer);
  }
  
-@@ -677,6 +699,28 @@ static void xfer_complete(GObex *obex, GError *err, gpointer user_data)
+@@ -664,6 +686,28 @@ static void xfer_complete(GObex *obex, GError *err, gpointer user_data)
  		callback->func(transfer, err, callback->data);
  }
  
@@ -180,7 +180,7 @@ index b53dffa21..b251fbbce 100644
  static void get_xfer_progress_first(GObex *obex, GError *err, GObexPacket *rsp,
  							gpointer user_data)
  {
-@@ -875,8 +919,8 @@ static gboolean transfer_start_put(struct obc_transfer *transfer, GError **err)
+@@ -862,8 +906,8 @@ static gboolean transfer_start_put(struct obc_transfer *transfer, GError **err)
  	}
  
  	transfer->xfer = g_obex_put_req_pkt(transfer->obex, req,

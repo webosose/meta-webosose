@@ -1,4 +1,4 @@
-From 9aea505c51974098acd70f011c6088c45b7a6d5f Mon Sep 17 00:00:00 2001
+From 7a4e82c413acf7e510c20e665a92faceb7421c2f Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd
@@ -34,10 +34,10 @@ Upstream-Status: Inappropriate[webos specific]
  10 files changed, 22 insertions(+), 9 deletions(-)
 
 diff --git a/obexd/client/ftp.c b/obexd/client/ftp.c
-index 5e30654af..eb7213760 100644
+index 160e0636a..f492965b2 100644
 --- a/obexd/client/ftp.c
 +++ b/obexd/client/ftp.c
-@@ -476,7 +476,8 @@ int ftp_init(void)
+@@ -463,7 +463,8 @@ int ftp_init(void)
  
  	DBG("");
  
@@ -48,10 +48,10 @@ index 5e30654af..eb7213760 100644
  		return -EIO;
  
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 23be2d6b2..28e60fe4c 100644
+index 74828cddb..ea3d25629 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
-@@ -2076,7 +2076,7 @@ int map_init(void)
+@@ -2063,7 +2063,7 @@ int map_init(void)
  
  	DBG("");
  
@@ -61,10 +61,10 @@ index 23be2d6b2..28e60fe4c 100644
  		return -EIO;
  
 diff --git a/obexd/client/opp.c b/obexd/client/opp.c
-index 92785f66e..36fd4db16 100644
+index 90d0c0c8e..369e9e91c 100644
 --- a/obexd/client/opp.c
 +++ b/obexd/client/opp.c
-@@ -191,7 +191,7 @@ int opp_init(void)
+@@ -178,7 +178,7 @@ int opp_init(void)
  
  	DBG("");
  
@@ -74,10 +74,10 @@ index 92785f66e..36fd4db16 100644
  		return -EIO;
  
 diff --git a/obexd/client/pbap.c b/obexd/client/pbap.c
-index 3f5665fcd..e4b7d5959 100644
+index 1a2bacc9f..7e730240f 100644
 --- a/obexd/client/pbap.c
 +++ b/obexd/client/pbap.c
-@@ -1314,7 +1314,7 @@ int pbap_init(void)
+@@ -1301,7 +1301,7 @@ int pbap_init(void)
  
  	DBG("");
  
@@ -87,10 +87,10 @@ index 3f5665fcd..e4b7d5959 100644
  		return -EIO;
  
 diff --git a/obexd/client/session.c b/obexd/client/session.c
-index 5bd2d2670..cf4cb2c5f 100644
+index 6955a8089..9b456f69c 100644
 --- a/obexd/client/session.c
 +++ b/obexd/client/session.c
-@@ -596,7 +596,7 @@ struct obc_session *obc_session_create(const char *source,
+@@ -583,7 +583,7 @@ struct obc_session *obc_session_create(const char *source,
  	if (driver == NULL)
  		return NULL;
  
@@ -100,10 +100,10 @@ index 5bd2d2670..cf4cb2c5f 100644
  		return NULL;
  
 diff --git a/obexd/client/sync.c b/obexd/client/sync.c
-index 548c318c3..8c3090879 100644
+index 92faf4434..c1147897c 100644
 --- a/obexd/client/sync.c
 +++ b/obexd/client/sync.c
-@@ -237,7 +237,7 @@ int sync_init(void)
+@@ -224,7 +224,7 @@ int sync_init(void)
  
  	DBG("");
  
@@ -113,10 +113,10 @@ index 548c318c3..8c3090879 100644
  		return -EIO;
  
 diff --git a/obexd/plugins/pcsuite.c b/obexd/plugins/pcsuite.c
-index 43ab409e9..3ea5963c3 100644
+index b2232ea09..b5a76c415 100644
 --- a/obexd/plugins/pcsuite.c
 +++ b/obexd/plugins/pcsuite.c
-@@ -333,7 +333,7 @@ static gboolean send_backup_dbus_message(const char *oper,
+@@ -320,7 +320,7 @@ static gboolean send_backup_dbus_message(const char *oper,
  
  	file_size = size ? *size : 0;
  
@@ -126,10 +126,10 @@ index 43ab409e9..3ea5963c3 100644
  	if (conn == NULL)
  		return FALSE;
 diff --git a/obexd/src/manager.c b/obexd/src/manager.c
-index a4af627cb..61f341711 100644
+index 01741fe62..f1fa9fa43 100644
 --- a/obexd/src/manager.c
 +++ b/obexd/src/manager.c
-@@ -499,7 +499,7 @@ gboolean manager_init(void)
+@@ -486,7 +486,7 @@ gboolean manager_init(void)
  
  	dbus_error_init(&err);
  
@@ -139,10 +139,10 @@ index a4af627cb..61f341711 100644
  		if (dbus_error_is_set(&err) == TRUE) {
  			fprintf(stderr, "%s\n", err.message);
 diff --git a/src/bluetooth.conf b/src/bluetooth.conf
-index 8a1e25801..582f492ce 100644
+index b6c614908..f8879c8bb 100644
 --- a/src/bluetooth.conf
 +++ b/src/bluetooth.conf
-@@ -20,10 +20,22 @@
+@@ -21,10 +21,22 @@
      <allow send_interface="org.freedesktop.DBus.ObjectManager"/>
      <allow send_interface="org.freedesktop.DBus.Properties"/>
      <allow send_interface="org.mpris.MediaPlayer2.Player"/>
@@ -166,10 +166,10 @@ index 8a1e25801..582f492ce 100644
  
  </busconfig>
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index 0709f692c..9ed336aa5 100644
+index e671d253b..056701306 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -2152,7 +2152,7 @@ int main(int argc, char *argv[])
+@@ -2139,7 +2139,7 @@ int main(int argc, char *argv[])
  	bt_shell_set_menu(&main_menu);
  	bt_shell_set_prompt(PROMPT_OFF);
  

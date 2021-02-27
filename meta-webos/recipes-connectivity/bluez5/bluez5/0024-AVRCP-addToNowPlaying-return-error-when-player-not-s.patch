@@ -1,4 +1,4 @@
-From 341983b542a7df714d21c0b032b202c03f871bd0 Mon Sep 17 00:00:00 2001
+From 04219c108d54999fc869a3b9c0e190a8d0d2ce01 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 11 Aug 2020 15:18:43 +0530
 Subject: [PATCH] AVRCP addToNowPlaying return error when player not supports
@@ -26,10 +26,10 @@ Upstream-Status: Inappropriate[webos specific]
  3 files changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 333b96a4f..3cd73f5ef 100644
+index 7c8f962da..702b47f03 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -2840,6 +2840,9 @@ static void avrcp_player_parse_features(struct avrcp_player *player,
+@@ -2885,6 +2885,9 @@ static void avrcp_player_parse_features(struct avrcp_player *player,
  	if (features[7] & 0x10)
  		media_player_set_searchable(mp, true);
  
@@ -40,10 +40,10 @@ index 333b96a4f..3cd73f5ef 100644
  		media_player_create_folder(mp, "/NowPlaying",
  						PLAYER_FOLDER_TYPE_MIXED, 0);
 diff --git a/profiles/audio/player.c b/profiles/audio/player.c
-index 27a7efb7e..3f6e60ed8 100644
+index d34b39168..c74039f95 100644
 --- a/profiles/audio/player.c
 +++ b/profiles/audio/player.c
-@@ -88,6 +88,7 @@ struct media_player {
+@@ -75,6 +75,7 @@ struct media_player {
  	char			*subtype;	/* Player subtype */
  	bool			browsable;	/* Player browsing feature */
  	bool			searchable;	/* Player searching feature */
@@ -51,7 +51,7 @@ index 27a7efb7e..3f6e60ed8 100644
  	struct media_folder	*scope;		/* Player current scope */
  	struct media_folder	*folder;	/* Player current folder */
  	struct media_folder	*search;	/* Player search folder */
-@@ -1515,6 +1516,16 @@ bool media_player_get_browsable(struct media_player *mp)
+@@ -1502,6 +1503,16 @@ bool media_player_get_browsable(struct media_player *mp)
  	return mp->browsable;
  }
  
@@ -68,7 +68,7 @@ index 27a7efb7e..3f6e60ed8 100644
  void media_player_set_searchable(struct media_player *mp, bool enabled)
  {
  	if (mp->searchable == enabled)
-@@ -1618,7 +1629,7 @@ static DBusMessage *media_item_add_to_nowplaying(DBusConnection *conn,
+@@ -1605,7 +1616,7 @@ static DBusMessage *media_item_add_to_nowplaying(DBusConnection *conn,
  	struct player_callback *cb = mp->cb;
  	int err;
  
@@ -78,10 +78,10 @@ index 27a7efb7e..3f6e60ed8 100644
  
  	err = cb->cbs->add_to_nowplaying(mp, item->path, item->uid,
 diff --git a/profiles/audio/player.h b/profiles/audio/player.h
-index e98550064..01ddcd9de 100644
+index 69f08735b..2de9e55f7 100644
 --- a/profiles/audio/player.h
 +++ b/profiles/audio/player.h
-@@ -91,6 +91,7 @@ void media_player_set_subtype(struct media_player *mp, const char *subtype);
+@@ -78,6 +78,7 @@ void media_player_set_subtype(struct media_player *mp, const char *subtype);
  void media_player_set_name(struct media_player *mp, const char *name);
  void media_player_set_browsable(struct media_player *mp, bool enabled);
  bool media_player_get_browsable(struct media_player *mp);

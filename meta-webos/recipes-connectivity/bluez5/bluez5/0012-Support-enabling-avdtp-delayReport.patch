@@ -1,4 +1,4 @@
-From eb9a9bb500dba51c30037e96592f5d652209ea1f Mon Sep 17 00:00:00 2001
+From 7c3448d4ddaa37763aaac1a1eebf226fcc3dc02b Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 4 Jun 2020 04:49:48 +0000
 Subject: [PATCH] Support enabling avdtp delayReport
@@ -28,16 +28,16 @@ Upstream Status: Pending
  profiles/audio/media.h |  2 ++
  src/adapter.c          | 52 ++++++++++++++++++++++++++++++++++++++++++
  src/adapter.h          |  3 +++
- src/hcid.h             |  1 +
+ src/btd.h              |  1 +
  src/main.c             | 11 +++++++++
  src/main.conf          |  3 +++
  11 files changed, 104 insertions(+)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index 2feea66c0..19ea2b4f7 100644
+index 98cae97b9..7f4833171 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
-@@ -2160,6 +2160,14 @@ found:
+@@ -2194,6 +2194,14 @@ found:
  	return avdtp_ref(chan->session);
  }
  
@@ -53,10 +53,10 @@ index 2feea66c0..19ea2b4f7 100644
  {
  	struct a2dp_channel *chan = user_data;
 diff --git a/profiles/audio/a2dp.h b/profiles/audio/a2dp.h
-index 19466a428..7729884bd 100644
+index 615b641c9..af67ee6ee 100644
 --- a/profiles/audio/a2dp.h
 +++ b/profiles/audio/a2dp.h
-@@ -90,6 +90,7 @@ gboolean a2dp_cancel(unsigned int id);
+@@ -77,6 +77,7 @@ gboolean a2dp_cancel(unsigned int id);
  gboolean a2dp_sep_lock(struct a2dp_sep *sep, struct avdtp *session);
  gboolean a2dp_sep_unlock(struct a2dp_sep *sep, struct avdtp *session);
  struct avdtp_stream *a2dp_sep_get_stream(struct a2dp_sep *sep);
@@ -65,10 +65,10 @@ index 19466a428..7729884bd 100644
  const char *a2dp_setup_remote_path(struct a2dp_setup *setup);
  struct avdtp *a2dp_avdtp_get(struct btd_device *device);
 diff --git a/profiles/audio/avdtp.c b/profiles/audio/avdtp.c
-index 782268c08..f13c8ca6b 100644
+index 088ca58b3..e94216533 100644
 --- a/profiles/audio/avdtp.c
 +++ b/profiles/audio/avdtp.c
-@@ -478,6 +478,11 @@ static gboolean try_send(int sk, void *data, size_t len)
+@@ -469,6 +469,11 @@ static gboolean try_send(int sk, void *data, size_t len)
  	return TRUE;
  }
  
@@ -81,19 +81,19 @@ index 782268c08..f13c8ca6b 100644
  				uint8_t message_type, uint8_t signal_id,
  				void *data, size_t len)
 diff --git a/profiles/audio/avdtp.h b/profiles/audio/avdtp.h
-index 011fea89e..621a611f3 100644
+index b29d0621a..fc35346eb 100644
 --- a/profiles/audio/avdtp.h
 +++ b/profiles/audio/avdtp.h
-@@ -314,3 +314,4 @@ struct avdtp_server *avdtp_get_server(struct avdtp_local_sep *lsep);
+@@ -306,3 +306,4 @@ struct avdtp_server *avdtp_get_server(struct avdtp_local_sep *lsep);
  struct avdtp *avdtp_new(GIOChannel *chan, struct btd_device *device,
  							struct queue *lseps);
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index ef9e40b41..4ad67ba9a 100644
+index 3727484a2..ffcd0398c 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -132,6 +132,19 @@ struct media_player {
+@@ -120,6 +120,19 @@ struct media_player {
  
  static GSList *adapters = NULL;
  
@@ -113,7 +113,7 @@ index ef9e40b41..4ad67ba9a 100644
  static void endpoint_request_free(struct endpoint_request *request)
  {
  	if (request->call)
-@@ -799,6 +812,9 @@ static struct media_endpoint *media_endpoint_create(struct media_adapter *adapte
+@@ -800,6 +813,9 @@ static struct media_endpoint *media_endpoint_create(struct media_adapter *adapte
  	}
  
  	endpoint->adapter = adapter;
@@ -123,7 +123,7 @@ index ef9e40b41..4ad67ba9a 100644
  
  	if (strcasecmp(uuid, A2DP_SOURCE_UUID) == 0)
  		succeeded = endpoint_init_a2dp_source(endpoint,
-@@ -2413,6 +2429,7 @@ int media_register(struct btd_adapter *btd_adapter)
+@@ -2414,6 +2430,7 @@ int media_register(struct btd_adapter *btd_adapter)
  		return -1;
  	}
  
@@ -132,10 +132,10 @@ index ef9e40b41..4ad67ba9a 100644
  
  	return 0;
 diff --git a/profiles/audio/media.h b/profiles/audio/media.h
-index 53694f4c6..966162f8c 100644
+index 96bea9db4..e9d10fd3c 100644
 --- a/profiles/audio/media.h
 +++ b/profiles/audio/media.h
-@@ -23,6 +23,7 @@
+@@ -10,6 +10,7 @@
   */
  
  struct media_endpoint;
@@ -143,24 +143,24 @@ index 53694f4c6..966162f8c 100644
  
  typedef void (*media_endpoint_cb_t) (struct media_endpoint *endpoint,
  					void *ret, int size, void *user_data);
-@@ -35,3 +36,4 @@ const char *media_endpoint_get_uuid(struct media_endpoint *endpoint);
+@@ -22,3 +23,4 @@ const char *media_endpoint_get_uuid(struct media_endpoint *endpoint);
  uint8_t media_endpoint_get_codec(struct media_endpoint *endpoint);
  
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index 1435e2bd7..2adffc63f 100644
+index 0b6321dd5..adfe96013 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
-@@ -78,6 +78,7 @@
- #include "gatt-database.h"
- #include "advertising.h"
+@@ -67,6 +67,7 @@
+ #include "adv_monitor.h"
  #include "eir.h"
+ #include "battery.h"
 +#include "profiles/audio/media.h"
  
- #define ADAPTER_INTERFACE	"org.bluez.Adapter1"
- 
-@@ -243,6 +244,9 @@ struct btd_adapter {
+ #define MODE_OFF		0x00
+ #define MODE_CONNECTABLE	0x01
+@@ -224,6 +225,9 @@ struct btd_adapter {
  	bool filtered_discovery;	/* we are doing filtered discovery */
  	bool no_scan_restart_delay;	/* when this flag is set, restart scan
  					 * without delay */
@@ -170,7 +170,7 @@ index 1435e2bd7..2adffc63f 100644
  	uint8_t discovery_type;		/* current active discovery type */
  	uint8_t discovery_enable;	/* discovery enabled/disabled */
  	bool discovery_suspended;	/* discovery has been suspended */
-@@ -303,6 +307,11 @@ typedef enum {
+@@ -288,6 +292,11 @@ typedef enum {
  	ADAPTER_AUTHORIZE_CHECK_CONNECTED
  } adapter_authorize_type;
  
@@ -182,16 +182,16 @@ index 1435e2bd7..2adffc63f 100644
  static struct btd_adapter *btd_adapter_lookup(uint16_t index)
  {
  	GList *list;
-@@ -504,6 +513,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
+@@ -489,6 +498,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
  
  	g_key_file_set_boolean(key_file, "General", "Discoverable",
  							discoverable);
 +        g_key_file_set_boolean(key_file, "General", "DelayReport",
 +                                                       adapter->delay_report);
  
- 	if (adapter->discoverable_timeout != main_opts.discovto)
+ 	if (adapter->discoverable_timeout != btd_opts.discovto)
  		g_key_file_set_integer(key_file, "General",
-@@ -3201,6 +3212,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
+@@ -3232,6 +3243,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
  
  	return TRUE;
  }
@@ -220,9 +220,9 @@ index 1435e2bd7..2adffc63f 100644
 +       return;
 +}
  
- static int device_path_cmp(gconstpointer a, gconstpointer b)
- {
-@@ -3483,6 +3518,7 @@ static const GDBusPropertyTable adapter_properties[] = {
+ static DBusMessage *remove_device(DBusConnection *conn,
+ 					DBusMessage *msg, void *user_data)
+@@ -3505,6 +3540,7 @@ static const GDBusPropertyTable adapter_properties[] = {
  	{ "Modalias", "s", property_get_modalias, NULL,
  					property_exists_modalias },
  	{ "Roles", "as", property_get_roles },
@@ -230,7 +230,7 @@ index 1435e2bd7..2adffc63f 100644
  	{ }
  };
  
-@@ -4838,6 +4874,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
+@@ -4832,6 +4868,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
  	return false;
  }
  
@@ -242,7 +242,7 @@ index 1435e2bd7..2adffc63f 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter)
  {
  	if (!adapter)
-@@ -6285,6 +6326,15 @@ static void load_config(struct btd_adapter *adapter)
+@@ -6279,6 +6320,15 @@ static void load_config(struct btd_adapter *adapter)
  		gerr = NULL;
  	}
  
@@ -250,7 +250,7 @@ index 1435e2bd7..2adffc63f 100644
 +       adapter->delay_report = g_key_file_get_boolean(key_file,
 +                                       "General", "DelayReport", &gerr);
 +       if (gerr) {
-+               adapter->delay_report = main_opts.delay_report;
++               adapter->delay_report = btd_opts.delay_report;
 +               g_error_free(gerr);
 +               gerr = NULL;
 +       }
@@ -258,15 +258,15 @@ index 1435e2bd7..2adffc63f 100644
  	g_key_file_free(key_file);
  }
  
-@@ -6317,6 +6367,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
- 						main_opts.did_version);
- 	adapter->discoverable_timeout = main_opts.discovto;
- 	adapter->pairable_timeout = main_opts.pairto;
-+        adapter->delay_report = main_opts.delay_report;
+@@ -6311,6 +6361,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+ 						btd_opts.did_version);
+ 	adapter->discoverable_timeout = btd_opts.discovto;
+ 	adapter->pairable_timeout = btd_opts.pairto;
++        adapter->delay_report = btd_opts.delay_report;
  
  	DBG("System name: %s", adapter->system_name);
  	DBG("Major class: %u", adapter->major_class);
-@@ -6324,6 +6375,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6318,6 +6369,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  	DBG("Modalias: %s", adapter->modalias);
  	DBG("Discoverable timeout: %u seconds", adapter->discoverable_timeout);
  	DBG("Pairable timeout: %u seconds", adapter->pairable_timeout);
@@ -275,10 +275,10 @@ index 1435e2bd7..2adffc63f 100644
  	adapter->auths = g_queue_new();
  
 diff --git a/src/adapter.h b/src/adapter.h
-index f8ac20261..4fc9b2eef 100644
+index 60b5e3bcc..09f2d0806 100644
 --- a/src/adapter.h
 +++ b/src/adapter.h
-@@ -33,6 +33,7 @@
+@@ -25,6 +25,7 @@
  
  struct btd_adapter;
  struct btd_device;
@@ -286,7 +286,7 @@ index f8ac20261..4fc9b2eef 100644
  
  struct btd_adapter *btd_adapter_get_default(void);
  bool btd_adapter_is_default(struct btd_adapter *adapter);
-@@ -76,6 +77,8 @@ bool btd_adapter_get_powered(struct btd_adapter *adapter);
+@@ -68,6 +69,8 @@ bool btd_adapter_get_powered(struct btd_adapter *adapter);
  bool btd_adapter_get_connectable(struct btd_adapter *adapter);
  bool btd_adapter_get_discoverable(struct btd_adapter *adapter);
  bool btd_adapter_get_bredr(struct btd_adapter *adapter);
@@ -295,23 +295,23 @@ index f8ac20261..4fc9b2eef 100644
  
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter);
  
-diff --git a/src/hcid.h b/src/hcid.h
-index 3624ba6ea..8f77184ed 100644
---- a/src/hcid.h
-+++ b/src/hcid.h
-@@ -101,6 +101,7 @@ struct main_opts {
+diff --git a/src/btd.h b/src/btd.h
+index a3247e4fd..27f201eee 100644
+--- a/src/btd.h
++++ b/src/btd.h
+@@ -105,6 +105,7 @@ struct btd_opts {
  	gboolean	debug_keys;
  	gboolean	fast_conn;
  	gboolean	refresh_discovery;
-+	gboolean        delay_report;
++	gboolean	delay_report;
  
  	uint16_t	did_source;
  	uint16_t	did_vendor;
 diff --git a/src/main.c b/src/main.c
-index b37c32948..468251511 100644
+index b66e2b8cb..3b1acace2 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -88,6 +88,7 @@ static const char *supported_options[] = {
+@@ -76,6 +76,7 @@ static const char *supported_options[] = {
  	"ControllerMode",
  	"MultiProfile",
  	"FastConnectable",
@@ -319,9 +319,9 @@ index b37c32948..468251511 100644
  	"Privacy",
  	"JustWorksRepairing",
  	"TemporaryTimeout",
-@@ -634,6 +635,16 @@ static void parse_config(GKeyFile *config)
+@@ -708,6 +709,16 @@ static void parse_config(GKeyFile *config)
  	else
- 		main_opts.refresh_discovery = boolean;
+ 		btd_opts.refresh_discovery = boolean;
  
 +        boolean = g_key_file_get_boolean(config, "General",
 +                                               "DelayReport", &err);
@@ -330,14 +330,14 @@ index b37c32948..468251511 100644
 +        else
 +        {
 +                DBG("DelayReport=%d", boolean);
-+                main_opts.delay_report = boolean;
++                btd_opts.delay_report = boolean;
 +        }
 +
  	str = g_key_file_get_string(config, "GATT", "Cache", &err);
  	if (err) {
  		DBG("%s", err->message);
 diff --git a/src/main.conf b/src/main.conf
-index 42f7e41c5..70f9bd85b 100644
+index ad36638b7..ec5c69808 100644
 --- a/src/main.conf
 +++ b/src/main.conf
 @@ -65,6 +65,9 @@

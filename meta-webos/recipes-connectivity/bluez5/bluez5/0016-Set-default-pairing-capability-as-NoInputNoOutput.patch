@@ -1,4 +1,4 @@
-From 69f93ab0e6c280d9457077a17417f8ed27651038 Mon Sep 17 00:00:00 2001
+From 7d2f7242fbce18e3639196e979d843382e1ba4a6 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Mon, 20 Apr 2020 19:24:45 +0900
 Subject: [PATCH] Set default pairing capability as "NoInputNoOutput"
@@ -8,10 +8,10 @@ Subject: [PATCH] Set default pairing capability as "NoInputNoOutput"
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/agent.c b/src/agent.c
-index e0ffcd22f..17a6482ab 100644
+index 7d66cf50d..849a527c8 100644
 --- a/src/agent.c
 +++ b/src/agent.c
-@@ -992,7 +992,7 @@ static DBusMessage *register_agent(DBusConnection *conn,
+@@ -979,7 +979,7 @@ static DBusMessage *register_agent(DBusConnection *conn,
  						DBUS_TYPE_INVALID) == FALSE)
  		return btd_error_invalid_args(msg);
  

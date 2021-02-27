@@ -1,4 +1,4 @@
-From 86a9d1ec559a98873b2ac7c293233d9b13a0a089 Mon Sep 17 00:00:00 2001
+From c29950285e87ef985fa9497c82dcbd2e164da949 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Wed, 3 Jun 2020 18:08:39 +0530
 Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
@@ -29,10 +29,10 @@ Upstream-Status: Inappropriate[webos specific]
  7 files changed, 62 insertions(+), 11 deletions(-)
 
 diff --git a/obexd/client/bluetooth.c b/obexd/client/bluetooth.c
-index 0c043e0ac..d718e1ad8 100644
+index ca2c023fb..c197fe8aa 100644
 --- a/obexd/client/bluetooth.c
 +++ b/obexd/client/bluetooth.c
-@@ -57,6 +57,7 @@ struct bluetooth_session {
+@@ -44,6 +44,7 @@ struct bluetooth_session {
  	sdp_record_t *sdp_record;
  	GIOChannel *io;
  	char *service;
@@ -40,7 +40,7 @@ index 0c043e0ac..d718e1ad8 100644
  	obc_transport_func func;
  	void *user_data;
  };
-@@ -191,6 +192,17 @@ static void search_callback(uint8_t type, uint16_t status,
+@@ -178,6 +179,17 @@ static void search_callback(uint8_t type, uint16_t status,
  		if (data != NULL && (data->val.uint16 & 0x0101) == 0x0001)
  			ch = data->val.uint16;
  
@@ -58,7 +58,7 @@ index 0c043e0ac..d718e1ad8 100644
  		/* Cache the sdp record associated with the service that we
  		 * attempt to connect. This allows reading its application
  		 * specific service attributes. */
-@@ -375,12 +387,14 @@ static int session_connect(struct bluetooth_session *session)
+@@ -362,12 +374,14 @@ static int session_connect(struct bluetooth_session *session)
  	DBG("session %p", session);
  
  	if (session->port > 0) {
@@ -73,7 +73,7 @@ index 0c043e0ac..d718e1ad8 100644
  		session->sdp = service_connect(&session->src, &session->dst,
  						service_callback, session);
  		err = (session->sdp == NULL) ? -ENOMEM : 0;
-@@ -390,14 +404,14 @@ static int session_connect(struct bluetooth_session *session)
+@@ -377,14 +391,14 @@ static int session_connect(struct bluetooth_session *session)
  }
  
  static guint bluetooth_connect(const char *source, const char *destination,
@@ -91,7 +91,7 @@ index 0c043e0ac..d718e1ad8 100644
  
  	if (destination == NULL)
  		return 0;
-@@ -410,6 +424,7 @@ static guint bluetooth_connect(const char *source, const char *destination,
+@@ -397,6 +411,7 @@ static guint bluetooth_connect(const char *source, const char *destination,
  	session->func = func;
  	session->port = port;
  	session->user_data = user_data;
@@ -100,10 +100,10 @@ index 0c043e0ac..d718e1ad8 100644
  	str2ba(destination, &session->dst);
  	str2ba(source, &session->src);
 diff --git a/obexd/client/manager.c b/obexd/client/manager.c
-index fbcad6da4..c24f0090b 100644
+index 75f1bfb04..dde5b3e82 100644
 --- a/obexd/client/manager.c
 +++ b/obexd/client/manager.c
-@@ -120,7 +120,7 @@ done:
+@@ -107,7 +107,7 @@ done:
  }
  
  static int parse_device_dict(DBusMessageIter *iter,
@@ -112,7 +112,7 @@ index fbcad6da4..c24f0090b 100644
  {
  	while (dbus_message_iter_get_arg_type(iter) == DBUS_TYPE_DICT_ENTRY) {
  		DBusMessageIter entry, value;
-@@ -138,6 +138,8 @@ static int parse_device_dict(DBusMessageIter *iter,
+@@ -125,6 +125,8 @@ static int parse_device_dict(DBusMessageIter *iter,
  				dbus_message_iter_get_basic(&value, source);
  			else if (g_str_equal(key, "Target") == TRUE)
  				dbus_message_iter_get_basic(&value, target);
@@ -121,7 +121,7 @@ index fbcad6da4..c24f0090b 100644
  			break;
  		case DBUS_TYPE_BYTE:
  			if (g_str_equal(key, "Channel") == TRUE)
-@@ -171,7 +173,7 @@ static DBusMessage *create_session(DBusConnection *connection,
+@@ -158,7 +160,7 @@ static DBusMessage *create_session(DBusConnection *connection,
  	DBusMessageIter iter, dict;
  	struct obc_session *session;
  	struct send_data *data;
@@ -130,7 +130,7 @@ index fbcad6da4..c24f0090b 100644
  	uint8_t channel = 0;
  
  	dbus_message_iter_init(message, &iter);
-@@ -188,7 +190,7 @@ static DBusMessage *create_session(DBusConnection *connection,
+@@ -175,7 +177,7 @@ static DBusMessage *create_session(DBusConnection *connection,
  
  	dbus_message_iter_recurse(&iter, &dict);
  
@@ -139,7 +139,7 @@ index fbcad6da4..c24f0090b 100644
  	if (dest == NULL || target == NULL)
  		return g_dbus_create_error(message,
  				ERROR_INTERFACE ".InvalidArguments", NULL);
-@@ -201,7 +203,7 @@ static DBusMessage *create_session(DBusConnection *connection,
+@@ -188,7 +190,7 @@ static DBusMessage *create_session(DBusConnection *connection,
  	data->connection = dbus_connection_ref(connection);
  	data->message = dbus_message_ref(message);
  
@@ -149,10 +149,10 @@ index fbcad6da4..c24f0090b 100644
  					create_callback, data);
  	if (session != NULL) {
 diff --git a/obexd/client/map.c b/obexd/client/map.c
-index 28e60fe4c..94e9d6467 100644
+index ea3d25629..2eb2c17a6 100644
 --- a/obexd/client/map.c
 +++ b/obexd/client/map.c
-@@ -1595,6 +1595,19 @@ static DBusMessage *map_list_filter_fields(DBusConnection *connection,
+@@ -1582,6 +1582,19 @@ static DBusMessage *map_list_filter_fields(DBusConnection *connection,
  	return reply;
  }
  
@@ -172,7 +172,7 @@ index 28e60fe4c..94e9d6467 100644
  static void update_inbox_cb(struct obc_session *session,
  				struct obc_transfer *transfer,
  				GError *err, void *user_data)
-@@ -1831,6 +1844,10 @@ static const GDBusMethodTable map_methods[] = {
+@@ -1818,6 +1831,10 @@ static const GDBusMethodTable map_methods[] = {
  			GDBUS_ARGS({ "transfer", "o" },
  						{ "properties", "a{sv}" }),
  			map_push_message) },
@@ -184,10 +184,10 @@ index 28e60fe4c..94e9d6467 100644
  };
  
 diff --git a/obexd/client/session.c b/obexd/client/session.c
-index cf4cb2c5f..8b6660bff 100644
+index 9b456f69c..d5262f680 100644
 --- a/obexd/client/session.c
 +++ b/obexd/client/session.c
-@@ -100,6 +100,7 @@ struct obc_session {
+@@ -87,6 +87,7 @@ struct obc_session {
  	int refcount;
  	char *source;
  	char *destination;
@@ -195,7 +195,7 @@ index cf4cb2c5f..8b6660bff 100644
  	uint8_t channel;
  	struct obc_transport *transport;
  	struct obc_driver *driver;
-@@ -554,7 +555,7 @@ static int session_connect(struct obc_session *session,
+@@ -541,7 +542,7 @@ static int session_connect(struct obc_session *session,
  	}
  
  	session->id = transport->connect(session->source, session->destination,
@@ -204,7 +204,7 @@ index cf4cb2c5f..8b6660bff 100644
  					transport_func, callback);
  	if (session->id == 0) {
  		obc_session_unref(callback->session);
-@@ -570,6 +571,7 @@ static int session_connect(struct obc_session *session,
+@@ -557,6 +558,7 @@ static int session_connect(struct obc_session *session,
  struct obc_session *obc_session_create(const char *source,
  						const char *destination,
  						const char *service,
@@ -212,7 +212,7 @@ index cf4cb2c5f..8b6660bff 100644
  						uint8_t channel,
  						const char *owner,
  						session_callback_t function,
-@@ -610,6 +612,7 @@ struct obc_session *obc_session_create(const char *source,
+@@ -597,6 +599,7 @@ struct obc_session *obc_session_create(const char *source,
  	session->conn = conn;
  	session->source = g_strdup(source);
  	session->destination = g_strdup(destination);
@@ -220,7 +220,7 @@ index cf4cb2c5f..8b6660bff 100644
  	session->channel = channel;
  	session->queue = g_queue_new();
  	session->folder = g_strdup("/");
-@@ -618,6 +621,7 @@ struct obc_session *obc_session_create(const char *source,
+@@ -605,6 +608,7 @@ struct obc_session *obc_session_create(const char *source,
  		obc_session_set_owner(session, owner, owner_disconnected);
  
  proceed:
@@ -228,7 +228,7 @@ index cf4cb2c5f..8b6660bff 100644
  	if (session_connect(session, function, user_data) < 0) {
  		obc_session_unref(session);
  		return NULL;
-@@ -626,6 +630,9 @@ proceed:
+@@ -613,6 +617,9 @@ proceed:
  	DBG("session %p transport %s driver %s", session,
  			session->transport->name, session->driver->service);
  
@@ -239,10 +239,10 @@ index cf4cb2c5f..8b6660bff 100644
  }
  
 diff --git a/obexd/client/session.h b/obexd/client/session.h
-index b561b7e58..5972b9d73 100644
+index 2c646df1a..5e200e40d 100644
 --- a/obexd/client/session.h
 +++ b/obexd/client/session.h
-@@ -34,6 +34,7 @@ typedef void (*session_callback_t) (struct obc_session *session,
+@@ -21,6 +21,7 @@ typedef void (*session_callback_t) (struct obc_session *session,
  struct obc_session *obc_session_create(const char *source,
  						const char *destination,
  						const char *service,
@@ -251,10 +251,10 @@ index b561b7e58..5972b9d73 100644
  						const char *owner,
  						session_callback_t function,
 diff --git a/obexd/client/transport.h b/obexd/client/transport.h
-index b035cfc45..ff17edfcb 100644
+index e1f1a5c53..43164c522 100644
 --- a/obexd/client/transport.h
 +++ b/obexd/client/transport.h
-@@ -27,7 +27,7 @@ typedef void (*obc_transport_func)(GIOChannel *io, GError *err,
+@@ -14,7 +14,7 @@ typedef void (*obc_transport_func)(GIOChannel *io, GError *err,
  struct obc_transport {
  	const char *name;
  	guint (*connect) (const char *source, const char *destination,
@@ -264,10 +264,10 @@ index b035cfc45..ff17edfcb 100644
  	int (*getpacketopt) (GIOChannel *io, int *tx_mtu, int *rx_mtu);
  	void (*disconnect) (guint id);
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index 9ed336aa5..275950aae 100644
+index 056701306..81777a719 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -127,6 +127,7 @@ static void connect_reply(DBusMessage *message, void *user_data)
+@@ -114,6 +114,7 @@ static void connect_reply(DBusMessage *message, void *user_data)
  struct connect_args {
  	char *dev;
  	char *target;
@@ -275,7 +275,7 @@ index 9ed336aa5..275950aae 100644
  };
  
  static void connect_args_free(void *data)
-@@ -157,6 +158,8 @@ static void connect_setup(DBusMessageIter *iter, void *user_data)
+@@ -144,6 +145,8 @@ static void connect_setup(DBusMessageIter *iter, void *user_data)
  
  	g_dbus_dict_append_entry(&dict, "Target",
  					DBUS_TYPE_STRING, &args->target);
@@ -284,7 +284,7 @@ index 9ed336aa5..275950aae 100644
  
  done:
  	dbus_message_iter_close_container(iter, &dict);
-@@ -166,6 +169,7 @@ static void cmd_connect(int argc, char *argv[])
+@@ -153,6 +156,7 @@ static void cmd_connect(int argc, char *argv[])
  {
  	struct connect_args *args;
  	const char *target = "opp";
@@ -292,7 +292,7 @@ index 9ed336aa5..275950aae 100644
  
  	if (!client) {
  		bt_shell_printf("Client proxy not available\n");
-@@ -175,9 +179,13 @@ static void cmd_connect(int argc, char *argv[])
+@@ -162,9 +166,13 @@ static void cmd_connect(int argc, char *argv[])
  	if (argc > 2)
  		target = argv[2];
  
@@ -306,7 +306,7 @@ index 9ed336aa5..275950aae 100644
  
  	if (g_dbus_proxy_method_call(client, "CreateSession", connect_setup,
  			connect_reply, args, connect_args_free) == FALSE) {
-@@ -1845,7 +1853,7 @@ static void cmd_mkdir(int argc, char *argv[])
+@@ -1832,7 +1840,7 @@ static void cmd_mkdir(int argc, char *argv[])
  static const struct bt_shell_menu main_menu = {
  	.name = "main",
  	.entries = {
@@ -315,7 +315,7 @@ index 9ed336aa5..275950aae 100644
  	{ "disconnect",   "[session]", cmd_disconnect, "Disconnect session",
  						session_generator },
  	{ "list",         NULL,       cmd_list, "List available sessions" },
-@@ -1865,7 +1873,8 @@ static const struct bt_shell_menu main_menu = {
+@@ -1852,7 +1860,8 @@ static const struct bt_shell_menu main_menu = {
  	{ "pull",	  "<file>",   cmd_pull,
  					"Pull Vobject & stores in file" },
  	{ "cd",           "<path>",   cmd_cd, "Change current folder" },
