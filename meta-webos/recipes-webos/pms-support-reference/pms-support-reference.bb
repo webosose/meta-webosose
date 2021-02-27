@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "Reference power manager plugin"
 AUTHOR = "Abhsiehk Srivastava <abhishek.srivastava@lge.com>"
@@ -9,7 +9,7 @@ SECTION = "webos/libs"
 DEPENDS = "luna-service2 glib-2.0 pmloglib libpbnjson nyx-lib libpmscore"
 PROVIDES = "virtual/pmssupportreference"
 
-WEBOS_VERSION = "1.0.0-3_279f849022562ac7c645ef5d30aff42566b4937a"
+WEBOS_VERSION = "1.0.0-4_fb77973c4c82a384cee430719365b95e26de6d03"
 PR = "r1"
 
 inherit webos_component

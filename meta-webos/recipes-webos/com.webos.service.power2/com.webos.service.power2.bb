@@ -8,7 +8,7 @@ SECTION = "webos/libs"
 
 DEPENDS = "luna-service2 glib-2.0 libpmscore virtual/pmssupportreference pmloglib libpbnjson nyx-lib"
 
-WEBOS_VERSION = "1.0.0-9_7c373ff36ee8474e40e9c2ff9df5814ab0f694cd"
+WEBOS_VERSION = "1.0.0-10_97fd5a094cf10b4eecd268298327f90e1f58dbe0"
 PR = "r1"
 
 inherit webos_component
