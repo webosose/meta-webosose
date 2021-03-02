@@ -16,8 +16,8 @@ RDEPENDS_${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fs
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
-WEBOS_VERSION = "1.0.1-51_b3ade52eeddaa2e7b3115351e3352924d6ae0dea"
-PR = "r3"
+WEBOS_VERSION = "1.0.1-52_3f204d15776b5b51b9d5ccfb4cbb89173f183e03"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -29,6 +29,11 @@ inherit webos_machine_dep
 inherit webos_public_repo
 inherit webos_localizable
 inherit webos_distro_dep
+inherit useradd
+
+USERADD_PARAM_${PN} = "-u 1023 -d /home/pdmuser -m -s /bin/sh pdmuser"
+GROUPADD_PARAM_${PN} = "-g 2023 pdmgroup"
+USERADD_PACKAGES = "${PN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
