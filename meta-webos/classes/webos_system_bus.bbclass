@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 #
 # webos_system_bus
 
@@ -30,25 +30,24 @@ webos_system_bus_install_files () {
     _LS_PUB=`find $_LS_TREE -name "$_LS_PUB_FILE"`
     _LS_PRV=`find $_LS_TREE -name "$_LS_PRV_FILE"`
 
-    if [ ${#_LS_PUB[@]} -ne 0 ]; then
+
+    if [ -n "${_LS_PUB}" ]; then
         install -d $_LS_PUB_DIR
+        for i in $_LS_PUB; do
+            _LS_PUB_DEST=`basename $i .pub`
+            bbnote "PUBLIC: $_LS_PUB_DIR/$_LS_PUB_DEST"
+            install -v -m 0644 $i $_LS_PUB_DIR/$_LS_PUB_DEST
+        done
     fi
 
-    for i in $_LS_PUB; do
-        _LS_PUB_DEST=`basename $i .pub`
-        bbnote "PUBLIC: $_LS_PUB_DIR/$_LS_PUB_DEST"
-        install -v -m 0644 $i $_LS_PUB_DIR/$_LS_PUB_DEST
-    done
-
-    if [ ${#_LS_PRV[@]} -ne 0 ]; then
+    if [ -n "${_LS_PRV}" ]; then
         install -d $_LS_PRV_DIR
+        for i in $_LS_PRV; do
+            _LS_PRV_DEST=`basename $i .prv`
+            bbnote "PRIVATE: $_LS_PRV_DIR/$_LS_PRV_DEST"
+            install -v -m 0644 $i $_LS_PRV_DIR/$_LS_PRV_DEST
+        done
     fi
-
-    for i in $_LS_PRV; do
-        _LS_PRV_DEST=`basename $i .prv`
-        bbnote "PRIVATE: $_LS_PRV_DIR/$_LS_PRV_DEST"
-        install -v -m 0644 $i $_LS_PRV_DIR/$_LS_PRV_DEST
-    done
 }
 
 # - Can't assume our current directory is still ${S}
