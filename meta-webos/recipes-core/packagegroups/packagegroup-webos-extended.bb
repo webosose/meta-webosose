@@ -180,7 +180,6 @@ RDEPENDS_${PN} = " \
     luna-downloadmgr \
     luna-init \
     luna-sysservice \
-    media-codec-interface \
     ${VIRTUAL-RUNTIME_mojoservicelauncher} \
     ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
     nodejs-module-webos-service \
