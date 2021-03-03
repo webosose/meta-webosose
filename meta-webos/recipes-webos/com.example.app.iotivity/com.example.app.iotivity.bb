@@ -13,13 +13,14 @@ SRC_URI = " \
     git://github.com/iotivity/iotivity.git;branch=webos;protocol=http;name=main \
     file://0001-webOS-Apply-new-ACG-policy-in-test-applications.patch \
     file://0001-webOS-Apply-proper-ACG-group-name-in-test-appl.patch \
+    file://0001-webOS-Fix-bug-that-API-is-not-called.patch \
 "
 
 SRCREV = "ff1837a569494cb9613c3b6c961fcf26f0014515"
 
 S = "${WORKDIR}/git"
 
-PR = "r5"
+PR = "r6"
 PV = "1.3.99+git${SRCPV}"
 
 inherit pkgconfig webos_enactjs_app webos_component

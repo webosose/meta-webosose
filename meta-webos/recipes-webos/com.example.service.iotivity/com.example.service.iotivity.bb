@@ -13,11 +13,12 @@ SRC_URI = " \
     git://github.com/iotivity/iotivity.git;branch=webos;protocol=http;name=main \
     file://0001-webOS-Apply-new-ACG-policy-in-test-applications.patch \
     file://0001-webOS-Apply-proper-ACG-group-name-in-test-appl.patch \
+    file://0001-webOS-Fix-bug-that-API-is-not-called.patch \
 "
 
 SRCREV = "ff1837a569494cb9613c3b6c961fcf26f0014515"
 S = "${WORKDIR}/git"
-PR = "r3"
+PR = "r4"
 PV = "1.3.99+git${SRCPV}"
 
 inherit pkgconfig webos_component webos_filesystem_paths
@@ -35,18 +36,21 @@ do_install_append() {
     install -d ${D}${datadir}/luna-service2/client-permissions.d
     install -d ${D}${datadir}/luna-service2/api-permissions.d
     install -d ${D}${datadir}/luna-service2/manifests.d
+    install -d ${D}${datadir}/luna-service2/groups.d
 
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.service ${D}${datadir}/luna-service2/services.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.role.json ${D}${datadir}/luna-service2/roles.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.perm.json ${D}${datadir}/luna-service2/client-permissions.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.api.json ${D}${datadir}/luna-service2/api-permissions.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.manifest.json ${D}${datadir}/luna-service2/manifests.d
+    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.server/files/sysbus/com.example.service.iotivity.server.groups.json ${D}${datadir}/luna-service2/groups.d
 
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.service ${D}${datadir}/luna-service2/services.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.role.json ${D}${datadir}/luna-service2/roles.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.perm.json ${D}${datadir}/luna-service2/client-permissions.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.api.json ${D}${datadir}/luna-service2/api-permissions.d
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.manifest.json ${D}${datadir}/luna-service2/manifests.d
+    install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.groups.json ${D}${datadir}/luna-service2/groups.d
 }
 
 FILES_${PN} = "\
