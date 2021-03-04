@@ -63,6 +63,10 @@ def webos_app_generate_security_files_write_permission_file(d, app_info):
         if pub_bus:
             permission[key].append("public")
 
+    if d.getVar("DISTRO", True) == "webos" or d.getVar("DISTRO", True) == "webos-auto":
+        if type == "qml":
+            permission[key].append("application.operation")
+
     dst_dir         = d.getVar("D", True)
     permissions_dir = d.getVar("webos_sysbus_permissionsdir", True)
     permission_file = permissions_dir + "/" + app_id + ".app.json"
