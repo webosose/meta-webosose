@@ -189,6 +189,7 @@ RDEPENDS_${PN} = " \
     pmklogd \
     pmlogctl \
     pmlogdaemon \
+    qml-app-components \
     sam \
     settingsservice \
     sleepd \
