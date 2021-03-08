@@ -34,7 +34,6 @@ inherit webos_prerelease_dep
 inherit pythonnative
 
 REPO_VERSION := "${@['','_${WEBRUNTIME_REPO_VERSION}'][d.getVar('WEBRUNTIME_REPO_VERSION').strip() != '']}"
-require webruntime-repo${REPO_VERSION}.inc
 
 WEBOS_REPO_NAME ?= "chromium84"
 WEBOS_GIT_PARAM_BRANCH_V8 ?= "@chromium84"
@@ -47,6 +46,8 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 SRC_URI_append = "\
     ${WEBOSOSE_GIT_REPO_COMPLETE_V8};destsuffix=git/src/v8;name=v8 \
 "
+
+require recipes-webos/chromium/webruntime-repo${REPO_VERSION}.inc
 
 ## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
 do_fetch[vardeps] += "SRCREV_v8"
