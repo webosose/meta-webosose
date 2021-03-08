@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "Maliit Input Method Framework"
 DESCRIPTION = "This is the webOS edition of the Maliit input method framework. It differs from upstream in that it supports a hardware keyboard using the wayland protocol."
@@ -15,7 +15,7 @@ RDEPENDS_${PN} = "qtbase-plugins configd"
 
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
-WEBOS_VERSION = "0.99.0+20-95_c1a85c31ada391062985c61f3bbe8cfbb5920b80"
+WEBOS_VERSION = "0.99.0+20-96_5fa7d269dba87c64c465f14f338107b4d5663c77"
 PR = "r33"
 
 inherit webos_daemon
