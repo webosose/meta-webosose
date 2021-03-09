@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 LG Electronics, Inc.
+# Copyright (c) 2016-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - qemux86 nyx module"
 AUTHOR  = "Sapna Todwal <sapna.todwal@lge.com>"
@@ -18,7 +18,7 @@ inherit webos_cmake
 inherit webos_library
 inherit webos_nyx_module_provider
 
-WEBOS_VERSION = "1.0.0-3_15b951eb576df42afd88122754a480bd772299f8"
+WEBOS_VERSION = "1.0.0-4_c470cca15479bf753b623d5051bca9a673e85036"
 PR = "r1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
