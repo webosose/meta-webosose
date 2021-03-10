@@ -1,0 +1,30 @@
+From 358a211006f9564db52fb35fd42ab469d7253b4e Mon Sep 17 00:00:00 2001
+From: Siyeon Seo <siyeon.seo@lge.com>
+Date: Wed, 10 Mar 2021 17:14:08 +0900
+Subject: [PATCH] Avoid crash when accessing an empty QTextLine
+
+In any case an empty QTextLine should not be used. Q_ASSERT doesn't help
+in non-debug build.
+
+Change-Id: I10b7895bc9b4cfd061aea086f810a9f8bf6d301a
+Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/339001]
+---
+ src/quick/items/qquicktext.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/quick/items/qquicktext.cpp b/src/quick/items/qquicktext.cpp
+index 97cc33b95f..a113dbbd0f 100644
+--- a/src/quick/items/qquicktext.cpp
++++ b/src/quick/items/qquicktext.cpp
+@@ -1141,8 +1141,8 @@ QRectF QQuickTextPrivate::setupTextLayout(qreal *const baseline)
+     QTextLine firstLine = visibleCount == 1 && elideLayout
+             ? elideLayout->lineAt(0)
+             : layout.lineAt(0);
+-    Q_ASSERT(firstLine.isValid());
+-    *baseline = firstLine.y() + firstLine.ascent();
++    if (firstLine.isValid())
++        *baseline = firstLine.y() + firstLine.ascent();
+ 
+     if (!customLayout)
+         br.setHeight(height);
