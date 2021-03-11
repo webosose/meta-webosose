@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "Booting sequence and CPU,I/O usage monitor"
 DESCRIPTION = "Monitors where the system spends its time at start, creating a graph of all processes, disk utilization, and wait time."
@@ -9,17 +9,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=44ac4678311254db62edf8fd39cb8124"
 
 RDEPENDS_${PN} = "python3-core python3-pycairo python3-compression python3-image python3-shell python3-codecs python3-misc"
 
-PR = "r10"
+PR = "r11"
 
 inherit autotools-brokensep
 inherit systemd
-inherit update-alternatives
 
 RCONFLICTS_${PN} = "bootchart"
-ALTERNATIVE_${PN} = "init"
-ALTERNATIVE_TARGET[init] = "${base_sbindir}/bootchartd"
-ALTERNATIVE_LINK_NAME[init] = "${base_sbindir}/init"
-ALTERNATIVE_PRIORITY = "40"
 
 SYSTEMD_SERVICE_${PN} = "bootchart2.service bootchart2-done.service bootchart2-done.timer"
 
