@@ -15,7 +15,7 @@ VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_rdx-utils} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-13_52cdac5f068f7093e2e96f3cbf9b15e89bf589cb"
+WEBOS_VERSION = "3.21.2-14_fb412145f2c01e3dc4fdbc272eb25e9dddddcdd1"
 PR = "r25"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
