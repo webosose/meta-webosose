@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2020 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 SUMMARY = "Components for testing added to webOS OSE -devel images"
 LICENSE = "Apache-2.0"
@@ -15,73 +15,6 @@ VIRTUAL-RUNTIME_umediaserver-python ?= ""
 VIRTUAL-RUNTIME_umediaserver-python_armv4 = ""
 VIRTUAL-RUNTIME_umediaserver-python_armv5 = ""
 
-# A group of Python 2 packages to develop and exercise tests for
-# webOS OSE processes.
-PYTHON = " \
-    python \
-    python-2to3 \
-    python-audio \
-    python-bsddb \
-    python-codecs \
-    python-compile \
-    python-compiler \
-    python-compression \
-    python-core \
-    python-crypt \
-    python-ctypes \
-    python-curses \
-    python-datetime \
-    python-db \
-    python-debugger \
-    python-difflib \
-    python-distutils \
-    python-email \
-    python-fcntl \
-    python-gdbm \
-    python-hotshot \
-    python-html \
-    python-idle \
-    python-image \
-    python-io \
-    python-json \
-    python-lang \
-    python-logging \
-    python-mailbox \
-    python-math \
-    python-mime \
-    python-misc \
-    python-mmap \
-    python-multiprocessing \
-    python-netclient \
-    python-netserver \
-    python-numbers \
-    python-pickle \
-    python-pkgutil \
-    python-pprint \
-    python-profile \
-    python-pydoc \
-    python-re \
-    python-resource \
-    python-robotparser \
-    python-setuptools \
-    python-shell \
-    python-smtpd \
-    python-sqlite3 \
-    python-stringold \
-    python-subprocess \
-    python-syslog \
-    python-terminal \
-    python-tests \
-    python-textutils \
-    python-threading \
-    python-tkinter \
-    python-unittest \
-    python-unixadmin \
-    python-xml \
-    python-xmlrpc \
-    python-zlib \
-"
-
 # ptest's default approach to running a component's tests is 'make test'.
 # glib-2.0 and dbus certainly assume this, and that's what their run-ptest
 # scripts do. But they don't follow https://wiki.yoctoproject.org/wiki/Ptest
@@ -97,5 +30,4 @@ RDEPENDS_${PN} = "\
     sam-tests \
     ${VIRTUAL-RUNTIME_surface-manager-tests} \
     ${VIRTUAL-RUNTIME_umediaserver-python} \
-    ${PYTHON} \
 "
