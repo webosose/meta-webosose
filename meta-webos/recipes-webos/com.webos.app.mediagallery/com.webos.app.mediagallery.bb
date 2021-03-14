@@ -17,7 +17,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative pmloglib luna-service2 libpbnjson"
 RDEPENDS_${PN} += "qml-webos-framework qml-webos-bridge"
 
-WEBOS_VERSION = "1.0.0-5_a0e20a8b77068154a363b0228ac2f50955456de4"
+WEBOS_VERSION = "1.0.0-6_388dffa7e54566e0fd0c42dcc512ec2aeb654f8c"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r0"
