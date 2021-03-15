@@ -17,7 +17,7 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-155_150f6d2220121fce5c4520df0c85b6090d0b6c93"
+WEBOS_VERSION = "1.0.0-156_6c503521b49daa05df311b3b6097b8feeb741897"
 PR = "r30"
 
 inherit webos_qmake5
