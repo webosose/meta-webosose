@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "nyx-lib glib-2.0"
 
-WEBOS_VERSION = "1.5.0-6_032987bbf5d80ee8032e4625b40e926d3c7999f3"
+WEBOS_VERSION = "1.5.0-7_eafc3df9dc8a3641ac56d1a69dc2672950971ce1"
 PR = "r3"
 
 inherit webos_component

@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 SUMMARY = "pmscore handles device states"
 AUTHOR = "Abhsiehk Srivastava <abhishek.srivastava@lge.com>"
@@ -8,7 +8,7 @@ SECTION = "webos/libs"
 
 DEPENDS = "luna-service2 glib-2.0 pmloglib libpbnjson nyx-lib"
 
-WEBOS_VERSION = "1.0.0-5_8c991b8bea066c3338714a483caa75921ecf6426"
+WEBOS_VERSION = "1.0.0-6_45ea261b69d902a4bf2d29b0a995eaa50670aba4"
 PR = "r0"
 
 inherit webos_component
