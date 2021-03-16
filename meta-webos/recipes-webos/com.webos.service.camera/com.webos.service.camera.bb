@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
 
-WEBOS_VERSION = "1.0.0-17_e31715df51b79f450156ec9ad1dd70dba3d37026"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-18_26c8aae06d03fe0d068324e8e0b5335d7b317c2c"
+PR = "r3"
 
 inherit webos_component
 inherit webos_cmake
@@ -26,7 +26,7 @@ inherit webos_daemon
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$"
+COMPATIBLE_MACHINE = "(.*)"
 
 FILES_${PN} += "${libdir}/*.so"
 FILES_SOLIBSDEV = ""
