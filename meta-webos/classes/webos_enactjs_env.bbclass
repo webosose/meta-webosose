@@ -23,11 +23,3 @@ ENACT_JSDOC_TO_TS ??= "${WEBOS_NODE_BIN} ${WEBOS_ENACTJS_JSDOC_TO_TS_PATH}/bin/j
 ENACT_BOOTSTRAP_OVERRIDE ??= "${ENACT_DEV} bootstrap --base=false --sampler=false --link=false --override"
 
 inherit webos_npm_env
-
-do_configure_append() {
-    # npm install on cli & jsdoc-to-ts
-    bbnote "Enact cli & jsdoc-to-ts npm install"
-    ${WEBOS_NPM_BIN} install -C ${WEBOS_ENACTJS_TOOL_PATH}
-    ${WEBOS_NPM_BIN} install -C ${WEBOS_ENACTJS_TOOL_LEGACY_PATH}
-    ${WEBOS_NPM_BIN} install -C ${WEBOS_ENACTJS_JSDOC_TO_TS_PATH}
-}

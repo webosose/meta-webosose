@@ -6,12 +6,18 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
+# Dependencies:
+#   - nodejs-native to get node & npm
+#   - coreutils-native to use timeout utility to prevent frozen NPM processes
+DEPENDS_append = " nodejs-native coreutils-native"
+
 inherit webos_enact_repo
 inherit native
+inherit webos_npm_env
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r8"
+PR = "r9"
 
 S = "${WORKDIR}/git"
 
@@ -39,7 +45,31 @@ SRCREV_jsdoc-to-ts = "91e3709da01f4a8e0d57c2ed80d068789acf37eb"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
-do_compile[noexec] = "1"
+
+# npm install on cli & jsdoc-to-ts
+do_compile() {
+    bbnote "Enact cli & jsdoc-to-ts npm install"
+    for LOC_TOOL in ${S}/* ; do
+        ATTEMPTS=0
+        STATUS=-1
+        while [ ${STATUS} -ne 0 ] ; do
+            ATTEMPTS=$(expr ${ATTEMPTS} + 1)
+            if [ ${ATTEMPTS} -gt 5 ] ; then
+                bberror "All attempts to NPM install have failed; exiting!"
+                exit ${STATUS}
+            fi
+
+            bbnote "NPM install attempt #${ATTEMPTS} (of 5)..." && echo
+            STATUS=0
+            timeout --kill-after=5m 15m ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install -C ${LOC_TOOL} || eval "STATUS=\$?"
+            if [ ${STATUS} -ne 0 ] ; then
+                bbwarn "...NPM process failed with status ${STATUS}"
+            else
+                bbnote "...NPM process succeeded" && echo
+            fi
+        done
+    done
+}
 
 # Install enact-dev in sysroot for use in Enact app recipes
 do_install() {
