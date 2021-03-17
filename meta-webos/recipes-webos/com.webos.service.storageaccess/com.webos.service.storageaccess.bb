@@ -12,7 +12,7 @@ DEPENDS= "glib-2.0 luna-service2 pmloglib libpbnjson curl"
 COMPATIBLE_MACHINE = "^raspberrypi4$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-1_82521fa6eb4024c1fe30467f0b4d0a5ae2aa96d1"
+WEBOS_VERSION = "1.0.0-3_24b6c3b8eb6f5c2600cd39a16e05312527adf917"
 PR = "r0"
 
 inherit webos_component
