@@ -284,6 +284,7 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
 "
 
 RDEPENDS_${PN}_append_qemux86 = " \
+    com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.camera \
     com.webos.service.location \
