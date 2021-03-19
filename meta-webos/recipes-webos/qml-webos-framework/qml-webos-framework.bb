@@ -10,6 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2"
+DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
 RDEPENDS_${PN} = "qtgraphicaleffects-qmlplugins"
 
 RPROVIDES_${PN}-examples = " \
@@ -18,7 +19,7 @@ RPROVIDES_${PN}-examples = " \
 "
 
 WEBOS_VERSION = "1.0.0-159_3cdfd0b4c44de9c5060638731090e1602d90ffa5"
-PR = "r30"
+PR = "r31"
 
 inherit webos_qmake5
 inherit webos_enhanced_submissions

@@ -15,12 +15,14 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qtdeclarative pmloglib luna-service2 libpbnjson"
+DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
+
 RDEPENDS_${PN} += "qml-webos-framework qml-webos-bridge"
 
 WEBOS_VERSION = "1.0.0-15_2726294995afb54941df42713727f6ba9d86fcba"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r0"
+PR = "r1"
 
 inherit webos_enhanced_submissions
 inherit webos_public_repo
