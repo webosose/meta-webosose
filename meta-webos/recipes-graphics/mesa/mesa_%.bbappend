@@ -1,20 +1,11 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos5"
+EXTENDPRAUTO_append = "webos6"
 
-# Add gallium, gallium-llvmpipe, opengl and enable wayland even without wayland in DISTRO_FEATURES
-PACKAGECONFIG_qemuall = "opengl gbm egl gles dri wayland gallium gallium-llvm"
+# Add gallium-llvm which will enable svga as well
+PACKAGECONFIG_append_qemuall = " gallium-llvm"
 
-# Add virgl gallium driver
-GALLIUMDRIVERS_qemux86 = "virgl,svga"
-GALLIUMDRIVERS_LLVM_qemux86 = "virgl,svga"
-GALLIUMDRIVERS_qemux86-64 = "virgl,svga"
-GALLIUMDRIVERS_LLVM_qemux86-64 = "virgl,svga"
 # svga fails to build for qemuarm:
+# mesa-20.0.2/src/gallium/winsys/svga/drm/vmw_msg.c:90:4: error: impossible constraint in 'asm'
 # http://caprica.lgsvl.com:8080/Errors/Details/1472308
-GALLIUMDRIVERS_qemuarm = "virgl"
-GALLIUMDRIVERS_LLVM_qemuarm = "virgl"
-DRIDRIVERS_qemuall = "swrast"
-
-# Enable wayland even without wayland in DISTRO_FEATURES
-PLATFORMS_qemuall = "drm,wayland"
+GALLIUMDRIVERS_LLVM_qemuarm = "r300,nouveau"
