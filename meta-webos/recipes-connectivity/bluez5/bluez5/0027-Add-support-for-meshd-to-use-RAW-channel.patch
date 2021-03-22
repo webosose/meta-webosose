@@ -1,0 +1,264 @@
+From 2ba833e4ead73f4b3432bf9dc577973db3179f48 Mon Sep 17 00:00:00 2001
+From: "ramya.hegde" <ramya.hegde@lge.com>
+Date: Mon, 25 Jan 2021 16:27:58 +0530
+Subject: [PATCH] Add support for meshd to use RAW channel
+
+:Release Notes:
+Add support for meshd to use RAW channel
+
+:Detailed Notes:
+Add support for meshd to use RAW channel so that
+bluetooth-meshd and bluetoothd can run in parallel
+
+:Testing Performed:
+Built and tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-123995] Analyze bluetooth-meshd and bluetoothd
+              working together
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ mesh/bluetooth-mesh.service.in |  3 ++-
+ mesh/main.c                    | 14 ++++++++----
+ mesh/mesh-io-generic.c         | 38 +++++++++++++++++++++++++------
+ mesh/mesh-io.h                 |  4 ++++
+ mesh/mesh-mgmt.c               | 41 +++++++++++++++++++++++++++++++++-
+ mesh/mesh-mgmt.h               |  1 +
+ 6 files changed, 88 insertions(+), 13 deletions(-)
+
+diff --git a/mesh/bluetooth-mesh.service.in b/mesh/bluetooth-mesh.service.in
+index c8afbf5..2154b87 100644
+--- a/mesh/bluetooth-mesh.service.in
++++ b/mesh/bluetooth-mesh.service.in
+@@ -5,7 +5,8 @@ ConditionPathIsDirectory=/sys/class/bluetooth
+ [Service]
+ Type=dbus
+ BusName=org.bluez.mesh
+-ExecStart=@pkglibexecdir@/bluetooth-meshd
++ExecStart=@pkglibexecdir@/bluetooth-meshd --nodetach --use_raw
++Capabilities=cap_net_admin,cap_net_bind_service
+ NotifyAccess=main
+ LimitNPROC=1
+ ProtectHome=true
+diff --git a/mesh/main.c b/mesh/main.c
+index 5a3cbf2..63bf749 100644
+--- a/mesh/main.c
++++ b/mesh/main.c
+@@ -43,6 +43,7 @@ static const char *storage_dir;
+ static const char *mesh_conf_fname;
+ static enum mesh_io_type io_type;
+ static void *io_opts;
++bool use_raw = false;
+ 
+ static const struct option main_options[] = {
+ 	{ "io",		required_argument,	NULL, 'i' },
+@@ -51,6 +52,7 @@ static const struct option main_options[] = {
+ 	{ "nodetach",	no_argument,		NULL, 'n' },
+ 	{ "debug",	no_argument,		NULL, 'd' },
+ 	{ "dbus-debug",	no_argument,		NULL, 'b' },
++	{ "use_raw",	no_argument,		NULL, 'r' },
+ 	{ "help",	no_argument,		NULL, 'h' },
+ 	{ }
+ };
+@@ -145,10 +147,11 @@ static void signal_handler(uint32_t signo, void *user_data)
+ static bool parse_io(const char *optarg, enum mesh_io_type *type, void **opts)
+ {
+ 	if (strstr(optarg, "generic") == optarg) {
+-		int *index = l_new(int, 1);
+-
++		struct mesh_io_opts *m_io_opts = l_new(struct mesh_io_opts, 1);
++		int *index = &(m_io_opts->index);
++		m_io_opts->use_raw = use_raw;
++		*opts = m_io_opts;
+ 		*type = MESH_IO_TYPE_GENERIC;
+-		*opts = index;
+ 
+ 		optarg += strlen("generic");
+ 		if (!*optarg) {
+@@ -196,7 +199,7 @@ int main(int argc, char *argv[])
+ 	for (;;) {
+ 		int opt;
+ 
+-		opt = getopt_long(argc, argv, "i:s:c:ndbh", main_options, NULL);
++		opt = getopt_long(argc, argv, "i:c:f:ndbhr", main_options, NULL);
+ 		if (opt < 0)
+ 			break;
+ 
+@@ -223,6 +226,9 @@ int main(int argc, char *argv[])
+ 		case 'b':
+ 			dbus_debug = true;
+ 			break;
++		case 'r':
++			use_raw = true;
++			break;
+ 		case 'h':
+ 			usage();
+ 			status = EXIT_SUCCESS;
+diff --git a/mesh/mesh-io-generic.c b/mesh/mesh-io-generic.c
+index 67304d2..95b1886 100644
+--- a/mesh/mesh-io-generic.c
++++ b/mesh/mesh-io-generic.c
+@@ -49,6 +49,7 @@ struct mesh_io_private {
+ 	uint16_t interval;
+ 	bool sending;
+ 	bool active;
++	bool use_raw;
+ };
+ 
+ struct pvt_rx_reg {
+@@ -268,8 +269,11 @@ static void configure_hci(struct mesh_io_private *io)
+ 
+ 	/* TODO: Move to suitable place. Set suitable masks */
+ 	/* Reset Command */
+-	bt_hci_send(io->hci, BT_HCI_CMD_RESET, NULL, 0, hci_generic_callback,
+-								NULL, NULL);
++	if (!(io->use_raw)) {
++		/* Reset Command in case of user channel */
++		bt_hci_send(io->hci, BT_HCI_CMD_RESET, NULL, 0, hci_generic_callback,
++									NULL, NULL);
++	}
+ 
+ 	/* Read local supported commands */
+ 	bt_hci_send(io->hci, BT_HCI_CMD_READ_LOCAL_COMMANDS, NULL, 0,
+@@ -401,10 +405,26 @@ static void hci_init(void *user_data)
+ 		bt_hci_unref(io->pvt->hci);
+ 	}
+ 
+-	io->pvt->hci = bt_hci_new_user_channel(io->pvt->index);
+-	if (!io->pvt->hci) {
++	if (io->pvt->use_raw)
++	{
++		l_debug("Use HCI RAW channel");
++
++		/* Power up HCI device */
++		uint16_t mode = 0x01;
++		if (!set_powered(mode, io->pvt->index))
++			return;
++
++		io->pvt->hci = bt_hci_new_raw_device(io->pvt->index);
++	}
++	else
++	{
++		l_debug("Use HCI USER channel");
++		io->pvt->hci = bt_hci_new_user_channel(io->pvt->index);
++	}
++	if (!io->pvt->hci)
++	{
+ 		l_error("Failed to start mesh io (hci %u): %s", io->pvt->index,
+-							strerror(errno));
++				strerror(errno));
+ 		result = false;
+ 	}
+ 
+@@ -445,7 +465,10 @@ static bool dev_init(struct mesh_io *io, void *opts,
+ 		return false;
+ 
+ 	io->pvt = l_new(struct mesh_io_private, 1);
+-	io->pvt->index = *(int *)opts;
++	struct mesh_io_opts *io_opts;
++	io_opts = (struct mesh_io_opts *)opts;
++	io->pvt->index = io_opts->index;
++	io->pvt->use_raw = io_opts->use_raw;
+ 
+ 	io->pvt->rx_regs = l_queue_new();
+ 	io->pvt->tx_pkts = l_queue_new();
+@@ -853,7 +876,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
+ 	if (l_queue_find(pvt->rx_regs, find_active, NULL))
+ 		active = true;
+ 
+-	if (!already_scanning || pvt->active != active) {
++	//if (!already_scanning || pvt->active != active)
++	{
+ 		pvt->active = active;
+ 		cmd.enable = 0x00;	/* Disable scanning */
+ 		cmd.filter_dup = 0x00;	/* Report duplicates */
+diff --git a/mesh/mesh-io.h b/mesh/mesh-io.h
+index fc04220..4952360 100644
+--- a/mesh/mesh-io.h
++++ b/mesh/mesh-io.h
+@@ -38,6 +38,10 @@ struct mesh_io_recv_info {
+ 	uint8_t chan;
+ 	int8_t rssi;
+ };
++struct mesh_io_opts {
++	int index;
++	bool use_raw;
++};
+ 
+ struct mesh_io_send_info {
+ 	enum mesh_io_timing_type type;
+diff --git a/mesh/mesh-mgmt.c b/mesh/mesh-mgmt.c
+index 2cf2eba..dc59844 100644
+--- a/mesh/mesh-mgmt.c
++++ b/mesh/mesh-mgmt.c
+@@ -52,6 +52,45 @@ static void process_read_info_req(void *data, void *user_data)
+ 	reg->cb(index, reg->user_data);
+ }
+ 
++static void set_powered_complete(uint8_t status, uint16_t length,
++                                        const void *param, void *user_data)
++{
++	int index = L_PTR_TO_UINT(user_data);
++	uint32_t settings;
++
++	if (status != MGMT_STATUS_SUCCESS) {
++		l_error("Failed to set powered: %s (0x%02x)",
++						mgmt_errstr(status), status);
++		return;
++	}
++
++	settings = l_get_le32(param);
++
++	if (!(settings & MGMT_SETTING_POWERED)) {
++		l_error("Controller is not powered");
++                return;
++        }
++
++	l_debug("set powered success on index %d", index);
++	/** <TO-DO> update current settings of adapter */
++}
++
++bool set_powered(uint16_t mode, int index)
++{
++	struct mgmt_mode cp;
++
++	memset(&cp, 0, sizeof(cp));
++	cp.val = mode;
++
++	/** <TO-DO> check current settings of adapter */
++	if (mgmt_send(mgmt_mesh, MGMT_OP_SET_POWERED, index, sizeof(cp), &cp,
++				set_powered_complete, L_UINT_TO_PTR(index), NULL) > 0)
++
++		return true;
++
++	return false;
++}
++
+ static void read_info_cb(uint8_t status, uint16_t length,
+ 					const void *param, void *user_data)
+ {
+@@ -80,7 +119,7 @@ static void read_info_cb(uint8_t status, uint16_t length,
+ 
+ 	if (current_settings & MGMT_SETTING_POWERED) {
+ 		l_info("Controller hci %u is in use", index);
+-		return;
++		//return;
+ 	}
+ 
+ 	if (!(supported_settings & MGMT_SETTING_LE)) {
+diff --git a/mesh/mesh-mgmt.h b/mesh/mesh-mgmt.h
+index 93ad799..86d1786 100644
+--- a/mesh/mesh-mgmt.h
++++ b/mesh/mesh-mgmt.h
+@@ -21,3 +21,4 @@
+ typedef void (*mesh_mgmt_read_info_func_t)(int index, void *user_data);
+ 
+ bool mesh_mgmt_list(mesh_mgmt_read_info_func_t cb, void *user_data);
++bool set_powered(uint16_t mode, int index);
+-- 
+2.26.0
+

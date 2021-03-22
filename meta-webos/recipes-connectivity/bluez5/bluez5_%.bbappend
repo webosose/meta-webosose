@@ -1,8 +1,8 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos22"
+EXTENDPRAUTO_append = "webos23"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -36,6 +36,8 @@ SRC_URI += " \
     file://0024-AVRCP-addToNowPlaying-return-error-when-player-not-s.patch \
     file://0025-AVRCP-MediaItem-object-path-fix.patch \
     file://0026-Revert-a2dp-Add-reverse-discovery.patch \
+    file://0027-Add-support-for-meshd-to-use-RAW-channel.patch \
+    file://0028-Enable-mesh-fixed-ell-undefined-symbol-error.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \
@@ -44,6 +46,12 @@ SRC_URI += " \
 SRC_URI_append_raspberrypi4 = " \
     file://blacklistbtusb.conf \
 "
+
+PACKAGECONFIG_append = " mesh \
+    testing \
+"
+
+EXTRA_OECONF_remove = "--enable-external-ell"
 
 do_install_append () {
     install -d ${D}${sysconfdir}/systemd/system

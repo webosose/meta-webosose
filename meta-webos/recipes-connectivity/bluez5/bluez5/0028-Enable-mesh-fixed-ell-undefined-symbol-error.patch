@@ -1,0 +1,42 @@
+From fa464150bd1612747638e07536a859d070107320 Mon Sep 17 00:00:00 2001
+From: "shoyeb.khan" <shoyeb.khan@lge.com>
+Date: Wed, 27 Jan 2021 03:34:27 +0530
+Subject: [PATCH] Enable mesh & fixed ell undefined symbol error
+
+:Release Notes:
+Enable mesh with Bluez 5.55 in WebOS OSE
+
+:Detailed Notes:
+Enabled mesh in Bluez 5.55 and fixed ell
+undefined symbol error
+
+:Testing Performed:
+Builded and tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-131628] Enable mesh with Bluez 5.55 in WebOS OSE
+
+Upstream-Status: Inappropriate[webos specific]
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 041af00..4840e92 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -625,7 +625,7 @@ ell/internal: Makefile
+ 		fi \
+ 	done > $@
+ 
+-ell/ell.h: Makefile
++ell/ell_h: Makefile
+ 	$(AM_V_at)echo -n > $@
+ 	$(AM_V_GEN)for f in $(ell_headers) ; do \
+ 		echo "#include <$$f>" >> $@ ; \
+-- 
+2.26.0
+
