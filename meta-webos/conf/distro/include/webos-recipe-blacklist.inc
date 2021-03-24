@@ -82,8 +82,6 @@ PNBLACKLIST[kata-runtime] ?= "ERROR: kata-runtime-git-r0 do_compile: oe_runmake 
 PNBLACKLIST[kata-shim] ?= "ERROR: kata-shim-git-r0 do_package_qa: QA Issue: ELF binary kata-shim/git-r0/packages-split/kata-shim/usr/libexec/kata-containers/kata-shim has relocations in .text [textrel]"
 # meta-virtualization/recipes-core/runv/runv_git.bb:do_compile
 PNBLACKLIST[runv] ?= "ERROR: runv-0.4.0+gitb360a686abc6c6e896382990ef1b93ef07c7a677-r0 do_compile: Function failed: do_compile: src/import/vendor/src/github.com/hyperhq/runv/hypervisor/qemu/qemu.go:45:28: undefined: QEMU_SYSTEM_EXE"
-# meta-virtualization/recipes-devtools/python/python-m2crypto_0.22.3.bb:do_configure
-PNBLACKLIST[python-m2crypto] ?= "ERROR: python-m2crypto-0.22.3-r0 do_configure: Function failed: do_configure: Error: CPP #error __WORDSIZE is not defined. Use the -cpperraswarn option to continue swig processing."
 # meta-virtualization/recipes-extended/dev86/dev86_0.16.20.bb:do_fetch
 PNBLACKLIST[dev86-native] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure: Connecting to v3.sk (v3.sk)|68.183.70.209|:80... connected. HTTP request sent, awaiting response... 503 Service Unavailable"
 PNBLACKLIST[dev86] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure: Connecting to v3.sk (v3.sk)|68.183.70.209|:80... connected. HTTP request sent, awaiting response... 503 Service Unavailable"
@@ -104,11 +102,9 @@ PNBLACKLIST[gstreamer1.0-rtsp-server] ?= "ERROR: gstreamer1.0-rtsp-server-1.16.0
 # meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gstreamer1.0-vaapi_1.16.0.bb:do_configure
 PNBLACKLIST[gstreamer1.0-vaapi] ?= "ERROR: gstreamer1.0-vaapi-1.16.0-r0 do_configure: Function failed: do_configure: configure: Requested gstreamer-1.0 >= 1.16.0 but version of GStreamer is 1.14.4"
 
-PNBLACKLIST[openlmi-tools] ?= "Depends on blacklisted python-m2crypto"
 PNBLACKLIST[gstd] ?= "Depends on blacklisted gstreamer1.0-rtsp-server"
 PNBLACKLIST[vgabios] ?= "Depends on blacklisted dev86-native"
 PNBLACKLIST[xen] ?= "Depends on blacklisted dev86-native"
-PNBLACKLIST[python-pywbem] ?= "Depends on blacklisted python-m2crypto"
 PNBLACKLIST[kubernetes] ?= "Depends on blacklisted cni"
 
 # These are reproducible only with rpi MACHINEs, most likely caused by usrmerge DISTRO_FEATURE enabled with sota from meta-updater
@@ -154,8 +150,6 @@ PNBLACKLIST[gradm] ?= "ERROR: gradm-3.1-r0 do_package: QA Issue: gradm: Files/di
 PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin/smistrip contained in package libsmi requires /usr/bin/sh, but no providers found in RDEPENDS_libsmi? [file-rdeps]"
 # meta-openembedded/meta-oe/recipes-support/usb-modeswitch/usb-modeswitch_2.5.0.bb:do_package
 PNBLACKLIST[usb-modeswitch] ?= "ERROR: usb-modeswitch-2.5.0-r0 do_package: QA Issue: usb-modeswitch: Files/directories were installed but not shipped in any package"
-# meta-openembedded/meta-python/recipes-devtools/python/python-pyrex_0.9.9.bb:do_package
-PNBLACKLIST[python-pyrex] ?= "ERROR: python-pyrex-0.9.9-r4 do_package: QA Issue: python-pyrex: Files/directories were installed but not shipped in any package"
 # meta-raspberrypi/recipes-multimedia/omxplayer/omxplayer_git.bb:do_compile
 PNBLACKLIST[omxplayer] ?= "ERROR: omxplayer-git-r4 do_compile: Function failed: do_compile: DllAvFormat.h:117:51: error: ::avio_feof has not been declared"
 # meta-virtualization/recipes-containers/cgroup-lite/cgroup-lite_1.15.bb:do_package
@@ -172,7 +166,6 @@ PNBLACKLIST[avahi-ui] ?= "ERROR: avahi-ui-0.7-r0 do_install: Function failed: do
 PNBLACKLIST[systemd-bootchart] ?= "ERROR: systemd-bootchart-233+gitAUTOINC+fe1c5e41e6-r0 do_package: SYSTEMD_SERVICE_systemd-bootchart value systemd-bootchart.service does not exist"
 
 PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
-PNBLACKLIST[python-snimpy] ?= "Depends on blacklisted libsmi"
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
 PNBLACKLIST[usb-modeswitch-data] ?= "Depends on blacklisted usb-modeswitch"
 
@@ -222,4 +215,17 @@ PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson
 # meta-virtualization/recipes-extended/ceph/ceph_15.2.0.bb
 PNBLACKLIST[ceph] ?= "Depends on blacklisted xfsprogs"
 
-PNBLACKLIST[python] ?= "python(2) is not supported, meta-python2 is included only for python-native needed for webruntime"
+# the following python recipes are an exception, because they need to be blacklisted even when python(2) itself is unblacklisted with I_SWEAR_TO_MIGRATE_TO_PYTHON3
+# meta-python2/recipes-devtools/python/python-snimpy_0.8.13.bb
+PNBLACKLIST[python-snimpy] ?= "Depends on blacklisted libsmi"
+# meta-python2/recipes-devtools/python/python-pyrex_0.9.9.bb.do_package
+PNBLACKLIST[python-pyrex] ?= "ERROR: python-pyrex-0.9.9-r4 do_package: QA Issue: python-pyrex: Files/directories were installed but not shipped in any package"
+# meta-oe/recipes-extended/openlmi/openlmi-tools_0.10.5.bb
+PNBLACKLIST[openlmi-tools] ?= "Depends on blacklisted python-m2crypto"
+# meta-python2/recipes-extended/pywbem/python-pywbem_0.15.0.bb
+PNBLACKLIST[python-pywbem] ?= "Depends on blacklisted python-m2crypto"
+# meta-virtualization/recipes-devtools/python/python-m2crypto_0.22.3.bb:do_configure
+PNBLACKLIST[python-m2crypto] ?= "ERROR: python-m2crypto-0.22.3-r0 do_configure: Function failed: do_configure: Error: CPP #error __WORDSIZE is not defined. Use the -cpperraswarn option to continue swig processing."
+
+# all target python2 recipes from meta-python2 and meta-oe
+require conf/distro/include/python2-target-recipes-blacklist.inc
