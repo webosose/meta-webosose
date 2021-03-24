@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos85"
+EXTENDPRAUTO_append = "webos86"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -72,7 +72,8 @@ PACKAGECONFIG_append = " kms"
 # Depending on whether LTTNG support is enabled or not for the build we need to
 # depend on the LTTNG providers to not let the build fail
 inherit webos_lttng
-PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' }"
+# Disable lttng until wam eliminates dependency to qtbase (See PLAT-139794 for details)
+#PACKAGECONFIG_append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' }"
 
 # Do not build tests/ in webos
 PACKAGECONFIG_remove = "tests"
