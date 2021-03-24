@@ -195,6 +195,7 @@ RDEPENDS_${PN} = " \
     settingsservice \
     sleepd \
     webos-connman-adapter \
+    webos-fluentbit-plugins \
     webos-fontconfig-files \
     webos-nettools \
     ${MEDIA} \
