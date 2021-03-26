@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 SUMMARY = "webOS daemon to cache filesystem requests"
 AUTHOR = "Alekseyev Oleksandr <alekseyev.oleksandr@lge.com>"
@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "jemalloc luna-service2 db8 glibmm boost libsandbox glib-2.0 libsigc++-2.0"
 
-WEBOS_VERSION = "2.0.1-4_a0acb2f5cf02318a404d82418959e55281834e9e"
+WEBOS_VERSION = "2.0.1-6_49bfd5af7fb96231f1536486c7605386728a527a"
 PR = "r5"
 
 inherit webos_component
