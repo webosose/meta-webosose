@@ -230,6 +230,7 @@ RDEPENDS_${PN} = " \
 
 RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
+    com.webos.app.imageviewer \
     com.webos.app.videoplayer \
     com.webos.service.swupdater \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
