@@ -48,14 +48,10 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r5"
+PR = "r6"
 PV = "1.3.99+git${SRCPV}"
 
-inherit scons pkgconfig webos_enactjs_app webos_component
-
-WEBOS_ENACTJS_PROJECT_PATH ??= "./resource/csdk/stack/samples/webos/com.example.app.iotivity"
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
-WEBOS_ENACTJS_APP_ID = "com.example.app.iotivity"
+inherit scons pkgconfig webos_filesystem_paths
 
 IOTIVITY_BIN_DIR = "${webos_servicesdir}/${PN}"
 IOTIVITY_BIN_DIR_D = "${D}${IOTIVITY_BIN_DIR}"
