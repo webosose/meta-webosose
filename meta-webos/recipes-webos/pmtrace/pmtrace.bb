@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "lttng-ust tracepoints wrapper library and performance tools"
 AUTHOR = "Andre Rosa <andre.rosa@lge.com>"
@@ -18,7 +18,7 @@ RDEPENDS_${PN} += " \
     lttng-modules \
 "
 
-WEBOS_VERSION = "1.0.0-8_f13162fadda4dea25d9218850d4824385ff48963"
+WEBOS_VERSION = "1.0.0-9_baf2c8ce00a722e9f58a1359993bf887b30d27e5"
 PR = "r11"
 
 inherit webos_component
