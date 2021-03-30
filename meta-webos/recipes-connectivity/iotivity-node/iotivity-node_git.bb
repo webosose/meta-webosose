@@ -61,6 +61,13 @@ do_install () {
     install -m 0755 ${S}/build/Release/iotivity.node ${D}${libdir}/node_modules/iotivity-node/build/Release/
 }
 
+# /usr/lib/node_modules/iotivity-node/node_modules/uuid/benchmark/bench.sh is included in this package only _sometimes_
+# but when it does get included, it rdepends on /bin/bash
+# ERROR: iotivity-node-1.3.1+gitAUTOINC+c6aab8e612-r7 do_package_qa: QA Issue: /usr/lib/node_modules/iotivity-node/node_modules/uuid/benchmark/bench.sh contained in package iotivity-node requires /bin/bash, but no providers found in RDEPENDS_iotivity-node? [file-rdeps]
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+
 FILES_${PN} = "${libdir}/node_modules/iotivity-node/"
 
 # COMPATIBLE_MACHINE is set because iotivity on which the iotivity-node doesn't build for armv[45]*
