@@ -48,11 +48,24 @@ PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted libsmi, phonet-util
 # meta-oe/recipes-benchmark/s-suite/s-suite_git.bb
 PNBLACKLIST[s-suite] ?= "rdepends on blacklisted sysstat"
 
+# nagios-* PNBLACKLIST upstreamed in:
+# https://lists.yoctoproject.org/g/meta-virtualization/message/6301
+# will probably get merged in hardknott
+# meta-virtualization/recipes-extended/nagios/nagios-core_4.4.6.bb
 PNBLACKLIST[nagios-core] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Depends on apache2 from meta-webserver which is not included', d)}"
+# meta-virtualization/recipes-extended/nagios/nagios-plugins_2.2.1.bb
 PNBLACKLIST[nagios-plugins] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Depends on nagios-core which depends on apache2 from meta-webserver which is not included', d)}"
+# meta-virtualization/recipes-extended/nagios/nagios-nrpe_4.0.2.bb
 PNBLACKLIST[nagios-nrpe] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Depends on nagios-core which depends on apache2 from meta-webserver which is not included', d)}"
+# meta-virtualization/recipes-extended/nagios/nagios-nsca_2.9.2.bb
 PNBLACKLIST[nagios-nsca] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Rdepends on nagios-base provided by nagios-core which depends on apache2 from meta-webserver which is not included', d)}"
-PNBLACKLIST[ipxe] ?= "Doesn't match the COMPATIBLE_HOST restriction from syslinux: syslinux was skipped: incompatible with host arm-webos-linux-gnueabi (not in COMPATIBLE_HOST)"
+# ipxe fixes sent upstream in:
+# https://lists.yoctoproject.org/g/meta-virtualization/message/6302
+# https://lists.yoctoproject.org/g/meta-virtualization/message/6304
+# https://lists.yoctoproject.org/g/meta-virtualization/message/6305
+# will probably get merged in hardknott
+# meta-virtualization/recipes-extended/ipxe/ipxe_git.bb:do_compile
+PNBLACKLIST[ipxe] ?= "Doesn't match the COMPATIBLE_HOST restriction from syslinux: syslinux was skipped: incompatible with host arm-webos-linux-gnueabi (not in COMPATIBLE_HOST) and also fails with gold: ipxe-gitrAUTOINC+64b4452bca-r0 do_compile: Function failed: do_compile: Makefile.housekeeping:111: GNU gold is unsuitable for building iPXE"
 
 # big-update fixes sent upstream in:
 # https://github.com/advancedtelematic/meta-updater/pull/805
@@ -74,8 +87,6 @@ PNBLACKLIST[runv] ?= "ERROR: runv-0.4.0+gitb360a686abc6c6e896382990ef1b93ef07c7a
 # meta-virtualization/recipes-extended/dev86/dev86_0.16.20.bb:do_fetch
 PNBLACKLIST[dev86-native] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure: Connecting to v3.sk (v3.sk)|68.183.70.209|:80... connected. HTTP request sent, awaiting response... 503 Service Unavailable"
 PNBLACKLIST[dev86] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure: Connecting to v3.sk (v3.sk)|68.183.70.209|:80... connected. HTTP request sent, awaiting response... 503 Service Unavailable"
-# meta-virtualization/recipes-extended/ipxe/ipxe_git.bb:do_compile
-PNBLACKLIST[ipxe] ?= "ERROR: ipxe-gitrAUTOINC+64b4452bca-r0 do_compile: Function failed: do_compile: Makefile.housekeeping:111: GNU gold is unsuitable for building iPXE"
 # meta-virtualization/recipes-extended/kvmtool/kvmtool.bb:do_compile
 PNBLACKLIST[kvmtool] ?= "ERROR: kvmtool-4.14.0+git0e1882a49f81cb15d328ef83a78849c0ea26eecc-r0 do_compile: Function failed: do_compile: virtio/net.c:336:47: error: argument to sizeof in strncpy call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]"
 # meta-virtualization/recipes-extended/seabios/seabios_1.11.2.bb:do_compile
