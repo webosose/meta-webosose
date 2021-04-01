@@ -115,10 +115,6 @@ PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
 
 # And few more in dunfell
-# meta-openembedded/meta-oe/recipes-support/libgusb/libgusb_git.bb:do_configure
-PNBLACKLIST[libgusb] ?= "ERROR: libgusb-0.3.0+gitAUTOINC+636efc0624-r0 do_configure: meson failed: gusb/meson.build:128:6: ERROR: Unknown variable libgusb_girtarget."
-# meta-openembedded/meta-oe/recipes-gnome/libpeas/libpeas_1.25.3.bb:do_configure
-PNBLACKLIST[libpeas] ?= "ERROR: libpeas-1.25.3-r0 do_configure: meson failed: tests/libpeas/introspection/meson.build:52:0: ERROR: Unknown variable libpeas_gir."
 # meta-virtualization/recipes-extended/xen/xen-tools_git.bb
 PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, details in https://lists.yoctoproject.org/g/meta-virtualization/message/5202', '', d)}"
 
@@ -130,6 +126,3 @@ PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold
 PNBLACKLIST[xen] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
 # meta-virtualization/recipes-extended/xen/xtf_git.bb
 PNBLACKLIST[xtf] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Rdepends on xen-tools-xl package provided by blacklisted xen-tools', '', d)}"
-
-# meta-oe/meta-multimedia/recipes-multimedia/packagegroups/packagegroup-meta-multimedia.bb
-PNBLACKLIST[packagegroup-meta-multimedia] ?= "ERROR: depends on x265 without respecting LICENSE_FLAGS, fixed in kirkstone https://lists.openembedded.org/g/openembedded-devel/message/94141"
