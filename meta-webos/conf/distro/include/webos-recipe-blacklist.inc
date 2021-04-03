@@ -66,8 +66,6 @@ PNBLACKLIST[nagios-nrpe] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserv
 PNBLACKLIST[nagios-nsca] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Rdepends on nagios-base provided by nagios-core which depends on apache2 from meta-webserver which is not included', d)}"
 PNBLACKLIST[ipxe] ?= "Doesn't match the COMPATIBLE_HOST restriction from syslinux: syslinux was skipped: incompatible with host arm-webos-linux-gnueabi (not in COMPATIBLE_HOST)"
 
-# meta-openembedded/meta-multimedia/recipes-multimedia/gerbera/gerbera_git.bb:do_compile
-PNBLACKLIST[gerbera] ?= "ERROR: gerbera-1.0+gitAUTOINC+4435b165d1-r0 do_compile: Function failed: do_compile: 8.2.0/ld: error: gerbera/1.0+gitAUTOINC+4435b165d1-r0/recipe-sysroot-native/usr/lib/libnsl.so: incompatible target"
 # meta-updater/recipes-test/big-update/big-update_2.0.bb:do_populate_lic
 PNBLACKLIST[big-update] ?= "ERROR: big-update-2.0-r0 do_populate_lic: QA Issue: big-update: Recipe file fetches files and does not have license file information (LIC_FILES_CHKSUM) [license-checksum]"
 # meta-virtualization/recipes-containers/cri-o/cri-o_git.bb:do_compile
@@ -95,14 +93,6 @@ PNBLACKLIST[seabios] ?= "ERROR: seabios-1.11.2-r0 do_compile: Function failed: d
 PNBLACKLIST[biossums] ?= "ERROR: biossums-0.7a-r0 do_package_qa: QA Issue: No GNU_HASH in the ELF binary biossums/0.7a-r0/packages-split/biossums/usr/bin/biossums, didnt pass LDFLAGS? [ldflags]"
 # meta-virtualization/recipes-networking/cni/cni_git.bb:do_compile
 PNBLACKLIST[cni] ?= "ERROR: cni-0.6.0+gitcc562d1b44b3d00b8c341250d49a8a0823a1c085-r0 do_compile: Function failed: do_compile: | ../../../src/github.com/containernetworking/plugins/vendor/github.com/safchain/ethtool/ethtool.go:205:35: undefined: syscall.SYS_SOCKET"
-# meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gst-validate_1.16.0.bb:do_configure
-PNBLACKLIST[gst-validate] ?= "ERROR: gst-validate-1.16.0-r0 do_configure: Function failed: do_configure: configure: Requested gstreamer-1.0 >= 1.16.0 but version of GStreamer is 1.14.4"
-# meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gstreamer1.0-rtsp-server_1.16.0.bb:do_configure
-PNBLACKLIST[gstreamer1.0-rtsp-server] ?= "ERROR: gstreamer1.0-rtsp-server-1.16.0-r0 do_configure: Function failed: do_configure: | configure: Requested gstreamer-1.0 >= 1.16.0 but version of GStreamer is 1.14.4"
-# meta-webosose/meta-webos-backports/meta-webos-backports-3.0/recipes-multimedia/gstreamer/gstreamer1.0-vaapi_1.16.0.bb:do_configure
-PNBLACKLIST[gstreamer1.0-vaapi] ?= "ERROR: gstreamer1.0-vaapi-1.16.0-r0 do_configure: Function failed: do_configure: configure: Requested gstreamer-1.0 >= 1.16.0 but version of GStreamer is 1.14.4"
-
-PNBLACKLIST[gstd] ?= "Depends on blacklisted gstreamer1.0-rtsp-server"
 PNBLACKLIST[vgabios] ?= "Depends on blacklisted dev86-native"
 PNBLACKLIST[xen] ?= "Depends on blacklisted dev86-native"
 PNBLACKLIST[kubernetes] ?= "Depends on blacklisted cni"
@@ -112,8 +102,6 @@ PNBLACKLIST[kubernetes] ?= "Depends on blacklisted cni"
 PNBLACKLIST[xfsdump] ?= "ERROR: xfsdump-3.1.8-r0 do_configure: Function failed: do_configure: | FATAL ERROR: could not find a current XFS handle library."
 # meta-openembedded/meta-filesystems/recipes-utils/xfsprogs/xfsprogs_4.18.0.bb:do_package
 PNBLACKLIST[xfsprogs] ?= "ERROR: xfsprogs-4.18.0-r0 do_package: QA Issue: xfsprogs: Files/directories were installed but not shipped in any package:"
-# meta-openembedded/meta-multimedia/recipes-connectivity/rygel/rygel_0.34.0.bb:do_install
-PNBLACKLIST[rygel] ?= "ERROR: rygel-0.34.0-r0 do_install: Function failed: do_install: rmdir: failed to remove tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/rygel/0.34.0-r0/image/usr/lib/systemd: Directory not empty "
 # meta-openembedded/meta-networking/recipes-connectivity/ufw/ufw_0.33.bb:do_package_qa
 PNBLACKLIST[ufw] ?= "ERROR: ufw-0.33-r0 do_package_qa: QA Issue: ufw package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-networking/recipes-filter/arno-iptables-firewall/arno-iptables-firewall_2.0.1g.bb:do_install
@@ -191,7 +179,6 @@ PNBLACKLIST[xmlsec1] ?= "ERROR: xmlsec1-1.2.28-r0 do_configure: configure failed
 
 PNBLACKLIST[remmina] ?= "Depends on blacklisted avahi-ui"
 PNBLACKLIST[telepathy-idle] ?= "Depends on blacklisted telepathy-glib"
-PNBLACKLIST[packagegroup-meta-multimedia] ?= "Depends on blacklisted gstd, gerbera, rygel"
 
 # And few more in dunfell
 # meta-openembedded/meta-oe/recipes-extended/dlt-daemon/dlt-daemon_2.18.4.bb:do_package
