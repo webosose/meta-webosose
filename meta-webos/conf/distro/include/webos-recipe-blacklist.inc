@@ -9,8 +9,6 @@
 # doesn't, then the only way to guarantee that the first recipe will never be
 # used is to blacklist it.
 
-PNBLACKLIST[vboxguestdrivers] ?= "BROKEN: fails to build with newer kernels and not used anymore: error: macro 'access_ok' passed 3 arguments, but takes just 2 http://caprica.lgsvl.com:8080/Errors/Details/1451808"
-
 # Use webOS qt5 configuration
 PNBLACKLIST[qwt-qt5] ?= "ERROR: Unknown module(s) in QT: printsupport opengl http://caprica.lgsvl.com:8080/Errors/Details/1509145"
 PNBLACKLIST[libconnman-qt5] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 http://caprica.lgsvl.com:8080/Errors/Details/1509142"
@@ -36,29 +34,19 @@ PNBLACKLIST[python3-pyqtchart] ?= "depends on blacklisted python3-pyqt5 which ne
 PNBLACKLIST[qmllive] ?= "requires widgets module enabled in qtbase, which was disabled in PLAT-18645 http://caprica.lgsvl.com:8080/Errors/Details/1509138"
 PNBLACKLIST[qtconnectivity] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 ERROR: Feature 'bluez' was enabled, but the pre-condition 'libs.bluez && features.concurrent && features.dbus' failed. http://caprica.lgsvl.com:8080/Errors/Details/1509143"
 
+# meta-oe/recipes-support/vboxguestdrivers/vboxguestdrivers_6.1.18.bb:do_packagedata
+PNBLACKLIST[vboxguestdrivers] ?= "BROKEN: kernel-module-vboxguest conflicts in pkgdata with the vboxguest kernel modules we have enabled in linux-yocto"
+# meta/recipes-kernel/linux/kernel-devsrc.bb:do_install
 PNBLACKLIST[kernel-devsrc] ?= "BROKEN for aarch64: make[4]: *** No rule to make target `kernel-devsrc/1.0-r0/image/usr/src/kernel/arch/arm64/boot/dts/broadcom/../overlays/Makefile'.  Stop http://caprica.lgsvl.com:8080/Errors/Details/1509158"
-PNBLACKLIST[glmark2] ?= "broken: we don't build libGL with mesa: cannot find -lGL http://caprica.lgsvl.com:8080/Errors/Details/1509155"
+# meta/recipes-extended/sysstat/sysstat_12.4.0.bb:do_install
 PNBLACKLIST[sysstat] ?= "BROKEN: install: invalid group ‘man’ http://caprica.lgsvl.com:8080/Errors/Details/1509136"
+# meta/recipes-extended/man-db/man-db_2.9.4.bb:do_install
 PNBLACKLIST[man-db] ?= "BROKEN: without --disable-cache-owner: chown: invalid user: ?man:man? our passwd doesn't have man user and since http://git.openembedded.org/openembedded-core/commit/?id=7080df4b6bc50440eed600e81f2c6fa76a80623d it's needed http://caprica.lgsvl.com:8080/Errors/Details/1509154"
-PNBLACKLIST[hplip] ?= "BROKEN: configure: error: could not force soft-float and chgrp: invalid group: ‘lp’ http://caprica.lgsvl.com:8080/Errors/Details/1509153"
-PNBLACKLIST[gst-plugins-gl] ?= "GL/glew.h:1205:14: fatal error: GL/glu.h: No such file or directory http://caprica.lgsvl.com:8080/Errors/Details/1509152"
-PNBLACKLIST[poppler] ?= "fails to generate GIR http://caprica.lgsvl.com:8080/Errors/Details/1509140"
-PNBLACKLIST[cups-filters] ?= "depends on blacklisted poppler"
+
+# meta-oe/recipes-core/packagegroups/packagegroup-meta-oe.bb
+PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted libsmi, phonet-utils, gradm, telepathy-idle, scsirastools, uml-utilities, tomoyo-tools, s-suite, .."
+# meta-oe/recipes-benchmark/s-suite/s-suite_git.bb
 PNBLACKLIST[s-suite] ?= "rdepends on blacklisted sysstat"
-PNBLACKLIST[mongodb] ?= "src/mongo/util/net/ssl_manager.cpp:557:70: error: invalid conversion from 'size_t*' {aka 'unsigned int*'} to 'long unsigned int*' [-fpermissive] http://caprica.lgsvl.com:8080/Errors/Details/1509767"
-PNBLACKLIST[netkit-rusers] ?= "BROKEN: fails to build rup.c:57:45: error: unknown type name 'statstime'; did you mean 'si_stime'? http://caprica.lgsvl.com:8080/Errors/Details/1530992"
-PNBLACKLIST[android-tools] ?= "Fails to build with thumb enabled http://caprica.lgsvl.com:8080/Errors/Details/1532133"
-PNBLACKLIST[paho-mqtt-c] ?= "Sometimes fails with cannot create build/VersionInfo.h: Directory nonexistent http://caprica.lgsvl.com:8080/Errors/Details/1530992"
-
-PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted ndctl, .."
-
-# ERROR: QA Issue: ELF binary 'TOPDIR/BUILD/work/qemux86-webos-linux/x264/r2854+gitAUTOINC+e9a5903edf-r0/packages-split/x264/usr/lib/libx264.so.152' has relocations in .text [textrel] http://caprica.lgsvl.com:8080/Errors/Details/1509766
-INSANE_SKIP_${PN}_pn-x264 = "textrel"
-# ERROR: QA Issue: ELF binary 'TOPDIR/BUILD/work/qemux86-webos-linux/x264/r2854+gitAUTOINC+e9a5903edf-r0/packages-split/x264-bin/usr/bin/x264' has relocations in .text [textrel] http://caprica.lgsvl.com:8080/Errors/Details/1530991
-INSANE_SKIP_${PN}-bin_pn-x264 = "textrel"
-
-# QA Issue: ELF binary 'work/raspberrypi3-webos-linux-gnueabi/mpeg2dec/0.5.1-r0/packages-split/libmpeg2/usr/lib/libmpeg2.so.0.1.0' has relocations in .text
-INSANE_SKIP_libmpeg2_pn-mpeg2dec += "textrel"
 
 PNBLACKLIST[nagios-core] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Depends on apache2 from meta-webserver which is not included', d)}"
 PNBLACKLIST[nagios-plugins] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Depends on nagios-core which depends on apache2 from meta-webserver which is not included', d)}"
@@ -66,6 +54,9 @@ PNBLACKLIST[nagios-nrpe] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserv
 PNBLACKLIST[nagios-nsca] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserver', '', 'Rdepends on nagios-base provided by nagios-core which depends on apache2 from meta-webserver which is not included', d)}"
 PNBLACKLIST[ipxe] ?= "Doesn't match the COMPATIBLE_HOST restriction from syslinux: syslinux was skipped: incompatible with host arm-webos-linux-gnueabi (not in COMPATIBLE_HOST)"
 
+# big-update fixes sent upstream in:
+# https://github.com/advancedtelematic/meta-updater/pull/805
+# will probably get merged in master branch (which is used for gatesgarth and harknott now)
 # meta-updater/recipes-test/big-update/big-update_2.0.bb:do_populate_lic
 PNBLACKLIST[big-update] ?= "ERROR: big-update-2.0-r0 do_populate_lic: QA Issue: big-update: Recipe file fetches files and does not have license file information (LIC_FILES_CHKSUM) [license-checksum]"
 # meta-virtualization/recipes-containers/cri-o/cri-o_git.bb:do_compile
@@ -98,10 +89,6 @@ PNBLACKLIST[xen] ?= "Depends on blacklisted dev86-native"
 PNBLACKLIST[kubernetes] ?= "Depends on blacklisted cni"
 
 # These are reproducible only with rpi MACHINEs, most likely caused by usrmerge DISTRO_FEATURE enabled with sota from meta-updater
-# meta-openembedded/meta-filesystems/recipes-utils/xfsdump/xfsdump_3.1.8.bb:do_configure
-PNBLACKLIST[xfsdump] ?= "ERROR: xfsdump-3.1.8-r0 do_configure: Function failed: do_configure: | FATAL ERROR: could not find a current XFS handle library."
-# meta-openembedded/meta-filesystems/recipes-utils/xfsprogs/xfsprogs_4.18.0.bb:do_package
-PNBLACKLIST[xfsprogs] ?= "ERROR: xfsprogs-4.18.0-r0 do_package: QA Issue: xfsprogs: Files/directories were installed but not shipped in any package:"
 # meta-openembedded/meta-networking/recipes-connectivity/ufw/ufw_0.33.bb:do_package_qa
 PNBLACKLIST[ufw] ?= "ERROR: ufw-0.33-r0 do_package_qa: QA Issue: ufw package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-networking/recipes-filter/arno-iptables-firewall/arno-iptables-firewall_2.0.1g.bb:do_install
@@ -116,12 +103,13 @@ PNBLACKLIST[cifs-utils] ?= "ERROR: cifs-utils-6.7-r0 do_package: QA Issue: cifs-
 PNBLACKLIST[linux-atm] ?= "ERROR: linux-atm-2.5.2-r0 do_package_qa: QA Issue: linux-atm package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-oe/recipes-connectivity/lirc/lirc_0.9.4d.bb:do_package
 PNBLACKLIST[lirc] ?= "ERROR: lirc-0.9.4d-r0 do_package: SYSTEMD_SERVICE_lirc value lircmd.service does not exist"
+# phonet-utils removal sent in:
+# https://lists.openembedded.org/g/openembedded-devel/message/90533
+# will probably get merged in hardknott
 # meta-openembedded/meta-oe/recipes-connectivity/phonet-utils/phonet-utils_git.bb:do_package_qa
 PNBLACKLIST[phonet-utils] ?= "ERROR: phonet-utils-0.0.0+gitrAUTOINC+4acfa720fd-r2 do_package_qa: QA Issue: phonet-utils package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-oe/recipes-extended/boinc/boinc-client_7.12.bb:do_package
 PNBLACKLIST[boinc-client] ?= "ERROR: boinc-client-7.12-r0 do_package: SYSTEMD_SERVICE_boinc-client value boinc-client.service does not exist"
-# meta-oe/meta-oe/recipes-extended/fluentbit/fluentbit_1.3.5.bb:do_package
-PNBLACKLIST[fluentbit] ?= ""
 # meta-openembedded/meta-oe/recipes-extended/scsirastools/scsirastools_1.6.6.bb:do_package
 PNBLACKLIST[scsirastools] ?= "ERROR: scsirastools-1.6.6-r0 do_package: QA Issue: scsirastools: Files/directories were installed but not shipped in any package"
 # meta-openembedded/meta-oe/recipes-extended/uml-utilities/uml-utilities_20040406.bb:do_package
@@ -136,8 +124,6 @@ PNBLACKLIST[tcsh] ?= "ERROR: tcsh-6.20.00-r0 do_install: Function failed: do_ins
 PNBLACKLIST[gradm] ?= "ERROR: gradm-3.1-r0 do_package: QA Issue: gradm: Files/directories were installed but not shipped in any package"
 # meta-openembedded/meta-oe/recipes-support/libsmi/libsmi_0.5.0.bb:do_package_qa
 PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin/smistrip contained in package libsmi requires /usr/bin/sh, but no providers found in RDEPENDS_libsmi? [file-rdeps]"
-# meta-openembedded/meta-oe/recipes-support/usb-modeswitch/usb-modeswitch_2.5.0.bb:do_package
-PNBLACKLIST[usb-modeswitch] ?= "ERROR: usb-modeswitch-2.5.0-r0 do_package: QA Issue: usb-modeswitch: Files/directories were installed but not shipped in any package"
 # meta-raspberrypi/recipes-multimedia/omxplayer/omxplayer_git.bb:do_compile
 PNBLACKLIST[omxplayer] ?= "ERROR: omxplayer-git-r4 do_compile: Function failed: do_compile: DllAvFormat.h:117:51: error: ::avio_feof has not been declared"
 # meta-virtualization/recipes-containers/cgroup-lite/cgroup-lite_1.15.bb:do_package
@@ -150,51 +136,39 @@ PNBLACKLIST[diod] ?= "ERROR: diod-1.0.24+gitAUTOINC+0ea3fe3d82-r0 do_package: QA
 PNBLACKLIST[bootchart2] ?= "ERROR: bootchart2-0.14.8+gitAUTOINC+42509aa0c9-r10 do_package: SYSTEMD_SERVICE_bootchart2 value bootchart2.service does not exist"
 # openembedded-core/meta/recipes-connectivity/avahi/avahi-ui_0.7.bb:do_install
 PNBLACKLIST[avahi-ui] ?= "ERROR: avahi-ui-0.7-r0 do_install: Function failed: do_install: rm: cannot remove tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/avahi-ui/0.7-r0/image/usr/lib/libavahi-c*: No such file or directory"
-# openembedded-core/meta/recipes-devtools/systemd-bootchart/systemd-bootchart_233.bb:do_package
-PNBLACKLIST[systemd-bootchart] ?= "ERROR: systemd-bootchart-233+gitAUTOINC+fe1c5e41e6-r0 do_package: SYSTEMD_SERVICE_systemd-bootchart value systemd-bootchart.service does not exist"
 
+# meta-networking/recipes-kernel/wireguard/wireguard-tools_1.0.20200319.bb
 PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
+# meta-oe/dynamic-layers/meta-python/recipes-extended/lcdproc/lcdproc_git.bb
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
-PNBLACKLIST[usb-modeswitch-data] ?= "Depends on blacklisted usb-modeswitch"
 
-# Few more failing in warrior:
 # meta-virtualization/recipes-networking/netns/netns_git.bb:do_compile_ptest_base
 PNBLACKLIST[netns] ?= "ERROR: netns-0.5.3-r0 do_compile_ptest_base: Function failed: do_compile_ptest_base: | bridge.go:10:2: cannot find package "github.com/genuinetools/netns/netutils""
-# meta-openembedded/meta-multimedia/recipes-multimedia/dvb-apps/dvb-apps_1.1.1.bb:do_package_qa
-PNBLACKLIST[dvb-apps] ?= "ERROR: dvb-apps-1.1.1-r0 do_package_qa: QA Issue: dvb-apps package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
+# slcand-start fix sent upstream in:
+# https://github.com/advancedtelematic/meta-updater/pull/806
+# will probably get merged in master branch (which is used for gatesgarth and harknott now)
 # meta-updater/recipes-support/slcand-start/slcand-start.bb:do_populate_lic
 PNBLACKLIST[slcand-start] ?= "ERROR: slcand-start-1.0-r0 do_populate_lic: QA Issue: slcand-start: The LIC_FILES_CHKSUM does not match for file://openembedded-core/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690"
 
-PNBLACKLIST[tvheadend] ?= "Depends on blacklisted dvb-apps"
-
-# Few more in zeus, but we can blacklist them in advance in thud branch, to keep it simple
-# meta-openembedded/meta-networking/recipes-support/wireshark/wireshark_3.0.6.bb:do_configure
-PNBLACKLIST[wireshark] ?= "ERROR: wireshark-1_3.0.6-r0 do_configure: Could not find a package configuration file provided by Qt5PrintSupport"
+# telepathy-glib fix sent in:
+# https://lists.openembedded.org/g/openembedded-devel/message/90534
+# will probably get merged in hardknott
 # meta-openembedded/meta-oe/recipes-connectivity/telepathy/telepathy-glib_0.24.1.bb:do_configure
 PNBLACKLIST[telepathy-glib] ?= "ERROR: telepathy-glib-0.24.1-r0 do_configure: configure failed: configure: error: GObject-Introspection must be enabled for Vala bindings"
-# meta-openembedded/meta-oe/recipes-graphics/yad/yad_4.1.bb:do_compile
-PNBLACKLIST[yad] ?= "ERROR: yad-4.1-r0 do_compile: oe_runmake failed: git/src/yad.h:28:10: fatal error: gdk/gdkx.h: No such file or directory"
-# meta-openembedded/meta-oe/recipes-support/xmlsec1/xmlsec1_1.2.28.bb:do_configure
-PNBLACKLIST[xmlsec1] ?= "ERROR: xmlsec1-1.2.28-r0 do_configure: configure failed: checking for nspr library installation in qemux86-webos-linux/xmlsec1/1.2.28-r0/recipe-sysroot/usr/lib/../.. folder... configure: error: not found: qemux86-webos-linux/xmlsec1/1.2.28-r0/recipe-sysroot/usr/lib/../../usr/include/nspr.h and/or qemux86-webos-linux/xmlsec1/1.2.28-r0/recipe-sysroot/usr/lib/../..//usr/lib/libnspr4.so files don't exist), typo?"
 
-PNBLACKLIST[remmina] ?= "Depends on blacklisted avahi-ui"
+# telepathy-glib will probably get fixed in hardknott
 PNBLACKLIST[telepathy-idle] ?= "Depends on blacklisted telepathy-glib"
 
 # And few more in dunfell
-# meta-openembedded/meta-oe/recipes-extended/dlt-daemon/dlt-daemon_2.18.4.bb:do_package
-PNBLACKLIST[dlt-daemon] ?= "ERROR: dlt-daemon-2.18.4-r0 do_package: SYSTEMD_SERVICE_dlt-daemon value dlt.service does not exist"
 # meta-openembedded/meta-oe/recipes-support/libgusb/libgusb_git.bb:do_configure
 PNBLACKLIST[libgusb] ?= "ERROR: libgusb-0.3.0+gitAUTOINC+636efc0624-r0 do_configure: meson failed: gusb/meson.build:128:6: ERROR: Unknown variable libgusb_girtarget."
 # meta-openembedded/meta-oe/recipes-gnome/libpeas/libpeas_1.25.3.bb:do_configure
 PNBLACKLIST[libpeas] ?= "ERROR: libpeas-1.25.3-r0 do_configure: meson failed: tests/libpeas/introspection/meson.build:52:0: ERROR: Unknown variable libpeas_gir."
-# meta-openembedded/meta-networking/recipes-connectivity/netplan/netplan_0.98.bb:do_compile
-PNBLACKLIST[netplan] ?= "ERROR: netplan-0.98+gitAUTOINC+5d22e9d22c-r0 do_compile: oe_runmake failed: src/generate.c:24:10: fatal error: glib.h: No such file or directory"
 # meta-virtualization/recipes-extended/xen/xen-tools_git.bb
 PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, details in https://lists.yoctoproject.org/g/meta-virtualization/message/5202', '', d)}"
 
 # meta-virtualization/recipes-extended/xen/xen-python2.bb
 PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
-PNBLACKLIST[mosquitto] ?= "Depends on blacklisted dlt-daemon"
 
 # meta-openembedded/meta-oe/recipes-multimedia/pipewire/pipewire_git.bb
 PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson.build:234:2: ERROR: Invalid version of dependency, need 'libpulse' ['>= 11.1'] found '9.0-14-gdf81'."
