@@ -84,20 +84,19 @@ PNBLACKLIST[kata-runtime] ?= "ERROR: kata-runtime-git-r0 do_compile: oe_runmake 
 PNBLACKLIST[kata-shim] ?= "ERROR: kata-shim-git-r0 do_package_qa: QA Issue: ELF binary kata-shim/git-r0/packages-split/kata-shim/usr/libexec/kata-containers/kata-shim has relocations in .text [textrel]"
 # meta-virtualization/recipes-core/runv/runv_git.bb:do_compile
 PNBLACKLIST[runv] ?= "ERROR: runv-0.4.0+gitb360a686abc6c6e896382990ef1b93ef07c7a677-r0 do_compile: Function failed: do_compile: src/import/vendor/src/github.com/hyperhq/runv/hypervisor/qemu/qemu.go:45:28: undefined: QEMU_SYSTEM_EXE"
-# meta-virtualization/recipes-extended/dev86/dev86_0.16.20.bb:do_fetch
-PNBLACKLIST[dev86-native] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure: Connecting to v3.sk (v3.sk)|68.183.70.209|:80... connected. HTTP request sent, awaiting response... 503 Service Unavailable"
-PNBLACKLIST[dev86] ?= "ERROR: dev86-native-0.16.20-r0 do_fetch: Fetcher failure: Connecting to v3.sk (v3.sk)|68.183.70.209|:80... connected. HTTP request sent, awaiting response... 503 Service Unavailable"
+# dev86 fixes sent upstream in:
+# https://lists.yoctoproject.org/g/meta-virtualization/message/6306
+# https://lists.yoctoproject.org/g/meta-virtualization/message/6307
+# will probably get merged in hardknott
+# meta-virtualization/recipes-extended/dev86/dev86_0.16.20.bb:do_install
+PNBLACKLIST[dev86] ?= "ERROR: dev86-0.16.21-r0 do_package_qa: QA Issue: File * in package dev86 doesn't have GNU_HASH (didn't pass LDFLAGS?)"
+# kvmtool can be dropped in hardknott
 # meta-virtualization/recipes-extended/kvmtool/kvmtool.bb:do_compile
-PNBLACKLIST[kvmtool] ?= "ERROR: kvmtool-4.14.0+git0e1882a49f81cb15d328ef83a78849c0ea26eecc-r0 do_compile: Function failed: do_compile: virtio/net.c:336:47: error: argument to sizeof in strncpy call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]"
+PNBLACKLIST[kvmtool] ?= "ERROR: kvmtool-4.14.0+gitAUTOINC+0e1882a49f-r0 do_patch: Fuzz detected: Applying patch 0003-kvmtool-Werror-disabled.patch"
 # meta-virtualization/recipes-extended/seabios/seabios_1.11.2.bb:do_compile
 PNBLACKLIST[seabios] ?= "ERROR: seabios-1.11.2-r0 do_compile: Function failed: do_compile: i586-webos-linux-ld: error: out/rom16.strip.o: unsupported ELF file type 2"
 # meta-virtualization/recipes-extended/vgabios/biossums_0.7a.bb:do_package_qa
 PNBLACKLIST[biossums] ?= "ERROR: biossums-0.7a-r0 do_package_qa: QA Issue: No GNU_HASH in the ELF binary biossums/0.7a-r0/packages-split/biossums/usr/bin/biossums, didnt pass LDFLAGS? [ldflags]"
-# meta-virtualization/recipes-networking/cni/cni_git.bb:do_compile
-PNBLACKLIST[cni] ?= "ERROR: cni-0.6.0+gitcc562d1b44b3d00b8c341250d49a8a0823a1c085-r0 do_compile: Function failed: do_compile: | ../../../src/github.com/containernetworking/plugins/vendor/github.com/safchain/ethtool/ethtool.go:205:35: undefined: syscall.SYS_SOCKET"
-PNBLACKLIST[vgabios] ?= "Depends on blacklisted dev86-native"
-PNBLACKLIST[xen] ?= "Depends on blacklisted dev86-native"
-PNBLACKLIST[kubernetes] ?= "Depends on blacklisted cni"
 
 # These are reproducible only with rpi MACHINEs, most likely caused by usrmerge DISTRO_FEATURE enabled with sota from meta-updater
 # meta-openembedded/meta-networking/recipes-connectivity/ufw/ufw_0.33.bb:do_package_qa
@@ -137,12 +136,8 @@ PNBLACKLIST[gradm] ?= "ERROR: gradm-3.1-r0 do_package: QA Issue: gradm: Files/di
 PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin/smistrip contained in package libsmi requires /usr/bin/sh, but no providers found in RDEPENDS_libsmi? [file-rdeps]"
 # meta-raspberrypi/recipes-multimedia/omxplayer/omxplayer_git.bb:do_compile
 PNBLACKLIST[omxplayer] ?= "ERROR: omxplayer-git-r4 do_compile: Function failed: do_compile: DllAvFormat.h:117:51: error: ::avio_feof has not been declared"
-# meta-virtualization/recipes-containers/cgroup-lite/cgroup-lite_1.15.bb:do_package
-PNBLACKLIST[cgroup-lite] ?= "ERROR: cgroup-lite-1.15-r0 do_package: QA Issue: cgroup-lite: Files/directories were installed but not shipped in any package"
 # meta-virtualization/recipes-containers/lxcfs/lxcfs_3.0.1.bb:do_package
 PNBLACKLIST[lxcfs] ?= "ERROR: lxcfs-3.0.1-r0 do_package: SYSTEMD_SERVICE_lxcfs value lxcfs.service does not exist"
-# meta-virtualization/recipes-extended/diod/diod_1.0.24.bb:do_package
-PNBLACKLIST[diod] ?= "ERROR: diod-1.0.24+gitAUTOINC+0ea3fe3d82-r0 do_package: QA Issue: diod: Files/directories were installed but not shipped in any package"
 # meta-webosose/meta-webos/recipes-upstreamable/bootchart2/bootchart2_git.bb:do_package
 PNBLACKLIST[bootchart2] ?= "ERROR: bootchart2-0.14.8+gitAUTOINC+42509aa0c9-r10 do_package: SYSTEMD_SERVICE_bootchart2 value bootchart2.service does not exist"
 # openembedded-core/meta/recipes-connectivity/avahi/avahi-ui_0.7.bb:do_install
@@ -153,8 +148,6 @@ PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
 # meta-oe/dynamic-layers/meta-python/recipes-extended/lcdproc/lcdproc_git.bb
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
 
-# meta-virtualization/recipes-networking/netns/netns_git.bb:do_compile_ptest_base
-PNBLACKLIST[netns] ?= "ERROR: netns-0.5.3-r0 do_compile_ptest_base: Function failed: do_compile_ptest_base: | bridge.go:10:2: cannot find package "github.com/genuinetools/netns/netutils""
 # slcand-start fix sent upstream in:
 # https://github.com/advancedtelematic/meta-updater/pull/806
 # will probably get merged in master branch (which is used for gatesgarth and harknott now)
@@ -180,12 +173,11 @@ PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold',
 
 # meta-virtualization/recipes-extended/xen/xen-python2.bb
 PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
+# meta-virtualization/recipes-extended/xen/xen_git.bb
+PNBLACKLIST[xen] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
 
 # meta-openembedded/meta-oe/recipes-multimedia/pipewire/pipewire_git.bb
 PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson.build:234:2: ERROR: Invalid version of dependency, need 'libpulse' ['>= 11.1'] found '9.0-14-gdf81'."
-
-# meta-virtualization/recipes-extended/ceph/ceph_15.2.0.bb
-PNBLACKLIST[ceph] ?= "Depends on blacklisted xfsprogs"
 
 # the following python recipes are an exception, because they need to be blacklisted even when python(2) itself is unblacklisted with I_SWEAR_TO_MIGRATE_TO_PYTHON3
 # meta-python2/recipes-devtools/python/python-snimpy_0.8.13.bb
