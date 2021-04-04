@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 # Place distro-wide PREFERRED_PROVIDER settings here. Place MACHINE-specific
 # settings (always with a _<MACHINE> override) in <MACHINE>.conf with a default
@@ -50,6 +50,8 @@ VIRTUAL-RUNTIME_webappmanager_armv5 = ""
 
 VIRTUAL-RUNTIME_initscripts = "webos-initscripts"
 PREFERRED_RPROVIDER_initd-functions = "webos-initscripts"
+
+PREFERRED_RPROVIDER_ssh = "dropbear"
 
 # Options are: sysvinit, upstart, systemd
 VIRTUAL-RUNTIME_init_manager = "systemd"
