@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
 
-WEBOS_VERSION = "1.0.0-29_97b771ebe7d852989975b6f5056624ba5c2dd06f"
+WEBOS_VERSION = "1.0.0-31_899cd96848508ccbd3784a293cef0122cc0b0799"
 PR = "r4"
 
 inherit webos_component
