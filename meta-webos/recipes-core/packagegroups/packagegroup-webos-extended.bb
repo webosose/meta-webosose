@@ -291,6 +291,7 @@ RDEPENDS_${PN}_append_qemux86 = " \
     com.webos.service.camera \
     com.webos.service.location \
     com.webos.service.mediaindexer \
+    com.webos.service.storageaccess \
     dhcp-client \
     kernel-module-ac97-bus \
     kernel-module-snd-ac97-codec \
