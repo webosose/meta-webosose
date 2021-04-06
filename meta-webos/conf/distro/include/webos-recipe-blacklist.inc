@@ -67,11 +67,6 @@ PNBLACKLIST[nagios-nsca] ?= "${@bb.utils.contains('BBFILE_COLLECTIONS', 'webserv
 # meta-virtualization/recipes-extended/ipxe/ipxe_git.bb:do_compile
 PNBLACKLIST[ipxe] ?= "Doesn't match the COMPATIBLE_HOST restriction from syslinux: syslinux was skipped: incompatible with host arm-webos-linux-gnueabi (not in COMPATIBLE_HOST) and also fails with gold: ipxe-gitrAUTOINC+64b4452bca-r0 do_compile: Function failed: do_compile: Makefile.housekeeping:111: GNU gold is unsuitable for building iPXE"
 
-# big-update fixes sent upstream in:
-# https://github.com/advancedtelematic/meta-updater/pull/805
-# will probably get merged in master branch (which is used for gatesgarth and harknott now)
-# meta-updater/recipes-test/big-update/big-update_2.0.bb:do_populate_lic
-PNBLACKLIST[big-update] ?= "ERROR: big-update-2.0-r0 do_populate_lic: QA Issue: big-update: Recipe file fetches files and does not have license file information (LIC_FILES_CHKSUM) [license-checksum]"
 # meta-virtualization/recipes-containers/cri-o/cri-o_git.bb:do_compile
 PNBLACKLIST[cri-o] ?= "ERROR: cri-o-1.12.0+git774a29ecf6855f2dff266dc2aa2fe81d7d964465-r0 do_compile: Function failed: do_compile: | Makefile:112: recipe for target conmon/config.h failed"
 # meta-virtualization/recipes-core/kata-containers/kata-agent_git.bb:do_package_qa
@@ -132,6 +127,9 @@ PNBLACKLIST[tomoyo-tools] ?= "ERROR: tomoyo-tools-2.5.0-r0 do_package: QA Issue:
 PNBLACKLIST[tcsh] ?= "ERROR: tcsh-6.20.00-r0 do_install: Function failed: do_install: ln: failed to create symbolic link tmp-glibc/work/raspberrypi4-webos-linux-gnueabi/tcsh/6.20.00-r0/image/usr/bin/tcsh: File exists"
 # meta-openembedded/meta-oe/recipes-support/gradm/gradm_3.1.bb:do_package
 PNBLACKLIST[gradm] ?= "ERROR: gradm-3.1-r0 do_package: QA Issue: gradm: Files/directories were installed but not shipped in any package"
+# Fix sent upstream in:
+# https://lists.openembedded.org/g/openembedded-devel/message/90578
+# will probably get merged in hardknott
 # meta-openembedded/meta-oe/recipes-support/libsmi/libsmi_0.5.0.bb:do_package_qa
 PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin/smistrip contained in package libsmi requires /usr/bin/sh, but no providers found in RDEPENDS_libsmi? [file-rdeps]"
 # meta-raspberrypi/recipes-multimedia/omxplayer/omxplayer_git.bb:do_compile
@@ -147,12 +145,6 @@ PNBLACKLIST[avahi-ui] ?= "ERROR: avahi-ui-0.7-r0 do_install: Function failed: do
 PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
 # meta-oe/dynamic-layers/meta-python/recipes-extended/lcdproc/lcdproc_git.bb
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
-
-# slcand-start fix sent upstream in:
-# https://github.com/advancedtelematic/meta-updater/pull/806
-# will probably get merged in master branch (which is used for gatesgarth and harknott now)
-# meta-updater/recipes-support/slcand-start/slcand-start.bb:do_populate_lic
-PNBLACKLIST[slcand-start] ?= "ERROR: slcand-start-1.0-r0 do_populate_lic: QA Issue: slcand-start: The LIC_FILES_CHKSUM does not match for file://openembedded-core/LICENSE;md5=4d92cd373abda3937c2bc47fbc49d690"
 
 # telepathy-glib fix sent in:
 # https://lists.openembedded.org/g/openembedded-devel/message/90534
@@ -181,15 +173,8 @@ PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson
 
 # the following python recipes are an exception, because they need to be blacklisted even when python(2) itself is unblacklisted with I_SWEAR_TO_MIGRATE_TO_PYTHON3
 # meta-python2/recipes-devtools/python/python-snimpy_0.8.13.bb
+# libsmi should be unblacklisted in hardknott
 PNBLACKLIST[python-snimpy] ?= "Depends on blacklisted libsmi"
-# meta-python2/recipes-devtools/python/python-pyrex_0.9.9.bb.do_package
-PNBLACKLIST[python-pyrex] ?= "ERROR: python-pyrex-0.9.9-r4 do_package: QA Issue: python-pyrex: Files/directories were installed but not shipped in any package"
-# meta-oe/recipes-extended/openlmi/openlmi-tools_0.10.5.bb
-PNBLACKLIST[openlmi-tools] ?= "Depends on blacklisted python-m2crypto"
-# meta-python2/recipes-extended/pywbem/python-pywbem_0.15.0.bb
-PNBLACKLIST[python-pywbem] ?= "Depends on blacklisted python-m2crypto"
-# meta-virtualization/recipes-devtools/python/python-m2crypto_0.22.3.bb:do_configure
-PNBLACKLIST[python-m2crypto] ?= "ERROR: python-m2crypto-0.22.3-r0 do_configure: Function failed: do_configure: Error: CPP #error __WORDSIZE is not defined. Use the -cpperraswarn option to continue swig processing."
 
 # all target python2 recipes from meta-python2 and meta-oe
 require conf/distro/include/python2-target-recipes-blacklist.inc
