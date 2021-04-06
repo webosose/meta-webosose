@@ -136,8 +136,6 @@ PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin
 PNBLACKLIST[omxplayer] ?= "ERROR: omxplayer-git-r4 do_compile: Function failed: do_compile: DllAvFormat.h:117:51: error: ::avio_feof has not been declared"
 # meta-virtualization/recipes-containers/lxcfs/lxcfs_3.0.1.bb:do_package
 PNBLACKLIST[lxcfs] ?= "ERROR: lxcfs-3.0.1-r0 do_package: SYSTEMD_SERVICE_lxcfs value lxcfs.service does not exist"
-# meta-webosose/meta-webos/recipes-upstreamable/bootchart2/bootchart2_git.bb:do_package
-PNBLACKLIST[bootchart2] ?= "ERROR: bootchart2-0.14.8+gitAUTOINC+42509aa0c9-r10 do_package: SYSTEMD_SERVICE_bootchart2 value bootchart2.service does not exist"
 
 # meta-networking/recipes-kernel/wireguard/wireguard-tools_1.0.20200319.bb
 PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
