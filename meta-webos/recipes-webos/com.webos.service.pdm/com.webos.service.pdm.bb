@@ -16,7 +16,7 @@ RDEPENDS_${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fs
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
-WEBOS_VERSION = "1.0.1-54_9294ed6574b7413a399b9630f86208c2294333c3"
+WEBOS_VERSION = "1.0.1-56_2636176401353cf2d00a602f7a9dd6c1c2fb9e19"
 PR = "r4"
 
 inherit webos_component
