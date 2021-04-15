@@ -2,11 +2,11 @@
 
 inherit webos_qmake5
 
-EXTENDPRAUTO_append = "webos60"
+EXTENDPRAUTO_append = "webos61"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Patches from 5.12.meta-webos.31 based on 5.12.meta-qt5.2
+# Patches from 5.12.meta-webos.32 based on 5.12.meta-qt5.2
 # Upstream-Status: Backport
 SRC_URI_append_class-target = " \
     file://0001-Set-the-stencil-buffer-zone.patch \
@@ -24,6 +24,7 @@ SRC_URI_append_class-target = " \
     file://0013-Fix-nullptr-handling-in-binding.patch \
     file://0014-Fix-QQuickKeyNavigationAttached-issue.patch \
     file://0015-Avoid-crash-when-accessing-an-empty-QTextLine.patch \
+    file://0016-Allow-Connections-to-handle-signals-using-JavaScript.patch \
 "
 
 # Upstream-Status: Inappropriate
