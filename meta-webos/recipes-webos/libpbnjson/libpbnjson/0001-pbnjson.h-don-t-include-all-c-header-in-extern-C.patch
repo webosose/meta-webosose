@@ -1,0 +1,57 @@
+From b943cd37dd981bbe73ca47fda5766bd1eee07089 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Mon, 19 Apr 2021 20:59:48 +0000
+Subject: [PATCH] pbnjson.h: don't include all c header in 'extern "C"'
+
+* newer glib-2.0 now includes type_traits from gatomic.h causing:
+
+cd /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/build/src/pbnjson_cxx && /jenkins/mjansa/build/ose-github/honister/BUILD/hosttools/g++ -DLIBRARY_NAME=pbnjson_cpp -DPJSONCXX_EXPORT -DPJSONCXX_SHARED -DPJSON_SHARED -DWEBOS_COMPONENT_VERSION=\"2.15.0\" -D_GNU_SOURCE -Dpbnjson_cpp_EXPORTS -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/lib/pkgconfig/../../../usr/include/glib-2.0 -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/lib/pkgconfig/../../../usr/lib/glib-2.0/include -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/share/pkgconfig/../../../usr/include/yajl -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/c -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/cxx -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/build/src/pbnjson_cxx -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/build/src/pbnjson_cxx/../pbnjson_c -I/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/src/pbnjson_cxx -isystem/jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/include -O2 -pipe -Wall -D__STRICT_ANSI__ -pthread -fmessage-length=0 -Wall -Wl,--no-undefined -DNDEBUG -DNDEBUG -g -fPIC -o CMakeFiles/pbnjson_cpp.dir/JValue.cpp.o -c /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/src/pbnjson_cxx/JValue.cpp
+In file included from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/lib/pkgconfig/../../../usr/include/glib-2.0/glib/gatomic.h:31:0,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/lib/pkgconfig/../../../usr/include/glib-2.0/glib/gthread.h:32,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/lib/pkgconfig/../../../usr/include/glib-2.0/glib/gasyncqueue.h:32,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/recipe-sysroot-native/usr/lib/pkgconfig/../../../usr/include/glib-2.0/glib.h:32,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/c/jtypes.h:21,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/c/jschema_types.h:21,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/c/jschema.h:22,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/c/jobject.h:28,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson.h:112,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/include/public/pbnjson/cxx/JValue.h:20,
+                 from /jenkins/mjansa/build/ose-github/honister/BUILD/work/x86_64-linux/libpbnjson-native/2.15.0-2-r8/git/src/pbnjson_cxx/JValue.cpp:17:
+/usr/include/c++/7/type_traits:68:3: error: template with C linkage
+   template<typename _Tp, _Tp __v>
+   ^~~~~~~~
+
+* it was moved from gmacros.h in:
+  https://gitlab.gnome.org/GNOME/glib/-/commit/552b8fd862061e74b5ad2ffe6a700f850a76f797
+  and improved in:
+  https://gitlab.gnome.org/GNOME/glib/-/commit/5b3e4f94b0514d0af605a4f6557def5a023a85f1
+  as alternative solution we should be able to define GLIB_VERSION_MIN_REQUIRED
+
+Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+---
+ include/public/pbnjson.h | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/include/public/pbnjson.h b/include/public/pbnjson.h
+index f8516ec..4028b15 100644
+--- a/include/public/pbnjson.h
++++ b/include/public/pbnjson.h
+@@ -103,9 +103,6 @@ The following examples will show how to use it.
+ @snippet TestExample.cpp parse stream sax
+ 
+  */
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+ 
+ #include "pbnjson/c/japi.h"
+ #include "pbnjson/c/jerror.h"
+@@ -115,8 +112,5 @@ extern "C" {
+ #include "pbnjson/c/jvalue_stringify.h"
+ #include "pbnjson/c/jquery.h"
+ 
+-#ifdef __cplusplus
+-}
+-#endif
+ 
+ #endif /* PJSONC_H_ */

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Palm's Better Native JSON library"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -12,7 +12,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
 WEBOS_VERSION = "2.15.0-4_bcd35ead52db4153cef68bb6e4ef0f7fc7f51510"
-PR = "r8"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
@@ -40,3 +40,5 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 BBCLASSEXTEND = "native"
+
+SRC_URI += "file://0001-pbnjson.h-don-t-include-all-c-header-in-extern-C.patch"
