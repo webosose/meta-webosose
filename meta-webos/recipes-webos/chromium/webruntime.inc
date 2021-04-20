@@ -22,7 +22,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r46"
+INC_PR = "r47"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -51,7 +51,6 @@ PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # By default debug is completely disabled to speed up build
 PACKAGECONFIG[debug] = "symbol_level=2,symbol_level=1"
 PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
-PACKAGECONFIG[compress-debuginfo] = "compress_debug_info=true,compress_debug_info=false"
 PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
 PACKAGECONFIG[av1-codec] = "enable_av1_decoder=true, enable_av1_decoder=false"
 PACKAGECONFIG[gav] = "use_gav=true,use_gav=false"
