@@ -78,6 +78,7 @@ GN_ARGS = "\
     v8_snapshot_toolchain=\"//build/toolchain/cros:v8_snapshot_clang_${TARGET_CPU}\"\
     host_pkg_config=\"pkg-config-native\"\
     host_os=\"linux\"\
+    host_toolchain=\"//build/toolchain/cros:host\" \
     is_clang=false\
     is_cross_linux_build=true\
     is_webos=true\
