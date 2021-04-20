@@ -1,0 +1,97 @@
+From 77bd41544bbe53eab0d5fd994b460a1ac39b4145 Mon Sep 17 00:00:00 2001
+From: "mukul20.jha" <mukul20.jha@lge.com>
+Date: Mon, 26 Apr 2021 14:26:26 +0000
+Subject: [PATCH] patch-for-jconer-in-SAF
+
+---
+ Makefile                     | 6 +++---
+ include/jconer/allocator.hpp | 6 +++---
+ include/jconer/value.hpp     | 4 ++--
+ src/allocator.cpp            | 6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 43c42d8..8a4bce9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -4,9 +4,9 @@ INCLUDE_DIR := ./include
+ BUILD_DIR := ./build
+ TESTBIN_DIR := $(BUILD_DIR)/test
+ 
+-CPP := g++
+-CC := gcc
+-AR := ar
++CPP := ${CXX}
++CC := ${CC}
++AR := ${AR}
+ 
+ CFLAG := -O2 -Wall -std=c++11
+ LFLAG := -O2 -flto -lpthread
+diff --git a/include/jconer/allocator.hpp b/include/jconer/allocator.hpp
+index 1800862..99c7149 100644
+--- a/include/jconer/allocator.hpp
++++ b/include/jconer/allocator.hpp
+@@ -7,9 +7,9 @@ class Allocator {
+   public:
+     Allocator() {
+       arena_ =  arena_New();
+-      if (arena_ == NULL) {
++     /* if (arena_ == NULL) {
+         throw std::bad_alloc();
+-      }
++      }*/
+     }
+     virtual ~Allocator() {
+       arena_Free(arena_);
+@@ -22,5 +22,5 @@ class Allocator {
+     Arena* arena_;
+ };
+ 
+-void* allocate(size_t size) throw (std::bad_alloc);
++void* allocate(size_t size) /*throw (std::bad_alloc)*/;
+ #endif
+diff --git a/include/jconer/value.hpp b/include/jconer/value.hpp
+index 5d8504d..b268725 100644
+--- a/include/jconer/value.hpp
++++ b/include/jconer/value.hpp
+@@ -132,8 +132,8 @@ class JTrue : public JValue {
+         inline bool getValue() { return true; }
+         void printout();
+         JValue* deepcopy();
+-    private:
+         JTrue();
++    private:
+         static JTrue _instance;
+ };
+ 
+@@ -145,8 +145,8 @@ class JFalse : public JValue {
+         inline bool getValue() { return true; }
+         void printout();
+         JValue* deepcopy();
+-    private:
+         JFalse();
++    private:
+         static JFalse _instance;
+ };
+ 
+diff --git a/src/allocator.cpp b/src/allocator.cpp
+index 5aaf408..f7652ad 100644
+--- a/src/allocator.cpp
++++ b/src/allocator.cpp
+@@ -3,10 +3,10 @@
+ 
+ Allocator alloc;
+ 
+-void* allocate(size_t size) throw (std::bad_alloc) {
++void* allocate(size_t size) /*throw (std::bad_alloc)*/ {
+   void* ptr = alloc.malloc(size);
+-  if (ptr == NULL) {
++ /* if (ptr == NULL) {
+     throw std::bad_alloc();
+-  }
++  }*/
+   return ptr;
+ }
+-- 
+2.17.1
+

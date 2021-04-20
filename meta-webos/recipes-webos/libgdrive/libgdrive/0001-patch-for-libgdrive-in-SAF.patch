@@ -1,0 +1,128 @@
+From edc48036463fdd267c9ecc8d694526e7df55913a Mon Sep 17 00:00:00 2001
+From: "mukul20.jha" <mukul20.jha@lge.com>
+Date: Mon, 26 Apr 2021 20:09:51 +0530
+Subject: [PATCH] patch-for-libgdrive-in-SAF
+
+---
+ Makefile                      |  6 ++---
+ include/gdrive/credential.hpp |  4 ++-
+ src/credential.cpp            | 49 +++++++++++++++++++++++++++++------
+ 3 files changed, 47 insertions(+), 12 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 15e17b3..2f08d09 100644
+--- a/Makefile
++++ b/Makefile
+@@ -13,9 +13,9 @@ LIB := -ljconer -lpthread
+ 
+ THIRD_INC_DIR := -I/home/justin/pkg/curl/include
+ THIRD_LIB_DIR := -L/home/justin/pkg/curl/lib
+-CPP := g++
+-CC := gcc
+-AR := ar
++CPP := ${CXX}
++CC := ${CC}
++AR := ${AR}
+ 
+ CFLAG := -O2
+ LFLAG := -O2 -lcurl -L$(LIB_DIR) $(LIB)
+diff --git a/include/gdrive/credential.hpp b/include/gdrive/credential.hpp
+index 8d97429..1d60ea3 100644
+--- a/include/gdrive/credential.hpp
++++ b/include/gdrive/credential.hpp
+@@ -7,6 +7,7 @@
+ #include "gdrive/store.hpp"
+ #include "common/all.hpp"
+ 
++#include <map>
+ #include <string>
+ 
+ namespace GDRIVE {
+@@ -17,6 +18,7 @@ class Credential {
+     CLASS_MAKE_LOGGER
+     public:
+         Credential(Store* store);
++	Credential(std::map<std::string, std::string> *auth);
+         inline bool invalid() const { return _invalid; }
+         void refresh(std::string at, std::string rt, long te, std::string it = "");
+         void dump();
+@@ -28,7 +30,7 @@ class Credential {
+         long _token_expiry;
+         std::string _id_token;
+         bool _invalid;
+-
++        std::map<std::string, std::string>* authMap;
+         Store *_store;
+ 
+         Credential(const Credential& other);
+diff --git a/src/credential.cpp b/src/credential.cpp
+index 7f0ba0d..2bcd458 100644
+--- a/src/credential.cpp
++++ b/src/credential.cpp
+@@ -29,6 +29,29 @@ Credential::Credential(Store* store)
+     _token_expiry = 0;
+ }
+ 
++Credential::Credential(std::map<std::string, std::string> *auth) : authMap(auth){
++#ifdef GDRIVE_DEBUG
++    CLASS_INIT_LOGGER("Credential", L_DEBUG);
++#endif
++ if ((*auth)["refresh_token"] == "") {
++        _invalid = true;
++        _access_token = "";
++        _client_id = (*auth)["client_id"];
++        _client_secret = (*auth)["client_secret"];
++        _refresh_token = "";
++        _id_token = "";
++    } else {
++        _invalid = false;
++        _access_token = (*auth)["access_token"];
++        _client_id = (*auth)["client_id"];
++        _client_secret = (*auth)["client_secret"];
++        _refresh_token = (*auth)["refresh_token"];
++        _id_token = (*auth)["id_token"];
++    }
++    _token_expiry = 0;
++    _store = NULL;
++}
++
+ void Credential::refresh(std::string at, std::string rt, long te, std::string it) {
+     _access_token = at;
+     _refresh_token = rt;
+@@ -40,15 +63,25 @@ void Credential::refresh(std::string at, std::string rt, long te, std::string it
+ 
+ void Credential::dump() {
+     if (_store == NULL) {
+-        CLOG_WARN("This is no store to save tokens\n");
+-        return;
++        (*authMap)["access_token"]  = _access_token;
++        (*authMap)["client_id"]     = _client_id;
++        (*authMap)["client_secret"] = _client_secret;
++        (*authMap)["refresh_token"] = _refresh_token;
++        (*authMap)["id_token"]      = _id_token;
+     }
+-    _store->put("access_token", _access_token);
+-    _store->put("client_id", _client_id);
+-    _store->put("client_secret", _client_secret);
+-    _store->put("refresh_token", _refresh_token);
+-    _store->put("id_token", _id_token);
+-    _store->dump(); 
++    else {
++       if (!_access_token.empty())
++            _store->put("access_token", _access_token);
++       if (!_client_id.empty())
++            _store->put("client_id", _client_id);
++       if (!_client_secret.empty())
++            _store->put("client_secret", _client_secret);
++       if (!_refresh_token.empty())
++            _store->put("refresh_token", _refresh_token);
++       if (!_id_token.empty())
++            _store->put("id_token", _id_token);
++        //_store->dump();
++     }
+ }
+ 
+ CredentialHttpRequest::CredentialHttpRequest(Credential* cred, std::string uri, RequestMethod method)
+-- 
+2.17.1
+
