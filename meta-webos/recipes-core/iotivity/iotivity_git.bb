@@ -34,6 +34,7 @@ SRC_URI = " \
     file://0001-hippomocks-fix-build-for-MIPS.patch;patchdir=extlibs/hippomocks/hippomocks \
     file://0001-OCApi.h-prevent-multiple-definitions-of-OC-detail-oc.patch \
     file://0002-Fix-segmentation-fault.patch \
+    file://0002-Add-os_arch-x86_64.patch \
 "
 SRCREV_main = "255060695e4de0e8f357aeab6e3e2c46e3c68bac"
 SRCREV_tinycbor = "ae64a3d9da39f3bf310b9a7b38427c096d8bcd43"
@@ -48,7 +49,7 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r6"
+PR = "r7"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_filesystem_paths
@@ -56,16 +57,6 @@ inherit scons pkgconfig webos_filesystem_paths
 IOTIVITY_BIN_DIR = "${webos_servicesdir}/${PN}"
 IOTIVITY_BIN_DIR_D = "${D}${IOTIVITY_BIN_DIR}"
 
-# This is wrong and should respect TARGET_ARCH set in OE build
-# but as it's now, it always creates the files in out/webos/arm/release
-# even when building for e.g. x86 with qemux86 MACHINE
-# file BUILD/work/qemux86-webos-linux/iotivity/1.3.1-r1/iotivity-1.3.1/out/webos/arm/release/libresource_directory.so
-# BUILD/work/qemux86-webos-linux/iotivity/1.3.1-r1/iotivity-1.3.1/out/webos/arm/release/libresource_directory.so: ELF 32-bit LSB  shared object, Intel 80386, version 1 (SYSV), dynamically linked, BuildID[sha1]=51acad0ee3e98648b762722e1fcf6285861006cf, not strippe
-# so we need to keep "arm" until it's fixed in SConscript, otherwise qemux86 builds will fail in do_install
-# currently we cannot use
-# IOTIVITY_TARGET_ARCH = "${TARGET_ARCH}"
-# like the recipe in meta-oic does, because then scons fails with:
-# scons: *** Invalid value for option TARGET_ARCH: i586.  Valid values are: ['arm']
 IOTIVITY_TARGET_ARCH = "${TARGET_ARCH}"
 
 EXTRA_OESCONS += " \
