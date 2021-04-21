@@ -44,7 +44,7 @@ PNBLACKLIST[sysstat] ?= "BROKEN: install: invalid group ‘man’ http://caprica
 PNBLACKLIST[man-db] ?= "BROKEN: without --disable-cache-owner: chown: invalid user: ?man:man? our passwd doesn't have man user and since http://git.openembedded.org/openembedded-core/commit/?id=7080df4b6bc50440eed600e81f2c6fa76a80623d it's needed http://caprica.lgsvl.com:8080/Errors/Details/1509154"
 
 # meta-oe/recipes-core/packagegroups/packagegroup-meta-oe.bb
-PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted libsmi, phonet-utils, gradm, telepathy-idle, scsirastools, uml-utilities, tomoyo-tools, s-suite, .."
+PNBLACKLIST[packagegroup-meta-oe] ?= "depends on blacklisted libsmi, phonet-utils, gradm, scsirastools, tomoyo-tools, s-suite, .."
 # meta-oe/recipes-benchmark/s-suite/s-suite_git.bb
 PNBLACKLIST[s-suite] ?= "rdepends on blacklisted sysstat"
 
@@ -117,8 +117,6 @@ PNBLACKLIST[phonet-utils] ?= "ERROR: phonet-utils-0.0.0+gitrAUTOINC+4acfa720fd-r
 PNBLACKLIST[boinc-client] ?= "ERROR: boinc-client-7.12-r0 do_package: SYSTEMD_SERVICE_boinc-client value boinc-client.service does not exist"
 # meta-openembedded/meta-oe/recipes-extended/scsirastools/scsirastools_1.6.6.bb:do_package
 PNBLACKLIST[scsirastools] ?= "ERROR: scsirastools-1.6.6-r0 do_package: QA Issue: scsirastools: Files/directories were installed but not shipped in any package"
-# meta-openembedded/meta-oe/recipes-extended/uml-utilities/uml-utilities_20040406.bb:do_package
-PNBLACKLIST[uml-utilities] ?= "ERROR: uml-utilities-20040406-r1 do_package: QA Issue: uml-utilities: Files/directories were installed but not shipped in any package"
 # meta-openembedded/meta-oe/recipes-graphics/dietsplash/dietsplash_git.bb:do_package
 PNBLACKLIST[dietsplash] ?= "ERROR: dietsplash-0.3-r1 do_package: QA Issue: dietsplash: Files/directories were installed but not shipped in any package"
 # meta-openembedded/meta-oe/recipes-security/tomoyo-tools/tomoyo-tools_2.5.0.bb:do_package
@@ -141,15 +139,6 @@ PNBLACKLIST[lxcfs] ?= "ERROR: lxcfs-3.0.1-r0 do_package: SYSTEMD_SERVICE_lxcfs v
 PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"
 # meta-oe/dynamic-layers/meta-python/recipes-extended/lcdproc/lcdproc_git.bb
 PNBLACKLIST[lcdproc] ?= "Depends on blacklisted lirc"
-
-# telepathy-glib fix sent in:
-# https://lists.openembedded.org/g/openembedded-devel/message/90534
-# will probably get merged in hardknott
-# meta-openembedded/meta-oe/recipes-connectivity/telepathy/telepathy-glib_0.24.1.bb:do_configure
-PNBLACKLIST[telepathy-glib] ?= "ERROR: telepathy-glib-0.24.1-r0 do_configure: configure failed: configure: error: GObject-Introspection must be enabled for Vala bindings"
-
-# telepathy-glib will probably get fixed in hardknott
-PNBLACKLIST[telepathy-idle] ?= "Depends on blacklisted telepathy-glib"
 
 # And few more in dunfell
 # meta-openembedded/meta-oe/recipes-support/libgusb/libgusb_git.bb:do_configure
