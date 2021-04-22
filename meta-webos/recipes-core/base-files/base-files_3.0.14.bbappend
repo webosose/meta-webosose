@@ -1,9 +1,9 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 AUTHOR = "Herb Kuta <herb.kuta@lge.com>"
 
 inherit webos_filesystem_paths
-EXTENDPRAUTO_append = "webos11"
+EXTENDPRAUTO_append = "webos12"
 
 dirs700 = " \
     ${webos_db8datadir} \
@@ -51,6 +51,15 @@ do_install_append() {
 
     [ -z "$collisions" ] \
         || bbfatal "Found records in fstab with identical mount-points: $collisions"
+}
+
+do_install_append() {
+    # For coredump handling
+    if ${@oe.utils.conditional('DISTRO', 'webos', 'true', 'false', d)} ; then
+        echo "" >> ${D}${sysconfdir}/profile
+        echo "# Set limit of core file size" >> ${D}${sysconfdir}/profile
+        echo "ulimit -c unlimited" >> ${D}${sysconfdir}/profile
+    fi
 }
 
 generate_fstab_entries() {
