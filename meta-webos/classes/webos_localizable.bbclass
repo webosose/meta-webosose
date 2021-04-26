@@ -38,19 +38,17 @@ WEBOS_LOCALIZATION_DEPENDS += "localization-tool-native"
 WEBOS_LOCALIZATION_DATA_PATH ?= "${S}"
 WEBOS_LOCALIZATION_SOURCE_DIR ?= "${S}"
 
-WEBOS_NODE = "${STAGING_DIR_NATIVE}${bindir}/node"
 WEBOS_JS_LOCTOOL_PATH = "${STAGING_DIR_NATIVE}/opt/js-loctool"
 WEBOS_JS_LOCTOOL = "${WEBOS_JS_LOCTOOL_PATH}/node_modules/loctool/loctool.js"
 
 do_generate_webos_localization () {
     if "${WEBOS_LOCALIZATION_GENERATE_RESOURCES}" ; then
-
         translation_target_locales="$(echo ${WEBOS_LOCALIZATION_TARGET_LOCALES} | sed -e 's/^ *//g' -e 's/ *$//g' | sed -e 's/ \+/,/g')"
 
+        webos_localization_options="-2 --localizeOnly --quiet --exclude oe-logs,oe-workdir --xliffStyle custom"
+
         if ${@ 'true' if bb.data.inherits_class('webos_qt_localization', d) else 'false' } ; then
-            webos_localization_options="-2 --localizeOnly --quiet --pseudo"
-        else
-            webos_localization_options="-2 --localizeOnly --quiet"
+            webos_localization_options="--pseudo ${webos_localization_options}"
         fi
 
         local origdir=$PWD
@@ -60,7 +58,7 @@ do_generate_webos_localization () {
         bbnote "- xliff file name : ${WEBOS_LOCALIZATION_XLIFF_BASENAME}"
         bbnote "- locales to localization : ${translation_target_locales}"
 
-        ${WEBOS_NODE} ${WEBOS_JS_LOCTOOL} -x ${WEBOS_LOCALIZATION_DATA_PATH}/${WEBOS_LOCALIZATION_XLIFF_BASENAME} -l ${translation_target_locales} ${webos_localization_options}
+        node ${WEBOS_JS_LOCTOOL} -x ${WEBOS_LOCALIZATION_DATA_PATH}/${WEBOS_LOCALIZATION_XLIFF_BASENAME} -l ${translation_target_locales} ${webos_localization_options}
 
     else
         bbnote "Generating localized files was disabled by WEBOS_LOCALIZATION_GENERATE_RESOURCES variable"

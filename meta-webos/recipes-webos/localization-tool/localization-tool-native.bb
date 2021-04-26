@@ -20,8 +20,8 @@ S = "${WORKDIR}/git"
 # iLib-js/ilib-loctool-webos-dist repository on GitHub. This version should correspond to the
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
-PV = "1.2.1"
-SRCREV = "29b07b1ec01ab81667eb4b946446693983b1711b"
+PV = "1.4.0"
+SRCREV = "986d3fdf3776da673a445c5855a3a10e1ce44a4c"
 
 # Skip the unwanted tasks
 do_configure[noexec] = "1"
