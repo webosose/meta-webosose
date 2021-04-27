@@ -18,7 +18,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 RDEPENDS_${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
 WEBOS_VERSION = "0.1.0-78_a66bf9ebb7bf1f4fde127742f43393b387fa3a73"
-PR = "r4"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo
@@ -41,3 +41,5 @@ S = "${WORKDIR}/git"
 #  g_print(g_variant_get_type_string(arguments));
 #                                              ^
 SECURITY_STRINGFORMAT = ""
+
+SRC_URI += "file://0001-bluez5meshadvprovisioner.h-don-t-include-freedesktop.patch"
