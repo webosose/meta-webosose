@@ -380,3 +380,6 @@ INHERIT += "reproducible_build_simple"
 # Override setting in upstream fontcache.bbclass and fontconfig recipe
 FONTCONFIG_CACHE_DIR = "${datadir}/fontconfig/cache"
 FONTCONFIG_CACHE_ENV = "FC_DEBUG=16"
+
+# Qt major version to use
+QT_VERSION ?= "6"
