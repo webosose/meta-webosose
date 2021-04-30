@@ -1,0 +1,15 @@
+diff --git a/lib/mbedtls-2.24.0/CMakeLists.txt b/lib/mbedtls-2.24.0/CMakeLists.txt
+index 6366edff..73cbd124 100644
+--- a/lib/mbedtls-2.24.0/CMakeLists.txt
++++ b/lib/mbedtls-2.24.0/CMakeLists.txt
+@@ -178,8 +178,8 @@ if(CMAKE_COMPILER_IS_GNU)
+         endif()
+     endif()
+     set(CMAKE_C_FLAGS_RELEASE     "-O2")
+-    set(CMAKE_C_FLAGS_DEBUG       "-O0 -g3")
+-    set(CMAKE_C_FLAGS_COVERAGE    "-O0 -g3 --coverage")
++    set(CMAKE_C_FLAGS_DEBUG       "-O2 -g3")
++    set(CMAKE_C_FLAGS_COVERAGE    "-O2 -g3 --coverage")
+     set(CMAKE_C_FLAGS_ASAN        "-fsanitize=address -fno-common -fsanitize=undefined -fno-sanitize-recover=all -O3")
+     set(CMAKE_C_FLAGS_ASANDBG     "-fsanitize=address -fno-common -fsanitize=undefined -fno-sanitize-recover=all -O1 -g3 -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+     set(CMAKE_C_FLAGS_CHECK       "-Os")
