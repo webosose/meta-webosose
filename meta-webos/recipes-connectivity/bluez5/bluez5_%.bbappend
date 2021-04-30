@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos24"
+EXTENDPRAUTO_append = "webos25"
 
 RRECOMMENDS_${PN} += " \
     glibc-gconv-utf-16 \
@@ -38,7 +38,6 @@ SRC_URI += " \
     file://0026-Revert-a2dp-Add-reverse-discovery.patch \
     file://0027-Add-support-for-meshd-to-use-RAW-channel.patch \
     file://0028-Enable-mesh-fixed-ell-undefined-symbol-error.patch \
-    file://0029-Avoid-mesh-cache-data-loading-from-storage-path.patch \
     file://main.conf \
     file://brcm43438.service \
     file://obex.service \
