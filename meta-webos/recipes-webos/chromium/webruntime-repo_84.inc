@@ -15,3 +15,6 @@ SRCREV_v8 = "b8071b2f0c803b36e56226b5c21ac180ed793ee9"
 SRC_URI_append_aarch64 = "\
     file://0001-op-ds-build-Fix-build-error-when-target-is-arm64.patch \
 "
+SRC_URI_append = "\
+    file://0001-Fix-build-with-gcc-11.patch \
+"
