@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "curl"
 
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_machine_impl_dep
@@ -26,7 +26,7 @@ SRC_URI += "git://github.com/allenbo/JConer.git;branch=master;name=coner;destsuf
 SRC_URI += "file://0001-patch-for-jconer-in-SAF.patch;patchdir=${WORKDIR}/git/jconer"
 SRC_URI += "file://0001-patch-for-libgdrive-in-SAF.patch"
 
-S = "${WORKDIR}/git/"
+S = "${WORKDIR}/git"
 
 #To Build Libgdrive
 do_compile_prepend() {
