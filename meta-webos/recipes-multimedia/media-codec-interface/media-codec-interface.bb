@@ -21,10 +21,10 @@ COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS_append_rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-1_b03f3c5b66cfe17a69337a6be1ffdc6dd6a0b5ce"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-3_13f4a0e50c95f7ecf04be37949c0da266ba221d3"
+PR = "r1"
 
-SRCREV_mcil = "594c42066638b76c917e4f01d96f4ccc3333943a"
+SRCREV_mcil = "ef2a9b183262a04e8246df951acf4693a18b3cd6"
 
 WEBOS_REPO_NAME_MCIL ?= "media-codec-ose"
 WEBOS_GIT_REPO_MCIL ?= "${WEBOSOSE_GIT_REPO}"
@@ -33,7 +33,7 @@ WEBOS_GIT_REPO_COMPLETE_MCIL ?= "${WEBOS_GIT_REPO_MCIL}/${WEBOS_REPO_NAME_MCIL}$
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 
 SRC_URI_append = "\
-    ${WEBOS_GIT_REPO_COMPLETE_MCIL};destsuffix=git/src/encoder;name=mcil \
+    ${WEBOS_GIT_REPO_COMPLETE_MCIL};destsuffix=git/src/codec_impl;name=mcil \
 "
 
 S = "${WORKDIR}/git"
