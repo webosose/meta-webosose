@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2020 LG Electronics, Inc.
+# Copyright (c) 2015-2021 LG Electronics, Inc.
 
 SUMMARY = "Settings Service Configs"
 AUTHOR = "Denys Romanchuk <denys.romanchuk@lge.com>"
@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-6_f5d3699ce17c4015e33e76420bbc9c5177befc23"
+WEBOS_VERSION = "1.0.0-8_280fb64b45ef9cb2c0a88d03cda7fe88afc001d9"
 PR = "r1"
 
 inherit webos_component
