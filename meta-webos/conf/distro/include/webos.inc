@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 require conf/distro/include/webos-component-head.inc
 require conf/distro/include/webos-preferred-providers.inc
@@ -329,6 +329,12 @@ PACKAGE_ARCH_pn-packagegroup-core-tools-debug = "${MACHINE_ARCH}"
 # packagegroup-cross-canadian-qemux86 package in MACHINE_ARCH feed (opkg-sdk.conf
 # doesn't contain MACHINE_ARCH).
 PACKAGE_ARCH_pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFIX}"
+
+# Otherwise QEMU_EXTRAOPTIONS aren't found and e.g. update_font_cache postinst
+# script may fail to run fc-cache with:
+# qemu: uncaught target signal 4 (Illegal instruction) - core dumped
+# because -cpu options are missing in QEMU_OPTIONS
+PACKAGE_ARCH_pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
 
 PATH_prepend = "${WEBOS_EXTRA_PATH}"
 
