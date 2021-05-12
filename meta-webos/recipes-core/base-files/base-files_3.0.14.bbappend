@@ -3,7 +3,9 @@
 AUTHOR = "Herb Kuta <herb.kuta@lge.com>"
 
 inherit webos_filesystem_paths
-EXTENDPRAUTO_append = "webos12"
+inherit webos_machine_impl_dep
+
+EXTENDPRAUTO_append = "webos13"
 
 dirs700 = " \
     ${webos_db8datadir} \
@@ -53,12 +55,14 @@ do_install_append() {
         || bbfatal "Found records in fstab with identical mount-points: $collisions"
 }
 
-do_install_append() {
+do_install_append_hardware() {
     # For coredump handling
     if ${@oe.utils.conditional('DISTRO', 'webos', 'true', 'false', d)} ; then
         echo "" >> ${D}${sysconfdir}/profile
         echo "# Set limit of core file size" >> ${D}${sysconfdir}/profile
-        echo "ulimit -c unlimited" >> ${D}${sysconfdir}/profile
+        echo "if [ $(id -u) -eq 0 ]; then" >> ${D}${sysconfdir}/profile
+        echo "    ulimit -c unlimited" >> ${D}${sysconfdir}/profile
+        echo "fi" >> ${D}${sysconfdir}/profile
     fi
 }
 
