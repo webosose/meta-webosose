@@ -3,20 +3,31 @@
 # webos_enactjs_env
 #
 # Base-level bbclass to setup the development environment for Enact code.
-# Provides access to enact-dev, Node, and NPM.
+# Provides access to Cli, Node, and NPM.
 #
 
 # Dependencies:
-#   - enact-dev-native to get enact-dev and npm
-DEPENDS_append = " enact-dev-native"
+#   - enact-dev-native to get cli & jsdoc-to-ts and nodejs-native to get node & npm
+DEPENDS_append = " enact-dev-native nodejs-native"
 
 # Allow overriding the path to the enact-dev tools, in case an app needs
 # to pull in a different version
-WEBOS_ENACTJS_TOOL_PATH ??= "${STAGING_DIR_NATIVE}/opt/enact-dev"
+WEBOS_ENACTJS_TOOL_PATH ??= "${STAGING_DIR_NATIVE}/opt/cli"
+WEBOS_ENACTJS_TOOL_LEGACY_PATH ??= "${STAGING_DIR_NATIVE}/opt/cli-legacy"
+WEBOS_ENACTJS_JSDOC_TO_TS_PATH ??= "${STAGING_DIR_NATIVE}/opt/jsdoc-to-ts"
 
-ENACT_NODE ??= "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/${BUILD_ARCH}/node"
-ENACT_DEV ??= "${ENACT_NODE} ${WEBOS_ENACTJS_TOOL_PATH}/bin/enact.js"
-ENACT_NPM ??= "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/${BUILD_ARCH}/npm"
+WEBOS_NODE_BIN ??= "${STAGING_BINDIR_NATIVE}/node"
+ENACT_DEV ??= "${WEBOS_NODE_BIN} ${WEBOS_ENACTJS_TOOL_PATH}/bin/enact.js"
+ENACT_DEV_LEGACY ??= "${WEBOS_NODE_BIN} ${WEBOS_ENACTJS_TOOL_LEGACY_PATH}/bin/enact.js"
+ENACT_JSDOC_TO_TS ??= "${WEBOS_NODE_BIN} ${WEBOS_ENACTJS_JSDOC_TO_TS_PATH}/bin/jsdoc-to-ts.js"
+ENACT_BOOTSTRAP_OVERRIDE ??= "${ENACT_DEV} bootstrap --base=false --sampler=false --link=false --override"
 
 inherit webos_npm_env
-WEBOS_NPM_BIN = "${ENACT_NPM}"
+
+do_configure_append() {
+    # npm install on cli & jsdoc-to-ts
+    bbnote "Enact cli & jsdoc-to-ts npm install"
+    ${WEBOS_NPM_BIN} install -C ${WEBOS_ENACTJS_TOOL_PATH}
+    ${WEBOS_NPM_BIN} install -C ${WEBOS_ENACTJS_TOOL_LEGACY_PATH}
+    ${WEBOS_NPM_BIN} install -C ${WEBOS_ENACTJS_JSDOC_TO_TS_PATH}
+}

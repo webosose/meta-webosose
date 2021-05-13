@@ -117,12 +117,12 @@ do_compile() {
         FRAMEWORK_PATH="${WEBOS_ENACTJS_FRAMEWORK}${ENACTJS_FRAMEWORK_VARIANT}"
         if [ -d ${FRAMEWORK_PATH} ] ; then
             bbnote "Using system submission Enact framework from ${FRAMEWORK_PATH}"
-            ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${FRAMEWORK_PATH}"
+            ${ENACT_BOOTSTRAP_OVERRIDE} "${FRAMEWORK_PATH}"
         else
             FRAMEWORK_ALLARCH_PATH="${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}${ENACTJS_FRAMEWORK_VARIANT}"
             if [ -d ${FRAMEWORK_ALLARCH_PATH} ] ; then
                 bbnote "Using system submission Enact framework from ${FRAMEWORK_ALLARCH_PATH}"
-                ${ENACT_NODE} "${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-override.js" "${FRAMEWORK_ALLARCH_PATH}"
+                ${ENACT_BOOTSTRAP_OVERRIDE} "${FRAMEWORK_ALLARCH_PATH}"
             else
                 bbwarn "Enact framework submission could not be found"
             fi
@@ -156,7 +156,7 @@ do_compile() {
 
         bbnote "NPM install attempt #${ATTEMPTS} (of 5)..." && echo
         STATUS=0
-        timeout --kill-after=5m 15m ${ENACT_NPM} ${NPM_OPTS} || eval "STATUS=\$?"
+        timeout --kill-after=5m 15m ${WEBOS_NPM_BIN} ${NPM_OPTS} || eval "STATUS=\$?"
         if [ ${STATUS} -ne 0 ] ; then
             bbwarn "...NPM process failed with status ${STATUS}"
         else
@@ -228,7 +228,13 @@ do_install() {
     else
         # Normal App Build
         bbnote "Bundling Enact app to ${appdir}"
-        ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
+        if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
+            bbnote "Use ENACT_DEV"
+            ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
+        else
+            bbnote "Use ENACT_DEV_LEGACY"
+            ${ENACT_DEV_LEGACY} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
+        fi
     fi
 
     if [ -f ${appdir}/snapshot_blob.bin ] ; then

@@ -22,64 +22,68 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "3.2.5"
+PV = "4.0.0"
 
-SRCREV_main = "8e86f0b41ef41e2b91651ff79d431627f7939d78"
-SRCREV_enact = "71ff6d98d9b9c74a52908f835b73cf583fe52e1c"
+SRCREV_main = "2c57bf461f8922eb9f0aff86a207f77698ab50a6"
+SRCREV_enact = "5b23abc4f462392fa1f62533c7bb9bfb42260654"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
 
 # Ordered dependency list for Moonstone; provides shrink-wrap style locking in of package versions
 WEBOS_ENACT_DEPENDENCIES ??= "\
-    classnames@2.2.6 \
+    asap@2.0.6 \
+    change-emitter@0.1.6 \
+    classnames@2.3.1 \
+    core-js@1.2.7 \
+    direction@1.0.4 \
+    dom-walk@0.1.2 \
+    encoding@0.1.13 \
+    fbjs@0.8.17 \
+    global@4.4.0 \
+    hoist-non-react-statics@2.5.5 \
+    iconv-lite@0.6.2 \
+    ilib@14.8.0 \
+    invariant@2.2.4 \
+    is-function@1.0.2 \
+    is-stream@1.1.0 \
+    isomorphic-fetch@2.2.1 \
     js-tokens@4.0.0 \
     loose-envify@1.4.0 \
-    invariant@2.2.4 \
+    min-document@2.19.0 \
+    node-fetch@1.7.3 \
     object-assign@4.1.1 \
-    react-is@16.13.1 \
+    parse-headers@2.0.3 \
+    process@0.11.10 \
+    promise@7.3.1 \
     prop-types@15.7.2 \
     ramda@0.24.1 \
-    react@16.13.1 \
-    scheduler@0.19.1 \
-    react-dom@16.13.1 \
-    change-emitter@0.1.6 \
-    core-js@1.2.7 \
-    safer-buffer@2.1.2 \
-    iconv-lite@0.6.2 \
-    encoding@0.1.13 \
-    is-stream@1.1.0 \
-    node-fetch@1.7.3 \
-    whatwg-fetch@3.4.0 \
-    isomorphic-fetch@2.2.1 \
-    asap@2.0.6 \
-    promise@7.3.1 \
-    setimmediate@1.0.5 \
-    ua-parser-js@0.7.21 \
-    fbjs@0.8.17 \
-    hoist-non-react-statics@2.5.5 \
-    symbol-observable@1.2.0 \
+    react@17.0.2 \
+    react-dom@17.0.2 \
+    react-is@17.0.2 \
     recompose@0.26.0 \
+    safer-buffer@2.1.2 \
+    scheduler@0.20.2 \
+    setimmediate@1.0.5 \
+    symbol-observable@1.2.0 \
+    ua-parser-js@0.7.28 \
     warning@4.0.3 \
-    dom-walk@0.1.2 \
-    min-document@2.19.0 \
-    process@0.5.2 \
-    global@4.3.2 \
-    is-function@1.0.2 \
-    parse-headers@2.0.3 \
+    whatwg-fetch@3.6.2 \
+    xhr@2.6.0 \
     xtend@4.0.2 \
-    xhr@2.5.0 \
-    ilib@14.6.2 \
-    direction@1.0.4 \
 "
 
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r8"
+PR = "r9"
 
-# Skip unneeded tasks
-do_configure[noexec] = "1"
+# Don't need to configure or compile anything for an enactjs app, but don't use
+# do_<task>[noexec] = "1" so that recipes that inherit can still override
+
+do_configure() {
+    :
+}
 
 do_compile() {
     cd ${S}
@@ -88,7 +92,7 @@ do_compile() {
 
     for LIB in core ui spotlight i18n webos ; do
         cd ${S}/enact/packages/$LIB
-        ${ENACT_NODE} ${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-typedef.js
+        ${ENACT_JSDOC_TO_TS}
     done
 
     cd ${S}/moonstone
@@ -101,21 +105,21 @@ do_compile() {
         sed -i -e "s/[, ]*url([^)]*.ttf['\"]*)[^,;]*//" styles/internal/fonts.less
     fi
 
-    ${ENACT_NODE} ${WEBOS_ENACTJS_TOOL_PATH}/node_binaries/enact-typedef.js
+    ${ENACT_JSDOC_TO_TS}
 
     cd ${S}
 
-    ${ENACT_NPM} pack --loglevel=error ./moonstone
-    ${ENACT_NPM} pack --loglevel=error ./enact/packages/core
-    ${ENACT_NPM} pack --loglevel=error ./enact/packages/ui
-    ${ENACT_NPM} pack --loglevel=error ./enact/packages/spotlight
-    ${ENACT_NPM} pack --loglevel=error ./enact/packages/i18n
-    ${ENACT_NPM} pack --loglevel=error ./enact/packages/webos
-    ${ENACT_NPM} pack --loglevel=error ${WEBOS_ENACT_DEPENDENCIES}
+    ${WEBOS_NPM_BIN} pack --loglevel=error ./moonstone
+    ${WEBOS_NPM_BIN} pack --loglevel=error ./enact/packages/core
+    ${WEBOS_NPM_BIN} pack --loglevel=error ./enact/packages/ui
+    ${WEBOS_NPM_BIN} pack --loglevel=error ./enact/packages/spotlight
+    ${WEBOS_NPM_BIN} pack --loglevel=error ./enact/packages/i18n
+    ${WEBOS_NPM_BIN} pack --loglevel=error ./enact/packages/webos
+    ${WEBOS_NPM_BIN} pack --loglevel=error ${WEBOS_ENACT_DEPENDENCIES}
 
     for ARCHIVE in $(find . -name "*.tgz") ; do
         tar --warning=no-unknown-keyword -xzf ${ARCHIVE} package/package.json
-        PKG=$(${ENACT_NODE} -p "require('./package/package.json').name")
+        PKG=$(${WEBOS_NODE_BIN} -p "require('./package/package.json').name")
         mkdir -p node_modules/${PKG}
         mv -f ${ARCHIVE} node_modules/${PKG}/package.tgz
     done

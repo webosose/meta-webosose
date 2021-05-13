@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-45_2626702fb11b3a6855dcebcde96ae2889d7889ae"
-PR = "r15"
+PR = "r16"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -31,8 +31,8 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 WEBOS_ENACTJS_PROJECT_PATH = "./samples/enact-based"
 WEBOS_ENACTJS_PACK_OVERRIDE = "\
-    ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} && \
-    ${ENACT_NODE} resbundler.js dist && \
+    ${ENACT_DEV_LEGACY} pack ${WEBOS_ENACTJS_PACK_OPTS} && \
+    ${WEBOS_NODE_BIN} resbundler.js dist && \
     rm -fr ./dist/resources && \
     rm -fr ./dist/node_modules/@enact/moonstone/resources && \
     cp -f webos-locale.js dist/webos-locale.js && \
@@ -41,7 +41,7 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
     cp -f background.js dist/ && \
     cp -f defaults.js dist/ && \
     cp -f manifest.json dist/ && \
-    ${ENACT_NODE} extract-inline.js ./dist \
+    ${WEBOS_NODE_BIN} extract-inline.js ./dist \
 "
 
 # Remove --production, because that causes
@@ -49,10 +49,9 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
 # Error: Cannot find module 'glob'
 WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional --verbose"
 
-WEBOS_NPM_BIN = "${ENACT_NPM}"
 do_compile_append() {
     ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
-    ${ENACT_NODE} ./scripts/cli.js transpile
+    ${WEBOS_NODE_BIN} ./scripts/cli.js transpile
 }
 
 install_acg_configuration() {
