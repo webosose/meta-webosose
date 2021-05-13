@@ -234,6 +234,8 @@ RDEPENDS_${PN}_append_webos = " \
     com.webos.app.imageviewer \
     com.webos.app.videoplayer \
     com.webos.service.swupdater \
+    gssdp \
+    gupnp \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_g-camera-pipeline} \

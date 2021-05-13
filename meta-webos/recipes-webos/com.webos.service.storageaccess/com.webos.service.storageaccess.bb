@@ -7,13 +7,13 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
                     file://oss-pkg-info.yaml;md5=13b5f44cefd7b1b0040a056eeddf6174"
 
-DEPENDS= "glib-2.0 luna-service2 pmloglib libpbnjson curl libgdrive"
+DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupnp"
 
 COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-9_033facab2fbe62bbd198ecc0c6252e79d89f4a40"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-11_73a74f8b5853d6df22ff6c532f20e72dca058c0f"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo

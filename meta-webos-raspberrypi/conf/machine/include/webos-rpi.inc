@@ -57,9 +57,12 @@ RPI_KERNEL_MODULES_append_raspberrypi4 = " \
     kernel-module-bcm2835-v4l2 \
     kernel-module-bnep \
     kernel-module-cdc-ether \
+    kernel-module-cifs \
     kernel-module-cmac \
     kernel-module-fixed \
     kernel-module-joydev \
+    kernel-module-libarc4 \
+    kernel-module-md4 \
     kernel-module-raspberrypi-hwmon \
     kernel-module-rpivid-mem \
     kernel-module-sch-fq-codel \
