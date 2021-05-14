@@ -1,0 +1,43 @@
+From 1b41c2eff3582a1115f7eceaf444e087012854eb Mon Sep 17 00:00:00 2001
+From: Rodrigo Dias Correa <rodrigo@correas.us>
+Date: Wed, 4 Nov 2020 01:55:38 -0300
+Subject: [PATCH] mbedtls: Fix build failure on gcc-11
+
+Function prototypes changed to use array parameters instead of
+pointers.
+
+Upstream-Status: Backport
+
+Signed-off-by: Rodrigo Dias Correa <rodrigo@correas.us>
+---
+ lib/mbedtls-2.24.0/library/ssl_tls.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/mbedtls-2.24.0/library/ssl_tls.c b/lib/mbedtls-2.24.0/library/ssl_tls.c
+index 7062d53b7..3d7e41eca 100644
+--- a/lib/mbedtls-2.24.0/library/ssl_tls.c
++++ b/lib/mbedtls-2.24.0/library/ssl_tls.c
+@@ -681,20 +681,20 @@ static void ssl_calc_finished_ssl( mbedtls_ssl_context *, unsigned char *, int )
+ #endif
+ 
+ #if defined(MBEDTLS_SSL_PROTO_TLS1) || defined(MBEDTLS_SSL_PROTO_TLS1_1)
+-static void ssl_calc_verify_tls( const mbedtls_ssl_context *, unsigned char *, size_t * );
++static void ssl_calc_verify_tls( const mbedtls_ssl_context *, unsigned char [36], size_t * );
+ static void ssl_calc_finished_tls( mbedtls_ssl_context *, unsigned char *, int );
+ #endif
+ 
+ #if defined(MBEDTLS_SSL_PROTO_TLS1_2)
+ #if defined(MBEDTLS_SHA256_C)
+ static void ssl_update_checksum_sha256( mbedtls_ssl_context *, const unsigned char *, size_t );
+-static void ssl_calc_verify_tls_sha256( const mbedtls_ssl_context *,unsigned char *, size_t * );
++static void ssl_calc_verify_tls_sha256( const mbedtls_ssl_context *,unsigned char [32], size_t * );
+ static void ssl_calc_finished_tls_sha256( mbedtls_ssl_context *,unsigned char *, int );
+ #endif
+ 
+ #if defined(MBEDTLS_SHA512_C)
+ static void ssl_update_checksum_sha384( mbedtls_ssl_context *, const unsigned char *, size_t );
+-static void ssl_calc_verify_tls_sha384( const mbedtls_ssl_context *, unsigned char *, size_t * );
++static void ssl_calc_verify_tls_sha384( const mbedtls_ssl_context *, unsigned char [48], size_t * );
+ static void ssl_calc_finished_tls_sha384( mbedtls_ssl_context *, unsigned char *, int );
+ #endif
+ #endif /* MBEDTLS_SSL_PROTO_TLS1_2 */
