@@ -2,7 +2,7 @@
 
 inherit webos_qmake5
 
-EXTENDPRAUTO_append = "webos61"
+EXTENDPRAUTO_append = "webos62"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -25,14 +25,6 @@ SRC_URI_append_class-target = " \
     file://0014-Fix-QQuickKeyNavigationAttached-issue.patch \
     file://0015-Avoid-crash-when-accessing-an-empty-QTextLine.patch \
     file://0016-Allow-Connections-to-handle-signals-using-JavaScript.patch \
-"
-
-# Upstream-Status: Inappropriate
-# Needed by Emulator
-inherit webos_machine_impl_dep
-SRC_URI_append_emulator = " \
-    file://9901-Revert-Fix-failing-assertion-in-the-GC-with-JIT.patch \
-    file://9902-Revert-Fix-failing-assertion-in-the-GC-with-the-JIT.patch \
 "
 
 # Supplement tool for qmllint
