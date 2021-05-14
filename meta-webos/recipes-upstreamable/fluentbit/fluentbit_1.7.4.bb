@@ -18,8 +18,8 @@ SECTION = "net"
 PR = "r0"
 PV = "1.7.4"
 
-SRCREV = "v${PV}"
-SRC_URI = "git://github.com/fluent/fluent-bit.git;nobranch=1"
+SRCREV = "d638a11725ecdaf683be6167709c4712559cde79"
+SRC_URI = "git://github.com/fluent/fluent-bit.git;branch=1.7"
 
 S = "${WORKDIR}/git"
 DEPENDS = "zlib bison-native flex-native"
