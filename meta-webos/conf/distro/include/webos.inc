@@ -84,6 +84,19 @@ EXTRA_WEBOS_WERROR:pn-webkitgtk = ""
 # mpich-3.4.1/src/mpl/src/sock/mpl_sockaddr.c:144:1: error: control reaches end of non-void function [-Werror=return-type]
 # http://gecko.lge.com/Errors/Details/126261
 EXTRA_WEBOS_WERROR:pn-mpich = ""
+# audit/3.0.1-r0/git/src/libev/ev_iouring.c:300:1: error: no return statement in function returning non-void [-Werror=return-type]
+# http://gecko.lge.com/Errors/Details/175789
+EXTRA_WEBOS_WERROR:pn-audit = ""
+# mtools-4.0.29/mk_direntry.c:308:1: error: control reaches end of non-void function [-Werror=return-type]
+# introduced in:
+# https://git.openembedded.org/openembedded-core/commit/?id=4d117a12bf0d25848c18ccda17e047b60af8bb67
+# http://gecko.lge.com/Errors/Details/186495
+EXTRA_WEBOS_WERROR:pn-mtools = ""
+# rocksdb/6.20.3-r0/git/utilities/transactions/lock/range/range_tree/lib/locktree/../portability/toku_time.h:181:1: error: control reaches end of non-void function [-Werror=return-type]
+# introduced in:
+# https://git.openembedded.org/meta-openembedded/commit/?id=912be5179c9e65fa33e9ca98c7f82d32ba31e827
+# http://gecko.lge.com/Errors/Details/192773
+EXTRA_WEBOS_WERROR:pn-rocksdb = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
