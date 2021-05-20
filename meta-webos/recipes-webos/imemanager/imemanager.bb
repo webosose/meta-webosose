@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
 RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
-WEBOS_VERSION = "1.0.0-21_d356761db2feffb5c7cab422107aa63caf7f1a21"
+WEBOS_VERSION = "1.0.0-22_13e9a9a7f4f1c755875abff714afd1550fb11a6a"
 PR = "r5"
 
 inherit webos_component
