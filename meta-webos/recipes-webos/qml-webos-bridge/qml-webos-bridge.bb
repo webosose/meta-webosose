@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 RDEPENDS_${PN} += "qml-webos-components"
 
-WEBOS_VERSION = "1.0.0-123_9906b4333d9166a4e964bc054439a75e8154bd3b"
+WEBOS_VERSION = "1.0.0-124_b245de2ea1eb464fbe7d6b23756c1eff3fb1ba80"
 PR = "r15"
 
 inherit webos_qmake5
