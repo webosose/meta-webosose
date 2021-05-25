@@ -9,10 +9,10 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost gtest pmtrace"
+DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost"
 
-WEBOS_VERSION = "2.0.0-17_7883c2516563d5224a9a8056d197a4d028aadf50"
-PR = "r12"
+WEBOS_VERSION = "2.0.0-18_8c9332daa3d0d8b492710d47dc7c7c8d7caefb49"
+PR = "r13"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -39,10 +39,6 @@ SRC_URI_append_qemux86 = " \
 # WEBOS_LTTNG_ENABLED = "0"
 EXTRA_OECMAKE += " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
 EXTRA_OECMAKE += "-DWEBOS_DISTRO_PRERELEASE:STRING='${WEBOS_DISTRO_PRERELEASE}'"
-
-# gtest option
-PACKAGES =+ "${PN}-tests"
-FILES_${PN}-tests = "${libexecdir}/tests/*"
 
 # http://caprica.lgsvl.com:8080/Errors/Details/1092091
 # bootd/2.0.0-142-r10/git/src/bootd/util/Logger.cpp:210:40: error: format not a string literal and no format arguments [-Werror=format-security]
