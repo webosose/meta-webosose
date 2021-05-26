@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 SUMMARY = "Palm's Better Native JSON library"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
-WEBOS_VERSION = "2.15.0-2_7669cac7d1466c685415ff4db38bf64c9ba68bbc"
+WEBOS_VERSION = "2.15.0-3_f6fd4f8e86fa5908be3e6491a4f38b33df71678a"
 PR = "r8"
 
 inherit webos_component
