@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos15"
+EXTENDPRAUTO_append = "webos16"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -24,6 +24,7 @@ SRC_URI += " \
     file://0016-Add-p2p-changes.patch \
     file://0017-Revert-storage-Remove-unused-__connman_storage_open_.patch \
     file://0018-Fix-crash-in-p2p-addservice-and-p2p-settethering.patch \
+    file://0019-Fix-connman-crash.patch \
 "
 
 do_install_append() {

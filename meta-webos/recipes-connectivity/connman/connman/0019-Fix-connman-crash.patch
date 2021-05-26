@@ -1,0 +1,56 @@
+From 1d9a421be1d0c3c97ee2d2e6a3e787f9bdbff542 Mon Sep 17 00:00:00 2001
+From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
+Date: Wed, 26 May 2021 17:24:34 +0530
+Subject: [PATCH] Fix connman crash
+
+:Release Notes:
+Fix connman crash when interface path length is zero
+
+:Detailed Notes:
+Connman crasing when path address is present and path lenght is zero.
+
+:Testing Performed:
+Build successfully.
+Ethrenet/wifi connection successfully.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[PLAT-143777] [RDX_CRASH][webos] /usr/sbin/connmand
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ gsupplicant/dbus.c       | 2 +-
+ gsupplicant/supplicant.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gsupplicant/dbus.c b/gsupplicant/dbus.c
+index c034737..c28b835 100644
+--- a/gsupplicant/dbus.c
++++ b/gsupplicant/dbus.c
+@@ -499,7 +499,7 @@ int supplicant_dbus_method_call(const char *path,
+ 	if (!connection)
+ 		return -EINVAL;
+ 
+-	if (!path || !interface || !method)
++	if (!path || (strlen(path) == 0)|| !interface || !method)
+ 		return -EINVAL;
+ 
+ 	method_call = g_try_new0(struct method_call_data, 1);
+diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
+index 6546ca9..59b02c2 100644
+--- a/gsupplicant/supplicant.c
++++ b/gsupplicant/supplicant.c
+@@ -6876,7 +6876,7 @@ static void interface_get_result(const char *error,
+ 	}
+ 
+ 	dbus_message_iter_get_basic(iter, &path);
+-	if (!path) {
++	if (!path || (strlen(path) == 0)) {
+ 		err = -EINVAL;
+ 		goto done;
+ 	}
+-- 
+2.26.0
+
