@@ -1,4 +1,4 @@
-From c36987db9f67f451b2569eb35337318c1e3eb7ca Mon Sep 17 00:00:00 2001
+From d3de903d6829bf5466249b6e9e6adbe70fa32d9c Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 7 Feb 2020 07:10:42 -0800
 Subject: [PATCH] implement drm_create_linear_prime_buffer
@@ -15,14 +15,14 @@ Signed-off-by: Martin Jansa <martin.jansa@lge.com>
  src/gbm/backends/dri/gbm_dri.c              |  1 +
  src/loader/loader_dri3_helper.c             |  1 +
  src/mesa/drivers/dri/i915/intel_screen.c    |  2 +-
- src/mesa/drivers/dri/i965/intel_screen.c    |  2 +-
+ src/mesa/drivers/dri/i965/brw_screen.c      |  2 +-
  11 files changed, 60 insertions(+), 12 deletions(-)
 
 diff --git a/include/GL/internal/dri_interface.h b/include/GL/internal/dri_interface.h
-index 39d5dd07533..11a6a230905 100644
+index 9b85e67ce49..2c6654e9010 100644
 --- a/include/GL/internal/dri_interface.h
 +++ b/include/GL/internal/dri_interface.h
-@@ -1585,6 +1585,7 @@ struct __DRIimageExtensionRec {
+@@ -1594,6 +1594,7 @@ struct __DRIimageExtensionRec {
      */
     __DRIimage *(*createImageFromFds)(__DRIscreen *screen,
                                       int width, int height, int fourcc,
@@ -31,10 +31,10 @@ index 39d5dd07533..11a6a230905 100644
                                       int *strides, int *offsets,
                                       void *loaderPrivate);
 diff --git a/src/egl/drivers/dri2/egl_dri2.c b/src/egl/drivers/dri2/egl_dri2.c
-index df5e3542a00..c869bd4f18b 100644
+index 0e48b965656..4072fd86ae8 100644
 --- a/src/egl/drivers/dri2/egl_dri2.c
 +++ b/src/egl/drivers/dri2/egl_dri2.c
-@@ -3177,7 +3177,7 @@ dri2_destroy_image_khr(_EGLDisplay *disp, _EGLImage *image)
+@@ -3180,7 +3180,7 @@ dri2_destroy_image_khr(_EGLDisplay *disp, _EGLImage *image)
  
  static void
  dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
@@ -43,7 +43,7 @@ index df5e3542a00..c869bd4f18b 100644
  {
     _EGLDisplay *disp = user_data;
     struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
-@@ -3198,6 +3198,7 @@ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
+@@ -3201,6 +3201,7 @@ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
                                                  buffer->width,
                                                  buffer->height,
                                                  buffer->format,
@@ -64,7 +64,7 @@ index b4782a013c9..2b400b8fa49 100644
    build_by_default : false,
  )
 diff --git a/src/egl/wayland/wayland-drm/wayland-drm.c b/src/egl/wayland/wayland-drm/wayland-drm.c
-index 51cdd2cb845..f35d47bd20b 100644
+index 29558ea910e..d330f647d04 100644
 --- a/src/egl/wayland/wayland-drm/wayland-drm.c
 +++ b/src/egl/wayland/wayland-drm/wayland-drm.c
 @@ -37,6 +37,8 @@
@@ -136,7 +136,7 @@ index 51cdd2cb845..f35d47bd20b 100644
  static void
  drm_authenticate(struct wl_client *client,
  		 struct wl_resource *resource, uint32_t id)
-@@ -191,8 +208,9 @@ drm_authenticate(struct wl_client *client,
+@@ -192,8 +209,9 @@ drm_authenticate(struct wl_client *client,
  static const struct wl_drm_interface drm_interface = {
  	drm_authenticate,
  	drm_create_buffer,
@@ -185,10 +185,10 @@ index eaf2654ab26..d6913d680ba 100644
  
  </protocol>
 diff --git a/src/gallium/frontends/dri/dri2.c b/src/gallium/frontends/dri/dri2.c
-index 5c935e74438..06e361cac60 100644
+index 59698719978..a7c360fb5e0 100644
 --- a/src/gallium/frontends/dri/dri2.c
 +++ b/src/gallium/frontends/dri/dri2.c
-@@ -1432,13 +1432,26 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
+@@ -1423,13 +1423,26 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
     return img;
  }
  
@@ -219,10 +219,10 @@ index 5c935e74438..06e361cac60 100644
  }
  
 diff --git a/src/gbm/backends/dri/gbm_dri.c b/src/gbm/backends/dri/gbm_dri.c
-index b5634741554..9da1e3f56d2 100644
+index 751b2e56497..09051b1f035 100644
 --- a/src/gbm/backends/dri/gbm_dri.c
 +++ b/src/gbm/backends/dri/gbm_dri.c
-@@ -953,6 +953,7 @@ gbm_dri_bo_import(struct gbm_device *gbm,
+@@ -995,6 +995,7 @@ gbm_dri_bo_import(struct gbm_device *gbm,
                                               fd_data->width,
                                               fd_data->height,
                                               fourcc,
@@ -231,7 +231,7 @@ index b5634741554..9da1e3f56d2 100644
                                               &stride, &offset,
                                               NULL);
 diff --git a/src/loader/loader_dri3_helper.c b/src/loader/loader_dri3_helper.c
-index ccf8d1795e7..9cd2b1b9daf 100644
+index 6c4b704ae5b..5c36a5d19e1 100644
 --- a/src/loader/loader_dri3_helper.c
 +++ b/src/loader/loader_dri3_helper.c
 @@ -1689,6 +1689,7 @@ loader_dri3_create_image(xcb_connection_t *c,
@@ -243,7 +243,7 @@ index ccf8d1795e7..9cd2b1b9daf 100644
                                              &stride, &offset, loaderPrivate);
     close(fds[0]);
 diff --git a/src/mesa/drivers/dri/i915/intel_screen.c b/src/mesa/drivers/dri/i915/intel_screen.c
-index 296f24eadd0..d86213350a0 100644
+index 33ca0321722..8e87723608d 100644
 --- a/src/mesa/drivers/dri/i915/intel_screen.c
 +++ b/src/mesa/drivers/dri/i915/intel_screen.c
 @@ -586,7 +586,7 @@ intel_create_image_from_names(__DRIscreen *screen,
@@ -255,16 +255,16 @@ index 296f24eadd0..d86213350a0 100644
                              int *fds, int num_fds, int *strides, int *offsets,
                              void *loaderPrivate)
  {
-diff --git a/src/mesa/drivers/dri/i965/intel_screen.c b/src/mesa/drivers/dri/i965/intel_screen.c
-index 4492d43c040..0d85fd6206a 100644
---- a/src/mesa/drivers/dri/i965/intel_screen.c
-+++ b/src/mesa/drivers/dri/i965/intel_screen.c
-@@ -1241,7 +1241,7 @@ intel_create_image_from_fds_common(__DRIscreen *dri_screen,
+diff --git a/src/mesa/drivers/dri/i965/brw_screen.c b/src/mesa/drivers/dri/i965/brw_screen.c
+index 23eb5f57fce..9a9d87a1cec 100644
+--- a/src/mesa/drivers/dri/i965/brw_screen.c
++++ b/src/mesa/drivers/dri/i965/brw_screen.c
+@@ -1258,7 +1258,7 @@ brw_create_image_from_fds_common(__DRIscreen *dri_screen,
  
  static __DRIimage *
- intel_create_image_from_fds(__DRIscreen *dri_screen,
--                            int width, int height, int fourcc,
-+                            int width, int height, int fourcc, uint64_t modifier,
-                             int *fds, int num_fds, int *strides, int *offsets,
-                             void *loaderPrivate)
+ brw_create_image_from_fds(__DRIscreen *dri_screen,
+-                          int width, int height, int fourcc,
++                          int width, int height, int fourcc, uint64_t modifier,
+                           int *fds, int num_fds, int *strides, int *offsets,
+                           void *loaderPrivate)
  {
