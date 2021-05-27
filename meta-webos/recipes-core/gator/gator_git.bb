@@ -9,9 +9,9 @@ LIC_FILES_CHKSUM = "file://driver/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 SRCREV = "3ff46fedd4d097813156069edab9704cc65e0a42"
 PV = "6.7+git${SRCPV}"
-PR = "r3"
+PR = "r4"
 
-SRC_URI = "git://github.com/ARM-software/gator.git;protocol=http;branch=master \
+SRC_URI = "git://github.com/ARM-software/gator.git;protocol=http;branch=main \
            file://0001-disable-stripping-debug-info.patch \
            file://0001-gator_main.c-gator_backtrace.c-fix-build-with-linux-.patch \
            file://Mali_events_disable.patch \
