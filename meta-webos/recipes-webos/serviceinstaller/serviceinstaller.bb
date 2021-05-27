@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 SUMMARY = "An extensible object oriented component used to add service components to webOS"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 "
 DEPENDS = "librolegen glib-2.0 libpbnjson luna-service2"
 
-WEBOS_VERSION = "2.0.0-2_d81b72763dba70e23ffd59ba348d69a0dd9fb0db"
+WEBOS_VERSION = "2.0.0-3_799c30fc706728d5e0924502bdd0733f25090a2f"
 PR = "r4"
 
 inherit webos_component
