@@ -6,26 +6,28 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=790420e31fa17284afec484d5b2ad2d8"
 
-DEPENDS = "virtual/webruntime qtbase luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust qt-features-webos"
+DEPENDS = "virtual/webruntime luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust gtest jsoncpp boost"
 PROVIDES = "webappmanager-webos"
 
 # webappmgr's upstart conf expects to be able to LD_PRELOAD ptmalloc3
 RDEPENDS_${PN} = "ptmalloc3"
 # webappmgr's upstart conf expects to have ionice available. Under OE-core, this is supplied by util-linux.
 RDEPENDS_${PN} += "util-linux"
-RDEPENDS_${PN} += "qtbase-plugins"
 
 #  webappmgr2's upstart conf expects setcpushares-task to be available
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-52_de185eef268ca76fa05f0ea26cbf1501f295318b"
-PR = "r39"
+WEBOS_VERSION = "1.0.2-53_6ab3b45384b4c7746ee64bdf0fe847829352e847"
+PR = "r40"
+
+WAM_BUILD_SYSTEM = "webos_qmake6"
+WAM_BUILD_SYSTEM_webos = "webos_cmake"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
 inherit webos_machine_dep
-inherit webos_qmake6
+inherit ${WAM_BUILD_SYSTEM}
 inherit webos_lttng
 inherit webos_distro_variant_dep
 inherit webos_distro_dep
@@ -40,19 +42,14 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
 SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
 
-OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
-
-WEBOS_QMAKE_TARGET = "${MACHINE}"
-
 # Set the location of chromium headers
-EXTRA_QMAKEVARS_PRE += "CHROMIUM_SRC_DIR=${STAGING_INCDIR}/${PREFERRED_PROVIDER_virtual/webruntime}"
+EXTRA_OECMAKE += "-DCHROMIUM_SRC_DIR=${STAGING_INCDIR}/${PREFERRED_PROVIDER_virtual/webruntime}"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
-EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CONFIG+=lttng', '', d)}"
+EXTRA_OECMAKE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
 
-EXTRA_QMAKEVARS_PRE += "DEFINES+=WAM_DATA_DIR=\"\"${webos_cryptofsdir}/.webappmanager/\"\""
-EXTRA_QMAKEVARS_PRE += "PREFIX=/usr"
-EXTRA_QMAKEVARS_PRE += "PLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '_')}"
+EXTRA_OECMAKE += "-DWAM_DATA_DIR=\"\"${webos_cryptofsdir}/.webappmanager/\"\""
+EXTRA_OECMAKE += "-DPLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '_')}"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
@@ -74,14 +71,11 @@ PLATFORM_DECODER_ENABLED ?= "true"
 # Flag to control runtime flag for platform encoder
 PLATFORM_ENCODER_ENABLED ?= "true"
 
-do_configure_prepend() {
+do_configure_append() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
       cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
     fi
     cp ${S}/files/launch/systemd/webapp-mgr.service ${B}/webapp-mgr.service
-}
-
-do_configure_append() {
     sed -i -e "s/NETWORK_STABLE_TIMEOUT/NETWORK_QUIET_TIMEOUT/gI" -e "s/network-stable-timeout/network-quiet-timeout/gI" ${B}/webapp-mgr.sh
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-in-process-stack-traces \\' ${B}/webapp-mgr.sh
     sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
@@ -143,6 +137,9 @@ do_install_append() {
     install -v -m 755 ${B}/webapp-mgr.sh ${D}${SYSTEMD_INSTALL_PATH}/scripts/webapp-mgr.sh
     cp -vf ${WAM_ERROR_SCRIPTS_PATH}/* ${D}${datadir}/localization/${BPN}/
 }
+
+PACKAGES =+ "${PN}-tests"
+FILES_${PN}-tests = "${webos_testsdir}/* ${libexecdir}/tests/*"
 
 FILES_${PN} += " \
     ${sysconfdir}/pmlog.d \
