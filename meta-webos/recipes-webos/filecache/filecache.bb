@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "jemalloc luna-service2 db8 glibmm boost libsandbox glib-2.0 libsigc++-2.0"
 
-WEBOS_VERSION = "2.0.1-7_cbd82bd0bdd0e6d7702f0b69275de0763478741b"
+WEBOS_VERSION = "2.0.1-8_8718628da5573854e2642126fede9addd65eb1a7"
 PR = "r5"
 
 inherit webos_component
