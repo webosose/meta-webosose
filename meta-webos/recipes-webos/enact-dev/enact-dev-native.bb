@@ -12,12 +12,12 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 DEPENDS_append = " nodejs-native coreutils-native"
 
 inherit webos_enact_repo
-inherit native
 inherit webos_npm_env
+inherit native
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r9"
+PR = "r10"
 
 S = "${WORKDIR}/git"
 
