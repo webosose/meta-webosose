@@ -267,8 +267,10 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
 # These packages that are installed in the qemux86 image only.
 RRECOMMENDS_${PN}_append_qemux86 = " \
     fuse-utils \
+    kernel-module-ac97-bus \
     kernel-module-bluetooth \
     kernel-module-btbcm \
+    kernel-module-btintel \
     kernel-module-btusb \
     kernel-module-configs \
     kernel-module-evdev \
@@ -276,11 +278,15 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
     kernel-module-hci-uart \
     kernel-module-media \
     kernel-module-rfcomm \
+    kernel-module-snd-ac97-codec \
+    kernel-module-snd-intel8x0 \
+    kernel-module-snd-pcm \
     kernel-module-snd-usb-audio \
     kernel-module-snd-usbmidi-lib \
     kernel-module-uinput \
     kernel-module-uvcvideo \
     kernel-module-v4l2-common \
+    kernel-module-vboxguest \
     kernel-module-videobuf2-core \
     kernel-module-videobuf2-memops \
     kernel-module-videobuf2-v4l2 \
@@ -293,15 +299,12 @@ RDEPENDS_${PN}_append_qemux86 = " \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.camera \
+    com.webos.service.hfp \
     com.webos.service.location \
     com.webos.service.mediaindexer \
     com.webos.service.storageaccess \
     dhcp-client \
-    kernel-module-ac97-bus \
-    kernel-module-snd-ac97-codec \
-    kernel-module-snd-intel8x0 \
-    kernel-module-snd-pcm \
-    kernel-module-vboxguest \
+    ofono \
     v4l-utils \
     vmwgfx-layout \
 "
