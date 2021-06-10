@@ -11,7 +11,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
-WEBOS_VERSION = "2.15.0-3_f6fd4f8e86fa5908be3e6491a4f38b33df71678a"
+WEBOS_VERSION = "2.15.0-4_bcd35ead52db4153cef68bb6e4ef0f7fc7f51510"
 PR = "r8"
 
 inherit webos_component
