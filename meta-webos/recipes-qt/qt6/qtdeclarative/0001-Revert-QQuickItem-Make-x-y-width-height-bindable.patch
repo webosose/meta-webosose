@@ -1,0 +1,632 @@
+From d77344c3648a44ac391391044c17fe3200013174 Mon Sep 17 00:00:00 2001
+From: Hyungchan Kim <hyungchan2.kim@lge.com>
+Date: Tue, 29 Jun 2021 19:21:21 +0900
+Subject: [PATCH] Revert "QQuickItem: Make x/y/width/height bindable"
+
+This reverts commit 4017505cbcd553f25779a5f449c13863b2c0622c.
+It causes crash in qemux86 build.
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+0xb5d736e6 in QQmlJavaScriptExpression::evaluate(void**, QMetaType const*, int) () from /usr/lib/libQt6Qml.so.6
+
+Upstream-Status: Inappropriate [workaround]
+---
+ src/quick/items/qquickitem.cpp                | 177 ++++--------------
+ src/quick/items/qquickitem.h                  |  13 +-
+ src/quick/items/qquickitem_p.h                |  17 +-
+ .../auto/qml/qqmlbinding/tst_qqmlbinding.cpp  |   4 +-
+ tests/auto/qml/qqmlinfo/tst_qqmlinfo.cpp      |   2 +-
+ tests/auto/quick/qquickitem2/CMakeLists.txt   |   2 -
+ .../auto/quick/qquickitem2/tst_qquickitem.cpp |  33 +---
+ .../tst_qquickmultipointtoucharea.cpp         |  12 +-
+ 8 files changed, 52 insertions(+), 208 deletions(-)
+
+diff --git a/src/quick/items/qquickitem.cpp b/src/quick/items/qquickitem.cpp
+index ff269363bb..14a00cfe64 100644
+--- a/src/quick/items/qquickitem.cpp
++++ b/src/quick/items/qquickitem.cpp
+@@ -3102,15 +3102,6 @@ Motifies \a t with this items local transform relative to its parent.
+ */
+ void QQuickItemPrivate::itemToParentTransform(QTransform &t) const
+ {
+-    /* Read the current x and y values. As this is an internal method,
+-       we don't care about it being usable in bindings. Instead, we
+-       care about performance here, and thus we read the value with
+-       valueBypassingBindings. This avoids any checks whether we are
+-       in a binding (which sholdn't be too expensive, but can add up).
+-    */
+-
+-    qreal x = this->x.valueBypassingBindings();
+-    qreal y = this->y.valueBypassingBindings();
+     if (x || y)
+         t.translate(x, y);
+ 
+@@ -3793,16 +3784,14 @@ void QQuickItem::geometryChange(const QRectF &newGeometry, const QRectF &oldGeom
+         }
+     }
+ 
+-    // The notify method takes care of emitting the signal, and also notifies any
+-    // property observers.
+     if (change.xChange())
+-        d->x.notify();
++        emit xChanged();
+     if (change.yChange())
+-        d->y.notify();
++        emit yChanged();
+     if (change.widthChange())
+-        d->width.notify();
++        emit widthChanged();
+     if (change.heightChange())
+-        d->height.notify();
++        emit heightChanged();
+ #if QT_CONFIG(accessibility)
+     if (QAccessible::isActive()) {
+         if (QObject *acc = QQuickAccessibleAttached::findAccessible(this)) {
+@@ -6778,16 +6767,6 @@ QPointF QQuickItem::position() const
+ void QQuickItem::setX(qreal v)
+ {
+     Q_D(QQuickItem);
+-    /* There are two ways in which this function might be called:
+-       a) Either directly by the user, or
+-       b) when a binding has evaluated to a new value and it writes
+-          the value back
+-       In the first case, we want to remove an existing binding, in
+-       the second case, we don't want to remove the binding which
+-       just wrote the value.
+-       removeBindingUnlessInWrapper takes care of this.
+-     */
+-    d->x.removeBindingUnlessInWrapper();
+     if (qt_is_nan(v))
+         return;
+     if (d->x == v)
+@@ -6798,14 +6777,13 @@ void QQuickItem::setX(qreal v)
+ 
+     d->dirty(QQuickItemPrivate::Position);
+ 
+-    geometryChange(QRectF(v, d->y, d->width, d->height),
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
+                    QRectF(oldx, d->y, d->width, d->height));
+ }
+ 
+ void QQuickItem::setY(qreal v)
+ {
+     Q_D(QQuickItem);
+-    d->y.removeBindingUnlessInWrapper();
+     if (qt_is_nan(v))
+         return;
+     if (d->y == v)
+@@ -6816,9 +6794,7 @@ void QQuickItem::setY(qreal v)
+ 
+     d->dirty(QQuickItemPrivate::Position);
+ 
+-    // we use v instead of d->y, as that avoid a method call
+-    // and we have v anyway in scope
+-    geometryChange(QRectF(d->x, v, d->width, d->height),
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
+                    QRectF(d->x, oldy, d->width, d->height));
+ }
+ 
+@@ -6834,21 +6810,8 @@ void QQuickItem::setPosition(const QPointF &pos)
+     qreal oldx = d->x;
+     qreal oldy = d->y;
+ 
+-    /* This preserves the bindings, because that was what the code used to do
+-       The effect of this is that you can have
+-       Item {
+-            Rectangle {
+-                x: someValue; y: someValue
+-                DragHandler {}
+-            }
+-       }
+-       and you can move the rectangle around; once someValue changes, the position gets
+-       reset again (even when a drag is currently ongoing).
+-       Whether we want this is up to discussion.
+-    */
+-
+-    d->x.setValueBypassingBindings(pos.x()); //TODO: investigate whether to break binding here or not
+-    d->y.setValueBypassingBindings(pos.y());
++    d->x = pos.x();
++    d->y = pos.y();
+ 
+     d->dirty(QQuickItemPrivate::Position);
+ 
+@@ -6856,19 +6819,6 @@ void QQuickItem::setPosition(const QPointF &pos)
+                    QRectF(oldx, oldy, d->width, d->height));
+ }
+ 
+-/* The bindable methods return an object which supports inspection (hasBinding) and
+-   modification (setBinding, removeBinding) of the properties bindable state.
+-*/
+-QBindable<qreal> QQuickItem::bindableX()
+-{
+-    return QBindable<qreal>(&d_func()->x);
+-}
+-
+-QBindable<qreal> QQuickItem::bindableY()
+-{
+-    return QBindable<qreal>(&d_func()->y);
+-}
+-
+ /*!
+     \property QQuickItem::width
+ 
+@@ -6883,7 +6833,6 @@ qreal QQuickItem::width() const
+ void QQuickItem::setWidth(qreal w)
+ {
+     Q_D(QQuickItem);
+-    d->width.removeBindingUnlessInWrapper();
+     if (qt_is_nan(w))
+         return;
+ 
+@@ -6896,14 +6845,13 @@ void QQuickItem::setWidth(qreal w)
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    geometryChange(QRectF(d->x, d->y, w, d->height),
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
+                    QRectF(d->x, d->y, oldWidth, d->height));
+ }
+ 
+ void QQuickItem::resetWidth()
+ {
+     Q_D(QQuickItem);
+-    d->width.takeBinding();
+     d->widthValid = false;
+     setImplicitWidth(implicitWidth());
+ }
+@@ -6935,11 +6883,6 @@ qreal QQuickItem::implicitWidth() const
+     return d->getImplicitWidth();
+ }
+ 
+-QBindable<qreal> QQuickItem::bindableWidth()
+-{
+-    return QBindable<qreal>(&d_func()->width);
+-}
+-
+ /*!
+     \qmlproperty real QtQuick::Item::implicitWidth
+     \qmlproperty real QtQuick::Item::implicitHeight
+@@ -7013,27 +6956,21 @@ void QQuickItem::setImplicitWidth(qreal w)
+     Q_D(QQuickItem);
+     bool changed = w != d->implicitWidth;
+     d->implicitWidth = w;
+-    // this uses valueBypassingBindings simply to avoid repeated "am I in a binding" checks
+-    if (d->width.valueBypassingBindings() == w || widthValid()) {
++    if (d->width == w || widthValid()) {
+         if (changed)
+             d->implicitWidthChanged();
+-        if (d->width.valueBypassingBindings() == w || widthValid())
++        if (d->width == w || widthValid())
+             return;
+         changed = false;
+     }
+ 
+-    qreal oldWidth = d->width.valueBypassingBindings();
+-    Q_ASSERT(!d->width.hasBinding());
++    qreal oldWidth = d->width;
+     d->width = w;
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    qreal x = d->x.valueBypassingBindings();
+-    qreal y = d->y.valueBypassingBindings();
+-    qreal width = w;
+-    qreal height = d->height.valueBypassingBindings();
+-    geometryChange(QRectF(x, y, width, height),
+-                   QRectF(x, y, oldWidth, height));
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
++                   QRectF(d->x, d->y, oldWidth, d->height));
+ 
+     if (changed)
+         d->implicitWidthChanged();
+@@ -7045,24 +6982,7 @@ void QQuickItem::setImplicitWidth(qreal w)
+ bool QQuickItem::widthValid() const
+ {
+     Q_D(const QQuickItem);
+-    /* Logic: The width is valid if we assigned a value
+-       or a binding to it. Note that a binding evaluation to
+-       undefined (and thus calling resetWidth) is detached [1];
+-       hasBinding will thus return false for it, which is
+-       what we want here, as resetting width should mean that
+-       width is invalid (until the binding evaluates to a
+-       non-undefined value again).
+-
+-       [1]: A detached binding is a binding which is not set on a property.
+-       In the case of QQmlPropertyBinding and resettable properties, it
+-       still gets reevaluated when it was detached due to the binding
+-       returning undefined, and it gets re-attached, once the binding changes
+-       to a non-undefined value (unless another binding has beenset in the
+-       meantime).
+-       See QQmlPropertyBinding::isUndefined and handleUndefinedAssignment
+-    */
+-
+-    return d->widthValid || d->width.hasBinding();
++    return d->widthValid;
+ }
+ 
+ /*!
+@@ -7079,10 +6999,6 @@ qreal QQuickItem::height() const
+ void QQuickItem::setHeight(qreal h)
+ {
+     Q_D(QQuickItem);
+-    // Note that we call removeUnlessInWrapper before returning in the
+-    // NaN and equal value cases; that ensures that an explicit setHeight
+-    // always removes the binding
+-    d->height.removeBindingUnlessInWrapper();
+     if (qt_is_nan(h))
+         return;
+ 
+@@ -7095,17 +7011,13 @@ void QQuickItem::setHeight(qreal h)
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    geometryChange(QRectF(d->x, d->y, d->width, h),
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
+                    QRectF(d->x, d->y, d->width, oldHeight));
+ }
+ 
+ void QQuickItem::resetHeight()
+ {
+     Q_D(QQuickItem);
+-    // using takeBinding, we remove any existing binding from the
+-    // property, but preserve the existing value (and avoid some overhead
+-    // compared to calling setHeight(height())
+-    d->height.takeBinding();
+     d->heightValid = false;
+     setImplicitHeight(implicitHeight());
+ }
+@@ -7135,36 +7047,26 @@ qreal QQuickItem::implicitHeight() const
+     return d->getImplicitHeight();
+ }
+ 
+-QBindable<qreal> QQuickItem::bindableHeight()
+-{
+-    return QBindable<qreal>(&d_func()->height);
+-}
+-
+ void QQuickItem::setImplicitHeight(qreal h)
+ {
+     Q_D(QQuickItem);
+     bool changed = h != d->implicitHeight;
+     d->implicitHeight = h;
+-    if (d->height.valueBypassingBindings() == h || heightValid()) {
++    if (d->height == h || heightValid()) {
+         if (changed)
+             d->implicitHeightChanged();
+-        if (d->height.valueBypassingBindings() == h || heightValid())
++        if (d->height == h || heightValid())
+             return;
+         changed = false;
+     }
+ 
+-    qreal oldHeight = d->height.valueBypassingBindings();
+-    Q_ASSERT(!d->height.hasBinding());
++    qreal oldHeight = d->height;
+     d->height = h;
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    qreal x = d->x.valueBypassingBindings();
+-    qreal y = d->y.valueBypassingBindings();
+-    qreal width = d->width.valueBypassingBindings();
+-    qreal height = d->height.valueBypassingBindings();
+-    geometryChange(QRectF(x, y, width, height),
+-                   QRectF(x, y, width, oldHeight));
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
++                   QRectF(d->x, d->y, d->width, oldHeight));
+ 
+     if (changed)
+         d->implicitHeightChanged();
+@@ -7184,40 +7086,32 @@ void QQuickItem::setImplicitSize(qreal w, qreal h)
+ 
+     bool wDone = false;
+     bool hDone = false;
+-    qreal width = d->width.valueBypassingBindings();
+-    qreal height = d->height.valueBypassingBindings();
+-    if (width == w || widthValid()) {
++    if (d->width == w || widthValid()) {
+         if (wChanged)
+             d->implicitWidthChanged();
+-        wDone = width == w || widthValid();
++        wDone = d->width == w || widthValid();
+         wChanged = false;
+     }
+-    if (height == h || heightValid()) {
++    if (d->height == h || heightValid()) {
+         if (hChanged)
+             d->implicitHeightChanged();
+-        hDone = height == h || heightValid();
++        hDone = d->height == h || heightValid();
+         hChanged = false;
+     }
+     if (wDone && hDone)
+         return;
+ 
+-    qreal oldWidth = width;
+-    qreal oldHeight = height;
+-    if (!wDone) {
+-        width = w;
++    qreal oldWidth = d->width;
++    qreal oldHeight = d->height;
++    if (!wDone)
+         d->width = w;
+-    }
+-    if (!hDone) {
+-        height = h;
++    if (!hDone)
+         d->height = h;
+-    }
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+-    qreal x = d->x.valueBypassingBindings();
+-    qreal y = d->y.valueBypassingBindings();
+-    geometryChange(QRectF(x, y, width, height),
+-                   QRectF(x, y, oldWidth, oldHeight));
++    geometryChange(QRectF(d->x, d->y, d->width, d->height),
++                   QRectF(d->x, d->y, oldWidth, oldHeight));
+ 
+     if (!wDone && wChanged)
+         d->implicitWidthChanged();
+@@ -7231,7 +7125,7 @@ void QQuickItem::setImplicitSize(qreal w, qreal h)
+ bool QQuickItem::heightValid() const
+ {
+     Q_D(const QQuickItem);
+-    return d->heightValid || d->height.hasBinding();
++    return d->heightValid;
+ }
+ 
+ /*!
+@@ -7253,9 +7147,6 @@ QSizeF QQuickItem::size() const
+     \since 5.10
+ 
+     Sets the size of the item to \a size.
+-    This methods preserves any existing binding on width and height;
+-    thus any change that triggers the binding to execute again will
+-    override the set values.
+ 
+     \sa size, setWidth, setHeight
+  */
+@@ -7270,8 +7161,8 @@ void QQuickItem::setSize(const QSizeF &size)
+ 
+     qreal oldHeight = d->height;
+     qreal oldWidth = d->width;
+-    d->height.setValueBypassingBindings(size.height());
+-    d->width.setValueBypassingBindings(size.width());
++    d->height = size.height();
++    d->width = size.width();
+ 
+     d->dirty(QQuickItemPrivate::Size);
+ 
+diff --git a/src/quick/items/qquickitem.h b/src/quick/items/qquickitem.h
+index 6a3a5db921..fd600f79d0 100644
+--- a/src/quick/items/qquickitem.h
++++ b/src/quick/items/qquickitem.h
+@@ -46,7 +46,6 @@
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QList>
+-#include <QtCore/qproperty.h>
+ #include <QtGui/qevent.h>
+ #include <QtGui/qfont.h>
+ #include <QtGui/qaccessible.h>
+@@ -106,11 +105,11 @@ class Q_QUICK_EXPORT QQuickItem : public QObject, public QQmlParserStatus
+     Q_PRIVATE_PROPERTY(QQuickItem::d_func(), QQmlListProperty<QObject> resources READ resources DESIGNABLE false)
+     Q_PRIVATE_PROPERTY(QQuickItem::d_func(), QQmlListProperty<QQuickItem> children READ children NOTIFY childrenChanged DESIGNABLE false)
+ 
+-    Q_PROPERTY(qreal x READ x WRITE setX NOTIFY xChanged BINDABLE bindableX FINAL)
+-    Q_PROPERTY(qreal y READ y WRITE setY NOTIFY yChanged BINDABLE bindableY FINAL)
++    Q_PROPERTY(qreal x READ x WRITE setX NOTIFY xChanged FINAL)
++    Q_PROPERTY(qreal y READ y WRITE setY NOTIFY yChanged FINAL)
+     Q_PROPERTY(qreal z READ z WRITE setZ NOTIFY zChanged FINAL)
+-    Q_PROPERTY(qreal width READ width WRITE setWidth NOTIFY widthChanged RESET resetWidth BINDABLE bindableWidth FINAL)
+-    Q_PROPERTY(qreal height READ height WRITE setHeight NOTIFY heightChanged RESET resetHeight BINDABLE bindableHeight FINAL)
++    Q_PROPERTY(qreal width READ width WRITE setWidth NOTIFY widthChanged RESET resetWidth FINAL)
++    Q_PROPERTY(qreal height READ height WRITE setHeight NOTIFY heightChanged RESET resetHeight FINAL)
+ 
+     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity NOTIFY opacityChanged FINAL)
+     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
+@@ -234,22 +233,18 @@ public:
+     void setX(qreal);
+     void setY(qreal);
+     void setPosition(const QPointF &);
+-    QBindable<qreal> bindableX();
+-    QBindable<qreal> bindableY();
+ 
+     qreal width() const;
+     void setWidth(qreal);
+     void resetWidth();
+     void setImplicitWidth(qreal);
+     qreal implicitWidth() const;
+-    QBindable<qreal> bindableWidth();
+ 
+     qreal height() const;
+     void setHeight(qreal);
+     void resetHeight();
+     void setImplicitHeight(qreal);
+     qreal implicitHeight() const;
+-    QBindable<qreal> bindableHeight();
+ 
+     QSizeF size() const;
+     void setSize(const QSizeF &size);
+diff --git a/src/quick/items/qquickitem_p.h b/src/quick/items/qquickitem_p.h
+index de6bb4aedd..99cd3a3269 100644
+--- a/src/quick/items/qquickitem_p.h
++++ b/src/quick/items/qquickitem_p.h
+@@ -59,7 +59,6 @@
+ #include <QtQuick/private/qquickstate_p.h>
+ #include <QtQuick/private/qquickpaletteproviderprivatebase_p.h>
+ #include <QtQuick/private/qquickwindow_p.h>
+-#include <QtCore/private/qproperty_p.h>
+ 
+ #if QT_CONFIG(quick_shadereffect)
+ #include <QtQuick/private/qquickshadereffectsource_p.h>
+@@ -563,18 +562,10 @@ public:
+ 
+     static bool canAcceptTabFocus(QQuickItem *item);
+ 
+-    void setX(qreal x) {q_func()->setX(x);}
+-    void xChanged() {q_func()->xChanged();}
+-    Q_OBJECT_COMPAT_PROPERTY(QQuickItemPrivate, qreal, x, &QQuickItemPrivate::setX, &QQuickItemPrivate::xChanged);
+-    void setY(qreal y) {q_func()->setY(y);}
+-    void yChanged() {q_func()->yChanged();}
+-    Q_OBJECT_COMPAT_PROPERTY(QQuickItemPrivate, qreal, y, &QQuickItemPrivate::setY, &QQuickItemPrivate::yChanged);
+-    void setWidth(qreal width) {q_func()->setWidth(width);}
+-    void widthChanged() {q_func()->widthChanged();}
+-    Q_OBJECT_COMPAT_PROPERTY(QQuickItemPrivate, qreal, width, &QQuickItemPrivate::setWidth, &QQuickItemPrivate::widthChanged);
+-    void setHeight(qreal height) {q_func()->setHeight(height);}
+-    void heightChanged() {q_func()->heightChanged();}
+-    Q_OBJECT_COMPAT_PROPERTY(QQuickItemPrivate, qreal, height, &QQuickItemPrivate::setHeight, &QQuickItemPrivate::heightChanged);
++    qreal x;
++    qreal y;
++    qreal width;
++    qreal height;
+     qreal implicitWidth;
+     qreal implicitHeight;
+ 
+diff --git a/tests/auto/qml/qqmlbinding/tst_qqmlbinding.cpp b/tests/auto/qml/qqmlbinding/tst_qqmlbinding.cpp
+index c0c96ca6e5..bc1d86980f 100644
+--- a/tests/auto/qml/qqmlbinding/tst_qqmlbinding.cpp
++++ b/tests/auto/qml/qqmlbinding/tst_qqmlbinding.cpp
+@@ -262,8 +262,8 @@ void tst_qqmlbinding::restoreBindingWithLoop()
+     QCOMPARE(myItem->x(), qreal(88));
+ 
+     //original binding restored
+-    QString warning = c.url().toString() + QLatin1String(R"(:\d+:\d+: QML Rectangle: Binding loop detected for property "x")");
+-    QTest::ignoreMessage(QtWarningMsg, QRegularExpression(warning));
++    QString warning = c.url().toString() + QLatin1String(":9:5: QML Rectangle: Binding loop detected for property \"x\"");
++    QTest::ignoreMessage(QtWarningMsg, qPrintable(warning));
+     rect->setProperty("activateBinding", false);
+     QCOMPARE(myItem->x(), qreal(88 + 100)); //if loop handling changes this could be 90 + 100
+ 
+diff --git a/tests/auto/qml/qqmlinfo/tst_qqmlinfo.cpp b/tests/auto/qml/qqmlinfo/tst_qqmlinfo.cpp
+index 7b7a12ee1b..bb96ba319c 100644
+--- a/tests/auto/qml/qqmlinfo/tst_qqmlinfo.cpp
++++ b/tests/auto/qml/qqmlinfo/tst_qqmlinfo.cpp
+@@ -242,7 +242,7 @@ void tst_qqmlinfo::attachedObject()
+     QVERIFY(warningSpy.isValid());
+ 
+     const QString qmlBindingLoopMessage = "QML Rectangle: Binding loop detected for property \"width\"";
+-    const QString qmlBindingLoopMessageFull = component.url().toString() + ":8:9: " + qmlBindingLoopMessage;
++    const QString qmlBindingLoopMessageFull = component.url().toString() + ":7:5: " + qmlBindingLoopMessage;
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(qmlBindingLoopMessageFull));
+ 
+     const QString cppBindingLoopMessage = "QML AttachedObject (parent or ancestor of Attached): Binding loop detected for property \"a\"";
+diff --git a/tests/auto/quick/qquickitem2/CMakeLists.txt b/tests/auto/quick/qquickitem2/CMakeLists.txt
+index 6ecd164787..f60d1b2d55 100644
+--- a/tests/auto/quick/qquickitem2/CMakeLists.txt
++++ b/tests/auto/quick/qquickitem2/CMakeLists.txt
+@@ -22,8 +22,6 @@ qt_internal_add_test(tst_qquickitem2
+         Qt::GuiPrivate
+         Qt::QmlPrivate
+         Qt::QuickPrivate
+-    LIBRARIES
+-        Qt::TestPrivate
+     TESTDATA ${test_data}
+ )
+ 
+diff --git a/tests/auto/quick/qquickitem2/tst_qquickitem.cpp b/tests/auto/quick/qquickitem2/tst_qquickitem.cpp
+index 4d381d59a3..3c1abfc21a 100644
+--- a/tests/auto/quick/qquickitem2/tst_qquickitem.cpp
++++ b/tests/auto/quick/qquickitem2/tst_qquickitem.cpp
+@@ -43,7 +43,6 @@
+ #include "../../shared/util.h"
+ #include "../shared/visualtestutil.h"
+ #include "../../shared/platforminputcontext.h"
+-#include <QtTest/private/qpropertytesthelper_p.h>
+ 
+ using namespace QQuickVisualTestUtil;
+ 
+@@ -119,8 +118,6 @@ private slots:
+ 
+     void childrenProperty();
+     void resourcesProperty();
+-    void bindableProperties_data();
+-    void bindableProperties();
+ 
+     void changeListener();
+     void transformCrash();
+@@ -2850,30 +2847,6 @@ void tst_QQuickItem::resourcesProperty()
+     delete object;
+ }
+ 
+-void tst_QQuickItem::bindableProperties_data()
+-{
+-    QTest::addColumn<qreal>("initialValue");
+-    QTest::addColumn<qreal>("newValue");
+-    QTest::addColumn<QString>("property");
+-
+-    // can't simply use 3. or 3.0 for the numbers as qreal might
+-    // be float instead of double...
+-    QTest::addRow("x") << qreal(3) << qreal(14) << "x";
+-    QTest::addRow("y") << qreal(10) << qreal(20) << "y";
+-    QTest::addRow("width") << qreal(100) << qreal(200) << "width";
+-    QTest::addRow("height") << qreal(50) << qreal(40) << "height";
+-}
+-
+-void tst_QQuickItem::bindableProperties()
+-{
+-    QQuickItem item;
+-    QFETCH(qreal, initialValue);
+-    QFETCH(qreal, newValue);
+-    QFETCH(QString, property);
+-
+-    QTestPrivate::testReadWritePropertyBasics(item, initialValue, newValue, property.toUtf8().constData());
+-}
+-
+ void tst_QQuickItem::propertyChanges()
+ {
+     QQuickView *window = new QQuickView(nullptr);
+@@ -2998,7 +2971,7 @@ void tst_QQuickItem::childrenRectBug()
+ {
+     QQuickView *window = new QQuickView(nullptr);
+ 
+-    QString warning = testFileUrl("childrenRectBug.qml").toString() + ":11:9: QML Item: Binding loop detected for property \"height\"";
++    QString warning = testFileUrl("childrenRectBug.qml").toString() + ":7:5: QML Item: Binding loop detected for property \"height\"";
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning));
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning));
+ 
+@@ -3019,11 +2992,11 @@ void tst_QQuickItem::childrenRectBug2()
+ {
+     QQuickView *window = new QQuickView(nullptr);
+ 
+-    QString warning1 = testFileUrl("childrenRectBug2.qml").toString() + ":10:9: QML Item: Binding loop detected for property \"width\"";
++    QString warning1 = testFileUrl("childrenRectBug2.qml").toString() + ":7:5: QML Item: Binding loop detected for property \"width\"";
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning1));
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning1));
+ 
+-    QString warning2 = testFileUrl("childrenRectBug2.qml").toString() + ":11:9: QML Item: Binding loop detected for property \"height\"";
++    QString warning2 = testFileUrl("childrenRectBug2.qml").toString() + ":7:5: QML Item: Binding loop detected for property \"height\"";
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning2));
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning2));
+     QTest::ignoreMessage(QtWarningMsg, qPrintable(warning2));
+diff --git a/tests/auto/quick/qquickmultipointtoucharea/tst_qquickmultipointtoucharea.cpp b/tests/auto/quick/qquickmultipointtoucharea/tst_qquickmultipointtoucharea.cpp
+index 056028b3f0..b5ab520055 100644
+--- a/tests/auto/quick/qquickmultipointtoucharea/tst_qquickmultipointtoucharea.cpp
++++ b/tests/auto/quick/qquickmultipointtoucharea/tst_qquickmultipointtoucharea.cpp
+@@ -28,7 +28,6 @@
+ 
+ #include <QtTest/QtTest>
+ #include <QtTest/QSignalSpy>
+-#include <private/qquickitem_p.h>
+ #include <private/qquickmultipointtoucharea_p.h>
+ #include <private/qquickflickable_p.h>
+ #include <private/qquickmousearea_p.h>
+@@ -1052,13 +1051,10 @@ void tst_QQuickMultiPointTouchArea::mouseAsTouchpoint()
+         QPoint touch1(10,10);
+         QPoint touch2(100,10);
+ 
+-        // do not break the QML bindings
+-        auto t1priv = QQuickItemPrivate::get(touch1rect);
+-        auto t2priv = QQuickItemPrivate::get(touch2rect);
+-        t1priv->x.setValueBypassingBindings(10);
+-        t1priv->y.setValueBypassingBindings(10);
+-        t2priv->x.setValueBypassingBindings(20);
+-        t2priv->y.setValueBypassingBindings(10);
++        touch1rect->setX(10);
++        touch1rect->setY(10);
++        touch2rect->setX(20);
++        touch2rect->setY(10);
+ 
+         // Start with mouse, move it, touch a point, move it, touch another.
+         // Mouse is ignored, both touch points are heeded.

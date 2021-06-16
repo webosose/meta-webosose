@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos87"
+EXTENDPRAUTO_append = "webos88"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -82,7 +82,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 # Upstream-Status: Backport
 SRC_URI_append = " \
-    file://0001-Support-hardware-composition-for-webOS.patch \
+    file://0001-Fix-compilation-error-in-QDateTime.patch \
 "
 
 # Upstream-Status: Inappropriate

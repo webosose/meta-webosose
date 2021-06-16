@@ -1,4 +1,4 @@
-From e7d89209338a3c0e2746ab90a454247069cf9f9e Mon Sep 17 00:00:00 2001
+From c1f12946c4229d55ec7d8783f1a1d15ca243fdfc Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Fri, 7 May 2021 14:05:36 +0900
 Subject: [PATCH] Allow warnings from qmllint
@@ -11,10 +11,10 @@ Upstream-Status: Inappropriate [workaround]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/qmllint/findwarnings.cpp b/tools/qmllint/findwarnings.cpp
-index 9e9301b104..dd921f6570 100644
+index c677e112dd..296373345c 100644
 --- a/tools/qmllint/findwarnings.cpp
 +++ b/tools/qmllint/findwarnings.cpp
-@@ -486,7 +486,7 @@ bool FindWarningVisitor::check()
+@@ -256,7 +256,7 @@ bool FindWarningVisitor::check()
      CheckIdentifiers check(&m_logger, m_code, m_rootScopeImports, m_filePath);
      check(m_scopesById, m_signalHandlers, m_memberAccessChains, m_globalScope, m_rootId);
  
@@ -22,4 +22,4 @@ index 9e9301b104..dd921f6570 100644
 +    return !m_logger.hasErrors();
  }
  
- bool FindWarningVisitor::visit(QQmlJS::AST::UiObjectBinding *uiob)
+ bool FindWarningVisitor::visit(QQmlJS::AST::PatternElement *element)
