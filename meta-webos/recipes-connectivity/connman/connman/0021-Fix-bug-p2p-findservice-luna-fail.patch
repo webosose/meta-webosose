@@ -1,0 +1,43 @@
+From 6ea842a512de9c25a2bd941a27cae6cae81b4544 Mon Sep 17 00:00:00 2001
+From: "marudhupandian.a" <sanju.bisanal@lge.com>
+Date: Wed, 16 Jun 2021 14:37:55 +0530
+Subject: [PATCH] Fix bug p2p/findservice luna fail
+
+:Release Notes:
+Fix bug when calling p2p/findservice luna API
+
+:Detailed Notes:
+Fix p2p/findservice luna fail.
+
+:Testing Performed:
+Build successfully.
+Ethrenet/wifi connection successfully.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[PLAT-145339] [OSE] Method p2p/findservice in com.webos.service.wifi
+              API raise FAILED on API Automation positive test.
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ gsupplicant/supplicant.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
+index 27e9e55..b43dc8b 100644
+--- a/gsupplicant/supplicant.c
++++ b/gsupplicant/supplicant.c
+@@ -7028,7 +7028,7 @@ int g_supplicant_interface_remove(GSupplicantInterface *interface,
+ 	struct interface_data *data;
+ 	int ret;
+ 
+-	if (!interface || !(interface->path) || (strlen(interface->path) == 0))
++	if (!interface || !(interface->path))
+ 		return -EINVAL;
+ 
+ 	if (!system_available)
+-- 
+2.26.0
+
