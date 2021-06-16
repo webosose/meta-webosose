@@ -1,0 +1,232 @@
+From 79e6a25a959cd66012bda7fdf51997c891ebd560 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Thu, 24 Jun 2021 18:30:00 +0900
+Subject: [PATCH] CMake: Update to latest qml CMake API
+
+Since QTBUG-91621, CMakeLists.txt should be updated as per the new API.
+Inspired by https://codereview.qt-project.org/c/qt/qt5compat/+/352146.
+Note that we keep the module name as "QtGraphicalEffects" for backward
+compatibility.
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ src/effects/CMakeLists.txt         | 124 ++++++++++++++---------------
+ src/effects/private/CMakeLists.txt |  36 +++------
+ src/effects/private/qmldir         |   4 -
+ 3 files changed, 72 insertions(+), 92 deletions(-)
+ delete mode 100644 src/effects/private/qmldir
+
+diff --git a/src/effects/CMakeLists.txt b/src/effects/CMakeLists.txt
+index a080d07..60bf1cc 100644
+--- a/src/effects/CMakeLists.txt
++++ b/src/effects/CMakeLists.txt
+@@ -1,70 +1,7 @@
+-# Generated from effects.pro.
+-
+ #####################################################################
+ ## qtgraphicaleffectsplugin Plugin:
+ #####################################################################
+ 
+-qt_internal_add_qml_module(qtgraphicaleffectsplugin
+-    URI "QtGraphicalEffects"
+-    VERSION "1.${CMAKE_PROJECT_VERSION_MINOR}"
+-    DESIGNER_SUPPORTED
+-    CLASSNAME QtGraphicalEffectsPlugin
+-    DEPENDENCIES
+-        QtGraphicalEffects/private/1.0
+-        QtQuick.Window/2.1
+-    SOURCES
+-        plugin.cpp
+-    PUBLIC_LIBRARIES
+-        Qt::Qml
+-        Qt::Quick
+-)
+-
+-# Resources:
+-set(qtgraphicaleffectsshaders_resource_files
+-    "shaders_ng/brightnesscontrast.frag.qsb"
+-    "shaders_ng/colorize.frag.qsb"
+-    "shaders_ng/coloroverlay.frag.qsb"
+-    "shaders_ng/conicalgradient_mask.frag.qsb"
+-    "shaders_ng/conicalgradient_nomask.frag.qsb"
+-    "shaders_ng/desaturate.frag.qsb"
+-    "shaders_ng/displace.frag.qsb"
+-    "shaders_ng/fastblur.frag.qsb"
+-    "shaders_ng/fastblur_internal.frag.qsb"
+-    "shaders_ng/fastblur_internal.vert.qsb"
+-    "shaders_ng/fastglow.frag.qsb"
+-    "shaders_ng/gammaadjust.frag.qsb"
+-    "shaders_ng/huesaturation.frag.qsb"
+-    "shaders_ng/leveladjust.frag.qsb"
+-    "shaders_ng/lineargradient.vert.qsb"
+-    "shaders_ng/lineargradient_mask.frag.qsb"
+-    "shaders_ng/lineargradient_nomask.frag.qsb"
+-    "shaders_ng/opacitymask.frag.qsb"
+-    "shaders_ng/opacitymask_invert.frag.qsb"
+-    "shaders_ng/radialgradient.vert.qsb"
+-    "shaders_ng/radialgradient_mask.frag.qsb"
+-    "shaders_ng/radialgradient_nomask.frag.qsb"
+-    "shaders_ng/rectangularglow.frag.qsb"
+-    "shaders_ng/thresholdmask.frag.qsb"
+-    "shaders_ng/gaussianblur_fixedradius_alphaOnly.frag.qsb"
+-    "shaders_ng/gaussianblur_fixedradius.frag.qsb"
+-    "shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb"
+-    "shaders_ng/gaussianblur_fixedradius_masked.frag.qsb"
+-)
+-
+-qt_internal_add_resource(qtgraphicaleffectsplugin "qtgraphicaleffectsshaders"
+-    PREFIX
+-        "/qt-project.org/imports/QtGraphicalEffects"
+-    FILES
+-        ${qtgraphicaleffectsshaders_resource_files}
+-)
+-
+-
+-#### Keys ignored in scope 2:.:.:effects_plugin.pro:<TRUE>:
+-# CXX_MODULE = "qml"
+-# IMPORT_VERSION = "1.$$QT_MINOR_VERSION"
+-# QML_FILES = "BrightnessContrast.qml" "ColorOverlay.qml" "Colorize.qml" "ConicalGradient.qml" "Desaturate.qml" "Displace.qml" "DropShadow.qml" "FastBlur.qml" "GammaAdjust.qml" "Glow.qml" "HueSaturation.qml" "LevelAdjust.qml" "LinearGradient.qml" "OpacityMask.qml" "RadialGradient.qml" "RectangularGlow.qml" "ThresholdMask.qml"
+-# TARGETPATH = "QtGraphicalEffects"
+-
+ set(qml_files
+     "BrightnessContrast.qml"
+     "ColorOverlay.qml"
+@@ -137,10 +74,67 @@ set_source_files_properties(ThresholdMask.qml PROPERTIES
+     QT_QML_SOURCE_VERSION "1.0"
+ )
+ 
+-qt6_target_qml_files(qtgraphicaleffectsplugin
+-    FILES
++qt_internal_add_qml_module(qtgraphicaleffectsplugin
++    URI "QtGraphicalEffects"
++    VERSION "1.${CMAKE_PROJECT_VERSION_MINOR}"
++    DESIGNER_SUPPORTED
++    CLASSNAME QtGraphicalEffectsPlugin
++    PLUGIN_TARGET qtgraphicaleffectsplugin
++    NO_GENERATE_PLUGIN_SOURCE
++    NO_PLUGIN_OPTIONAL
++    NO_GENERATE_QMLTYPES
++    INSTALL_SOURCE_QMLTYPES "plugins.qmltypes"
++    DEPENDENCIES
++        QtGraphicalEffects.private
++        QtQuick.Window
++    SOURCES
++        plugin.cpp
++    QML_FILES
+         ${qml_files}
++    PUBLIC_LIBRARIES
++        Qt::Qml
++        Qt::Quick
+ )
++
++# Resources:
++set(qtgraphicaleffectsshaders_resource_files
++    "shaders_ng/brightnesscontrast.frag.qsb"
++    "shaders_ng/colorize.frag.qsb"
++    "shaders_ng/coloroverlay.frag.qsb"
++    "shaders_ng/conicalgradient_mask.frag.qsb"
++    "shaders_ng/conicalgradient_nomask.frag.qsb"
++    "shaders_ng/desaturate.frag.qsb"
++    "shaders_ng/displace.frag.qsb"
++    "shaders_ng/fastblur.frag.qsb"
++    "shaders_ng/fastblur_internal.frag.qsb"
++    "shaders_ng/fastblur_internal.vert.qsb"
++    "shaders_ng/fastglow.frag.qsb"
++    "shaders_ng/gammaadjust.frag.qsb"
++    "shaders_ng/huesaturation.frag.qsb"
++    "shaders_ng/leveladjust.frag.qsb"
++    "shaders_ng/lineargradient.vert.qsb"
++    "shaders_ng/lineargradient_mask.frag.qsb"
++    "shaders_ng/lineargradient_nomask.frag.qsb"
++    "shaders_ng/opacitymask.frag.qsb"
++    "shaders_ng/opacitymask_invert.frag.qsb"
++    "shaders_ng/radialgradient.vert.qsb"
++    "shaders_ng/radialgradient_mask.frag.qsb"
++    "shaders_ng/radialgradient_nomask.frag.qsb"
++    "shaders_ng/rectangularglow.frag.qsb"
++    "shaders_ng/thresholdmask.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius_alphaOnly.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb"
++    "shaders_ng/gaussianblur_fixedradius_masked.frag.qsb"
++)
++
++qt_internal_add_resource(qtgraphicaleffectsplugin "qtgraphicaleffectsshaders"
++    PREFIX
++        "/qt-project.org/imports/QtGraphicalEffects"
++    FILES
++        ${qtgraphicaleffectsshaders_resource_files}
++)
++
+ qt_internal_add_docs(qtgraphicaleffectsplugin
+     doc/qtgraphicaleffects.qdocconf
+ )
+diff --git a/src/effects/private/CMakeLists.txt b/src/effects/private/CMakeLists.txt
+index b8e0e5b..8b77cd3 100644
+--- a/src/effects/private/CMakeLists.txt
++++ b/src/effects/private/CMakeLists.txt
+@@ -1,16 +1,27 @@
+-# Generated from private.pro.
+-
+ #####################################################################
+ ## qtgraphicaleffectsprivate Plugin:
+ #####################################################################
+ 
++set(qml_files
++    "FastGlow.qml"
++)
++set_source_files_properties(FastGlow.qml PROPERTIES
++    QT_QML_SOURCE_VERSION "1.0"
++)
++
+ qt_internal_add_qml_module(qtgraphicaleffectsprivate
+     URI "QtGraphicalEffects.private"
+     VERSION "${CMAKE_PROJECT_VERSION}"
+     CLASSNAME QtGraphicalEffectsPrivatePlugin
++    PLUGIN_TARGET qtgraphicaleffectsprivate
++    NO_GENERATE_PLUGIN_SOURCE
++    NO_PLUGIN_OPTIONAL
++    NO_GENERATE_QMLTYPES
+     SOURCES
+         plugin.cpp
+         qgfxsourceproxy.cpp qgfxsourceproxy_p.h
++    QML_FILES
++        ${qml_files}
+     PUBLIC_LIBRARIES
+         Qt::Core
+         Qt::CorePrivate
+@@ -21,24 +32,3 @@ qt_internal_add_qml_module(qtgraphicaleffectsprivate
+         Qt::Quick
+         Qt::QuickPrivate
+ )
+-
+-#### Keys ignored in scope 1:.:.:private.pro:<TRUE>:
+-# CXX_MODULE = "qml"
+-# QML_FILES = "FastGlow.qml"
+-# QML_IMPORT_VERSION = "$$QT_VERSION"
+-# TARGETPATH = "QtGraphicalEffects/private"
+-
+-## Scopes:
+-#####################################################################
+-
+-set(qml_files
+-    "FastGlow.qml"
+-)
+-set_source_files_properties(FastGlow.qml PROPERTIES
+-    QT_QML_SOURCE_VERSION "1.0"
+-)
+-
+-qt6_target_qml_files(qtgraphicaleffectsprivate
+-    FILES
+-        ${qml_files}
+-)
+diff --git a/src/effects/private/qmldir b/src/effects/private/qmldir
+deleted file mode 100644
+index da46a25..0000000
+--- a/src/effects/private/qmldir
++++ /dev/null
+@@ -1,4 +0,0 @@
+-module QtGraphicalEffects.private
+-plugin qtgraphicaleffectsprivate
+-classname QtGraphicalEffectsPrivatePlugin
+-FastGlow 1.0 FastGlow.qml
