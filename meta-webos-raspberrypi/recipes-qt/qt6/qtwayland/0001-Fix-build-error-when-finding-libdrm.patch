@@ -1,0 +1,23 @@
+From 204f021f68d8a20ba31033c5550530590aba6efb Mon Sep 17 00:00:00 2001
+From: Youngjin Kim <youngjin78.kim@lge.com>
+Date: Mon, 21 Jun 2021 13:48:07 +0900
+Subject: [PATCH] Fix build error when finding libdrm
+
+Change-Id: Ic1a066bf81ef760d57f31c3a6d08f3bbb8073b56
+Upstream-Status : Inappropriate [workaround]
+---
+ src/compositor/configure.cmake | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/compositor/configure.cmake b/src/compositor/configure.cmake
+index 9c5864e3..06356a15 100644
+--- a/src/compositor/configure.cmake
++++ b/src/compositor/configure.cmake
+@@ -28,6 +28,7 @@ if(NOT TARGET XKB::XKB)
+     qt_find_package(XKB 0.5.0 PROVIDED_TARGETS XKB::XKB MODULE_NAME gui QMAKE_LIB xkbcommon MARK_OPTIONAL)
+ endif()
+ 
++qt_find_package(Libdrm PROVIDED_TARGETS Libdrm::Libdrm MODULE_NAME gui QMAKE_LIB drm)
+ 
+ #### Tests
+ 
