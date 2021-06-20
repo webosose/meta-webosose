@@ -34,6 +34,7 @@ IOTIVITY_TARGET_ARCH = "${TARGET_ARCH}"
 SRC_URI += " \
     file://0001-Do-independent-build-of-csdk-samples.patch \
     file://0002-webOS-Fix-build-error-detected-by-gcc8.patch \
+    file://0001-UnpackAll.py-fix-compatibility-with-SCons-4.patch \
 "
 
 EXTRA_OESCONS += " \
