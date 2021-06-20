@@ -174,6 +174,8 @@ do_install:append() {
 
     #Adapt unaligned pkconfig (transitionnal)
     sed -e 's|^prefix=.*|prefix=/usr|g' -i ${S}/iotivity.pc
+    #Remove unexpanded @DEFINES@ and @LIBS@ to fix iotivity use in org.ocf.webossample.oc{client,server}basicops
+    sed -e 's|@DEFINES@||g; s|@LIBS@||g' -i ${S}/iotivity.pc
     make_dir ${D}${libdir}/pkgconfig/
     copy_file ${S}/iotivity.pc ${D}${libdir}/pkgconfig/
 
