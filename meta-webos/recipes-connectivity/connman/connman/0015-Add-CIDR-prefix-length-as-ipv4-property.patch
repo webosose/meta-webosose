@@ -1,4 +1,4 @@
-From e549f55bb90c2da0e2a4d7e9ae82151548a7d941 Mon Sep 17 00:00:00 2001
+From 48fe0a47f247636717b0536c546075bb1f188704 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 22 Jan 2021 09:50:37 +0530
 Subject: [PATCH] Add CIDR prefix length as ipv4 property
@@ -25,10 +25,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 4 insertions(+)
 
 diff --git a/src/ipconfig.c b/src/ipconfig.c
-index 08576820..fa9def70 100644
+index 484dd720..d12962f1 100644
 --- a/src/ipconfig.c
 +++ b/src/ipconfig.c
-@@ -1919,6 +1919,10 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
+@@ -1931,6 +1931,10 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
  		connman_dbus_dict_append_basic(iter, "Address",
  				DBUS_TYPE_STRING, &append_addr->local);
  

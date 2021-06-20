@@ -1,4 +1,4 @@
-From 89b7d4fbc1f47e066d332d1ed3d46aa0d120b87a Mon Sep 17 00:00:00 2001
+From 8e068f58ea097e5e9d8afcf56a1e3b094d6c5189 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 27 Jan 2021 17:23:22 +0530
 Subject: [PATCH] Add p2p changes
@@ -36,7 +36,7 @@ Upstream-Status: Inappropriate[webos specific]
  include/sd.h              |   25 +
  include/technology.h      |   38 +
  include/types.h           |   45 +
- plugins/wifi.c            | 7268 ++++++++++++++++++++++++-------------
+ plugins/wifi.c            | 7320 ++++++++++++++++++++++++-------------
  src/connman.h             |   27 +-
  src/dbus.c                |    5 +
  src/device.c              |   76 +
@@ -51,9 +51,9 @@ Upstream-Status: Inappropriate[webos specific]
  src/sd.c                  |  382 ++
  src/service.c             |    5 +
  src/storage.c             |  139 +-
- src/technology.c          |  812 ++++-
+ src/technology.c          |  812 +++-
  src/util.c                |  105 +
- 30 files changed, 14346 insertions(+), 4115 deletions(-)
+ 30 files changed, 14372 insertions(+), 4141 deletions(-)
  create mode 100644 include/group.h
  create mode 100644 include/sd.h
  create mode 100644 include/types.h
@@ -62,7 +62,7 @@ Upstream-Status: Inappropriate[webos specific]
  create mode 100644 src/sd.c
 
 diff --git a/Makefile.am b/Makefile.am
-index 8b4b4996..51e502b2 100644
+index e5718b19..5c9f61e1 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -11,8 +11,8 @@ include_HEADERS = include/log.h include/plugin.h \
@@ -9451,7 +9451,7 @@ index 00000000..0f671ec3
 +
 +#endif /* __CONNMAN_TYPES_H */
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index cc48ceb1..287c5789 100644
+index 6c1cd2d6..14e9bfc4 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
 @@ -33,6 +33,8 @@
@@ -9463,7 +9463,7 @@ index cc48ceb1..287c5789 100644
  #ifndef IFF_LOWER_UP
  #define IFF_LOWER_UP	0x10000
  #endif
-@@ -59,6 +61,10 @@
+@@ -58,6 +60,10 @@
  
  #include <gsupplicant/gsupplicant.h>
  
@@ -9474,7 +9474,7 @@ index cc48ceb1..287c5789 100644
  #include "src/shared/util.h"
  
  #define CLEANUP_TIMEOUT   8	/* in seconds */
-@@ -70,16 +76,30 @@
+@@ -69,16 +75,30 @@
  #define AUTOSCAN_EXPONENTIAL "exponential:3:300"
  #define AUTOSCAN_SINGLE "single:3"
  #define SCAN_MAX_DURATION 10
@@ -9508,7 +9508,7 @@ index cc48ceb1..287c5789 100644
  static struct connman_technology *wifi_technology = NULL;
  static struct connman_technology *p2p_technology = NULL;
  
-@@ -159,12 +179,14 @@ struct wifi_data {
+@@ -158,12 +178,14 @@ struct wifi_data {
  	struct autoscan_params *autoscan;
  	enum wifi_scanning_type scanning_type;
  	GSupplicantScanParams *scan_params;
@@ -9523,7 +9523,7 @@ index cc48ceb1..287c5789 100644
  	int servicing;
  	int disconnect_code;
  	int assoc_code;
-@@ -173,11 +195,12 @@ struct wifi_data {
+@@ -172,11 +194,12 @@ struct wifi_data {
  	GSupplicantSSID *wps_ssid;
  	guint wps_timeout;
  	bool wps_start_deferred;
@@ -9540,7 +9540,7 @@ index cc48ceb1..287c5789 100644
  };
  
  struct wifi_cb_data {
-@@ -186,16 +209,34 @@ struct wifi_cb_data {
+@@ -185,16 +208,34 @@ struct wifi_cb_data {
  	void *user_data;
  };
  
@@ -9575,7 +9575,7 @@ index cc48ceb1..287c5789 100644
  
  static void bss_foreach(gpointer key, gpointer value, gpointer user_data)
  {
-@@ -230,1515 +271,1759 @@ static void p2p_tech_remove(struct connman_technology *technology)
+@@ -229,1523 +270,1764 @@ static void p2p_tech_remove(struct connman_technology *technology)
  	p2p_technology = NULL;
  }
  
@@ -10118,18 +10118,26 @@ index cc48ceb1..287c5789 100644
  
 -	if (version > 0) {
 -		params->version = version;
--		params->service = g_memdup(spec, spec_length);
+-		if (spec_length > 0) {
+-			params->service = g_malloc(spec_length);
+-			memcpy(params->service, spec, spec_length);
+-		}
 -	} else if (query_length > 0 && spec_length > 0) {
--		params->query = g_memdup(query, query_length);
+-		params->query = g_malloc(query_length);
+-		memcpy(params->query, query, query_length);
 -		params->query_length = query_length;
 +		if (!wifi->interface ||
 +			!g_supplicant_interface_has_p2p(wifi->interface))
 +			continue;
  
--		params->response = g_memdup(spec, spec_length);
+-		params->response = g_malloc(spec_length);
+-		memcpy(params->response, spec, spec_length);
 -		params->response_length = spec_length;
 -	} else {
--		params->wfd_ies = g_memdup(spec, spec_length);
+-		if (spec_length > 0) {
+-			params->wfd_ies = g_malloc(spec_length);
+-			memcpy(params->wfd_ies, spec, spec_length);
+-		}
 -		params->wfd_ies_length = spec_length;
 +		// Decrement the count if listen is already set
 +		if (wifi->servicing && params_changed)
@@ -10432,8 +10440,7 @@ index cc48ceb1..287c5789 100644
 +	strncat(persistent_info_name, peer_ident, strlen(peer_ident));
 +
 +	p2p_persistent_info_load(interface, persistent_info_name, removing_pg);
- 
--		if (!g_supplicant_interface_has_p2p(wifi->interface))
++
 +	if(removing_pg->ssid == NULL) {
 +		g_free(removing_pg);
 +		return -EOPNOTSUPP;
@@ -10442,7 +10449,8 @@ index cc48ceb1..287c5789 100644
 +	item = wifi->persistent_groups;
 +	while(item != NULL) {
 +		persistent_group = item->data;
-+
+ 
+-		if (!g_supplicant_interface_has_p2p(wifi->interface))
 +		if(persistent_group->ssid == NULL || persistent_group->bssid == NULL)
  			continue;
  
@@ -10538,10 +10546,8 @@ index cc48ceb1..287c5789 100644
  	}
  
 -	return 0;
+-}
 +	g_free(addr_no_colon);
-+
-+	return err;
- }
  
 -static struct connman_peer_driver peer_driver = {
 -	.connect    = peer_connect,
@@ -10549,11 +10555,19 @@ index cc48ceb1..287c5789 100644
 -	.register_service = peer_register_service,
 -	.unregister_service = peer_unregister_service,
 -};
--
++	return err;
++}
+ 
 -static void handle_tethering(struct wifi_data *wifi)
 +static int tech_remove_persistent_info_all(struct connman_technology *technology)
  {
 -	if (!wifi->tethering)
+-		return;
+-
+-	if (!wifi->bridge)
+-		return;
+-
+-	if (wifi->bridged)
 -		return;
 +	GList *list;
 +	struct wifi_data *wifi = NULL;
@@ -10563,50 +10577,65 @@ index cc48ceb1..287c5789 100644
 +	struct connman_network *network;
 +	int i;
  
--	if (!wifi->bridge)
--		return;
+-	DBG("index %d bridge %s", wifi->index, wifi->bridge);
 +	if (!is_technology_enabled(p2p_technology))
 +		return -EOPNOTSUPP;
  
--	if (wifi->bridged)
+-	if (connman_inet_add_to_bridge(wifi->index, wifi->bridge) < 0)
 -		return;
 +	for (list = iface_list; list; list = list->next) {
 +		wifi = list->data;
 +		interface = wifi->interface;
  
--	DBG("index %d bridge %s", wifi->index, wifi->bridge);
+-	wifi->bridged = true;
+-}
 +		if (interface == NULL || !g_supplicant_interface_has_p2p(interface))
 +			continue;
- 
--	if (connman_inet_add_to_bridge(wifi->index, wifi->bridge) < 0)
--		return;
-+		g_supplicant_interface_p2p_remove_all_persistent_groups(interface);
-+	}
- 
--	wifi->bridged = true;
-+	persistents = __connman_storage_get_p2p_persistents();
-+	for (i = 0; persistents && persistents[i]; i++) {
-+		DBG("loop : %s\n", persistents[i]);
-+
-+		if (strncmp(persistents[i], "p2p_persistent_", 15) != 0)
-+			continue;
-+
-+		__connman_storage_remove_service(persistents[i]);
-+
-+	}
-+
-+	if (wifi)
-+		g_hash_table_remove_all(wifi->persistent_peer_ssid);
-+
-+	if (persistents)
-+		g_strfreev(persistents);
-+	return 1;
- }
  
 -static void wifi_newlink(unsigned flags, unsigned change, void *user_data)
 -{
 -	struct connman_device *device = user_data;
 -	struct wifi_data *wifi = connman_device_get_data(device);
++		g_supplicant_interface_p2p_remove_all_persistent_groups(interface);
++	}
+ 
+-	if (!wifi)
+-		return;
++	persistents = __connman_storage_get_p2p_persistents();
++	for (i = 0; persistents && persistents[i]; i++) {
++		DBG("loop : %s\n", persistents[i]);
+ 
+-	DBG("index %d flags %d change %d", wifi->index, flags, change);
++		if (strncmp(persistents[i], "p2p_persistent_", 15) != 0)
++			continue;
+ 
+-	if ((wifi->flags & IFF_UP) != (flags & IFF_UP)) {
+-		if (flags & IFF_UP)
+-			DBG("interface up");
+-		else
+-			DBG("interface down");
+-	}
++		__connman_storage_remove_service(persistents[i]);
+ 
+-	if ((wifi->flags & IFF_LOWER_UP) != (flags & IFF_LOWER_UP)) {
+-		if (flags & IFF_LOWER_UP)
+-			DBG("carrier on");
+-		else
+-			DBG("carrier off");
+ 	}
+ 
+-	if (flags & IFF_LOWER_UP)
+-		handle_tethering(wifi);
++	if (wifi)
++		g_hash_table_remove_all(wifi->persistent_peer_ssid);
+ 
+-	wifi->flags = flags;
++	if (persistents)
++		g_strfreev(persistents);
++	return 1;
+ }
+ 
+-static int wifi_probe(struct connman_device *device)
 +static struct connman_technology_driver p2p_tech_driver = {
 +	.name		= "p2p",
 +	.type		= CONNMAN_SERVICE_TYPE_P2P,
@@ -10623,34 +10652,31 @@ index cc48ceb1..287c5789 100644
 +	.remove_persistent_info = tech_remove_persistent_info,
 +	.remove_persistent_info_all = tech_remove_persistent_info_all,
 +};
- 
--	if (!wifi)
--		return;
++
 +static bool is_p2p_connecting(void)
-+{
+ {
+-	struct wifi_data *wifi;
 +	GList *list;
  
--	DBG("index %d flags %d change %d", wifi->index, flags, change);
+-	DBG("device %p", device);
 +	for (list = iface_list; list; list = list->next) {
 +		struct wifi_data *wifi = list->data;
  
--	if ((wifi->flags & IFF_UP) != (flags & IFF_UP)) {
--		if (flags & IFF_UP)
--			DBG("interface up");
--		else
--			DBG("interface down");
+-	wifi = g_try_new0(struct wifi_data, 1);
+-	if (!wifi)
+-		return -ENOMEM;
 +		if (wifi->p2p_connecting)
 +			return true;
- 	}
++	}
  
--	if ((wifi->flags & IFF_LOWER_UP) != (flags & IFF_LOWER_UP)) {
--		if (flags & IFF_LOWER_UP)
--			DBG("carrier on");
--		else
--			DBG("carrier off");
+-	wifi->state = G_SUPPLICANT_STATE_INACTIVE;
+-	wifi->ap_supported = WIFI_AP_UNKNOWN;
+-	wifi->tethering_param = NULL;
 +	return false;
 +}
-+
+ 
+-	connman_device_set_data(device, wifi);
+-	wifi->device = connman_device_ref(device);
 +static void enable_auto_connect_block(bool block)
 +{
 +	DBG("block %d", block);
@@ -10659,44 +10685,39 @@ index cc48ceb1..287c5789 100644
 +	else {
 +		block_auto_connect = false;
 +		__connman_service_auto_connect(CONNMAN_SERVICE_CONNECT_REASON_AUTO);
- 	}
++	}
 +}
  
--	if (flags & IFF_LOWER_UP)
--		handle_tethering(wifi);
+-	wifi->index = connman_device_get_index(device);
+-	wifi->flags = 0;
 +static void add_pending_wifi_device(struct wifi_data *wifi)
 +{
 +	if (g_list_find(pending_wifi_device, wifi))
 +		return;
  
--	wifi->flags = flags;
+-	wifi->watch = connman_rtnl_add_newlink_watch(wifi->index,
+-							wifi_newlink, device);
 +	pending_wifi_device = g_list_append(pending_wifi_device, wifi);
- }
++}
  
--static int wifi_probe(struct connman_device *device)
+-	wifi->wps_active = FALSE;
 +static struct wifi_data *get_pending_wifi_data(const char *ifname)
- {
--	struct wifi_data *wifi;
--
--	DBG("device %p", device);
++{
 +	GList *list;
  
--	wifi = g_try_new0(struct wifi_data, 1);
--	if (!wifi)
--		return -ENOMEM;
+-	if (is_p2p_connecting())
+-		add_pending_wifi_device(wifi);
+-	else
+-		iface_list = g_list_append(iface_list, wifi);
 +	for (list = pending_wifi_device; list; list = list->next) {
 +		struct wifi_data *wifi;
 +		const char *dev_name;
  
--	wifi->state = G_SUPPLICANT_STATE_INACTIVE;
--	wifi->ap_supported = WIFI_AP_UNKNOWN;
--	wifi->tethering_param = NULL;
+-	return 0;
 +		wifi = list->data;
 +		if (!wifi || !wifi->device)
 +			continue;
- 
--	connman_device_set_data(device, wifi);
--	wifi->device = connman_device_ref(device);
++
 +		dev_name = connman_device_get_string(wifi->device, "Interface");
 +		if (!g_strcmp0(ifname, dev_name)) {
 +			pending_wifi_device = g_list_delete_link(
@@ -10704,129 +10725,143 @@ index cc48ceb1..287c5789 100644
 +			return wifi;
 +		}
 +	}
- 
--	wifi->index = connman_device_get_index(device);
--	wifi->flags = 0;
++
 +	return NULL;
-+}
- 
--	wifi->watch = connman_rtnl_add_newlink_watch(wifi->index,
--							wifi_newlink, device);
-+static void remove_pending_wifi_device(struct wifi_data *wifi)
-+{
-+	GList *link;
- 
--	wifi->wps_active = FALSE;
-+	link = g_list_find(pending_wifi_device, wifi);
- 
--	if (is_p2p_connecting())
--		add_pending_wifi_device(wifi);
--	else
--		iface_list = g_list_append(iface_list, wifi);
-+	if (!link)
-+		return;
- 
--	return 0;
-+	pending_wifi_device = g_list_delete_link(pending_wifi_device, link);
  }
  
 -static void remove_networks(struct connman_device *device,
 -				struct wifi_data *wifi)
++static void remove_pending_wifi_device(struct wifi_data *wifi)
+ {
+-	GSList *list;
++	GList *link;
+ 
+-	for (list = wifi->networks; list; list = list->next) {
+-		struct connman_network *network = list->data;
++	link = g_list_find(pending_wifi_device, wifi);
+ 
+-		connman_device_remove_network(device, network);
+-		connman_network_unref(network);
+-	}
++	if (!link)
++		return;
+ 
+-	g_slist_free(wifi->networks);
+-	wifi->networks = NULL;
++	pending_wifi_device = g_list_delete_link(pending_wifi_device, link);
+ }
+ 
+-static void remove_peers(struct wifi_data *wifi)
 +static void peer_cancel_timeout(struct wifi_data *wifi)
  {
 -	GSList *list;
 +	if (wifi->p2p_connection_timeout > 0)
 +		g_source_remove(wifi->p2p_connection_timeout);
  
--	for (list = wifi->networks; list; list = list->next) {
--		struct connman_network *network = list->data;
+-	for (list = wifi->peers; list; list = list->next) {
+-		struct connman_peer *peer = list->data;
 +	wifi->p2p_connection_timeout = 0;
 +	wifi->p2p_connecting = false;
  
--		connman_device_remove_network(device, network);
--		connman_network_unref(network);
+-		connman_peer_unregister(peer);
+-		connman_peer_unref(peer);
 +	if (wifi->pending_peer) {
 +		connman_peer_unref(wifi->pending_peer);
 +		wifi->pending_peer = NULL;
  	}
 -
--	g_slist_free(wifi->networks);
--	wifi->networks = NULL;
+-	g_slist_free(wifi->peers);
+-	wifi->peers = NULL;
  }
  
--static void remove_peers(struct wifi_data *wifi)
+-static void reset_autoscan(struct connman_device *device)
 +static gboolean peer_connect_timeout(gpointer data)
  {
--	GSList *list;
+-	struct wifi_data *wifi = connman_device_get_data(device);
+-	struct autoscan_params *autoscan;
 +	struct wifi_data *wifi = data;
  
--	for (list = wifi->peers; list; list = list->next) {
--		struct connman_peer *peer = list->data;
-+	DBG("");
+ 	DBG("");
  
--		connman_peer_unregister(peer);
--		connman_peer_unref(peer);
+-	if (!wifi || !wifi->autoscan)
+-		return;
+-
+-	autoscan = wifi->autoscan;
 +	if (wifi->p2p_connecting) {
 +		enum connman_peer_state state = CONNMAN_PEER_STATE_FAILURE;
 +		GSupplicantPeer *gs_peer =
 +			g_supplicant_interface_peer_lookup(wifi->interface,
 +				connman_peer_get_identifier(wifi->pending_peer));
-+
+ 
+-	autoscan->interval = 0;
 +		if (g_supplicant_peer_has_requested_connection(gs_peer))
 +			state = CONNMAN_PEER_STATE_IDLE;
-+
-+		connman_peer_set_state(wifi->pending_peer, state);
- 	}
  
--	g_slist_free(wifi->peers);
--	wifi->peers = NULL;
-+	peer_cancel_timeout(wifi);
-+
-+	return FALSE;
- }
- 
--static void reset_autoscan(struct connman_device *device)
-+static void peer_connect_callback(int result, GSupplicantInterface *interface,
-+							void *user_data)
- {
--	struct wifi_data *wifi = connman_device_get_data(device);
--	struct autoscan_params *autoscan;
-+	struct wifi_data *wifi = user_data;
-+	struct connman_peer *peer = wifi->pending_peer;
- 
--	DBG("");
-+	DBG("peer %p - %d", peer, result);
- 
--	if (!wifi || !wifi->autoscan)
-+	if (!peer)
- 		return;
- 
--	autoscan = wifi->autoscan;
--
--	autoscan->interval = 0;
--
 -	if (autoscan->timeout == 0)
-+	if (result < 0) {
-+		peer_connect_timeout(wifi);
- 		return;
+-		return;
++		connman_peer_set_state(wifi->pending_peer, state);
 +	}
  
 -	g_source_remove(autoscan->timeout);
 -	autoscan->timeout = 0;
-+	connman_peer_set_state(peer, CONNMAN_PEER_STATE_ASSOCIATION);
++	peer_cancel_timeout(wifi);
  
 -	connman_device_unref(device);
++	return FALSE;
+ }
+ 
+-static void stop_autoscan(struct connman_device *device)
++static void peer_connect_callback(int result, GSupplicantInterface *interface,
++							void *user_data)
+ {
+-	const struct wifi_data *wifi = connman_device_get_data(device);
+-
+-	if (!wifi || !wifi->autoscan)
+-		return;
+-
+-	reset_autoscan(device);
+-
+-	connman_device_set_scanning(device, CONNMAN_SERVICE_TYPE_WIFI, false);
+-}
++	struct wifi_data *wifi = user_data;
++	struct connman_peer *peer = wifi->pending_peer;
+ 
+-static void check_p2p_technology(void)
+-{
+-	bool p2p_exists = false;
+-	GList *list;
++	DBG("peer %p - %d", peer, result);
+ 
+-	for (list = iface_list; list; list = list->next) {
+-		struct wifi_data *w = list->data;
++	if (!peer)
++		return;
+ 
+-		if (w->interface &&
+-				g_supplicant_interface_has_p2p(w->interface))
+-			p2p_exists = true;
++	if (result < 0) {
++		peer_connect_timeout(wifi);
++		return;
+ 	}
+ 
+-	if (!p2p_exists) {
+-		connman_technology_driver_unregister(&p2p_tech_driver);
+-		connman_peer_driver_unregister(&peer_driver);
+-	}
++	connman_peer_set_state(peer, CONNMAN_PEER_STATE_ASSOCIATION);
++
 +	wifi->p2p_connection_timeout = g_timeout_add_seconds(
 +						P2P_CONNECTION_TIMEOUT,
 +						peer_connect_timeout, wifi);
  }
  
--static void stop_autoscan(struct connman_device *device)
+-static void wifi_remove(struct connman_device *device)
 +static int peer_connect(struct connman_peer *peer,
 +			enum connman_peer_wps_method wps_method,
 +			const char *wps_pin)
  {
--	const struct wifi_data *wifi = connman_device_get_data(device);
+-	struct wifi_data *wifi = connman_device_get_data(device);
 +	struct connman_device *device = connman_peer_get_device(peer);
 +	GSupplicantPeerParams *peer_params;
 +	GSupplicantPeer *gs_peer;
@@ -10834,40 +10869,39 @@ index cc48ceb1..287c5789 100644
 +	bool pbc, pin;
 +	int ret;
  
--	if (!wifi || !wifi->autoscan)
--		return;
+-	DBG("device %p wifi %p", device, wifi);
 +	DBG("peer %p", peer);
  
--	reset_autoscan(device);
+-	if (!wifi)
+-		return;
 +	if (!device)
 +		return -ENODEV;
  
--	connman_device_set_scanning(device, CONNMAN_SERVICE_TYPE_WIFI, false);
--}
+-	stop_autoscan(device);
 +	wifi = connman_device_get_data(device);
 +	if (!wifi || !wifi->interface)
 +		return -ENODEV;
  
--static void check_p2p_technology(void)
--{
--	bool p2p_exists = false;
--	GList *list;
+-	if (wifi->p2p_device)
+-		p2p_iface_list = g_list_remove(p2p_iface_list, wifi);
+-	else
+-		iface_list = g_list_remove(iface_list, wifi);
 +	if (wifi->p2p_connecting)
 +		return -EBUSY;
  
--	for (list = iface_list; list; list = list->next) {
--		struct wifi_data *w = list->data;
+-	check_p2p_technology();
 +	gs_peer = g_supplicant_interface_peer_lookup(wifi->interface,
 +					connman_peer_get_identifier(peer));
 +	if (!gs_peer)
 +		return -EINVAL;
  
--		if (w->interface &&
--				g_supplicant_interface_has_p2p(w->interface))
--			p2p_exists = true;
+-	remove_pending_wifi_device(wifi);
 +	pbc = g_supplicant_peer_is_wps_pbc(gs_peer);
 +	pin = g_supplicant_peer_is_wps_pin(gs_peer);
-+
+ 
+-	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_P2P)) {
+-		g_source_remove(wifi->p2p_find_timeout);
+-		connman_device_unref(wifi->device);
 +	switch (wps_method) {
 +	case CONNMAN_PEER_WPS_UNKNOWN:
 +		if ((pbc && pin) || pin)
@@ -10884,47 +10918,67 @@ index cc48ceb1..287c5789 100644
 +		break;
  	}
  
--	if (!p2p_exists) {
--		connman_technology_driver_unregister(&p2p_tech_driver);
--		connman_peer_driver_unregister(&peer_driver);
+-	if (wifi->p2p_connection_timeout)
+-		g_source_remove(wifi->p2p_connection_timeout);
+-
+-	remove_networks(device, wifi);
+-	remove_peers(wifi);
+-
+-	connman_device_set_powered(device, false);
+-	connman_device_set_data(device, NULL);
+-	connman_device_unref(wifi->device);
+-	connman_rtnl_remove_watch(wifi->watch);
+-
+-	g_supplicant_interface_set_data(wifi->interface, NULL);
+-
+-	g_supplicant_interface_cancel(wifi->interface);
 +	if (connman_technology_get_p2p_listen(p2p_technology)) {
 +		leave_p2p_listen_on_iface(wifi);
 +		connman_technology_set_p2p_listen(p2p_technology, false);
- 	}
--}
++	}
  
--static void wifi_remove(struct connman_device *device)
--{
--	struct wifi_data *wifi = connman_device_get_data(device);
+-	if (wifi->scan_params)
+-		g_supplicant_free_scan_params(wifi->scan_params);
 +	if(p2p_go_identifier != NULL) {
 +			struct connman_network *network;
 +			const char *wp_pin = NULL;
  
--	DBG("device %p wifi %p", device, wifi);
+-	g_free(wifi->autoscan);
+-	g_free(wifi->identifier);
+-	g_free(wifi);
+-}
 +			struct connman_group * group = __connman_group_lookup_from_ident(p2p_go_identifier);
 +			const char *identifier = connman_peer_get_identifier(peer);
  
--	if (!wifi)
--		return;
+-static bool is_duplicate(GSList *list, gchar *ssid, int ssid_len)
+-{
+-	GSList *iter;
 +			network = connman_device_get_network(wifi->device, identifier);
  
--	stop_autoscan(device);
+-	for (iter = list; iter; iter = g_slist_next(iter)) {
+-		struct scan_ssid *scan_ssid = iter->data;
 +			if(group != NULL) {
 +				GSupplicantP2PWPSParams *wps_params = NULL;
  
--	if (wifi->p2p_device)
--		p2p_iface_list = g_list_remove(p2p_iface_list, wifi);
--	else
--		iface_list = g_list_remove(iface_list, wifi);
+-		if (ssid_len == scan_ssid->ssid_len &&
+-				memcmp(ssid, scan_ssid->ssid, ssid_len) == 0)
+-			return true;
+-	}
 +				wps_params = g_try_malloc0(sizeof(GSupplicantP2PWPSParams));
 +				if(wps_params == NULL)
 +					return -ENOMEM;
  
--	check_p2p_technology();
+-	return false;
+-}
 +				if (network != NULL)
 +					wp_pin = connman_network_get_string(network, "WiFi.PinWPS");
  
--	remove_pending_wifi_device(wifi);
+-static int add_scan_param(gchar *hex_ssid, char *raw_ssid, int ssid_len,
+-			int freq, GSupplicantScanParams *scan_data,
+-			int driver_max_scan_ssids, char *ssid_name)
+-{
+-	unsigned int i;
+-	struct scan_ssid *scan_ssid;
 +				wps_params->role = "enrollee";
 +				if(wp_pin == NULL) {
 +					wps_params->type = "pbc";
@@ -10934,42 +10988,70 @@ index cc48ceb1..287c5789 100644
 +					wps_params->pin = wp_pin;
 +				}
  
--	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_P2P)) {
--		g_source_remove(wifi->p2p_find_timeout);
--		connman_device_unref(wifi->device);
+-	if ((driver_max_scan_ssids == 0 ||
+-			driver_max_scan_ssids > scan_data->num_ssids) &&
+-			(hex_ssid || raw_ssid)) {
+-		gchar *ssid;
+-		unsigned int j = 0, hex;
 +				ret = __connman_group_accept_connection(group, wps_params);
-+
+ 
+-		if (hex_ssid) {
+-			size_t hex_ssid_len = strlen(hex_ssid);
 +				if(ret == -EINPROGRESS) {
 +					wifi->pending_peer = connman_peer_ref(peer);
 +					wifi->p2p_connecting = true;
 +				}
-+
+ 
+-			ssid = g_try_malloc0(hex_ssid_len / 2);
+-			if (!ssid)
 +				return ret;
 +			} else
-+				return -ENOMEM;
- 	}
+ 				return -ENOMEM;
++	}
  
--	if (wifi->p2p_connection_timeout)
--		g_source_remove(wifi->p2p_connection_timeout);
+-			for (i = 0; i < hex_ssid_len; i += 2) {
+-				sscanf(hex_ssid + i, "%02x", &hex);
+-				ssid[j++] = hex;
+-			}
+-		} else {
+-			ssid = raw_ssid;
+-			j = ssid_len;
+-		}
+-
+-		/*
+-		 * If we have already added hidden AP to the list,
+-		 * then do not do it again. This might happen if you have
+-		 * used or are using multiple wifi cards, so in that case
+-		 * you might have multiple service files for same AP.
+-		 */
+-		if (is_duplicate(scan_data->ssids, ssid, j)) {
+-			if (hex_ssid)
+-				g_free(ssid);
+-			return 0;
+-		}
 +	peer_params = g_try_malloc0(sizeof(GSupplicantPeerParams));
 +	if (!peer_params)
 +		return -ENOMEM;
  
--	remove_networks(device, wifi);
--	remove_peers(wifi);
+-		scan_ssid = g_try_new(struct scan_ssid, 1);
+-		if (!scan_ssid) {
+-			if (hex_ssid)
+-				g_free(ssid);
+-			return -ENOMEM;
+-		}
 +	peer_params->path = g_strdup(g_supplicant_peer_get_path(gs_peer));
 +	if (wps_pin)
 +		peer_params->wps_pin = g_strdup(wps_pin);
  
--	connman_device_set_powered(device, false);
--	connman_device_set_data(device, NULL);
--	connman_device_unref(wifi->device);
--	connman_rtnl_remove_watch(wifi->watch);
+-		memcpy(scan_ssid->ssid, ssid, j);
+-		scan_ssid->ssid_len = j;
+-		scan_data->ssids = g_slist_prepend(scan_data->ssids,
+-								scan_ssid);
 +	peer_params->master = connman_peer_service_is_master();
 +	peer_params->authorize_only= FALSE;
 +	peer_params->join = FALSE;
  
--	g_supplicant_interface_set_data(wifi->interface, NULL);
+-		scan_data->num_ssids++;
 +	peer_params->go_intent = wifi->p2p_device_config.go_intent;
 +	if(connman_technology_get_p2p_persistent(p2p_technology))
 +		peer_params->persistent = TRUE;
@@ -10988,11 +11070,14 @@ index cc48ceb1..287c5789 100644
 +		wifi->invited_path = NULL;
 +	}
  
--	g_supplicant_interface_cancel(wifi->interface);
+-		DBG("SSID %s added to scanned list of %d entries", ssid_name,
+-							scan_data->num_ssids);
 +	peer_params->wps_method= g_strdup(connman_peer_wps_method2string(wps_method));
  
--	if (wifi->scan_params)
--		g_supplicant_free_scan_params(wifi->scan_params);
+-		if (hex_ssid)
+-			g_free(ssid);
+-	} else
+-		return -EINVAL;
 +	ret = g_supplicant_interface_p2p_connect(wifi->interface, peer_params,
 +						peer_connect_callback, wifi);
 +	if (ret == -EINPROGRESS) {
@@ -11005,142 +11090,9 @@ index cc48ceb1..287c5789 100644
 +		g_free(peer_params);
 +	}
  
--	g_free(wifi->autoscan);
--	g_free(wifi->identifier);
--	g_free(wifi);
-+	return ret;
- }
- 
--static bool is_duplicate(GSList *list, gchar *ssid, int ssid_len)
-+static void p2p_peers_refresh(struct wifi_data *wifi)
- {
--	GSList *iter;
-+	GSupplicantInterface *interface = wifi->interface;
-+	int err;
- 
--	for (iter = list; iter; iter = g_slist_next(iter)) {
--		struct scan_ssid *scan_ssid = iter->data;
-+	err = g_supplicant_interface_p2p_flush(interface, NULL, NULL);
- 
--		if (ssid_len == scan_ssid->ssid_len &&
--				memcmp(ssid, scan_ssid->ssid, ssid_len) == 0)
--			return true;
-+	if (!connman_technology_get_enable_p2p_listen(p2p_technology))
-+		return;
-+
-+	//Do not p2p find from webOS 4.5 platform, since there is no WiFi Direct menu
-+	// in settings, so no need to list the peers
-+	// if(err == -EINPROGRESS)
-+		//p2p_find(wifi->device);
-+	if (__connman_get_connected_peer() == NULL && wifi->servicing){
-+		leave_p2p_listen_on_iface(wifi);
- 	}
- 
--	return false;
-+	err = apply_p2p_listen_on_iface(wifi, &params);
-+	if (err == 0)
-+		connman_technology_set_p2p_listen(p2p_technology, true);
- }
- 
--static int add_scan_param(gchar *hex_ssid, char *raw_ssid, int ssid_len,
--			int freq, GSupplicantScanParams *scan_data,
--			int driver_max_scan_ssids, char *ssid_name)
-+static int peer_disconnect(struct connman_peer *peer)
- {
--	unsigned int i;
--	struct scan_ssid *scan_ssid;
--
--	if ((driver_max_scan_ssids == 0 ||
--			driver_max_scan_ssids > scan_data->num_ssids) &&
--			(hex_ssid || raw_ssid)) {
--		gchar *ssid;
--		unsigned int j = 0, hex;
--
--		if (hex_ssid) {
--			size_t hex_ssid_len = strlen(hex_ssid);
-+	struct connman_device *device = connman_peer_get_device(peer);
-+	GSupplicantPeer *gs_peer;
-+	struct wifi_data *wifi;
-+	char* peer_path = NULL;
-+	int ret;
- 
--			ssid = g_try_malloc0(hex_ssid_len / 2);
--			if (!ssid)
--				return -ENOMEM;
-+	DBG("peer %p", peer);
- 
--			for (i = 0; i < hex_ssid_len; i += 2) {
--				sscanf(hex_ssid + i, "%02x", &hex);
--				ssid[j++] = hex;
--			}
--		} else {
--			ssid = raw_ssid;
--			j = ssid_len;
--		}
-+	if (!device)
-+		return -ENODEV;
- 
--		/*
--		 * If we have already added hidden AP to the list,
--		 * then do not do it again. This might happen if you have
--		 * used or are using multiple wifi cards, so in that case
--		 * you might have multiple service files for same AP.
--		 */
--		if (is_duplicate(scan_data->ssids, ssid, j)) {
--			if (hex_ssid)
--				g_free(ssid);
--			return 0;
-+	if (p2p_go_identifier) {
-+		struct connman_group *connman_group;
-+		bool autonomous;
-+		connman_group = __connman_group_lookup_from_ident(p2p_go_identifier);
-+		if (connman_group) {
-+			autonomous = __connman_group_is_autonomous(connman_group);
-+			if (autonomous)
-+				return -ENOTSUP;
- 		}
-+	}
- 
--		scan_ssid = g_try_new(struct scan_ssid, 1);
--		if (!scan_ssid) {
--			if (hex_ssid)
--				g_free(ssid);
--			return -ENOMEM;
--		}
-+	wifi = connman_device_get_data(device);
-+	if (!wifi)
-+		return -ENODEV;
- 
--		memcpy(scan_ssid->ssid, ssid, j);
--		scan_ssid->ssid_len = j;
--		scan_data->ssids = g_slist_prepend(scan_data->ssids,
--								scan_ssid);
-+	gs_peer = g_supplicant_interface_peer_lookup(wifi->interface,
-+					connman_peer_get_identifier(peer));
-+	if (!gs_peer)
-+		return -EINVAL;
- 
--		scan_data->num_ssids++;
-+	peer_path = g_strdup(g_supplicant_peer_get_path(gs_peer));
- 
--		DBG("SSID %s added to scanned list of %d entries", ssid_name,
--							scan_data->num_ssids);
-+	ret = g_supplicant_interface_p2p_client_remove(wifi->interface, NULL, peer_path);
-+	g_free(peer_path);
- 
--		if (hex_ssid)
--			g_free(ssid);
--	} else
--		return -EINVAL;
-+	if (ret == -EINPROGRESS) {
-+		peer_cancel_timeout(wifi);
-+		wifi->p2p_device = false;
-+		__connman_peer_set_static_ip(peer, NULL);
-+	}
- 
 -	scan_data->ssids = g_slist_reverse(scan_data->ssids);
-+	if (!__connman_get_connected_peer())
-+		p2p_peers_refresh(wifi);
++	return ret;
++}
  
 -	if (!scan_data->freqs) {
 -		scan_data->freqs = g_try_malloc0(sizeof(uint16_t));
@@ -11148,16 +11100,16 @@ index cc48ceb1..287c5789 100644
 -			g_slist_free_full(scan_data->ssids, g_free);
 -			return -ENOMEM;
 -		}
-+	return ret;
-+}
++static void p2p_peers_refresh(struct wifi_data *wifi)
++{
++	GSupplicantInterface *interface = wifi->interface;
++	int err;
  
 -		scan_data->num_freqs = 1;
 -		scan_data->freqs[0] = freq;
 -	} else {
 -		bool duplicate = false;
-+static gboolean timeout_p2p_listen_state(gpointer user_data)
-+{
-+	GSupplicantInterface *interface = user_data;
++	err = g_supplicant_interface_p2p_flush(interface, NULL, NULL);
  
 -		/* Don't add duplicate entries */
 -		for (i = 0; i < scan_data->num_freqs; i++) {
@@ -11166,7 +11118,8 @@ index cc48ceb1..287c5789 100644
 -				break;
 -			}
 -		}
-+	p2p_listen_ref = -1;
++	if (!connman_technology_get_enable_p2p_listen(p2p_technology))
++		return;
  
 -		if (!duplicate) {
 -			scan_data->num_freqs++;
@@ -11178,18 +11131,22 @@ index cc48ceb1..287c5789 100644
 -			}
 -			scan_data->freqs[scan_data->num_freqs - 1] = freq;
 -		}
--	}
-+	if (connman_technology_get_p2p_listen(p2p_technology) == false &&
-+			!__connman_peer_get_connected_exists())
-+		tech_set_p2p_listen(p2p_technology, true);
++	//Do not p2p find from webOS 4.5 platform, since there is no WiFi Direct menu
++	// in settings, so no need to list the peers
++	// if(err == -EINPROGRESS)
++		//p2p_find(wifi->device);
++	if (__connman_get_connected_peer() == NULL && wifi->servicing){
++		leave_p2p_listen_on_iface(wifi);
+ 	}
  
 -	return 1;
-+	return FALSE;
++	err = apply_p2p_listen_on_iface(wifi, &params);
++	if (err == 0)
++		connman_technology_set_p2p_listen(p2p_technology, true);
  }
  
 -static int get_hidden_connections(GSupplicantScanParams *scan_data)
-+static void reject_peer_callback(int result, GSupplicantInterface *interface,
-+								void *user_data)
++static int peer_disconnect(struct connman_peer *peer)
  {
 -	struct connman_config_entry **entries;
 -	GKeyFile *keyfile;
@@ -11198,33 +11155,39 @@ index cc48ceb1..287c5789 100644
 -	int i, ret;
 -	bool value;
 -	int num_ssids = 0, add_param_failed = 0;
-+	struct connman_peer *peer= user_data;
++	struct connman_device *device = connman_peer_get_device(peer);
++	GSupplicantPeer *gs_peer;
++	struct wifi_data *wifi;
++	char* peer_path = NULL;
++	int ret;
  
 -	services = connman_storage_get_services();
 -	for (i = 0; services && services[i]; i++) {
 -		if (strncmp(services[i], "wifi_", 5) != 0)
 -			continue;
-+	DBG("result %d supplicant interface %p peer %p",
-+			result, interface, peer);
++	DBG("peer %p", peer);
  
 -		keyfile = connman_storage_load_service(services[i]);
 -		if (!keyfile)
 -			continue;
-+	if (result < 0)
-+		return;
++	if (!device)
++		return -ENODEV;
  
 -		value = g_key_file_get_boolean(keyfile,
 -					services[i], "Hidden", NULL);
 -		if (!value) {
 -			g_key_file_free(keyfile);
 -			continue;
--		}
-+	/*
-+	 * Current wpa_supplicant does not supports to emit the signal which is
-+	 * P2P negotiation failure when calling RejectPeer().
-+	 * To do this, we should call dummy Connect() after RejectPeer().
-+	 */
-+	peer_connect(peer, CONNMAN_PEER_WPS_PBC, "");
++	if (p2p_go_identifier) {
++		struct connman_group *connman_group;
++		bool autonomous;
++		connman_group = __connman_group_lookup_from_ident(p2p_go_identifier);
++		if (connman_group) {
++			autonomous = __connman_group_is_autonomous(connman_group);
++			if (autonomous)
++				return -ENOTSUP;
+ 		}
++	}
  
 -		value = g_key_file_get_boolean(keyfile,
 -					services[i], "Favorite", NULL);
@@ -11232,37 +11195,37 @@ index cc48ceb1..287c5789 100644
 -			g_key_file_free(keyfile);
 -			continue;
 -		}
-+	if (p2p_listen_ref != -1)
-+		g_source_remove(p2p_listen_ref);
++	wifi = connman_device_get_data(device);
++	if (!wifi)
++		return -ENODEV;
  
 -		ssid = g_key_file_get_string(keyfile,
 -					services[i], "SSID", NULL);
-+	p2p_listen_ref = g_timeout_add(3000, timeout_p2p_listen_state, interface);
-+}
++	gs_peer = g_supplicant_interface_peer_lookup(wifi->interface,
++					connman_peer_get_identifier(peer));
++	if (!gs_peer)
++		return -EINVAL;
  
 -		name = g_key_file_get_string(keyfile, services[i], "Name",
 -								NULL);
-+static int peer_reject(struct connman_peer *peer)
-+{
-+	struct connman_device *device = connman_peer_get_device(peer);
-+	GSupplicantPeerParams peer_params = {};
-+	GSupplicantPeer *gs_peer;
-+	struct wifi_data *wifi;
-+	int ret;
++	peer_path = g_strdup(g_supplicant_peer_get_path(gs_peer));
  
 -		ret = add_scan_param(ssid, NULL, 0, 0, scan_data, 0, name);
 -		if (ret < 0)
 -			add_param_failed++;
 -		else if (ret > 0)
 -			num_ssids++;
-+	DBG("peer %p", peer);
++	ret = g_supplicant_interface_p2p_client_remove(wifi->interface, NULL, peer_path);
++	g_free(peer_path);
  
 -		g_free(ssid);
 -		g_free(name);
 -		g_key_file_free(keyfile);
--	}
-+	if (!device)
-+		return -ENODEV;
++	if (ret == -EINPROGRESS) {
++		peer_cancel_timeout(wifi);
++		wifi->p2p_device = false;
++		__connman_peer_set_static_ip(peer, NULL);
+ 	}
  
 -	/*
 -	 * Check if there are any hidden AP that needs to be provisioned.
@@ -11270,17 +11233,10 @@ index cc48ceb1..287c5789 100644
 -	entries = connman_config_get_entries("wifi");
 -	for (i = 0; entries && entries[i]; i++) {
 -		int len;
-+	wifi = connman_device_get_data(device);
-+	if (!wifi)
-+		return -ENODEV;
- 
+-
 -		if (!entries[i]->hidden)
 -			continue;
-+	gs_peer = g_supplicant_interface_peer_lookup(wifi->interface,
-+					connman_peer_get_identifier(peer));
-+	if (!gs_peer)
-+		return -EINVAL;
- 
+-
 -		if (!entries[i]->ssid) {
 -			ssid = entries[i]->name;
 -			len = strlen(ssid);
@@ -11288,53 +11244,48 @@ index cc48ceb1..287c5789 100644
 -			ssid = entries[i]->ssid;
 -			len = entries[i]->ssid_len;
 -		}
-+	peer_params.path = g_strdup(g_supplicant_peer_get_path(gs_peer));
- 
+-
 -		if (!ssid)
 -			continue;
-+	ret = g_supplicant_interface_p2p_reject(wifi->interface,
-+							&peer_params, reject_peer_callback, peer);
-+	g_free(peer_params.path);
++	if (!__connman_get_connected_peer())
++		p2p_peers_refresh(wifi);
  
 -		ret = add_scan_param(NULL, ssid, len, 0, scan_data, 0, ssid);
 -		if (ret < 0)
 -			add_param_failed++;
 -		else if (ret > 0)
 -			num_ssids++;
-+	if (ret == -EINPROGRESS) {
-+		wifi->p2p_device = false;
- 	}
- 
--	connman_config_free_entries(entries);
--
--	if (add_param_failed > 0)
--		DBG("Unable to scan %d out of %d SSIDs",
--					add_param_failed, num_ssids);
+-	}
 +	return ret;
 +}
  
+-	connman_config_free_entries(entries);
++static gboolean timeout_p2p_listen_state(gpointer user_data)
++{
++	GSupplicantInterface *interface = user_data;
+ 
+-	if (add_param_failed > 0)
+-		DBG("Unable to scan %d out of %d SSIDs",
+-					add_param_failed, num_ssids);
++	p2p_listen_ref = -1;
+ 
 -	g_strfreev(services);
-+struct peer_service_registration {
-+	peer_service_registration_cb_t callback;
-+	void *user_data;
-+};
++	if (connman_technology_get_p2p_listen(p2p_technology) == false &&
++			!__connman_peer_get_connected_exists())
++		tech_set_p2p_listen(p2p_technology, true);
  
 -	return num_ssids;
-+static bool is_service_wfd(const unsigned char *specs, int length)
-+{
-+	if (length < 9 || specs[0] != 0 || specs[1] != 0 || specs[2] != 6)
-+		return false;
-+
-+	return true;
++	return FALSE;
  }
  
 -static int get_hidden_connections_params(struct wifi_data *wifi,
 -					GSupplicantScanParams *scan_params)
-+static void apply_p2p_listen_callback(int result, GSupplicantInterface *interface, void *user_data)
++static void reject_peer_callback(int result, GSupplicantInterface *interface,
++								void *user_data)
  {
 -	int driver_max_ssids, i;
 -	GSupplicantScanParams *orig_params;
-+	struct wifi_data *wifi = user_data;
++	struct connman_peer *peer= user_data;
  
 -	/*
 -	 * Scan hidden networks so that we can autoconnect to them.
@@ -11344,187 +11295,156 @@ index cc48ceb1..287c5789 100644
 -							wifi->interface);
 -	if (driver_max_ssids == 0)
 -		driver_max_ssids = 1;
-+	if (result < 0) {
-+		connman_info("p2p extended listen set failed(%d)", result);
-+		wifi->servicing--;
-+	}
-+}
++	DBG("result %d supplicant interface %p peer %p",
++			result, interface, peer);
  
 -	DBG("max ssids %d", driver_max_ssids);
-+static int apply_p2p_listen_on_iface(gpointer data, gpointer user_data)
-+{
-+	int err = 0;
-+	struct wifi_data *wifi = data;
-+	struct p2p_listen_data* listenParams = user_data;
++	if (result < 0)
++		return;
  
 -	if (!wifi->scan_params) {
 -		wifi->scan_params = g_try_malloc0(sizeof(GSupplicantScanParams));
 -		if (!wifi->scan_params)
 -			return 0;
-+	if (!listenParams)
-+		return -EINVAL;
++	/*
++	 * Current wpa_supplicant does not supports to emit the signal which is
++	 * P2P negotiation failure when calling RejectPeer().
++	 * To do this, we should call dummy Connect() after RejectPeer().
++	 */
++	peer_connect(peer, CONNMAN_PEER_WPS_PBC, "");
  
 -		if (get_hidden_connections(wifi->scan_params) == 0) {
 -			g_supplicant_free_scan_params(wifi->scan_params);
 -			wifi->scan_params = NULL;
-+	if (!wifi->interface ||
-+			!g_supplicant_interface_has_p2p(wifi->interface))
-+		return -ENODEV;
++	if (p2p_listen_ref != -1)
++		g_source_remove(p2p_listen_ref);
  
 -			return 0;
 -		}
-+	if (connman_setting_get_bool("SupportP2P0Interface") &&
-+		g_strcmp0(connman_device_get_string(wifi->device, "Interface"),
-+				connman_option_get_string("P2PDevice")) != 0)
-+		return -EOPNOTSUPP;
-+
-+	if (__connman_group_exist())
-+		return -EALREADY;
-+
-+	if (!wifi->servicing) {
-+		err = g_supplicant_interface_p2p_listen(wifi->interface,
-+				listenParams->period, listenParams->interval, apply_p2p_listen_callback, wifi);
-+
-+		wifi->servicing++;
- 	}
-+	return err;
+-	}
++	p2p_listen_ref = g_timeout_add(3000, timeout_p2p_listen_state, interface);
 +}
  
 -	orig_params = wifi->scan_params;
-+static void leave_p2p_listen_on_iface(gpointer data)
++static int peer_reject(struct connman_peer *peer)
 +{
-+	struct wifi_data *wifi = data;
-+	if (!wifi->interface ||
-+			!g_supplicant_interface_has_p2p(wifi->interface))
-+		return;
++	struct connman_device *device = connman_peer_get_device(peer);
++	GSupplicantPeerParams peer_params = {};
++	GSupplicantPeer *gs_peer;
++	struct wifi_data *wifi;
++	int ret;
  
 -	/* Let's transfer driver_max_ssids params */
 -	for (i = 0; i < driver_max_ssids; i++) {
 -		struct scan_ssid *ssid;
-+	if (connman_setting_get_bool("SupportP2P0Interface") &&
-+		g_strcmp0(connman_device_get_string(wifi->device, "Interface"),
-+				connman_option_get_string("P2PDevice")) != 0)
-+		return;
++	DBG("peer %p", peer);
  
 -		if (!wifi->scan_params->ssids)
 -			break;
-+	wifi->servicing--;
-+	if (!wifi->servicing || wifi->servicing < 0) {
-+		g_supplicant_interface_p2p_listen(wifi->interface, 0, 0, NULL, wifi);
-+		wifi->servicing = 0;
-+	}
-+}
++	if (!device)
++		return -ENODEV;
  
 -		ssid = orig_params->ssids->data;
 -		orig_params->ssids = g_slist_remove(orig_params->ssids, ssid);
 -		scan_params->ssids = g_slist_prepend(scan_params->ssids, ssid);
-+static void register_wfd_service_cb(int result,
-+				GSupplicantInterface *iface, void *user_data)
-+{
-+	struct peer_service_registration *reg_data = user_data;
-+
-+	DBG("");
-+
-+	if (reg_data && reg_data->callback) {
-+		reg_data->callback(result, reg_data->user_data);
-+		g_free(reg_data);
- 	}
-+}
+-	}
++	wifi = connman_device_get_data(device);
++	if (!wifi)
++		return -ENODEV;
  
 -	if (i > 0) {
 -		scan_params->num_ssids = i;
 -		scan_params->ssids = g_slist_reverse(scan_params->ssids);
-+static GSupplicantP2PServiceParams *fill_in_peer_service_params(
-+				const unsigned char *spec,
-+				int spec_length, const unsigned char *query,
-+				int query_length, int version)
-+{
-+	GSupplicantP2PServiceParams *params;
++	gs_peer = g_supplicant_interface_peer_lookup(wifi->interface,
++					connman_peer_get_identifier(peer));
++	if (!gs_peer)
++		return -EINVAL;
  
--		scan_params->freqs = g_memdup(orig_params->freqs,
--				sizeof(uint16_t) * orig_params->num_freqs);
--		if (!scan_params->freqs)
+-		if (orig_params->num_freqs <= 0)
 -			goto err;
-+	params = g_try_malloc0(sizeof(GSupplicantP2PServiceParams));
-+	if (!params)
-+		return NULL;
++	peer_params.path = g_strdup(g_supplicant_peer_get_path(gs_peer));
+ 
+-		scan_params->freqs =
+-			g_malloc(sizeof(uint16_t) * orig_params->num_freqs);
+-		memcpy(scan_params->freqs, orig_params->freqs,
+-			sizeof(uint16_t) *orig_params->num_freqs);
++	ret = g_supplicant_interface_p2p_reject(wifi->interface,
++							&peer_params, reject_peer_callback, peer);
++	g_free(peer_params.path);
  
 -		scan_params->num_freqs = orig_params->num_freqs;
-+	if (version > 0) {
-+		params->version = version;
-+		params->service = g_memdup(spec, spec_length);
-+	} else if (query_length > 0 && spec_length > 0) {
-+		params->query = g_memdup(query, query_length);
-+		params->query_length = query_length;
++	if (ret == -EINPROGRESS) {
++		wifi->p2p_device = false;
++	}
  
 -	} else
 -		goto err;
-+		params->response = g_memdup(spec, spec_length);
-+		params->response_length = spec_length;
-+	} else {
-+		params->wfd_ies = g_memdup(spec, spec_length);
-+		params->wfd_ies_length = spec_length;
-+	}
- 
--	orig_params->num_ssids -= scan_params->num_ssids;
-+	return params;
++	return ret;
 +}
  
+-	orig_params->num_ssids -= scan_params->num_ssids;
++struct peer_service_registration {
++	peer_service_registration_cb_t callback;
++	void *user_data;
++};
+ 
 -	return scan_params->num_ssids;
-+static void free_peer_service_params(GSupplicantP2PServiceParams *params)
++static bool is_service_wfd(const unsigned char *specs, int length)
 +{
-+	if (!params)
-+		return;
++	if (length < 9 || specs[0] != 0 || specs[1] != 0 || specs[2] != 6)
++		return false;
  
 -err:
 -	g_slist_free_full(scan_params->ssids, g_free);
 -	g_supplicant_free_scan_params(wifi->scan_params);
 -	wifi->scan_params = NULL;
-+	g_free(params->service);
-+	g_free(params->query);
-+	g_free(params->response);
-+	g_free(params->wfd_ies);
++	return true;
++}
  
 -	return 0;
-+	g_free(params);
++static void apply_p2p_listen_callback(int result, GSupplicantInterface *interface, void *user_data)
++{
++	struct wifi_data *wifi = user_data;
++
++	if (result < 0) {
++		connman_info("p2p extended listen set failed(%d)", result);
++		wifi->servicing--;
++	}
  }
  
 -static int throw_wifi_scan(struct connman_device *device,
 -			GSupplicantInterfaceCallback callback)
-+static int peer_register_wfd_service(const unsigned char *specification,
-+				int specification_length,
-+				peer_service_registration_cb_t callback,
-+				void *user_data)
++static int apply_p2p_listen_on_iface(gpointer data, gpointer user_data)
  {
 -	struct wifi_data *wifi = connman_device_get_data(device);
-+	struct peer_service_registration *reg_data = NULL;
-+	static GSupplicantP2PServiceParams *params;
- 	int ret;
+-	int ret;
++	int err = 0;
++	struct wifi_data *wifi = data;
++	struct p2p_listen_data* listenParams = user_data;
  
 -	if (!wifi)
 -		return -ENODEV;
--
++	if (!listenParams)
++		return -EINVAL;
+ 
 -	DBG("device %p %p", device, wifi->interface);
-+	DBG("");
++	if (!wifi->interface ||
++			!g_supplicant_interface_has_p2p(wifi->interface))
++		return -ENODEV;
  
 -	if (wifi->tethering)
-+	if (wfd_service_registered)
- 		return -EBUSY;
+-		return -EBUSY;
++	if (connman_setting_get_bool("SupportP2P0Interface") &&
++		g_strcmp0(connman_device_get_string(wifi->device, "Interface"),
++				connman_setting_get_string("P2PDevice")) != 0)
++		return -EOPNOTSUPP;
  
 -	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI))
--		return -EALREADY;
-+	params = fill_in_peer_service_params(specification,
-+					specification_length, NULL, 0, 0);
-+	if (!params)
-+		return -ENOMEM;
++	if (__connman_group_exist())
+ 		return -EALREADY;
  
 -	connman_device_ref(device);
-+	reg_data = g_try_malloc0(sizeof(*reg_data));
-+	if (!reg_data) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
- 
+-
 -	ret = g_supplicant_interface_scan(wifi->interface, NULL,
 -						callback, device);
 -	if (ret == 0) {
@@ -11532,33 +11452,24 @@ index cc48ceb1..287c5789 100644
 -				CONNMAN_SERVICE_TYPE_WIFI, true);
 -	} else
 -		connman_device_unref(device);
-+	reg_data->callback = callback;
-+	reg_data->user_data = user_data;
-+
-+	ret = g_supplicant_set_widi_ies(params,
-+					register_wfd_service_cb, reg_data);
-+	if (ret < 0 && ret != -EINPROGRESS)
-+		goto error;
-+
-+	wfd_service_registered = true;
-+
-+	return ret;
-+error:
-+	free_peer_service_params(params);
-+	g_free(reg_data);
++	if (!wifi->servicing) {
++		err = g_supplicant_interface_p2p_listen(wifi->interface,
++				listenParams->period, listenParams->interval, apply_p2p_listen_callback, wifi);
  
- 	return ret;
+-	return ret;
++		wifi->servicing++;
++	}
++	return err;
  }
  
 -static void hidden_free(struct hidden_params *hidden)
-+static void register_peer_service_cb(int result,
-+				GSupplicantInterface *iface, void *user_data)
++static void leave_p2p_listen_on_iface(gpointer data)
  {
 -	if (!hidden)
--		return;
-+	struct wifi_data *wifi = g_supplicant_interface_get_data(iface);
-+	struct peer_service_registration *reg_data = user_data;
-+	int ret = 0;
++	struct wifi_data *wifi = data;
++	if (!wifi->interface ||
++			!g_supplicant_interface_has_p2p(wifi->interface))
+ 		return;
  
 -	if (hidden->scan_params)
 -		g_supplicant_free_scan_params(hidden->scan_params);
@@ -11566,33 +11477,29 @@ index cc48ceb1..287c5789 100644
 -	g_free(hidden->passphrase);
 -	g_free(hidden->security);
 -	g_free(hidden);
-+	DBG("");
++	if (connman_setting_get_bool("SupportP2P0Interface") &&
++		g_strcmp0(connman_device_get_string(wifi->device, "Interface"),
++				connman_setting_get_string("P2PDevice")) != 0)
++		return;
 +
-+	if (reg_data->callback)
-+		reg_data->callback(result, reg_data->user_data);
-+
-+	g_free(reg_data);
++	wifi->servicing--;
++	if (!wifi->servicing || wifi->servicing < 0) {
++		g_supplicant_interface_p2p_listen(wifi->interface, 0, 0, NULL, wifi);
++		wifi->servicing = 0;
++	}
  }
  
 -static void scan_callback(int result, GSupplicantInterface *interface,
 -						void *user_data)
-+static int peer_register_service(const unsigned char *specification,
-+				int specification_length,
-+				const unsigned char *query,
-+				int query_length, int version,
-+				peer_service_registration_cb_t callback,
-+				void *user_data)
++static void register_wfd_service_cb(int result,
++				GSupplicantInterface *iface, void *user_data)
  {
 -	struct connman_device *device = user_data;
 -	struct wifi_data *wifi = connman_device_get_data(device);
 -	bool scanning;
 -
 -	DBG("result %d wifi %p", result, wifi);
-+	struct peer_service_registration *reg_data = NULL;
-+	GSupplicantP2PServiceParams *params;
-+	bool found = false;
-+	int ret, ret_f;
-+	GList *list;
++	struct peer_service_registration *reg_data = user_data;
  
 -	if (wifi) {
 -		if (wifi->hidden && !wifi->postpone_hidden) {
@@ -11606,47 +11513,250 @@ index cc48ceb1..287c5789 100644
 -			g_supplicant_free_scan_params(wifi->scan_params);
 -			wifi->scan_params = NULL;
 -		}
-+	if (specification && !version && !query &&
-+			is_service_wfd(specification, specification_length)) {
-+		return peer_register_wfd_service(specification,
-+				specification_length, callback, user_data);
++	if (reg_data && reg_data->callback) {
++		reg_data->callback(result, reg_data->user_data);
++		g_free(reg_data);
  	}
++}
  
 -	if (result < 0)
 -		connman_device_reset_scanning(device);
-+	reg_data = g_try_malloc0(sizeof(*reg_data));
-+	if (!reg_data)
-+		return -ENOMEM;
- 
+-
 -	/* User is connecting to a hidden AP, let's wait for finished event */
 -	if (wifi && wifi->hidden && wifi->postpone_hidden) {
 -		GSupplicantScanParams *scan_params;
 -		int ret;
-+	reg_data->callback = callback;
-+	reg_data->user_data = user_data;
- 
+-
 -		wifi->postpone_hidden = false;
 -		scan_params = wifi->hidden->scan_params;
 -		wifi->hidden->scan_params = NULL;
-+	ret_f = -EOPNOTSUPP;
++static GSupplicantP2PServiceParams *fill_in_peer_service_params(
++				const unsigned char *spec,
++				int spec_length, const unsigned char *query,
++				int query_length, int version)
++{
++	GSupplicantP2PServiceParams *params;
  
 -		reset_autoscan(device);
-+	for (list = iface_list; list; list = list->next) {
-+		struct wifi_data *wifi = list->data;
-+		GSupplicantInterface *iface = wifi->interface;
++	params = g_try_malloc0(sizeof(GSupplicantP2PServiceParams));
++	if (!params)
++		return NULL;
  
 -		ret = g_supplicant_interface_scan(wifi->interface, scan_params,
 -							scan_callback, device);
 -		if (ret == 0)
 -			return;
--
++	if (version > 0) {
++		params->version = version;
++		if (spec_length > 0) {
++			params->service = g_malloc(spec_length);
++			memcpy(params->service, spec, spec_length);
++		}
++	} else if (query_length > 0 && spec_length > 0) {
++		params->query = g_malloc(query_length);
++		memcpy(params->query, query, query_length);
++		params->query_length = query_length;
+ 
 -		/* On error, let's recall scan_callback, which will cleanup */
 -		return scan_callback(ret, interface, user_data);
++		params->response = g_malloc(spec_length);
++		memcpy(params->response, spec, spec_length);
++		params->response_length = spec_length;
++	} else {
++		if (spec_length > 0) {
++			params->wfd_ies = g_malloc(spec_length);
++			memcpy(params->wfd_ies, spec, spec_length);
++		}
++		params->wfd_ies_length = spec_length;
+ 	}
+ 
+-	scanning = connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI);
+-
+-	if (scanning) {
+-		connman_device_set_scanning(device,
+-				CONNMAN_SERVICE_TYPE_WIFI, false);
 -	}
++	return params;
++}
+ 
+-	if (result != -ENOLINK)
+-		start_autoscan(device);
++static void free_peer_service_params(GSupplicantP2PServiceParams *params)
++{
++	if (!params)
++		return;
+ 
+-	/*
+-	 * If we are here then we were scanning; however, if we are
+-	 * also mid-flight disabling the interface, then wifi_disable
+-	 * has already cleared the device scanning state and
+-	 * unreferenced the device, obviating the need to do it here.
+-	 */
++	g_free(params->service);
++	g_free(params->query);
++	g_free(params->response);
++	g_free(params->wfd_ies);
+ 
+-	if (scanning)
+-		connman_device_unref(device);
++	g_free(params);
+ }
+ 
+-static void scan_callback_hidden(int result,
+-			GSupplicantInterface *interface, void *user_data)
++static int peer_register_wfd_service(const unsigned char *specification,
++				int specification_length,
++				peer_service_registration_cb_t callback,
++				void *user_data)
+ {
+-	struct connman_device *device = user_data;
+-	struct wifi_data *wifi = connman_device_get_data(device);
+-	GSupplicantScanParams *scan_params;
++	struct peer_service_registration *reg_data = NULL;
++	static GSupplicantP2PServiceParams *params;
+ 	int ret;
+ 
+-	DBG("result %d wifi %p", result, wifi);
++	DBG("");
+ 
+-	if (!wifi)
+-		goto out;
++	if (wfd_service_registered)
++		return -EBUSY;
+ 
+-	/* User is trying to connect to a hidden AP */
+-	if (wifi->hidden && wifi->postpone_hidden)
+-		goto out;
++	params = fill_in_peer_service_params(specification,
++					specification_length, NULL, 0, 0);
++	if (!params)
++		return -ENOMEM;
+ 
+-	scan_params = g_try_malloc0(sizeof(GSupplicantScanParams));
+-	if (!scan_params)
+-		goto out;
+-
+-	if (get_hidden_connections_params(wifi, scan_params) > 0) {
+-		ret = g_supplicant_interface_scan(wifi->interface,
+-							scan_params,
+-							scan_callback_hidden,
+-							device);
+-		if (ret == 0)
+-			return;
++	reg_data = g_try_malloc0(sizeof(*reg_data));
++	if (!reg_data) {
++		ret = -ENOMEM;
++		goto error;
+ 	}
+ 
+-	g_supplicant_free_scan_params(scan_params);
++	reg_data->callback = callback;
++	reg_data->user_data = user_data;
+ 
+-out:
+-	scan_callback(result, interface, user_data);
++	ret = g_supplicant_set_widi_ies(params,
++					register_wfd_service_cb, reg_data);
++	if (ret < 0 && ret != -EINPROGRESS)
++		goto error;
++
++	wfd_service_registered = true;
++
++	return ret;
++error:
++	free_peer_service_params(params);
++	g_free(reg_data);
++
++	return ret;
+ }
+ 
+-static gboolean autoscan_timeout(gpointer data)
++static void register_peer_service_cb(int result,
++				GSupplicantInterface *iface, void *user_data)
+ {
+-	struct connman_device *device = data;
+-	struct wifi_data *wifi = connman_device_get_data(device);
+-	struct autoscan_params *autoscan;
+-	int interval;
++	struct wifi_data *wifi = g_supplicant_interface_get_data(iface);
++	struct peer_service_registration *reg_data = user_data;
++	int ret = 0;
+ 
+-	if (!wifi)
+-		return FALSE;
++	DBG("");
+ 
+-	autoscan = wifi->autoscan;
++	if (reg_data && reg_data->callback)
++		reg_data->callback(result, reg_data->user_data);
+ 
+-	if (autoscan->interval <= 0) {
+-		interval = autoscan->base;
+-		goto set_interval;
+-	} else
+-		interval = autoscan->interval * autoscan->base;
++	g_free(reg_data);
++}
+ 
+-	if (interval > autoscan->limit)
+-		interval = autoscan->limit;
++static int peer_register_service(const unsigned char *specification,
++				int specification_length,
++				const unsigned char *query,
++				int query_length, int version,
++				peer_service_registration_cb_t callback,
++				void *user_data)
++{
++	struct peer_service_registration *reg_data = NULL;
++	GSupplicantP2PServiceParams *params;
++	bool found = false;
++	int ret, ret_f;
++	GList *list;
+ 
+-	throw_wifi_scan(wifi->device, scan_callback_hidden);
++	DBG("");
+ 
+-	/*
+-	 * In case BackgroundScanning is disabled, interval will reach the
+-	 * limit exactly after the very first passive scanning. It allows
+-	 * to ensure at most one passive scan is performed in such cases.
+-	 */
+-	if (!connman_setting_get_bool("BackgroundScanning") &&
+-					interval == autoscan->limit) {
+-		g_source_remove(autoscan->timeout);
+-		autoscan->timeout = 0;
++	if (specification && !version && !query &&
++			is_service_wfd(specification, specification_length)) {
++		return peer_register_wfd_service(specification,
++				specification_length, callback, user_data);
++	}
+ 
+-		connman_device_unref(device);
++	reg_data = g_try_malloc0(sizeof(*reg_data));
++	if (!reg_data)
++		return -ENOMEM;
+ 
+-		return FALSE;
+-	}
++	reg_data->callback = callback;
++	reg_data->user_data = user_data;
+ 
+-set_interval:
+-	DBG("interval %d", interval);
++	ret_f = -EOPNOTSUPP;
+ 
+-	autoscan->interval = interval;
++	for (list = iface_list; list; list = list->next) {
++		struct wifi_data *wifi = list->data;
++		GSupplicantInterface *iface = wifi->interface;
+ 
+-	autoscan->timeout = g_timeout_add_seconds(interval,
+-						autoscan_timeout, device);
 +		if (!g_supplicant_interface_has_p2p(iface))
 +			continue;
  
--	scanning = connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI);
+-	return FALSE;
+-}
 +		params = fill_in_peer_service_params(specification,
 +						specification_length, query,
 +						query_length, version);
@@ -11655,9 +11765,10 @@ index cc48ceb1..287c5789 100644
 +			continue;
 +		}
  
--	if (scanning) {
--		connman_device_set_scanning(device,
--				CONNMAN_SERVICE_TYPE_WIFI, false);
+-static void start_autoscan(struct connman_device *device)
+-{
+-	struct wifi_data *wifi = connman_device_get_data(device);
+-	struct autoscan_params *autoscan;
 +		if (!found) {
 +			ret_f = g_supplicant_interface_p2p_add_service(iface,
 +				register_peer_service_cb, params, reg_data);
@@ -11669,89 +11780,63 @@ index cc48ceb1..287c5789 100644
 +				register_peer_service_cb, params, NULL);
 +		if (ret != 0 && ret != -EINPROGRESS)
 +			free_peer_service_params(params);
- 	}
++	}
  
--	if (result != -ENOLINK)
--		start_autoscan(device);
--
--	/*
--	 * If we are here then we were scanning; however, if we are
--	 * also mid-flight disabling the interface, then wifi_disable
--	 * has already cleared the device scanning state and
--	 * unreferenced the device, obviating the need to do it here.
--	 */
+-	DBG("");
 +	if(ret_f != -EINPROGRESS && reg_data)
 +		g_free(reg_data);
  
--	if (scanning)
--		connman_device_unref(device);
-+	return ret_f;
- }
- 
--static void scan_callback_hidden(int result,
--			GSupplicantInterface *interface, void *user_data)
-+static int peer_unregister_wfd_service(void)
- {
--	struct connman_device *device = user_data;
--	struct wifi_data *wifi = connman_device_get_data(device);
--	GSupplicantScanParams *scan_params;
--	int ret;
--
--	DBG("result %d wifi %p", result, wifi);
--
 -	if (!wifi)
--		goto out;
+-		return;
++	return ret_f;
++}
+ 
+-	if (wifi->p2p_device)
+-		return;
++static int peer_unregister_wfd_service(void)
++{
 +	GSupplicantP2PServiceParams *params;
 +	GList *list;
  
--	/* User is trying to connect to a hidden AP */
--	if (wifi->hidden && wifi->postpone_hidden)
--		goto out;
+-	if (wifi->connected)
+-		return;
 +	if (!wfd_service_registered)
 +		return -EALREADY;
  
--	scan_params = g_try_malloc0(sizeof(GSupplicantScanParams));
--	if (!scan_params)
--		goto out;
+-	autoscan = wifi->autoscan;
+-	if (!autoscan)
+-		return;
 +	params = fill_in_peer_service_params(NULL, 0, NULL, 0, 0);
 +	if (!params)
 +		return -ENOMEM;
  
--	if (get_hidden_connections_params(wifi, scan_params) > 0) {
--		ret = g_supplicant_interface_scan(wifi->interface,
--							scan_params,
--							scan_callback_hidden,
--							device);
--		if (ret == 0)
--			return;
--	}
+-	if (autoscan->timeout > 0 || autoscan->interval > 0)
+-		return;
 +	wfd_service_registered = false;
  
--	g_supplicant_free_scan_params(scan_params);
+-	connman_device_ref(device);
 +	g_supplicant_set_widi_ies(params, NULL, NULL);
  
--out:
--	scan_callback(result, interface, user_data);
+-	autoscan_timeout(device);
 +	return 0;
  }
  
--static gboolean autoscan_timeout(gpointer data)
+-static struct autoscan_params *parse_autoscan_params(const char *params)
 +static int peer_unregister_service(const unsigned char *specification,
 +						int specification_length,
 +						const unsigned char *query,
 +						int query_length, int version)
  {
--	struct connman_device *device = data;
--	struct wifi_data *wifi = connman_device_get_data(device);
 -	struct autoscan_params *autoscan;
--	int interval;
+-	char **list_params;
+-	int limit;
+-	int base;
 +	GSupplicantP2PServiceParams *params;
 +	bool wfd = false;
 +	GList *list;
 +	int ret;
  
--	if (!wifi)
--		return FALSE;
+-	DBG("");
 +	if (specification && !version && !query &&
 +			is_service_wfd(specification, specification_length)) {
 +		ret = peer_unregister_wfd_service();
@@ -11760,149 +11845,12 @@ index cc48ceb1..287c5789 100644
 +		wfd = true;
 +	}
  
--	autoscan = wifi->autoscan;
-+	for (list = iface_list; list; list = list->next) {
-+		struct wifi_data *wifi = list->data;
-+		GSupplicantInterface *iface = wifi->interface;
- 
--	if (autoscan->interval <= 0) {
--		interval = autoscan->base;
--		goto set_interval;
--	} else
--		interval = autoscan->interval * autoscan->base;
-+		if (wfd)
-+			continue;
- 
--	if (interval > autoscan->limit)
--		interval = autoscan->limit;
-+		if (!g_supplicant_interface_has_p2p(iface))
-+			continue;
- 
--	throw_wifi_scan(wifi->device, scan_callback_hidden);
-+		params = fill_in_peer_service_params(specification,
-+						specification_length, query,
-+						query_length, version);
-+		if (!params) {
-+			continue;
-+		}
- 
--	/*
--	 * In case BackgroundScanning is disabled, interval will reach the
--	 * limit exactly after the very first passive scanning. It allows
--	 * to ensure at most one passive scan is performed in such cases.
--	 */
--	if (!connman_setting_get_bool("BackgroundScanning") &&
--					interval == autoscan->limit) {
--		g_source_remove(autoscan->timeout);
--		autoscan->timeout = 0;
-+		ret = g_supplicant_interface_p2p_del_service(iface, params);
-+		if (ret != 0 && ret != -EINPROGRESS)
-+			free_peer_service_params(params);
-+	}
- 
--		connman_device_unref(device);
-+	return 0;
-+}
- 
--		return FALSE;
--	}
-+static struct connman_peer_driver peer_driver = {
-+	.connect    = peer_connect,
-+	.disconnect = peer_disconnect,
-+	.register_service = peer_register_service,
-+	.unregister_service = peer_unregister_service,
-+	.reject = peer_reject,
-+};
- 
--set_interval:
--	DBG("interval %d", interval);
-+static void handle_tethering(struct wifi_data *wifi)
-+{
-+	if (!wifi->tethering)
-+		return;
- 
--	autoscan->interval = interval;
-+	if (!wifi->bridge)
-+		return;
- 
--	autoscan->timeout = g_timeout_add_seconds(interval,
--						autoscan_timeout, device);
-+	if (wifi->bridged)
-+		return;
- 
--	return FALSE;
-+	DBG("index %d bridge %s", wifi->index, wifi->bridge);
-+
-+	if (connman_inet_add_to_bridge(wifi->index, wifi->bridge) < 0)
-+		return;
-+
-+	wifi->bridged = true;
- }
- 
--static void start_autoscan(struct connman_device *device)
-+static void wifi_newlink(unsigned flags, unsigned change, void *user_data)
- {
-+	struct connman_device *device = user_data;
- 	struct wifi_data *wifi = connman_device_get_data(device);
--	struct autoscan_params *autoscan;
--
--	DBG("");
- 
- 	if (!wifi)
- 		return;
- 
--	if (wifi->p2p_device)
--		return;
--
--	if (wifi->connected)
--		return;
-+	DBG("index %d flags %d change %d", wifi->index, flags, change);
- 
--	autoscan = wifi->autoscan;
--	if (!autoscan)
--		return;
-+	if ((wifi->flags & IFF_UP) != (flags & IFF_UP)) {
-+		if (flags & IFF_UP)
-+			DBG("interface up");
-+		else
-+			DBG("interface down");
-+	}
- 
--	if (autoscan->timeout > 0 || autoscan->interval > 0)
--		return;
-+	if ((wifi->flags & IFF_LOWER_UP) != (flags & IFF_LOWER_UP)) {
-+		if (flags & IFF_LOWER_UP)
-+			DBG("carrier on");
-+		else
-+			DBG("carrier off");
-+	}
- 
--	connman_device_ref(device);
-+	if (flags & IFF_LOWER_UP)
-+		handle_tethering(wifi);
- 
--	autoscan_timeout(device);
-+	wifi->flags = flags;
- }
- 
--static struct autoscan_params *parse_autoscan_params(const char *params)
-+static int wifi_probe(struct connman_device *device)
- {
--	struct autoscan_params *autoscan;
--	char **list_params;
--	int limit;
--	int base;
-+	struct wifi_data *wifi;
- 
--	DBG("");
-+	DBG("device %p", device);
- 
 -	list_params = g_strsplit(params, ":", 0);
 -	if (list_params == 0)
 -		return NULL;
-+	wifi = g_try_new0(struct wifi_data, 1);
-+	if (!wifi)
-+		return -ENOMEM;
++	for (list = iface_list; list; list = list->next) {
++		struct wifi_data *wifi = list->data;
++		GSupplicantInterface *iface = wifi->interface;
  
 -	if (!g_strcmp0(list_params[0], "exponential") &&
 -				g_strv_length(list_params) == 3) {
@@ -11915,55 +11863,58 @@ index cc48ceb1..287c5789 100644
 -		g_strfreev(list_params);
 -		return NULL;
 -	}
-+	wifi->state = G_SUPPLICANT_STATE_INACTIVE;
-+	wifi->ap_supported = WIFI_AP_UNKNOWN;
-+	wifi->tethering_param = NULL;
++		if (wfd)
++			continue;
  
 -	DBG("Setup %s autoscanning", list_params[0]);
-+	connman_device_set_data(device, wifi);
-+	wifi->device = connman_device_ref(device);
++		if (!g_supplicant_interface_has_p2p(iface))
++			continue;
  
 -	g_strfreev(list_params);
-+	wifi->index = connman_device_get_index(device);
-+	wifi->flags = 0;
++		params = fill_in_peer_service_params(specification,
++						specification_length, query,
++						query_length, version);
++		if (!params) {
++			continue;
++		}
  
 -	autoscan = g_try_malloc0(sizeof(struct autoscan_params));
 -	if (!autoscan) {
 -		DBG("Could not allocate memory for autoscan");
 -		return NULL;
--	}
-+	wifi->watch = connman_rtnl_add_newlink_watch(wifi->index,
-+							wifi_newlink, device);
++		ret = g_supplicant_interface_p2p_del_service(iface, params);
++		if (ret != 0 && ret != -EINPROGRESS)
++			free_peer_service_params(params);
+ 	}
  
 -	DBG("base %d - limit %d", base, limit);
 -	autoscan->base = base;
 -	autoscan->limit = limit;
-+	wifi->p2p_listen_suppressed = false;
-+	wifi->wps_active = FALSE;
- 
+-
 -	return autoscan;
-+	if (is_p2p_connecting())
-+		add_pending_wifi_device(wifi);
-+	else
-+		iface_list = g_list_append(iface_list, wifi);
-+
 +	return 0;
  }
  
 -static void setup_autoscan(struct wifi_data *wifi)
--{
++static struct connman_peer_driver peer_driver = {
++	.connect    = peer_connect,
++	.disconnect = peer_disconnect,
++	.register_service = peer_register_service,
++	.unregister_service = peer_unregister_service,
++	.reject = peer_reject,
++};
++
++static void handle_tethering(struct wifi_data *wifi)
+ {
 -	/*
 -	 * If BackgroundScanning is enabled, setup exponential
 -	 * autoscanning if it has not been previously done.
 -	 */
 -	if (connman_setting_get_bool("BackgroundScanning")) {
 -		wifi->autoscan = parse_autoscan_params(AUTOSCAN_EXPONENTIAL);
--		return;
++	if (!wifi->tethering)
+ 		return;
 -	}
-+static void remove_networks(struct connman_device *device,
-+				struct wifi_data *wifi)
-+{
-+	GSList *list;
  
 -	/*
 -	 * On the contrary, if BackgroundScanning is disabled, update autoscan
@@ -11973,8 +11924,8 @@ index cc48ceb1..287c5789 100644
 -		g_free(wifi->autoscan);
 -		wifi->autoscan = NULL;
 -	}
-+	for (list = wifi->networks; list; list = list->next) {
-+		struct connman_network *network = list->data;
++	if (!wifi->bridge)
++		return;
  
 -	switch (wifi->scanning_type) {
 -	case WIFI_SCANNING_PASSIVE:
@@ -11988,73 +11939,135 @@ index cc48ceb1..287c5789 100644
 -		/* Setup autoscan in this case but we should never fall here. */
 -		wifi->autoscan = parse_autoscan_params(AUTOSCAN_SINGLE);
 -		break;
-+		connman_device_remove_network(device, network);
-+		connman_network_unref(network);
- 	}
+-	}
++	if (wifi->bridged)
++		return;
 +
-+	g_slist_free(wifi->networks);
-+	wifi->networks = NULL;
++	DBG("index %d bridge %s", wifi->index, wifi->bridge);
++
++	if (connman_inet_add_to_bridge(wifi->index, wifi->bridge) < 0)
++		return;
++
++	wifi->bridged = true;
  }
  
 -static void finalize_interface_creation(struct wifi_data *wifi)
-+static void remove_peers(struct wifi_data *wifi)
++static void wifi_newlink(unsigned flags, unsigned change, void *user_data)
  {
 -	DBG("interface is ready wifi %p tethering %d", wifi, wifi->tethering);
--
++	struct connman_device *device = user_data;
++	struct wifi_data *wifi = connman_device_get_data(device);
+ 
 -	if (!wifi->device) {
 -		connman_error("WiFi device not set");
--		return;
--	}
--
++	if (!wifi)
+ 		return;
++
++	DBG("index %d flags %d change %d", wifi->index, flags, change);
++
++	if ((wifi->flags & IFF_UP) != (flags & IFF_UP)) {
++		if (flags & IFF_UP)
++			DBG("interface up");
++		else
++			DBG("interface down");
+ 	}
+ 
 -	connman_device_set_powered(wifi->device, true);
-+	GSList *list;
-+	DBG("");
++	if ((wifi->flags & IFF_LOWER_UP) != (flags & IFF_LOWER_UP)) {
++		if (flags & IFF_LOWER_UP)
++			DBG("carrier on");
++		else
++			DBG("carrier off");
++	}
  
 -	if (wifi->p2p_device)
 -		return;
-+	for (list = wifi->peers; list; list = list->next) {
-+		struct connman_peer *peer = list->data;
++	if (flags & IFF_LOWER_UP)
++		handle_tethering(wifi);
  
 -	if (!wifi->autoscan)
 -		setup_autoscan(wifi);
-+		connman_peer_unregister(peer);
-+		connman_peer_unref(peer);
-+	}
++	wifi->flags = flags;
++}
  
 -	start_autoscan(wifi->device);
-+	g_slist_free(wifi->peers);
-+	wifi->peers = NULL;
++static int wifi_probe(struct connman_device *device)
++{
++	struct wifi_data *wifi;
++
++	DBG("device %p", device);
++
++	wifi = g_try_new0(struct wifi_data, 1);
++	if (!wifi)
++		return -ENOMEM;
++
++	wifi->state = G_SUPPLICANT_STATE_INACTIVE;
++	wifi->ap_supported = WIFI_AP_UNKNOWN;
++	wifi->tethering_param = NULL;
++
++	connman_device_set_data(device, wifi);
++	wifi->device = connman_device_ref(device);
++
++	wifi->index = connman_device_get_index(device);
++	wifi->flags = 0;
++
++	wifi->watch = connman_rtnl_add_newlink_watch(wifi->index,
++							wifi_newlink, device);
++
++	wifi->p2p_listen_suppressed = false;
++	wifi->wps_active = FALSE;
++
++	if (is_p2p_connecting())
++		add_pending_wifi_device(wifi);
++	else
++		iface_list = g_list_append(iface_list, wifi);
++
++	return 0;
  }
  
 -static void interface_create_callback(int result,
 -					GSupplicantInterface *interface,
 -							void *user_data)
-+static void reset_autoscan(struct connman_device *device)
++static void remove_networks(struct connman_device *device,
++				struct wifi_data *wifi)
  {
 -	struct wifi_data *wifi = user_data;
 -	char *bgscan_range_max;
 -	long value;
-+	struct wifi_data *wifi = connman_device_get_data(device);
-+	struct autoscan_params *autoscan;
++	GSList *list;
  
 -	DBG("result %d ifname %s, wifi %p", result,
 -				g_supplicant_interface_get_ifname(interface),
 -				wifi);
-+	DBG("");
++	for (list = wifi->networks; list; list = list->next) {
++		struct connman_network *network = list->data;
  
 -	if (result < 0 || !wifi)
-+	if (!wifi || !wifi->autoscan)
- 		return;
+-		return;
++		connman_device_remove_network(device, network);
++		connman_network_unref(network);
++	}
  
 -	wifi->interface = interface;
 -	g_supplicant_interface_set_data(interface, wifi);
-+	autoscan = wifi->autoscan;
++	g_slist_free(wifi->networks);
++	wifi->networks = NULL;
++}
  
 -	if (g_supplicant_interface_get_ready(interface)) {
 -		wifi->interface_ready = true;
 -		finalize_interface_creation(wifi);
--	}
-+	autoscan->interval = 0;
++static void remove_peers(struct wifi_data *wifi)
++{
++	GSList *list;
++	DBG("");
++
++	for (list = wifi->peers; list; list = list->next) {
++		struct connman_peer *peer = list->data;
++
++		connman_peer_unregister(peer);
++		connman_peer_unref(peer);
+ 	}
  
 -	/*
 -	 * Set the BSS expiration age to match the long scanning
@@ -12063,19 +12076,36 @@ index cc48ceb1..287c5789 100644
 -	 */
 -	bgscan_range_max = strrchr(BGSCAN_DEFAULT, ':');
 -	if (!bgscan_range_max || strlen(bgscan_range_max) < 1)
-+	if (autoscan->timeout == 0)
++	g_slist_free(wifi->peers);
++	wifi->peers = NULL;
++}
++
++static void reset_autoscan(struct connman_device *device)
++{
++	struct wifi_data *wifi = connman_device_get_data(device);
++	struct autoscan_params *autoscan;
++
++	DBG("");
++
++	if (!wifi || !wifi->autoscan)
  		return;
  
 -	value = strtol(bgscan_range_max + 1, NULL, 10);
 -	if (value <= 0 || errno == ERANGE)
--		return;
-+	g_source_remove(autoscan->timeout);
-+	autoscan->timeout = 0;
++	autoscan = wifi->autoscan;
++
++	autoscan->interval = 0;
++
++	if (autoscan->timeout == 0)
+ 		return;
  
 -	if (g_supplicant_interface_set_bss_expiration_age(interface,
 -					value + SCAN_MAX_DURATION) < 0) {
 -		connman_warn("Failed to set bss expiration age");
 -	}
++	g_source_remove(autoscan->timeout);
++	autoscan->timeout = 0;
++
 +	connman_device_unref(device);
  }
  
@@ -12085,7 +12115,7 @@ index cc48ceb1..287c5789 100644
 -	struct wifi_data *wifi = connman_device_get_data(device);
 -	int index;
 -	char *interface;
--	const char *driver = connman_option_get_string("wifi");
+-	const char *driver = connman_setting_get_string("wifi");
 -	int ret;
 +	const struct wifi_data *wifi = connman_device_get_data(device);
  
@@ -12271,27 +12301,15 @@ index cc48ceb1..287c5789 100644
 -	GSequenceIter *iter;
 -	GSequence *latest_list;
 -	struct last_connected *entry;
--	GKeyFile *keyfile;
--	struct timeval modified;
--	gchar **services;
--	gchar *str;
--	char *ssid;
--	int i, freq;
--	int num_ssids = 0;
 +	unsigned int i;
 +	struct scan_ssid *scan_ssid;
- 
--	latest_list = g_sequence_new(free_entry);
--	if (!latest_list)
--		return -ENOMEM;
++
 +	if ((driver_max_scan_ssids == 0 ||
 +			driver_max_scan_ssids > scan_data->num_ssids) &&
 +			(hex_ssid || raw_ssid)) {
 +		gchar *ssid;
 +		unsigned int j = 0, hex;
- 
--	services = connman_storage_get_services();
--	for (i = 0; services && services[i]; i++) {
++
 +		if (hex_ssid) {
 +			size_t hex_ssid_len = strlen(hex_ssid);
 +
@@ -12382,19 +12400,25 @@ index cc48ceb1..287c5789 100644
 +static int get_hidden_connections(GSupplicantScanParams *scan_data)
 +{
 +	struct connman_config_entry **entries;
-+	GKeyFile *keyfile;
-+	gchar **services;
+ 	GKeyFile *keyfile;
+-	struct timeval modified;
+ 	gchar **services;
+-	gchar *str;
+-	char *ssid;
+-	int i, freq;
+-	int num_ssids = 0;
+-
+-	latest_list = g_sequence_new(free_entry);
+-	if (!latest_list)
+-		return -ENOMEM;
 +	char *ssid, *name;
 +	int i, ret;
 +	bool value;
 +	int num_ssids = 0, add_param_failed = 0;
-+
-+	services = connman_storage_get_services();
-+	for (i = 0; services && services[i]; i++) {
- 		if (strncmp(services[i], "wifi_", 5) != 0)
- 			continue;
  
-@@ -1746,1981 +2031,3905 @@ static int get_latest_connections(int max_ssids,
+ 	services = connman_storage_get_services();
+ 	for (i = 0; services && services[i]; i++) {
+@@ -1756,1983 +2038,3910 @@ static int get_latest_connections(int max_ssids,
  		if (!keyfile)
  			continue;
  
@@ -12523,16 +12547,11 @@ index cc48ceb1..287c5789 100644
 +					GSupplicantScanParams *scan_params)
  {
 -	DBG("");
--
--	if (!wifi || wifi->scanning_type == new_type)
--		return;
--
--	wifi->scanning_type = new_type;
 +	int driver_max_ssids, i;
 +	GSupplicantScanParams *orig_params;
  
--	setup_autoscan(wifi);
--}
+-	if (!wifi || wifi->scanning_type == new_type)
+-		return;
 +	/*
 +	 * Scan hidden networks so that we can autoconnect to them.
 +	 * We will assume 1 as a default number of ssid to scan.
@@ -12542,24 +12561,29 @@ index cc48ceb1..287c5789 100644
 +	if (driver_max_ssids == 0)
 +		driver_max_ssids = 1;
  
--static int wifi_scan_simple(struct connman_device *device)
--{
--	struct wifi_data *wifi = connman_device_get_data(device);
+-	wifi->scanning_type = new_type;
 +	DBG("max ssids %d", driver_max_ssids);
  
--	reset_autoscan(device);
+-	setup_autoscan(wifi);
+-}
 +	if (!wifi->scan_params) {
 +		wifi->scan_params = g_try_malloc0(sizeof(GSupplicantScanParams));
 +		if (!wifi->scan_params)
 +			return 0;
  
--	/* Distinguish between devices performing passive and active scanning */
--	if (wifi)
--		wifi_update_scanner_type(wifi, WIFI_SCANNING_PASSIVE);
+-static int wifi_scan_simple(struct connman_device *device)
+-{
+-	struct wifi_data *wifi = connman_device_get_data(device);
 +		if (get_hidden_connections(wifi->scan_params) == 0) {
 +			g_supplicant_free_scan_params(wifi->scan_params);
 +			wifi->scan_params = NULL;
  
+-	reset_autoscan(device);
+-
+-	/* Distinguish between devices performing passive and active scanning */
+-	if (wifi)
+-		wifi_update_scanner_type(wifi, WIFI_SCANNING_PASSIVE);
+-
 -	return throw_wifi_scan(device, scan_callback_hidden);
 -}
 +			return 0;
@@ -12589,25 +12613,27 @@ index cc48ceb1..287c5789 100644
  	}
  
 -	connman_device_set_scanning(device, CONNMAN_SERVICE_TYPE_P2P, false);
+-
+-	connman_device_unref(device);
+-	start_autoscan(device);
 +	if (i > 0) {
 +		scan_params->num_ssids = i;
 +		scan_params->ssids = g_slist_reverse(scan_params->ssids);
  
--	connman_device_unref(device);
--	start_autoscan(device);
--
 -	return FALSE;
 -}
--
++		if (orig_params->num_freqs <= 0)
++			goto err;
+ 
 -static void p2p_find_callback(int result, GSupplicantInterface *interface,
 -							void *user_data)
 -{
 -	struct connman_device *device = user_data;
 -	struct wifi_data *wifi = connman_device_get_data(device);
-+		scan_params->freqs = g_memdup(orig_params->freqs,
-+				sizeof(uint16_t) * orig_params->num_freqs);
-+		if (!scan_params->freqs)
-+			goto err;
++		scan_params->freqs =
++			g_malloc(sizeof(uint16_t) * orig_params->num_freqs);
++		memcpy(scan_params->freqs, orig_params->freqs,
++			sizeof(uint16_t) *orig_params->num_freqs);
  
 -	DBG("result %d wifi %p", result, wifi);
 +		scan_params->num_freqs = orig_params->num_freqs;
@@ -12675,7 +12701,7 @@ index cc48ceb1..287c5789 100644
 -				CONNMAN_SERVICE_TYPE_P2P, true);
 +		if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
 +					g_strcmp0(connman_device_get_string(wifi->device, "Interface"),
-+							connman_option_get_string("P2PDevice")) == 0) {
++							connman_setting_get_string("P2PDevice")) == 0) {
 +			connman_device_set_scanning(wifi->device, CONNMAN_SERVICE_TYPE_P2P, false);
 +		}
 +		return;
@@ -12716,76 +12742,41 @@ index cc48ceb1..287c5789 100644
  
 -	if (params->type == CONNMAN_SERVICE_TYPE_P2P)
 -		return p2p_find(device);
-+	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI))
-+		return -EALREADY;
- 
+-
 -	DBG("device %p wifi %p hidden ssid %s", device, wifi->interface,
 -		params->ssid);
-+	connman_device_ref(device);
- 
+-
 -	scanning = connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI);
-+	ret = g_supplicant_interface_scan(wifi->interface, NULL,
-+						callback, device);
-+	if (ret == 0) {
-+		connman_device_set_scanning(device,
-+				CONNMAN_SERVICE_TYPE_WIFI, true);
-+	} else
-+		connman_device_unref(device);
- 
+-
 -	if (!params->ssid || params->ssid_len == 0 || params->ssid_len > 32) {
 -		if (scanning)
 -			return -EALREADY;
-+	return ret;
-+}
- 
+-
 -		driver_max_ssids = g_supplicant_interface_get_max_scan_ssids(
 -							wifi->interface);
 -		DBG("max ssids %d", driver_max_ssids);
 -		if (driver_max_ssids == 0)
 -			return wifi_scan_simple(device);
-+static void hidden_free(struct hidden_params *hidden)
-+{
-+	if (!hidden)
-+		return;
- 
+-
 -		do_hidden = false;
 -	} else {
 -		if (scanning && wifi->hidden && wifi->postpone_hidden)
 -			return -EALREADY;
-+	if (hidden->scan_params)
-+		g_supplicant_free_scan_params(hidden->scan_params);
-+	g_free(hidden->identity);
-+	g_free(hidden->passphrase);
-+	g_free(hidden->security);
-+	g_free(hidden);
-+}
- 
+-
 -		do_hidden = true;
 -	}
-+static void scan_callback(int result, GSupplicantInterface *interface,
-+						void *user_data)
-+{
-+	struct connman_device *device = user_data;
-+	struct wifi_data *wifi = connman_device_get_data(device);
-+	bool scanning;
- 
+-
 -	scan_params = g_try_malloc0(sizeof(GSupplicantScanParams));
 -	if (!scan_params)
 -		return -ENOMEM;
-+	DBG("result %d wifi %p", result, wifi);
- 
+-
 -	if (do_hidden) {
 -		scan_ssid = g_try_new(struct scan_ssid, 1);
 -		if (!scan_ssid) {
 -			g_free(scan_params);
 -			return -ENOMEM;
-+	if (wifi) {
-+		if (wifi->hidden && !wifi->postpone_hidden) {
-+			connman_network_clear_hidden(wifi->hidden->user_data);
-+			hidden_free(wifi->hidden);
-+			wifi->hidden = NULL;
- 		}
- 
+-		}
+-
 -		memcpy(scan_ssid->ssid, params->ssid, params->ssid_len);
 -		scan_ssid->ssid_len = params->ssid_len;
 -		scan_params->ssids = g_slist_prepend(scan_params->ssids,
@@ -12796,19 +12787,13 @@ index cc48ceb1..287c5789 100644
 -		if (!hidden) {
 -			g_supplicant_free_scan_params(scan_params);
 -			return -ENOMEM;
-+		if (wifi->scan_params) {
-+			g_supplicant_free_scan_params(wifi->scan_params);
-+			wifi->scan_params = NULL;
- 		}
-+	}
- 
+-		}
+-
 -		if (wifi->hidden) {
 -			hidden_free(wifi->hidden);
 -			wifi->hidden = NULL;
 -		}
-+	if (result < 0)
-+		connman_device_reset_scanning(device);
- 
+-
 -		memcpy(hidden->ssid, params->ssid, params->ssid_len);
 -		hidden->ssid_len = params->ssid_len;
 -		hidden->identity = g_strdup(params->identity);
@@ -12816,20 +12801,13 @@ index cc48ceb1..287c5789 100644
 -		hidden->security = g_strdup(params->security);
 -		hidden->user_data = params->user_data;
 -		wifi->hidden = hidden;
-+	/* User is connecting to a hidden AP, let's wait for finished event */
-+	if (wifi && wifi->hidden && wifi->postpone_hidden) {
-+		GSupplicantScanParams *scan_params;
-+		int ret;
- 
+-
 -		if (scanning) {
 -			/* Let's keep this active scan for later,
 -			 * when current scan will be over. */
 -			wifi->postpone_hidden = TRUE;
 -			hidden->scan_params = scan_params;
-+		wifi->postpone_hidden = false;
-+		scan_params = wifi->hidden->scan_params;
-+		wifi->hidden->scan_params = NULL;
- 
+-
 -			return 0;
 -		}
 -	} else if (wifi->connected) {
@@ -12842,44 +12820,164 @@ index cc48ceb1..287c5789 100644
 -			return wifi_scan_simple(device);
 -		}
 -	}
-+		reset_autoscan(device);
- 
+-
 -	/* Distinguish between devices performing passive and active scanning */
 -	wifi_update_scanner_type(wifi, WIFI_SCANNING_ACTIVE);
++	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI))
++		return -EALREADY;
+ 
+ 	connman_device_ref(device);
+ 
+-	reset_autoscan(device);
+-
+-	ret = g_supplicant_interface_scan(wifi->interface, scan_params,
+-						scan_callback, device);
++	ret = g_supplicant_interface_scan(wifi->interface, NULL,
++						callback, device);
+ 	if (ret == 0) {
+ 		connman_device_set_scanning(device,
+ 				CONNMAN_SERVICE_TYPE_WIFI, true);
+-	} else {
+-		g_supplicant_free_scan_params(scan_params);
++	} else
+ 		connman_device_unref(device);
+ 
+-		if (do_hidden) {
+-			hidden_free(wifi->hidden);
+-			wifi->hidden = NULL;
+-		}
+-	}
+-
+ 	return ret;
+ }
+ 
+-static void wifi_stop_scan(enum connman_service_type type,
+-			struct connman_device *device)
++static void hidden_free(struct hidden_params *hidden)
+ {
+-	struct wifi_data *wifi = connman_device_get_data(device);
+-
+-	DBG("device %p wifi %p", device, wifi);
+-
+-	if (!wifi)
++	if (!hidden)
+ 		return;
+ 
+-	if (type == CONNMAN_SERVICE_TYPE_P2P) {
+-		if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_P2P)) {
+-			g_source_remove(wifi->p2p_find_timeout);
+-			p2p_find_stop(device);
+-		}
+-	}
++	if (hidden->scan_params)
++		g_supplicant_free_scan_params(hidden->scan_params);
++	g_free(hidden->identity);
++	g_free(hidden->passphrase);
++	g_free(hidden->security);
++	g_free(hidden);
+ }
+ 
+-static void wifi_regdom_callback(int result,
+-					const char *alpha2,
++static void scan_callback(int result, GSupplicantInterface *interface,
+ 						void *user_data)
+ {
+ 	struct connman_device *device = user_data;
+-
+-	connman_device_regdom_notify(device, result, alpha2);
+-
+-	connman_device_unref(device);
+-}
+-
+-static int wifi_set_regdom(struct connman_device *device, const char *alpha2)
+-{
+ 	struct wifi_data *wifi = connman_device_get_data(device);
+-	int ret;
+-
+-	if (!wifi)
+-		return -EINVAL;
++	bool scanning;
+ 
+-	connman_device_ref(device);
++	DBG("result %d wifi %p", result, wifi);
+ 
+-	ret = g_supplicant_interface_set_country(wifi->interface,
+-						wifi_regdom_callback,
+-							alpha2, device);
+-	if (ret != 0)
+-		connman_device_unref(device);
+-
+-	return ret;
+-}
+-
+-static gboolean start_wps_timeout(gpointer user_data)
+-{
+-	struct wifi_data *wifi = user_data;
++	if (wifi) {
++		if (wifi->hidden && !wifi->postpone_hidden) {
++			connman_network_clear_hidden(wifi->hidden->user_data);
++			hidden_free(wifi->hidden);
++			wifi->hidden = NULL;
++		}
+ 
+-	DBG("");
++		if (wifi->scan_params) {
++			g_supplicant_free_scan_params(wifi->scan_params);
++			wifi->scan_params = NULL;
++		}
++	}
+ 
+-	wifi->wps_timeout = 0;
+-	wifi->wps_active = FALSE;
++	if (result < 0)
++		connman_device_reset_scanning(device);
+ 
+-	/* if we already assigned a network we have to remove it too */
+-	wifi->network = NULL;
++	/* User is connecting to a hidden AP, let's wait for finished event */
++	if (wifi && wifi->hidden && wifi->postpone_hidden) {
++		GSupplicantScanParams *scan_params;
++		int ret;
+ 
+-	connman_technology_wps_failed_notify(wifi_technology);
++		wifi->postpone_hidden = false;
++		scan_params = wifi->hidden->scan_params;
++		wifi->hidden->scan_params = NULL;
+ 
+-	return FALSE;
+-}
++		reset_autoscan(device);
+ 
+-static bool is_wifi_valid (struct wifi_data *wifi)
+-{
+-	GList *list;
 +		ret = g_supplicant_interface_scan(wifi->interface, scan_params,
 +							scan_callback, device);
 +		if (ret == 0)
 +			return;
  
--	connman_device_ref(device);
+-	DBG("");
 +		/* On error, let's recall scan_callback, which will cleanup */
 +		return scan_callback(ret, interface, user_data);
 +	}
  
--	reset_autoscan(device);
+-	if (wifi == NULL)
+-		return FALSE;
 +	scanning = connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI);
  
--	ret = g_supplicant_interface_scan(wifi->interface, scan_params,
--						scan_callback, device);
--	if (ret == 0) {
+-	for (list = iface_list; list; list = list->next) {
+-		if (list->data == wifi)
+-			return TRUE;
 +	if (scanning) {
- 		connman_device_set_scanning(device,
--				CONNMAN_SERVICE_TYPE_WIFI, true);
--	} else {
--		g_supplicant_free_scan_params(scan_params);
--		connman_device_unref(device);
--
--		if (do_hidden) {
--			hidden_free(wifi->hidden);
--			wifi->hidden = NULL;
--		}
++		connman_device_set_scanning(device,
 +				CONNMAN_SERVICE_TYPE_WIFI, false);
  	}
  
--	return ret;
+-	DBG("wifi %p not found", wifi);
 +	if (result != -ENOLINK)
 +		start_autoscan(device);
-+
+ 
+-	return FALSE;
 +	/*
 +	 * If we are here then we were scanning; however, if we are
 +	 * also mid-flight disabling the interface, then wifi_disable
@@ -12891,44 +12989,42 @@ index cc48ceb1..287c5789 100644
 +		connman_device_unref(device);
  }
  
--static void wifi_stop_scan(enum connman_service_type type,
--			struct connman_device *device)
+-static void cancel_wps_callback(int result, GSupplicantInterface *interface,
+-                            void *user_data)
 +static void scan_callback_hidden(int result,
 +			GSupplicantInterface *interface, void *user_data)
  {
+-	struct wifi_data *wifi = user_data;
 +	struct connman_device *device = user_data;
- 	struct wifi_data *wifi = connman_device_get_data(device);
++	struct wifi_data *wifi = connman_device_get_data(device);
 +	GSupplicantScanParams *scan_params;
 +	int ret;
  
--	DBG("device %p wifi %p", device, wifi);
+-	DBG("result %d", result);
 +	DBG("result %d wifi %p", result, wifi);
  
- 	if (!wifi)
+-	if (!is_wifi_valid(wifi))
 -		return;
++	if (!wifi)
 +		goto out;
  
--	if (type == CONNMAN_SERVICE_TYPE_P2P) {
--		if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_P2P)) {
--			g_source_remove(wifi->p2p_find_timeout);
--			p2p_find_stop(device);
--		}
+-	/* if we already assigned a network we have to remove it too */
+-	if (wifi->network) {
+-		connman_network_set_bool(wifi->network, "WiFi.UseWPS", FALSE);
+-		connman_network_set_connected(wifi->network, FALSE);
+-		wifi->network = NULL;
 -	}
--}
 +	/* User is trying to connect to a hidden AP */
 +	if (wifi->hidden && wifi->postpone_hidden)
 +		goto out;
  
--static void wifi_regdom_callback(int result,
--					const char *alpha2,
--						void *user_data)
--{
--	struct connman_device *device = user_data;
+-	if (wifi->wps_timeout > 0) {
+-		g_source_remove(wifi->wps_timeout);
+-		wifi->wps_timeout = 0;
 +	scan_params = g_try_malloc0(sizeof(GSupplicantScanParams));
 +	if (!scan_params)
 +		goto out;
- 
--	connman_device_regdom_notify(device, result, alpha2);
++
 +	if (get_hidden_connections_params(wifi, scan_params) > 0) {
 +		ret = g_supplicant_interface_scan(wifi->interface,
 +							scan_params,
@@ -12936,53 +13032,53 @@ index cc48ceb1..287c5789 100644
 +							device);
 +		if (ret == 0)
 +			return;
-+	}
+ 	}
  
--	connman_device_unref(device);
+-	wifi->wps_active = FALSE;
+-	/* already freed within gsupplicant layer */
+-	wifi->wps_ssid = NULL;
 +	g_supplicant_free_scan_params(scan_params);
-+
+ 
+-	enable_auto_connect_block(FALSE);
 +out:
 +	scan_callback(result, interface, user_data);
  }
  
--static int wifi_set_regdom(struct connman_device *device, const char *alpha2)
+-static int cancel_wps(struct wifi_data *wifi)
 +static gboolean autoscan_timeout(gpointer data)
  {
-+	struct connman_device *device = data;
- 	struct wifi_data *wifi = connman_device_get_data(device);
 -	int ret;
++	struct connman_device *device = data;
++	struct wifi_data *wifi = connman_device_get_data(device);
 +	struct autoscan_params *autoscan;
 +	int interval;
  
- 	if (!wifi)
--		return -EINVAL;
+-	DBG("wifi %p", wifi);
++	if (!wifi)
 +		return FALSE;
  
--	connman_device_ref(device);
+-	ret = g_supplicant_interface_wps_cancel(wifi->interface, cancel_wps_callback, wifi);
+-	if (ret == -EALREADY || ret == -EINPROGRESS)
+-		ret = 0;
 +	autoscan = wifi->autoscan;
  
--	ret = g_supplicant_interface_set_country(wifi->interface,
--						wifi_regdom_callback,
--							alpha2, device);
--	if (ret != 0)
--		connman_device_unref(device);
+-	return ret;
+-}
 +	if (autoscan->interval <= 0) {
 +		interval = autoscan->base;
 +		goto set_interval;
 +	} else
 +		interval = autoscan->interval * autoscan->base;
  
--	return ret;
--}
+-static gboolean wps_timeout_cb(gpointer user_data)
+-{
+-	struct wifi_data *wifi = user_data;
 +	if (interval > autoscan->limit)
 +		interval = autoscan->limit;
  
--static gboolean start_wps_timeout(gpointer user_data)
--{
--	struct wifi_data *wifi = user_data;
-+	throw_wifi_scan(wifi->device, scan_callback_hidden);
- 
 -	DBG("");
++	throw_wifi_scan(wifi->device, scan_callback_hidden);
++
 +	/*
 +	 * In case BackgroundScanning is disabled, interval will reach the
 +	 * limit exactly after the very first passive scanning. It allows
@@ -12992,20 +13088,18 @@ index cc48ceb1..287c5789 100644
 +					interval == autoscan->limit) {
 +		g_source_remove(autoscan->timeout);
 +		autoscan->timeout = 0;
- 
--	wifi->wps_timeout = 0;
--	wifi->wps_active = FALSE;
++
 +		connman_device_unref(device);
  
--	/* if we already assigned a network we have to remove it too */
--	wifi->network = NULL;
-+		return FALSE;
+-	if (!is_wifi_valid(wifi))
+ 		return FALSE;
 +	}
  
--	connman_technology_wps_failed_notify(wifi_technology);
+-	cancel_wps(wifi);
 +set_interval:
 +	DBG("interval %d", interval);
-+
+ 
+-	connman_technology_wps_failed_notify(wifi_technology);
 +	autoscan->interval = interval;
 +
 +	autoscan->timeout = g_timeout_add_seconds(interval,
@@ -13014,36 +13108,39 @@ index cc48ceb1..287c5789 100644
  	return FALSE;
  }
  
--static bool is_wifi_valid (struct wifi_data *wifi)
+-static void wps_start_callback(int result, GSupplicantInterface *interface,
+-                            void *user_data)
 +static void start_autoscan(struct connman_device *device)
  {
--	GList *list;
+-	struct wifi_data *wifi = user_data;
 +	struct wifi_data *wifi = connman_device_get_data(device);
 +	struct autoscan_params *autoscan;
  
- 	DBG("");
+-	DBG("result %d", result);
++	DBG("");
  
--	if (wifi == NULL)
--		return FALSE;
+-	if (result == 0)
 +	if (!wifi)
-+		return;
+ 		return;
  
--	for (list = iface_list; list; list = list->next) {
--		if (list->data == wifi)
--			return TRUE;
--	}
+-	if (!is_wifi_valid(wifi))
 +	if (wifi->p2p_device)
-+		return;
+ 		return;
  
--	DBG("wifi %p not found", wifi);
+-	/* if we're at this place something went wrong an we have to clean up */
+-	if (wifi->wps_timeout > 0) {
+-		g_source_remove(wifi->wps_timeout);
+-		wifi->wps_timeout = 0;
+-	}
 +	if (wifi->connected)
 +		return;
  
--	return FALSE;
+-	wifi->wps_active = FALSE;
 +	autoscan = wifi->autoscan;
 +	if (!autoscan)
 +		return;
-+
+ 
+-	connman_technology_wps_failed_notify(wifi_technology);
 +	if (autoscan->timeout > 0 || autoscan->interval > 0)
 +		return;
 +
@@ -13052,35 +13149,31 @@ index cc48ceb1..287c5789 100644
 +	autoscan_timeout(device);
  }
  
--static void cancel_wps_callback(int result, GSupplicantInterface *interface,
--                            void *user_data)
+-static int start_wps(struct wifi_data *wifi)
 +static struct autoscan_params *parse_autoscan_params(const char *params)
  {
--	struct wifi_data *wifi = user_data;
+-	int ret;
 -
--	DBG("result %d", result);
+-	connman_info("start wps connection");
 +	struct autoscan_params *autoscan;
 +	char **list_params;
 +	int limit;
 +	int base;
  
--	if (!is_wifi_valid(wifi))
--		return;
+-	wifi->wps_timeout = g_timeout_add_seconds(WPS_CONNECT_TIMEOUT,
+-							wps_timeout_cb, wifi);
 +	DBG("");
  
--	/* if we already assigned a network we have to remove it too */
--	if (wifi->network) {
--		connman_network_set_bool(wifi->network, "WiFi.UseWPS", FALSE);
--		connman_network_set_connected(wifi->network, FALSE);
--		wifi->network = NULL;
--	}
+-	ret = g_supplicant_interface_connect(wifi->interface, wifi->wps_ssid,
+-						wps_start_callback, wifi);
+-	if (ret == -EALREADY || ret == -EINPROGRESS)
+-		ret = 0;
 +	list_params = g_strsplit(params, ":", 0);
 +	if (list_params == 0)
 +		return NULL;
  
--	if (wifi->wps_timeout > 0) {
--		g_source_remove(wifi->wps_timeout);
--		wifi->wps_timeout = 0;
+-	return ret;
+-}
 +	if (!g_strcmp0(list_params[0], "exponential") &&
 +				g_strv_length(list_params) == 3) {
 +		base = atoi(list_params[1]);
@@ -13091,50 +13184,42 @@ index cc48ceb1..287c5789 100644
 +	else {
 +		g_strfreev(list_params);
 +		return NULL;
- 	}
++	}
  
--	wifi->wps_active = FALSE;
--	/* already freed within gsupplicant layer */
--	wifi->wps_ssid = NULL;
--
--	enable_auto_connect_block(FALSE);
--}
+-static gboolean deferred_wps_start(struct wifi_data *wifi)
+-{
+-	DBG("WPS active %d", wifi->wps_active);
 +	DBG("Setup %s autoscanning", list_params[0]);
  
--static int cancel_wps(struct wifi_data *wifi)
--{
--	int ret;
+-	if(wifi->wps_active == FALSE)
+-		return FALSE;
 +	g_strfreev(list_params);
  
--	DBG("wifi %p", wifi);
+-	if(wifi->wps_start_deferred) {
+-		wifi->network = NULL;
+-		start_wps(wifi);
+-		wifi->wps_start_deferred = FALSE;
+-		return TRUE;
 +	autoscan = g_try_malloc0(sizeof(struct autoscan_params));
 +	if (!autoscan) {
 +		DBG("Could not allocate memory for autoscan");
 +		return NULL;
-+	}
+ 	}
  
--	ret = g_supplicant_interface_wps_cancel(wifi->interface, cancel_wps_callback, wifi);
--	if (ret == -EALREADY || ret == -EINPROGRESS)
--		ret = 0;
+-	return FALSE;
 +	DBG("base %d - limit %d", base, limit);
 +	autoscan->base = base;
 +	autoscan->limit = limit;
- 
--	return ret;
++
 +	return autoscan;
  }
  
--static gboolean wps_timeout_cb(gpointer user_data)
+-static int wifi_start_wps(struct connman_device *device, const char *pin)
 +static void setup_autoscan(struct wifi_data *wifi)
  {
--	struct wifi_data *wifi = user_data;
--
--	DBG("");
--
--	if (!is_wifi_valid(wifi))
--		return FALSE;
--
--	cancel_wps(wifi);
+-	struct wifi_data *wifi = connman_device_get_data(device);
+-	GSupplicantSSID *ssid;
+-	int ret=0;
 +	/*
 +	 * If BackgroundScanning is enabled, setup exponential
 +	 * autoscanning if it has not been previously done.
@@ -13144,7 +13229,8 @@ index cc48ceb1..287c5789 100644
 +		return;
 +	}
  
--	connman_technology_wps_failed_notify(wifi_technology);
+-	if (wifi->wps_active == TRUE)
+-		return -EINPROGRESS;
 +	/*
 +	 * On the contrary, if BackgroundScanning is disabled, update autoscan
 +	 * parameters based on the type of scanning that is being performed.
@@ -13154,7 +13240,7 @@ index cc48ceb1..287c5789 100644
 +		wifi->autoscan = NULL;
 +	}
  
--	return FALSE;
+-	DBG("");
 +	switch (wifi->scanning_type) {
 +	case WIFI_SCANNING_PASSIVE:
 +		/* Do not setup autoscan. */
@@ -13168,144 +13254,31 @@ index cc48ceb1..287c5789 100644
 +		wifi->autoscan = parse_autoscan_params(AUTOSCAN_SINGLE);
 +		break;
 +	}
- }
++}
  
--static void wps_start_callback(int result, GSupplicantInterface *interface,
--                            void *user_data)
-+static void finalize_interface_creation(struct wifi_data *wifi)
- {
--	struct wifi_data *wifi = user_data;
--
--	DBG("result %d", result);
-+	DBG("interface is ready wifi %p tethering %d", wifi, wifi->tethering);
- 
--	if (result == 0)
-+	if (!wifi->device) {
-+		connman_error("WiFi device not set");
- 		return;
-+	}
- 
--	if (!is_wifi_valid(wifi))
-+	connman_device_set_powered(wifi->device, true);
-+
-+	if (wifi->p2p_device)
- 		return;
- 
--	/* if we're at this place something went wrong an we have to clean up */
--	if (wifi->wps_timeout > 0) {
--		g_source_remove(wifi->wps_timeout);
--		wifi->wps_timeout = 0;
-+	if (is_technology_enabled(wifi_technology)) {
-+		DBG("WiFi is enable, so enable p2p also");
-+		if (p2p_technology)
-+			connman_technology_set_p2p(p2p_technology, true);
- 	}
-+//	if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
-+//		g_strcmp0(g_supplicant_interface_get_ifname(wifi->interface),
-+//			connman_option_get_string("P2PDevice")) == 0) {
-+                int ret;
- 
--	wifi->wps_active = FALSE;
--
--	connman_technology_wps_failed_notify(wifi_technology);
--}
-+                DBG("interface type is p2p interface");
-+                ret = g_supplicant_interface_get_p2p_device_config(wifi->interface, &wifi->p2p_device_config);
-+                if (ret == 0) {
-+                        DBG("interface type is p2p device config");
- 
--static int start_wps(struct wifi_data *wifi)
--{
--	int ret;
-+                        wifi->persistent_peer_ssid = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
-+                        add_persistent_group_info(wifi);
-+                }
- 
--	connman_info("start wps connection");
-+                __connman_group_init();
- 
--	wifi->wps_timeout = g_timeout_add_seconds(WPS_CONNECT_TIMEOUT,
--							wps_timeout_cb, wifi);
-+		__connman_sd_init(wifi->interface, connman_device_get_ident(wifi->device));
-+//	}
- 
--	ret = g_supplicant_interface_connect(wifi->interface, wifi->wps_ssid,
--						wps_start_callback, wifi);
--	if (ret == -EALREADY || ret == -EINPROGRESS)
--		ret = 0;
-+	if (!wifi->autoscan)
-+		setup_autoscan(wifi);
- 
--	return ret;
-+	start_autoscan(wifi->device);
- }
- 
--static gboolean deferred_wps_start(struct wifi_data *wifi)
-+static void interface_create_callback(int result,
-+					GSupplicantInterface *interface,
-+							void *user_data)
- {
--	DBG("WPS active %d", wifi->wps_active);
-+	struct wifi_data *wifi = user_data;
-+	char *bgscan_range_max;
-+	long value;
- 
--	if(wifi->wps_active == FALSE)
--		return FALSE;
-+	DBG("result %d ifname %s, wifi %p", result,
-+				g_supplicant_interface_get_ifname(interface),
-+				wifi);
- 
--	if(wifi->wps_start_deferred) {
--		wifi->network = NULL;
--		start_wps(wifi);
--		wifi->wps_start_deferred = FALSE;
--		return TRUE;
--	}
--
--	return FALSE;
--}
--
--static int wifi_start_wps(struct connman_device *device, const char *pin)
--{
--	struct wifi_data *wifi = connman_device_get_data(device);
--	GSupplicantSSID *ssid;
--	int ret=0;
--
--	if (wifi->wps_active == TRUE)
--		return -EINPROGRESS;
--
--	DBG("");
--
 -	ssid = g_try_malloc0(sizeof(GSupplicantSSID));
 -	if (ssid == NULL)
 -		return -ENOMEM;
-+	if (result < 0 || !wifi)
-+		return;
++static void finalize_interface_creation(struct wifi_data *wifi)
++{
++	DBG("interface is ready wifi %p tethering %d", wifi, wifi->tethering);
  
 -	ssid->use_wps = TRUE;
 -	if(strlen(pin) == 0)
 -		ssid->pin_wps = NULL;
 -	else
 -		ssid->pin_wps = g_strdup(pin);
-+	wifi->interface = interface;
-+	g_supplicant_interface_set_data(interface, wifi);
++	if (!wifi->device) {
++		connman_error("WiFi device not set");
++		return;
++	}
  
 -	wifi->wps_active = TRUE;
 -	wifi->wps_ssid = ssid;
-+	if (g_supplicant_interface_get_ready(interface)) {
-+		wifi->interface_ready = true;
-+		finalize_interface_creation(wifi);
-+	}
++	connman_device_set_powered(wifi->device, true);
  
 -	enable_auto_connect_block(TRUE);
-+	/*
-+	 * Set the BSS expiration age to match the long scanning
-+	 * interval to avoid the loss of unconnected networks between
-+	 * two scans.
-+	 */
-+	bgscan_range_max = strrchr(BGSCAN_DEFAULT, ':');
-+	if (!bgscan_range_max || strlen(bgscan_range_max) < 1)
++	if (wifi->p2p_device)
 +		return;
  
 -	/* if we're still disconnecting wait until we're completely disconnected */
@@ -13313,10 +13286,15 @@ index cc48ceb1..287c5789 100644
 -		DBG("Defering WPS until disconnect is done");
 -		wifi->wps_start_deferred = TRUE;
 -		return 0;
--	}
-+	value = strtol(bgscan_range_max + 1, NULL, 10);
-+	if (value <= 0 || errno == ERANGE)
-+		return;
++	if (is_technology_enabled(wifi_technology)) {
++		DBG("WiFi is enable, so enable p2p also");
++		if (p2p_technology)
++			connman_technology_set_p2p(p2p_technology, true);
+ 	}
++//	if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
++//		g_strcmp0(g_supplicant_interface_get_ifname(wifi->interface),
++//			connman_setting_get_string("P2PDevice")) == 0) {
++                int ret;
  
 -	/* This is ahead of what will happen if we have an associating network
 -	 * at this point. Once we issue the StartWPS command to wpa-supplicant
@@ -13327,101 +13305,124 @@ index cc48ceb1..287c5789 100644
 -		connman_network_set_connected(wifi->network, FALSE);
 -		connman_network_set_associating(wifi->network, FALSE);
 -		wifi->network = NULL;
-+	if (g_supplicant_interface_set_bss_expiration_age(interface,
-+					value + SCAN_MAX_DURATION) < 0) {
-+		connman_warn("Failed to set bss expiration age");
- 	}
--
+-	}
++                DBG("interface type is p2p interface");
++                ret = g_supplicant_interface_get_p2p_device_config(wifi->interface, &wifi->p2p_device_config);
++                if (ret == 0) {
++                        DBG("interface type is p2p device config");
+ 
 -	return start_wps(wifi);
- }
+-}
++                        wifi->persistent_peer_ssid = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
++                        add_persistent_group_info(wifi);
++                }
  
 -static int wifi_cancel_wps(struct connman_device *device)
-+static int wifi_enable(struct connman_device *device)
- {
- 	struct wifi_data *wifi = connman_device_get_data(device);
-+	int index;
-+	char *interface;
-+	const char *driver = connman_option_get_string("wifi");
-+	int ret;
+-{
+-	struct wifi_data *wifi = connman_device_get_data(device);
++                __connman_group_init();
  
 -	DBG("");
--
++		__connman_sd_init(wifi->interface, connman_device_get_ident(wifi->device));
++//	}
+ 
 -	if (wifi->wps_active == FALSE)
 -		return 0;
--
++	if (!wifi->autoscan)
++		setup_autoscan(wifi);
+ 
 -	return cancel_wps(wifi);
--}
--
++	start_autoscan(wifi->device);
+ }
+ 
 -static void signal_info_cb(int result, GSupplicantInterface *interface, void *user_data)
--{
++static void interface_create_callback(int result,
++					GSupplicantInterface *interface,
++							void *user_data)
+ {
 -	struct wifi_cb_data *data = user_data;
 -	connman_device_request_signal_info_cb cb = data->callback;
 -	unsigned int value;
--
++	struct wifi_data *wifi = user_data;
++	char *bgscan_range_max;
++	long value;
+ 
 -	if (result < 0)
 -		goto done;
--
++	DBG("result %d ifname %s, wifi %p", result,
++				g_supplicant_interface_get_ifname(interface),
++				wifi);
+ 
 -	value = g_supplicant_interface_get_rssi(interface);
 -	connman_device_set_integer(data->wifi->device, "WiFi.RSSI", value);
-+	DBG("device %p %p", device, wifi);
++	if (result < 0 || !wifi)
++		return;
  
 -	value = g_supplicant_interface_get_link_speed(interface);
 -	connman_device_set_integer(data->wifi->device, "WiFi.LinkSpeed", value);
-+	index = connman_device_get_index(device);
-+	if (!wifi || index < 0)
-+		return -ENODEV;
++	wifi->interface = interface;
++	g_supplicant_interface_set_data(interface, wifi);
  
 -	value = g_supplicant_interface_get_frequency(interface);
 -	connman_device_set_integer(data->wifi->device, "WiFi.Frequency", value);
-+	if (is_p2p_connecting())
-+		return -EINPROGRESS;
++	if (g_supplicant_interface_get_ready(interface)) {
++		wifi->interface_ready = true;
++		finalize_interface_creation(wifi);
++	}
  
 -	value = g_supplicant_interface_get_noise(interface);
 -	connman_device_set_integer(data->wifi->device, "WiFi.Noise", value);
-+	interface = connman_inet_ifname(index);
-+	const char *wpas_config_file = connman_setting_get_string("WpaSupplicantConfigFile");
-+	ret = g_supplicant_interface_create(interface, driver, NULL, wpas_config_file,
-+						interface_create_callback,
-+							wifi);
-+	g_free(interface);
++	/*
++	 * Set the BSS expiration age to match the long scanning
++	 * interval to avoid the loss of unconnected networks between
++	 * two scans.
++	 */
++	bgscan_range_max = strrchr(BGSCAN_DEFAULT, ':');
++	if (!bgscan_range_max || strlen(bgscan_range_max) < 1)
++		return;
  
 -done:
 -	cb(data->wifi->device, data->user_data);
-+	if (ret < 0)
-+		return ret;
++	value = strtol(bgscan_range_max + 1, NULL, 10);
++	if (value <= 0 || errno == ERANGE)
++		return;
  
 -	g_free(data);
-+	return -EINPROGRESS;
++	if (g_supplicant_interface_set_bss_expiration_age(interface,
++					value + SCAN_MAX_DURATION) < 0) {
++		connman_warn("Failed to set bss expiration age");
++	}
  }
  
 -static int wifi_get_signal_info(struct connman_device *device, connman_device_request_signal_info_cb cb, void *user_data)
-+static int wifi_disable(struct connman_device *device)
++static int wifi_enable(struct connman_device *device)
  {
  	struct wifi_data *wifi = connman_device_get_data(device);
 -	struct wifi_cb_data *data;
-+	int ret;
-+
-+	DBG("device %p wifi %p", device, wifi);
- 
- 	if (!wifi)
+-
+-	if (!wifi)
 -		return -EINVAL;
-+		return -ENODEV;
++	int index;
++	char *interface;
++	const char *driver = connman_setting_get_string("wifi");
++	int ret;
  
 -	data = g_new0(struct wifi_cb_data, 1);
 -	if (!data)
 -		return -ENOMEM;
-+	wifi->connected = false;
-+	wifi->disconnecting = false;
++	DBG("device %p %p", device, wifi);
  
 -	data->callback = cb;
 -	data->user_data = user_data;
 -	data->wifi = wifi;
-+	if (wifi->pending_network)
-+		wifi->pending_network = NULL;
++	index = connman_device_get_index(device);
++	if (!wifi || index < 0)
++		return -ENODEV;
  
 -	return g_supplicant_interface_update_signal_info(wifi->interface, signal_info_cb, data);
 -}
-+	stop_autoscan(device);
++	if (is_p2p_connecting())
++		return -EINPROGRESS;
  
 -static struct connman_device_driver wifi_ng_driver = {
 -	.name		= "wifi",
@@ -13438,41 +13439,86 @@ index cc48ceb1..287c5789 100644
 -	.cancel_wps	= wifi_cancel_wps,
 -	.get_signal_info = wifi_get_signal_info,
 -};
++	interface = connman_inet_ifname(index);
++	const char *wpas_config_file = connman_setting_get_string("WpaSupplicantConfigFile");
++	ret = g_supplicant_interface_create(interface, driver, NULL, wpas_config_file,
++						interface_create_callback,
++							wifi);
++	g_free(interface);
+ 
+-static void system_ready(void)
+-{
+-	DBG("");
++	if (ret < 0)
++		return ret;
+ 
+-	if (connman_device_driver_register(&wifi_ng_driver) < 0)
+-		connman_error("Failed to register WiFi driver");
++	return -EINPROGRESS;
+ }
+ 
+-static void system_killed(void)
++static int wifi_disable(struct connman_device *device)
+ {
+-	DBG("");
+-
+-	connman_device_driver_unregister(&wifi_ng_driver);
+-}
++	struct wifi_data *wifi = connman_device_get_data(device);
++	int ret;
+ 
+-static int network_probe(struct connman_network *network)
+-{
+-	DBG("network %p", network);
++	DBG("device %p wifi %p", device, wifi);
+ 
+-	return 0;
+-}
++	if (!wifi)
++		return -ENODEV;
+ 
+-static int network_connect(struct connman_network *network);
++	wifi->connected = false;
++	wifi->disconnecting = false;
+ 
+-static gboolean perform_deferred_connect_after_disconnect(struct wifi_data *wifi)
+-{
+-	if (wifi->pending_network != NULL) {
+-		network_connect(wifi->pending_network);
++	if (wifi->pending_network)
+ 		wifi->pending_network = NULL;
+-		return TRUE;
++
++	stop_autoscan(device);
++
 +	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_P2P)) {
 +		g_source_remove(wifi->p2p_find_timeout);
 +		wifi->p2p_find_timeout = 0;
 +		connman_device_set_scanning(device, CONNMAN_SERVICE_TYPE_P2P, false);
 +		connman_device_unref(wifi->device);
-+	}
+ 	}
  
--static void system_ready(void)
--{
--	DBG("");
+-	if (deferred_wps_start(wifi)) {
+-		return TRUE;
 +	/* In case of a user scan, device is still referenced */
 +	if (connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI)) {
 +		connman_device_set_scanning(device,
 +				CONNMAN_SERVICE_TYPE_WIFI, false);
 +		connman_device_unref(wifi->device);
-+	}
+ 	}
  
--	if (connman_device_driver_register(&wifi_ng_driver) < 0)
--		connman_error("Failed to register WiFi driver");
--}
+-	return FALSE;
 +	remove_networks(device, wifi);
 +	remove_peers(wifi);
- 
--static void system_killed(void)
--{
--	DBG("");
++
 +	ret = g_supplicant_interface_remove(wifi->interface, NULL, NULL);
 +	if (ret < 0)
 +		return ret;
- 
--	connman_device_driver_unregister(&wifi_ng_driver);
++
 +	return -EINPROGRESS;
  }
  
--static int network_probe(struct connman_network *network)
+-static void network_remove(struct connman_network *network)
 +struct last_connected {
 +	struct timeval modified;
 +	gchar *ssid;
@@ -13481,49 +13527,46 @@ index cc48ceb1..287c5789 100644
 +
 +static gint sort_entry(gconstpointer a, gconstpointer b, gpointer user_data)
  {
--	DBG("network %p", network);
+-	struct connman_device *device = connman_network_get_device(network);
+-	struct wifi_data *wifi;
 +	struct timeval *aval = (struct timeval *)a;
 +	struct timeval *bval = (struct timeval *)b;
-+
+ 
+-	DBG("network %p", network);
 +	/* Note that the sort order is descending */
 +	if (aval->tv_sec < bval->tv_sec)
 +		return 1;
-+
+ 
+-	wifi = connman_device_get_data(device);
+-	if (!wifi)
+-		return;
 +	if (aval->tv_sec > bval->tv_sec)
 +		return -1;
  
- 	return 0;
- }
+-	if (wifi->network != network)
+-		return;
+-	else {
+-		wifi->disconnecting = FALSE;
+-		perform_deferred_connect_after_disconnect(wifi);
+-	}
++	return 0;
++}
  
--static int network_connect(struct connman_network *network);
--
--static gboolean perform_deferred_connect_after_disconnect(struct wifi_data *wifi)
+-	wifi->network = NULL;
 +static void free_entry(gpointer data)
- {
--	if (wifi->pending_network != NULL) {
--		network_connect(wifi->pending_network);
--		wifi->pending_network = NULL;
--		return TRUE;
--	}
--
--	if (deferred_wps_start(wifi)) {
--		return TRUE;
--	}
++{
 +	struct last_connected *entry = data;
- 
--	return FALSE;
++
 +	g_free(entry->ssid);
 +	g_free(entry);
  }
  
--static void network_remove(struct connman_network *network)
+-static void connect_callback(int result, GSupplicantInterface *interface,
+-							void *user_data)
 +static int get_latest_connections(int max_ssids,
 +				GSupplicantScanParams *scan_data)
  {
--	struct connman_device *device = connman_network_get_device(network);
--	struct wifi_data *wifi;
--
--	DBG("network %p", network);
+-	struct connman_network *network = user_data;
 +	GSequenceIter *iter;
 +	GSequence *latest_list;
 +	struct last_connected *entry;
@@ -13535,52 +13578,10 @@ index cc48ceb1..287c5789 100644
 +	int i, freq;
 +	int num_ssids = 0;
  
--	wifi = connman_device_get_data(device);
--	if (!wifi)
--		return;
+-	DBG("network %p result %d", network, result);
 +	latest_list = g_sequence_new(free_entry);
 +	if (!latest_list)
 +		return -ENOMEM;
- 
--	if (wifi->network != network)
--		return;
--	else {
--		wifi->disconnecting = FALSE;
--		perform_deferred_connect_after_disconnect(wifi);
--	}
-+	services = connman_storage_get_services();
-+	for (i = 0; services && services[i]; i++) {
-+		if (strncmp(services[i], "wifi_", 5) != 0)
-+			continue;
- 
--	wifi->network = NULL;
--}
-+		keyfile = connman_storage_load_service(services[i]);
-+		if (!keyfile)
-+			continue;
- 
--static void connect_callback(int result, GSupplicantInterface *interface,
--							void *user_data)
--{
--	struct connman_network *network = user_data;
-+		str = g_key_file_get_string(keyfile,
-+					services[i], "Favorite", NULL);
-+		if (!str || g_strcmp0(str, "true")) {
-+			g_free(str);
-+			g_key_file_free(keyfile);
-+			continue;
-+		}
-+		g_free(str);
- 
--	DBG("network %p result %d", network, result);
-+		str = g_key_file_get_string(keyfile,
-+					services[i], "AutoConnect", NULL);
-+		if (!str || g_strcmp0(str, "true")) {
-+			g_free(str);
-+			g_key_file_free(keyfile);
-+			continue;
-+		}
-+		g_free(str);
  
 -	if (result == -ENOKEY) {
 -		connman_network_set_error(network,
@@ -13588,69 +13589,20 @@ index cc48ceb1..287c5789 100644
 -	} else if (result < 0) {
 -		connman_network_set_error(network,
 -					CONNMAN_NETWORK_ERROR_CONFIGURE_FAIL);
-+		str = g_key_file_get_string(keyfile,
-+					services[i], "Modified", NULL);
-+		if (!str) {
-+			g_key_file_free(keyfile);
+-	}
++	services = connman_storage_get_services();
++	for (i = 0; services && services[i]; i++) {
++		if (strncmp(services[i], "wifi_", 5) != 0)
 +			continue;
-+		}
-+		util_iso8601_to_timeval(str, &modified);
-+		g_free(str);
-+
-+		ssid = g_key_file_get_string(keyfile,
-+					services[i], "SSID", NULL);
-+
-+		freq = g_key_file_get_integer(keyfile, services[i],
-+					"Frequency", NULL);
-+		if (freq) {
-+			entry = g_try_new(struct last_connected, 1);
-+			if (!entry) {
-+				g_sequence_free(latest_list);
-+				g_key_file_free(keyfile);
-+				g_free(ssid);
-+				return -ENOMEM;
-+			}
-+
-+			entry->ssid = ssid;
-+			entry->modified = modified;
-+			entry->freq = freq;
-+
-+			g_sequence_insert_sorted(latest_list, entry,
-+						sort_entry, NULL);
-+			num_ssids++;
-+		} else
-+			g_free(ssid);
-+
-+		g_key_file_free(keyfile);
- 	}
  
 -	connman_network_unref(network);
-+	g_strfreev(services);
-+
-+	num_ssids = num_ssids > max_ssids ? max_ssids : num_ssids;
-+
-+	iter = g_sequence_get_begin_iter(latest_list);
-+
-+	for (i = 0; i < num_ssids; i++) {
-+		entry = g_sequence_get(iter);
-+
-+		DBG("ssid %s freq %d modified %lu", entry->ssid, entry->freq,
-+						entry->modified.tv_sec);
-+
-+		add_scan_param(entry->ssid, NULL, 0, entry->freq, scan_data,
-+						max_ssids, entry->ssid);
-+
-+		iter = g_sequence_iter_next(iter);
-+	}
-+
-+	g_sequence_free(latest_list);
-+	return num_ssids;
- }
+-}
++		keyfile = connman_storage_load_service(services[i]);
++		if (!keyfile)
++			continue;
  
 -static GSupplicantSecurity network_security(const char *security)
-+static void wifi_update_scanner_type(struct wifi_data *wifi,
-+					enum wifi_scanning_type new_type)
- {
+-{
 -	if (g_str_equal(security, "none"))
 -		return G_SUPPLICANT_SECURITY_NONE;
 -	else if (g_str_equal(security, "wep"))
@@ -13663,22 +13615,37 @@ index cc48ceb1..287c5789 100644
 -		return G_SUPPLICANT_SECURITY_PSK;
 -	else if (g_str_equal(security, "ieee8021x"))
 -		return G_SUPPLICANT_SECURITY_IEEE8021X;
-+	DBG("");
++		str = g_key_file_get_string(keyfile,
++					services[i], "Favorite", NULL);
++		if (!str || g_strcmp0(str, "true")) {
++			g_free(str);
++			g_key_file_free(keyfile);
++			continue;
++		}
++		g_free(str);
  
 -	return G_SUPPLICANT_SECURITY_UNKNOWN;
-+	if (!wifi || wifi->scanning_type == new_type)
-+		return;
-+
-+	wifi->scanning_type = new_type;
-+
-+	setup_autoscan(wifi);
- }
+-}
++		str = g_key_file_get_string(keyfile,
++					services[i], "AutoConnect", NULL);
++		if (!str || g_strcmp0(str, "true")) {
++			g_free(str);
++			g_key_file_free(keyfile);
++			continue;
++		}
++		g_free(str);
  
 -static void ssid_init(GSupplicantSSID *ssid, struct connman_network *network)
-+static int wifi_scan_simple(struct connman_device *device)
- {
+-{
 -	const char *security;
-+	struct wifi_data *wifi = connman_device_get_data(device);
++		str = g_key_file_get_string(keyfile,
++					services[i], "Modified", NULL);
++		if (!str) {
++			g_key_file_free(keyfile);
++			continue;
++		}
++		util_iso8601_to_timeval(str, &modified);
++		g_free(str);
  
 -	memset(ssid, 0, sizeof(*ssid));
 -	ssid->mode = G_SUPPLICANT_MODE_INFRA;
@@ -13689,12 +13656,20 @@ index cc48ceb1..287c5789 100644
 -	ssid->security = network_security(security);
 -	ssid->passphrase = connman_network_get_string(network,
 -						"WiFi.Passphrase");
-+	reset_autoscan(device);
++		ssid = g_key_file_get_string(keyfile,
++					services[i], "SSID", NULL);
  
 -	ssid->eap = connman_network_get_string(network, "WiFi.EAP");
-+	/* Distinguish between devices performing passive and active scanning */
-+	if (wifi)
-+		wifi_update_scanner_type(wifi, WIFI_SCANNING_PASSIVE);
++		freq = g_key_file_get_integer(keyfile, services[i],
++					"Frequency", NULL);
++		if (freq) {
++			entry = g_try_new(struct last_connected, 1);
++			if (!entry) {
++				g_sequence_free(latest_list);
++				g_key_file_free(keyfile);
++				g_free(ssid);
++				return -ENOMEM;
++			}
  
 -	/*
 -	 * If our private key password is unset,
@@ -13708,17 +13683,19 @@ index cc48ceb1..287c5789 100644
 -						ssid->passphrase);
 -	/* We must have an identity for both PEAP and TLS */
 -	ssid->identity = connman_network_get_string(network, "WiFi.Identity");
-+	return throw_wifi_scan(device, scan_callback_hidden);
-+}
++			entry->ssid = ssid;
++			entry->modified = modified;
++			entry->freq = freq;
  
 -	/* Use agent provided identity as a fallback */
 -	if (!ssid->identity || strlen(ssid->identity) == 0)
 -		ssid->identity = connman_network_get_string(network,
 -							"WiFi.AgentIdentity");
-+static gboolean p2p_find_stop(gpointer data)
-+{
-+	struct connman_device *device = data;
-+	struct wifi_data *wifi = connman_device_get_data(device);
++			g_sequence_insert_sorted(latest_list, entry,
++						sort_entry, NULL);
++			num_ssids++;
++		} else
++			g_free(ssid);
  
 -	ssid->anonymous_identity = connman_network_get_string(network,
 -						"WiFi.AnonymousIdentity");
@@ -13739,15 +13716,97 @@ index cc48ceb1..287c5789 100644
 -	ssid->private_key_passphrase = connman_network_get_string(network,
 -						"WiFi.PrivateKeyPassphrase");
 -	ssid->phase2_auth = connman_network_get_string(network, "WiFi.Phase2");
-+	DBG("");
++		g_key_file_free(keyfile);
++	}
  
 -	ssid->use_wps = connman_network_get_bool(network, "WiFi.UseWPS");
 -	ssid->pin_wps = connman_network_get_string(network, "WiFi.PinWPS");
-+	if (wifi) {
-+		wifi->p2p_find_timeout = 0;
++	g_strfreev(services);
  
 -	if (connman_setting_get_bool("BackgroundScanning"))
 -		ssid->bgscan = BGSCAN_DEFAULT;
++	num_ssids = num_ssids > max_ssids ? max_ssids : num_ssids;
++
++	iter = g_sequence_get_begin_iter(latest_list);
++
++	for (i = 0; i < num_ssids; i++) {
++		entry = g_sequence_get(iter);
++
++		DBG("ssid %s freq %d modified %lu", entry->ssid, entry->freq,
++						entry->modified.tv_sec);
++
++		add_scan_param(entry->ssid, NULL, 0, entry->freq, scan_data,
++						max_ssids, entry->ssid);
++
++		iter = g_sequence_iter_next(iter);
++	}
++
++	g_sequence_free(latest_list);
++	return num_ssids;
+ }
+ 
+-static int network_connect(struct connman_network *network)
++static void wifi_update_scanner_type(struct wifi_data *wifi,
++					enum wifi_scanning_type new_type)
+ {
+-	struct connman_device *device = connman_network_get_device(network);
+-	struct wifi_data *wifi;
+-	GSupplicantInterface *interface;
+-	GSupplicantSSID *ssid;
++	DBG("");
+ 
+-	DBG("network %p", network);
++	if (!wifi || wifi->scanning_type == new_type)
++		return;
+ 
+-	if (!device)
+-		return -ENODEV;
++	wifi->scanning_type = new_type;
+ 
+-	wifi = connman_device_get_data(device);
+-	if (!wifi)
+-		return -ENODEV;
++	setup_autoscan(wifi);
++}
+ 
+-	if (wifi->wps_active)
+-		return -EINPROGRESS;
++static int wifi_scan_simple(struct connman_device *device)
++{
++	struct wifi_data *wifi = connman_device_get_data(device);
+ 
+-	ssid = g_try_malloc0(sizeof(GSupplicantSSID));
+-	if (!ssid)
+-		return -ENOMEM;
++	reset_autoscan(device);
+ 
+-	interface = wifi->interface;
++	/* Distinguish between devices performing passive and active scanning */
++	if (wifi)
++		wifi_update_scanner_type(wifi, WIFI_SCANNING_PASSIVE);
+ 
+-	ssid_init(ssid, network);
++	return throw_wifi_scan(device, scan_callback_hidden);
++}
+ 
+-	if (wifi->disconnecting) {
+-		wifi->pending_network = network;
+-		g_free(ssid);
+-	} else {
+-		wifi->network = connman_network_ref(network);
+-		wifi->retries = 0;
++static gboolean p2p_find_stop(gpointer data)
++{
++	struct connman_device *device = data;
++	struct wifi_data *wifi = connman_device_get_data(device);
+ 
+-		return g_supplicant_interface_connect(interface, ssid,
+-						connect_callback, network);
++	DBG("");
++
++	if (wifi) {
++		wifi->p2p_find_timeout = 0;
++
 +		g_supplicant_interface_p2p_stop_find(wifi->interface);
 +		if (p2p_technology &&
 +				(wifi->p2p_listen_suppressed == true ||
@@ -13756,8 +13815,9 @@ index cc48ceb1..287c5789 100644
 +			if (wifi->p2p_listen_suppressed)
 +				wifi->p2p_listen_suppressed = false;
 +		}
-+	}
-+
+ 	}
+ 
+-	return -EINPROGRESS;
 +	connman_device_set_scanning(device, CONNMAN_SERVICE_TYPE_P2P, false);
 +
 +	connman_device_unref(device);
@@ -13766,64 +13826,47 @@ index cc48ceb1..287c5789 100644
 +	return FALSE;
  }
  
--static int network_connect(struct connman_network *network)
+-static void disconnect_callback(int result, GSupplicantInterface *interface,
+-								void *user_data)
 +static void p2p_find_callback(int result, GSupplicantInterface *interface,
 +							void *user_data)
  {
--	struct connman_device *device = connman_network_get_device(network);
--	struct wifi_data *wifi;
--	GSupplicantInterface *interface;
--	GSupplicantSSID *ssid;
--
--	DBG("network %p", network);
+-	struct disconnect_data *dd = user_data;
+-	struct connman_network *network = dd->network;
+-	struct wifi_data *wifi = dd->wifi;
 +	struct connman_device *device = user_data;
 +	struct wifi_data *wifi = connman_device_get_data(device);
  
--	if (!device)
--		return -ENODEV;
+-	g_free(dd);
 +	DBG("result %d wifi %p", result, wifi);
  
--	wifi = connman_device_get_data(device);
- 	if (!wifi)
--		return -ENODEV;
+-	DBG("result %d supplicant interface %p wifi %p networks: current %p "
+-		"pending %p disconnected %p", result, interface, wifi,
+-		wifi->network, wifi->pending_network, network);
++	if (!wifi)
 +		goto error;
- 
--	if (wifi->wps_active)
--		return -EINPROGRESS;
++
 +	if (wifi->p2p_find_timeout) {
 +		g_source_remove(wifi->p2p_find_timeout);
 +		wifi->p2p_find_timeout = 0;
 +	}
- 
--	ssid = g_try_malloc0(sizeof(GSupplicantSSID));
--	if (!ssid)
--		return -ENOMEM;
++
 +	if (result)
 +		goto error;
- 
--	interface = wifi->interface;
++
 +	wifi->p2p_find_timeout = g_timeout_add_seconds(P2P_FIND_TIMEOUT,
 +							p2p_find_stop, device);
 +	if (!wifi->p2p_find_timeout)
 +		goto error;
- 
--	ssid_init(ssid, network);
++
 +	p2p_find_ref = -1;
- 
--	if (wifi->disconnecting) {
--		wifi->pending_network = network;
--		g_free(ssid);
--	} else {
--		wifi->network = connman_network_ref(network);
--		wifi->retries = 0;
++
 +	return;
 +error:
 +	p2p_find_ref = -1;
 +	p2p_find_stop(device);
 +}
- 
--		return g_supplicant_interface_connect(interface, ssid,
--						connect_callback, network);
++
 +static gboolean p2p_find_complete(gpointer argv)
 +{
 +	struct connman_device *device = argv;
@@ -13833,9 +13876,8 @@ index cc48ceb1..287c5789 100644
 +	if(!wifi) {
 +		p2p_find_ref = -1;
 +		return FALSE;
- 	}
- 
--	return -EINPROGRESS;
++	}
++
 +	if (p2p_technology &&
 +			(wifi->p2p_listen_suppressed == true ||
 +			connman_technology_get_p2p_listen(p2p_technology))) {
@@ -13847,29 +13889,18 @@ index cc48ceb1..287c5789 100644
 +	p2p_find_ref = -1;
 +
 +	return FALSE;
- }
- 
--static void disconnect_callback(int result, GSupplicantInterface *interface,
--								void *user_data)
++}
++
 +static int p2p_find(struct connman_device *device)
- {
--	struct disconnect_data *dd = user_data;
--	struct connman_network *network = dd->network;
--	struct wifi_data *wifi = dd->wifi;
++{
 +	struct wifi_data *wifi;
 +	int ret;
- 
--	g_free(dd);
++
 +	DBG("");
- 
--	DBG("result %d supplicant interface %p wifi %p networks: current %p "
--		"pending %p disconnected %p", result, interface, wifi,
--		wifi->network, wifi->pending_network, network);
++
 +	if (!p2p_technology)
 +		return -ENOTSUP;
- 
--	if (result == -ECONNABORTED) {
--		DBG("wifi interface no longer available");
++
 +	wifi = connman_device_get_data(device);
 +
 +	if (!wifi || !wifi->interface)
@@ -13930,7 +13961,7 @@ index cc48ceb1..287c5789 100644
 +	if (params->type == CONNMAN_SERVICE_TYPE_P2P) {
 +			if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
 +					g_strcmp0(connman_device_get_string(device, "Interface"),
-+								connman_option_get_string("P2PDevice")) != 0)
++								connman_setting_get_string("P2PDevice")) != 0)
 +					return -ENOTSUP;
 +
 +			if(p2p_find_ref != -1)
@@ -13943,7 +13974,7 @@ index cc48ceb1..287c5789 100644
 +
 +	if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
 +				g_strcmp0(connman_device_get_string(device, "Interface"),
-+						connman_option_get_string("WiFiDevice")) != 0)
++						connman_setting_get_string("WiFiDevice")) != 0)
 +		return -ENOTSUP;
 +
 +	scanning = connman_device_get_scanning(device, CONNMAN_SERVICE_TYPE_WIFI);
@@ -14649,7 +14680,10 @@ index cc48ceb1..287c5789 100644
 +		return;
 +	}
 +
-+	connman_network_set_connected(network, false);
++	if (g_slist_find(wifi->networks, network))
++		connman_network_set_connected(network, false);
++
++	wifi->disconnecting = false;
 +
 +	if (network != wifi->network) {
 +		if (network == wifi->pending_network)
@@ -14660,7 +14694,6 @@ index cc48ceb1..287c5789 100644
 +
 +	wifi->network = NULL;
 +
-+	wifi->disconnecting = false;
 +	wifi->connected = false;
 +
 +	if (perform_deferred_connect_after_disconnect(wifi) == FALSE)
@@ -15160,7 +15193,7 @@ index cc48ceb1..287c5789 100644
 +
 +		if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
 +				g_strcmp0(g_supplicant_interface_get_ifname(p2p_interface),
-+					connman_option_get_string("P2PDevice")) != 0)
++					connman_setting_get_string("P2PDevice")) != 0)
 +			continue;
 +
 +		if (connman_technology_get_p2p_listen(p2p_technology) == false &&
@@ -15427,7 +15460,9 @@ index cc48ceb1..287c5789 100644
 +
 +	if (!g_supplicant_interface_has_p2p(interface))
 +		return;
-+
+ 
+-	if (result == -ECONNABORTED) {
+-		DBG("wifi interface no longer available");
 +	wifi = g_supplicant_interface_get_data(interface);
 +
 +	if (!wifi)
@@ -15722,8 +15757,13 @@ index cc48ceb1..287c5789 100644
  		return;
 -	}
  
--	connman_network_set_connected(network, false);
+-	if (g_slist_find(wifi->networks, network))
+-		connman_network_set_connected(network, false);
 +	connman_network_set_address(connman_network, g_supplicant_network_get_bssid(network), 6);
+ 
+-	wifi->disconnecting = false;
++	if (bss_table)
++		g_hash_table_foreach(bss_table, bss_foreach, connman_network);
  
 -	if (network != wifi->network) {
 -		if (network == wifi->pending_network)
@@ -15731,32 +15771,28 @@ index cc48ceb1..287c5789 100644
 -		DBG("current wifi network has changed since disconnection");
 -		return;
 -	}
-+	if (bss_table)
-+		g_hash_table_foreach(bss_table, bss_foreach, connman_network);
- 
--	wifi->network = NULL;
 +	if (g_str_equal(property, "WPSCapabilities")) {
 +		bool wps;
 +		bool wps_pbc;
 +		bool wps_ready;
 +		bool wps_advertizing;
  
--	wifi->disconnecting = false;
--	wifi->connected = false;
+-	wifi->network = NULL;
 +		wps = g_supplicant_network_get_wps(network);
 +		wps_pbc = g_supplicant_network_is_wps_pbc(network);
 +		wps_ready = g_supplicant_network_is_wps_active(network);
 +		wps_advertizing =
 +			g_supplicant_network_is_wps_advertizing(network);
  
+-	wifi->connected = false;
++		connman_network_set_bool(connman_network, "WiFi.WPS", wps);
++		connman_network_set_bool(connman_network,
++				"WiFi.WPSAdvertising", wps_advertizing);
+ 
 -	if (perform_deferred_connect_after_disconnect(wifi) == FALSE)
 -	{
 -		start_autoscan(wifi->device);
 -	}
-+		connman_network_set_bool(connman_network, "WiFi.WPS", wps);
-+		connman_network_set_bool(connman_network,
-+				"WiFi.WPSAdvertising", wps_advertizing);
-+
 +		if (wps) {
 +			/*
 +			 * Is AP advertizing for WPS association?
@@ -17712,7 +17748,7 @@ index cc48ceb1..287c5789 100644
  }
  
  static const GSupplicantCallbacks callbacks = {
-@@ -3730,6 +5939,7 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3742,6 +5951,7 @@ static const GSupplicantCallbacks callbacks = {
  	.interface_state	= interface_state,
  	.interface_removed	= interface_removed,
  	.p2p_support		= p2p_support,
@@ -17720,7 +17756,7 @@ index cc48ceb1..287c5789 100644
  	.scan_started		= scan_started,
  	.scan_finished		= scan_finished,
  	.ap_create_fail		= ap_create_fail,
-@@ -3745,13 +5955,29 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3757,13 +5967,29 @@ static const GSupplicantCallbacks callbacks = {
  	.peer_lost		= peer_lost,
  	.peer_changed		= peer_changed,
  	.peer_request		= peer_request,
@@ -17751,7 +17787,7 @@ index cc48ceb1..287c5789 100644
  static int tech_probe(struct connman_technology *technology)
  {
  	wifi_technology = technology;
-@@ -4056,6 +6282,21 @@ static int tech_set_regdom(struct connman_technology *technology, const char *al
+@@ -4068,6 +6294,21 @@ static int tech_set_regdom(struct connman_technology *technology, const char *al
  	return g_supplicant_set_country(alpha2, regdom_callback, NULL);
  }
  
@@ -17773,7 +17809,7 @@ index cc48ceb1..287c5789 100644
  static struct connman_technology_driver tech_driver = {
  	.name		= "wifi",
  	.type		= CONNMAN_SERVICE_TYPE_WIFI,
-@@ -4063,12 +6304,15 @@ static struct connman_technology_driver tech_driver = {
+@@ -4075,12 +6316,15 @@ static struct connman_technology_driver tech_driver = {
  	.remove		= tech_remove,
  	.set_tethering	= tech_set_tethering,
  	.set_regdom	= tech_set_regdom,
@@ -17789,7 +17825,7 @@ index cc48ceb1..287c5789 100644
  	err = connman_network_driver_register(&network_driver);
  	if (err < 0)
  		return err;
-@@ -4089,6 +6333,72 @@ static int wifi_init(void)
+@@ -4101,6 +6345,72 @@ static int wifi_init(void)
  	return 0;
  }
  
@@ -17863,10 +17899,10 @@ index cc48ceb1..287c5789 100644
  {
  	DBG();
 diff --git a/src/connman.h b/src/connman.h
-index 558e06db..0f750694 100644
+index 67886e5d..dac252d9 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -280,6 +280,7 @@ void __connman_storage_save_provider(GKeyFile *keyfile, const char *identifier);
+@@ -278,6 +278,7 @@ void __connman_storage_save_provider(GKeyFile *keyfile, const char *identifier);
  bool __connman_storage_remove_provider(const char *identifier);
  char **__connman_storage_get_providers(void);
  bool __connman_storage_remove_service(const char *service_id);
@@ -17874,7 +17910,7 @@ index 558e06db..0f750694 100644
  
  int __connman_detect_init(void);
  void __connman_detect_cleanup(void);
-@@ -469,6 +470,7 @@ typedef void (* dhcpv6_cb) (struct connman_network *network,
+@@ -467,6 +468,7 @@ typedef void (* dhcpv6_cb) (struct connman_network *network,
  typedef void (* dhcp_cb) (struct connman_ipconfig *ipconfig,
  			struct connman_network *opt_network,
  			bool success, gpointer data);
@@ -17882,7 +17918,7 @@ index 558e06db..0f750694 100644
  char *__connman_dhcp_get_server_address(struct connman_ipconfig *ipconfig);
  int __connman_dhcp_start(struct connman_ipconfig *ipconfig,
  			struct connman_network *network, dhcp_cb callback,
-@@ -563,6 +565,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
+@@ -561,6 +563,8 @@ void __connman_technology_remove_interface(enum connman_service_type type,
  				int index, const char *ident);
  void __connman_technology_notify_regdom_by_device(struct connman_device *device,
  						int result, const char *alpha2);
@@ -17891,7 +17927,7 @@ index 558e06db..0f750694 100644
  
  #include <connman/device.h>
  
-@@ -577,6 +581,7 @@ int __connman_device_request_scan(enum connman_service_type type);
+@@ -575,6 +579,7 @@ int __connman_device_request_scan(enum connman_service_type type);
  int __connman_device_request_scan_full(enum connman_service_type type);
  int __connman_device_request_start_wps(enum connman_service_type type, const char *pin);
  int __connman_device_request_cancel_wps(enum connman_service_type type);
@@ -17899,7 +17935,7 @@ index 558e06db..0f750694 100644
  int __connman_device_request_hidden_scan(struct connman_device *device,
  				const char *ssid, unsigned int ssid_len,
  				const char *identity, const char *passphrase,
-@@ -703,6 +708,7 @@ int __connman_service_compare(const struct connman_service *a,
+@@ -704,6 +709,7 @@ int __connman_service_compare(const struct connman_service *a,
  					const struct connman_service *b);
  
  struct connman_service *__connman_service_lookup_from_index(int index);
@@ -17907,7 +17943,7 @@ index 558e06db..0f750694 100644
  struct connman_service *__connman_service_create_from_network(struct connman_network *network);
  struct connman_service *__connman_service_create_from_provider(struct connman_provider *provider);
  bool __connman_service_index_is_default(int index);
-@@ -857,7 +863,9 @@ void __connman_peer_cleanup(void);
+@@ -858,7 +864,9 @@ void __connman_peer_cleanup(void);
  
  void __connman_peer_list_struct(DBusMessageIter *array);
  const char *__connman_peer_get_path(struct connman_peer *peer);
@@ -17918,7 +17954,7 @@ index 558e06db..0f750694 100644
  
  int __connman_peer_service_init(void);
  void __connman_peer_service_cleanup(void);
-@@ -1011,6 +1019,15 @@ typedef void (*ippool_collision_cb_t) (struct connman_ippool *pool,
+@@ -1012,6 +1020,15 @@ typedef void (*ippool_collision_cb_t) (struct connman_ippool *pool,
  int __connman_ippool_init(void);
  void __connman_ippool_cleanup(void);
  
@@ -17934,7 +17970,7 @@ index 558e06db..0f750694 100644
  void __connman_ippool_free(struct connman_ippool *pool);
  
  struct connman_ippool *__connman_ippool_create(int index,
-@@ -1019,6 +1036,13 @@ struct connman_ippool *__connman_ippool_create(int index,
+@@ -1020,6 +1037,13 @@ struct connman_ippool *__connman_ippool_create(int index,
  					ippool_collision_cb_t collision_cb,
  					void *user_data);
  
@@ -17948,7 +17984,7 @@ index 558e06db..0f750694 100644
  const char *__connman_ippool_get_gateway(struct connman_ippool *pool);
  const char *__connman_ippool_get_broadcast(struct connman_ippool *pool);
  const char *__connman_ippool_get_subnet_mask(struct connman_ippool *pool);
-@@ -1105,3 +1129,4 @@ int __connman_util_get_random(uint64_t *val);
+@@ -1106,3 +1130,4 @@ int __connman_util_get_random(uint64_t *val);
  unsigned int __connman_util_random_delay_ms(unsigned int secs);
  int __connman_util_init(void);
  void __connman_util_cleanup(void);
@@ -17970,7 +18006,7 @@ index c454a581..a1e35c85 100644
  		variant_sig = DBUS_TYPE_ARRAY_AS_STRING
  				DBUS_TYPE_STRING_AS_STRING;
 diff --git a/src/device.c b/src/device.c
-index ce70da90..5c6d3637 100644
+index ce70da90..d898aa08 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -1060,6 +1060,9 @@ void connman_device_unregister(struct connman_device *device)
@@ -18045,7 +18081,7 @@ index ce70da90..5c6d3637 100644
 +
 +		if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
 +				g_strcmp0(connman_device_get_string(device, "Interface"),
-+					connman_option_get_string("P2PDevice")) != 0)
++					connman_setting_get_string("P2PDevice")) != 0)
 +			continue;
 +
 +		err = device_cancel_p2p(device);
@@ -18064,7 +18100,7 @@ index ce70da90..5c6d3637 100644
                                         connman_device_request_signal_info_cb cb, void *user_data)
  {
 diff --git a/src/dhcp.c b/src/dhcp.c
-index 42e9f417..a1df8289 100644
+index 2d96c439..e128ca97 100644
 --- a/src/dhcp.c
 +++ b/src/dhcp.c
 @@ -659,6 +659,16 @@ static int dhcp_release(struct connman_dhcp *dhcp)
@@ -19134,7 +19170,7 @@ index 2aacee37..0c424598 100644
  };
  
 diff --git a/src/network.c b/src/network.c
-index aa8802ff..f412fa4d 100644
+index be2efc54..e6e8076e 100644
 --- a/src/network.c
 +++ b/src/network.c
 @@ -87,6 +87,7 @@ struct connman_network {
@@ -19461,7 +19497,7 @@ index 00000000..e9d5f2d0
 +	DBG("");
 +}
 diff --git a/src/peer.c b/src/peer.c
-index c66b3a71..fcac4698 100644
+index bad5c841..ca1e46ac 100644
 --- a/src/peer.c
 +++ b/src/peer.c
 @@ -33,12 +33,16 @@
@@ -20139,7 +20175,7 @@ index c66b3a71..fcac4698 100644
  }
  
  static void peer_service_free(gpointer data)
-@@ -1072,6 +1411,7 @@ static const GDBusMethodTable peer_methods[] = {
+@@ -1075,6 +1414,7 @@ static const GDBusMethodTable peer_methods[] = {
  			get_peer_properties) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, connect_peer) },
  	{ GDBUS_METHOD("Disconnect", NULL, NULL, disconnect_peer) },
@@ -20147,7 +20183,7 @@ index c66b3a71..fcac4698 100644
  	{ },
  };
  
-@@ -1127,6 +1467,8 @@ void connman_peer_unregister(struct connman_peer *peer)
+@@ -1130,6 +1470,8 @@ void connman_peer_unregister(struct connman_peer *peer)
  	connman_agent_cancel(peer);
  	reply_pending(peer, EIO);
  
@@ -20156,7 +20192,7 @@ index c66b3a71..fcac4698 100644
  	g_dbus_unregister_interface(connection, peer->path,
  					CONNMAN_PEER_INTERFACE);
  	peer->registered = false;
-@@ -1145,6 +1487,35 @@ struct connman_peer *connman_peer_get(struct connman_device *device,
+@@ -1148,6 +1490,35 @@ struct connman_peer *connman_peer_get(struct connman_device *device,
  	return peer;
  }
  
@@ -20192,7 +20228,7 @@ index c66b3a71..fcac4698 100644
  int connman_peer_driver_register(struct connman_peer_driver *driver)
  {
  	if (peer_driver && peer_driver != driver)
-@@ -1180,16 +1551,63 @@ const char *__connman_peer_get_path(struct connman_peer *peer)
+@@ -1183,16 +1554,63 @@ const char *__connman_peer_get_path(struct connman_peer *peer)
  	return peer->path;
  }
  
@@ -20693,10 +20729,10 @@ index 00000000..9be1bde8
 +	}
 +}
 diff --git a/src/service.c b/src/service.c
-index 8926a5b6..8bb51926 100644
+index 068679d5..cd3e5104 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -7354,6 +7354,11 @@ struct connman_service *__connman_service_lookup_from_index(int index)
+@@ -7416,6 +7416,11 @@ struct connman_service *__connman_service_lookup_from_index(int index)
  	return NULL;
  }
  
@@ -20870,7 +20906,7 @@ index 90f03ebc..7e6d6590 100644
 +	closedir(dir);
 +}
 diff --git a/src/technology.c b/src/technology.c
-index 252701e9..1a437d9e 100644
+index 252701e9..9aa335b7 100644
 --- a/src/technology.c
 +++ b/src/technology.c
 @@ -69,6 +69,16 @@ struct connman_technology {
@@ -21837,7 +21873,7 @@ index 252701e9..1a437d9e 100644
 -	technology->device_list = g_slist_prepend(technology->device_list,
 +	if (connman_setting_get_bool("SupportP2P0Interface") == TRUE &&
 +					g_strcmp0(connman_device_get_string(device, "Interface"),
-+						connman_option_get_string("WiFiDevice")) == 0)
++						connman_setting_get_string("WiFiDevice")) == 0)
 +		technology->device_list = g_slist_append(technology->device_list,
 +								device);
 +	else

@@ -1,4 +1,4 @@
-From fdf31f0cf943a76d2222ea313412e8142228a47f Mon Sep 17 00:00:00 2001
+From 7a20a99ee8e55cbbaf9619615b52aaa77814d615 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Tue, 5 Jan 2021 13:55:12 +0530
 Subject: [PATCH] Added new method SetDefault for Interface net.connman.Service
@@ -32,10 +32,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 111 insertions(+)
 
 diff --git a/src/service.c b/src/service.c
-index 1de32aee..f90416a3 100644
+index 2f354c3b..c63c1edc 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -5016,6 +5016,108 @@ static DBusMessage *move_service(DBusConnection *conn,
+@@ -5038,6 +5038,108 @@ static DBusMessage *move_service(DBusConnection *conn,
  	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
  }
  
@@ -144,7 +144,7 @@ index 1de32aee..f90416a3 100644
  static DBusMessage *move_before(DBusConnection *conn,
  					DBusMessage *msg, void *user_data)
  {
-@@ -5038,6 +5140,13 @@ static DBusMessage *reset_counters(DBusConnection *conn,
+@@ -5060,6 +5162,13 @@ static DBusMessage *reset_counters(DBusConnection *conn,
  	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
  }
  
@@ -158,7 +158,7 @@ index 1de32aee..f90416a3 100644
  static void service_schedule_added(struct connman_service *service)
  {
  	DBG("service %p", service);
-@@ -5095,6 +5204,8 @@ static const GDBusMethodTable service_methods[] = {
+@@ -5117,6 +5226,8 @@ static const GDBusMethodTable service_methods[] = {
  			GDBUS_ARGS({ "service", "o" }), NULL,
  			move_after) },
  	{ GDBUS_METHOD("ResetCounters", NULL, NULL, reset_counters) },

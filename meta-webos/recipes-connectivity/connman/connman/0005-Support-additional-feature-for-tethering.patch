@@ -1,4 +1,4 @@
-From 8720cc006772f7c32e249a6268f500db43dc886d Mon Sep 17 00:00:00 2001
+From 810b8ba3ab15d3a20b80d9d1b87f3c5b54ff9bfd Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 25 Jun 2019 13:11:11 +0900
 Subject: [PATCH] Support additional feature for tethering
@@ -40,10 +40,10 @@ index a3095fb7..1d78649c 100644
  
  void connman_technology_wps_failed_notify(struct connman_technology *technology);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index a9dd35c4..314d3126 100644
+index 13e6861a..23782ff8 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3657,16 +3657,25 @@ static void tech_remove(struct connman_technology *technology)
+@@ -3669,16 +3669,25 @@ static void tech_remove(struct connman_technology *technology)
  static GSupplicantSSID *ssid_ap_init(const char *ssid, const char *passphrase)
  {
  	GSupplicantSSID *ap;
@@ -71,10 +71,10 @@ index a9dd35c4..314d3126 100644
  	if (!passphrase || strlen(passphrase) == 0) {
  		ap->security = G_SUPPLICANT_SECURITY_NONE;
 diff --git a/src/connman.h b/src/connman.h
-index b8de7bd1..8c2aebce 100644
+index a37d574b..741ce028 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -648,6 +648,7 @@ const char *__connman_tethering_get_bridge(void);
+@@ -647,6 +647,7 @@ const char *__connman_tethering_get_bridge(void);
  int __connman_tethering_set_enabled(void);
  void __connman_tethering_set_disabled(void);
  void __connman_tethering_list_clients(DBusMessageIter *array);

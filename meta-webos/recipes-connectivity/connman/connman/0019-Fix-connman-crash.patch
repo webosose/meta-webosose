@@ -1,4 +1,4 @@
-From 1d9a421be1d0c3c97ee2d2e6a3e787f9bdbff542 Mon Sep 17 00:00:00 2001
+From f1428532fed35565d4cf592104c12c24c5205ae8 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 26 May 2021 17:24:34 +0530
 Subject: [PATCH] Fix connman crash
@@ -26,7 +26,7 @@ Upstream-Status: Inappropriate [webOS specific]
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/gsupplicant/dbus.c b/gsupplicant/dbus.c
-index c034737..c28b835 100644
+index c0347374..c28b835c 100644
 --- a/gsupplicant/dbus.c
 +++ b/gsupplicant/dbus.c
 @@ -499,7 +499,7 @@ int supplicant_dbus_method_call(const char *path,
@@ -39,7 +39,7 @@ index c034737..c28b835 100644
  
  	method_call = g_try_new0(struct method_call_data, 1);
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 6546ca9..59b02c2 100644
+index 6546ca93..59b02c23 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
 @@ -6876,7 +6876,7 @@ static void interface_get_result(const char *error,
@@ -51,6 +51,3 @@ index 6546ca9..59b02c2 100644
  		err = -EINVAL;
  		goto done;
  	}
--- 
-2.26.0
-

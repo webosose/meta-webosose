@@ -1,4 +1,4 @@
-From 81b0f2e30dc65b496966933e74156ee83491e4e8 Mon Sep 17 00:00:00 2001
+From 6e67e52695585b9bc91b3f7e9bb811d28487ea4f Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Tue, 1 Jun 2021 16:00:56 +0530
 Subject: [PATCH] Fix connman crash when interface removed
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 59b02c2..27e9e55 100644
+index 59b02c23..27e9e559 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
 @@ -7028,7 +7028,7 @@ int g_supplicant_interface_remove(GSupplicantInterface *interface,
@@ -37,6 +37,3 @@ index 59b02c2..27e9e55 100644
  		return -EINVAL;
  
  	if (!system_available)
--- 
-2.26.0
-

@@ -1,31 +1,29 @@
-From 6f8a7556bf35f5c5758292e5add2bb54504f62fc Mon Sep 17 00:00:00 2001
+From 3eb7e531625c7cbca6cc21d1d080eb7bc90b82eb Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 4 Aug 2020 09:42:25 +0900
 Subject: [PATCH] Read WpaSupplicantConfigFile from main configuration
 
----
- include/setting.h |  1 +
- plugins/wifi.c    | 23 +----------------------
- src/main.c        | 20 ++++++++++++++++++++
- 3 files changed, 22 insertions(+), 22 deletions(-)
+connman_setting_get_string API was added in upstream 1.40 with:
 
-diff --git a/include/setting.h b/include/setting.h
-index a8820217..3c87e77d 100644
---- a/include/setting.h
-+++ b/include/setting.h
-@@ -29,6 +29,7 @@ extern "C" {
- #endif
- 
- bool connman_setting_get_bool(const char *key);
-+char *connman_setting_get_string(const char *key);
- char **connman_setting_get_string_list(const char *key);
- unsigned int *connman_setting_get_uint_list(const char *key);
- 
+  commit 1b86c9e256d103c8f483085878149ba6b168ead6
+  Author: VAUTRIN Emmanuel (Canal Plus Prestataire) <Emmanuel.VAUTRIN@cpexterne.org>
+  Date:   Thu May 6 09:45:01 2021 +0000
+
+    main: Cleanup of vendor class id and wifi config options
+
+    Ensure homogeneity of config options management by replacing
+    connman_option_get_string() by connman_setting_get_string(), and
+    removing irrelevant option.h header file.
+---
+ plugins/wifi.c | 23 +----------------------
+ src/main.c     | 12 ++++++++++++
+ 2 files changed, 13 insertions(+), 22 deletions(-)
+
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 9efc7842..cc48ceb1 100644
+index 6b38df9e..6c1cd2d6 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -1618,27 +1618,6 @@ static void interface_create_callback(int result,
+@@ -1628,27 +1628,6 @@ static void interface_create_callback(int result,
  	}
  }
  
@@ -53,7 +51,7 @@ index 9efc7842..cc48ceb1 100644
  static int wifi_enable(struct connman_device *device)
  {
  	struct wifi_data *wifi = connman_device_get_data(device);
-@@ -1657,7 +1636,7 @@ static int wifi_enable(struct connman_device *device)
+@@ -1667,7 +1646,7 @@ static int wifi_enable(struct connman_device *device)
  		return -EINPROGRESS;
  
  	interface = connman_inet_ifname(index);
@@ -63,10 +61,10 @@ index 9efc7842..cc48ceb1 100644
  						interface_create_callback,
  							wifi);
 diff --git a/src/main.c b/src/main.c
-index 94afc1d9..5affe0e7 100644
+index 6480caa6..88f5fe24 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -83,6 +83,7 @@ static struct {
+@@ -91,6 +91,7 @@ static struct {
  	bool allow_hostname_updates;
  	bool allow_domainname_updates;
  	bool single_tech;
@@ -74,7 +72,7 @@ index 94afc1d9..5affe0e7 100644
  	char **tethering_technologies;
  	bool persistent_tethering_mode;
  	bool enable_6to4;
-@@ -105,6 +106,7 @@ static struct {
+@@ -116,6 +117,7 @@ static struct {
  	.allow_hostname_updates = true,
  	.allow_domainname_updates = true,
  	.single_tech = false,
@@ -82,7 +80,7 @@ index 94afc1d9..5affe0e7 100644
  	.tethering_technologies = NULL,
  	.persistent_tethering_mode = false,
  	.enable_6to4 = false,
-@@ -128,6 +130,7 @@ static struct {
+@@ -142,6 +144,7 @@ static struct {
  #define CONF_ALLOW_HOSTNAME_UPDATES     "AllowHostnameUpdates"
  #define CONF_ALLOW_DOMAINNAME_UPDATES   "AllowDomainnameUpdates"
  #define CONF_SINGLE_TECH                "SingleConnectedTechnology"
@@ -90,7 +88,7 @@ index 94afc1d9..5affe0e7 100644
  #define CONF_TETHERING_TECHNOLOGIES      "TetheringTechnologies"
  #define CONF_PERSISTENT_TETHERING_MODE  "PersistentTetheringMode"
  #define CONF_ENABLE_6TO4                "Enable6to4"
-@@ -151,6 +154,7 @@ static const char *supported_options[] = {
+@@ -168,6 +171,7 @@ static const char *supported_options[] = {
  	CONF_ALLOW_HOSTNAME_UPDATES,
  	CONF_ALLOW_DOMAINNAME_UPDATES,
  	CONF_SINGLE_TECH,
@@ -98,15 +96,15 @@ index 94afc1d9..5affe0e7 100644
  	CONF_TETHERING_TECHNOLOGIES,
  	CONF_PERSISTENT_TETHERING_MODE,
  	CONF_ENABLE_6TO4,
-@@ -280,6 +284,7 @@ static void parse_config(GKeyFile *config)
+@@ -300,6 +304,7 @@ static void parse_config(GKeyFile *config)
  	char **timeservers;
  	char **interfaces;
  	char **str_list;
 +	char *wpas_config_file;
  	char **tethering;
-         char *vendor_class_id;
+ 	char *string;
  	gsize len;
-@@ -418,6 +423,13 @@ static void parse_config(GKeyFile *config)
+@@ -438,6 +443,13 @@ static void parse_config(GKeyFile *config)
  
  	g_clear_error(&error);
  
@@ -120,18 +118,3 @@ index 94afc1d9..5affe0e7 100644
  	tethering = __connman_config_get_string_list(config, "General",
  			CONF_TETHERING_TECHNOLOGIES, &len, &error);
  
-@@ -699,6 +711,14 @@ bool connman_setting_get_bool(const char *key)
- 	return false;
- }
- 
-+char *connman_setting_get_string(const char *key)
-+{
-+	if (g_str_equal(key, CONF_WPA_SUPPLICANT_CONF_FILE) == TRUE)
-+		return connman_settings.wpas_config_file;
-+
-+	return NULL;
-+}
-+
- char **connman_setting_get_string_list(const char *key)
- {
- 	if (g_str_equal(key, CONF_PREF_TIMESERVERS))

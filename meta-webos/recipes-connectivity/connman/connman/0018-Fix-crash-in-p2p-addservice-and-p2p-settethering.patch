@@ -1,4 +1,4 @@
-From a60120b77c093a23c7d31ec64ee814d334e284e8 Mon Sep 17 00:00:00 2001
+From 4b29d8ba64e6049561929900ca79b4688e0d057c Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 17 Feb 2021 14:12:35 +0530
 Subject: [PATCH] Fix crash in p2p/addservice and p2p/settethering
@@ -18,24 +18,10 @@ N/A
 :Issues Addressed:
 [PLAT-137131] [webOS OSE]: Failed to enable tethering mode
 ---
- plugins/wifi.c | 2 +-
- src/group.c    | 5 ++---
- src/p2pgo.c    | 2 ++
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ src/group.c | 5 ++---
+ src/p2pgo.c | 2 ++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 287c5789..7107fab3 100644
---- a/plugins/wifi.c
-+++ b/plugins/wifi.c
-@@ -1513,7 +1513,7 @@ static void register_peer_service_cb(int result,
- 
- 	DBG("");
- 
--	if (reg_data->callback)
-+	if (reg_data && reg_data->callback)
- 		reg_data->callback(result, reg_data->user_data);
- 
- 	g_free(reg_data);
 diff --git a/src/group.c b/src/group.c
 index 83661cf1..e55358b3 100644
 --- a/src/group.c

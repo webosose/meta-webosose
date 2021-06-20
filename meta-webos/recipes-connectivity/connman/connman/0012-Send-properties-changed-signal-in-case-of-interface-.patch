@@ -1,4 +1,4 @@
-From 3f94033062d820a722be30a6afbe41e2e39f84f4 Mon Sep 17 00:00:00 2001
+From 5e28fa42429e6b760213e178550979fc491dc7ed Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 4 Dec 2020 14:31:45 +0530
 Subject: [PATCH] Send properties changed signal in case of interface change
@@ -40,10 +40,10 @@ index 60686900..8b4f159c 100644
  int connman_technology_remove_station(char *mac);
  int connman_technology_set_regdom(const char *alpha2);
 diff --git a/plugins/ethernet.c b/plugins/ethernet.c
-index ed4208ad..fc8cd433 100644
+index 6146b1c0..23ea29b4 100644
 --- a/plugins/ethernet.c
 +++ b/plugins/ethernet.c
-@@ -345,6 +345,8 @@ static void eth_tech_add_interface(struct connman_technology *technology,
+@@ -347,6 +347,8 @@ static void eth_tech_add_interface(struct connman_technology *technology,
  
  	eth_interface_list = g_list_prepend(eth_interface_list,
  					(GINT_TO_POINTER((int) index)));
@@ -52,7 +52,7 @@ index ed4208ad..fc8cd433 100644
  }
  
  static void eth_tech_remove_interface(struct connman_technology *technology,
-@@ -354,6 +356,7 @@ static void eth_tech_remove_interface(struct connman_technology *technology,
+@@ -356,6 +358,7 @@ static void eth_tech_remove_interface(struct connman_technology *technology,
  
  	eth_interface_list = g_list_remove(eth_interface_list,
  					GINT_TO_POINTER((int) index));

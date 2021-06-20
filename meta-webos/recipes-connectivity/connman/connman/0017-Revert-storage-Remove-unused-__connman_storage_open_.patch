@@ -1,4 +1,4 @@
-From ffc2535dfd57bb7b9eff5082204ae834300ace3c Mon Sep 17 00:00:00 2001
+From 7eb3acb20d20417b40976dc50bd178050fe7ed32 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Wed, 10 Mar 2021 06:48:18 -0800
 Subject: [PATCH] Revert "storage: Remove unused
@@ -13,10 +13,10 @@ This reverts commit 6ca9222beb5445de9fc8a94d92e0a7b9ebce3724.
  2 files changed, 23 insertions(+)
 
 diff --git a/src/connman.h b/src/connman.h
-index 0f750694..3badeb78 100644
+index dac252d9..e23dbc13 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -274,6 +274,7 @@ void __connman_storage_delete_global(void);
+@@ -272,6 +272,7 @@ void __connman_storage_delete_global(void);
  GKeyFile *__connman_storage_load_config(const char *ident);
  GKeyFile *__connman_storage_load_provider_config(const char *ident);
  

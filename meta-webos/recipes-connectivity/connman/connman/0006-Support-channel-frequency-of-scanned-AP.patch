@@ -1,4 +1,4 @@
-From 3ea46b51c77c6f15dc9c5666311ac6434721cd64 Mon Sep 17 00:00:00 2001
+From 70a331cc07d59d1036700853b79de1721a8e8c38 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Wed, 28 Aug 2019 15:35:45 +0900
 Subject: [PATCH] Support channel frequency of scanned AP
@@ -336,10 +336,10 @@ index 8f9dd94a..1a8f57ad 100644
  							const char *name);
  int connman_network_set_strength(struct connman_network *network,
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 314d3126..6a61fab2 100644
+index 23782ff8..feff1f66 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -180,6 +180,12 @@ struct disconnect_data {
+@@ -179,6 +179,12 @@ struct disconnect_data {
  	struct connman_network *network;
  };
  
@@ -352,7 +352,7 @@ index 314d3126..6a61fab2 100644
  static GList *iface_list = NULL;
  
  static GList *pending_wifi_device = NULL;
-@@ -191,6 +197,27 @@ static int tech_set_tethering(struct connman_technology *technology,
+@@ -190,6 +196,27 @@ static int tech_set_tethering(struct connman_technology *technology,
  				const char *identifier, const char *passphrase,
  				const char *bridge, bool enabled);
  
@@ -380,7 +380,7 @@ index 314d3126..6a61fab2 100644
  static int p2p_tech_probe(struct connman_technology *technology)
  {
  	p2p_technology = technology;
-@@ -2291,6 +2318,52 @@ static int wifi_cancel_wps(struct connman_device *device)
+@@ -2301,6 +2328,52 @@ static int wifi_cancel_wps(struct connman_device *device)
  	return cancel_wps(wifi);
  }
  
@@ -433,7 +433,7 @@ index 314d3126..6a61fab2 100644
  static struct connman_device_driver wifi_ng_driver = {
  	.name		= "wifi",
  	.type		= CONNMAN_DEVICE_TYPE_WIFI,
-@@ -2303,7 +2376,8 @@ static struct connman_device_driver wifi_ng_driver = {
+@@ -2313,7 +2386,8 @@ static struct connman_device_driver wifi_ng_driver = {
  	.stop_scan	= wifi_stop_scan,
  	.set_regdom	= wifi_set_regdom,
  	.start_wps	= wifi_start_wps,
@@ -443,7 +443,7 @@ index 314d3126..6a61fab2 100644
  };
  
  static void system_ready(void)
-@@ -3154,6 +3228,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3166,6 +3240,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  	bool wps_pbc;
  	bool wps_ready;
  	bool wps_advertizing;
@@ -451,7 +451,7 @@ index 314d3126..6a61fab2 100644
  
  	mode = g_supplicant_network_get_mode(supplicant_network);
  	identifier = g_supplicant_network_get_identifier(supplicant_network);
-@@ -3173,6 +3248,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3185,6 +3260,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  	wps_ready = g_supplicant_network_is_wps_active(supplicant_network);
  	wps_advertizing = g_supplicant_network_is_wps_advertizing(
  							supplicant_network);
@@ -459,7 +459,7 @@ index 314d3126..6a61fab2 100644
  
  	if (!wifi)
  		return;
-@@ -3239,6 +3315,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3251,6 +3327,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  			wifi->hidden = NULL;
  		}
  	}
@@ -471,7 +471,7 @@ index 314d3126..6a61fab2 100644
  }
  
  static void network_removed(GSupplicantNetwork *network)
-@@ -3275,11 +3356,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+@@ -3287,11 +3368,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
  	const char *name, *identifier;
  	struct connman_network *connman_network;
  	bool update_needed;
@@ -485,7 +485,7 @@ index 314d3126..6a61fab2 100644
  
  	DBG("name %s", name);
  
-@@ -3290,6 +3373,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+@@ -3302,6 +3385,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
  	if (!connman_network)
  		return;
  
@@ -598,7 +598,7 @@ index d3048379..ce70da90 100644
  {
  	struct ifreq ifr;
 diff --git a/src/network.c b/src/network.c
-index 256e3b5f..aa8802ff 100644
+index b12bbc09..be2efc54 100644
 --- a/src/network.c
 +++ b/src/network.c
 @@ -55,6 +55,12 @@
@@ -750,10 +750,10 @@ index 256e3b5f..aa8802ff 100644
   * connman_network_set_name:
   * @network: network structure
 diff --git a/src/service.c b/src/service.c
-index 0e1bc59d..ce51034e 100644
+index 3b35c188..90839f88 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -153,6 +153,7 @@ static struct connman_ipconfig *create_ip6config(struct connman_service *service
+@@ -156,6 +156,7 @@ static struct connman_ipconfig *create_ip6config(struct connman_service *service
  		int index);
  static void dns_changed(struct connman_service *service);
  static void vpn_auto_connect(void);
@@ -761,7 +761,7 @@ index 0e1bc59d..ce51034e 100644
  
  struct find_data {
  	const char *path;
-@@ -1662,6 +1663,13 @@ static void strength_changed(struct connman_service *service)
+@@ -1673,6 +1674,13 @@ static void strength_changed(struct connman_service *service)
  	connman_dbus_property_changed_basic(service->path,
  				CONNMAN_SERVICE_INTERFACE, "Strength",
  					DBUS_TYPE_BYTE, &service->strength);
@@ -775,7 +775,7 @@ index 0e1bc59d..ce51034e 100644
  }
  
  static void favorite_changed(struct connman_service *service)
-@@ -2518,6 +2526,57 @@ int connman_service_iterate_services(connman_service_iterate_cb cb,
+@@ -2529,6 +2537,57 @@ int connman_service_iterate_services(connman_service_iterate_cb cb,
  	return ret;
  }
  
@@ -833,7 +833,7 @@ index 0e1bc59d..ce51034e 100644
  static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
  					struct connman_service *service)
  {
-@@ -2583,9 +2642,21 @@ static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
+@@ -2594,9 +2653,21 @@ static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
  						append_ethernet, service);
  		break;
  	case CONNMAN_SERVICE_TYPE_WIFI:

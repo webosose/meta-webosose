@@ -1,4 +1,4 @@
-From bc23bfdfe3c834d8263761b60bfb6a43cfe6ff13 Mon Sep 17 00:00:00 2001
+From fcfd2db1e98f34b6188ac16d59d6a966bf0eccde Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Sat, 31 Aug 2019 14:41:49 +0900
 Subject: [PATCH] Provide station information when AP mode
@@ -113,10 +113,10 @@ index 1d78649c..60686900 100644
  void connman_technology_regdom_notify(struct connman_technology *technology,
  							const char *alpha2);
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 6a61fab2..7e5e33ee 100644
+index feff1f66..41b4813e 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -3497,6 +3497,25 @@ static void sta_deauthorized(GSupplicantInterface *interface,
+@@ -3509,6 +3509,25 @@ static void sta_deauthorized(GSupplicantInterface *interface,
  	__connman_tethering_client_unregister(addr);
  }
  
@@ -142,7 +142,7 @@ index 6a61fab2..7e5e33ee 100644
  static void apply_peer_services(GSupplicantPeer *peer,
  				struct connman_peer *connman_peer)
  {
-@@ -3717,6 +3736,8 @@ static const GSupplicantCallbacks callbacks = {
+@@ -3729,6 +3748,8 @@ static const GSupplicantCallbacks callbacks = {
  	.network_removed	= network_removed,
  	.network_changed	= network_changed,
  	.network_associated	= network_associated,
@@ -152,10 +152,10 @@ index 6a61fab2..7e5e33ee 100644
  	.sta_deauthorized	= sta_deauthorized,
  	.peer_found		= peer_found,
 diff --git a/src/connman.h b/src/connman.h
-index 8c2aebce..33d097c5 100644
+index 741ce028..63fe06d3 100644
 --- a/src/connman.h
 +++ b/src/connman.h
-@@ -641,10 +641,21 @@ bool __connman_config_address_provisioned(const char *address,
+@@ -640,10 +640,21 @@ bool __connman_config_address_provisioned(const char *address,
  
  #include <connman/tethering.h>
  

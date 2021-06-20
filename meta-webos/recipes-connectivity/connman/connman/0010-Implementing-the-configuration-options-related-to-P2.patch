@@ -1,4 +1,4 @@
-From 41f3ede31e4a9225b03c5099cfb42406d8d88edc Mon Sep 17 00:00:00 2001
+From 84ddfe469be5dd0aeea2674cd0f6c1141c55cf59 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 21 Apr 2020 09:27:33 +0900
 Subject: [PATCH] Implementing the configuration options related to P2P
@@ -64,10 +64,10 @@ index c95ca62b..8c008319 100644
  	data->user_data = user_data;
  
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 7e5e33ee..9efc7842 100644
+index 41b4813e..6b38df9e 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -1618,6 +1618,27 @@ static void interface_create_callback(int result,
+@@ -1628,6 +1628,27 @@ static void interface_create_callback(int result,
  	}
  }
  
@@ -95,7 +95,7 @@ index 7e5e33ee..9efc7842 100644
  static int wifi_enable(struct connman_device *device)
  {
  	struct wifi_data *wifi = connman_device_get_data(device);
-@@ -1636,7 +1657,8 @@ static int wifi_enable(struct connman_device *device)
+@@ -1646,7 +1667,8 @@ static int wifi_enable(struct connman_device *device)
  		return -EINPROGRESS;
  
  	interface = connman_inet_ifname(index);
@@ -105,7 +105,7 @@ index 7e5e33ee..9efc7842 100644
  						interface_create_callback,
  							wifi);
  	g_free(interface);
-@@ -3888,7 +3910,7 @@ static void sta_remove_callback(int result,
+@@ -3900,7 +3922,7 @@ static void sta_remove_callback(int result,
  
  	info->wifi->interface = NULL;
  
