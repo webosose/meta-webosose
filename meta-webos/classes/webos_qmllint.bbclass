@@ -10,8 +10,7 @@ inherit qt6-paths
 WEBOS_QMLLINT_EXTRA_VALIDATION ?= "0"
 WEBOS_QMLLINT_ERROR_ON_WARNING ?= "0"
 WEBOS_QMLLINT_ERROR_LOG ?= "${T}/qmllint_error.log"
-
-NO_UNQUALIFIED_ID = "${@ '--no-unqualified-id' if d.getVar('QT_VERSION', True) != '5' else '' }"
+WEBOS_QMLLINT_OPTIONS ?= "${@ '--no-unqualified-id -I ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QML}' if d.getVar('QT_VERSION', True) != '5' else '' }"
 
 do_compile_prepend () {
     bbnote "Checking QML syntax error and problematic pattern (Step 1): .qml or .js files stored as qresource"
@@ -20,7 +19,7 @@ do_compile_prepend () {
         local _dirname_=$(dirname $qrc)
         ${STAGING_BINDIR_NATIVE}/xmllint --xpath '//RCC/qresource/file' $qrc | sed 's/<file>//g' | sed 's/<\/file>/\n/g' | grep -E "*.qml$|*.js$" | while read file; do
             if [ -s "${_dirname_}/${file}" ]; then
-                ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint "${_dirname_}/${file}" ${NO_UNQUALIFIED_ID} \
+                ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint "${_dirname_}/${file}" ${WEBOS_QMLLINT_OPTIONS} \
                     || echo "Found syntax error in ${_dirname_}/${file}" >> ${WEBOS_QMLLINT_ERROR_LOG}
                 if [ "${WEBOS_QMLLINT_EXTRA_VALIDATION}" = "1" ]; then
                     PATH=${STAGING_BINDIR_NATIVE}/python3-native:${PATH} \
@@ -41,7 +40,7 @@ do_install_append () {
     bbnote "Checking QML syntax error and problematic pattern (Step 2): .qml or .js files to be installed"
     rm -f ${WEBOS_QMLLINT_ERROR_LOG}
     find ${D} -type f -not -empty -name "*.qml" -o -name "*.js" | while read file; do
-        ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint "${file}" ${NO_UNQUALIFIED_ID} \
+        ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint "${file}" ${WEBOS_QMLLINT_OPTIONS} \
             || echo "Found syntax error in ${file}" >> ${WEBOS_QMLLINT_ERROR_LOG}
         if [ "${WEBOS_QMLLINT_EXTRA_VALIDATION}" = "1" ]; then
             PATH=${STAGING_BINDIR_NATIVE}/python3-native:${PATH} \
