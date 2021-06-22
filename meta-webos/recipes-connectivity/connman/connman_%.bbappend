@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos18"
+EXTENDPRAUTO_append = "webos19"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -27,6 +27,7 @@ SRC_URI += " \
     file://0019-Fix-connman-crash.patch \
     file://0020-Fix-connman-crash-when-interface-removed.patch \
     file://0021-Fix-bug-p2p-findservice-luna-fail.patch \
+    file://0022-Fix-connman-crash.patch \
 "
 
 do_install_append() {
