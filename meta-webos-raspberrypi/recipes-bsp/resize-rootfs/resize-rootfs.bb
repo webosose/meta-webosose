@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 SUMMARY = "A service to expand rootfs to whole media"
 AUTHOR = "JeongBong Seo <jb.seo@lge.com>"
@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 RDEPENDS_${PN} = "e2fsprogs-resize2fs parted"
 
-PR = "r0"
+PR = "r1"
 
 inherit systemd
 
