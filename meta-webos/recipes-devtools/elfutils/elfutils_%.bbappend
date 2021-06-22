@@ -1,6 +1,6 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos3"
 
 # ERROR: QA Issue: /usr/lib/elfutils/ptest/tests/run-ar.sh contained in package elfutils-ptest requires /bin/bash, but no providers found in RDEPENDS_elfutils-ptest? [file-rdeps]
 VIRTUAL-RUNTIME_bash ?= "bash"
