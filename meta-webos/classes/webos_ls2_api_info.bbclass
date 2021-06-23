@@ -3,7 +3,7 @@
 LS2_DIR = "${IMAGE_ROOTFS}${datadir}/luna-service2"
 
 webos_ls2_api_info_data () {
-    if [ -d "${LS2_DIR}" ] ; then
+    if [ -d "${LS2_DIR}" -a -n "${BUILDHISTORY_DIR_IMAGE}" ] ; then
         cd ${LS2_DIR}
         if [ -d ${BUILDHISTORY_DIR_IMAGE}/ls2_api ] ; then
             rm -rf ${BUILDHISTORY_DIR_IMAGE}/ls2_api
