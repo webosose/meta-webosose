@@ -1,0 +1,98 @@
+From 769c98a13957f595e1e1556757e46aa9acf129a2 Mon Sep 17 00:00:00 2001
+From: Fabian Kosmale <fabian.kosmale@qt.io>
+Date: Mon, 5 Jul 2021 11:14:55 +0200
+Subject: [PATCH] Fix binding functor addressing in QQmlPropertyBinding
+
+This mirrors the change in qtbase.
+
+Task-number: QTBUG-93890
+Pick-to: 6.1 6.2
+Change-Id: I761b320e4dd4b1e2884bb9c0e01b28cc15c4ac2d
+Reviewed-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Reviewed-by: Andrei Golubev <andrei.golubev@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/358175]
+---
+ src/qml/qml/qqmlpropertybinding.cpp | 15 +++++++++------
+ src/qml/qml/qqmlpropertybinding_p.h |  8 +++++---
+ 2 files changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/src/qml/qml/qqmlpropertybinding.cpp b/src/qml/qml/qqmlpropertybinding.cpp
+index b1ad3f1767..185fac6dcc 100644
+--- a/src/qml/qml/qqmlpropertybinding.cpp
++++ b/src/qml/qml/qqmlpropertybinding.cpp
+@@ -61,10 +61,11 @@ QUntypedPropertyBinding QQmlPropertyBinding::create(QMetaType propertyType, QV4:
+                                                     QV4::ExecutionContext *scope, QObject *target,
+                                                     QQmlPropertyIndex targetIndex)
+ {
+-    auto buffer = new std::byte[sizeof(QQmlPropertyBinding)+sizeof(QQmlPropertyBindingJS)+jsExpressionOffsetLength()]; // QQmlPropertyBinding uses delete[]
++    auto buffer = new std::byte[QQmlPropertyBinding::getSizeEnsuringAlignment()
++            + sizeof(QQmlPropertyBindingJS)+jsExpressionOffsetLength()]; // QQmlPropertyBinding uses delete[]
+     auto binding = new (buffer) QQmlPropertyBinding(propertyType, target, targetIndex,
+                                                     TargetData::WithoutBoundFunction);
+-    auto js = new(buffer + sizeof(QQmlPropertyBinding) + jsExpressionOffsetLength()) QQmlPropertyBindingJS();
++    auto js = new(buffer + QQmlPropertyBinding::getSizeEnsuringAlignment() + jsExpressionOffsetLength()) QQmlPropertyBindingJS();
+     Q_ASSERT(binding->jsExpression() == js);
+     Q_ASSERT(js->asBinding() == binding);
+     Q_UNUSED(js);
+@@ -77,9 +78,10 @@ QUntypedPropertyBinding QQmlPropertyBinding::create(QMetaType propertyType, QV4:
+ 
+ QUntypedPropertyBinding QQmlPropertyBinding::createFromCodeString(const QQmlPropertyData *pd, const QString& str, QObject *obj, const QQmlRefPointer<QQmlContextData> &ctxt, const QString &url, quint16 lineNumber, QObject *target, QQmlPropertyIndex targetIndex)
+ {
+-    auto buffer = new std::byte[sizeof(QQmlPropertyBinding)+sizeof(QQmlPropertyBindingJS)+jsExpressionOffsetLength()]; // QQmlPropertyBinding uses delete[]
++    auto buffer = new std::byte[QQmlPropertyBinding::getSizeEnsuringAlignment()
++            + sizeof(QQmlPropertyBindingJS)+jsExpressionOffsetLength()]; // QQmlPropertyBinding uses delete[]
+     auto binding = new(buffer) QQmlPropertyBinding(QMetaType(pd->propType()), target, targetIndex, TargetData::WithoutBoundFunction);
+-    auto js = new(buffer + sizeof(QQmlPropertyBinding) + jsExpressionOffsetLength()) QQmlPropertyBindingJS();
++    auto js = new(buffer + QQmlPropertyBinding::getSizeEnsuringAlignment() + jsExpressionOffsetLength()) QQmlPropertyBindingJS();
+     Q_ASSERT(binding->jsExpression() == js);
+     Q_ASSERT(js->asBinding() == binding);
+     Q_UNUSED(js);
+@@ -91,9 +93,10 @@ QUntypedPropertyBinding QQmlPropertyBinding::createFromCodeString(const QQmlProp
+ 
+ QUntypedPropertyBinding QQmlPropertyBinding::createFromBoundFunction(const QQmlPropertyData *pd, QV4::BoundFunction *function, QObject *obj, const QQmlRefPointer<QQmlContextData> &ctxt, QV4::ExecutionContext *scope, QObject *target, QQmlPropertyIndex targetIndex)
+ {
+-    auto buffer = new std::byte[sizeof(QQmlPropertyBinding)+sizeof(QQmlPropertyBindingJSForBoundFunction)+jsExpressionOffsetLength()]; // QQmlPropertyBinding uses delete[]
++    auto buffer = new std::byte[QQmlPropertyBinding::getSizeEnsuringAlignment()
++            + sizeof(QQmlPropertyBindingJSForBoundFunction)+jsExpressionOffsetLength()]; // QQmlPropertyBinding uses delete[]
+     auto binding = new(buffer) QQmlPropertyBinding(QMetaType(pd->propType()), target, targetIndex, TargetData::HasBoundFunction);
+-    auto js = new(buffer + sizeof(QQmlPropertyBinding) + jsExpressionOffsetLength()) QQmlPropertyBindingJSForBoundFunction();
++    auto js = new(buffer + QQmlPropertyBinding::getSizeEnsuringAlignment() + jsExpressionOffsetLength()) QQmlPropertyBindingJSForBoundFunction();
+     Q_ASSERT(binding->jsExpression() == js);
+     Q_ASSERT(js->asBinding() == binding);
+     Q_UNUSED(js);
+diff --git a/src/qml/qml/qqmlpropertybinding_p.h b/src/qml/qml/qqmlpropertybinding_p.h
+index 2765a13a21..341e300de4 100644
+--- a/src/qml/qml/qqmlpropertybinding_p.h
++++ b/src/qml/qml/qqmlpropertybinding_p.h
+@@ -109,7 +109,7 @@ public:
+     {
+         return std::launder(reinterpret_cast<QQmlPropertyBindingJS const *>(
+                                 reinterpret_cast<std::byte const*>(this)
+-                                + sizeof(QQmlPropertyBinding)
++                                + QPropertyBindingPrivate::getSizeEnsuringAlignment()
+                                 + jsExpressionOffsetLength()));
+     }
+ 
+@@ -146,7 +146,7 @@ public:
+ 
+     static bool doEvaluate(QMetaType metaType, QUntypedPropertyData *dataPtr, void *f) {
+         auto address = static_cast<std::byte*>(f);
+-        address -= sizeof (QPropertyBindingPrivate); // f now points to QPropertyBindingPrivate suboject
++        address -= QPropertyBindingPrivate::getSizeEnsuringAlignment(); // f now points to QPropertyBindingPrivate suboject
+         // and that has the same address as QQmlPropertyBinding
+         return reinterpret_cast<QQmlPropertyBinding *>(address)->evaluate(metaType, dataPtr);
+     }
+@@ -237,10 +237,12 @@ inline const QQmlPropertyBinding *QQmlPropertyBindingJS::asBinding() const
+ {
+     return std::launder(reinterpret_cast<QQmlPropertyBinding const *>(
+                             reinterpret_cast<std::byte const*>(this)
+-                            - sizeof(QQmlPropertyBinding)
++                            - QPropertyBindingPrivate::getSizeEnsuringAlignment()
+                             - QQmlPropertyBinding::jsExpressionOffsetLength()));
+ }
+ 
++static_assert(sizeof(QQmlPropertyBinding) == sizeof(QPropertyBindingPrivate)); // else the whole offset computatation will break
++
+ QT_END_NAMESPACE
+ 
+ #endif // QQMLPROPERTYBINDING_P_H

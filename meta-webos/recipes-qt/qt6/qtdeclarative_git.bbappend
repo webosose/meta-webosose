@@ -2,13 +2,16 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos65"
+EXTENDPRAUTO_append = "webos67"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 # Upstream-Status: Backport, Submitted
 SRC_URI_append_class-target = " \
-    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch \
+    file://0001-Fix-binding-functor-addressing-in-QQmlPropertyBindin.patch \
+    file://0002-Completely-cache-the-result-of-qmldir-searches.patch \
+    file://0003-Fix-qmldir-cache-inconsistency.patch \
+    file://0004-Check-if-a-device-in-knownPointingDevices-is-destroy.patch \
 "
 
 # Upstream-Status: Inappropriate
@@ -20,11 +23,6 @@ SRC_URI_append = " \
 # Needed to workaround qmllint error
 SRC_URI_append_class-native = " \
     file://0001-Allow-warnings-from-qmllint.patch \
-"
-
-# TODO: It causes crash in webos emulator build (QTBUG-93890)
-SRC_URI_append_qemux86_class-target = " \
-    file://0001-Revert-QQuickItem-Make-x-y-width-height-bindable.patch \
 "
 
 # Supplement tool for qmllint

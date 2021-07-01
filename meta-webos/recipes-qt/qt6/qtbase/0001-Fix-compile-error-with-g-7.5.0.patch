@@ -1,22 +1,22 @@
-From 0723662a7a4d2d2edcda7fc0972a7b501f7c5aa1 Mon Sep 17 00:00:00 2001
+From 543a68313d7b15f0b2f0582605bfdbef8fecf1d0 Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Wed, 26 May 2021 17:45:05 +0900
 Subject: [PATCH] Fix compile error with g++ 7.5.0
 
-git/src/corelib/kernel/qproperty_p.h:540:30: error: '(QItemSelectionModelPrivate::modelChanged != 0)' is not a constant expression
-         if constexpr (Signal != nullptr) {
-                       ~~~~~~~^~~~~~~~~~
+This fixes a few compilation errors in a host that has g++ 7.5.0.
+There is no fix from upstream as 8.1 is the minimum gcc version of Qt.
 
 Upstream-Status : Inappropriate [workaround]
 ---
  src/corelib/kernel/qproperty_p.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ src/corelib/time/qdatetime.cpp   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/corelib/kernel/qproperty_p.h b/src/corelib/kernel/qproperty_p.h
-index d00094c54f..2ada23f5f9 100644
+index 2883308299..1fdd50e445 100644
 --- a/src/corelib/kernel/qproperty_p.h
 +++ b/src/corelib/kernel/qproperty_p.h
-@@ -537,7 +537,7 @@ public:
+@@ -540,7 +540,7 @@ public:
          const bool inWrapper = inBindingWrapper(storage);
          if (bd && !inWrapper)
              notify(bd);
@@ -25,3 +25,16 @@ index d00094c54f..2ada23f5f9 100644
              if constexpr (SignalTakesValue::value)
                  (owner()->*Signal)(value());
              else
+diff --git a/src/corelib/time/qdatetime.cpp b/src/corelib/time/qdatetime.cpp
+index 94ea0112d4..b641fbea8f 100644
+--- a/src/corelib/time/qdatetime.cpp
++++ b/src/corelib/time/qdatetime.cpp
+@@ -4012,7 +4012,7 @@ void QDateTime::setMSecsSinceEpoch(qint64 msecs)
+         status |= QDateTimePrivate::ValidWhenMask;
+         break;
+     case Qt::OffsetFromUTC:
+-        if (!add_overflow(msecs, d->m_offsetFromUtc * MSECS_PER_SEC, &msecs))
++        if (!add_overflow(msecs, qint64(d->m_offsetFromUtc * MSECS_PER_SEC), &msecs))
+             status |= QDateTimePrivate::ValidWhenMask;
+         break;
+     case Qt::TimeZone:

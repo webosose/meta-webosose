@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos88"
+EXTENDPRAUTO_append = "webos89"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -82,7 +82,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 # Upstream-Status: Backport
 SRC_URI_append = " \
-    file://0001-Fix-compilation-error-in-QDateTime.patch \
+    file://0001-Fix-binding-functor-addressing-in-QProperty.patch \
 "
 
 # Upstream-Status: Inappropriate
@@ -90,18 +90,10 @@ SRC_URI_append = " \
     file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
 "
 
-# TODO: qtbase-native fail to build with g++ from hosttools(7.5.0)
-# git/src/corelib/kernel/qobject.cpp:1239:41:   required from here
-# include/QtCore/6.2.0/QtCore/private/../../../../../../git/src/corelib/kernel/qproperty_p.h:540:30: error: ‘(QObjectPrivate::ExtraData::nameChangedForwarder != 0)’ is not a constant expression
-#          if constexpr (Signal != nullptr) {
-#                        ~~~~~~~^~~~~~~~~~
+# TODO: qtbase-native fails to build with g++ from hosttools(7.5.0)
+# Drop this once our build host has a newer version of g++.
 SRC_URI_append_class-native = " \
     file://0001-Fix-compile-error-with-g-7.5.0.patch \
-"
-
-# TODO: It causes crash in webos emulator build (QTBUG-93890)
-SRC_URI_append_qemux86_class-target = " \
-    file://0001-Revert-QObject-port-to-new-property-system.patch \
 "
 
 # Flags needed for webOS

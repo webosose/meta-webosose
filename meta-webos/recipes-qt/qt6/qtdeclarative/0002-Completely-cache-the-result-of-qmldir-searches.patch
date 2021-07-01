@@ -1,0 +1,47 @@
+From 1958936d52bff66e0d7723ada0c188581d26f279 Mon Sep 17 00:00:00 2001
+From: Ulf Hermann <ulf.hermann@qt.io>
+Date: Fri, 2 Jul 2021 10:28:57 +0200
+Subject: [PATCH] Completely cache the result of qmldir searches
+
+Change-Id: Ib6a41c8d20b1443d8d4296190c007f4627086602
+Reviewed-by: Fabian Kosmale <fabian.kosmale@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/358018]
+---
+ src/qml/qml/qqmlimport_p.h | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/src/qml/qml/qqmlimport_p.h b/src/qml/qml/qqmlimport_p.h
+index 946f36b398..6f7951f00f 100644
+--- a/src/qml/qml/qqmlimport_p.h
++++ b/src/qml/qml/qqmlimport_p.h
+@@ -286,8 +286,11 @@ QQmlImportDatabase::LocalQmldirResult QQmlImportDatabase::locateLocalQmldir(
+             QmldirCache *cache = cacheHead;
+             while (cache) {
+                 if (cache->version == version) {
+-                    if (cache->qmldirFilePath.isEmpty())
+-                        return QmldirNotFound;
++                    if (cache->qmldirFilePath.isEmpty()) {
++                        return cache->qmldirPathUrl.isEmpty()
++                                ? QmldirNotFound
++                                : QmldirInterceptedToRemote;
++                    }
+                     if (callback(cache->qmldirFilePath, cache->qmldirPathUrl))
+                         return QmldirFound;
+                     result = QmldirRejected;
+@@ -361,10 +364,15 @@ QQmlImportDatabase::LocalQmldirResult QQmlImportDatabase::locateLocalQmldir(
+     }
+ 
+     // Nothing found? Add an empty cache entry to signal that for further requests.
+-    if (result == QmldirNotFound) {
++    if (result == QmldirNotFound || result == QmldirInterceptedToRemote) {
+         QmldirCache *cache = new QmldirCache;
+         cache->version = version;
+         cache->next = cacheHead;
++        if (result == QmldirInterceptedToRemote) {
++            // The actual value doesn't matter as long as it's not empty.
++            // We only use it to discern QmldirInterceptedToRemote from QmldirNotFound above.
++            cache->qmldirPathUrl = QStringLiteral("intercepted");
++        }
+         qmldirCache.insert(uri, cache);
+     }
+ 

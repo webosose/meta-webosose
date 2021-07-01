@@ -1,0 +1,53 @@
+From 49da466912b9e668a73536742edb14b49d693df5 Mon Sep 17 00:00:00 2001
+From: Andrei Golubev <andrei.golubev@qt.io>
+Date: Thu, 1 Jul 2021 15:24:46 +0200
+Subject: [PATCH] Fix binding functor addressing in QProperty
+
+We create the callable object at sizeof(QPBP) offset from
+the beginning of the memory block. However, evaluateRecursive()
+uses sizeof() + alignment when fetching that same callable from
+the memory
+
+While on 64-bit platforms this is fine due to
+sizeof(QPBP) == QPBP::getSizeEnsuringAlignment(), this is broken for
+32-bit systems where there's actually alignment bits that follow the
+QPBP struct in memory (and thus we cast a random memory location to
+an object)
+(Note: QPBP is short for QPropertyBindingPrivate)
+
+To fix this, change the offset for creation and destruction of the
+callable to the one that uses alignment. This way, evaluateRecursive()
+code becomes correct
+
+Fixes: QTBUG-93890
+Pick-to: 6.1 6.2
+Change-Id: Ief57051846632fa61df4b79b3f054c25062a9498
+Reviewed-by: Fabian Kosmale <fabian.kosmale@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/357819]
+---
+ src/corelib/kernel/qproperty.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/corelib/kernel/qproperty.cpp b/src/corelib/kernel/qproperty.cpp
+index d290f0a16c..965939a1fc 100644
+--- a/src/corelib/kernel/qproperty.cpp
++++ b/src/corelib/kernel/qproperty.cpp
+@@ -268,7 +268,8 @@ QPropertyBindingPrivate::~QPropertyBindingPrivate()
+     if (firstObserver)
+         firstObserver.unlink();
+     if (vtable->size)
+-        vtable->destroy(reinterpret_cast<std::byte *>(this) + sizeof(QPropertyBindingPrivate));
++        vtable->destroy(reinterpret_cast<std::byte *>(this)
++                        + QPropertyBindingPrivate::getSizeEnsuringAlignment());
+ }
+ 
+ void QPropertyBindingPrivate::unlinkAndDeref()
+@@ -344,7 +345,7 @@ QUntypedPropertyBinding::QUntypedPropertyBinding(QMetaType metaType, const Bindi
+ {
+     std::byte *mem = new std::byte[QPropertyBindingPrivate::getSizeEnsuringAlignment() + vtable->size]();
+     d = new(mem) QPropertyBindingPrivate(metaType, vtable, std::move(location));
+-    vtable->moveConstruct(mem+sizeof(QPropertyBindingPrivate), function);
++    vtable->moveConstruct(mem + QPropertyBindingPrivate::getSizeEnsuringAlignment(), function);
+ }
+ 
+ QUntypedPropertyBinding::QUntypedPropertyBinding(QUntypedPropertyBinding &&other)
