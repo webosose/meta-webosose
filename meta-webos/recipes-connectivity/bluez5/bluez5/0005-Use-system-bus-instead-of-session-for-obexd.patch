@@ -1,4 +1,4 @@
-From 7a4e82c413acf7e510c20e665a92faceb7421c2f Mon Sep 17 00:00:00 2001
+From 7eff0e52a3013cf5b72a3664a718d9ebca8cffff Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd

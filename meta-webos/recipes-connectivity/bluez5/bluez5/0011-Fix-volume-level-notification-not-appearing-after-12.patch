@@ -1,4 +1,4 @@
-From 5fb19344d378a9dc729826705ff958ed7549d9ae Mon Sep 17 00:00:00 2001
+From 5050f49dc510bd9522abb3cb05a08d67bc93ddec Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Tue, 10 Dec 2019 16:15:43 +0530
 Subject: [PATCH] Fix volume level notification not appearing after 127

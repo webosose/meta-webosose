@@ -1,4 +1,4 @@
-From 1d59242d83ee719042e5fb29db074c3320f7c379 Mon Sep 17 00:00:00 2001
+From 43dadeab48001c678498398ca6e50065ef3f911c Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 22 Jul 2018 18:59:45 +0530
 Subject: [PATCH] Fix Gatt connect when device address type is BDADDR_LE_PUBLIC
@@ -29,10 +29,10 @@ Upstream-Status: Pending
  1 file changed, 28 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index b20906f3c..91dc363e2 100644
+index 229e239fb..0c2614fc8 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2160,6 +2160,33 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,
+@@ -2161,6 +2161,33 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,
  	return connect_profiles(dev, bdaddr_type, msg, NULL);
  }
  
@@ -66,7 +66,7 @@ index b20906f3c..91dc363e2 100644
  static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
  							void *user_data)
  {
-@@ -2919,6 +2946,7 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -2920,6 +2947,7 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },

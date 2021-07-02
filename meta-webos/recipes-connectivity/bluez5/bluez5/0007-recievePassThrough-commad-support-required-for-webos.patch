@@ -1,4 +1,4 @@
-From 13e06fa6638811a45892d4188aa6f7220ef323d9 Mon Sep 17 00:00:00 2001
+From 5d0bf8b0af49adab265e9ac8d830c17692501159 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -30,10 +30,10 @@ Change-Id: I9c07aa27f242247b5c3df85e0b3605d2ba055cad
  3 files changed, 62 insertions(+), 1 deletion(-)
 
 diff --git a/profiles/audio/avctp.c b/profiles/audio/avctp.c
-index c959b4f49..aae6e7d62 100644
+index 50de33618..abbee205f 100644
 --- a/profiles/audio/avctp.c
 +++ b/profiles/audio/avctp.c
-@@ -403,6 +403,7 @@ static size_t handle_panel_passthrough(struct avctp *session,
+@@ -405,6 +405,7 @@ static size_t handle_panel_passthrough(struct avctp *session,
  
  		DBG("AV/C: %s %s", key_map[i].name, status);
  
@@ -41,7 +41,7 @@ index c959b4f49..aae6e7d62 100644
  		key_quirks = session->key_quirks[key_map[i].avc];
  
  		if (key_quirks & QUIRK_NO_RELEASE) {
-@@ -418,9 +419,13 @@ static size_t handle_panel_passthrough(struct avctp *session,
+@@ -420,9 +421,13 @@ static size_t handle_panel_passthrough(struct avctp *session,
  		}
  
  		if (pressed)
@@ -56,10 +56,10 @@ index c959b4f49..aae6e7d62 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index 2e2ae32f7..5c52dd616 100644
+index 1a668335e..12053a306 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -170,6 +170,11 @@ enum {
+@@ -171,6 +171,11 @@ enum {
  	WAKE_FLAG_DISABLED,
  };
  
@@ -71,7 +71,7 @@ index 2e2ae32f7..5c52dd616 100644
  struct btd_device {
  	int ref_count;
  
-@@ -273,6 +278,7 @@ struct btd_device {
+@@ -274,6 +279,7 @@ struct btd_device {
  
  	GIOChannel	*att_io;
  	guint		store_id;
@@ -79,7 +79,7 @@ index 2e2ae32f7..5c52dd616 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1304,6 +1310,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
+@@ -1305,6 +1311,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
  	return bt_ad_has_manufacturer_data(device->ad, NULL);
  }
  
@@ -98,7 +98,7 @@ index 2e2ae32f7..5c52dd616 100644
  static void append_service_data(void *data, void *user_data)
  {
  	struct bt_ad_service_data *sd = data;
-@@ -1322,13 +1340,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1323,13 +1341,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	struct btd_device *device = data;
  	DBusMessageIter dict;
  
@@ -113,7 +113,7 @@ index 2e2ae32f7..5c52dd616 100644
  	bt_ad_foreach_service_data(device->ad, append_service_data, &dict);
  
  	dbus_message_iter_close_container(iter, &dict);
-@@ -1336,6 +1354,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1337,6 +1355,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -142,7 +142,7 @@ index 2e2ae32f7..5c52dd616 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -1898,6 +1938,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -1899,6 +1939,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -158,7 +158,7 @@ index 2e2ae32f7..5c52dd616 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3018,6 +3067,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3019,6 +3068,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -167,7 +167,7 @@ index 2e2ae32f7..5c52dd616 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4183,6 +4234,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4184,6 +4235,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->adapter = adapter;
  	device->temporary = true;
  

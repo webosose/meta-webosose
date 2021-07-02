@@ -1,4 +1,4 @@
-From 27ea00f69ea3ab90c8a2a90ed6c9649ec1b8558d Mon Sep 17 00:00:00 2001
+From 98fcab5b34563119e7b408049015f4a25c78bfba Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Mon, 21 Jan 2019 12:44:19 +0530
 Subject: [PATCH] Fix volume property not able to set

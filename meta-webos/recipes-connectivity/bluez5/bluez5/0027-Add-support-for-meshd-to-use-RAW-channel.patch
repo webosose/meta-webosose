@@ -1,4 +1,4 @@
-From 2ba833e4ead73f4b3432bf9dc577973db3179f48 Mon Sep 17 00:00:00 2001
+From 95d5bc2cdc3e2c7938e252f4b8058122640bbfc6 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 25 Jan 2021 16:27:58 +0530
 Subject: [PATCH] Add support for meshd to use RAW channel
@@ -31,7 +31,7 @@ Upstream-Status: Inappropriate[webos specific]
  6 files changed, 88 insertions(+), 13 deletions(-)
 
 diff --git a/mesh/bluetooth-mesh.service.in b/mesh/bluetooth-mesh.service.in
-index c8afbf5..2154b87 100644
+index c8afbf53e..ee65ce485 100644
 --- a/mesh/bluetooth-mesh.service.in
 +++ b/mesh/bluetooth-mesh.service.in
 @@ -5,7 +5,8 @@ ConditionPathIsDirectory=/sys/class/bluetooth
@@ -45,10 +45,10 @@ index c8afbf5..2154b87 100644
  LimitNPROC=1
  ProtectHome=true
 diff --git a/mesh/main.c b/mesh/main.c
-index 5a3cbf2..63bf749 100644
+index dd99c3085..c68530faf 100644
 --- a/mesh/main.c
 +++ b/mesh/main.c
-@@ -43,6 +43,7 @@ static const char *storage_dir;
+@@ -36,6 +36,7 @@ static const char *storage_dir;
  static const char *mesh_conf_fname;
  static enum mesh_io_type io_type;
  static void *io_opts;
@@ -56,7 +56,7 @@ index 5a3cbf2..63bf749 100644
  
  static const struct option main_options[] = {
  	{ "io",		required_argument,	NULL, 'i' },
-@@ -51,6 +52,7 @@ static const struct option main_options[] = {
+@@ -44,6 +45,7 @@ static const struct option main_options[] = {
  	{ "nodetach",	no_argument,		NULL, 'n' },
  	{ "debug",	no_argument,		NULL, 'd' },
  	{ "dbus-debug",	no_argument,		NULL, 'b' },
@@ -64,7 +64,7 @@ index 5a3cbf2..63bf749 100644
  	{ "help",	no_argument,		NULL, 'h' },
  	{ }
  };
-@@ -145,10 +147,11 @@ static void signal_handler(uint32_t signo, void *user_data)
+@@ -138,10 +140,11 @@ static void signal_handler(uint32_t signo, void *user_data)
  static bool parse_io(const char *optarg, enum mesh_io_type *type, void **opts)
  {
  	if (strstr(optarg, "generic") == optarg) {
@@ -79,16 +79,16 @@ index 5a3cbf2..63bf749 100644
  
  		optarg += strlen("generic");
  		if (!*optarg) {
-@@ -196,7 +199,7 @@ int main(int argc, char *argv[])
+@@ -204,7 +207,7 @@ int main(int argc, char *argv[])
  	for (;;) {
  		int opt;
  
--		opt = getopt_long(argc, argv, "i:s:c:ndbh", main_options, NULL);
-+		opt = getopt_long(argc, argv, "i:c:f:ndbhr", main_options, NULL);
+-		opt = getopt_long(argc, argv, "u:i:s:c:ndbh", main_options,
++		opt = getopt_long(argc, argv, "u:i:s:c:ndbhr", main_options,
+ 									NULL);
  		if (opt < 0)
  			break;
- 
-@@ -223,6 +226,9 @@ int main(int argc, char *argv[])
+@@ -239,6 +242,9 @@ int main(int argc, char *argv[])
  		case 'b':
  			dbus_debug = true;
  			break;
@@ -99,10 +99,10 @@ index 5a3cbf2..63bf749 100644
  			usage();
  			status = EXIT_SUCCESS;
 diff --git a/mesh/mesh-io-generic.c b/mesh/mesh-io-generic.c
-index 67304d2..95b1886 100644
+index 6c0b8f0fd..946a6177d 100644
 --- a/mesh/mesh-io-generic.c
 +++ b/mesh/mesh-io-generic.c
-@@ -49,6 +49,7 @@ struct mesh_io_private {
+@@ -40,6 +40,7 @@ struct mesh_io_private {
  	uint16_t interval;
  	bool sending;
  	bool active;
@@ -110,7 +110,7 @@ index 67304d2..95b1886 100644
  };
  
  struct pvt_rx_reg {
-@@ -268,8 +269,11 @@ static void configure_hci(struct mesh_io_private *io)
+@@ -259,8 +260,11 @@ static void configure_hci(struct mesh_io_private *io)
  
  	/* TODO: Move to suitable place. Set suitable masks */
  	/* Reset Command */
@@ -124,7 +124,7 @@ index 67304d2..95b1886 100644
  
  	/* Read local supported commands */
  	bt_hci_send(io->hci, BT_HCI_CMD_READ_LOCAL_COMMANDS, NULL, 0,
-@@ -401,10 +405,26 @@ static void hci_init(void *user_data)
+@@ -392,10 +396,26 @@ static void hci_init(void *user_data)
  		bt_hci_unref(io->pvt->hci);
  	}
  
@@ -154,7 +154,7 @@ index 67304d2..95b1886 100644
  		result = false;
  	}
  
-@@ -445,7 +465,10 @@ static bool dev_init(struct mesh_io *io, void *opts,
+@@ -436,7 +456,10 @@ static bool dev_init(struct mesh_io *io, void *opts,
  		return false;
  
  	io->pvt = l_new(struct mesh_io_private, 1);
@@ -166,7 +166,7 @@ index 67304d2..95b1886 100644
  
  	io->pvt->rx_regs = l_queue_new();
  	io->pvt->tx_pkts = l_queue_new();
-@@ -853,7 +876,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
+@@ -846,7 +869,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
  	if (l_queue_find(pvt->rx_regs, find_active, NULL))
  		active = true;
  
@@ -177,10 +177,10 @@ index 67304d2..95b1886 100644
  		cmd.enable = 0x00;	/* Disable scanning */
  		cmd.filter_dup = 0x00;	/* Report duplicates */
 diff --git a/mesh/mesh-io.h b/mesh/mesh-io.h
-index fc04220..4952360 100644
+index 80ef3fa3e..fdf5eb6b1 100644
 --- a/mesh/mesh-io.h
 +++ b/mesh/mesh-io.h
-@@ -38,6 +38,10 @@ struct mesh_io_recv_info {
+@@ -30,6 +30,10 @@ struct mesh_io_recv_info {
  	uint8_t chan;
  	int8_t rssi;
  };
@@ -192,10 +192,10 @@ index fc04220..4952360 100644
  struct mesh_io_send_info {
  	enum mesh_io_timing_type type;
 diff --git a/mesh/mesh-mgmt.c b/mesh/mesh-mgmt.c
-index 2cf2eba..dc59844 100644
+index 754093dbc..7e039498c 100644
 --- a/mesh/mesh-mgmt.c
 +++ b/mesh/mesh-mgmt.c
-@@ -52,6 +52,45 @@ static void process_read_info_req(void *data, void *user_data)
+@@ -43,6 +43,45 @@ static void process_read_info_req(void *data, void *user_data)
  	reg->cb(index, reg->user_data);
  }
  
@@ -241,7 +241,7 @@ index 2cf2eba..dc59844 100644
  static void read_info_cb(uint8_t status, uint16_t length,
  					const void *param, void *user_data)
  {
-@@ -80,7 +119,7 @@ static void read_info_cb(uint8_t status, uint16_t length,
+@@ -71,7 +110,7 @@ static void read_info_cb(uint8_t status, uint16_t length,
  
  	if (current_settings & MGMT_SETTING_POWERED) {
  		l_info("Controller hci %u is in use", index);
@@ -251,14 +251,11 @@ index 2cf2eba..dc59844 100644
  
  	if (!(supported_settings & MGMT_SETTING_LE)) {
 diff --git a/mesh/mesh-mgmt.h b/mesh/mesh-mgmt.h
-index 93ad799..86d1786 100644
+index 90ac14e73..1fdb25646 100644
 --- a/mesh/mesh-mgmt.h
 +++ b/mesh/mesh-mgmt.h
-@@ -21,3 +21,4 @@
+@@ -12,3 +12,4 @@
  typedef void (*mesh_mgmt_read_info_func_t)(int index, void *user_data);
  
  bool mesh_mgmt_list(mesh_mgmt_read_info_func_t cb, void *user_data);
 +bool set_powered(uint16_t mode, int index);
--- 
-2.26.0
-

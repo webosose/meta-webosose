@@ -1,4 +1,4 @@
-From fa464150bd1612747638e07536a859d070107320 Mon Sep 17 00:00:00 2001
+From b66c8b97636d7c47bf5c4142e4ddd8de0807dddf Mon Sep 17 00:00:00 2001
 From: "shoyeb.khan" <shoyeb.khan@lge.com>
 Date: Wed, 27 Jan 2021 03:34:27 +0530
 Subject: [PATCH] Enable mesh & fixed ell undefined symbol error
@@ -25,10 +25,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 041af00..4840e92 100644
+index 497f05f06..6009ca398 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -625,7 +625,7 @@ ell/internal: Makefile
+@@ -666,7 +666,7 @@ ell/internal: Makefile
  		fi \
  	done > $@
  
@@ -37,6 +37,3 @@ index 041af00..4840e92 100644
  	$(AM_V_at)echo -n > $@
  	$(AM_V_GEN)for f in $(ell_headers) ; do \
  		echo "#include <$$f>" >> $@ ; \
--- 
-2.26.0
-
