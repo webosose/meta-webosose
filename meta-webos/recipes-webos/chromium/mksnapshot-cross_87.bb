@@ -13,15 +13,11 @@ UNINATIVE_LOADER = ""
 PROVIDES = "mksnapshot-cross-${TARGET_ARCH}"
 PN = "mksnapshot-cross-${TARGET_ARCH}"
 BPN = "mksnapshot"
-PR = "r0"
+PR = "r1"
 
 TARGET = "v8_snapshot_clang_${TARGET_CPU}/mksnapshot"
 
 DEPENDS = "glib-2.0-native python-native gcc-runtime"
-
-SRC_URI_append = " \
-file://0001-op-ds-build-Added-mksnapshot.gn-for-mksnapshot-targe.patch \
-"
 
 GN_ARGS_append = "\
     use_pmlog=false \

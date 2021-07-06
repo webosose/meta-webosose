@@ -6,7 +6,7 @@ require webruntime-repo${REPO_VERSION}.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
 GN_ARGS_append = " use_x11=false"
 
