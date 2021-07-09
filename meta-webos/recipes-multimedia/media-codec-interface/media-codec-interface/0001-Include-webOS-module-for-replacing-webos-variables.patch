@@ -1,0 +1,32 @@
+From 3d879e5ff146067af014898efde115115f23ad62 Mon Sep 17 00:00:00 2001
+From: Kyungjik Min <dp.min@lge.com>
+Date: Sat, 10 Jul 2021 02:35:13 +0900
+Subject: [PATCH] Include webOS module for replacing webos variables correctly
+
+---
+ src/CMakeLists.txt                                           | 5 ++++-
+ ...{media-codec-interface.pc => media-codec-interface.pc.in} | 0
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+ rename src/{media-codec-interface.pc => media-codec-interface.pc.in} (100%)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 18cbd41..257218e 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -53,5 +53,8 @@ install(TARGETS ${MEDIA_CODEC_INTERFACE_LIB} DESTINATION lib)
+ install(FILES ${MEDIA_CODEC_INTERFACE_HEADERS} DESTINATION include/mcil)
+ 
+ #install media-codec-interface.pc file
+-install(FILES media-codec-interface.pc DESTINATION share/pkgconfig)
++include(webOS/webOS)
++webos_modules_init(1 6 3)
++configure_file(media-codec-interface.pc.in ${CMAKE_BINARY_DIR}/media-codec-interface.pc @ONLY)
++install(FILES ${CMAKE_BINARY_DIR}/media-codec-interface.pc DESTINATION share/pkgconfig)
+ 
+diff --git a/src/media-codec-interface.pc b/src/media-codec-interface.pc.in
+similarity index 100%
+rename from src/media-codec-interface.pc
+rename to src/media-codec-interface.pc.in
+-- 
+2.17.1
+

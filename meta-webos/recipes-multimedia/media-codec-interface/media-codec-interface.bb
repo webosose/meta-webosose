@@ -22,7 +22,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS_append_rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-3_13f4a0e50c95f7ecf04be37949c0da266ba221d3"
-PR = "r1"
+PR = "r2"
 
 SRCREV_mcil = "ef2a9b183262a04e8246df951acf4693a18b3cd6"
 
@@ -34,6 +34,11 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 
 SRC_URI_append = "\
     ${WEBOS_GIT_REPO_COMPLETE_MCIL};destsuffix=git/src/codec_impl;name=mcil \
+"
+
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+SRC_URI_append = "\
+    file://0001-Include-webOS-module-for-replacing-webos-variables.patch \
 "
 
 S = "${WORKDIR}/git"
