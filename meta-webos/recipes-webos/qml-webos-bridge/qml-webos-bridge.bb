@@ -13,9 +13,9 @@ DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 RDEPENDS_${PN} += "qml-webos-components"
 
 WEBOS_VERSION = "1.0.0-124_b245de2ea1eb464fbe7d6b23756c1eff3fb1ba80"
-PR = "r15"
+PR = "r16"
 
-inherit webos_qmake5
+inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_qmllint
 inherit webos_public_repo

@@ -19,9 +19,9 @@ RPROVIDES_${PN}-examples = " \
 "
 
 WEBOS_VERSION = "1.0.0-159_3cdfd0b4c44de9c5060638731090e1602d90ffa5"
-PR = "r31"
+PR = "r32"
 
-inherit webos_qmake5
+inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_machine_dep
 inherit webos_app_generate_security_files

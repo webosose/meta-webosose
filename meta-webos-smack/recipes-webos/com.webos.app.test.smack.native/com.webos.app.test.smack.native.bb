@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 SUMMARY = "Native Qt App"
 SECTION = "webos/apps"
@@ -8,12 +8,12 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 WEBOS_VERSION = "1.0.0-1_083b69c1827edf5214dd78d8ac0cab96407b000b"
 
 inherit webos_enhanced_submissions
-inherit webos_qmake5
+inherit webos_qmake6
 inherit webos_app
 inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-PR = "r0"
+PR = "r1"
 S = "${WORKDIR}/git"
 
 DEPENDS = "qtbase qt-features-webos qtdeclarative glib-2.0"

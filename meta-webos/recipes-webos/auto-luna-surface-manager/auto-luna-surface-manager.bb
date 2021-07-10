@@ -16,9 +16,9 @@ RDEPENDS_${PN} = " \
 "
 
 WEBOS_VERSION = "0.0.1-34_f552d2fa5a17ab458750aff94828b348203349e2"
-PR = "r5"
+PR = "r6"
 
-inherit webos_qmake5
+inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_qmllint

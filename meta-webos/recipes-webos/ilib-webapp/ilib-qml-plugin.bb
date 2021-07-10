@@ -12,9 +12,9 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative"
 
 WEBOS_VERSION = "11.0.0-6_bdf1beb39a1326243eac0797791f099ca4f1c5ae"
-PR = "r5"
+PR = "r6"
 
-inherit webos_qmake5
+inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 

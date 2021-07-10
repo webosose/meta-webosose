@@ -3,7 +3,7 @@
 inherit qt6-qmake
 inherit webos_filesystem_paths
 # To use OE_QMAKE_PATH_QT_* under meta-lg-webos/
-inherit webos_qmake5_paths
+inherit webos_qmake6_paths
 
 # These are used in the luna-sysmgr recipe
 export QT_CONFIGURE_PREFIX_PATH = "${OE_QMAKE_PATH_PREFIX}"

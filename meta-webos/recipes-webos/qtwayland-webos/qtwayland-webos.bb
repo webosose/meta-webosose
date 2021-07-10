@@ -12,9 +12,9 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
 WEBOS_VERSION = "2.0.0-64_56a9b511166c7db8769a8016280ee1df0d532ee5"
-PR = "r12"
+PR = "r13"
 
-inherit webos_qmake5
+inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_lttng
 inherit webos_public_repo
