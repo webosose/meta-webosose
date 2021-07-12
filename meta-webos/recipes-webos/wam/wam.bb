@@ -38,7 +38,9 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-build-with-gcc-11.patch \
+    file://0002-add_oomd_option.patch \
 "
+
 S = "${WORKDIR}/git"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"

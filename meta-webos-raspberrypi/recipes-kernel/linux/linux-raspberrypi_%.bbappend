@@ -1,8 +1,8 @@
 # Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi28"
+EXTENDPRAUTO_append = "webosrpi29"
 
-CMDLINE_append = " rw cgroup_memory=1 cgroup_enable=memory"
+CMDLINE_append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 CMDLINE_remove_sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
 
 SHRT_VER = "${@oe.utils.trim_version('${PV}', 2)}"
@@ -18,6 +18,7 @@ SRC_URI += "\
     file://bridge.cfg \
     file://gps.cfg \
     file://usb-serial-ftdi-sio.cfg \
+    file://oomd.cfg \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \

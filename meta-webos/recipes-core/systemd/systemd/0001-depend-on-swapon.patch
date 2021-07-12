@@ -1,0 +1,13 @@
+diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
+index f264a1bef0..f141c94873 100644
+--- a/units/systemd-oomd.service.in
++++ b/units/systemd-oomd.service.in
+@@ -12,6 +12,8 @@ Description=Userspace Out-Of-Memory (OOM) Killer
+ Documentation=man:systemd-oomd.service(8)
+ DefaultDependencies=no
+ Before=multi-user.target shutdown.target
++Wants=swap-on.service
++After=swap-on.service
+ Conflicts=shutdown.target
+ ConditionControlGroupController=v2
+ ConditionPathExists=/proc/pressure/cpu

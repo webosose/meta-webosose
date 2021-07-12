@@ -9,10 +9,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib procps"
+DEPENDS = "glib-2.0 glib-2.0-native luna-service2 libpbnjson pmloglib procps"
 
-WEBOS_VERSION = "1.0.0-48_1c3994e31f4299c76227a78d9236b7dcbf716d8e"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-49_d2acfefe0e099bc278349b48152b664129f0575d"
+PR = "r6"
 
 inherit webos_component
 inherit webos_cmake

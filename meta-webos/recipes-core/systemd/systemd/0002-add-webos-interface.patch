@@ -1,0 +1,257 @@
+diff --git a/src/oom/com.webos.MemoryManager1.conf b/src/oom/com.webos.MemoryManager1.conf
+new file mode 100644
+index 0000000000..cef8430362
+--- /dev/null
++++ b/src/oom/com.webos.MemoryManager1.conf
+@@ -0,0 +1,40 @@
++<?xml version="1.0"?> <!--*-nxml-*-->
++<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
++        "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
++
++<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
++
++<busconfig>
++
++        <policy user="systemd-oom">
++                <allow own="com.webos.MemoryManager1"/>
++                <allow send_destination="com.webos.MemoryManager1"/>
++                <allow receive_sender="com.webos.MemoryManager1"/>
++        </policy>
++
++        <policy user="root">
++                <allow send_destination="com.webos.MemoryManager1"/>
++        </policy>
++
++        <policy context="default">
++                <deny send_destination="com.webos.MemoryManager1"/>
++
++                <!-- Generic interfaces -->
++
++                <allow send_destination="com.webos.MemoryManager1"
++                       send_interface="org.freedesktop.DBus.Introspectable"/>
++
++                <allow send_destination="com.webos.MemoryManager1"
++                       send_interface="org.freedesktop.DBus.Peer"/>
++
++                <allow send_destination="com.webos.MemoryManager1"
++                       send_interface="org.freedesktop.DBus.Properties"
++                       send_member="Get"/>
++
++                <allow send_destination="com.webOS.MemoryManager1"
++                       send_interface="org.freedesktop.DBus.Properties"
++                       send_member="GetAll"/>
++
++        </policy>
++
++</busconfig>
+diff --git a/src/oom/meson.build b/src/oom/meson.build
+index 4e1c8543c8..ee4c7b13fa 100644
+--- a/src/oom/meson.build
++++ b/src/oom/meson.build
+@@ -8,6 +8,10 @@ systemd_oomd_sources = files('''
+         oomd-util.c
+         oomd-util.h
+         oomd.c
++        webos-manager-bus.c
++        webos-manager-bus.h
++        webos-manager.c
++        webos-manager.h
+ '''.split())
+ 
+ oomctl_sources = files('''
+@@ -18,6 +22,9 @@ if conf.get('ENABLE_OOMD') == 1
+         install_data('org.freedesktop.oom1.conf',
+                      install_dir : dbuspolicydir)
+ 
++        install_data('com.webos.MemoryManager1.conf',
++                     install_dir : dbuspolicydir)
++
+         install_data('org.freedesktop.oom1.service',
+                      install_dir : dbussystemservicedir)
+ 
+diff --git a/src/oom/oomd-manager.c b/src/oom/oomd-manager.c
+index 49dc5eb26e..009fee55e8 100644
+--- a/src/oom/oomd-manager.c
++++ b/src/oom/oomd-manager.c
+@@ -11,6 +11,8 @@
+ #include "oomd-manager.h"
+ #include "path-util.h"
+ #include "percent-util.h"
++#include "webos-manager.h"
++#include "webos-manager-bus.h"
+ 
+ typedef struct ManagedOOMReply {
+         ManagedOOMMode mode;
+@@ -351,6 +353,9 @@ static int monitor_swap_contexts_handler(sd_event_source *s, uint64_t usec, void
+                           m->system_context.swap_used, m->system_context.swap_total,
+                           PERMYRIAD_AS_PERCENT_FORMAT_VAL(m->swap_used_limit_permyriad));
+ 
++                // send MemoryPressure signal
++                send_signal_pressure(m, WEBOS_SIGNAL_TYPE_SWAP);
++
+                 r = get_monitored_cgroup_contexts_candidates(m->monitored_swap_cgroup_contexts, &candidates);
+                 if (r == -ENOMEM)
+                         return log_oom();
+@@ -472,6 +477,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
+                                 log_debug_errno(r, "Failed to update monitored memory pressure candidate cgroup contexts, ignoring: %m");
+                         else
+                                 clear_candidates = NULL;
++                        // send MemoryPressure signal
++                        send_signal_pressure(m, WEBOS_SIGNAL_TYPE_PSI);
+ 
+                         r = oomd_kill_by_pgscan_rate(m->monitored_mem_pressure_cgroup_contexts_candidates, t->path, m->dry_run, &selected);
+                         if (r == -ENOMEM)
+diff --git a/src/oom/oomd.c b/src/oom/oomd.c
+index deb7b094d5..9645c64bcd 100644
+--- a/src/oom/oomd.c
++++ b/src/oom/oomd.c
+@@ -15,6 +15,8 @@
+ #include "pretty-print.c"
+ #include "psi-util.h"
+ #include "signal-util.h"
++#include "webos-manager.h"
++#include "webos-manager-bus.h"
+ 
+ static bool arg_dry_run = false;
+ static int arg_swap_used_limit_permyriad = -1;
+@@ -175,6 +177,9 @@ static int run(int argc, char *argv[]) {
+ 
+         log_debug("systemd-oomd started%s.", arg_dry_run ? " in dry run mode" : "");
+ 
++        r = webos_manager_start(m);
++        if (r < 0)
++                return log_error_errno(r, "Failed to start up daemon: %m");
+         r = sd_event_loop(m->event);
+         if (r < 0)
+                 return log_error_errno(r, "Event loop failed: %m");
+diff --git a/src/oom/webos-manager-bus.c b/src/oom/webos-manager-bus.c
+new file mode 100644
+index 0000000000..67809314d4
+--- /dev/null
++++ b/src/oom/webos-manager-bus.c
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++
++#include "bus-common-errors.h"
++#include "bus-polkit.h"
++#include "oomd-manager.h"
++#include "webos-manager-bus.h"
++
++static const sd_bus_vtable webos_manager_vtable[] = {
++        SD_BUS_VTABLE_START(0),
++        SD_BUS_SIGNAL_WITH_NAMES("MemoryPressured",
++                                 "u",
++                                 SD_BUS_PARAM(Above),
++				 0),
++        SD_BUS_VTABLE_END
++};
++
++const BusObjectImplementation webos_manager_object = { 
++        "/com/webos/MemoryManager1",
++        "com.webos.MemoryManager1",
++        .vtables = BUS_VTABLES(webos_manager_vtable),
++};
++
++int send_signal_pressure(Manager *m,int type)
++{
++    return sd_bus_emit_signal(m->bus,
++                       "/com/webos/MemoryManager1",
++                       "com.webos.MemoryManager1",
++                       "MemoryPressured",
++                       "u", type);
++}
++
+diff --git a/src/oom/webos-manager-bus.h b/src/oom/webos-manager-bus.h
+new file mode 100644
+index 0000000000..cc816c7934
+--- /dev/null
++++ b/src/oom/webos-manager-bus.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++#pragma once
++
++#include "bus-object.h"
++
++#define WEBOS_SIGNAL_TYPE_SWAP 0
++#define WEBOS_SIGNAL_TYPE_PSI  1
++
++extern const BusObjectImplementation webos_manager_object;
++int send_signal_pressure(Manager *m, int type);
+diff --git a/src/oom/webos-manager.c b/src/oom/webos-manager.c
+new file mode 100644
+index 0000000000..5a0c04d668
+--- /dev/null
++++ b/src/oom/webos-manager.c
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++
++#include "bus-util.h"
++#include "bus-polkit.h"
++#include "bus-log-control-api.h"
++#include "webos-manager.h"
++#include "webos-manager-bus.h"
++
++static int webos_manager_connect_bus(Manager *m) {
++    int r;
++
++    r = bus_open_system_watch_bind_with_description(&m->bus, "bus-api-webos");
++    if (r < 0)
++        return log_error_errno(r, "Failed to connect to bus: %m");
++
++    r = bus_add_implementation(m->bus, &webos_manager_object, m);
++    if (r < 0)
++        return r;
++
++    r = bus_log_control_api_register(m->bus);
++    if (r < 0)
++        return r;
++
++    r = sd_bus_request_name_async(m->bus, NULL, "com.webos.MemoryManager1", 0, NULL, NULL);
++    if (r < 0)
++        return log_error_errno(r, "Failed to request name: %m");
++
++    r = sd_bus_attach_event(m->bus, m->event, 0);
++    if (r < 0)
++        return log_error_errno(r, "Failed to attach bus to event loop: %m");
++
++    return 0;
++}
++
++int webos_manager_start(Manager *m) {
++    int r;
++
++    assert(m);
++
++    r = webos_manager_connect_bus(m);
++    if (r < 0)
++        return r;
++
++    return 0;
++}
+diff --git a/src/oom/webos-manager.h b/src/oom/webos-manager.h
+new file mode 100644
+index 0000000000..bed7413c6a
+--- /dev/null
++++ b/src/oom/webos-manager.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: LGPL-2.1-or-later */
++#pragma once
++
++#include "sd-event.h"
++#include "oomd-manager.h"
++
++int webos_manager_start(Manager *m);
+diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
+index f264a1bef0..31c5921413 100644
+--- a/units/systemd-oomd.service.in
++++ b/units/systemd-oomd.service.in
+@@ -22,7 +24,7 @@ ConditionPathExists=/proc/pressure/memory
+ AmbientCapabilities=CAP_KILL CAP_DAC_OVERRIDE
+ BusName=org.freedesktop.oom1
+ CapabilityBoundingSet=CAP_KILL CAP_DAC_OVERRIDE
+-ExecStart=@rootlibexecdir@/systemd-oomd
++ExecStart=@rootlibexecdir@/systemd-oomd --dry-run
+ IPAddressDeny=any
+ LockPersonality=yes
+ MemoryDenyWriteExecute=yes
+
