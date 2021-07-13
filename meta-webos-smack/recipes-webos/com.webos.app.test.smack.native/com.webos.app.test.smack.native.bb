@@ -12,8 +12,10 @@ inherit webos_qmake6
 inherit webos_app
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-PR = "r1"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-build-with-qt-6.patch \
+"
+PR = "r2"
 S = "${WORKDIR}/git"
 
 DEPENDS = "qtbase qt-features-webos qtdeclarative glib-2.0"
