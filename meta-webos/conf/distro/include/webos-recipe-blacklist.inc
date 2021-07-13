@@ -33,6 +33,13 @@ PNBLACKLIST[python3-pyqtchart] ?= "depends on blacklisted python3-pyqt5 which ne
 # since 5.12:
 PNBLACKLIST[qmllive] ?= "requires widgets module enabled in qtbase, which was disabled in PLAT-18645 http://caprica.lgsvl.com:8080/Errors/Details/1509138"
 PNBLACKLIST[qtconnectivity] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 ERROR: Feature 'bluez' was enabled, but the pre-condition 'libs.bluez && features.concurrent && features.dbus' failed. http://caprica.lgsvl.com:8080/Errors/Details/1509143"
+# since 6.2:
+PNBLACKLIST[packagegroup-qt6-addons] ?= "depends on blacklisted qtconnectivity, qtmqtt, qtopcua"
+PNBLACKLIST[packagegroup-qt6-modules] ?= "depends on blacklisted packagegroup-qt6-addons"
+PNBLACKLIST[qtdeviceutilities] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com/Errors/Details/200304"
+PNBLACKLIST[qtcharts] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com/Errors/Details/200305"
+PNBLACKLIST[qtdatavis3d] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com/Errors/Details/200303"
+PNBLACKLIST[qtpositioning] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 http://gecko.lge.com/Errors/Details/200302"
 
 # meta-oe/recipes-support/vboxguestdrivers/vboxguestdrivers_6.1.18.bb:do_packagedata
 PNBLACKLIST[vboxguestdrivers] ?= "BROKEN: kernel-module-vboxguest conflicts in pkgdata with the vboxguest kernel modules we have enabled in linux-yocto"
