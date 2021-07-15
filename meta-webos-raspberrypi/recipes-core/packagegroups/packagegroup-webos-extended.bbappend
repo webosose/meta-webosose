@@ -60,6 +60,7 @@ RDEPENDS_${PN}_append_rpi = " \
     com.webos.service.location \
     com.webos.service.mediaindexer \
     com.webos.service.peripheralmanager \
+    com.webos.service.power2 \
     ofono \
     resize-rootfs \
     ${CAMERASERVICE} \

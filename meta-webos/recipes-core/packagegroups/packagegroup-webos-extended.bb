@@ -172,7 +172,6 @@ RDEPENDS_${PN} = " \
     com.palm.service.devmode \
     com.webos.app.mediagallery\
     com.webos.service.intent \
-    com.webos.service.power2 \
     event-monitor \
     filecache \
     fluentbit \
@@ -302,6 +301,7 @@ RDEPENDS_${PN}_append_qemux86 = " \
     com.webos.service.hfp \
     com.webos.service.location \
     com.webos.service.mediaindexer \
+    com.webos.service.power2 \
     com.webos.service.storageaccess \
     dhcp-client \
     ofono \
