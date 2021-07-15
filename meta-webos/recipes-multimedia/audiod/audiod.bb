@@ -23,7 +23,7 @@ RDEPENDS_${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-31_a394e7b09268c78e97f75fbfc99370c154a480c2"
+WEBOS_VERSION = "1.0.0-32_cac25f1270cb645211974403a21982cc59400cd8"
 PR = "r29"
 
 inherit webos_component
