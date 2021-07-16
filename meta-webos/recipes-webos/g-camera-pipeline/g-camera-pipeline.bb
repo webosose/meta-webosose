@@ -5,7 +5,7 @@ AUTHOR = "Praveen P <praveen.p@lge.com>"
 SECTION = "webos/media"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-  file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+  file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
   file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -19,10 +19,10 @@ inherit webos_machine_dep
 inherit webos_pkgconfig
 
 WEBOS_VERSION = "1.0.0-15_e9d8253132f6745c6cbff49a6e7fdd345b50aad9"
-PR = "r8"
+PR = "r9"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.17_95a73bae5c79e5899f1677c7fb77eea22f20e81a"
+WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.19_b6a4ad582d94127dd4ba114203e93845e63d2f15"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
 DEPENDS_append_rpi = " userland"
