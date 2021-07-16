@@ -19,7 +19,7 @@ RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_rdx-utils} $
 PROVIDES = "initscripts"
 RPROVIDES_${PN} = "initscripts initd-functions"
 
-WEBOS_VERSION = "3.0.0-72_03106cb131a172998eae45833a79187400ba7283"
+WEBOS_VERSION = "3.0.0-75_db4bff344f2b125f7fb81df65e122e3af8e06354"
 PR = "r16"
 
 inherit webos_component

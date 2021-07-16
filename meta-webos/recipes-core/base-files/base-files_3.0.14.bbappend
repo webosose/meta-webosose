@@ -4,8 +4,9 @@ AUTHOR = "Herb Kuta <herb.kuta@lge.com>"
 
 inherit webos_filesystem_paths
 inherit webos_machine_impl_dep
+inherit webos_prerelease_dep
 
-EXTENDPRAUTO_append = "webos13"
+EXTENDPRAUTO_append = "webos14"
 
 dirs700 = " \
     ${webos_db8datadir} \
@@ -57,7 +58,7 @@ do_install_append() {
 
 do_install_append_hardware() {
     # For coredump handling
-    if ${@oe.utils.conditional('DISTRO', 'webos', 'true', 'false', d)} ; then
+    if ${@oe.utils.conditional('WEBOS_DISTRO_PRERELEASE', 'devel', 'true', 'false', d)}; then
         echo "" >> ${D}${sysconfdir}/profile
         echo "# Set limit of core file size" >> ${D}${sysconfdir}/profile
         echo "if [ $(id -u) -eq 0 ]; then" >> ${D}${sysconfdir}/profile
