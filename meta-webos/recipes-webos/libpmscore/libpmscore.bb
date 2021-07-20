@@ -3,13 +3,16 @@
 SUMMARY = "pmscore handles device states"
 AUTHOR = "Abhsiehk Srivastava <abhishek.srivastava@lge.com>"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://oss-pkg-info.yaml;md5=ceae6b60c3da8e439a7f94eb5f011878 \
+"
 SECTION = "webos/libs"
 
 DEPENDS = "luna-service2 glib-2.0 pmloglib libpbnjson nyx-lib"
 
-WEBOS_VERSION = "1.0.0-7_db96d74a4e10d86353520a3501c4674667fa7bf5"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-11_f7dd5e7ec8cb39154634aab0d70667c29253e0be"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions

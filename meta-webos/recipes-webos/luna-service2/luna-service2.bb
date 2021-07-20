@@ -5,7 +5,7 @@ AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -15,8 +15,8 @@ VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_rdx-utils} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-20_42864a37d2193271a9b1fc8062d3ce729ec7d32b"
-PR = "r26"
+WEBOS_VERSION = "3.21.2-22_1733cfabcffc582d65844b3161a53f98bc86a241"
+PR = "r27"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"

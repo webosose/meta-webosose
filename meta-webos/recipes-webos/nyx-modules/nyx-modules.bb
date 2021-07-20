@@ -5,7 +5,7 @@ AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -13,8 +13,8 @@ DEPENDS = "nyx-lib glib-2.0 luna-service2 openssl udev"
 
 RDEPENDS_${PN} = "lsb-release gzip"
 
-WEBOS_VERSION = "7.1.0-16_14d7ac660684e6f8559675275203b8ed103510bc"
-PR = "r17"
+WEBOS_VERSION = "7.1.0-18_75df81a8aaf23947e80f94161197b15712e294ed"
+PR = "r18"
 
 EXTRA_OECMAKE += "-DDISTRO_VERSION:STRING='${DISTRO_VERSION}' -DDISTRO_NAME:STRING='${DISTRO_NAME}${WEBOS_DISTRO_NAME_SUFFIX}' \
                   -DWEBOS_DISTRO_RELEASE_PLATFORMCODE:STRING='${WEBOS_DISTRO_RELEASE_PLATFORMCODE}' \
