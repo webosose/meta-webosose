@@ -5,14 +5,14 @@ AUTHOR  = "Anupam Kaul <anupam.kaul@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=2c7c706c6a586a6abec428c64006d86b \
 "
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
 
-WEBOS_VERSION = "2.0.0-354_31bc3a31843f86adaa622097f628aa4e3b65e429"
-PR = "r50"
+WEBOS_VERSION = "2.0.0-355_887b8d038d64cbec6929f12a5139d96d4ad4a837"
+PR = "r51"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions

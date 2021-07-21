@@ -5,7 +5,7 @@ AUTHOR  = "Jaeyoon Jung <jaeyoon.jung@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=1bbf047e5c70344c074aaaa58a668952 \
 "
 
@@ -15,8 +15,8 @@ RDEPENDS_${PN} = " \
     qtbase-plugins-webos \
 "
 
-WEBOS_VERSION = "0.0.1-34_f552d2fa5a17ab458750aff94828b348203349e2"
-PR = "r6"
+WEBOS_VERSION = "0.0.1-35_be8a0de5bf20f2ba903eef35a31210f0859a55bb"
+PR = "r7"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions

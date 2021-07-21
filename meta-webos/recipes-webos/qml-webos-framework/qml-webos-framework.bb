@@ -5,7 +5,7 @@ AUTHOR = "Mikko Levonmaa <mikko.levonmaa@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=9e100013a76448cbe7c14134b0974453 \
 "
 
@@ -18,8 +18,8 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-159_3cdfd0b4c44de9c5060638731090e1602d90ffa5"
-PR = "r32"
+WEBOS_VERSION = "1.0.0-160_d89ab0a01a224a6139bdfa916736df67ff6dda44"
+PR = "r33"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions

@@ -5,14 +5,14 @@ AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=7187b1fb0318bb1af23edbf4237ee8b8 \
 "
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native"
 
-WEBOS_VERSION = "2.0.0-64_56a9b511166c7db8769a8016280ee1df0d532ee5"
-PR = "r13"
+WEBOS_VERSION = "2.0.0-65_5abdeaf4078f50edacdaf5a22c2213857f8ffc22"
+PR = "r14"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions

@@ -5,14 +5,14 @@ AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=3f3152217d6f7d50567ddadebe5f22a2 \
 "
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-7_7c83c36d7a4170126b264c1ee11abecf29b336f8"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-8_f342c962b8cf93759939887fec52d41209cdb399"
+PR = "r3"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions

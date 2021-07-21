@@ -5,14 +5,14 @@ AUTHOR = "Anupam Kaul <anulam.kaul@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=35b2f0d27bf4833f2764dfe176fa1e9c \
 "
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-49_3d1cd246bf9f2898f6eda02548619aad63f96830"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-50_e3cd3c25717605a153d10fcccbf35893a38ebb8b"
+PR = "r8"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions

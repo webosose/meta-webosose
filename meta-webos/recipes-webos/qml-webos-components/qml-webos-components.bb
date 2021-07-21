@@ -5,14 +5,14 @@ AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=9dc14fd8aee1928cb4947063ac388f74 \
 "
 
 DEPENDS = "qtdeclarative pmloglib librdx qt-features-webos"
 
-WEBOS_VERSION = "1.0.0-53_7daca15a4b08c2d9579b63b16f755da3dc3c08ac"
-PR = "r15"
+WEBOS_VERSION = "1.0.0-54_b995381efeafef72262bfd5d934ab2718c58fc5d"
+PR = "r16"
 
 inherit webos_qmake6
 inherit webos_machine_impl_dep
