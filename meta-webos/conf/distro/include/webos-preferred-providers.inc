@@ -13,6 +13,11 @@ WEBOS_PREFERRED_PROVIDER_FOR_BASH = "busybox"
 PREFERRED_PROVIDER_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'busybox', 'bash', d)}"
 VIRTUAL-RUNTIME_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'busybox', 'bash', d)}"
 
+# Use the busybox Tar instead of GNU Tar
+WEBOS_PREFERRED_PROVIDER_FOR_TAR = "busybox"
+PREFERRED_PROVIDER_tar = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_TAR', 'busybox', 'busybox', 'tar', d)}"
+VIRTUAL-RUNTIME_tar = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_TAR', 'busybox', 'busybox', 'tar', d)}"
+
 # Prefer libjpeg-turbo from meta-oe as it provides SIMD optimizations
 PREFERRED_PROVIDER_jpeg = "libjpeg-turbo"
 PREFERRED_PROVIDER_jpeg-native = "libjpeg-turbo-native"

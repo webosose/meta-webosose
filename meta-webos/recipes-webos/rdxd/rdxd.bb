@@ -13,7 +13,7 @@ DEPENDS = "glib-2.0 libpbnjson luna-prefs luna-service2 pmloglib"
 RDEPENDS_${PN} = "nyx-utils tar"
 
 WEBOS_VERSION = "4.0.2-15_615c867fa85e3719d8c7305fffcf476b1e372c14"
-PR = "r9"
+PR = "r10"
 
 PROVIDES = "librdx rdx-utils"
 
@@ -33,3 +33,8 @@ EXTRA_OECMAKE += "-DWEBOS_USE_LEGACY_PACKAGE_MANAGER:BOOL=FALSE"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+
+VIRTUAL-RUNTIME_tar ?= "tar"
+RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_tar}"
+RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_TAR', 'busybox', 'tar', '', d)}"
