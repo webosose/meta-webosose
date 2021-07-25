@@ -5,14 +5,14 @@ AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"
 SECTION = "webos/location"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
     file://oss-pkg-info.yaml;md5=7be9908f876cc5f1edaf1124d0084067 \
 "
 
 DEPENDS = "glib-2.0 libpbnjson libxml2 pmloglib luna-service2 luna-prefs loc-utils boost"
 
-WEBOS_VERSION = "1.0.0-92_46b4dabd4bc0c6c6be225548208cac0c86ffe81a"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-95_63c28765cf2e098a3f25ac91d27144d56b21a0a4"
+PR = "r2"
 
 inherit webos_component
 inherit webos_public_repo
