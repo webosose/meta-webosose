@@ -1,0 +1,50 @@
+From 417aaa040c6937c49e62c38084e05b7fcabe3340 Mon Sep 17 00:00:00 2001
+From: Wanchang Ryu <wanchang.ryu@lge.com>
+Date: Thu, 3 Sep 2020 10:36:19 +0900
+Subject: [PATCH] waitForStop API is added for cleanup message handler thread
+
+uMediaClient creates a thread for dispatching message from uMediaServer
+and it calls derived virtual method when dispatching message.
+There is a race condition between destructing and dispatching message.
+Event dispatch still can be happened even after called derived class's
+destructor since the thread for message dispatching is cleaned up on
+the destructor of the base class.
+
+This CL added |waitForStop| API to cleanup message thread before exiting
+destructor of derived class.
+---
+ include/public/uMediaClient.h     | 1 +
+ src/media_client/uMediaClient.cpp | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/include/public/uMediaClient.h b/include/public/uMediaClient.h
+index f39bdd61..8ff92f34 100755
+--- a/include/public/uMediaClient.h
++++ b/include/public/uMediaClient.h
+@@ -431,6 +431,7 @@ public :
+ 
+ 	void run();
+ 	void stop();
++  void waitForStop();
+ 
+ protected :
+ 	UMSConnector *connection;
+diff --git a/src/media_client/uMediaClient.cpp b/src/media_client/uMediaClient.cpp
+index 17b4d841..57e3eb5a 100755
+--- a/src/media_client/uMediaClient.cpp
++++ b/src/media_client/uMediaClient.cpp
+@@ -2535,6 +2535,11 @@ void uMediaClient::stop()
+ 	connection->stop();
+ }
+ 
++void uMediaClient::waitForStop() {
++  stop();
++  pthread_join(message_thread, NULL);
++}
++
+ // -----------------------------------------------
+ // --- utility functions to create JSON arguments
+ 
+-- 
+2.17.1
+

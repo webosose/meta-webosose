@@ -31,7 +31,6 @@ GN_ARGS_append = " \
   includedir=\"${includedir}\"\
   enable_mojom_closure_compile=false\
   enable_js_type_check=false\
-  use_local_storage_tracker=true\
 "
 PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav neva-webrtc"
 PACKAGECONFIG_remove_qemux86-64 = "gstreamer umediaserver neva-media gav neva-webrtc"

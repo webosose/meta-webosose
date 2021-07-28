@@ -131,7 +131,7 @@ do_configure() {
     export PATH="${S}/depot_tools:$PATH"
 
     GN_ARGS="${GN_ARGS}"
-    echo GN_ARGS is ${GN_ARGS}
+    echo GN_ARGS is "${GN_ARGS}"
     echo BUILD_TARGETS are ${TARGET}
     cd ${S}/src
     gn gen ${OUT_DIR} --args="${GN_ARGS}"
