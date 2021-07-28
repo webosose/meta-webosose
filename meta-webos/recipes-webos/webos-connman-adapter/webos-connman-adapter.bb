@@ -4,7 +4,7 @@ DESCRIPTION = "webOS component for managing network connections using connman"
 AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
     file://oss-pkg-info.yaml;md5=b0cf0d697c8340cbfa56b94bdc2539fb \
 "
 
@@ -13,8 +13,8 @@ SECTION = "webos/services"
 DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support"
 RDEPENDS_${PN} = "connman connman-client"
 
-WEBOS_VERSION = "1.1.0-38_e156015daaeff2264e946bef45bc88b747ca90fc"
-PR = "r8"
+WEBOS_VERSION = "1.1.0-39_dc622623142035004f2354cc90cfee0e8fc3c5b3"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo

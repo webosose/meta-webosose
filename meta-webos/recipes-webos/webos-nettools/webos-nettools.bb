@@ -3,7 +3,7 @@
 DESCRIPTION = "Luna-service2 service providing network utility tools like ping and arping"
 AUTHOR = "Rakes Pani <rakes.pani@lge.com>"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+LIC_FILES_CHKSUM = "file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
                     file://oss-pkg-info.yaml;md5=19d9ec0fe1295511ff6de5bf74c43d46 \
 "
 
@@ -14,8 +14,8 @@ RDEPENDS_${PN} = "iputils"
 
 WEBOS_REPO_NAME = "com.webos.service.nettools"
 
-WEBOS_VERSION = "1.1.0-5_bb5fc25236a69ffc7f8eb525b69ba264a64daba0"
-PR = "r0"
+WEBOS_VERSION = "1.1.0-6_5ebd0866e9709d88db9c433746ccfcbc7561d48f"
+PR = "r1"
 
 inherit webos_component
 inherit webos_public_repo

@@ -5,14 +5,14 @@ AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
     file://oss-pkg-info.yaml;md5=e07d738b032e6351a6608e81ea1b1b49 \
 "
 
 DEPENDS = "glib-2.0"
 
-WEBOS_VERSION = "1.0.0-24_1a28127c00fbd2d8d7fd746142fd9a77f4d13d0c"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-25_63e9e3f8ee9b39f0aa82e454de320d890b51f11d"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo

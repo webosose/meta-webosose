@@ -5,14 +5,14 @@ AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"
 SECTION = "webos/location"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
     file://oss-pkg-info.yaml;md5=71729d222d4be4c1e2518bb8770abeee \
 "
 
 DEPENDS = "glib-2.0 curl pmloglib"
 
-WEBOS_VERSION = "1.0.0-20_587f1d470c825266931a62f119f00b736e0be3de"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-21_d0236729512fee0f89ff9bb13b187f09a110481a"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo

@@ -5,7 +5,7 @@ AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
     file://oss-pkg-info.yaml;md5=1ff1242ee7d960d745e8abafd26f2471 \
 "
 
@@ -48,8 +48,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 # emulator), which means that the pairing should happen without user intervention.
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
-WEBOS_VERSION = "1.0.0-63_e543e5e0bf9a7510ad0b2c4aa21b15e8f989bf20"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-64_879009d135c517b351cca0d8bc886458bd321b11"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo

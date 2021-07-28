@@ -5,7 +5,7 @@ AUTHOR = "Sameeer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
     file://oss-pkg-info.yaml;md5=92fcba59ec6480ce73cd35edd7995099 \
 "
 
@@ -17,8 +17,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 # Add runtime dependency on bluez5 OBEX service when we have to support FTP
 RDEPENDS_${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
-WEBOS_VERSION = "0.1.0-63_3cdee7efcecd64a35497300a0c0f92e9203b1069"
-PR = "r2"
+WEBOS_VERSION = "0.1.0-64_569707602027bc9a1a35f115f78a2645694bbe2c"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo
