@@ -1,9 +1,9 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
-# Rather than using sota:raspberrypi.bbclass on meta-updater/classes,
+# Rather than using sota_raspberrypi.bbclass on meta-updater/classes,
 # this setting keeps the boot partition then original one as possible.
 #
-# Differences (between sota:raspberrypi.bbclass)
+# Differences (between sota_raspberrypi.bbclass)
 #  - Don't use 'fitImage' kernel type for '/boot/ostree/webos-{hash}/vmlinuz'.
 #  - So, need to use initramfs on the u-boot directly. (cpio.gz => cpio.gz.u-boot)
 #  - Copy DTBs, DTBOs to 1st partition (like original rpi image)

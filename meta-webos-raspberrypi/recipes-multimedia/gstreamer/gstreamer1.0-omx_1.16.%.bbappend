@@ -8,14 +8,14 @@ CPPFLAGS:append:rpi = " -I${STAGING_INCDIR}/IL \
 
 DEPENDS:append:rpi = " virtual/egl virtual/libomxil"
 
-EXTRA_LDFLAGS:rpi = "-lEGL -lbcm_host -lvcos -lvchiq:arm -lopenmaxil"
+EXTRA_LDFLAGS:rpi = "-lEGL -lbcm_host -lvcos -lvchiq_arm -lopenmaxil"
 
 # raspberrypi3-64 version of userland doesn't provide bcm_host and openmaxil libraries
 # (that's actually the only difference between set of files staged by userland build for raspberrypi3 and raspberrypi3-64)
-EXTRA_LDFLAGS:raspberrypi3-64 = "-lEGL -lvcos -lvchiq:arm"
+EXTRA_LDFLAGS:raspberrypi3-64 = "-lEGL -lvcos -lvchiq_arm"
 
 # Build for raspberrypi4
-EXTRA_LDFLAGS:raspberrypi4-64 = "-lEGL -lvcos -lvchiq:arm"
+EXTRA_LDFLAGS:raspberrypi4-64 = "-lEGL -lvcos -lvchiq_arm"
 
 LDFLAGS:append:rpi = " ${EXTRA_LDFLAGS}"
 

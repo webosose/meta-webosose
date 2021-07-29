@@ -40,7 +40,7 @@ EXTRA_OECMAKE:append:class-native = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=FALSE -DUS
 # Backported from Yocto 1.8
 # http://git.openembedded.org/openembedded-core/commit/?id=79144da00f005b5a3ab8f7404730216cfc684616
 OECMAKE_AR ?= "${AR}"
-cmake_do_generate_toolchain_file_append() {
+cmake_do_generate_toolchain_file:append() {
         cat >> ${WORKDIR}/toolchain.cmake <<EOF
 set( CMAKE_AR ${OECMAKE_AR} CACHE FILEPATH "Archiver" )
 EOF
