@@ -42,9 +42,17 @@ vars = vars + ["linux-gnux32", "linux-muslx32", "linux-gnun32", "mingw32", "poky
 vars = vars + ["linux-gnueabi", "eabi"]
 vars = vars + ["virtclass-multilib", "virtclass-mcextend"]
 
+# meta-webos
+vars = vars + ["rpi", "raspberrypi", "raspberrypi2", "raspberrypi3", "raspberrypi3-64", "raspberrypi4", "raspberrypi4-64"]
+vars = vars + ["emulator", "hardware", "no-lttng", "sota"]
+vars = vars + ["armv4", "armv5", "armv6", "armv7a", "armv7ve", "x86-64", "i686"]
+
 # List of strings to treat as overrides but only with whitespace following or another override (more restricted matching).
 # Handles issues with arc matching arch.
 shortvars = ["arc", "mips", "mipsel", "sh4"]
+
+# meta-webos
+shortvars = shortvars + ["webos"]
 
 # Variables which take packagenames as an override
 packagevars = ["FILES", "RDEPENDS", "RRECOMMENDS", "SUMMARY", "DESCRIPTION", "RSUGGESTS", "RPROVIDES", "RCONFLICTS", "PKG", "ALLOW_EMPTY",
@@ -63,6 +71,9 @@ skips = skips + ["run_loaddata_poky", "determine_if_poky_env", "do_populate_poky
 skips = skips + ["get_appends_for_files", "test_doubleref_remove", "test_bitbakelayers_add_remove", "elf32_x86_64", "colour_remove", "revmap_remove"]
 skips = skips + ["test_rpm_remove", "test_bitbakelayers_add_remove", "recipe_append_file", "log_data_removed", "recipe_append", "systemd_machine_unit_append"]
 skips = skips + ["recipetool_append", "changetype_remove", "try_appendfile_wc", "test_qemux86_directdisk", "test_layer_appends", "tgz_removed"]
+# webos
+skips = skips + ["webos_configure_manifest_comment_remover", "webos_app_generate_security_files_comment_remover", "webos_service_generate_security_files_comment_remover"]
+skips = skips + ["webos_certificates_removefiles", "webos_emulatorshareddir"]
 
 imagevars = ["IMAGE_CMD", "EXTRA_IMAGECMD", "IMAGE_TYPEDEP", "CONVERSION_CMD", "COMPRESS_CMD"]
 packagevars = packagevars + imagevars
