@@ -27,7 +27,7 @@ WEBOS_NPM_REGISTRY ?= "https://registry.npmjs.org/"
 WEBOS_NPM_ARCH ?= "${@get_nodejs_arch(d)}"
 WEBOS_NPM_INSTALL_FLAGS ?= "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --production --without-ssl --insecure --no-optional --verbose"
 
-do_compile_prepend() {
+do_compile:prepend() {
     # this is needed to use user's gitconfig even after changing the HOME directory bellow
     # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
     # but also HOME might be already changed to WORKDIR or some other directory somewhere else

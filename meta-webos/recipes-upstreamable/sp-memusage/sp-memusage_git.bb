@@ -5,7 +5,7 @@ LICENSE = "GPL-2.0"
 LIC_FILES_CHKSUM = "file://COPYING;md5=751419260aa954499f7abaabaa882bbe"
 
 DEPENDS = "sp-measure"
-RDEPENDS_${PN} = "sp-measure"
+RDEPENDS:${PN} = "sp-measure"
 
 SRCREV = "65e6a729ce04cd90206689ae28fbabc4baf801f6"
 PR = "r6"
@@ -18,7 +18,7 @@ SRC_URI = "git://github.com/maemo-tools-old/${BPN}.git;branch=master;protocol=ht
 "
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${datadir}/sp-memusage-tests"
+FILES:${PN} += "${datadir}/sp-memusage-tests"
 
 # | /jenkins/mjansa/build/webos/gatesgarth/BUILD/work/qemux86-webos-linux/sp-memusage/1.3.2+gitAUTOINC+65e6a729ce-r5/recipe-sysroot-native/usr/bin/i686-webos-linux/../../libexec/i686-webos-linux/gcc/i686-webos-linux/10.2.0/ld: error: /tmp/cclzkt11.o: multiple definition of 'sp_report_alignment_t'
 # | /jenkins/mjansa/build/webos/gatesgarth/BUILD/work/qemux86-webos-linux/sp-memusage/1.3.2+gitAUTOINC+65e6a729ce-r5/recipe-sysroot-native/usr/bin/i686-webos-linux/../../libexec/i686-webos-linux/gcc/i686-webos-linux/10.2.0/ld: /tmp/ccYygIT3.o: previous definition here

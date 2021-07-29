@@ -3,7 +3,7 @@ DESCRIPTION = "iotivity webapp sample provides server and client application wri
 HOMEPAGE = "https://www.iotivity.org/"
 DEPENDS = "boost virtual/gettext chrpath-replacement-native expat openssl util-linux curl glib-2.0 glib-2.0-native"
 DEPENDS += "sqlite3 luna-service2 libpbnjson iotivity"
-RDEPENDS_${PN} = "iotivity-resource"
+RDEPENDS:${PN} = "iotivity-resource"
 
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
@@ -29,18 +29,18 @@ WEBOS_ENACTJS_PROJECT_PATH ??= "./resource/csdk/stack/samples/webos/com.example.
 WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 WEBOS_ENACTJS_APP_ID = "com.example.app.iotivity"
 
-FILES_${PN} = "\
+FILES:${PN} = "\
     ${webos_applicationsdir} \
     ${datadir}/luna-service2 \
 "
 
 # iotivity doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 SRC_URI += "file://0001-webOS-Fix-UI-bug-in-iotivity-sampler.patch"

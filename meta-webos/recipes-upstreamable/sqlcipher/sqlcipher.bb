@@ -20,4 +20,4 @@ EXTRA_OEMAKE='"LIBTOOL=${STAGING_BINDIR_CROSS}/${HOST_SYS}-libtool"'
 S = "${WORKDIR}/git"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_bash}"

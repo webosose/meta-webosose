@@ -1,8 +1,8 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos7"
+EXTENDPRAUTO:append = "webos7"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 inherit webos_core_os_dep
 
@@ -12,7 +12,7 @@ WEBOS_TARGET_CORE_OS ?= "undefined"
 BUILD_INFO_FILE = "${DISTRO}-release"
 BUILD_DISTRIB_ID = "${@'${WEBOS_TARGET_CORE_OS}'.capitalize()}"
 
-do_install_append() {
+do_install:append() {
     # Remove lsb-release file and directory created by parent recipe.
     rm -f ${D}${sysconfdir}/lsb-release
     rm -rf ${D}${sysconfdir}/lsb-release.d

@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.LGPL;md5=e2aa4f66375a24019b0ff5e99cec40ad \
 
 DEPENDS = "lttng-ust libpbnjson pmloglib glib-2.0"
 
-RDEPENDS_${PN} += " \
+RDEPENDS:${PN} += " \
     babeltrace \
     lttng-tools \
     lttng-modules \

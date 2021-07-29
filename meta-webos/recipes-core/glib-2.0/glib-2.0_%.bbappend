@@ -1,9 +1,9 @@
 # Copyright (c) 2013-2020 LG Electronics, Inc.
 
 PKGV .= "-0webos4"
-EXTENDPRAUTO_append = "webos4"
+EXTENDPRAUTO:append = "webos4"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += " \
     file://0002-gdbus-codegen-also-replace-character-with-underscore.patch \
@@ -16,7 +16,7 @@ SRC_URI += " \
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-October/156694.html
 # it doesn't work when GLIBC_GENERATE_LOCALES are restricted like they are in our builds:
 # meta-webos/conf/distro/include/webos-toolchain.inc:GLIBC_GENERATE_LOCALES = "en_US.UTF-8"
-RDEPENDS_${PN}-ptest_remove_libc-glibc = " \
+RDEPENDS:${PN}-ptest:remove:libc-glibc = " \
     locale-base-pl-pl.iso-8859-2 \
     locale-base-tr-tr \
     locale-base-lt-lt \

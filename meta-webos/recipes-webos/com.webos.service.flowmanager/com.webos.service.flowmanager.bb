@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=66c8021042d90a78e662c2cf62e2ee13 \
 "
 
-RDEPENDS_${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service nodejs-module-node-red"
+RDEPENDS:${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service nodejs-module-node-red"
 
 inherit systemd
 inherit webos_cmake
@@ -21,11 +21,11 @@ require flowmanager.inc
 PR = "r7"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
-COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
-COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
-COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
+COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
+COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
+COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
-DEPENDS_append = " nodejs-native"
+DEPENDS:append = " nodejs-native"
 
 S = "${WORKDIR}/git"
 
@@ -37,12 +37,12 @@ S = "${WORKDIR}/git"
 # here
 WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional --verbose"
 
-do_compile_append() {
+do_compile:append() {
     cd ${S}
     ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
     ${WEBOS_NPM_BIN} run webpack
 }
 
-FILES_${PN} += "${webos_servicesdir}"
+FILES:${PN} += "${webos_servicesdir}"
 
 SRC_URI += "file://0001-webpack-use-sha256-instead-of-ancient-md4-to-fix-bui.patch"

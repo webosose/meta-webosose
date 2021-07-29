@@ -1,10 +1,10 @@
 # Copyright (c) 2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi2"
+EXTENDPRAUTO:append = "webosrpi2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI_append_rpi = " \
+SRC_URI:append:rpi = " \
     file://0001-add-the-wayland-drm-protocol.patch \
     file://0002-add-create-linear-prime-buffer.patch \
 "

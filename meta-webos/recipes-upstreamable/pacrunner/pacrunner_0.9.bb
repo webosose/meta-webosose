@@ -19,9 +19,9 @@ SRC_URI[sha256sum] = "32ba57943f449c0c3912e919c3aff25c679b8ee61b5aa24ebf9913d5de
 
 inherit autotools pkgconfig
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${sysconfdir}/init
     install -v -m 644 ${WORKDIR}/pacrunner.conf ${D}${sysconfdir}/init
 }
 
-FILES_${PN} = "${datadir}/dbus-1/system-services/* ${sbindir}/* ${sysconfdir} ${sysconfdir}"
+FILES:${PN} = "${datadir}/dbus-1/system-services/* ${sbindir}/* ${sysconfdir} ${sysconfdir}"

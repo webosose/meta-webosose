@@ -28,8 +28,8 @@ PACKAGECONFIG ??= ""
 
 # Emulator
 PACKAGECONFIG[emulator] = "CONFIG+=emulator,,nyx-lib"
-PACKAGECONFIG_append_emulator = " emulator"
-SRC_URI_append_emulator = " \
+PACKAGECONFIG:append:emulator = " emulator"
+SRC_URI:append:emulator = " \
     file://0001-virtual-touch-for-emulator.patch \
     file://0002-Disable-mouse-wheel-on-touch-mode-for-emulator.patch \
 "
@@ -40,6 +40,6 @@ PACKAGECONFIG[plane-composition] = "CONFIG+=plane_composition,,"
 # EGL Protected content
 PACKAGECONFIG[egl-protected-content] = "CONFIG+=egl_protected_content,,"
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     ${OE_QMAKE_PATH_PLUGINS}/ \
 "

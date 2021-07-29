@@ -18,8 +18,8 @@ SRC_URI = "git://github.com/sparkleholic/vmwgfx-layout.git;branch=master;protoco
 "
 S = "${WORKDIR}/git"
 
-SYSTEMD_SERVICE_${PN} = "vmwgfx-setlayout.service"
+SYSTEMD_SERVICE:${PN} = "vmwgfx-setlayout.service"
 
-FILES_${PN} = "${bindir} \
+FILES:${PN} = "${bindir} \
     ${systemd_system_unitdir} \
 "

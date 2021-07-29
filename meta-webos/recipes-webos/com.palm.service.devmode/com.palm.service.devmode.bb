@@ -24,18 +24,18 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 # touch /var/luna/preferences/devmode_enabled in emulator build
-do_install_append_emulator() {
+do_install:append:emulator() {
     install -d ${D}${webos_sysmgr_localstatedir}/preferences
     touch ${D}${webos_sysmgr_localstatedir}/preferences/devmode_enabled
 }
 
 # touch /var/luna/preferences/devmode_enabled in webOS OSE build
-do_install_append_webos() {
+do_install:append:webos() {
     install -d ${D}${webos_sysmgr_localstatedir}/preferences
     touch ${D}${webos_sysmgr_localstatedir}/preferences/devmode_enabled
 }
 
-do_install_append() {
+do_install:append() {
     mkdir -p ${D}${webos_sysbus_manifestsdir}
 
     cat > "${D}${webos_sysbus_manifestsdir}/${BPN}.manifest.json" <<END
@@ -59,9 +59,9 @@ END
 }
 
 PACKAGES =+ "${PN}-tests"
-FILES_${PN}-tests += "${webos_servicesdir}/${BPN}/tests"
-FILES_${PN}-tests += "${webos_sysbus_rolesdir}/com.palm.service.devmode.test.json"
-FILES_${PN}-tests += "${webos_sysbus_manifestsdir}/${BPN}-tests.manifest.json"
+FILES:${PN}-tests += "${webos_servicesdir}/${BPN}/tests"
+FILES:${PN}-tests += "${webos_sysbus_rolesdir}/com.palm.service.devmode.test.json"
+FILES:${PN}-tests += "${webos_sysbus_manifestsdir}/${BPN}-tests.manifest.json"
 
-FILES_${PN}_append = " ${webos_servicesdir}/${BPN}/*"
-FILES_${PN}_append_emulator = " ${webos_sysmgr_localstatedir}"
+FILES:${PN}:append = " ${webos_servicesdir}/${BPN}/*"
+FILES:${PN}:append:emulator = " ${webos_sysmgr_localstatedir}"

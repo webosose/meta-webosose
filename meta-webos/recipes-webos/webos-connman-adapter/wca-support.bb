@@ -14,7 +14,7 @@ PR = "r2"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib luna-prefs wca-support-api"
 
-RDEPENDS_${PN} = "iw"
+RDEPENDS:${PN} = "iw"
 
 inherit webos_component
 inherit webos_enhanced_submissions

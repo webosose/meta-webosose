@@ -36,7 +36,7 @@ WAM_DEMO_BUILD_TARGET = "${@oe.utils.conditional('DEPLOY_WAM_DEMO', 'true', 'wam
 
 TARGET = "${WEBRUNTIME_BUILD_TARGET} ${BROWSER_APP_BUILD_TARGET} ${APPSHELL_BUILD_TARGET} ${CHROMEDRIVER_BUILD_TARGET} ${WAM_DEMO_BUILD_TARGET}"
 
-# Skip do_install_append of webos_system_bus. It is not compatible with this component.
+# Skip do_install:append of webos_system_bus. It is not compatible with this component.
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
@@ -44,7 +44,7 @@ WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 PACKAGECONFIG_NEVA_WEBRTC ?= "neva-webrtc"
 PACKAGECONFIG_MEDIA ?= "neva-media gstreamer umediaserver gav"
 PACKAGECONFIG ?= ""
-PACKAGECONFIG_append_hardware = " ${PACKAGECONFIG_MEDIA} ${PACKAGECONFIG_NEVA_WEBRTC}"
+PACKAGECONFIG:append:hardware = " ${PACKAGECONFIG_MEDIA} ${PACKAGECONFIG_NEVA_WEBRTC}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
@@ -56,10 +56,10 @@ PACKAGECONFIG[av1-codec] = "enable_av1_decoder=true, enable_av1_decoder=false"
 PACKAGECONFIG[gav] = "use_gav=true,use_gav=false"
 PACKAGECONFIG[neva-webrtc] = "use_neva_webrtc=true,use_neva_webrtc=false,media-codec-interface,media-codec-interface"
 
-PACKAGECONFIG_append = " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', 'lttng', '', d)}"
+PACKAGECONFIG:append = " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', 'lttng', '', d)}"
 PACKAGECONFIG[lttng] = "use_lttng=true,use_lttng=false,lttng-ust,lttng-tools lttng-modules babeltrace"
 
-GN_ARGS_append = " \
+GN_ARGS:append = " \
     enable_memorymanager_webapi=true\
     ffmpeg_branding=\"Chrome\"\
     is_app_shell_cbe=true\
@@ -102,7 +102,7 @@ CBE_DATA_PATH = "${libdir}/cbe"
 CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/neva_locales"
 
 
-do_compile_append() {
+do_compile:append() {
     ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/weboswebruntime
 
     if ${DEPLOY_BROWSER} ; then
@@ -165,11 +165,11 @@ modify_run_app_shell() {
     true
 }
 
-modify_run_app_shell_append_qemux86() {
+modify_run_app_shell:append:qemux86() {
     # Disable media hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
-modify_run_app_shell_append_qemux86-64() {
+modify_run_app_shell:append:qemux86-64() {
     # Disable media hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
@@ -235,7 +235,7 @@ do_install() {
     install_chromium_manifest
 }
 
-do_install_append_webos() {
+do_install:append:webos() {
     install_ls2_roles_acg ${APP_SHELL_RUNTIME}
 }
 
@@ -268,58 +268,58 @@ WEBOS_SYSTEM_BUS_DIRS_LEGACY_WAM_DEMO_APPLICATION = " \
     ${webos_sysbus_containersdir}/${WAM_DEMO_APPLICATION}.container.json \
 "
 
-SYSROOT_DIRS_append = " ${base_bindir}"
+SYSROOT_DIRS:append = " ${base_bindir}"
 
-PACKAGES_prepend = " \
+PACKAGES:prepend = " \
     ${BROWSER_APPLICATION} \
     ${APP_SHELL_RUNTIME} \
     ${CHROMEDRIVER_RUNTIME} \
     ${WAM_DEMO_APPLICATION} \
 "
 
-FILES_${BROWSER_APPLICATION} += " \
+FILES:${BROWSER_APPLICATION} += " \
     ${BROWSER_APPLICATION_DIR} \
     ${WEBOS_SYSTEM_BUS_DIRS_LEGACY_BROWSER_APPLICATION} \
 "
 
-FILES_${APP_SHELL_RUNTIME} += " \
+FILES:${APP_SHELL_RUNTIME} += " \
     ${APP_SHELL_RUNTIME_DIR} \
     ${WEBOS_SYSTEM_BUS_DIRS_ACG_APP_SHELL_RUNTIME} \
     ${WEBOS_SYSTEM_BUS_DIRS_LEGACY_APP_SHELL_RUNTIME} \
 "
 
-FILES_${CHROMEDRIVER_RUNTIME} += " \
+FILES:${CHROMEDRIVER_RUNTIME} += " \
     ${CHROMEDRIVER_RUNTIME_DIR} \
 "
 
-FILES_${WAM_DEMO_APPLICATION} += " \
+FILES:${WAM_DEMO_APPLICATION} += " \
     ${WAM_DEMO_APPLICATION_DIR} \
     ${WEBOS_SYSTEM_BUS_DIRS_LEGACY_WAM_DEMO_APPLICATION} \
 "
 
-RDEPENDS_${BROWSER_APPLICATION} += "${PN}"
-RDEPENDS_${APP_SHELL_RUNTIME} += "${PN} ${VIRTUAL-RUNTIME_gpu-libs}"
+RDEPENDS:${BROWSER_APPLICATION} += "${PN}"
+RDEPENDS:${APP_SHELL_RUNTIME} += "${PN} ${VIRTUAL-RUNTIME_gpu-libs}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs} ${APP_SHELL_RUNTIME}"
-RDEPENDS_${WAM_DEMO_APPLICATION} += "${VIRTUAL-RUNTIME_gpu-libs}"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs} ${APP_SHELL_RUNTIME}"
+RDEPENDS:${WAM_DEMO_APPLICATION} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
 # The text relocations are intentional -- see comments in [GF-52468]
 # TODO: check if we need INSANE_SKIP on ldflags
-INSANE_SKIP_${PN} = "textrel ldflags"
-INSANE_SKIP_${PN}-dbg += "libdir"
-INSANE_SKIP_${MLPREFIX}${BROWSER_APPLICATION} += "libdir ldflags textrel"
-INSANE_SKIP_${MLPREFIX}${APP_SHELL_RUNTIME} += "libdir ldflags textrel"
-INSANE_SKIP_${MLPREFIX}${CHROMEDRIVER_RUNTIME} += "libdir ldflags textrel"
-INSANE_SKIP_${MLPREFIX}${WAM_DEMO_APPLICATION} += "libdir ldflags textrel"
+INSANE_SKIP:${PN} = "textrel ldflags"
+INSANE_SKIP:${PN}-dbg += "libdir"
+INSANE_SKIP:${MLPREFIX}${BROWSER_APPLICATION} += "libdir ldflags textrel"
+INSANE_SKIP:${MLPREFIX}${APP_SHELL_RUNTIME} += "libdir ldflags textrel"
+INSANE_SKIP:${MLPREFIX}${CHROMEDRIVER_RUNTIME} += "libdir ldflags textrel"
+INSANE_SKIP:${MLPREFIX}${WAM_DEMO_APPLICATION} += "libdir ldflags textrel"
 
-FILES_${PN} = " \
+FILES:${PN} = " \
     ${libdir}/*.so \
     ${CBE_DATA_PATH}/* \
     ${libdir}/${BPN}/*.so \
     ${WEBOS_SYSTEM_BUS_DIRS} \
 "
 
-FILES_${PN}-dev = " \
+FILES:${PN}-dev = " \
     ${includedir} \
 "

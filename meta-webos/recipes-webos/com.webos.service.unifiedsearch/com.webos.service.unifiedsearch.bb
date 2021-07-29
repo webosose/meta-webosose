@@ -24,6 +24,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 PACKAGES += "${PN}-plugins"
-FILES_${PN}-plugins = "/usr/lib/plugins"
+FILES:${PN}-plugins = "/usr/lib/plugins"
 
 EXTRA_OECMAKE += "-DUSE_BUILTIN_PLUGIN:bool=true"

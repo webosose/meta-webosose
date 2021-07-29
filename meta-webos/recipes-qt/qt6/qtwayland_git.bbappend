@@ -2,14 +2,14 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos31"
+EXTENDPRAUTO:append = "webos31"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 PATCHTOOL = "git"
 
 # Upstream-Status: Backport
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://0001-Support-presentation-time-protocol.patch;maxver=6.2.* \
     file://0002-Use-scope-resolution-operator-for-request.patch;maxver=6.2.* \
     file://0003-Fix-to-have-presentation-feedback-sequence-timely.patch;maxver=6.3.0 \
@@ -31,9 +31,9 @@ PACKAGECONFIG[client-xdg-shell] = "-DFEATURE_wayland_client_xdg_shell=ON,-DFEATU
 PACKAGECONFIG = "wayland-server wayland-client client-wl-shell"
 
 # qtwayland-qmlplugins is not used in webos
-RRECOMMENDS_${PN}_remove = "${PN}-qmlplugins"
+RRECOMMENDS:${PN}:remove = "${PN}-qmlplugins"
 
-do_install_append() {
+do_install:append() {
     # Remove files unnecessary or conflict with qtwayland-webos
     rm -rf ${D}${QT6_INSTALL_PLUGINSDIR}/platforms \
         ${D}${QT6_INSTALL_PLUGINSDIR}/{wayland-decoration-client,wayland-graphics-integration-client} \

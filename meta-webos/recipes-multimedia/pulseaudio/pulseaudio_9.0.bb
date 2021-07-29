@@ -32,7 +32,7 @@ DEPENDS += "json-c gdbm"
 DEPENDS += "intltool-native"
 
 # This is blacklisted because of the license
-DEPENDS_remove = "libatomic-ops"
+DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib"
 
@@ -50,18 +50,18 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
 
 S = "${WORKDIR}/git"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 EXTRA_OECONF += "--with-access-group=root \
                 --disable-samplerate \
                 "
 
 # Added to oe-core pulseaudio.inc when upgrading to 12.2 version
 # but our old 9.* version doesn't support it
-EXTRA_OECONF_remove = "--disable-gsettings"
+EXTRA_OECONF:remove = "--disable-gsettings"
 
 # Added to oe-core pulseaudio.inc to improve build reproducibility with 12.2 version
 # but our old 9.* version doesn't support it
-EXTRA_OECONF_remove = "--disable-running-from-build-tree"
+EXTRA_OECONF:remove = "--disable-running-from-build-tree"
 
 # Compared to oe-core default, remove gsettings, add palm-resampler and add ofono even without 3g in DISTRO_FEATURES
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5', '', d)} \
@@ -72,31 +72,31 @@ PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5'
     palm-resampler \
     ofono \
 "
-PACKAGECONFIG_append_rpi = " rpi"
+PACKAGECONFIG:append:rpi = " rpi"
 
 PACKAGECONFIG[palm-resampler] = "--enable-palm-resampler,--disable-palm-resampler"
 PACKAGECONFIG[rpi] = "--enable-rpi,--disable-rpi"
 
-do_install_prepend() {
+do_install:prepend() {
     install -v -m 0644 ${S}/volatiles.04_pulse ${WORKDIR}/volatiles.04_pulse
 }
 
-do_install_append() {
+do_install:append() {
     install -v -d ${D}${sysconfdir}/systemd/system
     install -v -m 644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system/
     install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
     install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
 }
-do_install_append_webos() {
+do_install:append:webos() {
     install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
 }
-do_install_append_qemuall() {
+do_install:append:qemuall() {
     install -v -m 644 ${S}/palm/qemux86_system.pa ${D}${sysconfdir}/pulse/system.pa
 }
 
-FILES_${PN}-dev += "${libdir}/pulse-9.0/modules/*.la ${datadir}/vala ${libdir}/cmake"
+FILES:${PN}-dev += "${libdir}/pulse-9.0/modules/*.la ${datadir}/vala ${libdir}/cmake"
 
-RDEPENDS_pulseaudio-server_append = "\
+RDEPENDS:pulseaudio-server:append = "\
     pulseaudio-module-palm-policy \
     pulseaudio-module-null-source \
     pulseaudio-module-rtp-send \
@@ -113,7 +113,7 @@ RDEPENDS_pulseaudio-server_append = "\
     ', '', d)} \
 "
 
-python populate_packages_prepend() {
+python populate_packages:prepend() {
     plugindir = d.expand('${libdir}/pulse-9.0/modules/')
     do_split_packages(d, plugindir, r'^module-(.*)\.so$', 'pulseaudio-module-%s', 'PulseAudio module for %s', extra_depends='', prepend=True)
     do_split_packages(d, plugindir, r'^lib(.*)\.so$', 'pulseaudio-lib-%s', 'PulseAudio library for %s', extra_depends='', prepend=True)
@@ -121,5 +121,5 @@ python populate_packages_prepend() {
 
 # ERROR: pulseaudio-9.0-13-r20 do_package_qa: QA Issue: pulseaudio-pa-info rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN}-pa-info_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}-pa-info_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+RDEPENDS:${PN}-pa-info:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}-pa-info:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"

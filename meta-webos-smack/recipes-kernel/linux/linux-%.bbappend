@@ -1,8 +1,8 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
+EXTENDPRAUTO:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/linux:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/linux:"
 
 SRC_URI += "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'file://smack.cfg', '', d)} \

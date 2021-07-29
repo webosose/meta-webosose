@@ -12,7 +12,7 @@
 # Extra variable is needed to be able to inhibit this dependency in case
 # we have some recipe which can reuse this bbclass but without this dependency.
 WEBOS_CMAKE_DEPENDS = "cmake-modules-webos-native"
-DEPENDS_append = " ${WEBOS_CMAKE_DEPENDS}"
+DEPENDS:append = " ${WEBOS_CMAKE_DEPENDS}"
 
 inherit cmake
 inherit webos_filesystem_paths
@@ -112,7 +112,7 @@ do_generate_toolchain_file_append() {
 }
 
 # Record how cmake was invoked
-do_configure_append() {
+do_configure:append() {
     # Keep in sync with how cmake_do_configure() invokes cmake
     echo $(which cmake) \
       ${OECMAKE_SITEFILE} \

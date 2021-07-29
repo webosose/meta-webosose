@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
                     file://oss-pkg-info.yaml;md5=7c010a972eb989740843ee18e1577536"
 
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
-RDEPENDS_${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
+RDEPENDS:${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
 WEBOS_VERSION = "1.0.0-22_13e9a9a7f4f1c755875abff714afd1550fb11a6a"
 PR = "r6"
@@ -37,4 +37,4 @@ EXTRA_QMAKEVARS_PRE += "LIBDIR=${STAGING_LIBDIR}"
 EXTRA_QMAKEVARS_PRE += "WEBOS_INSTALL_BINS=${sbindir}"
 EXTRA_QMAKEVARS_PRE += "MALIIT_PLUGIN_VERSION=${PV}"
 
-FILES_${PN} += "${libdir}/maliit ${datadir}/maliit"
+FILES:${PN} += "${libdir}/maliit ${datadir}/maliit"

@@ -9,12 +9,12 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=d6f37569f5013072e9490d2194d10ae6"
 PR = "r3"
 
 DEPENDS += "nodejs-native"
-RDEPENDS_${PN} = "nodejs"
+RDEPENDS:${PN} = "nodejs"
 
 # The same restrition as nodejs
-COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
-COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
-COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
+COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
+COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
+COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
 # If uncomment under 'TODO' on do_install step,
 # this package will provide much more things actually. (e.g. express)
@@ -39,12 +39,12 @@ do_install() {
     # mv ${TARGET_DIR}/node-red/node_modules/* ${TARGET_DIR}
 }
 
-FILES_${PN} += "${libdir}/node_modules"
+FILES:${PN} += "${libdir}/node_modules"
 
-# ERROR: QA Issue: /usr/lib/node_modules/node-red/nodes/core/hardware/nrgpio contained in package nodejs-module-node-red requires /bin/bash, but no providers found in RDEPENDS_nodejs-module-node-red? [file-rdeps]
+# ERROR: QA Issue: /usr/lib/node_modules/node-red/nodes/core/hardware/nrgpio contained in package nodejs-module-node-red requires /bin/bash, but no providers found in RDEPENDS:nodejs-module-node-red? [file-rdeps]
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
 # From 0.19.0 https://github.com/node-red/node-red/commit/4bcf13cb58869902e3d62294af91eeece5c93497
 SRC_URI += "file://python3.patch"

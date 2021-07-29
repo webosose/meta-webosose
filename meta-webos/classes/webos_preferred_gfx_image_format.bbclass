@@ -13,7 +13,7 @@ WEBOS_PREFERRED_GFX_IMAGE_FORMAT_RDEPENDS = "${@ \
     '' \
 }"
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_RDEPENDS[vardepvalue] = "${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_RDEPENDS}"
-RDEPENDS_${PN}_append = " ${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_RDEPENDS}"
+RDEPENDS:${PN}:append = " ${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_RDEPENDS}"
 
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_DEPENDS = "${@ \
     '${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_CONVERSION_UTILITY}' \
@@ -21,7 +21,7 @@ WEBOS_PREFERRED_GFX_IMAGE_FORMAT_DEPENDS = "${@ \
     '' \
 }"
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_DEPENDS[vardepvalue] = "${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_DEPENDS}"
-DEPENDS_append = " ${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_DEPENDS}"
+DEPENDS:append = " ${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_DEPENDS}"
 
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_INTERNAL = "${@ \
     '${WEBOS_PREFERRED_GFX_IMAGE_FORMAT}' \
@@ -118,7 +118,7 @@ addtask do_convert_webos_preferred_gfx_image_format after do_install before do_p
 #   1) The files might be used elsewhere for example second screen apps
 #   2) The platform remains flexible and does not enforce it
 # Hence the UI layer needs to probe the existance of the native version
-pkg_postinst_${PN}_append() {
+pkg_postinst:${PN}:append() {
     enabled=${WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED}
     if [ "$enabled" = "1" ] ; then
         pncorrected=${PN}

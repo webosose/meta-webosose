@@ -9,7 +9,7 @@ S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "(machine-native|android)"
 
-INSANE_SKIP_${PN} += "already-stripped"
+INSANE_SKIP:${PN} += "already-stripped"
 
 def get_snowboy_arch(d):
     machine = d.getVar('MACHINE')

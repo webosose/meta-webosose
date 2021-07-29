@@ -27,7 +27,7 @@ INHIBIT_PACKAGE_STRIP  = "1"
 # since "gator=r3,v6.9" commit was reverted, it's failing for e.g. x86 MACHINEs
 COMPATIBLE_MACHINE = "^raspberrypi4$"
 # But it also fails on aarch64 raspberrypi4-64 (which as raspberrypi4 in MACHINEOVERRIDES), so we need to explicitly disable it
-COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
+COMPATIBLE_MACHINE:raspberrypi4-64 = "^$"
 
 do_compile() {
     unset LDFLAGS
@@ -48,7 +48,7 @@ do_install() {
     install -m 0755 ${S}/driver/gator.ko ${D}${sbindir}/gator.ko
 }
 
-FILES_${PN} = " \
+FILES:${PN} = " \
     ${sbindir}/gatord \
     ${sbindir}/gator.ko \
 "

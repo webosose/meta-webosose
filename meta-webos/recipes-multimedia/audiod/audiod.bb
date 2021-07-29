@@ -10,7 +10,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib luna-prefs boost pulseaudio"
-RDEPENDS_${PN} = "\
+RDEPENDS:${PN} = "\
     libasound \
     libasound-module-pcm-pulse \
     libpulsecore \

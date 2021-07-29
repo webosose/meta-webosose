@@ -106,9 +106,9 @@ def main():
                         elif line.startswith('SRC_URI ='):
                             srcuri = value
                 if srcuri and (options.reportall or srcrev != orig_srcrev):
-                    print('SRC_URI_pn-%s%s = "%s"' % (pn, forcevariable, srcuri))
+                    print('SRC_URI:pn-%s%s = "%s"' % (pn, forcevariable, srcuri))
                 if srcrev and (options.reportall or srcrev != orig_srcrev):
-                    print('SRCREV_pn-%s%s = "%s"' % (pn, forcevariable, srcrev))
+                    print('SRCREV:pn-%s%s = "%s"' % (pn, forcevariable, srcrev))
                 for name, value in srcrevs.items():
                     orig = orig_srcrevs.get(name, orig_srcrev)
                     if options.reportall or value != orig:

@@ -25,7 +25,7 @@ S = "${WORKDIR}/git"
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "SERVICE"
 
-FILES_${PN} += "${base_libdir}/*"
+FILES:${PN} += "${base_libdir}/*"
 
-SYSTEMD_SERVICE_${PN} += " com.webos.service.peripheralmanager.service"
+SYSTEMD_SERVICE:${PN} += " com.webos.service.peripheralmanager.service"
 

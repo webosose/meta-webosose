@@ -36,10 +36,10 @@ EXTRA_OECMAKE += "-DWEBOS_CONFIG_BUILD_TESTS:BOOL=${@ 'TRUE' if oe.data.typed_va
 EXTRA_OECMAKE += "-DWEBOS_CONFIG_INSTALL_TESTS:BOOL=${@ 'TRUE' if oe.data.typed_value('WEBOS_CONFIG_INSTALL_TESTS',d) else 'FALSE' }"
 
 # Ensure tests are installed if they are in the correct place
-FILES_${PN}-ptest += "${webos_testsdir}/${BPN}"
+FILES:${PN}-ptest += "${webos_testsdir}/${BPN}"
 
 # Bring in the g-lib test runner, as something is bound to use it
-RDEPENDS_${PN}-ptest += "glib-2.0-utils"
+RDEPENDS:${PN}-ptest += "glib-2.0-utils"
 
 # Also, add an RDEPENDS on ptest-runner - saves adding it to a packagegroup
-RDEPENDS_${PN}-ptest += "ptest-runner"
+RDEPENDS:${PN}-ptest += "ptest-runner"

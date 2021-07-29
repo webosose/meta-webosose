@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO:append = "webos1"
 
 # modify tests PACKAGECONFIG to add optional gsl and gmp dependencies
 # this cannot be merged to oe-core, recipe, because gsl recipe is in

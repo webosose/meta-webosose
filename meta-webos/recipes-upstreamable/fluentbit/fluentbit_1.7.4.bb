@@ -26,7 +26,7 @@ SRC_URI = "git://github.com/fluent/fluent-bit.git;branch=1.7;protocol=https \
 
 S = "${WORKDIR}/git"
 DEPENDS = "zlib bison-native flex-native"
-INSANE_SKIP_${PN}-dev += "dev-elf"
+INSANE_SKIP:${PN}-dev += "dev-elf"
 
 # Use CMake 'Unix Makefiles' generator
 OECMAKE_GENERATOR ?= "Unix Makefiles"
@@ -56,5 +56,5 @@ EXTRA_OECMAKE += "-DFLB_IN_SYSTEMD=On "
 
 inherit cmake systemd
 
-SYSTEMD_SERVICE_${PN} = "fluent-bit.service"
-TARGET_CC_ARCH_append = " ${SELECTED_OPTIMIZATION}"
+SYSTEMD_SERVICE:${PN} = "fluent-bit.service"
+TARGET_CC_ARCH:append = " ${SELECTED_OPTIMIZATION}"

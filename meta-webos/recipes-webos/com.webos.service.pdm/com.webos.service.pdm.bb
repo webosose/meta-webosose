@@ -12,9 +12,9 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 VIRTUAL-RUNTIME_pdm-plugin ?= "pdm-plugin"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib udev libwebosi18n libusb"
-RDEPENDS_${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e2fsck e2fsprogs-tune2fs ntfs-3g ntfs-3g-ntfsprogs dosfstools simple-mtpfs lsof smartmontools"
+RDEPENDS:${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fsprogs-e2fsck e2fsprogs-tune2fs ntfs-3g ntfs-3g-ntfsprogs dosfstools simple-mtpfs lsof smartmontools"
 
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
 WEBOS_VERSION = "1.0.1-69_863dd16e6634f0f5f6964a9f87db78f2c4fee20f"
 PR = "r5"
@@ -31,11 +31,11 @@ inherit webos_localizable
 inherit webos_distro_dep
 inherit useradd
 
-USERADD_PARAM_${PN} = "-u 1023 -d /home/pdmuser -m -s /bin/sh pdmuser"
-GROUPADD_PARAM_${PN} = "-g 2023 pdmgroup"
+USERADD_PARAM:${PN} = "-u 1023 -d /home/pdmuser -m -s /bin/sh pdmuser"
+GROUPADD_PARAM:${PN} = "-g 2023 pdmgroup"
 USERADD_PACKAGES = "${PN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${datadir}"
+FILES:${PN} += "${datadir}"

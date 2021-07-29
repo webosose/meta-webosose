@@ -114,14 +114,14 @@ PNBLACKLIST[cifs-utils] ?= "ERROR: cifs-utils-6.7-r0 do_package: QA Issue: cifs-
 # meta-openembedded/meta-networking/recipes-support/linux-atm/linux-atm_2.5.2.bb:do_package_qa
 PNBLACKLIST[linux-atm] ?= "ERROR: linux-atm-2.5.2-r0 do_package_qa: QA Issue: linux-atm package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-oe/recipes-connectivity/lirc/lirc_0.9.4d.bb:do_package
-PNBLACKLIST[lirc] ?= "ERROR: lirc-0.9.4d-r0 do_package: SYSTEMD_SERVICE_lirc value lircmd.service does not exist"
+PNBLACKLIST[lirc] ?= "ERROR: lirc-0.9.4d-r0 do_package: SYSTEMD_SERVICE:lirc value lircmd.service does not exist"
 # phonet-utils removal sent in:
 # https://lists.openembedded.org/g/openembedded-devel/message/90533
 # will probably get merged in hardknott
 # meta-openembedded/meta-oe/recipes-connectivity/phonet-utils/phonet-utils_git.bb:do_package_qa
 PNBLACKLIST[phonet-utils] ?= "ERROR: phonet-utils-0.0.0+gitrAUTOINC+4acfa720fd-r2 do_package_qa: QA Issue: phonet-utils package is not obeying usrmerge distro feature. /lib should be relocated to /usr. [usrmerge]"
 # meta-openembedded/meta-oe/recipes-extended/boinc/boinc-client_7.12.bb:do_package
-PNBLACKLIST[boinc-client] ?= "ERROR: boinc-client-7.12-r0 do_package: SYSTEMD_SERVICE_boinc-client value boinc-client.service does not exist"
+PNBLACKLIST[boinc-client] ?= "ERROR: boinc-client-7.12-r0 do_package: SYSTEMD_SERVICE:boinc-client value boinc-client.service does not exist"
 # meta-openembedded/meta-oe/recipes-extended/scsirastools/scsirastools_1.6.6.bb:do_package
 PNBLACKLIST[scsirastools] ?= "ERROR: scsirastools-1.6.6-r0 do_package: QA Issue: scsirastools: Files/directories were installed but not shipped in any package"
 # meta-openembedded/meta-oe/recipes-graphics/dietsplash/dietsplash_git.bb:do_package
@@ -136,11 +136,11 @@ PNBLACKLIST[gradm] ?= "ERROR: gradm-3.1-r0 do_package: QA Issue: gradm: Files/di
 # https://lists.openembedded.org/g/openembedded-devel/message/90578
 # will probably get merged in hardknott
 # meta-openembedded/meta-oe/recipes-support/libsmi/libsmi_0.5.0.bb:do_package_qa
-PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin/smistrip contained in package libsmi requires /usr/bin/sh, but no providers found in RDEPENDS_libsmi? [file-rdeps]"
+PNBLACKLIST[libsmi] ?= "ERROR: libsmi-0.5.0-r0 do_package_qa: QA Issue: /usr/bin/smistrip contained in package libsmi requires /usr/bin/sh, but no providers found in RDEPENDS:libsmi? [file-rdeps]"
 # meta-raspberrypi/recipes-multimedia/omxplayer/omxplayer_git.bb:do_compile
 PNBLACKLIST[omxplayer] ?= "ERROR: omxplayer-git-r4 do_compile: Function failed: do_compile: DllAvFormat.h:117:51: error: ::avio_feof has not been declared"
 # meta-virtualization/recipes-containers/lxcfs/lxcfs_3.0.1.bb:do_package
-PNBLACKLIST[lxcfs] ?= "ERROR: lxcfs-3.0.1-r0 do_package: SYSTEMD_SERVICE_lxcfs value lxcfs.service does not exist"
+PNBLACKLIST[lxcfs] ?= "ERROR: lxcfs-3.0.1-r0 do_package: SYSTEMD_SERVICE:lxcfs value lxcfs.service does not exist"
 
 # meta-networking/recipes-kernel/wireguard/wireguard-tools_1.0.20200319.bb
 PNBLACKLIST[wireguard-tools] ?= "Depends on blacklisted wireguard-module"

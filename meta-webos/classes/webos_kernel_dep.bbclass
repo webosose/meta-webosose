@@ -9,6 +9,6 @@
 # XXX Append -I${STAGING_KERNEL_DIR}/include to CFLAGS
 
 WEBOS_KERNEL_DEPENDS = "virtual/kernel"
-DEPENDS_append = " ${WEBOS_KERNEL_DEPENDS}"
+DEPENDS:append = " ${WEBOS_KERNEL_DEPENDS}"
 
 do_configure[depends] += "virtual/kernel:do_shared_workdir"

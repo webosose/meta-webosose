@@ -8,4 +8,4 @@
 
 DEPENDS += "bluetooth-sil-api"
 
-FILES_${PN} += "${libdir}/bluetooth-sils"
+FILES:${PN} += "${libdir}/bluetooth-sils"

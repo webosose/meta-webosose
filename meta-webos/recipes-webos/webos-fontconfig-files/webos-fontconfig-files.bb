@@ -30,4 +30,4 @@ do_install() {
     ln -vsf /usr/share/fontconfig/conf.avail/31-webos-aliases.conf ${D}${sysconfdir}/fonts/conf.d/31-webos-aliases.conf
 }
 
-FILES_${PN} += "${sysconfdir}/fonts/conf.d/ ${datadir}/fontconfig/"
+FILES:${PN} += "${sysconfdir}/fonts/conf.d/ ${datadir}/fontconfig/"

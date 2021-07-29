@@ -20,11 +20,11 @@ FEATURE_PACKAGES_webos-test = "packagegroup-webos-test"
 WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE = "ssh-server-dropbear"
 WEBOS_IMAGE_DEFAULT_FEATURES = "package-management"
 
-WEBOS_IMAGE_DEFAULT_FEATURES_append = "${@ ' ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
-WEBOS_IMAGE_DEFAULT_FEATURES_append_emulator = " ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}"
+WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
+WEBOS_IMAGE_DEFAULT_FEATURES:append:emulator = " ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}"
 
 IMAGE_FEATURES[validitems] += "webos-production-image"
-WEBOS_IMAGE_DEFAULT_FEATURES_append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) == '' else ''}"
+WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) == '' else ''}"
 
 WEBOS_IMAGE_BASE_INSTALL = '\
     packagegroup-core-boot \
@@ -91,31 +91,31 @@ inherit webos_filesystem_paths
 inherit webos_prerelease_dep
 do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
 
-WKS_FILE_qemux86 = "webos-qemux86-directdisk.wks"
-WKS_FILE_qemux86-64 = "webos-qemux86-directdisk.wks"
+WKS_FILE:qemux86 = "webos-qemux86-directdisk.wks"
+WKS_FILE:qemux86-64 = "webos-qemux86-directdisk.wks"
 
 # Build only wic.vmdk for qemux86*, otherwise wic.vmdk might conflict with tar.gz and cause errors like:
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
-IMAGE_FSTYPES_qemux86 = "wic.vmdk"
-IMAGE_FSTYPES_qemux86-64 = "wic.vmdk"
+IMAGE_FSTYPES:qemux86 = "wic.vmdk"
+IMAGE_FSTYPES:qemux86-64 = "wic.vmdk"
 
 # A workaround for controlling '/media' and '/opt' policy of meta-updater
-IMAGE_CMD_ostree_prepend_sota() {
-    echo "Moving ${IMAGE_ROOTFS} /media and /opt to /.media and /.opt to prevent IMAGE_CMD_ostree replacing them with symlinks to /var/rootdirs/"
+IMAGE_CMD:ostree:prepend:sota() {
+    echo "Moving ${IMAGE_ROOTFS} /media and /opt to /.media and /.opt to prevent IMAGE_CMD:ostree replacing them with symlinks to /var/rootdirs/"
     mv -v ${IMAGE_ROOTFS}/media ${IMAGE_ROOTFS}/.media || true
     mv -v ${IMAGE_ROOTFS}/opt ${IMAGE_ROOTFS}/.opt || true
 }
-IMAGE_CMD_ostree_append_sota() {
+IMAGE_CMD:ostree:append:sota() {
     echo "Moving ${IMAGE_ROOTFS} /.media and /.opt back to /media and /opt"
     mv -v ${IMAGE_ROOTFS}/.media ${IMAGE_ROOTFS}/media
     mv -v ${IMAGE_ROOTFS}/.opt ${IMAGE_ROOTFS}/opt
 
-    # Remove the symlinks to var/rootdirs/media, var/rootdirs/opt created in IMAGE_CMD_ostree and replace them with backup versions of the real directories saved above in IMAGE_CMD_ostree
+    # Remove the symlinks to var/rootdirs/media, var/rootdirs/opt created in IMAGE_CMD:ostree and replace them with backup versions of the real directories saved above in IMAGE_CMD:ostree
     rm -fv ${OSTREE_ROOTFS}/media ${OSTREE_ROOTFS}/opt
     cp -av ${IMAGE_ROOTFS}/media ${OSTREE_ROOTFS} || true
     cp -av ${IMAGE_ROOTFS}/opt ${OSTREE_ROOTFS} || true
 }
-IMAGE_CMD_ota_append_sota() {
+IMAGE_CMD:ota:append:sota() {
     # Copy /var that was ignored by ostree
     cp -av ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
     cp -av ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true

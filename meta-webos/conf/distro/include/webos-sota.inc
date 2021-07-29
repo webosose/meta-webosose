@@ -14,10 +14,10 @@ OSTREE_BRANCHNAME = "${IMAGE_BASENAME}-${WEBOS_DISTRO_BUILD_CODENAME}"
 OSTREE_COMMIT_SUBJECT ?= "${IMAGE_BASENAME}${IMAGE_VERSION_SUFFIX}"
 
 # Don't use aktualizr as a SOTA_CLIENT (will create new one)
-IMAGE_INSTALL_remove_sota = "aktualizr aktualizr-info"
+IMAGE_INSTALL:remove:sota = "aktualizr aktualizr-info"
 SOTA_CLIENT_PROV = ""
 
 # Disable sota when target is qemu
-INHERIT_remove_qemuall = "sota"
-DISTRO_FEATURES_remove_qemuall = "sota usrmerge"
-DISTRO_FEATURES_NATIVE_remove_qemuall = "sota"
+INHERIT:remove:qemuall = "sota"
+DISTRO_FEATURES:remove:qemuall = "sota usrmerge"
+DISTRO_FEATURES_NATIVE:remove:qemuall = "sota"

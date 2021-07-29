@@ -20,8 +20,8 @@ PR = "r3"
 S = "${WORKDIR}/git"
 
 DEPENDS = "qtbase qt-features-webos qtdeclarative glib-2.0"
-RDEPENDS_${PN} += "qml-webos-framework qml-webos-bridge"
+RDEPENDS:${PN} += "qml-webos-framework qml-webos-bridge"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
-FILES_${PN} += "${webos_applicationsdir}"
+FILES:${PN} += "${webos_applicationsdir}"

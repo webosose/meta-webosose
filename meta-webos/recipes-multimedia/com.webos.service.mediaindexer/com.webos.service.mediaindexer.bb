@@ -23,7 +23,7 @@ DEPENDS = "glib-2.0 libmtp libupnp libedit gstreamer1.0 gstreamer1.0-plugins-bas
 DEPENDS += "luna-service2 pmloglib libpbnjson"
 # webos runtime dependencies
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
-RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
+RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -40,5 +40,5 @@ S = "${WORKDIR}/git"
 
 # media indexer client library
 FILES_SOLIBSDEV = ""
-FILES_${PN} += "${libdir}/*.so"
+FILES:${PN} += "${libdir}/*.so"
 

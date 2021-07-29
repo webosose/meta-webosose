@@ -1,8 +1,8 @@
 # Copyright (c) 2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO:append = "webos3"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 PATCHTOOL = "git"
 

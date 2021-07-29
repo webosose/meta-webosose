@@ -12,7 +12,7 @@ VIRTUAL-RUNTIME_ntp ?= "sntp"
 
 DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib nyx-lib libwebosi18n"
 
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode"
 
 WEBOS_VERSION = "4.4.0-21_2d1e59312b516465d40ebcf45559cc3a40578ac6"
 PR = "r9"
@@ -28,9 +28,9 @@ inherit webos_cmake_qt6
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${datadir}/localization/${BPN}
     cp -rf ${S}/resources ${D}/${datadir}/localization/${BPN}
 }
 
-FILES_${PN} += "${datadir}/localization/${BPN}"
+FILES:${PN} += "${datadir}/localization/${BPN}"

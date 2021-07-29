@@ -33,8 +33,8 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 
 IMAGE_FSTYPES = ""
-IMAGE_FSTYPES_qemux86 = ""
-IMAGE_FSTYPES_qemux86-64 = ""
+IMAGE_FSTYPES:qemux86 = ""
+IMAGE_FSTYPES:qemux86-64 = ""
 
 SDK_NAME = "${BPN}-${DISTRO}-${SDK_ARCH}-${WEBOS_DISTRO_BUILD_CODENAME}-${MACHINE_ARCH}"
 

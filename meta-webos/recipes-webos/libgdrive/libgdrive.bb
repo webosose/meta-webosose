@@ -27,7 +27,7 @@ SRC_URI = "git://github.com/allenbo/libgdrive.git;name=libgdrive;branch=master;p
 S = "${WORKDIR}/git"
 
 #To Build Libgdrive
-do_compile_prepend() {
+do_compile:prepend() {
     cp -R ${S}/common/include/common ${S}/jconer/include/
     cd ${S}/jconer
     oe_runmake

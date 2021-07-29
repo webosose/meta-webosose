@@ -13,12 +13,12 @@ PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
 
 PACKAGECONFIG[v8_lite] = "v8_enable_lite_mode=true,v8_enable_lite_mode=false"
 
-GN_ARGS_append = " use_x11=false"
+GN_ARGS:append = " use_x11=false"
 PACKAGECONFIG[google_ozone_wayland] = "import(\"//neva/gow.gn\")"
 PACKAGECONFIG[intel_ozone_wayland] = "import(\"//neva/iow.gn\")"
 PACKAGECONFIG += "intel_ozone_wayland"
 
-GN_ARGS_append = " \
+GN_ARGS:append = " \
   libdir=\"${libdir}\"\
   includedir=\"${includedir}\"\
   enable_mojom_closure_compile=false\
@@ -26,4 +26,4 @@ GN_ARGS_append = " \
   use_neva_media_player_camera=true\
 "
 
-TUNE_FEATURES_remove_raspberrypi4-64 = "crypto"
+TUNE_FEATURES:remove:raspberrypi4-64 = "crypto"

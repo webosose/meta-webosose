@@ -23,4 +23,4 @@ inherit webos_program
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${libdir}/nyx/nyxcmd/"
+FILES:${PN} += "${libdir}/nyx/nyxcmd/"

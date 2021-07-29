@@ -10,7 +10,7 @@ require ${COREBASE}/meta/classes/kernel.bbclass
 
 inherit webos_deploy
 
-do_deploy_append() {
+do_deploy:append() {
     # The .bin-s are of no use to us.
     for type in ${KERNEL_IMAGETYPES} ; do
         rm -vf ${DEPLOYDIR}/${type}-${KERNEL_IMAGE_LINK_NAME}.bin
@@ -18,7 +18,7 @@ do_deploy_append() {
     done
 }
 
-do_webos_deploy_fixup_prepend() {
+do_webos_deploy_fixup:prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_NAME}.bin ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_NAME}.bin \
                ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_LINK_NAME}.bin

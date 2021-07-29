@@ -20,7 +20,7 @@ TARGET = "v8_snapshot_clang_${TARGET_CPU}/mksnapshot"
 
 DEPENDS = "glib-2.0-native gcc-runtime"
 
-GN_ARGS_append = "\
+GN_ARGS:append = "\
     use_pmlog=false \
 "
 

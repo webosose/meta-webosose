@@ -55,7 +55,7 @@ webos_system_bus_install_files () {
 #   webOS OSE is not require installation by the recipe).
 WEBOS_SYSTEM_BUS_FILES_LOCATION ?= "${S}/service"
 
-do_install_append () {
+do_install:append () {
     # Only want WEBOS_SYSTEM_BUS_SKIP_DO_TASKS to be expanded by bitbake => single quotes
     if [ '${WEBOS_SYSTEM_BUS_SKIP_DO_TASKS}' != 1 ]; then
         local tree=${WEBOS_SYSTEM_BUS_FILES_LOCATION}
@@ -89,9 +89,9 @@ WEBOS_SYSTEM_BUS_DIRS += " \
     ${webos_sysbus_manifestsdir} \
 "
 
-FILES_${PN} += "${WEBOS_SYSTEM_BUS_DIRS_LEGACY} ${WEBOS_SYSTEM_BUS_DIRS}"
+FILES:${PN} += "${WEBOS_SYSTEM_BUS_DIRS_LEGACY} ${WEBOS_SYSTEM_BUS_DIRS}"
 
-sysroot_stage_dirs_append() {
+sysroot_stage_dirs:append() {
     # $to is 2nd parameter passed to sysroot_stage_dir, e.g. ${SYSROOT_DESTDIR} passed from sysroot_stage_all
     for dir in ${WEBOS_SYSTEM_BUS_DIRS_LEGACY} ${WEBOS_SYSTEM_BUS_DIRS}; do
         rm -rf $to$dir

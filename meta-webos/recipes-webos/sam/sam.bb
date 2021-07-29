@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 "
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson boost icu pmloglib procps libwebosi18n"
-RDEPENDS_${PN} = "ecryptfs-utils"
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
+RDEPENDS:${PN} = "ecryptfs-utils"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
@@ -30,5 +30,5 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 PACKAGES =+ "${PN}-tests"
-ALLOW_EMPTY_${PN}-tests = "1"
-FILES_${PN}-tests = "${libexecdir}/tests/*"
+ALLOW_EMPTY:${PN}-tests = "1"
+FILES:${PN}-tests = "${libexecdir}/tests/*"

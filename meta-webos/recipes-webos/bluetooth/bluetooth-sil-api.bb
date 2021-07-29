@@ -26,6 +26,6 @@ S = "${WORKDIR}/git"
 EXTRA_OECMAKE += "-DWEBOS_CONFIG_BUILD_TESTS:BOOL=TRUE"
 
 PACKAGES =. "${PN}-tests "
-FILES_${PN}-tests = "${bindir}/bluetooth-sil-tester"
+FILES:${PN}-tests = "${bindir}/bluetooth-sil-tester"
 
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"

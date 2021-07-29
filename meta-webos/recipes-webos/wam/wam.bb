@@ -10,19 +10,19 @@ DEPENDS = "virtual/webruntime luna-service2 sqlite3 librolegen nyx-lib openssl l
 PROVIDES = "webappmanager-webos"
 
 # webappmgr's upstart conf expects to be able to LD_PRELOAD ptmalloc3
-RDEPENDS_${PN} = "ptmalloc3"
+RDEPENDS:${PN} = "ptmalloc3"
 # webappmgr's upstart conf expects to have ionice available. Under OE-core, this is supplied by util-linux.
-RDEPENDS_${PN} += "util-linux"
+RDEPENDS:${PN} += "util-linux"
 
 #  webappmgr2's upstart conf expects setcpushares-task to be available
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-58_abdd3a3484ada38b4691628588008d974d7c2f22"
 PR = "r44"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
-WAM_BUILD_SYSTEM_webos = "webos_cmake"
+WAM_BUILD_SYSTEM:webos = "webos_cmake"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -57,12 +57,12 @@ EXTRA_OECMAKE += "-DPLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 
@@ -75,7 +75,7 @@ PLATFORM_DECODER_ENABLED ?= "true"
 # Flag to control runtime flag for platform encoder
 PLATFORM_ENCODER_ENABLED ?= "true"
 
-do_configure_append() {
+do_configure:append() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
       cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
     fi
@@ -121,7 +121,7 @@ do_configure_append() {
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-accurate-seek \\' ${B}/webapp-mgr.sh
 }
 
-do_configure_append_qemux86() {
+do_configure:append:qemux86() {
     # Remove this condition once webos wam is synchronized to get systemd initscripts
     if [ -f "${B}/webapp-mgr.sh" ]; then
         # Disable media hardware acceleration
@@ -129,7 +129,7 @@ do_configure_append_qemux86() {
     fi
 }
 
-do_configure_append_qemux86-64() {
+do_configure:append:qemux86-64() {
     # Remove this condition once webos wam is synchronized to get systemd initscripts
     if [ -f "${B}/webapp-mgr.sh" ]; then
         # Disable media hardware acceleration
@@ -137,7 +137,7 @@ do_configure_append_qemux86-64() {
     fi
 }
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${sysconfdir}/pmlog.d
     install -d ${D}${sysconfdir}/wam
     install -d ${D}${WAM_DATA_DIR}
@@ -151,9 +151,9 @@ do_install_append() {
 }
 
 PACKAGES =+ "${PN}-tests"
-FILES_${PN}-tests = "${webos_testsdir}/* ${libexecdir}/tests/*"
+FILES:${PN}-tests = "${webos_testsdir}/* ${libexecdir}/tests/*"
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     ${sysconfdir}/pmlog.d \
     ${SYSTEMD_INSTALL_PATH} \
     ${sysconfdir}/wam \

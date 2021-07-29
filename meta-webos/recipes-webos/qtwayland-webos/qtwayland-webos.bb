@@ -24,9 +24,9 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 # No debian package renaming
-DEBIAN_NOAUTONAME_${PN} = "1"
-DEBIAN_NOAUTONAME_${PN}-dbg = "1"
-DEBIAN_NOAUTONAME_${PN}-dev = "1"
+DEBIAN_NOAUTONAME:${PN} = "1"
+DEBIAN_NOAUTONAME:${PN}-dbg = "1"
+DEBIAN_NOAUTONAME:${PN}-dev = "1"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
 EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CONFIG+=lttng', '', d)}"
@@ -39,11 +39,11 @@ PACKAGECONFIG[criu] = "CONFIG+=criu,,criu-webos"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     ${OE_QMAKE_PATH_PLUGINS}/*/*${SOLIBSDEV} \
 "
 
-FILES_${PN}-dev += " \
+FILES:${PN}-dev += " \
     ${OE_QMAKE_PATH_LIBS}/*.prl \
     ${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/* \
 "
@@ -54,7 +54,7 @@ FILES_${PN}-dev += " \
 # depend on weboscompositorextensionclient build and run as before.
 # This should be removed once all these components have no dependency
 # on weboscompositorextensionclient.
-do_install_append() {
+do_install:append() {
     ln -snvf webos-platform-interface.pc ${D}${libdir}/pkgconfig/weboscompositorextensionclient.pc
     sed -i 's@prefix=${STAGING_DIR_HOST}@prefix=@g ;s@-L${STAGING_DIR_HOST} @ @g;' ${D}${libdir}/pkgconfig/*.pc
     sed -i "s@-L${STAGING_LIBDIR}@-L\${libdir}@g" ${D}${libdir}/pkgconfig/*.pc

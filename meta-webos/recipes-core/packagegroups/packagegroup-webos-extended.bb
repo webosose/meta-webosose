@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-# You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
+# You don't need to change this value when you're changing just RDEPENDS:${PN} variable.
 PR = "r41"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
@@ -14,9 +14,9 @@ inherit webos_prerelease_dep
 
 VIRTUAL-RUNTIME_ai ?= "com.webos.service.ai"
 # The same restriction as libgoogleassistant (snowboy doesn't support i686;x86)
-VIRTUAL-RUNTIME_ai_i686 = ""
-VIRTUAL-RUNTIME_ai_arm = ""
-VIRTUAL-RUNTIME_ai_rpi = "com.webos.service.ai"
+VIRTUAL-RUNTIME_ai:i686 = ""
+VIRTUAL-RUNTIME_ai:arm = ""
+VIRTUAL-RUNTIME_ai:rpi = "com.webos.service.ai"
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
@@ -35,24 +35,24 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
 
 # Restricted to only these 3 MACHINEs by COMPATIBLE_MACHINE
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller ?= ""
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller_qemux86 = "com.webos.service.mediacontroller"
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller_qemux86-64 = "com.webos.service.mediacontroller"
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4 = "com.webos.service.mediacontroller"
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4-64 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller:qemux86 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller:qemux86-64 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller:raspberrypi4 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller:raspberrypi4-64 = "com.webos.service.mediacontroller"
 
 VIRTUAL-RUNTIME_g-media-pipeline ?= ""
-VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3 = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4 = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4-64 = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline_qemux86 = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline_qemux86-64 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:raspberrypi3 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:raspberrypi3-64 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:raspberrypi4 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:raspberrypi4-64 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:qemux86 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:qemux86-64 = "g-media-pipeline"
 
 VIRTUAL-RUNTIME_g-camera-pipeline ?= ""
-VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4 = "g-camera-pipeline"
-VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4-64 = "g-camera-pipeline"
-VIRTUAL-RUNTIME_g-camera-pipeline_qemux86 = "g-camera-pipeline"
-VIRTUAL-RUNTIME_g-camera-pipeline_qemux86-64 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline:raspberrypi4 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline:raspberrypi4-64 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline:qemux86 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline:qemux86-64 = "g-camera-pipeline"
 
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 
@@ -84,59 +84,59 @@ MEDIA = " \
 VIRTUAL-RUNTIME_browser_fonts ?= "webos-fonts"
 
 VIRTUAL-RUNTIME_settingsapp ?= "com.webos.app.settings"
-VIRTUAL-RUNTIME_settingsapp_armv4 = ""
-VIRTUAL-RUNTIME_settingsapp_armv5 = ""
+VIRTUAL-RUNTIME_settingsapp:armv4 = ""
+VIRTUAL-RUNTIME_settingsapp:armv5 = ""
 
 VIRTUAL-RUNTIME_umediaserver ?= "umediaserver"
-VIRTUAL-RUNTIME_umediaserver_armv4 = ""
-VIRTUAL-RUNTIME_umediaserver_armv5 = ""
+VIRTUAL-RUNTIME_umediaserver:armv4 = ""
+VIRTUAL-RUNTIME_umediaserver:armv5 = ""
 
 VIRTUAL-RUNTIME_iotivity-node ?= "iotivity-node"
-VIRTUAL-RUNTIME_iotivity-node_armv4 = ""
-VIRTUAL-RUNTIME_iotivity-node_armv5 = ""
+VIRTUAL-RUNTIME_iotivity-node:armv4 = ""
+VIRTUAL-RUNTIME_iotivity-node:armv5 = ""
 
 VIRTUAL-RUNTIME_com.example.app.iotivity ?= "com.example.app.iotivity"
-VIRTUAL-RUNTIME_com.example.app.iotivity_armv4 = ""
-VIRTUAL-RUNTIME_com.example.app.iotivity_armv5 = ""
+VIRTUAL-RUNTIME_com.example.app.iotivity:armv4 = ""
+VIRTUAL-RUNTIME_com.example.app.iotivity:armv5 = ""
 
 VIRTUAL-RUNTIME_com.example.service.iotivity ?= "com.example.service.iotivity"
-VIRTUAL-RUNTIME_com.example.service.iotivity_armv4 = ""
-VIRTUAL-RUNTIME_com.example.service.iotivity_armv5 = ""
+VIRTUAL-RUNTIME_com.example.service.iotivity:armv4 = ""
+VIRTUAL-RUNTIME_com.example.service.iotivity:armv5 = ""
 
 VIRTUAL-RUNTIME_org.ocf.webossample ?= "org.ocf.webossample.occlientbasicops org.ocf.webossample.ocserverbasicops"
-VIRTUAL-RUNTIME_org.ocf.webossample_armv4 = ""
-VIRTUAL-RUNTIME_org.ocf.webossample_armv5 = ""
-VIRTUAL-RUNTIME_org.ocf.webossample_x86-64 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample:armv4 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample:armv5 = ""
+VIRTUAL-RUNTIME_org.ocf.webossample:x86-64 = ""
 
 VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
-VIRTUAL-RUNTIME_nodejs-module-node-red_armv4 = ""
-VIRTUAL-RUNTIME_nodejs-module-node-red_armv5 = ""
+VIRTUAL-RUNTIME_nodejs-module-node-red:armv4 = ""
+VIRTUAL-RUNTIME_nodejs-module-node-red:armv5 = ""
 
 # The same restrition as nodejs (and nodejs-module-node-red and com.webos.service.contextintentmgr)
 VIRTUAL-RUNTIME_contextintentmgr ?= "com.webos.service.contextintentmgr"
-VIRTUAL-RUNTIME_contextintentmgr_armv4 = ""
-VIRTUAL-RUNTIME_contextintentmgr_armv5 = ""
-VIRTUAL-RUNTIME_contextintentmgr_mips64 = ""
+VIRTUAL-RUNTIME_contextintentmgr:armv4 = ""
+VIRTUAL-RUNTIME_contextintentmgr:armv5 = ""
+VIRTUAL-RUNTIME_contextintentmgr:mips64 = ""
 
 VIRTUAL-RUNTIME_mojoservicelauncher ?= "mojoservicelauncher"
-VIRTUAL-RUNTIME_mojoservicelauncher_armv4 = ""
-VIRTUAL-RUNTIME_mojoservicelauncher_armv5 = ""
+VIRTUAL-RUNTIME_mojoservicelauncher:armv4 = ""
+VIRTUAL-RUNTIME_mojoservicelauncher:armv5 = ""
 
 VIRTUAL-RUNTIME_com.webos.service.flowmanager ?= "com.webos.service.flowmanager"
-VIRTUAL-RUNTIME_com.webos.service.flowmanager_armv4 = ""
-VIRTUAL-RUNTIME_com.webos.service.flowmanager_armv5 = ""
+VIRTUAL-RUNTIME_com.webos.service.flowmanager:armv4 = ""
+VIRTUAL-RUNTIME_com.webos.service.flowmanager:armv5 = ""
 
 VIRTUAL-RUNTIME_com.webos.app.home ?= "com.webos.app.home"
-VIRTUAL-RUNTIME_com.webos.app.home_armv4 = ""
-VIRTUAL-RUNTIME_com.webos.app.home_armv5 = ""
+VIRTUAL-RUNTIME_com.webos.app.home:armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.home:armv5 = ""
 
 VIRTUAL-RUNTIME_com.webos.app.notification ?= "com.webos.app.notification"
-VIRTUAL-RUNTIME_com.webos.app.notification_armv4 = ""
-VIRTUAL-RUNTIME_com.webos.app.notification_armv5 = ""
+VIRTUAL-RUNTIME_com.webos.app.notification:armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.notification:armv5 = ""
 
 VIRTUAL-RUNTIME_com.webos.app.volume ?= "com.webos.app.volume"
-VIRTUAL-RUNTIME_com.webos.app.volume_armv4 = ""
-VIRTUAL-RUNTIME_com.webos.app.volume_armv5 = ""
+VIRTUAL-RUNTIME_com.webos.app.volume:armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.volume:armv5 = ""
 
 VIRTUAL-RUNTIME_bluetooth_service ?= "com.webos.service.bluetooth2"
 
@@ -166,7 +166,7 @@ WEBOS_PACKAGESET_TZDATA ?= " \
     tzdata-right \
 "
 
-RDEPENDS_${PN} = " \
+RDEPENDS:${PN} = " \
     activitymanager \
     audiod \
     ${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', '${VIRTUAL-RUNTIME_bluetooth_service}', '', d)} \
@@ -230,7 +230,7 @@ RDEPENDS_${PN} = " \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
 
-RDEPENDS_${PN}_append_webos = " \
+RDEPENDS:${PN}:append:webos = " \
     com.webos.app.camera \
     com.webos.app.mediaviewer \
     com.webos.app.imageviewer \
@@ -271,7 +271,7 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
 "
 
 # These packages that are installed in the qemux86 image only.
-RRECOMMENDS_${PN}_append_qemux86 = " \
+RRECOMMENDS:${PN}:append:qemux86 = " \
     fuse-utils \
     kernel-module-8021q \
     kernel-module-ac97-bus \
@@ -302,7 +302,7 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
     ntfs-3g \
 "
 
-RRECOMMENDS_${PN}_append_qemux86-64 = " \
+RRECOMMENDS:${PN}:append:qemux86-64 = " \
     fuse-utils \
     kernel-module-8021q \
     kernel-module-ac97-bus \
@@ -333,7 +333,7 @@ RRECOMMENDS_${PN}_append_qemux86-64 = " \
     ntfs-3g \
 "
 
-RDEPENDS_${PN}_append_qemux86 = " \
+RDEPENDS:${PN}:append:qemux86 = " \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.camera \
@@ -347,7 +347,7 @@ RDEPENDS_${PN}_append_qemux86 = " \
     v4l-utils \
     vmwgfx-layout \
 "
-RDEPENDS_${PN}_append_qemux86-64 = " \
+RDEPENDS:${PN}:append:qemux86-64 = " \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.camera \
@@ -362,8 +362,8 @@ RDEPENDS_${PN}_append_qemux86-64 = " \
     vmwgfx-layout \
 "
 
-RDEPENDS_${PN} += "${MACHINE_EXTRA_RDEPENDS}"
-RRECOMMENDS_${PN} += "${MACHINE_EXTRA_RRECOMMENDS}"
+RDEPENDS:${PN} += "${MACHINE_EXTRA_RDEPENDS}"
+RRECOMMENDS:${PN} += "${MACHINE_EXTRA_RRECOMMENDS}"
 
 # Unused meta-webos components:
 # - libtinyxml

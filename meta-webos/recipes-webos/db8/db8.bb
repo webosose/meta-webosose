@@ -10,7 +10,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "icu glib-2.0 leveldb leveldb-tl boost"
-DEPENDS_append_class-target = " luna-service2 pmloglib jemalloc gtest curl"
+DEPENDS:append:class-target = " luna-service2 pmloglib jemalloc gtest curl"
 
 # db8 is also the provider for mojodb
 PROVIDES = "mojodb"
@@ -18,8 +18,8 @@ PROVIDES = "mojodb"
 # db8's upstart job requires stat
 VIRTUAL-RUNTIME_stat ?= "stat"
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}-tests:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.2.0-22_455918e4a71249781f88d75c2785abf6f5819133"
 PR = "r36"
@@ -34,8 +34,8 @@ inherit webos_library
 inherit webos_prerelease_dep
 
 EXTRA_OECMAKE += "-DWEBOS_DB8_BACKEND:STRING='leveldb;sandwich' -DCMAKE_SKIP_RPATH:BOOL=TRUE"
-EXTRA_OECMAKE_append_class-target = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=TRUE  -DUSE_PMLOG:BOOL=TRUE  -DBUILD_LS2:BOOL=TRUE -DWANT_PROFILING:BOOL=${@ 'true' if '${WEBOS_DISTRO_PRERELEASE}' != '' else 'false'}"
-EXTRA_OECMAKE_append_class-native = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=FALSE -DUSE_PMLOG:BOOL=FALSE -DBUILD_LS2:BOOL=FALSE"
+EXTRA_OECMAKE:append:class-target = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=TRUE  -DUSE_PMLOG:BOOL=TRUE  -DBUILD_LS2:BOOL=TRUE -DWANT_PROFILING:BOOL=${@ 'true' if '${WEBOS_DISTRO_PRERELEASE}' != '' else 'false'}"
+EXTRA_OECMAKE:append:class-native = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=FALSE -DUSE_PMLOG:BOOL=FALSE -DBUILD_LS2:BOOL=FALSE"
 
 # Backported from Yocto 1.8
 # http://git.openembedded.org/openembedded-core/commit/?id=79144da00f005b5a3ab8f7404730216cfc684616
@@ -51,8 +51,8 @@ S = "${WORKDIR}/git"
 
 PACKAGES =+ "${PN}-tests"
 
-FILES_${PN}-tests = "${libdir}/${BPN}/tests"
-FILES_${PN} += "${webos_sysbus_datadir}"
+FILES:${PN}-tests = "${libdir}/${BPN}/tests"
+FILES:${PN} += "${webos_sysbus_datadir}"
 
 BBCLASSEXTEND = "native"
 

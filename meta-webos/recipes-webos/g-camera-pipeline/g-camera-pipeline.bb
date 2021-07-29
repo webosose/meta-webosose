@@ -21,14 +21,14 @@ inherit webos_pkgconfig
 PR = "r10"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
-DEPENDS_append_rpi = " userland"
+DEPENDS:append:rpi = " userland"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
 WEBOS_VERSION = "1.0.0-13.gav.27_e68fd50c6837edd62501448bcdf75e2c8a766a01"
 
 
-WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "master"
-WEBOS_VERSION_raspberrypi3 = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
+WEBOS_GIT_PARAM_BRANCH:raspberrypi3 = "master"
+WEBOS_VERSION:raspberrypi3 = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
 
 # See the restrictions in CMakeLists.txt
 COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$|^qemux86-64$"
@@ -37,7 +37,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES_SOLIBSDEV = ""
-FILES_${PN} += "${libdir}/*.so"
-FILES_${PN} += "${libdir}/gstreamer-1.0/*.so"
+FILES:${PN} += "${libdir}/*.so"
+FILES:${PN} += "${libdir}/gstreamer-1.0/*.so"
 
-DEPENDS_append = " webos-wayland-extensions"
+DEPENDS:append = " webos-wayland-extensions"

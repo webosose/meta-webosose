@@ -69,7 +69,7 @@ EXTRA_OESCONS += " \
     LOGGING=true LOG_LEVEL=INFO \
 "
 
-do_compile_append() {
+do_compile:append() {
     export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
     export PKG_CONFIG="PKG_CONFIG_SYSROOT_DIR=\"${PKG_CONFIG_SYSROOT_DIR}\" pkg-config"
     export LD_FLAGS="${LD_FLAGS}"
@@ -97,7 +97,7 @@ copy_exec_recursive() {
     cd $1 && find . -executable -exec install -c -m 555 "{}" $2/"{}" \;
 }
 
-do_install_append() {
+do_install:append() {
     make_dir ${D}${libdir}
     #Resource
     #C++ APIs
@@ -198,7 +198,7 @@ do_install_append() {
 
 FILES_SOLIBSDEV = ""
 
-FILES_${PN}-resource = "\
+FILES:${PN}-resource = "\
     ${libdir}/libconnectivity_abstraction.so \
     ${libdir}/liboc.so \
     ${libdir}/liboctbstack.so \
@@ -209,11 +209,11 @@ FILES_${PN}-resource = "\
     ${libdir}/libresource_directory.so \
 "
 
-FILES_${PN}-plugins-samples = "\
+FILES:${PN}-plugins-samples = "\
     ${IOTIVITY_BIN_DIR}/examples/plugins \
 "
 
-FILES_${PN}-service = "\
+FILES:${PN}-service = "\
     ${libdir}/libBMISensorBundle.so \
     ${libdir}/libDISensorBundle.so \
     ${libdir}/librcs_server.so \
@@ -228,38 +228,38 @@ FILES_${PN}-service = "\
     ${libdir}/libTestBundle.so \
 "
 
-FILES_${PN}-service-samples = "\
+FILES:${PN}-service-samples = "\
     ${IOTIVITY_BIN_DIR}/examples/service \
 "
 
-FILES_${PN}-tests = "\
+FILES:${PN}-tests = "\
     ${IOTIVITY_BIN_DIR}/tests \
     ${libdir}/liboctbstack_test.so \
 "
 
-FILES_${PN}-tools = "\
+FILES:${PN}-tools = "\
     ${@bb.utils.contains('EXTRA_OESCONS', 'SECURED=0', '', '${sbindir}/json2cbor', d)} \
 "
 
 PACKAGE_BEFORE_PN += "${PN}-tests ${PN}-plugins-samples ${PN}-resource ${PN}-service ${PN}-service-samples ${PN}-tools"
-ALLOW_EMPTY_${PN} = "1"
-RRECOMMENDS_${PN} += "${PN}-resource ${PN}-service"
-RDEPENDS_${PN}-plugins-samples += "${PN}-resource"
-RDEPENDS_${PN}-tests += "${PN}-resource ${PN}-service"
-RDEPENDS_${PN}-service-samples += "${PN}-service ${PN}-resource"
-RDEPENDS_${PN}-service += "${PN}-resource"
-RDEPENDS_${PN}-tools += "${PN}-resource"
+ALLOW_EMPTY:${PN} = "1"
+RRECOMMENDS:${PN} += "${PN}-resource ${PN}-service"
+RDEPENDS:${PN}-plugins-samples += "${PN}-resource"
+RDEPENDS:${PN}-tests += "${PN}-resource ${PN}-service"
+RDEPENDS:${PN}-service-samples += "${PN}-service ${PN}-resource"
+RDEPENDS:${PN}-service += "${PN}-resource"
+RDEPENDS:${PN}-tools += "${PN}-resource"
 
 BBCLASSEXTEND = "native nativesdk"
 
 # iotivity doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 # http://caprica.lgsvl.com:8080/Errors/Details/1300370
 # iotivity/1.3.99+gitAUTOINC+179f1820ff-r1/recipe-sysroot/usr/include/features.h:381:4: error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Werror=cpp]

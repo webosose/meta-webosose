@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=3bf50002aefd002f49e7bb854063f7e7"
 DEPENDS = "glib-2.0 libsoup-2.4"
 
 COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$"
-COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
+COMPATIBLE_MACHINE:raspberrypi4-64 = "^$"
 
 PR = "r0"
 
@@ -23,4 +23,4 @@ PACKAGECONFIG[sniffer] = "-Dsniffer=true,-Dsniffer=false,gtk+3,"
 
 PACKAGES =+ "gssdp-tools"
 
-FILES_gssdp-tools = "${bindir}/gssdp* ${datadir}/gssdp/*.glade"
+FILES:gssdp-tools = "${bindir}/gssdp* ${datadir}/gssdp/*.glade"

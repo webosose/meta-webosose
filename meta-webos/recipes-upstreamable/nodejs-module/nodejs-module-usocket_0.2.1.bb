@@ -43,4 +43,4 @@ do_install() {
     cp -r ${S}/node_modules/ ${D}${libdir}/node_modules/usocket
 }
 
-FILES_${PN} += "${libdir}/node_modules/usocket"
+FILES:${PN} += "${libdir}/node_modules/usocket"

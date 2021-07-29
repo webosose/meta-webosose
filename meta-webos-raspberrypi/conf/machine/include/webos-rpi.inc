@@ -24,9 +24,9 @@ PNBLACKLIST[omxplayer] ?= "not compatible with webOS Open components"
 PNBLACKLIST[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 PNBLACKLIST[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
 
-MACHINE_EXTRA_RRECOMMENDS_remove = "kernel-modules"
-MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_remove = "kernel-modules"
-MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS_append = " ${RPI_KERNEL_MODULES}"
+MACHINE_EXTRA_RRECOMMENDS:remove = "kernel-modules"
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS:remove = "kernel-modules"
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS:append = " ${RPI_KERNEL_MODULES}"
 RPI_KERNEL_MODULES = " \
     kernel-module-bcm2835-gpiomem \
     kernel-module-bcm2835-wdt \
@@ -51,7 +51,7 @@ RPI_KERNEL_MODULES = " \
 "
 # Few more modules which are automatically loaded on
 # raspberrypi4 when all kernel-modules are installed
-RPI_KERNEL_MODULES_append_raspberrypi4 = " \
+RPI_KERNEL_MODULES:append:raspberrypi4 = " \
     kernel-module-8021q \
     kernel-module-bcm2835-codec \
     kernel-module-bcm2835-v4l2 \
@@ -70,12 +70,12 @@ RPI_KERNEL_MODULES_append_raspberrypi4 = " \
     kernel-module-v3d \
 "
 
-KERNEL_MODULE_AUTOLOAD_append = " uinput bridge vc4"
+KERNEL_MODULE_AUTOLOAD:append = " uinput bridge vc4"
 
 # Disabling U-Boot until IP address conflict and ALSA issues resolved (PLAT-46515)
 # RPI_USE_U_BOOT = "1"
 # Enable only for raspberrypi3-64
-RPI_USE_U_BOOT_raspberrypi3-64 = "1"
+RPI_USE_U_BOOT:raspberrypi3-64 = "1"
 
 # Always deploy the VFAT partition
 SDIMG_VFAT_DEPLOY = "1"
@@ -90,7 +90,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "SPP GATT FTP OPP A2DP"
 
 # Use ext4 as a uSD rootfs type and don't build ext3
 SDIMG_ROOTFS_TYPE = "ext4"
-IMAGE_FSTYPES_remove = "ext3"
+IMAGE_FSTYPES:remove = "ext3"
 
 # OSTree target
-SOTA_MACHINE_rpi = "webos-rpi"
+SOTA_MACHINE:rpi = "webos-rpi"

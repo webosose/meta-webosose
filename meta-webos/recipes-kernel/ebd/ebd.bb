@@ -38,4 +38,4 @@ do_install() {
     install -v -m 0755 ${WORKDIR}/build/bin/* ${D}${bindir}
 }
 
-FILES_${PN} = "${bindir}/ebd"
+FILES:${PN} = "${bindir}/ebd"

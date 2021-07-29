@@ -30,18 +30,18 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^r
 # raspberrypi4 and qemux86 uses @gav branch
 PR = "r10"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator webos-wayland-extensions"
-DEPENDS_append_rpi = " virtual/libomxil"
+DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
 WEBOS_VERSION = "1.0.0-21.gav.28_1264733b844bb487118cac43f20c0eaa7dbbd16a"
 
 # raspberrypi3 uses @21.master branch
-DEPENDS_remove_raspberrypi3 = "webos-wayland-extensions"
-WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "@21.master"
-WEBOS_VERSION_raspberrypi3 = "1.0.0-21.master.1_5780fa2b8466405a9873df1e64621f5930e00686"
+DEPENDS:remove:raspberrypi3 = "webos-wayland-extensions"
+WEBOS_GIT_PARAM_BRANCH:raspberrypi3 = "@21.master"
+WEBOS_VERSION:raspberrypi3 = "1.0.0-21.master.1_5780fa2b8466405a9873df1e64621f5930e00686"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES_SOLIBSDEV = ""
-FILES_${PN} += "${libdir}/*.so"
+FILES:${PN} += "${libdir}/*.so"

@@ -1,8 +1,8 @@
 # Copyright (c) 2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO:append = "webos3"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 DEPENDS +="openssl"
 
@@ -11,10 +11,10 @@ SRC_URI += " \
    file://0001-fix_FORTIFY_SOURCE_optionmization.patch \
 "
 
-EXTRA_OECMAKE_append = "-DFLB_SHARED_LIB=ON "
-EXTRA_OECMAKE_append = "-DFLB_DEBUG=OFF "
+EXTRA_OECMAKE:append = "-DFLB_SHARED_LIB=ON "
+EXTRA_OECMAKE:append = "-DFLB_DEBUG=OFF "
 
-do_install_append() {
+do_install:append() {
     # install mk_core*.h
     install -d ${D}${includedir}/monkey
     install -d ${D}${includedir}/monkey/mk_core
@@ -51,5 +51,5 @@ do_install_append() {
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 
-SYSTEMD_SERVICE_${PN}_remove = "fluent-bit.service"
-INSANE_SKIP_${PN} = "installed-vs-shipped"
+SYSTEMD_SERVICE:${PN}:remove = "fluent-bit.service"
+INSANE_SKIP:${PN} = "installed-vs-shipped"

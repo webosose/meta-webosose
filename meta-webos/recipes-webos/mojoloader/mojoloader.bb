@@ -23,4 +23,4 @@ do_install() {
     install -v -m 0644  ${S}/mojoloader.js ${D}${webos_frameworksdir}
 }
 
-FILES_${PN} += "${webos_frameworksdir}"
+FILES:${PN} += "${webos_frameworksdir}"

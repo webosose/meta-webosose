@@ -1,11 +1,11 @@
 # Copyright (c) 2015-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO:append = "webos2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-DEPENDS_append_class-target = " pmloglib"
-EXTRA_OECONF_append_class-target = " --enable-pmlog"
+DEPENDS:append:class-target = " pmloglib"
+EXTRA_OECONF:append:class-target = " --enable-pmlog"
 
 SRC_URI += " \
     file://0001-server-Fix-crash-when-accessing-client-which-is-alre.patch \

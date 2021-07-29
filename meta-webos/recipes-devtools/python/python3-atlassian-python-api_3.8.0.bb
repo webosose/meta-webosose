@@ -12,7 +12,7 @@ inherit pypi setuptools3
 
 SRC_URI[sha256sum] = "7ef384a91a790c807336e2bd6b7554284691aadd6d7413d199baf752dd84c53e"
 
-RDEPENDS_${PN} = "${PYTHON_PN}-requests \
+RDEPENDS:${PN} = "${PYTHON_PN}-requests \
                   ${PYTHON_PN}-oauthlib \
                   ${PYTHON_PN}-urllib3 \
                   ${PYTHON_PN}-certifi \

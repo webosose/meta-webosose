@@ -37,8 +37,8 @@ VIRTUAL-RUNTIME_bluetooth_stack = "bluez5"
 BLUETOOTH_SIL_NAME = "bluez5"
 
 BLUEZ = "${VIRTUAL-RUNTIME_bluetooth_stack}"
-BLUEZ_class-native = "bluez5"
-BLUEZ_class-nativesdk = "bluez5"
+BLUEZ:class-native = "bluez5"
+BLUEZ:class-nativesdk = "bluez5"
 
 # Just for documentation; these values are the defaults set in the recipes that
 # use them.
@@ -46,12 +46,12 @@ VIRTUAL-RUNTIME_cpushareholder = "cpushareholder-stub"
 
 # Use Enactbrowser by default, except for armv45
 VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
-VIRTUAL-RUNTIME_com.webos.app.browser_armv4 = ""
-VIRTUAL-RUNTIME_com.webos.app.browser_armv5 = ""
+VIRTUAL-RUNTIME_com.webos.app.browser:armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.browser:armv5 = ""
 
 VIRTUAL-RUNTIME_webappmanager = "wam"
-VIRTUAL-RUNTIME_webappmanager_armv4 = ""
-VIRTUAL-RUNTIME_webappmanager_armv5 = ""
+VIRTUAL-RUNTIME_webappmanager:armv4 = ""
+VIRTUAL-RUNTIME_webappmanager:armv5 = ""
 
 VIRTUAL-RUNTIME_initscripts = "webos-initscripts"
 PREFERRED_RPROVIDER_initd-functions = "webos-initscripts"
@@ -64,11 +64,11 @@ VIRTUAL-RUNTIME_init_manager = "systemd"
 # With upstart we don't need update-rc.d, as bonus fixes following avahi issue for us:
 # http://lists.openembedded.org/pipermail/openembedded-core/2013-November/086901.html
 BAD_RECOMMENDATIONS += "update-rc.d"
-UPDATERCD_class-target = ""
+UPDATERCD:class-target = ""
 
 # Don't install big /boot/vmlinux* file by default in qemux86 images (included in oprofile's RRECOMMENDS)
 # Use --no-vmlinux option to opcontrol or install it manually if you need to see samples from kernel
-BAD_RECOMMENDATIONS_append_qemux86 = " kernel-vmlinux"
+BAD_RECOMMENDATIONS:append:qemux86 = " kernel-vmlinux"
 
 PREFERRED_PROVIDER_virtual/docker = "docker-moby"
 

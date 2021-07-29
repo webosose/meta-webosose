@@ -8,7 +8,7 @@ LICENSE = "LGPLv2.1"
 LIC_FILES_CHKSUM = "file://COPYING;md5=0fb040b9b86a214885e3285fe25d74bc"
 
 DEPENDS = "sqlite3"
-DEPENDS_append_class-target = " sunpinyin-native"
+DEPENDS:append:class-target = " sunpinyin-native"
 
 inherit pkgconfig scons perlnative
 
@@ -32,14 +32,14 @@ SRC_URI =  "git://github.com/sunpinyin/sunpinyin.git;protocol=https;branch=maste
 
 S = "${WORKDIR}/git"
 
-do_install_append_class-target() {
+do_install:append:class-target() {
     install -d ${D}${libdir}/maliit/plugins/dict
     install -m 755 ${S}/libsunpinyin.so.3.0 ${D}${libdir}/maliit/plugins
     install -m 755 ${S}/Dictionary/pydict_sc.bin ${D}${libdir}/maliit/plugins/dict
     install -m 755 ${S}/Dictionary/lm_sc.t3g ${D}${libdir}/maliit/plugins/dict
 }
 
-do_install_append_class-native () {
+do_install:append:class-native () {
     install -d                                  ${D}${bindir}
     install -m 755 ${S}/src/genpyt              ${D}${bindir}
     install -m 755 ${S}/src/getwordfreq         ${D}${bindir}
@@ -57,4 +57,4 @@ do_install_append_class-native () {
     install -m 755 ${S}/src/tslminfo            ${D}${bindir}
 }
 
-FILES_${PN} += "${libdir}/maliit/plugins/"
+FILES:${PN} += "${libdir}/maliit/plugins/"

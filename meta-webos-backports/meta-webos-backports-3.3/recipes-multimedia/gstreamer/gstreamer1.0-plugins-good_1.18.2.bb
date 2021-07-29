@@ -13,8 +13,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=a6f89e2100d9b6cdffcea4f398e37343 \
                     file://gst/replaygain/rganalysis.c;beginline=1;endline=23;md5=b60ebefd5b2f5a8e0cab6bfee391a5fe"
 
 DEPENDS += "gstreamer1.0-plugins-base libcap zlib"
-RPROVIDES_${PN}-pulseaudio += "${PN}-pulse"
-RPROVIDES_${PN}-soup += "${PN}-souphttpsrc"
+RPROVIDES:${PN}-pulseaudio += "${PN}-pulse"
+RPROVIDES:${PN}-soup += "${PN}-souphttpsrc"
 
 PACKAGECONFIG ??= " \
     ${GSTREAMER_ORC} \
@@ -69,4 +69,4 @@ EXTRA_OEMESON += " \
     -Dwaveform=disabled \
 "
 
-FILES_${PN}-equalizer += "${datadir}/gstreamer-1.0/presets/*.prs"
+FILES:${PN}-equalizer += "${datadir}/gstreamer-1.0/presets/*.prs"

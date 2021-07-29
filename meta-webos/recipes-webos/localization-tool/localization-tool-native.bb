@@ -36,7 +36,7 @@ do_install() {
     cd ${D}${base_prefix}/opt/js-loctool
 }
 
-sysroot_stage_all_append() {
+sysroot_stage_all:append() {
     # files installed to /opt don't get staged by default so we must force /opt to be staged
     sysroot_stage_dir ${D}${base_prefix}/opt ${SYSROOT_DESTDIR}${base_prefix}/opt
 }

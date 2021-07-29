@@ -1,18 +1,18 @@
 # Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos4"
+EXTENDPRAUTO:append = "webos4"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI += "file://wpa-supplicant.sh \
             file://wpa-supplicant.service \
             file://0001-Add-p2p-changes.patch \
 "
 # Replace the wpa_supplicant.service from wpa-supplicant source with our own version (for some unknown reason)
-SYSTEMD_SERVICE_${PN}_remove = "wpa_supplicant.service"
-SYSTEMD_SERVICE_${PN}_append = " wpa-supplicant.service"
+SYSTEMD_SERVICE:${PN}:remove = "wpa_supplicant.service"
+SYSTEMD_SERVICE:${PN}:append = " wpa-supplicant.service"
 
-do_configure_append() {
+do_configure:append() {
     # Enable DBus Introspection for easier debugging
     echo "CONFIG_CTRL_IFACE_DBUS_INTRO=y" >> ${B}/wpa_supplicant/.config
 
@@ -42,7 +42,7 @@ do_configure_append() {
 
 }
 
-do_install_append() {
+do_install:append() {
     # systemd service files
     install -d ${D}${sysconfdir}/systemd/system
     install -v -m 644 ${WORKDIR}/wpa-supplicant.service ${D}${sysconfdir}/systemd/system/wpa-supplicant.service
@@ -56,4 +56,4 @@ do_install_append() {
     sed -i 's/SystemdService=wpa_supplicant.service/SystemdService=wpa-supplicant.service/g' ${D}/${datadir}/dbus-1/system-services/*service
 }
 
-FILES_${PN} += "${systemd_unitdir}"
+FILES:${PN} += "${systemd_unitdir}"

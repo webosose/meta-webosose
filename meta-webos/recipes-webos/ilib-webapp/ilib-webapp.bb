@@ -32,4 +32,4 @@ do_install() {
 }
 
 PACKAGES = "${PN}"
-FILES_${PN} = "${datadir}/javascript/ilib"
+FILES:${PN} = "${datadir}/javascript/ilib"

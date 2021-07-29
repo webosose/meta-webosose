@@ -1,13 +1,13 @@
 # Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosvirt3"
+EXTENDPRAUTO:append = "webosvirt3"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN}-contrib_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}-contrib_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+RDEPENDS:${PN}-contrib:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}-contrib:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
 # required kernel modules
-RRECOMMENDS_${PN}_append = " \
+RRECOMMENDS:${PN}:append = " \
     kernel-module-br-netfilter \
     kernel-module-ebt-dnat \
     kernel-module-ip-vs \
@@ -20,7 +20,7 @@ RRECOMMENDS_${PN}_append = " \
     kernel-module-xt-nat \
 "
 
-do_install_append() {
+do_install:append() {
     # don't start by default
     sed -i '/\[Install\]/,+1 d' ${D}${systemd_system_unitdir}/docker.service
 

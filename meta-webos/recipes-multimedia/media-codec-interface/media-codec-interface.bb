@@ -19,7 +19,7 @@ inherit webos_pkgconfig
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
-DEPENDS_append_rpi = " virtual/libomxil"
+DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-3_13f4a0e50c95f7ecf04be37949c0da266ba221d3"
 PR = "r4"
@@ -32,16 +32,16 @@ WEBOS_GIT_REPO_COMPLETE_MCIL ?= "${WEBOS_GIT_REPO_MCIL}/${WEBOS_REPO_NAME_MCIL}$
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 
-SRC_URI_append = "\
+SRC_URI:append = "\
     ${WEBOS_GIT_REPO_COMPLETE_MCIL};destsuffix=git/src/codec_impl;name=mcil \
 "
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
-SRC_URI_append = "\
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+SRC_URI:append = "\
     file://0001-Include-webOS-module-for-replacing-webos-variables.patch \
 "
 
 S = "${WORKDIR}/git"
 
 FILES_SOLIBSDEV = ""
-FILES_${PN} += "${libdir}/*.so"
+FILES:${PN} += "${libdir}/*.so"

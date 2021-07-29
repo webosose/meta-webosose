@@ -24,5 +24,5 @@ PR = "r4"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-EXTRA_OECMAKE_append_qemux86 = " -DWEBOS_SOC:STRING=qemux86"
-EXTRA_OECMAKE_append_qemux86-64 = " -DWEBOS_SOC:STRING=qemux86"
+EXTRA_OECMAKE:append:qemux86 = " -DWEBOS_SOC:STRING=qemux86"
+EXTRA_OECMAKE:append:qemux86-64 = " -DWEBOS_SOC:STRING=qemux86"

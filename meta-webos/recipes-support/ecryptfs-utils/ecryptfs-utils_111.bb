@@ -29,7 +29,7 @@ SRC_URI[sha256sum] = "112cb3e37e81a1ecd8e39516725dec0ce55c5f3df6284e0f4cc0f11875
 inherit autotools pkgconfig systemd
 
 SYSTEMD_PACKAGES = "${PN}"
-SYSTEMD_SERVICE_${PN} = "ecryptfs.service"
+SYSTEMD_SERVICE:${PN} = "ecryptfs.service"
 
 EXTRA_OECONF = "\
     --libdir=${base_libdir} \
@@ -44,14 +44,14 @@ PACKAGECONFIG[nss] = "--enable-nss,--disable-nss,nss,"
 PACKAGECONFIG[openssl] = "--enable-openssl,--disable-openssl,openssl,"
 PACKAGECONFIG[pam] = "--enable-pam,--disable-pam,libpam,"
 
-do_configure_prepend() {
+do_configure:prepend() {
     export NSS_CFLAGS="-I${STAGING_INCDIR}/nspr -I${STAGING_INCDIR}/nss3"
     export NSS_LIBS="-L${STAGING_BASELIBDIR} -lssl3 -lsmime3 -lnss3 -lsoftokn3 -lnssutil3"
     export KEYUTILS_CFLAGS="-I${STAGING_INCDIR}"
     export KEYUTILS_LIBS="-L${STAGING_LIBDIR} -lkeyutils"
 }
 
-do_install_append() {
+do_install:append() {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'usrmerge', 'true', 'false', d)}; then
         install -d ${D}${base_sbindir}
         mv ${D}/sbin/* ${D}${base_sbindir}
@@ -69,7 +69,7 @@ do_install_append() {
     fi
 }
 
-FILES_${PN} += "${base_libdir}/security/* ${base_libdir}/ecryptfs/*"
+FILES:${PN} += "${base_libdir}/security/* ${base_libdir}/ecryptfs/*"
 
-RDEPENDS_${PN} += "cryptsetup"
-RRECOMMENDS_${PN} = "gettext-runtime"
+RDEPENDS:${PN} += "cryptsetup"
+RRECOMMENDS:${PN} = "gettext-runtime"

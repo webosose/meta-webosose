@@ -10,8 +10,8 @@
 FEATURE_PACKAGES_webos-iot-core = "packagegroup-webos-iot-core"
 FEATURE_PACKAGES_webos-iot-devtools = "packagegroup-webos-iot-devtools"
 
-WEBOS_IMAGE_BASE_INSTALL_remove = "${FEATURE_PACKAGES_webos-extended}"
-WEBOS_IMAGE_BASE_INSTALL_append = "${FEATURE_PACKAGES_webos-iot-core}"
+WEBOS_IMAGE_BASE_INSTALL:remove = "${FEATURE_PACKAGES_webos-extended}"
+WEBOS_IMAGE_BASE_INSTALL:append = "${FEATURE_PACKAGES_webos-iot-core}"
 
 inherit webos_image
 inherit webos_prerelease_dep

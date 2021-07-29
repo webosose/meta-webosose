@@ -24,6 +24,6 @@ inherit webos_machine_impl_dep
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${webos_sysbus_datadir}"
+FILES:${PN} += "${webos_sysbus_datadir}"
 
 EXTRA_OECMAKE += "-DINIT_MANAGER:STRING=${VIRTUAL-RUNTIME_init_manager}"

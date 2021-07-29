@@ -11,7 +11,7 @@ inherit pypi setuptools3
 
 SRC_URI[sha256sum] = "6d2de2de7931a968874481ef30208fd4e08da39177d61d3d4ebdf4366e7dbca1"
 
-RDEPENDS_${PN} = "${PYTHON_PN}-wrapt"
+RDEPENDS:${PN} = "${PYTHON_PN}-wrapt"
 
 BBCLASSEXTEND = "native nativesdk"
 

@@ -3,9 +3,9 @@
 EXTENDPRAUTO = "webos2"
 
 PACKAGES =+ "${PN}-gdisk ${PN}-cgdisk ${PN}-fixparts ${PN}-sgdisk"
-FILES_${PN}-gdisk += "${sbindir}/gdisk"
-FILES_${PN}-cgdisk += "${sbindir}/cgdisk"
-FILES_${PN}-sgdisk += "${sbindir}/sgdisk"
-FILES_${PN}-fixparts += "${sbindir}/fixparts"
+FILES:${PN}-gdisk += "${sbindir}/gdisk"
+FILES:${PN}-cgdisk += "${sbindir}/cgdisk"
+FILES:${PN}-sgdisk += "${sbindir}/sgdisk"
+FILES:${PN}-fixparts += "${sbindir}/fixparts"
 
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"

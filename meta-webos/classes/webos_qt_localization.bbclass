@@ -7,7 +7,7 @@ inherit webos_localizable
 inherit qt6-paths
 
 WEBOS_QT_LOCALIZATION_DEPENDS = "qttools-native"
-DEPENDS_append = " ${WEBOS_QT_LOCALIZATION_DEPENDS}"
+DEPENDS:append = " ${WEBOS_QT_LOCALIZATION_DEPENDS}"
 
 #
 # Allow the default localization PN of the app to be overridden. The default is
@@ -24,7 +24,7 @@ WEBOS_QT_LOCALIZATION_QM_BASENAME ?= "${@ '${WEBOS_QT_LOCALIZATION_PN}'.split('.
 #
 # Qt application resources sholud not be optimized, so that it needs 't' options
 #
-WEBOS_LOCALIZATION_OPTIONS_append = " -t"
+WEBOS_LOCALIZATION_OPTIONS:append = " -t"
 #
 
 #
@@ -86,7 +86,7 @@ fakeroot do_generate_webos_qt_localization() {
 # Most QT recipes don't need the resources to be installed
 WEBOS_LOCALIZATION_INSTALL_RESOURCES = "false"
 
-FILES_${PN}-localization += "${webos_qt_localization_qm_dir}/*.qm"
+FILES:${PN}-localization += "${webos_qt_localization_qm_dir}/*.qm"
 
 PACKAGES += "${PN}-localization-ts"
-FILES_${PN}-localization-ts += "${webos_qt_localization_ts_dir}"
+FILES:${PN}-localization-ts += "${webos_qt_localization_ts_dir}"

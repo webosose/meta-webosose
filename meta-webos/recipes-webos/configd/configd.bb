@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 "
 
 DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
-RDEPENDS_${PN} += "configd-data"
+RDEPENDS:${PN} += "configd-data"
 
 WEBOS_VERSION = "1.2.0-15_fd287009cd47949c4a210c89826996131d395b0f"
 PR = "r18"
@@ -28,5 +28,5 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 PACKAGES =+ "${PN}-tests"
-FILES_${PN}-tests = "${libexecdir}/tests/*"
-FILES_${PN} += "${webos_sysbus_datadir}"
+FILES:${PN}-tests = "${libexecdir}/tests/*"
+FILES:${PN} += "${webos_sysbus_datadir}"

@@ -15,4 +15,4 @@ do_configure[noexec] = "1"
 do_compile[noexec] = "1"
 
 PACKAGES = "${PN}"
-FILES_${PN} = "${datadir}/fonts"
+FILES:${PN} = "${datadir}/fonts"

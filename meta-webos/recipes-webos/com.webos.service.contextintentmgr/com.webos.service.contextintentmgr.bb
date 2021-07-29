@@ -13,9 +13,9 @@ WEBOS_VERSION = "1.0.0-16_81772cbd310891d4df004000a9b1af3173a8185e"
 PR = "r4"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
-COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
-COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
-COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
+COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
+COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
+COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
 inherit systemd
 inherit webos_public_repo
@@ -28,10 +28,10 @@ inherit webos_machine_impl_dep
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-do_install_append() {
+do_install:append() {
     install -d ${D}${sysconfdir}/systemd/system/scripts
     install -v -m 744 ${S}/files/systemd/scripts/contextintentmgr.sh ${D}${sysconfdir}/systemd/system/scripts/
 }
 
-FILES_${PN} += "${webos_servicesdir} ${webos_sysconfdir}"
-SYSTEMD_SERVICE_${PN} = "contextintentmgr.service"
+FILES:${PN} += "${webos_servicesdir} ${webos_sysconfdir}"
+SYSTEMD_SERVICE:${PN} = "contextintentmgr.service"

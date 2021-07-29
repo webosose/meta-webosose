@@ -26,6 +26,6 @@ inherit webos_machine_impl_dep
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${libdir}/location/plugins/lib*.so"
-FILES_${PN}-dbg += "${libdir}/location/plugins/.debug"
+FILES:${PN} += "${libdir}/location/plugins/lib*.so"
+FILES:${PN}-dbg += "${libdir}/location/plugins/.debug"
 SECURITY_STRINGFORMAT = ""

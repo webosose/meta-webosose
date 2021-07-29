@@ -13,7 +13,7 @@ SECTION = "webos/libs"
 # here because nyx-modules is MACHINE_ARCH (e.g. qemux86), while nyx-lib is
 # TUNE_PKGARCH  (e.g. i586). Instead, it is pulled into the image by adding it to
 # the RDPENDS_${PN} of packagegroup-webos-extended. Putting
-#   RDEPENDS_${PN} = "nyx-modules"
+#   RDEPENDS:${PN} = "nyx-modules"
 # here would cause bitbake to re-execute the do_package task for each MACHINE,
 # even if these MACHINE-s were all i586 and should therefore share the same nyx-lib
 # .ipk and sstate files. (The reason do_package is re-executed when a component

@@ -1,10 +1,10 @@
 # Copyright (c) 2015-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO:append = "webos2"
 
 # GTest developers recommend to use source code instead of linking
 # against a prebuilt library.
-do_install_append() {
+do_install:append() {
     rm -rf ${B}/fused-src
     mkdir ${B}/fused-src
     ${S}/googletest/scripts/fuse_gtest_files.py ${B}/fused-src
@@ -24,9 +24,9 @@ do_install_append() {
     install -v -m 0755 ${S}/googletest/test/*.py ${D}${bindir}/gtest
 }
 
-sysroot_stage_all_append() {
+sysroot_stage_all:append() {
     sysroot_stage_dir ${D}${prefix}/src ${SYSROOT_DESTDIR}${prefix}/src
 }
 
-FILES_${PN} += "${bindir}/gtest"
-FILES_${PN}-dev += "${prefix}/src"
+FILES:${PN} += "${bindir}/gtest"
+FILES:${PN}-dev += "${prefix}/src"

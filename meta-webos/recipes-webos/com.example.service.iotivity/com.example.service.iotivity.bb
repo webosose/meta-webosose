@@ -3,7 +3,7 @@ DESCRIPTION = "Provides server and client services written in JavaScript. Server
 HOMEPAGE = "https://www.iotivity.org/"
 DEPENDS = "boost virtual/gettext chrpath-replacement-native expat openssl util-linux curl glib-2.0 glib-2.0-native"
 DEPENDS += "sqlite3 luna-service2 libpbnjson iotivity"
-RDEPENDS_${PN} = "iotivity-resource"
+RDEPENDS:${PN} = "iotivity-resource"
 
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
@@ -23,7 +23,7 @@ PV = "1.3.99+git${SRCPV}"
 
 inherit pkgconfig webos_component webos_filesystem_paths
 
-do_install_append() {
+do_install:append() {
     # Application / dat files
     install -d -g 5000 -m 0775 ${D}${webos_servicesdir}/com.example.service.iotivity.server
     install -d -g 5000 -m 0775 ${D}${webos_servicesdir}/com.example.service.iotivity.client
@@ -53,16 +53,16 @@ do_install_append() {
     install -v -m 0644 ${S}/resource/csdk/stack/samples/webos/com.example.app.iotivity/services/com.example.service.iotivity.client/files/sysbus/com.example.service.iotivity.client.groups.json ${D}${datadir}/luna-service2/groups.d
 }
 
-FILES_${PN} = "\
+FILES:${PN} = "\
     ${webos_servicesdir} \
     ${datadir}/luna-service2 \
 "
 
 # iotivity doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"

@@ -23,5 +23,5 @@ do_install() {
     cp -rv ${S}/${BPN}/* ${D}${webos_applicationsdir}/${PN}
 }
 
-FILES_${PN} += "${webos_applicationsdir}"
+FILES:${PN} += "${webos_applicationsdir}"
 

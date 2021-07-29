@@ -10,7 +10,7 @@ inherit pypi setuptools3
 SRC_URI[md5sum] = "a243f59b2d286c41ff6ed1c4d4b50996"
 SRC_URI[sha256sum] = "68b07193755440d5f8d4f47e6f3484212afc255d5b785a81353ea1e9298c1c2c"
 
-RDEPENDS_${PN} = "\
+RDEPENDS:${PN} = "\
   ${PYTHON_PN}-cached-property \
   ${PYTHON_PN}-certifi \
   ${PYTHON_PN}-chardet \

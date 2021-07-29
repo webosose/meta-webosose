@@ -8,7 +8,7 @@
 
 # Dependencies:
 #   - enact-dev-native to get cli & jsdoc-to-ts and nodejs-native to get node & npm
-DEPENDS_append = " enact-dev-native nodejs-native"
+DEPENDS:append = " enact-dev-native nodejs-native"
 
 # Allow overriding the path to the enact-dev tools, in case an app needs
 # to pull in a different version

@@ -1,5 +1,5 @@
 # Copyright (c) 2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append_rpi = "webosrpi2"
+EXTENDPRAUTO:append:rpi = "webosrpi2"
 
-PACKAGECONFIG_append_rpi = " dmabuf-client-buffer"
+PACKAGECONFIG:append:rpi = " dmabuf-client-buffer"

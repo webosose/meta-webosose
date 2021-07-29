@@ -32,5 +32,5 @@ do_install() {
     rm ${D}/${includedir}/sysdeps/generic/atomic.h
 }
 
-FILES_${PN} = " ${libdir}/lib*.so"
-FILES_${PN}-dev = "${includedir}"
+FILES:${PN} = " ${libdir}/lib*.so"
+FILES:${PN}-dev = "${includedir}"

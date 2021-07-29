@@ -48,10 +48,10 @@ SRC_URI = "git://github.com/choehwanjin/libhangul.git;branch=main;protocol=https
 "
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${libdir}/maliit/plugins/*"
-FILES_${PN}-staticdev += "${libdir}/maliit/plugins/*.a"
+FILES:${PN} += "${libdir}/maliit/plugins/*"
+FILES:${PN}-staticdev += "${libdir}/maliit/plugins/*.a"
 
 # imemanager loads libhangul.so file dynamically
 # from maliit/plugins path, since it is using unversioned symlinks
 # any change in libhangul will not affect imemanager
-INSANE_SKIP_${PN} = "dev-so"
+INSANE_SKIP:${PN} = "dev-so"

@@ -1,9 +1,9 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos20"
-SYSTEMD_SERVICE_${PN}_remove = "connman.service"
+EXTENDPRAUTO:append = "webos20"
+SYSTEMD_SERVICE:${PN}:remove = "connman.service"
 
 SRC_URI += " \
     file://0001-Add-support-for-the-WPS-PBS-and-PIN-mode.patch \
@@ -31,6 +31,6 @@ SRC_URI += " \
     file://0023-Fix-connman-crash-on-p2p-connect.patch \
 "
 
-do_install_append() {
+do_install:append() {
     rm -vf ${D}${systemd_unitdir}/system/connman.service
 }

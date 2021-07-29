@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
 SECTION = "webos/services"
 
 DEPENDS = "luna-service2 libpbnjson glib-2.0"
-RDEPENDS_${PN} = "iputils"
+RDEPENDS:${PN} = "iputils"
 
 WEBOS_REPO_NAME = "com.webos.service.nettools"
 

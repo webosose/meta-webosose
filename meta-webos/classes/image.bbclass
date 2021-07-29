@@ -16,7 +16,7 @@ do_image_wic[depends] += "virtual/kernel:do_webos_deploy_fixup"
 # for ostree
 do_image_ostree[depends] += "virtual/kernel:do_webos_deploy_fixup"
 
-do_webos_deploy_fixup_prepend() {
+do_webos_deploy_fixup:prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ext3 ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ext3 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ext3

@@ -28,6 +28,6 @@ S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "(.*)"
 
-FILES_${PN} += "${libdir}/*.so"
+FILES:${PN} += "${libdir}/*.so"
 FILES_SOLIBSDEV = ""
-INSANE_SKIP_${PN} += "dev-so"
+INSANE_SKIP:${PN} += "dev-so"

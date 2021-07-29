@@ -77,10 +77,10 @@ EXTRA_OEMAKE += "${EXPORT_WEBOS_QMAKE_TARGET}"
 # Since 6.1 rcc is located in libexec. (QTBUG-92245)
 WEBOS_EXTRA_PATH .= "${OE_QMAKE_PATH_EXTERNAL_HOST_BINS}:${STAGING_LIBEXECDIR_NATIVE}:"
 
-do_configure_prepend() {
+do_configure:prepend() {
   ${EXPORT_WEBOS_QMAKE_MACHINE}
 }
 
-do_compile_prepend() {
+do_compile:prepend() {
   ${EXPORT_WEBOS_QMAKE_MACHINE}
 }

@@ -3,7 +3,7 @@
 # QML syntax error and problematic pattern checker
 #
 
-DEPENDS_append = " qtdeclarative-native libxml2-native"
+DEPENDS:append = " qtdeclarative-native libxml2-native"
 
 inherit qt6-paths
 
@@ -26,7 +26,7 @@ WEBOS_QMLLINT_OPTIONS ?= "${@ ' \
     -I ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QML}' \
     if d.getVar('QT_VERSION', True) != '5' else '' }"
 
-do_compile_prepend () {
+do_compile:prepend () {
     bbnote "Checking QML syntax error and problematic pattern (Step 1): .qml or .js files stored as qresource"
     rm -f ${WEBOS_QMLLINT_ERROR_LOG}
     find ${S} -type f -name "*.qrc" | while read qrc; do
@@ -50,7 +50,7 @@ do_compile_prepend () {
     fi
 }
 
-do_install_append () {
+do_install:append () {
     bbnote "Checking QML syntax error and problematic pattern (Step 2): .qml or .js files to be installed"
     rm -f ${WEBOS_QMLLINT_ERROR_LOG}
     find ${D} -type f -not -empty -name "*.qml" -o -name "*.js" | while read file; do

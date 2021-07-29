@@ -1,6 +1,6 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO:append = "webos1"
 
 # We need to revert RDEPENDS changes from
 #
@@ -15,6 +15,6 @@ EXTENDPRAUTO_append = "webos1"
 # it doesn't work when GLIBC_GENERATE_LOCALES are restricted like they are in our builds:
 # meta-webos/conf/distro/include/webos-toolchain.inc:GLIBC_GENERATE_LOCALES = "en_US.UTF-8"
 
-RDEPENDS_${PN}-ptest_remove_libc-glibc = " \
+RDEPENDS:${PN}-ptest:remove:libc-glibc = " \
     locale-base-fr-fr.iso-8859-1 \
 "

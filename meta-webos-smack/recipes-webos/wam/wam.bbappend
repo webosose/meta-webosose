@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
+EXTENDPRAUTO:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
 
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'set_wam_process_label', '', d)}"
 

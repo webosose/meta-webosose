@@ -32,5 +32,5 @@ do_install() {
     cp -rv ${S}/docker-simple-webserver ${D}${datadir}
 }
 
-FILES_${PN} += "${webos_mountablestoragedir}"
-SYSTEMD_SERVICE_${PN} = "docker-simple-webserver.service"
+FILES:${PN} += "${webos_mountablestoragedir}"
+SYSTEMD_SERVICE:${PN} = "docker-simple-webserver.service"

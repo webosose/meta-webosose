@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 "
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit"
-RDEPENDS_${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
+RDEPENDS:${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
 WEBOS_VERSION = "1.0.0-30_9f7c98a3c6ab09c71deb4b5a491497ae6746fa9c"
 PR = "r4"
@@ -28,7 +28,7 @@ SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://0001-Fix-static-analysis-issues.patch \
 "
 

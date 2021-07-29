@@ -1,19 +1,19 @@
 # Copyright (c) 2017-2019 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos6"
+EXTENDPRAUTO:append = "webos6"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://0001-Load-installed-files-before-update-file-ownership.patch \
     file://0002-Sort-opkg-list-file-content-to-speed-package-removal.patch \
     file://0005-Add-symlink-path-validity.patch \
 "
-SRC_URI_append_class-target = " \
+SRC_URI:append:class-target = " \
     file://0004-Mask-S_ISUID-and-S_ISGID-permission-bits.patch \
 "
 
-do_install_append() {
+do_install:append() {
     if ! grep status_file ${D}${sysconfdir}/opkg/opkg.conf; then
 cat << EOF >> ${D}${sysconfdir}/opkg/opkg.conf
 

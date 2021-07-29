@@ -23,16 +23,16 @@ inherit webos_enactjs_env
 #   - enact-framework, enact-sandstone to use a shared Enact framework libraries
 #   - coreutils-native to use timeout utility to prevent frozen NPM processes
 WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp mksnapshot-cross-${TARGET_ARCH} enact-framework enact-sandstone coreutils-native"
-DEPENDS_append = " ${WEBOS_ENACTJS_APP_DEPENDS}"
+DEPENDS:append = " ${WEBOS_ENACTJS_APP_DEPENDS}"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 # The appID of the app
 WEBOS_ENACTJS_APP_ID ??= "${BPN}"
@@ -257,4 +257,4 @@ do_install() {
     cd ${working}
 }
 
-FILES_${PN} += "${webos_applicationsdir}"
+FILES:${PN} += "${webos_applicationsdir}"

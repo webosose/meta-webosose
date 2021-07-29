@@ -8,7 +8,7 @@
 
 # If no modules from this provider are needed for an image, then it might
 # produce an empty package
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"
 
 # Pass in the list of required modules
 #
@@ -43,4 +43,4 @@ EXTRA_OECMAKE[vardepsexclude] += "DATETIME"
 DEPENDS += "nyx-lib"
 
 # Add any built modules that are installed
-FILES_${PN} += "${libdir}/nyx/modules/*"
+FILES:${PN} += "${libdir}/nyx/modules/*"

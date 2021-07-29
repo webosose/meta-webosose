@@ -1,9 +1,9 @@
 # Copyright (c) 2019-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO:append = "webos2"
 
 # Used by mkspecs/features/webos-variables.prf
-toolchain_create_sdk_env_script_append() {
+toolchain_create_sdk_env_script:append() {
     echo 'export TUNE_FEATURES="${TUNE_FEATURES}"' >> $script
     echo "export WEBOS_INSTALL_BINS=${target_exec_prefix}/bin" >> $script
     echo "export WEBOS_INSTALL_LIBS=${target_libdir}" >> $script

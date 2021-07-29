@@ -24,7 +24,7 @@ inherit webos_distro_dep
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-do_install_append() {
+do_install:append() {
     # Expand fonts tarball
     if [ -e ${S}/files/conf/fonts/fonts.tgz ]; then
         install -d ${D}${datadir}/fonts
@@ -36,5 +36,5 @@ do_install_append() {
 }
 
 PACKAGES =+ "${PN}-fonts"
-FILES_${PN} += "${webos_prefix} ${webos_sysconfdir}"
-FILES_${PN}-fonts += "${datadir}/fonts/"
+FILES:${PN} += "${webos_prefix} ${webos_sysconfdir}"
+FILES:${PN}-fonts += "${datadir}/fonts/"

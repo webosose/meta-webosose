@@ -1,7 +1,7 @@
 # Copyright (c) 2019 LG Electronics, Inc.
 
 # move /lib, /bin, /sbin to /usr
-do_install_append_sota() {
+do_install:append:sota() {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'usrmerge', 'true', 'false', d)}; then
         TARGETS='/lib /bin /sbin'
         for target in ${TARGETS}; do

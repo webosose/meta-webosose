@@ -1,12 +1,12 @@
 # Copyright (c) 2017 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi2"
+EXTENDPRAUTO:append = "webosrpi2"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI_append = " file://wired-setup"
+SRC_URI:append = " file://wired-setup"
 
-do_install_append() {
+do_install:append() {
     #Configure wired network interface for raspberrypi
     install -d ${D}${datadir}/connman
     install -m 0755 ${WORKDIR}/wired-setup ${D}${datadir}/connman

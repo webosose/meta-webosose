@@ -3,9 +3,9 @@
 # webOS system should be ready to have read-only /etc folder
 # thus we move timezone/localtime to other place (in volatile partition)
 
-EXTENDPRAUTO_append = "webos7"
+EXTENDPRAUTO:append = "webos7"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += "file://etcetera.patch"
 
@@ -22,7 +22,7 @@ do_compile () {
     done
 }
 
-do_install_append() {
+do_install:append() {
     install -d "${D}/${webos_sysmgr_localstatedir}/preferences"
     install -d "${D}/${webos_sysmgr_localstatedir}/preferences/zoneinfo/Etc"
 
@@ -41,7 +41,7 @@ do_install_append() {
 
 # we replace current OE variant with our own based on original code
 # please keep it in sync original OE variant or find a better solution
-pkg_postinst_${PN}() {
+pkg_postinst:${PN}() {
     etc_lt=${LOCALTIME_LOCATION:-${webos_sysmgr_localstatedir}/preferences/localtime}
     src=${TIMEZONE_LOCATION:-${webos_sysmgr_localstatedir}/preferences/timezone}
 
@@ -62,5 +62,5 @@ pkg_postinst_${PN}() {
     fi
 }
 
-FILES_${PN} += "${webos_sysmgr_localstatedir}/preferences"
-FILES_${PN} += "${datadir}/zoneinfo/Etc/Manual"
+FILES:${PN} += "${webos_sysmgr_localstatedir}/preferences"
+FILES:${PN} += "${datadir}/zoneinfo/Etc/Manual"

@@ -17,11 +17,11 @@ PR = "r1"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-do_install_append() {
+do_install:append() {
     install -d  ${D}${libdir}/maliit/plugins
     install -m 755 ${S}/libWnnJpn.so ${D}${libdir}/maliit/plugins
 }
 
 TARGET_CC_ARCH += "${LDFLAGS}"
-FILES_${PN} += "${libdir}/maliit/plugins/"
+FILES:${PN} += "${libdir}/maliit/plugins/"
 

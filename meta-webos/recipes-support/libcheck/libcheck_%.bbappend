@@ -1,10 +1,10 @@
 # Copyright (c) 2014-2017 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos2"
+EXTENDPRAUTO:append = "webos2"
 
 # Use awk (from busybox) instead of detecting what's available on the build
 # machine.
-RDEPENDS_${PN}_append_class-target = " busybox"
+RDEPENDS:${PN}:append:class-target = " busybox"
 
 AWK = "awk"
 export AWK_PATH = "${bindir}/${AWK}"

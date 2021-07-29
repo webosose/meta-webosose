@@ -1,12 +1,12 @@
 # Copyright (c) 2015-2021 LG Electronics, Inc.
 
 AUTHOR  = "Viesturs Zarins <viesturs.zarins@lge.com>"
-EXTENDPRAUTO_append = "webos3"
+EXTENDPRAUTO:append = "webos3"
 
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
-do_install_append_hardware() {
+do_install:append:hardware() {
 
     echo "" >> ${D}${sysconfdir}/sysctl.conf
     echo "# Additional Security Settings" >> ${D}${sysconfdir}/sysctl.conf

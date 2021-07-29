@@ -24,4 +24,4 @@ S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE += "-DGOOGLEAPIS_PATH=${STAGING_INCDIR}/google"
 
-FILES_${PN} += "${webos_sysbus_datadir}"
+FILES:${PN} += "${webos_sysbus_datadir}"

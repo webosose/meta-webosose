@@ -10,4 +10,4 @@ PR = "r0"
 
 inherit webos_machine_dep
 
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"

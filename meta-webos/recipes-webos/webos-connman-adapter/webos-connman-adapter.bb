@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 SECTION = "webos/services"
 
 DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support"
-RDEPENDS_${PN} = "connman connman-client"
+RDEPENDS:${PN} = "connman connman-client"
 
 WEBOS_VERSION = "1.1.0-39_dc622623142035004f2354cc90cfee0e8fc3c5b3"
 PR = "r9"
@@ -33,12 +33,12 @@ PACKAGECONFIG[enable-multiple-routing-table] = "-DMULTIPLE_ROUTING_TABLE:BOOL=tr
 PACKAGECONFIG = "enable-multiple-routing-table"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-SRC_URI_append_raspberrypi4 = " file://blacklistcdc_ether.conf"
+SRC_URI:append:raspberrypi4 = " file://blacklistcdc_ether.conf"
 S = "${WORKDIR}/git"
 
-do_install_append_raspberrypi4 () {
+do_install:append:raspberrypi4 () {
     install -d  ${D}${sysconfdir}/modprobe.d
     install -m 644 ${WORKDIR}/blacklistcdc_ether.conf  ${D}${sysconfdir}/modprobe.d/blacklistcdc_ether.conf
 }
 
-FILES_${PN}_append_raspberrypi4 = " ${sysconfdir}/modprobe.d/*"
+FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"

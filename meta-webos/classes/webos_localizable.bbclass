@@ -6,7 +6,7 @@
 LIB32_PREFIX ?= ""
 
 WEBOS_LOCALIZATION_DEPENDS = "${@ '' if bb.data.inherits_class('webos_qt_localization', d) or bb.data.inherits_class('webos_arch_indep', d) else '${LIB32_PREFIX}libwebosi18n' }"
-DEPENDS_append = " ${WEBOS_LOCALIZATION_DEPENDS}"
+DEPENDS:append = " ${WEBOS_LOCALIZATION_DEPENDS}"
 
 inherit webos_filesystem_paths
 
@@ -71,7 +71,7 @@ webos_localization_resources_dir ??= "${datadir}/localization/${BPN}/resources"
 
 WEBOS_LOCALIZATION_INSTALL_RESOURCES ?= "true"
 
-do_install_append() {
+do_install:append() {
     if "${WEBOS_LOCALIZATION_INSTALL_RESOURCES}" ; then
         if ls ${WEBOS_LOCALIZATION_SOURCE_DIR}/resources/* >/dev/null 2>/dev/null ; then
             bbnote "Installing localized files"
@@ -91,5 +91,5 @@ do_install_append() {
 }
 
 PACKAGE_BEFORE_PN += "${PN}-localization"
-RRECOMMENDS_${PN} += "${PN}-localization"
-FILES_${PN}-localization += "${webos_localization_resources_dir}"
+RRECOMMENDS:${PN} += "${PN}-localization"
+FILES:${PN}-localization += "${webos_localization_resources_dir}"

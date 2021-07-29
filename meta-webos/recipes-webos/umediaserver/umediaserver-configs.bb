@@ -25,4 +25,4 @@ EXTRA_OECMAKE += "-DWEBOS_INSTALL_CONFCAPSDIR:STRING=${webos_frameworksdir}"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-FILES_${PN} += "${webos_frameworksdir}/umediaserver/*"
+FILES:${PN} += "${webos_frameworksdir}/umediaserver/*"

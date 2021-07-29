@@ -1,10 +1,10 @@
 # Copyright (c) 2018-2021 LG Electronics, Inc.
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos26"
+EXTENDPRAUTO:append = "webos26"
 
-RRECOMMENDS_${PN} += " \
+RRECOMMENDS:${PN} += " \
     glibc-gconv-utf-16 \
     glibc-gconv-utf-32 \
 "
@@ -44,25 +44,25 @@ SRC_URI += " \
     file://obex.service \
 "
 
-SRC_URI_append_raspberrypi4 = " \
+SRC_URI:append:raspberrypi4 = " \
     file://blacklistbtusb.conf \
 "
 
-PACKAGECONFIG_append = " mesh \
+PACKAGECONFIG:append = " mesh \
     testing \
 "
 
-EXTRA_OECONF_remove = "--enable-external-ell"
+EXTRA_OECONF:remove = "--enable-external-ell"
 
-do_install_append () {
+do_install:append () {
     install -d ${D}${sysconfdir}/systemd/system
     install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
     install -v -m 0644  ${WORKDIR}/obex.service ${D}${sysconfdir}/systemd/system/
 }
 
-do_install_append_raspberrypi4 () {
+do_install:append:raspberrypi4 () {
     install -d  ${D}${sysconfdir}/modprobe.d
     install -m 644 ${WORKDIR}/blacklistbtusb.conf  ${D}${sysconfdir}/modprobe.d/blacklistbtusb.conf
 }
 
-FILES_${PN}_append_raspberrypi4 = " ${sysconfdir}/modprobe.d/*"
+FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"

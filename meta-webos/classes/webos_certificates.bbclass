@@ -10,7 +10,7 @@
 # links to the certificates will be in the image. Example: "/etc/ssl"
 #
 
-DEPENDS_append = " openssl-native"
+DEPENDS:append = " openssl-native"
 
 # Creates symlinks from a directory tree's files that match pattern.
 # DESTDIR/file.crt -> SOURCEDIR/path/to/file.pem
@@ -75,7 +75,7 @@ webos_certificates_check_sanity() {
     fi
 }
 
-do_install_append_class-target() {
+do_install:append:class-target() {
     webos_certificates_check_sanity "${CERT_SOURCE_DIR}" "CERT_SOURCE_DIR"
     webos_certificates_check_sanity "${CERT_TARGET_DIR}" "CERT_TARGET_DIR"
 

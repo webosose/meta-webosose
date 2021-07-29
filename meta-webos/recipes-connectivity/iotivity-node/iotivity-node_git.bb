@@ -11,7 +11,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://index.js;beginline=1;endline=13;md5=bafd0234b0f43def6ab0bced96530c42"
 
 DEPENDS = "nodejs-native glib-2.0 iotivity"
-RDEPENDS_${PN} += "iotivity-resource iotivity-tools"
+RDEPENDS:${PN} += "iotivity-resource iotivity-tools"
 
 SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https;branch=master"
 SRCREV = "c6aab8e6126c06516090dd13e812fee0d16b8cc7"
@@ -30,7 +30,7 @@ inherit webos_npm_env
 
 export PYTHON = "python3"
 
-do_compile_prepend() {
+do_compile:prepend() {
     OCTBDIR="${STAGING_INCDIR}/iotivity/resource"
     export OCTBSTACK_CFLAGS="-I${OCTBDIR} -I${OCTBDIR}/stack -I${OCTBDIR}/ocrandom -I${STAGING_INCDIR}/iotivity/c_common -DROUTING_EP -DRD_CLIENT -DRD_SERVER -D__WITH_DTLS__"
     export OCTBSTACK_LIBS="-loctbstack -lresource_directory"
@@ -63,18 +63,18 @@ do_install () {
 
 # /usr/lib/node_modules/iotivity-node/node_modules/uuid/benchmark/bench.sh is included in this package only _sometimes_
 # but when it does get included, it rdepends on /bin/bash
-# ERROR: iotivity-node-1.3.1+gitAUTOINC+c6aab8e612-r7 do_package_qa: QA Issue: /usr/lib/node_modules/iotivity-node/node_modules/uuid/benchmark/bench.sh contained in package iotivity-node requires /bin/bash, but no providers found in RDEPENDS_iotivity-node? [file-rdeps]
+# ERROR: iotivity-node-1.3.1+gitAUTOINC+c6aab8e612-r7 do_package_qa: QA Issue: /usr/lib/node_modules/iotivity-node/node_modules/uuid/benchmark/bench.sh contained in package iotivity-node requires /bin/bash, but no providers found in RDEPENDS:iotivity-node? [file-rdeps]
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS_${PN}_remove_class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
-FILES_${PN} = "${libdir}/node_modules/iotivity-node/"
+FILES:${PN} = "${libdir}/node_modules/iotivity-node/"
 
 # COMPATIBLE_MACHINE is set because iotivity on which the iotivity-node doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
-COMPATIBLE_MACHINE_x86-64 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"

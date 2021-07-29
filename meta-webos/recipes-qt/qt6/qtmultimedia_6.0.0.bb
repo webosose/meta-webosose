@@ -35,7 +35,7 @@ CXXFLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'x11', '', '-DMESA_EGL_NO_X
 
 # The same issue as in qtbase:
 # http://errors.yoctoproject.org/Errors/Build/44914/
-LDFLAGS_append_x86 = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd ', '', d)}"
+LDFLAGS:append:x86 = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd ', '', d)}"
 
 QT_MODULE_BRANCH = "dev"
 # Needs the "_${QT_MODULE}" suffix (it's not an override),

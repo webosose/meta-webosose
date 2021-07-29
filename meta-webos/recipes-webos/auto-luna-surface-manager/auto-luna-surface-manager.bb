@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "luna-surfacemanager qt-features-webos"
-RDEPENDS_${PN} = " \
+RDEPENDS:${PN} = " \
     luna-surfacemanager-base \
     qtbase-plugins-webos \
 "
@@ -34,7 +34,7 @@ WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
-FILES_${PN} += " \
+FILES:${PN} += " \
     ${OE_QMAKE_PATH_QML}/WebOSCompositor \
     ${OE_QMAKE_PATH_PLUGINS}/compositor \
 "

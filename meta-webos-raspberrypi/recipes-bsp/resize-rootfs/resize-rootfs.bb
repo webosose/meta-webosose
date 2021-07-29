@@ -6,7 +6,7 @@ SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-RDEPENDS_${PN} = "e2fsprogs-resize2fs parted"
+RDEPENDS:${PN} = "e2fsprogs-resize2fs parted"
 
 PR = "r1"
 
@@ -24,4 +24,4 @@ do_install() {
     install -v -m 0755 ${WORKDIR}/resize-rootfs.sh ${D}${sysconfdir}/systemd/system/scripts
 }
 
-SYSTEMD_SERVICE_${PN} = " resize-rootfs.service"
+SYSTEMD_SERVICE:${PN} = " resize-rootfs.service"

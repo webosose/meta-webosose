@@ -10,10 +10,10 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2 qttools-native"
-DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
-RDEPENDS_${PN} = "qtgraphicaleffects-qmlplugins"
+DEPENDS:append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
+RDEPENDS:${PN} = "qtgraphicaleffects-qmlplugins"
 
-RPROVIDES_${PN}-examples = " \
+RPROVIDES:${PN}-examples = " \
     eos.bare \
     eos.widgetgallery \
 "
@@ -39,21 +39,21 @@ OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 # Perform extra QML validation
 WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
-FILES_${PN} += "${OE_QMAKE_PATH_QML}/Eos/*"
+FILES:${PN} += "${OE_QMAKE_PATH_QML}/Eos/*"
 
 PACKAGES += "${PN}-examples"
-FILES_${PN}-examples += " \
+FILES:${PN}-examples += " \
     ${webos_applicationsdir}/* \
     ${datadir}/qml/locales/${BPN}/ \
 "
 
 # unit-tests
 PACKAGES =+ "${PN}-tests"
-FILES_${PN}-tests += "${datadir}/booster/tests/*"
+FILES:${PN}-tests += "${datadir}/booster/tests/*"
 
 # SDK tools
 PACKAGES += "${PN}-tools"
-FILES_${PN}-tools += "${webos_sdkdir}/*"
+FILES:${PN}-tools += "${webos_sdkdir}/*"
 
 # we don't provide cmake tests
 EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"

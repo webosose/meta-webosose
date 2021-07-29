@@ -22,59 +22,59 @@ require conf/distro/include/security_flags.inc
 # Enable -Werror=return-type flag
 EXTRA_WEBOS_WERROR = "-Werror=return-type"
 # http://caprica.lgsvl.com:8080/Errors/Details/1564610
-EXTRA_WEBOS_WERROR_pn-openipmi = ""
+EXTRA_WEBOS_WERROR:pn-openipmi = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564608
-EXTRA_WEBOS_WERROR_pn-indent = ""
+EXTRA_WEBOS_WERROR:pn-indent = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564607
-EXTRA_WEBOS_WERROR_pn-acpitool = ""
+EXTRA_WEBOS_WERROR:pn-acpitool = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564606
-EXTRA_WEBOS_WERROR_pn-libdbus-c++ = ""
+EXTRA_WEBOS_WERROR:pn-libdbus-c++ = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564605
-EXTRA_WEBOS_WERROR_pn-strongswan = ""
+EXTRA_WEBOS_WERROR:pn-strongswan = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564604
-EXTRA_WEBOS_WERROR_pn-joe = ""
+EXTRA_WEBOS_WERROR:pn-joe = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564603
-EXTRA_WEBOS_WERROR_pn-inotify-tools = ""
+EXTRA_WEBOS_WERROR:pn-inotify-tools = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564602
-EXTRA_WEBOS_WERROR_pn-smem = ""
+EXTRA_WEBOS_WERROR:pn-smem = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564601
-EXTRA_WEBOS_WERROR_pn-ckermit = ""
+EXTRA_WEBOS_WERROR:pn-ckermit = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564600
-EXTRA_WEBOS_WERROR_pn-mbuffer = ""
+EXTRA_WEBOS_WERROR:pn-mbuffer = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564599
-EXTRA_WEBOS_WERROR_pn-dhrystone = ""
+EXTRA_WEBOS_WERROR:pn-dhrystone = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564598
-EXTRA_WEBOS_WERROR_pn-cscope = ""
+EXTRA_WEBOS_WERROR:pn-cscope = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564597
-EXTRA_WEBOS_WERROR_pn-gtk+3 = ""
+EXTRA_WEBOS_WERROR:pn-gtk+3 = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564595
-EXTRA_WEBOS_WERROR_pn-gst-plugins-base = ""
+EXTRA_WEBOS_WERROR:pn-gst-plugins-base = ""
 # http://caprica.lgsvl.com:8080/Builds/Details/5772400
-EXTRA_WEBOS_WERROR_pn-gst-plugins-good = ""
+EXTRA_WEBOS_WERROR:pn-gst-plugins-good = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1574051
-EXTRA_WEBOS_WERROR_pn-read-edid = ""
+EXTRA_WEBOS_WERROR:pn-read-edid = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1584264
-EXTRA_WEBOS_WERROR_pn-testfloat = ""
+EXTRA_WEBOS_WERROR:pn-testfloat = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1584263
-EXTRA_WEBOS_WERROR_pn-libc-bench = ""
+EXTRA_WEBOS_WERROR:pn-libc-bench = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1584262
-EXTRA_WEBOS_WERROR_pn-qtwebengine = ""
+EXTRA_WEBOS_WERROR:pn-qtwebengine = ""
 # Temporarily until patches from PLAT-84533 are integrated
-EXTRA_WEBOS_WERROR_pn-webruntime = ""
+EXTRA_WEBOS_WERROR:pn-webruntime = ""
 # ERROR: ntop-5.0.1-r0 do_compile: Function failed: do_compile: netflowPlugin.c:2144:1: error: no return statement in function returning non-void [-Werror=return-type]
-EXTRA_WEBOS_WERROR_pn-ntop = ""
+EXTRA_WEBOS_WERROR:pn-ntop = ""
 # ERROR: python3-twofish-0.3.0-r0 do_compile: Function failed: do_compile: twofish.c:45:1: error: control reaches end of non-void function [-Werror=return-type]
-EXTRA_WEBOS_WERROR_pn-python3-twofish = ""
+EXTRA_WEBOS_WERROR:pn-python3-twofish = ""
 # ERROR: live555-20190828-r0 do_compile: oe_runmake failed: MPEG2TransportStreamParser.cpp:302:1: error: control reaches end of non-void function [-Werror=return-type]
-EXTRA_WEBOS_WERROR_pn-live555 = ""
+EXTRA_WEBOS_WERROR:pn-live555 = ""
 # ERROR: hdf5-1.8.21-r0 do_compile: hdf5/1.8.21-r0/hdf5-1.8.21/c++/src/H5Location.cpp:258:34: error: control reaches end of non-void function [-Werror=return-type]
-EXTRA_WEBOS_WERROR_pn-hdf5 = ""
+EXTRA_WEBOS_WERROR:pn-hdf5 = ""
 # ERROR: libev-4.31-r0 do_compile: oe_runmake failed: libev-4.31/ev_iouring.c:227:1: error: no return statement in function returning non-void [-Werror=return-type] libev-4.31/ev_iouring.c:261:1: error: no return statement in function returning non-void [-Werror=return-type]
-EXTRA_WEBOS_WERROR_pn-libev = ""
+EXTRA_WEBOS_WERROR:pn-libev = ""
 # temporarily until https://lists.openembedded.org/g/openembedded-devel/message/85109 is resolved: git/meson.build:26:4: ERROR: C library 'argp' not found
-EXTRA_WEBOS_WERROR_pn-zchunk = ""
+EXTRA_WEBOS_WERROR:pn-zchunk = ""
 
-TARGET_CC_ARCH_append = " ${EXTRA_WEBOS_WERROR}"
+TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
 #
 # Form the codename of a release (WEBOS_DISTRO_RELEASE_CODENAME) from a codename
@@ -163,7 +163,7 @@ MODULE_TARBALL_DEPLOY ?= "0"
 # image filename match that of the corresponding rootfs image even if its
 # contents are unchanged.
 kernel_do_install[vardepsexclude] += "KERNEL_IMAGE_NAME"
-kernel_do_install_append() {
+kernel_do_install:append() {
 	rm -vf $kerneldir/kernel-image-name
 }
 
@@ -184,7 +184,7 @@ BUILDCFG_VARS += "DATETIME"
 # Build time dependency on TUNE_PKGARCH recipes base-passwd, shadow, shadow-sysroot
 # Drop this when upgrading oe-core to some release with this change:
 # http://lists.openembedded.org/pipermail/openembedded-core/2013-November/085849.html
-PACKAGE_ARCH_pn-xuser-account = "${MACHINE_ARCH}"
+PACKAGE_ARCH:pn-xuser-account = "${MACHINE_ARCH}"
 
 # Override these in webOS based distros to modify DISTRO_EXTRA_R*
 WEBOS_DEFAULT_EXTRA_RDEPENDS = ""
@@ -194,8 +194,8 @@ DISTRO_EXTRA_RDEPENDS += " ${WEBOS_DEFAULT_EXTRA_RDEPENDS}"
 DISTRO_EXTRA_RRECOMMENDS += " ${WEBOS_DEFAULT_EXTRA_RRECOMMENDS}"
 
 WEBOSQEMUDEPS = "${@bb.utils.contains("INCOMPATIBLE_LICENSE", "GPLv3", "", "qemu-config",d)}"
-DISTRO_EXTRA_RDEPENDS_append_qemuarm = " ${WEBOSQEMUDEPS}"
-DISTRO_EXTRA_RDEPENDS_append_qemux86 = " ${WEBOSQEMUDEPS}"
+DISTRO_EXTRA_RDEPENDS:append:qemuarm = " ${WEBOSQEMUDEPS}"
+DISTRO_EXTRA_RDEPENDS:append:qemux86 = " ${WEBOSQEMUDEPS}"
 
 USER_CLASSES ?= ""
 
@@ -230,7 +230,7 @@ OVERRIDES[vardepsexclude] += "WEBOS_EXTRA_MACHINEOVERRIDES_VARIANT"
 # still work.
 # E.g. distro default is thumb (for all MACHINEs)
 # Then you find some issues with thumb1 on armv5te cores, so distro can
-# change the default to "arm" with PREFERRED_ARM_INSTRUCTION_SET_armv5,
+# change the default to "arm" with PREFERRED_ARM_INSTRUCTION_SET:armv5,
 # but the recipe which explicitly asks for "thumb" still gets thumb.
 PREFERRED_ARM_INSTRUCTION_SET ?= "thumb"
 ARM_INSTRUCTION_SET = "${PREFERRED_ARM_INSTRUCTION_SET}"
@@ -241,19 +241,19 @@ ARM_INSTRUCTION_SET = "${PREFERRED_ARM_INSTRUCTION_SET}"
 # {standard input}:42: Error: cannot use post-indexing with this instruction -- `ldrt r6,[r5],#+132'
 # {standard input}:42: Error: cannot use post-indexing with this instruction -- `ldrt r6,[r5],#132'
 # ...
-# ARM_INSTRUCTION_SET_pn-valgrind = "arm"
+# ARM_INSTRUCTION_SET:pn-valgrind = "arm"
 # and remove -O2 as work around for ICE:
 # 3.9.0-r8/valgrind-3.9.0/none/tests/arm/vcvt_fixed_float_VFP.c:12:1: internal compiler error:
 # Max. number of generated reload insns per insn is achieved (90)
 # http://lists.openembedded.org/pipermail/openembedded-core/2014-September/097330.html
 # both issues are still reproducible with 3.10.0 version imported from
 # http://patchwork.openembedded.org/patch/83009/
-# TARGET_CFLAGS_remove_pn-valgrind = "-O2"
-PTEST_ENABLED_pn-valgrind = "0"
+# TARGET_CFLAGS:remove:pn-valgrind = "-O2"
+PTEST_ENABLED:pn-valgrind = "0"
 # parted and apr ptest currently doesn't build with gold
 # http://lists.openembedded.org/pipermail/openembedded-core/2017-February/132917.html
-PTEST_ENABLED_pn-parted = "0"
-PTEST_ENABLED_pn-apr = "0"
+PTEST_ENABLED:pn-parted = "0"
+PTEST_ENABLED:pn-apr = "0"
 
 INHERIT_DISTRO ?= "debian devshell sstate license buildstats-summary webos_base remove-libtool image-buildinfo"
 
@@ -269,7 +269,7 @@ ICECC_DISABLED ??= "1"
 # $ bitbake -c write_oss_pkg_info <image>
 # Components can have oss-pkg-info file itself but it is forced to
 # add checksum in LIC_FILES_CHKSUM if it contain oss-pkg-info.yaml
-do_populate_lic_append() {
+do_populate_lic:append() {
     """ To check oss-pkg-info.yaml """
     oss_filename = "oss-pkg-info.yaml"
     if os.path.isfile(os.path.join(d.getVar("S"), oss_filename)):
@@ -277,10 +277,10 @@ do_populate_lic_append() {
             bb.fatal("%s is in source repository but LIC_FILES_CHKSUM doesn't include it." % oss_filename)
 }
 
-WARN_QA_append = " version-going-backwards webos-enh-sub-warning"
+WARN_QA:append = " version-going-backwards webos-enh-sub-warning"
 WEBOS_ERROR_QA_AUTOREV ?= "webos-enh-sub-autorev-error"
-ERROR_QA_append = " webos-enh-sub-error acg-dirty acg-json ${WEBOS_ERROR_QA_AUTOREV} acg-api acg-perm ls2-role ls2-schema"
-ERROR_QA_remove = " version-going-backwards"
+ERROR_QA:append = " webos-enh-sub-error acg-dirty acg-json ${WEBOS_ERROR_QA_AUTOREV} acg-api acg-perm ls2-role ls2-schema"
+ERROR_QA:remove = " version-going-backwards"
 # Move all default WARN_QA from insane.bbclass to ERROR_QA to prevent silently re-introducing these issues
 DEFAULT_WARN_QA = "\
     ldflags useless-rpaths rpaths staticdev libdir xorg-driver-abi \
@@ -292,8 +292,8 @@ DEFAULT_WARN_QA = "\
     mime mime-xdg unlisted-pkg-lics unhandled-features-check \
     missing-update-alternatives \
 "
-ERROR_QA_append = " ${DEFAULT_WARN_QA}"
-WARN_QA_remove = "${DEFAULT_WARN_QA}"
+ERROR_QA:append = " ${DEFAULT_WARN_QA}"
+WARN_QA:remove = "${DEFAULT_WARN_QA}"
 
 # Default WEBOS_TARGET_* values (see webos_cmake.bbclass)
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
@@ -313,34 +313,34 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 # For toolchain recipes keep TUNE_PKGARCH, to support default STAGING_BINDIR_TOOLCHAIN
 # as defined in bitbake.conf
 # STAGING_BINDIR_TOOLCHAIN = "${STAGING_DIR_NATIVE}${bindir_native}/${TUNE_PKGARCH}${TARGET_VENDOR}-${TARGET_OS}"
-PACKAGE_ARCH_pn-binutils-cross = "${TUNE_PKGARCH}"
-PACKAGE_ARCH_pn-gcc-cross = "${TUNE_PKGARCH}"
-PACKAGE_ARCH_pn-gcc-cross-initial = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-binutils-cross = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-gcc-cross = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-gcc-cross-initial = "${TUNE_PKGARCH}"
 # libgcc.inc: target=`echo ${MULTIMACH_TARGET_SYS} | sed -e s#-${SDKPKGSUFFIX}##`
-PACKAGE_ARCH_pn-libgcc = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-libgcc = "${TUNE_PKGARCH}"
 # gcc-runtime.inc: mtarget=`echo ${MULTIMACH_TARGET_SYS} | sed -e s#-${SDKPKGSUFFIX}##`
-PACKAGE_ARCH_pn-gcc-runtime = "${TUNE_PKGARCH}"
-PACKAGE_ARCH_pn-meta-toolchain = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-gcc-runtime = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-meta-toolchain = "${TUNE_PKGARCH}"
 # since oe-core/c26569320817263a487eceb610e3c70badba0b52 it's ${TUNE_PKGARCH} but it depends
 # on strace, which in our strange default PACKAGE_ARCH is MACHINE_ARCH
-PACKAGE_ARCH_pn-packagegroup-core-tools-debug = "${MACHINE_ARCH}"
+PACKAGE_ARCH:pn-packagegroup-core-tools-debug = "${MACHINE_ARCH}"
 
 # Respect PACKAGE_ARCH set in recipe, otherwise building sdk will fail to find
 # packagegroup-cross-canadian-qemux86 package in MACHINE_ARCH feed (opkg-sdk.conf
 # doesn't contain MACHINE_ARCH).
-PACKAGE_ARCH_pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFIX}"
+PACKAGE_ARCH:pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFIX}"
 
 # Otherwise QEMU_EXTRAOPTIONS aren't found and e.g. update_font_cache postinst
 # script may fail to run fc-cache with:
 # qemu: uncaught target signal 4 (Illegal instruction) - core dumped
 # because -cpu options are missing in QEMU_OPTIONS
-PACKAGE_ARCH_pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
+PACKAGE_ARCH:pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
 
-PATH_prepend = "${WEBOS_EXTRA_PATH}"
+PATH:prepend = "${WEBOS_EXTRA_PATH}"
 
 EXTRAOPKGCONFIG = ""
 # with multilib libdir would became /usr/lib64 and we want opkg files in /usr/lib
-OPKGLIBDIR_forcevariable := "${exec_prefix}/lib"
+OPKGLIBDIR:forcevariable := "${exec_prefix}/lib"
 
 # We don't plan to ever support qt4
 QT_DIR_NAME = ""
@@ -359,14 +359,14 @@ BB_DISKMON_DIRS = "\
 # Select at most one of the two choices here for the console:
 #   Redirect console output to keep it from spewing all over the Emulator window
 #   (This is added to qemux86 kernel cmdline by openembedded-core/meta/classes/syslinux.bbclass)
-APPEND_append_qemuall = " console=ttyS0 net.ifnames=0 biosdevname=0"
+APPEND:append:qemuall = " console=ttyS0 net.ifnames=0 biosdevname=0"
 # - or -
 #   If your build is not using the screen for graphics, and you're running an emulator,
 #   you should be able to use the emulator's on-screen window as the console by
 #   uncommenting this line (and commenting the above line out).
 #   Note that this setting may interfere with a program that is trying to change the
 #   mode of the display device
-# APPEND_append_qemuall = " console=tty0"
+# APPEND:append:qemuall = " console=tty0"
 
 require conf/distro/include/yocto-uninative.inc
 INHERIT += "uninative"
@@ -383,7 +383,7 @@ FONTCONFIG_CACHE_DIR = "${datadir}/fontconfig/cache"
 FONTCONFIG_CACHE_ENV = "FC_DEBUG=16"
 
 # To build lapack(blas) for snowboy
-FORTRAN_forcevariable_webos = ",fortran"
+FORTRAN:forcevariable:webos = ",fortran"
 
 # Qt major version to use
 QT_VERSION ?= "6"

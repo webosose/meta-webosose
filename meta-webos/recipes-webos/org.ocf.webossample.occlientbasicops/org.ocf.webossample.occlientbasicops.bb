@@ -3,7 +3,7 @@ DESCRIPTION = "iotivity-native-sample provides server and client application wri
 HOMEPAGE = "https://www.iotivity.org/"
 DEPENDS = "boost virtual/gettext chrpath-replacement-native expat openssl util-linux curl glib-2.0 glib-2.0-native"
 DEPENDS += "sqlite3 luna-service2 libpbnjson iotivity"
-RDEPENDS_${PN} = "iotivity-resource"
+RDEPENDS:${PN} = "iotivity-resource"
 
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
@@ -44,14 +44,14 @@ EXTRA_OESCONS += " \
     VERBOSE=1 \
 "
 
-do_compile_append() {
+do_compile:append() {
     export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
     export PKG_CONFIG="PKG_CONFIG_SYSROOT_DIR=\"${PKG_CONFIG_SYSROOT_DIR}\" pkg-config"
     export LD_FLAGS="${LD_FLAGS}"
     scons_do_compile
 }
 
-do_install_append() {
+do_install:append() {
     # Application / dat files
     install -d ${D}${webos_servicesdir}/org.ocf.webossample.occlientbasicops
 
@@ -71,7 +71,7 @@ do_install_append() {
     install -c -m 555 ${S}/resource/csdk/stack/samples/webos/secure/files/sysbus/occlientbasicops.manifest.json ${D}${datadir}/luna-service2/manifests.d
 }
 
-FILES_${PN} = "\
+FILES:${PN} = "\
     ${webos_servicesdir}/org.ocf.webossample.* \
     ${datadir}/luna-service2 \
 "
@@ -80,10 +80,10 @@ BBCLASSEXTEND = "native nativesdk"
 
 # iotivity doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
-COMPATIBLE_MACHINE_aarch64 = "(.*)"
-COMPATIBLE_MACHINE_armv6 = "(.*)"
-COMPATIBLE_MACHINE_armv7a = "(.*)"
-COMPATIBLE_MACHINE_armv7ve = "(.*)"
-COMPATIBLE_MACHINE_x86 = "(.*)"
+COMPATIBLE_MACHINE:aarch64 = "(.*)"
+COMPATIBLE_MACHINE:armv6 = "(.*)"
+COMPATIBLE_MACHINE:armv7a = "(.*)"
+COMPATIBLE_MACHINE:armv7ve = "(.*)"
+COMPATIBLE_MACHINE:x86 = "(.*)"
 
 SRC_URI += "file://0001-Fix-missing-return-statement.patch"

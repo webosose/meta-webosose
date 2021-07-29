@@ -33,12 +33,12 @@ EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 # We don't support configuring via cmake
 EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"
 
-FILES_${PN}-dev += " \
+FILES:${PN}-dev += " \
     ${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/* \
     ${OE_QMAKE_PATH_LIBS}/*.prl \
 "
 
-do_install_append() {
+do_install:append() {
     sed -i 's@prefix=${STAGING_DIR_HOST}@prefix=@g;s@-L${STAGING_DIR_HOST} @ @g;' ${D}${libdir}/pkgconfig/*.pc
     sed -i "s@-L${STAGING_LIBDIR}@-L\${libdir}@g" ${D}${libdir}/pkgconfig/*.pc
     if ${@bb.utils.contains('PACKAGECONFIG', 'compositor', 'true', 'false', d)}; then
@@ -52,11 +52,11 @@ do_install_append() {
     fi
 }
 
-TARGET_CXXFLAGS_append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage -fprofile-dir=/tmp/luna-surfacemanager-gcov -O0', '', d)}"
-TARGET_LDFLAGS_append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage', '', d)}"
+TARGET_CXXFLAGS:append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage -fprofile-dir=/tmp/luna-surfacemanager-gcov -O0', '', d)}"
+TARGET_LDFLAGS:append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage', '', d)}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
 inherit webos_system_bus
 inherit webos_qmllint
@@ -73,17 +73,17 @@ PACKAGECONFIG[compositor] = "CONFIG+=compositor_base,,qt-features-webos-native"
 PACKAGECONFIG[multi-input] = ",CONFIG+=no_multi_input,"
 PACKAGECONFIG[cursor-theme] = "CONFIG+=cursor_theme,,"
 
-PACKAGECONFIG_webos = "compositor cursor-theme"
+PACKAGECONFIG:webos = "compositor cursor-theme"
 
 PACKAGE_BEFORE_PN = "${PN}-gcov"
 
-FILES_${PN}-gcov = " \
+FILES:${PN}-gcov = " \
     ${libdir}/${BPN}/*.gcno \
 "
 
 PACKAGES =+ "${PN}-conf ${PN}-base ${PN}-base-tests"
 
-FILES_${PN}-conf += " \
+FILES:${PN}-conf += " \
     ${sysconfdir}/surface-manager.d/ \
     ${webos_sysbus_apipermissionsdir} \
     ${webos_sysbus_groupsdir} \
@@ -93,7 +93,7 @@ FILES_${PN}-conf += " \
     ${webos_sysbus_rolesdir}/com.webos.surfacemanager.role.json \
 "
 
-FILES_${PN}-base += " \
+FILES:${PN}-base += " \
     ${OE_QMAKE_PATH_QML}/WebOSCompositorBase/ \
     ${OE_QMAKE_PATH_QML}/WebOSCompositor/ \
     ${OE_QMAKE_PATH_BINS}/ \
@@ -101,7 +101,7 @@ FILES_${PN}-base += " \
     ${datadir}/webos-keymap/webos-keymap.qmap \
 "
 
-FILES_${PN}-base-tests += " \
+FILES:${PN}-base-tests += " \
     ${webos_applicationsdir}/ \
     ${webos_sysbus_manifestsdir}/ \
     ${webos_sysbus_permissionsdir}/ \
@@ -109,4 +109,4 @@ FILES_${PN}-base-tests += " \
     ${webos_testsdir}/${BPN}/ \
 "
 
-RDEPENDS_${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components"
+RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components"

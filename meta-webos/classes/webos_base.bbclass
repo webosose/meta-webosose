@@ -45,7 +45,7 @@ python do_write_bom_data() {
     pkg_lic = {}
     if packages:
         for pkg in packages.split():
-            lic = d.getVar("LICENSE_%s" % pkg, True)
+            lic = d.getVar("LICENSE:%s" % pkg, True)
             if lic and lic != license:
                 pkg_lic[pkg] = lic
     jsondata["pkg_lic"] = pkg_lic

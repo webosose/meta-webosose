@@ -12,7 +12,7 @@ file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 DEPENDS = "libpbnjson pmloglib glib-2.0 gtest systemd"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-27_0ee0f9692363f615f9e70c251827be79810d4f27"
 PR = "r28"
@@ -39,7 +39,7 @@ S = "${WORKDIR}/git"
 
 # This fix-up will be removed shortly. luna-service2 headers must be included
 # using '#include <luna-service2/*.h>'
-do_install_append() {
+do_install:append() {
     # XXX Temporarily, create links from the old locations until all users of
     # luna-service2 convert to using pkg-config
     ln -svnf luna-service2/lunaservice.h ${D}${includedir}/lunaservice.h
@@ -49,7 +49,7 @@ do_install_append() {
 
 # Disable LTTng tracepoints explicitly.
 # LTTng tracepoints in LS2 can cause out of memory, because LS2 is used by many components.
-# To enable tracepoints back use WEBOS_LTTNG_ENABLED_pn-luna-service2 = "1"
+# To enable tracepoints back use WEBOS_LTTNG_ENABLED:pn-luna-service2 = "1"
 WEBOS_LTTNG_ENABLED = "0"
 EXTRA_OECMAKE += " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
 
@@ -58,12 +58,12 @@ EXTRA_OECMAKE += '${@oe.utils.conditional("WEBOS_DISABLE_LS2_SECURITY", "1", "-D
 
 PACKAGES += "${PN}-perf"
 
-FILES_${PN}-perf += "${webos_testsdir}/${BPN}-perf"
+FILES:${PN}-perf += "${webos_testsdir}/${BPN}-perf"
 
 # Disable QA checks which are now triggered after moving the webos_testsdir from /opt to /usr/opt
 # luna-service2-ptest: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/libls-hublib-test.so
-INSANE_SKIP_${PN}-ptest += "libdir"
+INSANE_SKIP:${PN}-ptest += "libdir"
 # luna-service2-dbg: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/.debug/libls-hublib-test.so
-INSANE_SKIP_${PN}-dbg += "libdir"
+INSANE_SKIP:${PN}-dbg += "libdir"
 
 SRC_URI += "file://0001-util.hpp-hub_service.hpp-include-string-to-fix-build.patch"

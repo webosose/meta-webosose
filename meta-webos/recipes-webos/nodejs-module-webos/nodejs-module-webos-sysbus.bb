@@ -28,7 +28,7 @@ do_compile() {
 
 WEBOS_NODE = "webos-sysbus.node"
 
-do_install_append() {
+do_install:append() {
     install ${S}/src/palmbus.js ${D}${libdir}/nodejs/palmbus.js
     # The CMake build did this with macros
     install -d ${D}${webos_sysbus_rolesdir}

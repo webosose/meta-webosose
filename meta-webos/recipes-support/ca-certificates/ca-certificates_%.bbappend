@@ -1,14 +1,14 @@
 # Copyright (c) 2013-2018 LG Electronics, Inc.
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-EXTENDPRAUTO_append = "webos3"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+EXTENDPRAUTO:append = "webos3"
 
 CERT_SOURCE_DIR = "${datadir}/ca-certificates"
 CERT_TARGET_DIR = "${sysconfdir}/ssl/certs"
 
 inherit webos_certificates
 
-do_install_append() {
+do_install:append() {
     cd ${D}${sysconfdir}/ssl/certs
     for a in *.pem
     do
@@ -21,4 +21,4 @@ do_install_append() {
 # ca-certificats is allarch, so it either has to RDEPENDS on ${MLPREFIX}openssl or
 # in this case it's easier to just remove the dependency and pull it from somewhere
 # else
-RDEPENDS_${PN}_remove = "openssl"
+RDEPENDS:${PN}:remove = "openssl"

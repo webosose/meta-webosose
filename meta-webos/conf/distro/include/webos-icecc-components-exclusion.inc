@@ -2,7 +2,7 @@
 
 # These packages fail to build when icecc is used
 
-ICECC_USER_PACKAGE_BL_append = " \
+ICECC_USER_PACKAGE_BL:append = " \
     busybox \
     gmp-native \
     linux-libc-headers \
@@ -10,7 +10,7 @@ ICECC_USER_PACKAGE_BL_append = " \
     nss \
 "
 
-ICECC_USER_PACKAGE_BL_append_arm = " \
+ICECC_USER_PACKAGE_BL:append:arm = " \
     binutils \
     e2fsprogs \
     gcc \

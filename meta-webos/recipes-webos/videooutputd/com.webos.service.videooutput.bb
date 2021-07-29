@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 VIRTUAL-RUNTIME_val-impl ??= "videooutput-adaptation-layer-mock"
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson val-impl"
-RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_val-impl}"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_val-impl}"
 WEBOS_VERSION = "1.0.0-13_931b3e59260a97ea0741ebbd1d84fd30b405b484"
 PR = "r2"
 

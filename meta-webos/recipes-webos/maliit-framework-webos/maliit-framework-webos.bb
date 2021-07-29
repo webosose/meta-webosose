@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qtbase qtdeclarative qtwayland-webos libxkbcommon pmloglib luna-service2 glib-2.0 udev wayland"
-RDEPENDS_${PN} = "qtbase-plugins configd"
+RDEPENDS:${PN} = "qtbase-plugins configd"
 
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
@@ -39,7 +39,7 @@ EXTRA_QMAKEVARS_PRE += "${EXTRA_CONF_PACKAGECONFIG}"
 # .pc generation should be fixed to use correct paths
 SSTATE_SCAN_FILES += "*.prf *.pc"
 
-do_install_append() {
+do_install:append() {
     # headers
     install -d ${D}${includedir}/maliit
     install -v -m 644 ${S}/common/maliit/*.h ${D}${includedir}/maliit/
@@ -47,11 +47,11 @@ do_install_append() {
     install -v -m 644 ${S}/src/maliit/plugins/*.h ${D}${includedir}/maliit/plugins/
 }
 
-FILES_${PN}-dev += "${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs"
+FILES:${PN}-dev += "${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs"
 
-do_install_append() {
+do_install:append() {
     sed -i 's@libdir=${STAGING_LIBDIR}@libdir=${libdir}@g' ${D}${libdir}/pkgconfig/*.pc
     sed -i 's@includedir=${STAGING_INCDIR}@includedir=${includedir}@g' ${D}${libdir}/pkgconfig/*.pc
 }
 
-FILES_${PN} += "${OE_QMAKE_PATH_QT_ARCHDATA}"
+FILES:${PN} += "${OE_QMAKE_PATH_QT_ARCHDATA}"

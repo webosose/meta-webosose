@@ -20,7 +20,7 @@ DEPENDS = " \
 # specified by BLUETOOTH_SIL_NAME
 BLUETOOTH_SIL_NAME ?= "bluez5"
 BLUETOOTH_SIL_COMPONENT = "${@ ' bluetooth-sil-'.join([''] + '${BLUETOOTH_SIL_NAME}'.split(' '))}"
-RDEPENDS_${PN} = " \
+RDEPENDS:${PN} = " \
     ${BLUETOOTH_SIL_COMPONENT} \
 "
 

@@ -8,7 +8,7 @@ SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57"
 DEPENDS = "leveldb"
-DEPENDS_append_class-target = " gtest"
+DEPENDS:append:class-target = " gtest"
 PR = "r3"
 
 SRC_URI = "git://github.com/ony/${BPN};branch=gcc-4.7;protocol=https"
@@ -21,7 +21,7 @@ S = "${WORKDIR}/git"
 
 inherit cmake
 
-EXTRA_OECMAKE_append_class-native = " -DBUILD_TESTING:BOOL=false -DBUILD_MKSANDWICH:BOOL=false"
+EXTRA_OECMAKE:append:class-native = " -DBUILD_TESTING:BOOL=false -DBUILD_MKSANDWICH:BOOL=false"
 
 BBCLASSEXTEND = "native"
 

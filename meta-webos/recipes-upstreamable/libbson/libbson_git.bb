@@ -19,7 +19,7 @@ S = "${WORKDIR}/git"
 
 inherit cmake
 
-do_configure_append() {
+do_configure:append() {
     find ${S}/src -type f -name "*.[c|h]" | xargs sed -i 's/\([^"|^\/]\)yajl_/\1bson_yajl_/g'
     find ${S}/src -type f -name "*.[c|h]" | xargs sed -i 's/^yajl_/bson_yajl_/g'
 }

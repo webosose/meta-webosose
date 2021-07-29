@@ -49,7 +49,7 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
 # Error: Cannot find module 'glob'
 WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional --verbose"
 
-do_compile_append() {
+do_compile:append() {
     ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
     ${WEBOS_NODE_BIN} ./scripts/cli.js transpile
 }
@@ -64,7 +64,7 @@ install_acg_configuration() {
     install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.json
 }
 
-do_install_append() {
+do_install:append() {
     install_acg_configuration
 
     # Enact does something wrong in this case, chown to prevent host-user-contaminated QA issue
@@ -72,4 +72,4 @@ do_install_append() {
     chown root:root -R ${D}
 }
 
-FILES_${PN} += "${webos_applicationsdir}"
+FILES:${PN} += "${webos_applicationsdir}"

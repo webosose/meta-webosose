@@ -12,7 +12,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 # (Note that the OE 2011.03 bitbake.conf defines WORKDIR to effectively prepend
 # "${PACKAGE_ARCH}-${TARGET_VENDOR}-${TARGET_OS}/" for all PACKAGE_ARCH-s, i.e.
 # there are separate subdirectories instead of suffixes.)
-# WORKDIR_append = "-${PACKAGE_ARCH}"
+# WORKDIR:append = "-${PACKAGE_ARCH}"
 
 # Append this to EXTRA_OEMAKE to allow your makefile be MACHINE-dependent:
 WEBOS_MACHINE ?= "${MACHINE}"
