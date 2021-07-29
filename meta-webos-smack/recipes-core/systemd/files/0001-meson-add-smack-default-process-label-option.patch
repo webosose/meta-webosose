@@ -1,4 +1,4 @@
-From 9b69bf2a8f1f47cfd89cf76102b75ab6afa7c3ad Mon Sep 17 00:00:00 2001
+From a7059bf28303504e77650d18806230c041af6fc8 Mon Sep 17 00:00:00 2001
 From: "eugene.todoruk" <eugene.todoruk@lge.com>
 Date: Wed, 29 May 2019 12:32:32 +0300
 Subject: [PATCH] meson: add smack-default-process-label option
@@ -9,12 +9,12 @@ Subject: [PATCH] meson: add smack-default-process-label option
  2 files changed, 7 insertions(+)
 
 diff --git a/meson.build b/meson.build
-index 79b762faeb..b0e13f5df1 100644
+index c6167b93eb..f79a2d0f8f 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -872,6 +872,11 @@ if smack_run_label != ''
-         conf.set_quoted('SMACK_RUN_LABEL', smack_run_label)
- endif
+@@ -1017,6 +1017,11 @@ conf.set10('HAVE_APPARMOR', have)
+ conf.set10('HAVE_SMACK_RUN_LABEL', get_option('smack-run-label') != '')
+ conf.set_quoted('SMACK_RUN_LABEL', get_option('smack-run-label'))
  
 +smack_default_process_label = get_option('smack-default-process-label')
 +if smack_default_process_label != ''
@@ -25,10 +25,10 @@ index 79b762faeb..b0e13f5df1 100644
  install_polkit = false
  install_polkit_pkla = false
 diff --git a/meson_options.txt b/meson_options.txt
-index 5dc898eb80..f5e0146664 100644
+index 82ef983d22..3831b758bc 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -241,6 +241,8 @@ option('smack', type : 'boolean',
+@@ -332,6 +332,8 @@ option('smack', type : 'boolean',
         description : 'SMACK support')
  option('smack-run-label', type : 'string',
         description : 'run systemd --system itself with a specific SMACK label')

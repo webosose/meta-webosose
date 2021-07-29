@@ -1,4 +1,4 @@
-From ba4607c9bc28fd2f93d49f5c60174994fb597bd8 Mon Sep 17 00:00:00 2001
+From ef79a7645f3c0a42b76ac5b8e63bb01dcf0f0bc7 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 21 Aug 2020 13:50:06 -0700
 Subject: [PATCH] fileio.c: fix build with smack enabled
@@ -22,11 +22,12 @@ cc1: some warnings being treated as errors
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
- src/basic/fileio.c | 1 +
- 1 file changed, 1 insertion(+)
+ src/basic/fileio.c    | 1 +
+ src/basic/meson.build | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/src/basic/fileio.c b/src/basic/fileio.c
-index c3d55d209a..d94fee9234 100644
+index 99a44fdea2..5561315e70 100644
 --- a/src/basic/fileio.c
 +++ b/src/basic/fileio.c
 @@ -23,6 +23,7 @@
@@ -37,3 +38,16 @@ index c3d55d209a..d94fee9234 100644
  #include "stdio-util.h"
  #include "string-util.h"
  #include "tmpfile-util.h"
+diff --git a/src/basic/meson.build b/src/basic/meson.build
+index 9b016ce5e8..eb1e43bfad 100644
+--- a/src/basic/meson.build
++++ b/src/basic/meson.build
+@@ -370,7 +370,7 @@ libbasic = static_library(
+         'basic',
+         basic_sources,
+         fundamental_sources,
+-        include_directories : basic_includes,
++        include_directories : [basic_includes, include_directories('../shared')],
+         dependencies : [versiondep,
+                         threads,
+                         libcap,

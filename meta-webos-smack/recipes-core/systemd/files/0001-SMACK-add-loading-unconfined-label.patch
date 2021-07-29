@@ -84,7 +84,7 @@ index 8cc1696a4f..c2b97ad10c 100644
                  return log_emergency_errno(r, "Failed to write Smack onlycap list: %m");
          }
  
-+	r = write_unconfined();
++        r = write_unconfined();
 +        switch(r) {
 +        case -ENOENT:
 +                log_debug("Smack is not enabled in the kernel.");
