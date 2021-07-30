@@ -1,4 +1,4 @@
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 #
 # webos_certificates
 #
@@ -34,7 +34,7 @@ webos_certificates_linkfiles() {
 
 # Removes all files in a semicolon-separated (;) list.
 # arg1: Semicolon-separated list of file paths
-webos_certificates_removefiles() {
+webos_certificates_delete_files() {
     local IFS=";"
     for path in $1;
     do
@@ -59,7 +59,7 @@ webos_certificates_linkcertificates() {
     c_rehash $DESTDIR > /dev/null 2>&1
 
     # Remove the links we created before c_rehash and then replace them with new ones.
-    webos_certificates_removefiles $TEMPORARY_LINKS
+    webos_certificates_delete_files $TEMPORARY_LINKS
 
     # Create links to replace the previous links that were deleted.
     # These are the final ones that will work properly in the image, but not during build phase.
