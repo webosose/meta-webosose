@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2020 LG Electronics, Inc.
+# Copyright (c) 2015-2021 LG Electronics, Inc.
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE ??= "PACKAGE"
 
@@ -141,7 +141,7 @@ def webos_configure_manifest_service(d):
 
     return manifests
 
-def webos_configure_manifest_comment_remover(text):
+def webos_configure_manifest_delete_comments(text):
     import re
 
     def replacer(match):
@@ -158,7 +158,7 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
     manifest = webos_configure_manifest_template()
 
     with open(app_info_file, "r") as f:
-        app_info = json.loads(webos_configure_manifest_comment_remover(f.read()))
+        app_info = json.loads(webos_configure_manifest_delete_comments(f.read()))
 
 
         def is_valid_version(version):

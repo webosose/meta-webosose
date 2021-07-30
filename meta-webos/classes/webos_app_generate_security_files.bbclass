@@ -122,7 +122,7 @@ def webos_app_generate_security_files_get_immediate_subdirectories(root):
     return [name for name in os.listdir(root)
             if os.path.isdir(os.path.join(root, name))]
 
-def webos_app_generate_security_files_comment_remover(text):
+def webos_app_generate_security_files_delete_comments(text):
     import re
 
     def replacer(match):
@@ -142,7 +142,7 @@ def webos_app_generate_security_files_read_json(file):
     with open(file, "r") as f:
         content = f.read()
 
-    content = webos_app_generate_security_files_comment_remover(content)
+    content = webos_app_generate_security_files_delete_comments(content)
     return json.loads(content)
 
 fakeroot python do_configure_security() {
