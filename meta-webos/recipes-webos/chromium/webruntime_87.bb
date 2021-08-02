@@ -6,7 +6,7 @@ require webruntime-repo${REPO_VERSION}.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
 GN_ARGS_append = " use_x11=false"
 
@@ -33,3 +33,4 @@ GN_ARGS_append = " \
   enable_js_type_check=false\
   use_local_storage_tracker=true\
 "
+PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav neva-webrtc"
