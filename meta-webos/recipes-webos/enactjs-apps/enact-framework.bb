@@ -4,7 +4,7 @@ SUMMARY = "Enact moonstone standard override used for Enact apps"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://enact/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
 
 inherit webos_enact_repo
 inherit webos_arch_indep
@@ -22,10 +22,10 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "4.0.0"
+PV = "4.0.2"
 
-SRCREV_main = "2c57bf461f8922eb9f0aff86a207f77698ab50a6"
-SRCREV_enact = "5b23abc4f462392fa1f62533c7bb9bfb42260654"
+SRCREV_main = "84dcafa4392e2a10511225bc011449a930607d95"
+SRCREV_enact = "ef7085f13a3affc3fdab44bde183d364b354ff8d"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
@@ -42,8 +42,8 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     fbjs@0.8.17 \
     global@4.4.0 \
     hoist-non-react-statics@2.5.5 \
-    iconv-lite@0.6.2 \
-    ilib@14.8.0 \
+    iconv-lite@0.6.3 \
+    ilib@14.9.1 \
     invariant@2.2.4 \
     is-function@1.0.2 \
     is-stream@1.1.0 \
@@ -61,7 +61,9 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     react@17.0.2 \
     react-dom@17.0.2 \
     react-is@17.0.2 \
-    recompose@0.26.0 \
+    react-lifecycles-compat@3.0.4 \
+    recompose@0.30.0 \
+    regenerator-runtime@0.13.9 \
     safer-buffer@2.1.2 \
     scheduler@0.20.2 \
     setimmediate@1.0.5 \
@@ -76,14 +78,10 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r9"
+PR = "r10"
 
-# Don't need to configure or compile anything for an enactjs app, but don't use
-# do_<task>[noexec] = "1" so that recipes that inherit can still override
-
-do_configure() {
-    :
-}
+# Skip unneeded tasks
+do_configure[noexec] = "1"
 
 do_compile() {
     cd ${S}

@@ -4,7 +4,7 @@ DESCRIPTION = "enact-dev command-line tools used by webOS"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
 SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://cli/LICENSE;md5=9456eea7fa7e9e4a4fcdf8e430bd36c8"
 
 # Dependencies:
 #   - nodejs-native to get node & npm
@@ -17,7 +17,7 @@ inherit native
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r10"
+PR = "r11"
 
 S = "${WORKDIR}/git"
 
@@ -38,8 +38,8 @@ SRCREV_FORMAT = "main_cli-legacy_jsdoc-to-ts"
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "4.0.2"
-SRCREV = "957de13dd358c6d32df84414e40ad64a8b798aef"
+PV = "4.0.3"
+SRCREV = "81e067291eefb72a166f0be5d89b7d97ff8d1a78"
 SRCREV_cli-legacy = "bf5012e50bdca62ff596b73a55a5b5f93ccf1069"
 SRCREV_jsdoc-to-ts = "91e3709da01f4a8e0d57c2ed80d068789acf37eb"
 
