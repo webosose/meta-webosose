@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos89"
+EXTENDPRAUTO_append = "webos90"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -80,9 +80,9 @@ PACKAGECONFIG_remove = "tests"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Upstream-Status: Backport
+# Upstream-Status: Submitted
 SRC_URI_append = " \
-    file://0001-Fix-binding-functor-addressing-in-QProperty.patch \
+    file://0001-Fix-button-type-to-update-coordinates-when-dragging.patch \
 "
 
 # Upstream-Status: Inappropriate

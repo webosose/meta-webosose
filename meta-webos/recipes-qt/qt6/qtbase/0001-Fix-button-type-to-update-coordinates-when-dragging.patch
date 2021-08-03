@@ -1,0 +1,33 @@
+From 1e6e4e3ab3307f6d0eaebc6efbde2cfe4be38f61 Mon Sep 17 00:00:00 2001
+From: Cathy Park <cathy.park@lge.com>
+Date: Mon, 2 Aug 2021 17:53:59 +0900
+Subject: [PATCH] Fix button type to update coordinates when dragging
+
+A move position (x,y) can be delivered to the MouseArea only if
+button is Qt::NoButton during mouse move (dragging). Otherwise
+mouse move does not cause positionChanged in MouseArea.
+
+Task-number: QTBUG-95453
+Pick-to: 6.1 6.2
+Change-Id: I298943dc4f6f30714e940f4029c62dd52c176b93
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtbase/+/362797]
+---
+ src/platformsupport/input/evdevmouse/qevdevmousehandler.cpp | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/platformsupport/input/evdevmouse/qevdevmousehandler.cpp b/src/platformsupport/input/evdevmouse/qevdevmousehandler.cpp
+index 5d6f20bd1a..2012022656 100644
+--- a/src/platformsupport/input/evdevmouse/qevdevmousehandler.cpp
++++ b/src/platformsupport/input/evdevmouse/qevdevmousehandler.cpp
+@@ -204,7 +204,10 @@ void QEvdevMouseHandler::sendMouseEvent()
+         m_prevInvalid = false;
+     }
+ 
+-    emit handleMouseEvent(x, y, m_abs, m_buttons, m_button, m_eventType);
++    if (m_eventType == QEvent::MouseMove)
++        emit handleMouseEvent(x, y, m_abs, m_buttons, Qt::NoButton, m_eventType);
++    else
++        emit handleMouseEvent(x, y, m_abs, m_buttons, m_button, m_eventType);
+ 
+     m_prevx = m_x;
+     m_prevy = m_y;

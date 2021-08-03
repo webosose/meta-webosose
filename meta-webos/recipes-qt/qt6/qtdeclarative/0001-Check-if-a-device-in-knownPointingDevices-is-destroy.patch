@@ -1,4 +1,4 @@
-From 99734dce8a82c2b876f4cc2de7896d0d0ce3ccb2 Mon Sep 17 00:00:00 2001
+From bcf1ef522634fc0ceba5c81d052b05188087f278 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 15 Jun 2021 13:49:55 +0900
 Subject: [PATCH] Check if a device in knownPointingDevices is destroyed before
@@ -19,10 +19,10 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative
  2 files changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/src/quick/util/qquickdeliveryagent.cpp b/src/quick/util/qquickdeliveryagent.cpp
-index 2b649d01cf..cd5f6cb901 100644
+index 344024ab7c..2b602f35ef 100644
 --- a/src/quick/util/qquickdeliveryagent.cpp
 +++ b/src/quick/util/qquickdeliveryagent.cpp
-@@ -273,9 +273,16 @@ void QQuickDeliveryAgentPrivate::removeGrabber(QQuickItem *grabber, bool mouse,
+@@ -269,9 +269,16 @@ void QQuickDeliveryAgentPrivate::removeGrabber(QQuickItem *grabber, bool mouse,
      Q_Q(QQuickDeliveryAgent);
      if (eventsInDelivery.isEmpty()) {
          // do it the expensive way
@@ -42,7 +42,7 @@ index 2b649d01cf..cd5f6cb901 100644
          }
          return;
      }
-@@ -1543,7 +1550,6 @@ void QQuickDeliveryAgentPrivate::ensureDeviceConnected(const QPointingDevice *de
+@@ -1639,7 +1646,6 @@ void QQuickDeliveryAgentPrivate::ensureDeviceConnected(const QPointingDevice *de
          return;
      knownPointingDevices.append(dev);
      connect(dev, &QPointingDevice::grabChanged, this, &QQuickDeliveryAgentPrivate::onGrabChanged);
@@ -51,7 +51,7 @@ index 2b649d01cf..cd5f6cb901 100644
  
  void QQuickDeliveryAgentPrivate::deliverPointerEvent(QPointerEvent *event)
 diff --git a/src/quick/util/qquickdeliveryagent_p_p.h b/src/quick/util/qquickdeliveryagent_p_p.h
-index 0d7d5fb71d..39ce1a364a 100644
+index f9095158e8..7acdbeb31b 100644
 --- a/src/quick/util/qquickdeliveryagent_p_p.h
 +++ b/src/quick/util/qquickdeliveryagent_p_p.h
 @@ -110,7 +110,7 @@ public:
@@ -61,5 +61,5 @@ index 0d7d5fb71d..39ce1a364a 100644
 -    QList<const QPointingDevice *> knownPointingDevices;
 +    QList<QPointer<const QPointingDevice> > knownPointingDevices;
  
+     uint currentHoverId = 0;
  #if QT_CONFIG(wheelevent)
-     uint lastWheelEventAccepted = 0;
