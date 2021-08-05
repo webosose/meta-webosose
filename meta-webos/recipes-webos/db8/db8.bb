@@ -22,7 +22,7 @@ RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME
 RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.2.0-15_d800ccad05c94aa79420f185ba3f87d24c1dd295"
-PR = "r34"
+PR = "r35"
 
 inherit webos_component
 inherit webos_public_repo
@@ -58,3 +58,4 @@ BBCLASSEXTEND = "native"
 
 # From http://gpro.lgsvl.com/190951
 SRC_URI += "file://0001-CMakeLists.txt-explicitly-link-with-libatomic-to-fix.patch"
+SRC_URI += "file://0001-MojOsInternal.h-update-for-glibc-2.34.patch"
