@@ -18,7 +18,7 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-15_e9d8253132f6745c6cbff49a6e7fdd345b50aad9"
+WEBOS_VERSION = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
 PR = "r9"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
