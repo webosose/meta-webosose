@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos68"
+EXTENDPRAUTO_append = "webos69"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -29,3 +29,14 @@ SRC_URI_append_class-native = " file://qmllint-supplement.py"
 do_install_append_class-native() {
     install -m 755 ${WORKDIR}/qmllint-supplement.py ${D}${OE_QMAKE_PATH_QT_BINS}
 }
+
+# TODO: To workaround the build issue where a recipe that depends on
+# qtdeclarative fails at do_configure with CMake errors like:
+# The imported target "Qt6::qmltyperegistrar" references the file
+# ".../recipe-sysroot/usr/libexec/qmltyperegistrar"
+# The imported target "Qt6::qmldom" references the file
+# ".../recipe-sysroot/usr/bin/qmldom"
+SYSROOT_DIRS_append = " \
+    ${bindir} \
+    ${libexecdir} \
+"
