@@ -4,9 +4,9 @@ SUMMARY = "A localization tool is written in JavaScript"
 AUTHOR = "Goun Lee<goun.lee@lge.com>"
 SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
-PR = "r5"
+PR = "r6"
 
 inherit pythonnative
 inherit webos_npm_env
@@ -20,8 +20,8 @@ S = "${WORKDIR}/git"
 # iLib-js/ilib-loctool-webos-dist repository on GitHub. This version should correspond to the
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
-PV = "1.4.0"
-SRCREV = "986d3fdf3776da673a445c5855a3a10e1ce44a4c"
+PV = "1.5.0"
+SRCREV = "86b83a1bbfa3f0585300bf57c3472af000e8a1fa"
 
 # Skip the unwanted tasks
 do_configure[noexec] = "1"
