@@ -4,7 +4,7 @@ SUMMARY = "Provides preference, timezone and ringtone services"
 AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+LIC_FILES_CHKSUM = "file://LICENSE;md5=7bd705f8ae3d5077cbd3da7078607d8b \
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -14,8 +14,8 @@ DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib ny
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode"
 
-WEBOS_VERSION = "4.4.0-15_eff73f8b0ad000a697b90ee9d57332d6e6e432ee"
-PR = "r8"
+WEBOS_VERSION = "4.4.0-17_a6b79399204c0927ef80028faaeb995862d777a3"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
