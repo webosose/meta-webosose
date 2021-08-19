@@ -9,7 +9,7 @@ file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
 file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
-WEBOS_VERSION = "0.0.1-4_508b2ee01858090c0191543ff8b1b3ef8d046df8"
+WEBOS_VERSION = "0.0.1-5_a2532a5949b3db69efabe543176a6e85b38595e1"
 PR = "r0"
 
 inherit webos_component
