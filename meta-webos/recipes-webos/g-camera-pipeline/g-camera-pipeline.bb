@@ -18,21 +18,22 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
-PR = "r9"
-
-WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-13.gav.20_20f5e22b8e1fae6c44a71b729415ee72d87a51e0"
+PR = "r10"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
 DEPENDS_append_rpi = " userland"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-S = "${WORKDIR}/git"
+WEBOS_GIT_PARAM_BRANCH = "@gav"
+WEBOS_VERSION = "1.0.0-13.gav.21_4231a2804ba30ee1dc780e29c5d224a6903da6ae"
+
+WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "master"
+WEBOS_VERSION_raspberrypi3 = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
 
 # See the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^raspberrypi3$"
-COMPATIBLE_MACHINE_append = "|^raspberrypi4$"
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$"
+
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+S = "${WORKDIR}/git"
 
 FILES_SOLIBSDEV = ""
 FILES_${PN} += "${libdir}/*.so"

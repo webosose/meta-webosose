@@ -4,16 +4,17 @@ SUMMARY = "webOS uMediaserver daemon and utilities"
 AUTHOR = "Ian Cain <ian.cain@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
-LIC_FILES_CHKSUM_raspberrypi4 += "file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519"
+LIC_FILES_CHKSUM = " \
+  file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
+  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
 DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 luna-service2 pmloglib boost luna-prefs"
 DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
-WEBOS_VERSION = "1.0.0-24_0407a711cbe8e747dfda50633d8b1c70b0ffc9ef"
-PR = "r16"
+PR = "r17"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -40,8 +41,11 @@ COMPATIBLE_MACHINE_armv7ve = "(.*)"
 COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
-WEBOS_GIT_PARAM_BRANCH_raspberrypi4 = "@gav"
-WEBOS_VERSION_raspberrypi4 = "1.0.0-24.gav.18_dbda25cc40cc4916ec36fca4fda09a36e9a43f3e"
+WEBOS_GIT_PARAM_BRANCH = "@gav"
+WEBOS_VERSION = "1.0.0-24.gav.19_44e71aa82937cfbde73222669aa96ff0c060ea42"
+
+WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "master"
+WEBOS_VERSION_raspberrypi3 = "1.0.0-26_3f1cb5df3ed06d730b90ab9c404fb3cd0a3e219b"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
