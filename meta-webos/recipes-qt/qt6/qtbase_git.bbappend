@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos90"
+EXTENDPRAUTO_append = "webos91"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -80,7 +80,7 @@ PACKAGECONFIG_remove = "tests"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Upstream-Status: Submitted
+# Upstream-Status: Backport
 SRC_URI_append = " \
     file://0001-Fix-button-type-to-update-coordinates-when-dragging.patch \
 "

@@ -2,13 +2,14 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos69"
+EXTENDPRAUTO_append = "webos70"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Upstream-Status: Backport, Submitted
+# Upstream-Status: Submitted
 SRC_URI_append_class-target = " \
     file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch \
+    file://0002-qqmllistmodel-Fix-QObjects-setting-indestructible.patch \
 "
 
 # Upstream-Status: Inappropriate

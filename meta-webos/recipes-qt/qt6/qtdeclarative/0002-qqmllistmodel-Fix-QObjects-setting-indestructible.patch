@@ -1,0 +1,105 @@
+From 68856b463467e679c0c52760ce0342848bf5306e Mon Sep 17 00:00:00 2001
+From: Cathy Park <cathy.park@lge.com>
+Date: Thu, 19 Aug 2021 15:40:27 +0900
+Subject: [PATCH] qqmllistmodel: Fix QObjects setting indestructible
+
+It makes a QObject indestructable only if its ownership is determined.
+This fixes an issue where a QObject created by createObject() in QML
+becomes indestructable once it is appended to a ListModel.
+
+Fixes: QTBUG-95895
+Pick-to: 6.2
+Change-Id: I30647298977d7901dab938626e8f94b9910c21e3
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/365868]
+---
+ src/qmlmodels/qqmllistmodel.cpp                |  2 +-
+ .../qml/qqmllistmodel/data/destroyObject.qml   | 18 ++++++++++++++++++
+ .../auto/qml/qqmllistmodel/data/dummyItem.qml  |  5 +++++
+ .../qml/qqmllistmodel/tst_qqmllistmodel.cpp    | 17 +++++++++++++++++
+ 4 files changed, 41 insertions(+), 1 deletion(-)
+ create mode 100644 tests/auto/qml/qqmllistmodel/data/destroyObject.qml
+ create mode 100644 tests/auto/qml/qqmllistmodel/data/dummyItem.qml
+
+diff --git a/src/qmlmodels/qqmllistmodel.cpp b/src/qmlmodels/qqmllistmodel.cpp
+index a9c58d59a5..b71931cc85 100644
+--- a/src/qmlmodels/qqmllistmodel.cpp
++++ b/src/qmlmodels/qqmllistmodel.cpp
+@@ -1112,7 +1112,7 @@ static void setQObjectOwnership(char *mem, QObject *o)
+     if (!ddata)
+         ddata = QQmlData::get(o, true);
+ 
+-    ddata->indestructible = true;
++    ddata->indestructible = ownership != 0;
+     ddata->explicitIndestructibleSet = false;
+ 
+     new (mem) ListElement::GuardedQObjectPointer(
+diff --git a/tests/auto/qml/qqmllistmodel/data/destroyObject.qml b/tests/auto/qml/qqmllistmodel/data/destroyObject.qml
+new file mode 100644
+index 0000000000..22d600d2bb
+--- /dev/null
++++ b/tests/auto/qml/qqmllistmodel/data/destroyObject.qml
+@@ -0,0 +1,18 @@
++import QtQuick
++
++Item {
++    id: root
++    property ListModel projects: ListModel {}
++    property var object
++
++    Component.onCompleted: {
++        var comp= Qt.createComponent("dummyItem.qml");
++        object = comp.createObject(root, {});
++        projects.append({"name": object});
++    }
++
++    function destroy() {
++        object.destroy();
++        return true;
++    }
++}
+diff --git a/tests/auto/qml/qqmllistmodel/data/dummyItem.qml b/tests/auto/qml/qqmllistmodel/data/dummyItem.qml
+new file mode 100644
+index 0000000000..c9939efcdf
+--- /dev/null
++++ b/tests/auto/qml/qqmllistmodel/data/dummyItem.qml
+@@ -0,0 +1,5 @@
++import QtQml
++
++QtObject {
++    property var random: null
++}
+diff --git a/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp b/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
+index a9b6ec03a4..6195382998 100644
+--- a/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
++++ b/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
+@@ -136,6 +136,7 @@ private slots:
+     void destroyObject();
+     void emptyStringNotUndefined();
+     void listElementWithTemplateString();
++    void destroyComponentObject();
+ };
+ 
+ bool tst_qqmllistmodel::compareVariantList(const QVariantList &testList, QVariant object)
+@@ -1856,6 +1857,22 @@ void tst_qqmllistmodel::listElementWithTemplateString()
+     QVERIFY(!root.isNull());
+ }
+ 
++//QTBUG-95895
++void tst_qqmllistmodel::destroyComponentObject()
++{
++    QQmlEngine eng;
++    QQmlComponent component(&eng, testFileUrl("destroyObject.qml"));
++    QVERIFY(!component.isError());
++    QScopedPointer<QQuickItem> item(qobject_cast<QQuickItem*>(component.create()));
++    QVERIFY(item != 0);
++    QVariant retVal;
++    QMetaObject::invokeMethod(item.data(),
++                              "destroy",
++                               Qt::DirectConnection,
++                               Q_RETURN_ARG(QVariant, retVal));
++    QVERIFY(retVal.toBool());
++}
++
+ QTEST_MAIN(tst_qqmllistmodel)
+ 
+ #include "tst_qqmllistmodel.moc"

@@ -10,7 +10,7 @@ mouse move does not cause positionChanged in MouseArea.
 Task-number: QTBUG-95453
 Pick-to: 6.1 6.2
 Change-Id: I298943dc4f6f30714e940f4029c62dd52c176b93
-Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtbase/+/362797]
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/362797]
 ---
  src/platformsupport/input/evdevmouse/qevdevmousehandler.cpp | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
