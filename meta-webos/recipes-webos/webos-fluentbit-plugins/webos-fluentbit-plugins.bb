@@ -8,11 +8,11 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "glib-2.0 luna-service2 json-c libpbnjson fluentbit"
-RDEPENDS_${PN} = "python3-core python3-requests python3-atlassian-python-api"
+DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit"
+RDEPENDS_${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
-WEBOS_VERSION = "1.0.0-18_6987f5ac7fcd64b5df3c3352fb238d0c0f3fd9d7"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-20_c85f2e8912ee45fdad054925257990002528ae39"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions

@@ -9,10 +9,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=9dc14fd8aee1928cb4947063ac388f74 \
 "
 
-DEPENDS = "qtdeclarative pmloglib librdx qt-features-webos"
+DEPENDS = "qtdeclarative pmloglib qt-features-webos luna-service2 glib-2.0"
 
-WEBOS_VERSION = "1.0.0-54_b995381efeafef72262bfd5d934ab2718c58fc5d"
-PR = "r16"
+WEBOS_VERSION = "1.0.0-55_2013bd787616f74e3d879fe115022a915cc324bd"
+PR = "r17"
 
 inherit webos_qmake6
 inherit webos_machine_impl_dep

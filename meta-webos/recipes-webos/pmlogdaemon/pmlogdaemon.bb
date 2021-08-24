@@ -8,13 +8,13 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "pmloglib zlib glib-2.0 librdx libpbnjson pmloglib-private luna-service2"
+DEPENDS = "pmloglib zlib glib-2.0 libpbnjson pmloglib-private luna-service2"
 # show_disk_usage.sh script uses mktemp, find, xargs, and du, all of which are
 # provided by busybox.
 RDEPENDS_${PN} = "busybox"
 
-WEBOS_VERSION = "3.1.0-11_ead7c2ce86165d6bc349e445bb7c01bb5a003d8d"
-PR = "r10"
+WEBOS_VERSION = "3.1.0-13_17f40f7074f3f0a54395e6b1bc6b29af02d46fb8"
+PR = "r11"
 
 inherit webos_component
 inherit webos_public_repo

@@ -17,7 +17,6 @@ VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
 VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
 VIRTUAL-RUNTIME_webappmanager ?= ""
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
-VIRTUAL-RUNTIME_librdx ?= "rdxd"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
 VIRTUAL-RUNTIME_surface-manager-conf ?= "luna-surfacemanager-conf"
 VIRTUAL-RUNTIME_surface-manager-extension ?= ""
@@ -205,7 +204,6 @@ RDEPENDS_${PN} = " \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_iotivity-node} \
-    ${VIRTUAL-RUNTIME_librdx} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_org.ocf.webossample} \

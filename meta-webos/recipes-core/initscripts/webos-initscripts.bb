@@ -12,15 +12,14 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 # The dependency needs to be deleted after deleting fake initctl.
 DEPENDS = "systemd"
 
-VIRTUAL-RUNTIME_rdx-utils ?= "rdxd"
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_rdx-utils} ${VIRTUAL-RUNTIME_bash} python3"
+RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_bash} python3"
 
 PROVIDES = "initscripts"
 RPROVIDES_${PN} = "initscripts initd-functions"
 
-WEBOS_VERSION = "3.0.0-75_db4bff344f2b125f7fb81df65e122e3af8e06354"
-PR = "r16"
+WEBOS_VERSION = "3.0.0-76_8f6cf5df37009b90ac2eadbd9224f5b1de36b6d1"
+PR = "r17"
 
 inherit webos_component
 inherit webos_enhanced_submissions
