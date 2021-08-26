@@ -1,4 +1,4 @@
-From 4fef670216ec019ce347e310a38b9d1c0a6aff73 Mon Sep 17 00:00:00 2001
+From c88d704fdf7d2ab162f16f81f97dd87ced6c8566 Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Mon, 27 Apr 2020 11:56:21 +0530
 Subject: [PATCH] Fix device/getStatus not updated when unpaired
@@ -28,7 +28,7 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/src/device.c b/src/device.c
-index 20e86e3eb..567b3e504 100644
+index 2079b6c86..87ef87aed 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -1861,13 +1861,13 @@ static void device_profile_connected(struct btd_device *dev,

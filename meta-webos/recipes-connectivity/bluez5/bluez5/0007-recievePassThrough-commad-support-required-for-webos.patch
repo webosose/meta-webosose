@@ -1,4 +1,4 @@
-From 5d0bf8b0af49adab265e9ac8d830c17692501159 Mon Sep 17 00:00:00 2001
+From 676204a6ddf505f4fdaeeed7dc6ba373d022ab59 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -56,7 +56,7 @@ index 50de33618..abbee205f 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index 1a668335e..12053a306 100644
+index 03ea5cb3f..6d9eff031 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -171,6 +171,11 @@ enum {
@@ -158,7 +158,7 @@ index 1a668335e..12053a306 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3019,6 +3068,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3082,6 +3131,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -167,7 +167,7 @@ index 1a668335e..12053a306 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4184,6 +4235,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4252,6 +4303,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->adapter = adapter;
  	device->temporary = true;
  
@@ -178,11 +178,11 @@ index 1a668335e..12053a306 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 4ae9abe0d..7cefee6db 100644
+index 5f615cb4b..394470060 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -177,3 +177,5 @@ void btd_device_flags_changed(struct btd_device *dev, uint32_t supported_flags,
- 
+@@ -179,3 +179,5 @@ bool btd_device_all_services_allowed(struct btd_device *dev);
+ void btd_device_update_allowed_services(struct btd_device *dev);
  void btd_device_init(void);
  void btd_device_cleanup(void);
 +

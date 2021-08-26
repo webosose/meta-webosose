@@ -1,4 +1,4 @@
-From 95d5bc2cdc3e2c7938e252f4b8058122640bbfc6 Mon Sep 17 00:00:00 2001
+From f159e3d01cf6f88d5039422b210d19ca931c4e65 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 25 Jan 2021 16:27:58 +0530
 Subject: [PATCH] Add support for meshd to use RAW channel

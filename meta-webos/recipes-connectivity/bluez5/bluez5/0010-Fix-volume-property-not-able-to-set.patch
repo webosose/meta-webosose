@@ -1,4 +1,4 @@
-From 98fcab5b34563119e7b408049015f4a25c78bfba Mon Sep 17 00:00:00 2001
+From 1c9aa46305ff947d0e1f9d9de5ec0c531618ec35 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Mon, 21 Jan 2019 12:44:19 +0530
 Subject: [PATCH] Fix volume property not able to set
@@ -26,7 +26,7 @@ Change-Id: I183357a5de4b95a6e02d39d9d51c4af715bf0a54
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
-index 8248014ae..c6c17d039 100644
+index d158fc97a..9bb98a0d4 100644
 --- a/profiles/audio/transport.c
 +++ b/profiles/audio/transport.c
 @@ -810,7 +810,7 @@ static int media_transport_init_source(struct media_transport *transport)

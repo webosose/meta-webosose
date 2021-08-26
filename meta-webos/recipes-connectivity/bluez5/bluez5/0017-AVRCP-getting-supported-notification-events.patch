@@ -1,4 +1,4 @@
-From 7497dded069e70cff6c6d5b54e5d51b51d7c9e9a Mon Sep 17 00:00:00 2001
+From b632ec0b8e4a5584e6e7b6ab378d2c3b7330ed53 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -26,7 +26,7 @@ Upstream-Status: Inappropriate[webos specific]
  2 files changed, 22 insertions(+)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 5585e53f3..dbac46e24 100644
+index 8a1f315e8..fc588205d 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
 @@ -3991,6 +3991,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
@@ -38,7 +38,7 @@ index 5585e53f3..dbac46e24 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index 567b3e504..064983f32 100644
+index 87ef87aed..7383781ff 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -282,6 +282,7 @@ struct btd_device {
@@ -82,7 +82,7 @@ index 567b3e504..064983f32 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3160,6 +3180,7 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3223,6 +3243,7 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_avrcp_ct_feature_exist},
  	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
  				NULL, dev_property_avrcp_tg_feature_exist},

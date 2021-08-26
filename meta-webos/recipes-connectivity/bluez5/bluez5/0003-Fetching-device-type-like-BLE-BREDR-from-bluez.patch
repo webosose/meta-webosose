@@ -1,4 +1,4 @@
-From 84ea8ffa177381b070518089d41b92ba8bd7b651 Mon Sep 17 00:00:00 2001
+From e18dacaa6956528dc1e0812bf6d075cf047a58bb Mon Sep 17 00:00:00 2001
 From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
 Date: Fri, 1 Jun 2018 11:43:15 +0530
 Subject: [PATCH] Fetching device type like BLE, BREDR from bluez
@@ -24,7 +24,7 @@ Upstream-Status : Pending
  1 file changed, 17 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index 65838f59f..229e239fb 100644
+index 807106812..4253a9bae 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -206,6 +206,7 @@ struct btd_device {
@@ -57,7 +57,7 @@ index 65838f59f..229e239fb 100644
  static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
  							uint16_t *appearance)
  {
-@@ -2916,6 +2932,7 @@ static const GDBusMethodTable device_methods[] = {
+@@ -2979,6 +2995,7 @@ static const GDBusMethodTable device_methods[] = {
  static const GDBusPropertyTable device_properties[] = {
  	{ "Address", "s", dev_property_get_address },
  	{ "AddressType", "s", property_get_address_type },

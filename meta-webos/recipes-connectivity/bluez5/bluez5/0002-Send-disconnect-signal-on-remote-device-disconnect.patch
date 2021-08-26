@@ -1,4 +1,4 @@
-From a893234f2aa6f5376bf71cfe85221b6dbb526e1e Mon Sep 17 00:00:00 2001
+From 9421e5aab591217a8c9b3cc030e5a0657a88c98c Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Thu, 17 May 2018 18:15:48 +0530
 Subject: [PATCH] Send disconnect signal on remote device disconnect
@@ -26,7 +26,7 @@ Upstream-Status : Pending
  1 file changed, 4 insertions(+)
 
 diff --git a/src/profile.c b/src/profile.c
-index 5e460b639..a287eee66 100644
+index e1bebf1ee..36a999c7a 100644
 --- a/src/profile.c
 +++ b/src/profile.c
 @@ -727,6 +727,8 @@ static GSList *custom_props = NULL;
@@ -38,7 +38,7 @@ index 5e460b639..a287eee66 100644
  void btd_profile_foreach(void (*func)(struct btd_profile *p, void *data),
  								void *data)
  {
-@@ -843,6 +845,8 @@ drop:
+@@ -867,6 +869,8 @@ drop:
  			btd_service_disconnecting_complete(conn->service, 0);
  	}
  
