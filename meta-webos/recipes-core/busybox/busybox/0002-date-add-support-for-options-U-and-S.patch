@@ -1,4 +1,4 @@
-From b6d8a3f0ac77267a40a010e854adfb573f82d9b4 Mon Sep 17 00:00:00 2001
+From 2b261a2232bda648401753f64bd65136aecd977d Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:24:12 +0000
 Subject: [PATCH] date: add support for options -U and -S

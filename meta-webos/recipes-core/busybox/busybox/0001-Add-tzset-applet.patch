@@ -1,4 +1,4 @@
-From 0b7ccc8f4c62c1c11593de542200e5974d5551e5 Mon Sep 17 00:00:00 2001
+From c4c67ae0387d4b99044d733128188df4ee337697 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:22:45 +0000
 Subject: [PATCH] Add tzset applet

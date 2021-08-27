@@ -1,4 +1,4 @@
-From 5a8682957534e7abd9f1bcfbe37c255cc9b73477 Mon Sep 17 00:00:00 2001
+From 774524dbddfdb74f92e56897a0b0a64d8876502d Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 6 Nov 2017 17:24:53 +0000
 Subject: [PATCH] libedit: check for null before passing cmdedit_prompt to
@@ -10,16 +10,16 @@ Signed-off-by: Martin Jansa <martin.jansa@lge.com>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/libbb/lineedit.c b/libbb/lineedit.c
-index 75de88e77..d5fe5120a 100644
+index 68d19e127..178018085 100644
 --- a/libbb/lineedit.c
 +++ b/libbb/lineedit.c
 @@ -460,7 +460,9 @@ static void beep(void)
   */
  static void put_prompt_custom(bool is_full)
  {
--	fputs((is_full ? cmdedit_prompt : prompt_last_line), stdout);
+-	fputs_stdout((is_full ? cmdedit_prompt : prompt_last_line));
 +	if ( !is_full || NULL != cmdedit_prompt ) {
-+		fputs((is_full ? cmdedit_prompt : prompt_last_line), stdout);
++		fputs_stdout((is_full ? cmdedit_prompt : prompt_last_line));
 +	}
  	cursor = 0;
  	cmdedit_y = cmdedit_prmt_len / cmdedit_termw; /* new quasireal y */
