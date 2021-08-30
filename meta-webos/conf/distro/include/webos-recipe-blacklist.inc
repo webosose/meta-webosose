@@ -40,6 +40,7 @@ PNBLACKLIST[qtdeviceutilities] ?= "fails to build with ninja: error: unknown tar
 PNBLACKLIST[qtcharts] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com/Errors/Details/200305"
 PNBLACKLIST[qtdatavis3d] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com/Errors/Details/200303"
 PNBLACKLIST[qtpositioning] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 http://gecko.lge.com/Errors/Details/200302"
+PNBLACKLIST[qt3d] ?= "fails to build with assimp enabled, Feature qt3d_system_assimp: Forcing to ON breaks its condition: QT_FEATURE_qt3d_assimp AND TEST_assimp, probably related to https://lists.openembedded.org/g/openembedded-core/message/155219"
 
 # meta-oe/recipes-support/vboxguestdrivers/vboxguestdrivers_6.1.18.bb:do_packagedata
 PNBLACKLIST[vboxguestdrivers] ?= "BROKEN: kernel-module-vboxguest conflicts in pkgdata with the vboxguest kernel modules we have enabled in linux-yocto"
