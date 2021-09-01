@@ -1,4 +1,4 @@
-From bcf1ef522634fc0ceba5c81d052b05188087f278 Mon Sep 17 00:00:00 2001
+From c81ac4495cdaf0fb7d6f9c02fd2e0ba234eef26c Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 15 Jun 2021 13:49:55 +0900
 Subject: [PATCH] Check if a device in knownPointingDevices is destroyed before

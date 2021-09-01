@@ -1,0 +1,137 @@
+From fa6ff7dc41e6bb79dda79e5f8ebb9b8c5e80994b Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Wed, 1 Sep 2021 18:47:08 +0900
+Subject: [PATCH] QQmlListModel: Fix C++ owned object getting destroyed
+
+If an object is explicitly set as C++ owned, it should not be turned to
+destructible in any case. explicitIndestructibleSet flag is used for
+that and thus it should not be unset in any case.
+This fixes an issue where a C++ owned object could be destroyed by GC
+when it is added to a ListModel. An object is supposed to be set as
+destructible implicitly when it is used as a return value from JS unless
+explicitIndestructibleSet is set.
+
+Fixes: QTBUG-96167
+Pick-to: 6.2
+Change-Id: Iad06847e56e29dd1b20146be108d7f747d8474dc
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/368105]
+---
+ src/qmlmodels/qqmllistmodel.cpp               |  8 ++---
+ .../qqmllistmodel/data/objectOwnership.qml    | 27 ++++++++++++++
+ .../qml/qqmllistmodel/tst_qqmllistmodel.cpp   | 35 +++++++++++++++++++
+ 3 files changed, 65 insertions(+), 5 deletions(-)
+ create mode 100644 tests/auto/qml/qqmllistmodel/data/objectOwnership.qml
+
+diff --git a/src/qmlmodels/qqmllistmodel.cpp b/src/qmlmodels/qqmllistmodel.cpp
+index b71931cc85..4ae6b011fa 100644
+--- a/src/qmlmodels/qqmllistmodel.cpp
++++ b/src/qmlmodels/qqmllistmodel.cpp
+@@ -1095,10 +1095,8 @@ restoreQObjectOwnership(ListElement::GuardedQObjectPointer *pointer)
+ 
+         // Only restore the previous state if the object hasn't become explicitly
+         // owned
+-        if (!data->explicitIndestructibleSet) {
++        if (!data->explicitIndestructibleSet)
+             data->indestructible = (pointer->tag() & ListElement::Indestructible);
+-            data->explicitIndestructibleSet = (pointer->tag() & ListElement::ExplicitlySet);
+-        }
+     }
+ }
+ 
+@@ -1112,8 +1110,8 @@ static void setQObjectOwnership(char *mem, QObject *o)
+     if (!ddata)
+         ddata = QQmlData::get(o, true);
+ 
+-    ddata->indestructible = ownership != 0;
+-    ddata->explicitIndestructibleSet = false;
++    if (!ddata->explicitIndestructibleSet)
++        ddata->indestructible = ownership != 0;
+ 
+     new (mem) ListElement::GuardedQObjectPointer(
+             o, static_cast<ListElement::ObjectIndestructible>(ownership));
+diff --git a/tests/auto/qml/qqmllistmodel/data/objectOwnership.qml b/tests/auto/qml/qqmllistmodel/data/objectOwnership.qml
+new file mode 100644
+index 0000000000..0ebb29d75b
+--- /dev/null
++++ b/tests/auto/qml/qqmllistmodel/data/objectOwnership.qml
+@@ -0,0 +1,27 @@
++import QtQuick
++
++ListView {
++    id: root
++    width: 100
++    height: 100
++
++    delegate: Component {
++        Item {
++            property Item myItem: refItem
++        }
++    }
++
++    model: ListModel {
++        id: listModel
++        objectName: "listModel"
++
++        function addItem() {
++            append({"refItem": cppOwnedItem});
++        }
++    }
++
++    function checkItem() {
++        root.currentIndex = 0;
++        currentItem.myItem.dummy();
++    }
++}
+diff --git a/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp b/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
+index 7f94180274..fae2b8da63 100644
+--- a/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
++++ b/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
+@@ -137,6 +137,7 @@ private slots:
+     void emptyStringNotUndefined();
+     void listElementWithTemplateString();
+     void destroyComponentObject();
++    void objectOwnershipFlip();
+ };
+ 
+ bool tst_qqmllistmodel::compareVariantList(const QVariantList &testList, QVariant object)
+@@ -1882,6 +1883,40 @@ void tst_qqmllistmodel::destroyComponentObject()
+     QCOMPARE(list->count(), 1);
+ }
+ 
++// Used for objectOwnershipFlip
++class TestItem : public QQuickItem
++{
++    Q_OBJECT
++public:
++    // To trigger QQmlData::setImplicitDestructible through QV4::CallArgument::toValue
++    Q_INVOKABLE TestItem* dummy() { return this; }
++};
++
++void tst_qqmllistmodel::objectOwnershipFlip()
++{
++    QQmlEngine engine;
++    QQmlComponent component(&engine, testFileUrl("objectOwnership.qml"));
++    QVERIFY(!component.isError());
++    QScopedPointer<QObject> root(component.create());
++    QVERIFY(!root.isNull());
++    QQmlListModel *model = root->findChild<QQmlListModel*>("listModel");
++    QVERIFY(model != nullptr);
++
++    QScopedPointer<TestItem> item(new TestItem());
++    item->setObjectName("cppOwnedItem");
++    QJSEngine::setObjectOwnership(item.data(), QJSEngine::CppOwnership);
++    QCOMPARE(QJSEngine::objectOwnership(item.data()), QJSEngine::CppOwnership);
++
++    engine.rootContext()->setContextProperty("cppOwnedItem", item.data());
++
++    QMetaObject::invokeMethod(model, "addItem");
++    QCOMPARE(model->count(), 1);
++
++    QMetaObject::invokeMethod(root.data(), "checkItem");
++
++    QCOMPARE(QJSEngine::objectOwnership(item.data()), QJSEngine::CppOwnership);
++}
++
+ QTEST_MAIN(tst_qqmllistmodel)
+ 
+ #include "tst_qqmllistmodel.moc"

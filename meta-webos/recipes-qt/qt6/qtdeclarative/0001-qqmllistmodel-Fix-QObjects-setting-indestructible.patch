@@ -1,4 +1,4 @@
-From 68856b463467e679c0c52760ce0342848bf5306e Mon Sep 17 00:00:00 2001
+From 54df41a8be6ca64149d343856a6732d40a3b3bc9 Mon Sep 17 00:00:00 2001
 From: Cathy Park <cathy.park@lge.com>
 Date: Thu, 19 Aug 2021 15:40:27 +0900
 Subject: [PATCH] qqmllistmodel: Fix QObjects setting indestructible
@@ -8,15 +8,19 @@ This fixes an issue where a QObject created by createObject() in QML
 becomes indestructable once it is appended to a ListModel.
 
 Fixes: QTBUG-95895
-Pick-to: 6.2
 Change-Id: I30647298977d7901dab938626e8f94b9910c21e3
-Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/365868]
+Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
+Reviewed-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Reviewed-by: Andrei Golubev <andrei.golubev@qt.io>
+(cherry picked from commit 69e07c55ad9b49b7643ffddfedc9a558983272ad)
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/367051]
 ---
- src/qmlmodels/qqmllistmodel.cpp                |  2 +-
- .../qml/qqmllistmodel/data/destroyObject.qml   | 18 ++++++++++++++++++
- .../auto/qml/qqmllistmodel/data/dummyItem.qml  |  5 +++++
- .../qml/qqmllistmodel/tst_qqmllistmodel.cpp    | 17 +++++++++++++++++
- 4 files changed, 41 insertions(+), 1 deletion(-)
+ src/qmlmodels/qqmllistmodel.cpp               |  2 +-
+ .../qml/qqmllistmodel/data/destroyObject.qml  | 23 ++++++++++++++++
+ .../auto/qml/qqmllistmodel/data/dummyItem.qml |  5 ++++
+ .../qml/qqmllistmodel/tst_qqmllistmodel.cpp   | 26 +++++++++++++++++++
+ 4 files changed, 55 insertions(+), 1 deletion(-)
  create mode 100644 tests/auto/qml/qqmllistmodel/data/destroyObject.qml
  create mode 100644 tests/auto/qml/qqmllistmodel/data/dummyItem.qml
 
@@ -35,13 +39,13 @@ index a9c58d59a5..b71931cc85 100644
      new (mem) ListElement::GuardedQObjectPointer(
 diff --git a/tests/auto/qml/qqmllistmodel/data/destroyObject.qml b/tests/auto/qml/qqmllistmodel/data/destroyObject.qml
 new file mode 100644
-index 0000000000..22d600d2bb
+index 0000000000..e6b3f33bb9
 --- /dev/null
 +++ b/tests/auto/qml/qqmllistmodel/data/destroyObject.qml
-@@ -0,0 +1,18 @@
-+import QtQuick
+@@ -0,0 +1,23 @@
++import QtQml
 +
-+Item {
++QtObject {
 +    id: root
 +    property ListModel projects: ListModel {}
 +    property var object
@@ -49,11 +53,16 @@ index 0000000000..22d600d2bb
 +    Component.onCompleted: {
 +        var comp= Qt.createComponent("dummyItem.qml");
 +        object = comp.createObject(root, {});
-+        projects.append({"name": object});
++        projects.append({"obj": object});
 +    }
 +
 +    function destroy() {
-+        object.destroy();
++        try {
++            object.destroy();
++        } catch(e) {
++            console.warn(e);
++            return false;
++        }
 +        return true;
 +    }
 +}
@@ -69,7 +78,7 @@ index 0000000000..c9939efcdf
 +    property var random: null
 +}
 diff --git a/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp b/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
-index a9b6ec03a4..6195382998 100644
+index a9b6ec03a4..7f94180274 100644
 --- a/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
 +++ b/tests/auto/qml/qqmllistmodel/tst_qqmllistmodel.cpp
 @@ -136,6 +136,7 @@ private slots:
@@ -80,7 +89,7 @@ index a9b6ec03a4..6195382998 100644
  };
  
  bool tst_qqmllistmodel::compareVariantList(const QVariantList &testList, QVariant object)
-@@ -1856,6 +1857,22 @@ void tst_qqmllistmodel::listElementWithTemplateString()
+@@ -1856,6 +1857,31 @@ void tst_qqmllistmodel::listElementWithTemplateString()
      QVERIFY(!root.isNull());
  }
  
@@ -90,14 +99,23 @@ index a9b6ec03a4..6195382998 100644
 +    QQmlEngine eng;
 +    QQmlComponent component(&eng, testFileUrl("destroyObject.qml"));
 +    QVERIFY(!component.isError());
-+    QScopedPointer<QQuickItem> item(qobject_cast<QQuickItem*>(component.create()));
-+    QVERIFY(item != 0);
++    QScopedPointer<QObject> obj(component.create());
++    QVERIFY(!obj.isNull());
++    QQmlListModel *list = qvariant_cast<QQmlListModel *>(obj->property("projects"));
++    QVERIFY(list != nullptr);
++    QCOMPARE(list->count(), 1);
++    QPointer<QObject> created(qvariant_cast<QObject *>(obj->property("object")));
++    QVERIFY(!created.isNull());
++    QCOMPARE(list->get(0).property("obj").toQObject(), created.data());
 +    QVariant retVal;
-+    QMetaObject::invokeMethod(item.data(),
++    QMetaObject::invokeMethod(obj.data(),
 +                              "destroy",
 +                               Qt::DirectConnection,
 +                               Q_RETURN_ARG(QVariant, retVal));
 +    QVERIFY(retVal.toBool());
++    QTRY_VERIFY(created.isNull());
++    QTRY_VERIFY(list->get(0).property("obj").isUndefined());
++    QCOMPARE(list->count(), 1);
 +}
 +
  QTEST_MAIN(tst_qqmllistmodel)
