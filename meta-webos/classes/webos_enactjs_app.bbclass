@@ -104,12 +104,12 @@ do_compile() {
 
     # ensure an NPM shrinkwrap file exists so app has its dependencies locked in
     if [ ! -f npm-shrinkwrap.json ] ; then
-        bberror "NPM shrinkwrap file not found. Ensure a shrinkwrap is included with the app source to lock in dependencies."
-        exit 1
+        bbwarn "NPM shrinkwrap file not found. Ensure a shrinkwrap is included with the app source to lock in dependencies."
+    else
+        cp -f npm-shrinkwrap.json npm-shrinkwrap.json.bak
     fi
 
     cp -f package.json package.json.bak
-    cp -f npm-shrinkwrap.json npm-shrinkwrap.json.bak
 
     # apply shrinkwrap override, rerouting to shared enact framework tarballs as needed
     if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
@@ -191,7 +191,9 @@ do_compile() {
     fi
 
     cp -f package.json.bak package.json
-    cp -f npm-shrinkwrap.json.bak npm-shrinkwrap.json
+    if [ -f npm-shrinkwrap.json.bak ] ; then
+        cp -f npm-shrinkwrap.json.bak npm-shrinkwrap.json
+    fi
     cd ${working}
 }
 
