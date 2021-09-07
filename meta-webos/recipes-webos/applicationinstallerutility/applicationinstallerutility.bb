@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 
 DEPENDS = "pmloglib openssl glib-2.0"
 
-WEBOS_VERSION = "3.0.0-3_bcac39f93b3d78cfd3af875f4faabbca7e8acae3"
+WEBOS_VERSION = "3.0.0-4_b92c22380a52ca20f72a04d52187ec0e52148eab"
 PR = "r2"
 
 inherit webos_component
