@@ -224,7 +224,6 @@ RDEPENDS_${PN} = " \
 "
 
 RDEPENDS_${PN}_append_webos = " \
-    com.webos.app.camera \
     com.webos.app.mediaviewer \
     com.webos.app.imageviewer \
     com.webos.app.videoplayer \
