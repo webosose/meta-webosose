@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 #
 # Variables invented by webOS for standard locations
@@ -166,9 +166,6 @@ webos_emulatorshareddir = "${webos_mediadir}/shared"
 
 # The presence of this file indicates that First Use has been completed.
 webos_firstusesentinelfile = "${webos_sysmgr_localstatedir}/preferences/ran-firstuse"
-
-# Note that everything under localstatedir is erased by a NYX_SYSTEM_ERASE_VAR erasure.
-webos_crashddir = "${webos_logdir}/crashd"
 
 # SDK tools
 webos_sdkdir = "${webos_optdir}/webos/sdk"

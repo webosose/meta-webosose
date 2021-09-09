@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2019 LG Electronics, Inc.
+# Copyright (c) 2012-2021 LG Electronics, Inc.
 
 DESCRIPTION = "CMake modules used by webOS"
 LICENSE = "Apache-2.0"
@@ -6,7 +6,7 @@ SECTION = "webos/devel/tools"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 WEBOS_VERSION = "1.6.3-3_a7010cb34dd263b63369c83a530890026b8c5a25"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo

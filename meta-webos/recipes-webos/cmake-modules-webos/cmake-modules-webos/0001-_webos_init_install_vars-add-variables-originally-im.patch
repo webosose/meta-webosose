@@ -30,7 +30,7 @@ diff --git a/webOS/webOS.cmake b/webOS/webOS.cmake
 index a666adf..37aa2ca 100644
 --- a/webOS/webOS.cmake
 +++ b/webOS/webOS.cmake
-@@ -489,6 +489,28 @@ macro(_webos_init_install_vars)
+@@ -489,6 +489,23 @@ macro(_webos_init_install_vars)
  	# The /opt/webos/tests tree contains all installed unit and/or integration test scripts and executables
  	_webos_set_from_env(WEBOS_INSTALL_TESTSDIR                  webos_testsdir                  ${WEBOS_INSTALL_ROOT}/opt/webos/tests)
  
@@ -51,11 +51,6 @@ index a666adf..37aa2ca 100644
 +
 +	# Path to file which indicate failure to init settingsservice
 +	_webos_set_from_env(WEBOS_INSTALL_SETTINGSSERVICE_ERRORSENTINELFILE   webos_settingsservice_errorsentinelfile ${WEBOS_INSTALL_WEBOS_LOCALSTATEDIR}/settingsservice_critical_error)
-+
-+	# Note that everything under localstatedir is erased by a NYX_SYSTEM_ERASE_VAR erasure.
-+	# webos_crashddir = "${webos_logdir}/crashd"
-+	# we don't need to set this one from environment, it's used only in a few recipes and passed explicitly
-+	# meta-webos/recipes-webos/crashd/crashd.bb:EXTRA_OECMAKE += "-DWEBOS_INSTALL_CRASHDDIR:STRING=${webos_crashddir}"
  endmacro()
  
  
