@@ -144,4 +144,4 @@ EOF
     chmod +x $filename
 }
 
-addtask do_exportbuildscript before do_compile after do_configure
+addtask do_exportbuildscript after do_configure
