@@ -1,0 +1,93 @@
+From e3314d6167889d11a26d536f281ec2f8f9ca5427 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Mon, 13 Sep 2021 13:05:35 +0900
+Subject: [PATCH] Revert "QRegularExpression: fix matching over null/empty
+ QString(View)"
+
+This reverts commit 8359615cf984ed84ab358570c6a0ab0344de7b0c as it
+causes a compile error with g++ 7. See also
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53157
+
+Upstream-Status : Inappropriate [workaround]
+---
+ src/corelib/text/qregularexpression.cpp       | 16 ++----------
+ .../tst_qregularexpression.cpp                | 25 ++-----------------
+ 2 files changed, 4 insertions(+), 37 deletions(-)
+
+diff --git a/src/corelib/text/qregularexpression.cpp b/src/corelib/text/qregularexpression.cpp
+index e055ae064a..72079c1996 100644
+--- a/src/corelib/text/qregularexpression.cpp
++++ b/src/corelib/text/qregularexpression.cpp
+@@ -1174,19 +1174,7 @@ void QRegularExpressionPrivate::doMatch(QRegularExpressionMatchPrivate *priv,
+     pcre2_jit_stack_assign_16(matchContext, &qtPcreCallback, nullptr);
+     pcre2_match_data_16 *matchData = pcre2_match_data_create_from_pattern_16(compiledPattern, nullptr);
+ 
+-    // PCRE does not accept a null pointer as subject string, even if
+-    // its length is zero. We however allow it in input: a QStringView
+-    // subject may have data == nullptr. In this case, to keep PCRE
+-    // happy, pass a pointer to a dummy character.
+-    constexpr char16_t dummySubject = 0;
+-    const char16_t * const subjectUtf16 = [&]()
+-    {
+-        const auto subjectUtf16 = priv->subject.utf16();
+-        if (subjectUtf16)
+-            return subjectUtf16;
+-        Q_ASSERT(subjectLength == 0);
+-        return &dummySubject;
+-    }();
++    const char16_t * const subjectUtf16 = priv->subject.utf16();
+ 
+     int result;
+ 
+@@ -1622,7 +1610,7 @@ QRegularExpressionMatch QRegularExpression::match(const QString &subject,
+     d.data()->compilePattern();
+     auto priv = new QRegularExpressionMatchPrivate(*this,
+                                                    subject,
+-                                                   QStringView(subject),
++                                                   qToStringViewIgnoringNull(subject),
+                                                    matchType,
+                                                    matchOptions);
+     d->doMatch(priv, offset);
+diff --git a/tests/auto/corelib/text/qregularexpression/tst_qregularexpression.cpp b/tests/auto/corelib/text/qregularexpression/tst_qregularexpression.cpp
+index 48d4de0aa4..f2fe382521 100644
+--- a/tests/auto/corelib/text/qregularexpression/tst_qregularexpression.cpp
++++ b/tests/auto/corelib/text/qregularexpression/tst_qregularexpression.cpp
+@@ -252,11 +252,8 @@ void consistencyCheck(const QRegularExpressionMatch &match)
+                     QVERIFY((endPos - startPos) == length);
+                     QVERIFY(captured == capturedView);
+                 } else {
+-                    // A null capture can either mean no capture at all,
+-                    // or capture of length 0 over a null subject.
+-                    QVERIFY(startPos == endPos);
+-                    QVERIFY(((startPos == -1) && (endPos == -1)) // no capture
+-                            || ((startPos == 0) && (endPos == 0))); // null subject
++                    QVERIFY(startPos == -1);
++                    QVERIFY(endPos == -1);
+                     QVERIFY((endPos - startPos) == length);
+                     QVERIFY(capturedView.isNull());
+                 }
+@@ -863,24 +860,6 @@ void tst_QRegularExpression::normalMatch_data()
+                              << QRegularExpression::MatchOptions(QRegularExpression::NoMatchOption)
+                              << m;
+ 
+-    m.clear();
+-    m.isValid = true; m.hasMatch = true;
+-    m.captured << QString();
+-    QTest::newRow("empty-in-null-string") << QRegularExpression("")
+-                             << QString()
+-                             << qsizetype(0)
+-                             << QRegularExpression::MatchOptions(QRegularExpression::NoMatchOption)
+-                             << m;
+-
+-    m.clear();
+-    m.isValid = true; m.hasMatch = true;
+-    m.captured << QString("");
+-    QTest::newRow("empty-in-empty-string") << QRegularExpression("")
+-                             << QString("")
+-                             << qsizetype(0)
+-                             << QRegularExpression::MatchOptions(QRegularExpression::NoMatchOption)
+-                             << m;
+-
+     // non existing names for capturing groups
+     m.clear();
+     m.isValid = true; m.hasMatch = true;

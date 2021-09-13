@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos91"
+EXTENDPRAUTO_append = "webos92"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -80,11 +80,6 @@ PACKAGECONFIG_remove = "tests"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Upstream-Status: Backport
-SRC_URI_append = " \
-    file://0001-Fix-button-type-to-update-coordinates-when-dragging.patch \
-"
-
 # Upstream-Status: Inappropriate
 SRC_URI_append = " \
     file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch \
@@ -94,6 +89,7 @@ SRC_URI_append = " \
 # Drop this once our build host has a newer version of g++.
 SRC_URI_append_class-native = " \
     file://0001-Fix-compile-error-with-g-7.5.0.patch \
+    file://0002-Revert-QRegularExpression-fix-matching-over-null-emp.patch \
 "
 
 # Flags needed for webOS
