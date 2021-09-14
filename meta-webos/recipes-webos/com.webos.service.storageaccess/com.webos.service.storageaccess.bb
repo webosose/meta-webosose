@@ -12,7 +12,7 @@ DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupn
 COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
-WEBOS_VERSION = "1.0.0-16_20342cce50681c0c5b56dd9f4bdce56d9084656d"
+WEBOS_VERSION = "1.0.0-17_8d99527ad0e8d42668c570293b4204f77fe1a458"
 PR = "r4"
 
 inherit webos_component
