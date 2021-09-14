@@ -9,7 +9,6 @@ MEDIA_append_rpi = " \
 "
 # Until build issues caused by PLAT-44962 are fixed in PLAT-45700
 MEDIA_raspberrypi3-64 = ""
-MEDIA_raspberrypi4-64 = ""
 
 SAFSERVICE = ""
 SAFSERVICE_raspberrypi4 = " \

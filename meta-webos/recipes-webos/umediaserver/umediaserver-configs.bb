@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
   file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-12_12cf0941d4fe3c40ef78fa9569ac4e7624e5b5a3"
+WEBOS_VERSION = "1.0.0-13_9a6afea61254c66a27dd46c37c7252a3b92acb4c"
 PR = "r7"
 
 inherit webos_cmake
