@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r38"
+PR = "r39"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -32,7 +32,12 @@ VIRTUAL-RUNTIME_com.webos.service.mediacontroller_qemux86 = "com.webos.service.m
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4 = "com.webos.service.mediacontroller"
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4-64 = "com.webos.service.mediacontroller"
 
-VIRTUAL-RUNTIME_g-media-pipeline ?= "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline ?= ""
+VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4-64 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_qemux86 = "g-media-pipeline"
 
 VIRTUAL-RUNTIME_g-camera-pipeline ?= ""
 VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4 = "g-camera-pipeline"

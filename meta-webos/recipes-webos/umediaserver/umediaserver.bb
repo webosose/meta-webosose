@@ -14,7 +14,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS_${PN} = "umediaserver-configs"
 
-PR = "r17"
+PR = "r18"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -42,10 +42,10 @@ COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-24.gav.19_44e71aa82937cfbde73222669aa96ff0c060ea42"
+WEBOS_VERSION = "1.0.0-24.gav.20_775b619f47853937593088e627792b7f11a86510"
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "master"
-WEBOS_VERSION_raspberrypi3 = "1.0.0-26_3f1cb5df3ed06d730b90ab9c404fb3cd0a3e219b"
+WEBOS_VERSION_raspberrypi3 = "1.0.0-27_dad33357ba323a69885bc11661330ab07296b0c8"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -64,8 +64,6 @@ FILES_${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${dat
 #   char message[MAX_FT_SIZE]; snprintf(message, MAX_FT_SIZE, format, args...);
 #                              ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 SECURITY_STRINGFORMAT = ""
-
-SRC_URI += "file://0001-Fix-build-with-boost-1.73.0.patch"
 
 #Remove videooutputd from OSE
 PACKAGECONFIG_remove_raspberrypi4 = "com.webos.service.videooutput"
