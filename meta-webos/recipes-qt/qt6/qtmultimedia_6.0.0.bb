@@ -38,7 +38,8 @@ CXXFLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'x11', '', '-DMESA_EGL_NO_X
 LDFLAGS_append_x86 = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd ', '', d)}"
 
 QT_MODULE_BRANCH = "dev"
-SRCREV = "e22a4c82ee24d3d574a6be629e3049248cfba9d9"
+# Needs the override since v6.2.0-rc2
+SRCREV_qtmultimedia = "e22a4c82ee24d3d574a6be629e3049248cfba9d9"
 PV = "6.0.0"
 
 SRC_URI += "\

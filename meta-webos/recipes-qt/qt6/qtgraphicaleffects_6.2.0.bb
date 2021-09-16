@@ -13,6 +13,7 @@ include recipes-qt/qt6/qt6.inc
 
 DEPENDS += "qtbase qtdeclarative"
 
-PV = "6.0.0"
+PV = "6.2.0"
+QT_MODULE_BRANCH = "6.2"
 
-SRCREV = "2910bb5d11da4261a88bd57c7251d86c51bb57d3"
+SRCREV = "59ab3e11433a5157aac0f3af7c0d7fe70a373373"
