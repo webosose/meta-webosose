@@ -14,11 +14,12 @@ DEPENDS = "libpbnjson"
 EXTRA_OECMAKE += "-DNO_TEST=1"
 
 WEBOS_VERSION = "1.0.0-8_c8079f2c44942cc4bcaee39499b0cd66da388d4d"
-PR = "r5"
+PR = "r6"
 
 inherit webos_component
 inherit webos_enhanced_submissions
 inherit webos_cmake
+inherit webos_pkgconfig
 inherit webos_machine_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
