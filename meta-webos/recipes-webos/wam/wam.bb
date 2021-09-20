@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-54_8de10667b88c163b669a760056d3b5dc24a3f222"
-PR = "r41"
+PR = "r42"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM_webos = "webos_cmake"
@@ -28,6 +28,7 @@ inherit webos_enhanced_submissions
 inherit webos_system_bus
 inherit webos_machine_dep
 inherit ${WAM_BUILD_SYSTEM}
+inherit webos_pkgconfig
 inherit webos_lttng
 inherit webos_distro_variant_dep
 inherit webos_distro_dep
