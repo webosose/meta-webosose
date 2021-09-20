@@ -167,9 +167,9 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
                 according to semver.org.
             """
             import re
-            pattern = re.compile("^(\d+\.\d+\.\d+)"
-                                 "(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
-                                 "(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$")
+            pattern = re.compile(r"^(\d+\.\d+\.\d+)"
+                                 r"(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
+                                 r"(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$")
             return re.match(pattern, version)
 
         manifest["id"] = app_info["id"]
