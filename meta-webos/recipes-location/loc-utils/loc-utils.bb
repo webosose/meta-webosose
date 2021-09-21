@@ -12,12 +12,13 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 curl pmloglib"
 
 WEBOS_VERSION = "1.0.0-21_d0236729512fee0f89ff9bb13b187f09a110481a"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_cmake
+inherit webos_pkgconfig
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
