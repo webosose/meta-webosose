@@ -12,11 +12,12 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 event-monitor pmloglib libpbnjson libwebosi18n"
 
 WEBOS_VERSION = "1.0.0-5_c99401afd1464f8b74766696560bad84a10e5ab4"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
 inherit webos_cmake
+inherit webos_pkgconfig
 inherit webos_event_monitor_plugin
 inherit webos_public_repo
 
