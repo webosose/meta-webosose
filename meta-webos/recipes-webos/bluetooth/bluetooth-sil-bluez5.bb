@@ -18,12 +18,13 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 RDEPENDS_${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
 WEBOS_VERSION = "0.1.0-75_a9d9cb0483288289f2911c809b112f13ddf01b02"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_cmake
+inherit webos_pkgconfig
 inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_distro_dep
