@@ -46,3 +46,11 @@ PV = "6.0.0"
 SRC_URI += "\
     file://0001-Fix-build-error-for-qtmultimedia-dev-branch.patch \
 "
+
+# this is already in the upstream recipe since:
+# https://code.qt.io/cgit/yocto/meta-qt6.git/commit/?id=d718354d16d1e65b0d02b360f56d23f56d083d69
+# it detects that pkgconfig is missing:
+# and then fails because pulseaudio PACKAGECONFIG is enabled but isn't detected:
+# ERROR: Feature 'pulseaudio' was enabled, but the pre-condition 'libs.pulseaudio' failed.
+# ERROR: Error calling TOPDIR/BUILD/work/qemux86-webos-linux/qtmultimedia/6.0.0-r0/recipe-sysroot-native/usr/bin/qmake -makefile -o Makefile    QT_BUILD_PARTS-=examples QT_BUILD_PARTS-=tests  TOPDIR/BUILD/work/qemux86-webos-linux/qtmultimedia/6.0.0-r0/git/qtmultimedia.pro  --   -alsa -pulseaudio -no-gstreamer
+inherit pkgconfig
