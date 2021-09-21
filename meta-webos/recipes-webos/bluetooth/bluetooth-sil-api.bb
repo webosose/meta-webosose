@@ -12,12 +12,13 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0"
 
 WEBOS_VERSION = "1.0.0-26_d1236c28f289d0e40f4d26c5d73ad198158e62bb"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_cmake
+inherit webos_pkgconfig
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
