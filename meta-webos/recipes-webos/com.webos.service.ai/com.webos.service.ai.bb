@@ -17,13 +17,14 @@ COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
 COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
 
 WEBOS_VERSION = "1.0.0-10_bca8a9b3669caae7173ea6196cdbfd86a88bb666"
-PR = "r4"
+PR = "r5"
 
 inherit systemd
 inherit webos_public_repo
 inherit webos_component
 inherit webos_enhanced_submissions
 inherit webos_cmake
+inherit webos_pkgconfig
 inherit webos_system_bus
 inherit webos_machine_impl_dep
 
