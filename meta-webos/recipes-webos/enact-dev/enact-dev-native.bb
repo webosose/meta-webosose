@@ -38,8 +38,8 @@ SRCREV_FORMAT = "main_cli-legacy_jsdoc-to-ts"
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "4.0.3"
-SRCREV = "81e067291eefb72a166f0be5d89b7d97ff8d1a78"
+PV = "4.1.2"
+SRCREV = "396a8b32fce74609d33f7b3e38c6ef75a1b59357"
 SRCREV_cli-legacy = "bf5012e50bdca62ff596b73a55a5b5f93ccf1069"
 SRCREV_jsdoc-to-ts = "91e3709da01f4a8e0d57c2ed80d068789acf37eb"
 
