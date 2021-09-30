@@ -9,13 +9,14 @@ WEBOS_VERSION = "1.0.0-1_083b69c1827edf5214dd78d8ac0cab96407b000b"
 
 inherit webos_enhanced_submissions
 inherit webos_qmake6
+inherit webos_pkgconfig
 inherit webos_app
 inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-build-with-qt-6.patch \
 "
-PR = "r2"
+PR = "r3"
 S = "${WORKDIR}/git"
 
 DEPENDS = "qtbase qt-features-webos qtdeclarative glib-2.0"
