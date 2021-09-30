@@ -155,6 +155,8 @@ PNBLACKLIST[libpeas] ?= "ERROR: libpeas-1.25.3-r0 do_configure: meson failed: te
 # meta-virtualization/recipes-extended/xen/xen-tools_git.bb
 PNBLACKLIST[xen-tools] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, details in https://lists.yoctoproject.org/g/meta-virtualization/message/5202', '', d)}"
 
+PNBLACKLIST[sysdig] ?= "Doesn't build with jsoncpp with exceptions disabled, meta-webos/recipes-devtools/jsoncpp/jsoncpp_%.bbappend adds -DJSON_USE_EXCEPTION=0"
+
 # meta-virtualization/recipes-extended/xen/xen-python2.bb
 PNBLACKLIST[xen-python2] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depends on blacklisted xen-tools', '', d)}"
 # meta-virtualization/recipes-extended/xen/xen_git.bb
