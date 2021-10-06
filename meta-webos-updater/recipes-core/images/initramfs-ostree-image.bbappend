@@ -1,6 +1,6 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos1"
+EXTENDPRAUTO_append = "webos2"
 
 IMAGE_CMD_cpio_append_sota() {
     # meta-updater and webos.inc uses different image name, need to match it
@@ -9,3 +9,8 @@ IMAGE_CMD_cpio_append_sota() {
             ${IMGDEPLOYDIR}/${INITRAMFS_IMAGE}-${MACHINE}.${INITRAMFS_FSTYPES}
     fi
 }
+
+# Fix build error (bitbake --runall patch webos-image)
+# ERROR: An uncaught exception occurred in runqueue
+# KeyError: '/home/builder/output/build-webos/meta-updater/recipes-core/images/initramfs-ostree-image.bb:do_unpack'
+deltask do_unpack
