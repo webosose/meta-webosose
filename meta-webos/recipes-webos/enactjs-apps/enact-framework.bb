@@ -43,7 +43,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     global@4.4.0 \
     hoist-non-react-statics@2.5.5 \
     iconv-lite@0.6.3 \
-    ilib@14.9.2 \
+    ilib@14.10.0 \
     invariant@2.2.4 \
     is-function@1.0.2 \
     is-stream@1.1.0 \
@@ -76,7 +76,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r12"
+PR = "r13"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
