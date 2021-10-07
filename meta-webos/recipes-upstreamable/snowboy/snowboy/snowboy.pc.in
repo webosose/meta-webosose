@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@/snowboy
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: Snowboy keword detection library
+Version: 1.3.0
+Libs: -L${libdir} -lsnowboy-detect-c
+Cflags: -I${includedir} @SNOWBOY_EXTRA_FLAGS@

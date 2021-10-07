@@ -12,6 +12,9 @@ inherit packagegroup
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
+VIRTUAL-RUNTIME_ai ?= "com.webos.service.ai"
+# The same restriction as libgoogleassistant (snowboy doesn't support i686;x86)
+VIRTUAL-RUNTIME_ai_i686 = ""
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
 VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
@@ -43,15 +46,6 @@ VIRTUAL-RUNTIME_g-camera-pipeline ?= ""
 VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4 = "g-camera-pipeline"
 VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4-64 = "g-camera-pipeline"
 VIRTUAL-RUNTIME_g-camera-pipeline_qemux86 = "g-camera-pipeline"
-
-VIRTUAL-RUNTIME_ai ?= ""
-VIRTUAL-RUNTIME_ai_raspberrypi3 = "com.webos.service.ai"
-VIRTUAL-RUNTIME_ai_raspberrypi4 = "com.webos.service.ai"
-# There is only rpi-32bit keyword detection library available.(https://github.com/Kitt-AI/snowboy/tree/master/lib)
-# It seems to be a library for arm-64bit(https://github.com/Kitt-AI/snowboy/tree/master/lib/aarch64-ubuntu1604),
-# but it has not been verified on webOS rpi64 which cannot boot yet.
-VIRTUAL-RUNTIME_ai_raspberrypi3-64 = ""
-VIRTUAL-RUNTIME_ai_raspberrypi4-64 = ""
 
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 
@@ -197,7 +191,6 @@ RDEPENDS_${PN} = " \
     webos-fontconfig-files \
     webos-nettools \
     ${MEDIA} \
-    ${VIRTUAL-RUNTIME_ai} \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_browser_fonts} \
     ${VIRTUAL-RUNTIME_com.example.app.iotivity} \
@@ -235,6 +228,7 @@ RDEPENDS_${PN}_append_webos = " \
     com.webos.service.uwb \
     gssdp \
     gupnp \
+    ${VIRTUAL-RUNTIME_ai} \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_g-camera-pipeline} \

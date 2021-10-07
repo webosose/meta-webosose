@@ -11,13 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libgoogleassistant"
 
-# libgoogleassistant contains prebuilt binaries useful only on raspberrypi3
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
-COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
-COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
-
-WEBOS_VERSION = "1.0.0-10_bca8a9b3669caae7173ea6196cdbfd86a88bb666"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-11_6bc7a16f334f58dfa4b439b6f849d79a1b72871b"
+PR = "r6"
 
 inherit systemd
 inherit webos_public_repo
