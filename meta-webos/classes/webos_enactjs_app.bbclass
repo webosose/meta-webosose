@@ -20,9 +20,9 @@ inherit webos_enactjs_env
 # Dependencies:
 #   - ilib-webapp so we can override NPM ilib dependency with device submission
 #   - mksnapshot-cross to use the mksnapshot binary to build v8 app snapshot blobs
-#   - enact-framework to use a shared Enact framework libraries
+#   - enact-framework, enact-sandstone to use a shared Enact framework libraries
 #   - coreutils-native to use timeout utility to prevent frozen NPM processes
-WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp mksnapshot-cross-${TARGET_ARCH} enact-framework coreutils-native"
+WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp mksnapshot-cross-${TARGET_ARCH} enact-framework enact-sandstone coreutils-native"
 DEPENDS_append = " ${WEBOS_ENACTJS_APP_DEPENDS}"
 
 # chromium doesn't build for armv[45]*
@@ -110,6 +110,17 @@ do_compile() {
     fi
 
     cp -f package.json package.json.bak
+
+    if [ -f ${S}/${WEBOS_ENACTJS_PROJECT_PATH}/package.json ] ; then
+        export ENACTJS_FRAMEWORK_VARIANT=$(${WEBOS_NODE_BIN} -e " \
+                try { \
+                    const deps = require(process.argv[1]).dependencies || []; \
+                    if (Object.keys(deps).includes('@enact/sandstone')) { \
+                        console.log('-sandstone'); \
+                    }
+                } catch(e) {} \
+            " ${S}/${WEBOS_ENACTJS_PROJECT_PATH}/package.json)
+    fi
 
     # apply shrinkwrap override, rerouting to shared enact framework tarballs as needed
     if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
