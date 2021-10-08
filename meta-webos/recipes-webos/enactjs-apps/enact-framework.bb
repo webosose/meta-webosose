@@ -25,7 +25,7 @@ SRC_URI = " \
 PV = "4.0.3"
 
 SRCREV_main = "8d4590d46fc35d64635e9e017926dc88be8fe1e2"
-SRCREV_enact = "e5c7a0c9d3b8d15321f5fff3c0d17bc0ae9a786e"
+SRCREV_enact = "d2d5262c8d026fbfd8fa635e5364491dc83cba7c"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
@@ -39,7 +39,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     direction@1.0.4 \
     dom-walk@0.1.2 \
     encoding@0.1.13 \
-    fbjs@0.8.17 \
+    fbjs@0.8.18 \
     global@4.4.0 \
     hoist-non-react-statics@2.5.5 \
     iconv-lite@0.6.3 \
@@ -66,7 +66,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     scheduler@0.20.2 \
     setimmediate@1.0.5 \
     symbol-observable@1.2.0 \
-    ua-parser-js@0.7.28 \
+    ua-parser-js@0.7.31 \
     warning@4.0.3 \
     whatwg-fetch@3.6.2 \
     xhr@2.6.0 \
@@ -76,7 +76,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r14"
+PR = "r15"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"

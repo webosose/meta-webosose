@@ -22,55 +22,36 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.0.1"
+PV = "2.1.0"
 
-SRCREV = "d82b4339adb6b89b060775fc12af0904c6eb8879"
-SRCREV_enact = "e5c7a0c9d3b8d15321f5fff3c0d17bc0ae9a786e"
+SRCREV = "e69d6dcdf0993bc00b79495af68c1796dc027193"
+SRCREV_enact = "d2d5262c8d026fbfd8fa635e5364491dc83cba7c"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
 
 # Ordered dependency list for Sandstone; provides shrink-wrap style locking in of package versions
 WEBOS_ENACT_DEPENDENCIES ??= "\
-    asap@2.0.6 \
-    change-emitter@0.1.6 \
     classnames@2.3.1 \
-    core-js@1.2.7 \
     direction@1.0.4 \
     dom-walk@0.1.2 \
-    encoding@0.1.13 \
-    fbjs@0.8.17 \
     global@4.4.0 \
-    hoist-non-react-statics@2.5.5 \
-    iconv-lite@0.6.3 \
-    ilib@14.9.2 \
+    ilib@14.11.1 \
     invariant@2.2.4 \
     is-function@1.0.2 \
-    is-stream@1.1.0 \
-    isomorphic-fetch@2.2.1 \
     js-tokens@4.0.0 \
     loose-envify@1.4.0 \
     min-document@2.19.0 \
-    node-fetch@1.7.3 \
     object-assign@4.1.1 \
     parse-headers@2.0.4 \
     process@0.11.10 \
-    promise@7.3.1 \
     prop-types@15.7.2 \
     ramda@0.24.1 \
     react@17.0.2 \
     react-dom@17.0.2 \
     react-is@17.0.2 \
-    react-lifecycles-compat@3.0.4 \
-    recompose@0.30.0 \
-    regenerator-runtime@0.13.9 \
-    safer-buffer@2.1.2 \
     scheduler@0.20.2 \
-    setimmediate@1.0.5 \
-    symbol-observable@1.2.0 \
-    ua-parser-js@0.7.28 \
     warning@4.0.3 \
-    whatwg-fetch@3.6.2 \
     xhr@2.6.0 \
     xtend@4.0.2 \
 "
@@ -78,7 +59,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r6"
+PR = "r7"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
