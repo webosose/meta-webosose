@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017 LG Electronics, Inc.
+# Copyright (c) 2016-2021 LG Electronics, Inc.
 
 SUMMARY = "Hangul input method library"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
@@ -7,7 +7,7 @@ SECTION = "libs"
 LICENSE = "LGPLv2.1"
 LIC_FILES_CHKSUM = "file://COPYING;md5=a6f89e2100d9b6cdffcea4f398e37343"
 
-PR = "r2"
+PR = "r3"
 
 inherit gettext
 inherit autotools
@@ -18,7 +18,7 @@ PV = "0.1.0+git${SRCPV}"
 
 EXTRA_OECONF += "--libdir=${libdir}/maliit/plugins"
 
-SRC_URI = "git://github.com/choehwanjin/libhangul.git \
+SRC_URI = "git://github.com/choehwanjin/libhangul.git;branch=main \
     file://0001-Change-the-project-to-address-code.google.com-p-libh.patch \
     file://0002-Add-rule-to-auto-update-when-you-make-dist-ChangeLog.patch \
     file://0003-Change-wrong-name-hangul-jongseong-dicompose-decomp.patch \
