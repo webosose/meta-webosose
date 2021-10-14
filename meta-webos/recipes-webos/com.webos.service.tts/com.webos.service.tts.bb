@@ -9,12 +9,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleapis grpc"
 
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$"
-COMPATIBLE_MACHINE_raspberrypi3-64 = "^$"
-COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
-
 WEBOS_VERSION = "1.0.0-20_dba2c3804230e47b90b317282debcf938b6656c3"
-PR = "r5"
+PR = "r6"
 
 inherit webos_component
 inherit webos_public_repo

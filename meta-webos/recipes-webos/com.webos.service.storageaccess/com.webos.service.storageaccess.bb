@@ -9,11 +9,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
 
 DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupnp"
 
-COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$"
-COMPATIBLE_MACHINE_raspberrypi4-64 = "^$"
-
 WEBOS_VERSION = "1.0.0-17_8d99527ad0e8d42668c570293b4204f77fe1a458"
-PR = "r5"
+PR = "r6"
 
 inherit webos_component
 inherit webos_public_repo

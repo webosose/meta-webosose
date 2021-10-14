@@ -17,13 +17,15 @@ VIRTUAL-RUNTIME_ai ?= "com.webos.service.ai"
 VIRTUAL-RUNTIME_ai_i686 = ""
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
-VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
-VIRTUAL-RUNTIME_webappmanager ?= ""
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
+VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
 VIRTUAL-RUNTIME_surface-manager-conf ?= "luna-surfacemanager-conf"
 VIRTUAL-RUNTIME_surface-manager-extension ?= ""
+VIRTUAL-RUNTIME_tts ?= "com.webos.service.tts"
+VIRTUAL-RUNTIME_webappmanager ?= ""
 VIRTUAL-RUNTIME_webos-ime ?= ""
+
 VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
     nyx-modules \
     nyx-modules-qemux86 \
@@ -100,13 +102,15 @@ VIRTUAL-RUNTIME_org.ocf.webossample_armv4 = ""
 VIRTUAL-RUNTIME_org.ocf.webossample_armv5 = ""
 VIRTUAL-RUNTIME_org.ocf.webossample_x86-64 = ""
 
-VIRTUAL-RUNTIME_contextintentmgr ?= "com.webos.service.contextintentmgr"
-VIRTUAL-RUNTIME_contextintentmgr_armv4 = ""
-VIRTUAL-RUNTIME_contextintentmgr_armv5 = ""
-
 VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
 VIRTUAL-RUNTIME_nodejs-module-node-red_armv4 = ""
 VIRTUAL-RUNTIME_nodejs-module-node-red_armv5 = ""
+
+# The same restrition as nodejs (and nodejs-module-node-red and com.webos.service.contextintentmgr)
+VIRTUAL-RUNTIME_contextintentmgr ?= "com.webos.service.contextintentmgr"
+VIRTUAL-RUNTIME_contextintentmgr_armv4 = ""
+VIRTUAL-RUNTIME_contextintentmgr_armv5 = ""
+VIRTUAL-RUNTIME_contextintentmgr_mips64 = ""
 
 VIRTUAL-RUNTIME_mojoservicelauncher ?= "mojoservicelauncher"
 VIRTUAL-RUNTIME_mojoservicelauncher_armv4 = ""
@@ -224,6 +228,7 @@ RDEPENDS_${PN}_append_webos = " \
     com.webos.app.mediaviewer \
     com.webos.app.imageviewer \
     com.webos.app.videoplayer \
+    com.webos.service.storageaccess \
     com.webos.service.swupdater \
     com.webos.service.uwb \
     gssdp \
@@ -231,7 +236,9 @@ RDEPENDS_${PN}_append_webos = " \
     ${VIRTUAL-RUNTIME_ai} \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
+    ${VIRTUAL-RUNTIME_contextintentmgr} \
     ${VIRTUAL-RUNTIME_g-camera-pipeline} \
+    ${VIRTUAL-RUNTIME_tts} \
     wireless-regdb-static \
 "
 
