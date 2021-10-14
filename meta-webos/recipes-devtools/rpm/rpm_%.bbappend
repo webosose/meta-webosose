@@ -1,8 +1,6 @@
-# Copyright (c) 2016-2019 LG Electronics, Inc.
+# Copyright (c) 2016-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos3"
-
-EXTRA_OECONF += "--without-abi-compliance-checker --without-api-sanity-checker"
+EXTENDPRAUTO_append = "webos4"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
