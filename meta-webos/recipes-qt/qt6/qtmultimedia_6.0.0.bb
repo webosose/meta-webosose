@@ -38,7 +38,8 @@ CXXFLAGS += "${@bb.utils.contains('DISTRO_FEATURES', 'x11', '', '-DMESA_EGL_NO_X
 LDFLAGS_append_x86 = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd ', '', d)}"
 
 QT_MODULE_BRANCH = "dev"
-# Needs the override since v6.2.0-rc2
+# Needs the "_${QT_MODULE}" suffix (it's not an override),
+# since v6.2.0-rc2 with https://code.qt.io/cgit/yocto/meta-qt6.git/commit/?id=f61b87ae78ff376c206baad10bc4184328889db7
 SRCREV_qtmultimedia = "e22a4c82ee24d3d574a6be629e3049248cfba9d9"
 PV = "6.0.0"
 
