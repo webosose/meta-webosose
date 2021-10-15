@@ -18,7 +18,7 @@ inherit webos_enhanced_submissions
 inherit webos_npm_env
 
 require flowmanager.inc
-PR = "r6"
+PR = "r7"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
@@ -44,3 +44,5 @@ do_compile_append() {
 }
 
 FILES_${PN} += "${webos_servicesdir}"
+
+SRC_URI += "file://0001-webpack-use-sha256-instead-of-ancient-md4-to-fix-bui.patch"
