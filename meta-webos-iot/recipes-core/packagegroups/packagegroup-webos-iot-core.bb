@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2021 LG Electronics, Inc.
 
 DESCRIPTION = "meta-webos-iot components used in webOS OSE"
 LICENSE = "Apache-2.0"
@@ -12,6 +12,7 @@ inherit packagegroup
 inherit webos_machine_impl_dep
 
 VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
+    nyx-utils \
     nyx-modules \
     nyx-modules-qemux86 \
 "
