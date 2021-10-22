@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 #
 # webos_npm_env
 #
@@ -23,7 +23,7 @@ def get_nodejs_arch(d):
 
 WEBOS_NPM_BIN ?= "${STAGING_BINDIR_NATIVE}/npm"
 WEBOS_NPM_CACHE_DIR ?= "${WORKDIR}/npm_cache"
-WEBOS_NPM_REGISTRY ?= "http://registry.npmjs.org/"
+WEBOS_NPM_REGISTRY ?= "https://registry.npmjs.org/"
 WEBOS_NPM_ARCH ?= "${@get_nodejs_arch(d)}"
 WEBOS_NPM_INSTALL_FLAGS ?= "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --production --without-ssl --insecure --no-optional --verbose"
 
