@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos92"
+EXTENDPRAUTO_append = "webos93"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -89,7 +89,7 @@ SRC_URI_append = " \
 # Drop this once our build host has a newer version of g++.
 SRC_URI_append_class-native = " \
     file://0001-Fix-compile-error-with-g-7.5.0.patch \
-    file://0002-Revert-QRegularExpression-fix-matching-over-null-emp.patch \
+    file://0002-Revert-commits-causing-a-compile-error-with-g-7.patch \
 "
 
 # Flags needed for webOS

@@ -1,11 +1,13 @@
-From e3314d6167889d11a26d536f281ec2f8f9ca5427 Mon Sep 17 00:00:00 2001
+From 54f09c2fbb037da71f4402cce2d53cc71b7e08c6 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
-Date: Mon, 13 Sep 2021 13:05:35 +0900
-Subject: [PATCH] Revert "QRegularExpression: fix matching over null/empty
- QString(View)"
+Date: Mon, 25 Oct 2021 09:53:13 +0900
+Subject: [PATCH] Revert commits causing a compile error with g++ 7
 
-This reverts commit 8359615cf984ed84ab358570c6a0ab0344de7b0c as it
-causes a compile error with g++ 7. See also
+This reverts commit 7fcae4e1b51d8a9d1ba65fb1ade240ae8b204980,
+"Fix compilation error with MSVC 2019 and C++20"
+and commit 8359615cf984ed84ab358570c6a0ab0344de7b0c,
+"QRegularExpression: fix matching over null/empty QString(View)"
+as they cause a compile error with g++ 7. See also
 https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53157
 
 Upstream-Status : Inappropriate [workaround]
@@ -15,10 +17,10 @@ Upstream-Status : Inappropriate [workaround]
  2 files changed, 4 insertions(+), 37 deletions(-)
 
 diff --git a/src/corelib/text/qregularexpression.cpp b/src/corelib/text/qregularexpression.cpp
-index e055ae064a..72079c1996 100644
+index b0728bca4a..e61d77f0b7 100644
 --- a/src/corelib/text/qregularexpression.cpp
 +++ b/src/corelib/text/qregularexpression.cpp
-@@ -1174,19 +1174,7 @@ void QRegularExpressionPrivate::doMatch(QRegularExpressionMatchPrivate *priv,
+@@ -1180,19 +1180,7 @@ void QRegularExpressionPrivate::doMatch(QRegularExpressionMatchPrivate *priv,
      pcre2_jit_stack_assign_16(matchContext, &qtPcreCallback, nullptr);
      pcre2_match_data_16 *matchData = pcre2_match_data_create_from_pattern_16(compiledPattern, nullptr);
  
@@ -26,7 +28,7 @@ index e055ae064a..72079c1996 100644
 -    // its length is zero. We however allow it in input: a QStringView
 -    // subject may have data == nullptr. In this case, to keep PCRE
 -    // happy, pass a pointer to a dummy character.
--    constexpr char16_t dummySubject = 0;
+-    const char16_t dummySubject = 0;
 -    const char16_t * const subjectUtf16 = [&]()
 -    {
 -        const auto subjectUtf16 = priv->subject.utf16();
@@ -39,7 +41,7 @@ index e055ae064a..72079c1996 100644
  
      int result;
  
-@@ -1622,7 +1610,7 @@ QRegularExpressionMatch QRegularExpression::match(const QString &subject,
+@@ -1628,7 +1616,7 @@ QRegularExpressionMatch QRegularExpression::match(const QString &subject,
      d.data()->compilePattern();
      auto priv = new QRegularExpressionMatchPrivate(*this,
                                                     subject,
