@@ -1,4 +1,4 @@
-From 36d5aad241425cc3b8b327c3337830bcc4932633 Mon Sep 17 00:00:00 2001
+From 7018eaf3f827aba6c50eab269c445a761a41bf67 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 11 Aug 2020 15:18:43 +0530
 Subject: [PATCH] AVRCP addToNowPlaying return error when player not supports
@@ -26,10 +26,10 @@ Upstream-Status: Inappropriate[webos specific]
  3 files changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index fc588205d..890a926c8 100644
+index ac46e387e..5d3d50596 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -2900,6 +2900,9 @@ static void avrcp_player_parse_features(struct avrcp_player *player,
+@@ -2901,6 +2901,9 @@ static void avrcp_player_parse_features(struct avrcp_player *player,
  	if (features[7] & 0x10)
  		media_player_set_searchable(mp, true);
  

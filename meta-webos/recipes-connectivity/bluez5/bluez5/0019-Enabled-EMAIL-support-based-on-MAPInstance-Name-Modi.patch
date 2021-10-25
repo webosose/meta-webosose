@@ -1,4 +1,4 @@
-From b09fd4cebf24f20e1ff7523af24cb24479b5a4ef Mon Sep 17 00:00:00 2001
+From 980cd6c0029c712d1b09b3d0b72eca30a56ab1b0 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Wed, 3 Jun 2020 18:08:39 +0530
 Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified

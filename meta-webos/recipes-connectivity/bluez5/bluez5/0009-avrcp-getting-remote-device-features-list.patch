@@ -1,4 +1,4 @@
-From b0d6f27988174e9e2f6f7721fcacf32a6a6d8871 Mon Sep 17 00:00:00 2001
+From c5eee75e9977b157786a46da6344ec299d2e72c0 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Tue, 5 Feb 2019 18:10:55 +0530
 Subject: [PATCH] avrcp getting remote device features list
@@ -29,10 +29,10 @@ Change-Id: I93393e5955c745c4df3eaddf6661177410ad3a7d
  3 files changed, 88 insertions(+)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index b661898ac..8a1f315e8 100644
+index 0339f4921..59f1dc750 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -4154,9 +4154,16 @@ static void target_init(struct avrcp *session)
+@@ -4155,9 +4155,16 @@ static void target_init(struct avrcp *session)
  				(1 << AVRCP_EVENT_TRACK_REACHED_END) |
  				(1 << AVRCP_EVENT_SETTINGS_CHANGED);
  
@@ -49,7 +49,7 @@ index b661898ac..8a1f315e8 100644
  	session->supported_events |=
  				(1 << AVRCP_EVENT_ADDRESSED_PLAYER_CHANGED) |
  				(1 << AVRCP_EVENT_AVAILABLE_PLAYERS_CHANGED) |
-@@ -4169,6 +4176,8 @@ static void target_init(struct avrcp *session)
+@@ -4170,6 +4177,8 @@ static void target_init(struct avrcp *session)
  	if (!(target->features & AVRCP_FEATURE_BROWSING))
  		return;
  
@@ -58,7 +58,7 @@ index b661898ac..8a1f315e8 100644
  	avrcp_connect_browsing(session);
  }
  
-@@ -4199,14 +4208,20 @@ static void controller_init(struct avrcp *session)
+@@ -4200,14 +4209,20 @@ static void controller_init(struct avrcp *session)
  	if (controller->version < 0x0103)
  		return;
  
@@ -80,7 +80,7 @@ index b661898ac..8a1f315e8 100644
  }
  
 diff --git a/src/device.c b/src/device.c
-index 4c45b92ff..47e3d32a5 100644
+index c186d43ec..d70712e69 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -280,6 +280,8 @@ struct btd_device {
@@ -92,7 +92,7 @@ index 4c45b92ff..47e3d32a5 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1377,6 +1379,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+@@ -1378,6 +1380,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -139,7 +139,7 @@ index 4c45b92ff..47e3d32a5 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -1964,6 +2006,25 @@ void media_metadata_request(struct btd_device *dev)
+@@ -1966,6 +2008,25 @@ void media_metadata_request(struct btd_device *dev)
  			DBUS_TYPE_INVALID);
  }
  
@@ -165,7 +165,7 @@ index 4c45b92ff..47e3d32a5 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3155,6 +3216,10 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3169,6 +3230,10 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_manufacturer_data_exist },
  	{ "KeyCode", "a{sv}", dev_property_get_key_code,
  				NULL, dev_property_key_code_exist},
@@ -176,7 +176,7 @@ index 4c45b92ff..47e3d32a5 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4328,6 +4393,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4362,6 +4427,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->passththough_key.state = NULL;
  	device->passththough_key.key = NULL;
  

@@ -1,4 +1,4 @@
-From bfccfdc589709c599d0db023fde9fa2bfd40de9f Mon Sep 17 00:00:00 2001
+From 810d7f8305919577f46d5ee7756deaecfea67b42 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 30 Jan 2019 15:17:11 +0530
 Subject: [PATCH] Added dbus signal for MediaPlayRequest
@@ -29,10 +29,10 @@ Change-Id: Ib225395809a3b53f1c494ac4e21beabc47f7f906
  4 files changed, 29 insertions(+), 2 deletions(-)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 22bd5df20..b661898ac 100644
+index 7c280203c..0339f4921 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -1236,6 +1236,7 @@ static uint8_t avrcp_handle_get_element_attributes(struct avrcp *session,
+@@ -1237,6 +1237,7 @@ static uint8_t avrcp_handle_get_element_attributes(struct avrcp *session,
  		 */
  		attr_ids = player_list_metadata(player);
  		len = g_list_length(attr_ids);
@@ -40,7 +40,7 @@ index 22bd5df20..b661898ac 100644
  	} else {
  		unsigned int i;
  		for (i = 0, len = 0, attr_ids = NULL; i < nattr; i++) {
-@@ -1502,6 +1503,7 @@ static uint8_t avrcp_handle_get_play_status(struct avrcp *session,
+@@ -1503,6 +1504,7 @@ static uint8_t avrcp_handle_get_play_status(struct avrcp *session,
  
  	pdu->params_len = htons(9);
  
@@ -49,10 +49,10 @@ index 22bd5df20..b661898ac 100644
  }
  
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 267722542..253029fa7 100644
+index 521902ed8..5a74d9b00 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1221,7 +1221,7 @@ static uint32_t get_position(void *user_data)
+@@ -1222,7 +1222,7 @@ static uint32_t media_player_get_position(void *user_data)
  	sec = (uint32_t) timedelta;
  	msec = (uint32_t) ((timedelta - sec) * 1000);
  
@@ -60,12 +60,12 @@ index 267722542..253029fa7 100644
 +	return mp->position;
  }
  
- static uint32_t get_duration(void *user_data)
+ static uint32_t media_player_get_duration(void *user_data)
 diff --git a/src/device.c b/src/device.c
-index 6d9eff031..4c45b92ff 100644
+index 2133561e2..c186d43ec 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -1948,6 +1948,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -1950,6 +1950,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  					DEVICE_INTERFACE, "KeyCode");
  }
  
@@ -88,7 +88,7 @@ index 6d9eff031..4c45b92ff 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3093,6 +3109,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -3107,6 +3123,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  	return dbus_message_new_method_return(msg);
  }
  
@@ -101,7 +101,7 @@ index 6d9eff031..4c45b92ff 100644
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
-@@ -4292,7 +4314,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4326,7 +4348,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  
  	if (g_dbus_register_interface(dbus_conn,
  					device->path, DEVICE_INTERFACE,
