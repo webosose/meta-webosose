@@ -92,10 +92,6 @@ VIRTUAL-RUNTIME_umediaserver ?= "umediaserver"
 VIRTUAL-RUNTIME_umediaserver:armv4 = ""
 VIRTUAL-RUNTIME_umediaserver:armv5 = ""
 
-VIRTUAL-RUNTIME_iotivity-node ?= "iotivity-node"
-VIRTUAL-RUNTIME_iotivity-node:armv4 = ""
-VIRTUAL-RUNTIME_iotivity-node:armv5 = ""
-
 VIRTUAL-RUNTIME_com.example.app.iotivity ?= "com.example.app.iotivity"
 VIRTUAL-RUNTIME_com.example.app.iotivity:armv4 = ""
 VIRTUAL-RUNTIME_com.example.app.iotivity:armv5 = ""
@@ -212,7 +208,6 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
-    ${VIRTUAL-RUNTIME_iotivity-node} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_org.ocf.webossample} \

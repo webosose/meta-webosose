@@ -35,7 +35,6 @@ RDEPENDS:${PN} = " \
     bootd \
     configurator \
     iotivity \
-    iotivity-node \
     luna-downloadmgr \
     luna-init \
     luna-sysservice \
