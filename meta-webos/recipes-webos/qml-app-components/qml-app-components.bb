@@ -3,13 +3,16 @@
 SUMMARY = "webOS QML app components"
 AUTHOR = "Jongson Kim <jongson.kim@lge.com>"
 SECTION = "webos/libs"
-LICENSE = "CLOSED"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = " \
+  file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+"
 
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
 
-WEBOS_VERSION = "1.0.0-2_fbf3fc0c2f22f9a283a33b3469fd187598609ca0"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-4_e147b3bc8dc6a5edbcf5f4431611bd4fcf520e3b"
+PR = "r4"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
