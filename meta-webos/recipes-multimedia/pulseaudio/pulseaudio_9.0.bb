@@ -36,8 +36,8 @@ DEPENDS_remove = "libatomic-ops"
 
 DEPENDS += "pmloglib"
 
-WEBOS_VERSION = "9.0-29_2cec94910d7c88c13a004843c57d0032bebeccb3"
-PR = "r27"
+WEBOS_VERSION = "9.0-30_7390ae117ba7a4a30421bee9788e7f0a9cea3d27"
+PR = "r28"
 
 inherit webos_enhanced_submissions
 
@@ -103,6 +103,7 @@ RDEPENDS_pulseaudio-server_append = "\
     pulseaudio-module-rtp-recv \
     pulseaudio-module-loopback \
     pulseaudio-module-combine-sink \
+    pulseaudio-module-ladspa-sink \
     ${@bb.utils.contains('PACKAGECONFIG', 'bluez5', '\
             pulseaudio-lib-bluez5-util \
             pulseaudio-module-bluetooth-discover \
