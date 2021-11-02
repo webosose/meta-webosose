@@ -35,15 +35,25 @@ GN_ARGS_OVERRIDES="\
     cros_host_extra_cppflags=\"$BUILD_CPPFLAGS\" \
     cros_host_extra_cxxflags=\"$BUILD_CXXFLAGS\" \
     cros_host_extra_lsflags=\"$BUILD_LDFLAGS\" \
-    cros_host_sysroot=\"$OECORE_NATIVE_SYSROOT\" \
     cros_target_ar=\"$AR\" \
     cros_target_cc=\"$CC\" \
     cros_target_cxx=\"$CXX\" \
     target_sysroot=\"$SDKTARGETSYSROOT\" \
     v8_snapshot_toolchain=\"//build/toolchain/cros:v8_snapshot_clang_$TARGET_CPU\" \
-    host_pkg_config=\"pkg-config\" \
+    host_pkg_config=\"$(pwd)/host-pkg-config\" \
     target_cpu=\"$TARGET_CPU\" \
 "
+
+cat << 'HOSTPKGCFG' > host-pkg-config
+#!/bin/bash
+unset PKG_CONFIG_PATH
+unset PKG_CONFIG_LIBDIR
+unset PKG_CONFIG_SYSROOT_DIR
+
+/usr/bin/pkg-config "$@"
+HOSTPKGCFG
+
+chmod +x host-pkg-config
 
 # Customising target cpu related variables based on TUNE_FEATURES of the SDK
 declare -A target_tune_features
@@ -85,8 +95,17 @@ nchars=${#GN_ARGS}
 has_arg=0
 declare -A arr_webruntime_gn_args
 declare -a arr_webruntime_gn_args_idx # To keep the ordering of args
+is_assignment=false
+maybe_lvalue=true
+# Only interesting the statement which assigns key=value to modify the value.
+# Store assignment statement as key=value into assoicated array
+# and other statements are stored as position=statement.
 for (( i = 0; i < $nchars; ++i)); do
   curr_char="${GN_ARGS:$i:1}"
+  if [ $maybe_lvalue ]; then
+    [[ $curr_char == "=" ]] && is_assignment=true
+    [[ $curr_char =~ '[a-zA-Z0-9.]' ]] || maybe_lvalue=false
+  fi
   if [ "${curr_char}" == "\"" ];then
     inside_quote=$(( ($inside_quote + 1) % 2 ))
     # Ending quote also requires to close one arguemnt
@@ -94,6 +113,10 @@ for (( i = 0; i < $nchars; ++i)); do
     # e.g var1="value1"var2="value2" makes below in args.gn file
     #  var1 = "value1"
     #  var2 = "value2"
+    # Hence if the current statement is assignment
+    # it need to check statement is completed.
+    # Otherwise continue to next char
+    [ "$is_assignment" = false ] && continue
   elif [ "$curr_char" != " " ];then
     if [ $has_arg -eq 0 ];then
       has_arg=1
@@ -105,10 +128,18 @@ for (( i = 0; i < $nchars; ++i)); do
   if [ $inside_quote -eq 0 ] && [ $has_arg -eq 1 ];then
       argument="${GN_ARGS:$start_pos:$(( $i - $start_pos + 1 ))}"
       key="${argument%%=*}"
+      [ "$is_assignment" = false ] && key="$start_pos"
       arr_webruntime_gn_args["$key"]="${argument}"
-      arr_webruntime_gn_args_idx=( "${arr_webruntime_gn_args_idx[@]/$key}" )
-      arr_webruntime_gn_args_idx+=("${argument%%=*}")
+      tmp_array=()
+      # Replace previous key=value with new key=value
+      for value in "${arr_webruntime_gn_args_idx[@]}";do
+        [[ $value != $key ]] && tmp_array+=($value)
+      done
+      arr_webruntime_gn_args_idx=("${tmp_array[@]}" "$key")
+      unset tmp_array
       has_arg=0
+      is_assignment=false
+      maybe_lvalue=true
   fi
 done
 
@@ -139,7 +170,14 @@ if [ ! -f $OUT_DIR/build.ninja ] || [[ $(realpath $0) -nt $OUT_DIR/build.ninja ]
   gn gen $OUT_DIR --args="$GN_ARGS"
 fi
 
-ninja -C $OUT_DIR ${TARGET}
+# Limit jobs up to # of cpus - 2 not to use 100% cpu
+JOBS_CPU=$(($(nproc --all) - 2))
+# Limit jobs based on available memory (2G per one job) to avoid OOM
+JOBS_RAM=$(($(free -g | grep Mem | awk '{ print $7}') / 2 ))
+JOBS_MAX=$(($JOBS_CPU > $JOBS_RAM ? $JOBS_RAM : $JOBS_CPU))
+echo "Using -j $JOBS_MAX"
+
+ninja -j $JOBS_MAX -C $OUT_DIR ${TARGET}
 EOF
     chmod +x $filename
 }

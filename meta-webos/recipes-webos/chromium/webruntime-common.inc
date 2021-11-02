@@ -83,7 +83,6 @@ GN_ARGS = "\
     is_debug=false\
     is_component_build=false\
     target_os=\"linux\"\
-    target_sysroot=\"${STAGING_DIR_HOST}\"\
     cros_host_sysroot=\"/\"\
     treat_warnings_as_errors=false\
     use_custom_libcxx=false\
