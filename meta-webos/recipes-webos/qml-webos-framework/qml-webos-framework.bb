@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=9e100013a76448cbe7c14134b0974453 \
 "
 
-DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2"
+DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2 qttools-native"
 DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
 RDEPENDS_${PN} = "qtgraphicaleffects-qmlplugins"
 
@@ -18,8 +18,8 @@ RPROVIDES_${PN}-examples = " \
     eos.widgetgallery \
 "
 
-WEBOS_VERSION = "1.0.0-160_d89ab0a01a224a6139bdfa916736df67ff6dda44"
-PR = "r34"
+WEBOS_VERSION = "1.0.0-161_a6969a4cb6e95949af68e316c8414951b0c8fc9b"
+PR = "r35"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -42,7 +42,10 @@ WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 FILES_${PN} += "${OE_QMAKE_PATH_QML}/Eos/*"
 
 PACKAGES += "${PN}-examples"
-FILES_${PN}-examples += "${webos_applicationsdir}/*"
+FILES_${PN}-examples += " \
+    ${webos_applicationsdir}/* \
+    ${datadir}/qml/locales/${BPN}/ \
+"
 
 # unit-tests
 PACKAGES =+ "${PN}-tests"
