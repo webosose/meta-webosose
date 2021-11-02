@@ -13,7 +13,7 @@ DEPENDS = "libpbnjson"
 
 EXTRA_OECMAKE += "-DNO_TEST=1"
 
-WEBOS_VERSION = "1.0.0-8_c8079f2c44942cc4bcaee39499b0cd66da388d4d"
+WEBOS_VERSION = "1.0.0-9_d685d5e7c8828b252dba18833046a7c4fcd97f95"
 PR = "r6"
 
 inherit webos_component
@@ -33,4 +33,5 @@ S = "${WORKDIR}/git"
 # raspberrypi4
 # raspberrypi4-64
 # qemux86
-COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
+# qemux86-64
+COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"

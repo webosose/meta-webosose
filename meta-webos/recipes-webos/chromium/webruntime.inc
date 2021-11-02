@@ -24,7 +24,7 @@ DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype 
 DEPENDS_remove_raspberrypi4 = " xproto"
 DEPENDS_append_raspberrypi4 = " xorgproto"
 
-INC_PR = "r50"
+INC_PR = "r51"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -181,6 +181,10 @@ modify_run_app_shell() {
 }
 
 modify_run_app_shell_append_qemux86() {
+    # Disable media hardware acceleration
+    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
+}
+modify_run_app_shell_append_qemux86-64() {
     # Disable media hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }

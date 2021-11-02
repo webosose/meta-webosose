@@ -16,13 +16,13 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
+COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS_append_rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-3_13f4a0e50c95f7ecf04be37949c0da266ba221d3"
-PR = "r2"
+PR = "r3"
 
 SRCREV_mcil = "ef2a9b183262a04e8246df951acf4693a18b3cd6"
 

@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-55_233715d16eeba34c2cc71bc813dbc60280475c44"
-PR = "r42"
+PR = "r43"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM_webos = "webos_cmake"
@@ -121,6 +121,14 @@ do_configure_append() {
 }
 
 do_configure_append_qemux86() {
+    # Remove this condition once webos wam is synchronized to get systemd initscripts
+    if [ -f "${B}/webapp-mgr.sh" ]; then
+        # Disable media hardware acceleration
+        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
+    fi
+}
+
+do_configure_append_qemux86-64() {
     # Remove this condition once webos wam is synchronized to get systemd initscripts
     if [ -f "${B}/webapp-mgr.sh" ]; then
         # Disable media hardware acceleration

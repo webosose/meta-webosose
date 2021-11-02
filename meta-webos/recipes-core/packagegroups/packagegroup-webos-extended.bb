@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r39"
+PR = "r40"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -34,6 +34,7 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
 # Restricted to only these 3 MACHINEs by COMPATIBLE_MACHINE
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller ?= ""
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller_qemux86 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller_qemux86-64 = "com.webos.service.mediacontroller"
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4 = "com.webos.service.mediacontroller"
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller_raspberrypi4-64 = "com.webos.service.mediacontroller"
 
@@ -43,11 +44,13 @@ VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi3-64 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_raspberrypi4-64 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline_qemux86 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline_qemux86-64 = "g-media-pipeline"
 
 VIRTUAL-RUNTIME_g-camera-pipeline ?= ""
 VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4 = "g-camera-pipeline"
 VIRTUAL-RUNTIME_g-camera-pipeline_raspberrypi4-64 = "g-camera-pipeline"
 VIRTUAL-RUNTIME_g-camera-pipeline_qemux86 = "g-camera-pipeline"
+VIRTUAL-RUNTIME_g-camera-pipeline_qemux86-64 = "g-camera-pipeline"
 
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 
@@ -294,7 +297,51 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
     ntfs-3g \
 "
 
+RRECOMMENDS_${PN}_append_qemux86-64 = " \
+    fuse-utils \
+    kernel-module-ac97-bus \
+    kernel-module-bluetooth \
+    kernel-module-btbcm \
+    kernel-module-btintel \
+    kernel-module-btusb \
+    kernel-module-configs \
+    kernel-module-evdev \
+    kernel-module-fuse \
+    kernel-module-hci-uart \
+    kernel-module-media \
+    kernel-module-rfcomm \
+    kernel-module-snd-ac97-codec \
+    kernel-module-snd-intel8x0 \
+    kernel-module-snd-pcm \
+    kernel-module-snd-usb-audio \
+    kernel-module-snd-usbmidi-lib \
+    kernel-module-uinput \
+    kernel-module-uvcvideo \
+    kernel-module-v4l2-common \
+    kernel-module-vboxguest \
+    kernel-module-videobuf2-core \
+    kernel-module-videobuf2-memops \
+    kernel-module-videobuf2-v4l2 \
+    kernel-module-videobuf2-vmalloc \
+    kernel-module-videodev \
+    ntfs-3g \
+"
+
 RDEPENDS_${PN}_append_qemux86 = " \
+    com.webos.service.audiofocusmanager \
+    com.webos.service.audiooutput \
+    com.webos.service.camera \
+    com.webos.service.hfp \
+    com.webos.service.location \
+    com.webos.service.mediaindexer \
+    com.webos.service.power2 \
+    com.webos.service.storageaccess \
+    dhcp-client \
+    ofono \
+    v4l-utils \
+    vmwgfx-layout \
+"
+RDEPENDS_${PN}_append_qemux86-64 = " \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.camera \

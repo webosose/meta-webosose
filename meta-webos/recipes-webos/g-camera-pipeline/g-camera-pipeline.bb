@@ -24,13 +24,14 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS_append_rpi = " userland"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-13.gav.23_ef003343fe115366073e705355e5db9853805989"
+WEBOS_VERSION = "1.0.0-13.gav.24_63de3a9a912af9caa2dbe03d367b5db22379745b"
+
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "master"
 WEBOS_VERSION_raspberrypi3 = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
 
 # See the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$"
+COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$|^qemux86-64$"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

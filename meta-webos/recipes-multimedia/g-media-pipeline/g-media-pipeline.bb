@@ -24,7 +24,8 @@ inherit webos_pkgconfig
 # raspberrypi4
 # raspberrypi4-64
 # qemux86
-COMPATIBLE_MACHINE = "^qemux86$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
+# qemux86-64
+COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
 # raspberrypi4 and qemux86 uses @gav branch
 PR = "r9"
@@ -32,7 +33,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS_append_rpi = " virtual/libomxil"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-21.gav.22_bfda47abcd88d2f27e4682ea85786464439b6144"
+WEBOS_VERSION = "1.0.0-21.gav.23_0890c1cfc02fd7f3d71763d5e2b73c1a49487c6a"
 SRC_URI_append = " file://0001-LunaServiceClient.cpp-include-string-to-fix-build-wi.patch"
 
 # raspberrypi3 uses @21.master branch

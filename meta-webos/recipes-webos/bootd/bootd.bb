@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost"
 
 WEBOS_VERSION = "2.0.0-18_8c9332daa3d0d8b492710d47dc7c7c8d7caefb49"
-PR = "r13"
+PR = "r14"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -35,6 +35,9 @@ SRC_URI_append_qemux86 = " \
     file://0001-display-count-check-for-emulator.patch \
 "
 
+SRC_URI_append_qemux86-64 = " \
+    file://0001-display-count-check-for-emulator.patch \
+"
 # LTTNG option
 # WEBOS_LTTNG_ENABLED = "0"
 EXTRA_OECMAKE += " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
