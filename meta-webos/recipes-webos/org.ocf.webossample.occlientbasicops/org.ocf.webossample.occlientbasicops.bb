@@ -10,9 +10,9 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=86d3f3a95c324c9479bd8986968f4327"
 
 SRC_URI += " \
-    git://github.com/iotivity/iotivity.git;branch=webos;protocol=http;name=main;destsuffix=iotivity \
-    git://github.com/intel/tinycbor.git;destsuffix=iotivity/extlibs/tinycbor/tinycbor;protocol=http;name=tinycbor \
-    git://github.com/ARMmbed/mbedtls.git;destsuffix=iotivity/extlibs/mbedtls/mbedtls;protocol=http;branch=mbedtls-2.4;name=mbedtls \
+    git://github.com/iotivity/iotivity.git;branch=webos;protocol=https;name=main;destsuffix=iotivity \
+    git://github.com/intel/tinycbor.git;destsuffix=iotivity/extlibs/tinycbor/tinycbor;protocol=https;name=tinycbor \
+    git://github.com/ARMmbed/mbedtls.git;destsuffix=iotivity/extlibs/mbedtls/mbedtls;protocol=https;branch=mbedtls-2.4;name=mbedtls \
 "
 
 SRCREV_main = "8fe09d4c9859d3ff32b4e8ca2ed996a156fccb81"
