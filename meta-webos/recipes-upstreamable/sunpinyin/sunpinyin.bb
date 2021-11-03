@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 SUMMARY = "Pinyin input method library"
 AUTHOR = "pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
@@ -23,7 +23,7 @@ SRC_URI[arpa.sha256sum] = "751bab7c55ea93a2cedfb0fbb7eb09f67d4da9c2c55496e5f31eb
 SRC_URI[dict.md5sum] = "2055f50a0f942b49d4417d801388eba5"
 SRC_URI[dict.sha256sum] = "af70bc2bcd7af7468495774fed9e3a2de434650119fbc3d3388c2bcf7e0acb01"
 
-SRC_URI =  "git://github.com/sunpinyin/sunpinyin.git;protocol=https \
+SRC_URI =  "git://github.com/sunpinyin/sunpinyin.git;protocol=https;branch=master \
     https://downloads.sourceforge.net/project/open-gram/lm_sc.3gm.arpa-20140820.tar.bz2;name=arpa \
     https://downloads.sourceforge.net/project/open-gram/dict.utf8-20131214.tar.bz2;name=dict \
     file://0001-Change-scon-to-download-open-gram-dictionary.patch \

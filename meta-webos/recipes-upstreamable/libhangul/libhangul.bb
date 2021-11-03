@@ -18,7 +18,7 @@ PV = "0.1.0+git${SRCPV}"
 
 EXTRA_OECONF += "--libdir=${libdir}/maliit/plugins"
 
-SRC_URI = "git://github.com/choehwanjin/libhangul.git;branch=main \
+SRC_URI = "git://github.com/choehwanjin/libhangul.git;branch=main;protocol=https \
     file://0001-Change-the-project-to-address-code.google.com-p-libh.patch \
     file://0002-Add-rule-to-auto-update-when-you-make-dist-ChangeLog.patch \
     file://0003-Change-wrong-name-hangul-jongseong-dicompose-decomp.patch \

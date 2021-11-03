@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2020 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 SUMMARY = "LevelDB Template Library"
 DESCRIPTION = "Template library to build a more complex storage schema with leveldb as a backend"
@@ -11,7 +11,7 @@ DEPENDS = "leveldb"
 DEPENDS_append_class-target = " gtest"
 PR = "r3"
 
-SRC_URI = "git://github.com/ony/${BPN};branch=gcc-4.7"
+SRC_URI = "git://github.com/ony/${BPN};branch=gcc-4.7;protocol=https"
 
 # Use gcc-4.7/v0.1.6 tag. It's backport of gcc-4.8 branch,
 # so it would work fine with both compiler versions

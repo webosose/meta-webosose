@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "A collection of memory usage monitoring tools and scripts"
 LICENSE = "GPL-2.0"
@@ -13,7 +13,7 @@ PV = "1.3.2+git${SRCPV}"
 
 inherit autotools-brokensep
 
-SRC_URI = "git://github.com/maemo-tools-old/${BPN}.git \
+SRC_URI = "git://github.com/maemo-tools-old/${BPN}.git;branch=master;protocol=https \
     file://build-fixes.patch \
 "
 S = "${WORKDIR}/git"

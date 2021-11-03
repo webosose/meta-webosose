@@ -25,11 +25,11 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=86d3f3a95c324c9479bd8986968f4327"
 
 SRC_URI = " \
     git://github.com/iotivity/iotivity.git;branch=webos;protocol=https;name=main \
-    git://github.com/intel/tinycbor.git;destsuffix=git/extlibs/tinycbor/tinycbor;protocol=https;name=tinycbor \
+    git://github.com/intel/tinycbor.git;destsuffix=git/extlibs/tinycbor/tinycbor;protocol=https;name=tinycbor;branch=master \
     git://github.com/google/googletest.git;destsuffix=git/extlibs/gtest/googletest-release-1.7.0;protocol=https;nobranch=1;name=gtest \
-    git://github.com/dascandy/hippomocks.git;destsuffix=git/extlibs/hippomocks/hippomocks;protocol=https;name=hippomocks \
+    git://github.com/dascandy/hippomocks.git;destsuffix=git/extlibs/hippomocks/hippomocks;protocol=https;name=hippomocks;branch=master \
     git://github.com/ARMmbed/mbedtls.git;destsuffix=git/extlibs/mbedtls/mbedtls;protocol=https;branch=mbedtls-2.4;name=mbedtls \
-    git://github.com/miloyip/rapidjson.git;destsuffix=git/extlibs/rapidjson/rapidjson;protocol=https;name=rapidjson \
+    git://github.com/miloyip/rapidjson.git;destsuffix=git/extlibs/rapidjson/rapidjson;protocol=https;name=rapidjson;branch=master \
     git://github.com/dthaler/libcoap.git;destsuffix=git/extlibs/libcoap/libcoap;protocol=https;branch=develop;name=libcoap \
     file://0001-hippomocks-fix-build-for-MIPS.patch;patchdir=extlibs/hippomocks/hippomocks \
     file://0001-OCApi.h-prevent-multiple-definitions-of-OC-detail-oc.patch \

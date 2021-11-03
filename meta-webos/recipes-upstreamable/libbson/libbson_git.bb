@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018 LG Electronics, Inc.
+# Copyright (c) 2014-2021 LG Electronics, Inc.
 
 SUMMARY = "A BSON utility library"
 DESCRIPTION = "libbson is a library providing useful routines related to building, parsing, and iterating BSON documents."
@@ -12,7 +12,7 @@ PR = "r2"
 PV = "0.98.0+git${SRCPV}"
 # corresponds to 0.98.0
 SRCREV = "b2d142f48676124e80578b5d491bd9aec50e748d"
-SRC_URI = "git://github.com/mongodb/${BPN} \
+SRC_URI = "git://github.com/mongodb/${BPN};branch=master;protocol=https \
            file://0001-Update-CMakelist-file-to-install-lib-correctly.patch"
 
 S = "${WORKDIR}/git"

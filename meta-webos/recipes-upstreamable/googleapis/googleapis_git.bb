@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 DESCRIPTION = "Public interface definitions of Google APIs"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -11,7 +11,7 @@ PR = "r0"
 
 DEPENDS = "grpc-native"
 
-SRC_URI = "git://github.com/googleapis/googleapis.git"
+SRC_URI = "git://github.com/googleapis/googleapis.git;branch=master;protocol=https"
 SRCREV = "9efcd835514288b21ce37182d75cc75c18b16541"
 
 S = "${WORKDIR}/git"

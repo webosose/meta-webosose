@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = "file://index.js;beginline=1;endline=13;md5=bafd0234b0f43def6
 DEPENDS = "nodejs-native glib-2.0 iotivity"
 RDEPENDS_${PN} += "iotivity-resource iotivity-tools"
 
-SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https"
+SRC_URI = "git://github.com/otcshare/iotivity-node.git;protocol=https;branch=master"
 SRCREV = "c6aab8e6126c06516090dd13e812fee0d16b8cc7"
 SRC_URI += "file://0001-Add-new-api-for-register-custom-cbor-files.patch \
     file://0002-Build-Do-not-purge-build-scripts-after-build.patch \

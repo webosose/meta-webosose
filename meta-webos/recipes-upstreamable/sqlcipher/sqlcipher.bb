@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 SUMMARY = "Open Source Full Database Encryption for SQLite"
 DESCRIPTION = "SQLCipher is an open source library that provides transparent, secure 256-bit AES encryption of SQLite database files."
@@ -12,7 +12,7 @@ PV = "3.4.2"
 inherit autotools
 
 SRCREV = "c6f709fca81c910ba133aaf6330c28e01ccfe5f8"
-SRC_URI = "git://github.com/${BPN}/${BPN}"
+SRC_URI = "git://github.com/${BPN}/${BPN};branch=master;protocol=https"
 
 EXTRA_OECONF = "--disable-tcl CFLAGS=-DSQLITE_HAS_CODEC"
 EXTRA_OEMAKE='"LIBTOOL=${STAGING_BINDIR_CROSS}/${HOST_SYS}-libtool"'

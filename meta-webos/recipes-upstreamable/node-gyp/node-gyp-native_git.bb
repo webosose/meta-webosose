@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2021 LG Electronics, Inc.
 
 DESCRIPTION = "Node.js native addon build tool"
 HOMEPAGE = "https://github.com/nodejs/node-gyp"
@@ -8,7 +8,7 @@ DEPENDS = "nodejs-native node-gyp-packages-native"
 
 PV = "6.1.0+git${SRCPV}"
 SRCREV = "d1dea13fe44bc65ee3ea8441c08c9a3d03d6d63d"
-SRC_URI = "git://github.com/nodejs/node-gyp.git"
+SRC_URI = "git://github.com/nodejs/node-gyp.git;branch=master;protocol=https"
 
 S = "${WORKDIR}/git"
 

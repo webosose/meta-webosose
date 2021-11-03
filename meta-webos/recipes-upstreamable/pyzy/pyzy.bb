@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2020 LG Electronics, Inc.
+# Copyright (c) 2019-2021 LG Electronics, Inc.
 
 SUMMARY = "The Chinese PinYin and Bopomofo conversion library"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
@@ -16,7 +16,7 @@ SRCREV = "d7747466562cb8b4bc2934708e29b7643c7bedbc"
 PV = "0.1.0+git${SRCPV}"
 PR = "r1"
 
-SRC_URI = "git://github.com/pyzy/pyzy.git \
+SRC_URI = "git://github.com/pyzy/pyzy.git;branch=master;protocol=https \
     file://0001-Fix-Narrowing-conversion-from-int-to-char-bug.patch \
     file://0002-Remove-Cursor-line-from-auxiliary-text.patch \
     file://0003-Add-pyzy-wrapper-for-webOS.patch \

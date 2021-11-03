@@ -22,9 +22,9 @@ PR = "r11"
 S = "${WORKDIR}/git"
 
 SRC_URI = " \
-    ${ENACTJS_GIT_REPO}/cli.git;name=main;nobranch=1;destsuffix=git/cli \
-    ${ENACTJS_GIT_REPO}/cli.git;name=cli-legacy;nobranch=1;destsuffix=git/cli-legacy \
-    ${ENACTJS_GIT_REPO}/jsdoc-to-ts.git;name=jsdoc-to-ts;nobranch=1;destsuffix=git/jsdoc-to-ts \
+    ${ENACTJS_GIT_REPO}/cli.git;name=main${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/cli \
+    ${ENACTJS_GIT_REPO}/cli.git;name=cli-legacy${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/cli-legacy \
+    ${ENACTJS_GIT_REPO}/jsdoc-to-ts.git;name=jsdoc-to-ts${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/jsdoc-to-ts \
 "
 
 # we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps

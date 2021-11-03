@@ -1,8 +1,8 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2021 LG Electronics, Inc.
 
 # inherit ${@'webos_public_repo webos_enhanced_submissions' if '${MACHINE}'.startswith('raspberrypi3') or '${MACHINE}'.startswith('raspberrypi4') else ''}
 
-# GST_COMMON_GIT_rpi = "git://anongit.freedesktop.org/gstreamer/common"
+# GST_COMMON_GIT_rpi = "git://anongit.freedesktop.org/gstreamer/common;branch=master"
 # SRCREV_common_rpi = "46d420818ed8172022caf4503894076b18b1e153"
 # SRCREV_FORMAT_rpi = "main_common"
 

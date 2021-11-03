@@ -13,8 +13,8 @@ inherit webos_enactjs_env
 S = "${WORKDIR}/git"
 
 SRC_URI = " \
-    ${ENACTJS_GIT_REPO}/moonstone.git;name=main;nobranch=1;destsuffix=git/moonstone \
-    ${ENACTJS_GIT_REPO}/enact;name=enact;nobranch=1;destsuffix=git/enact \
+    ${ENACTJS_GIT_REPO}/moonstone.git;name=main${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/moonstone \
+    ${ENACTJS_GIT_REPO}/enact;name=enact${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/enact \
 "
 
 # NOTE: PV is the Moonstone version (which uses the Semantic Versioning spec),
