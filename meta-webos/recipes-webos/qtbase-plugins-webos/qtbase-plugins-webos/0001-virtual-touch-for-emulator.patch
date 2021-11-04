@@ -1,0 +1,131 @@
+From c4df08911d1e6ead0f17c7bcaa8398cbd0ce3ff7 Mon Sep 17 00:00:00 2001
+From: Heegoo Han <heegoo.han@lge.com>
+Date: Thu, 4 Nov 2021 16:14:14 +0900
+Subject: [PATCH] virtual touch for emulator
+
+---
+ src/eglfs_webos/weboseglfsintegration.cpp | 73 ++++++++++++++++++++++-
+ src/eglfs_webos/weboseglfsintegration.h   |  2 -
+ 2 files changed, 72 insertions(+), 3 deletions(-)
+
+diff --git a/src/eglfs_webos/weboseglfsintegration.cpp b/src/eglfs_webos/weboseglfsintegration.cpp
+index 56f4671..2c00a3f 100644
+--- a/src/eglfs_webos/weboseglfsintegration.cpp
++++ b/src/eglfs_webos/weboseglfsintegration.cpp
+@@ -127,6 +127,77 @@ void WebOSEglFSIntegration::createInputHandlers()
+     if ((m_emulatorKeyboardManager) && (m_emulatorMouseManager)) {
+         connect(m_emulatorKeyboardManager, &QEmulatorKeyboardManager::handleKeycodeSignal, m_emulatorMouseManager, &QEmulatorMouseManager::handleKeycodeSlot);
+     }
++
++    // HACK: implement virtual touch for emulator.
++    QOutputMapping::set(&m_mappingHelper);
++
++    if (!m_configJson.isEmpty()) {
++        for (int i = 0; i < m_configJson.array().size(); i++) {
++            const QJsonObject object = m_configJson.array().at(i).toObject();
++            const QJsonArray outputs = object.value(QLatin1String("outputs")).toArray();
++            for (int j = 0; j < outputs.size(); j++) {
++                const QJsonObject output = outputs.at(j).toObject();
++                if (!m_useFixedAssociationForTouch) {
++                    QString touchDevice = output.value(QLatin1String("touchDevice")).toString();
++                    if (!touchDevice.isEmpty())
++                        m_useFixedAssociationForTouch = true;
++                }
++
++                const QVariantMap outputSettings = outputs.at(j).toObject().toVariantMap();
++                if (outputSettings.contains(QStringLiteral("name"))) {
++                    const QString name = outputSettings.value(QStringLiteral("name")).toString();
++                    if (m_outputSettings.contains(name))
++                        qWarning() << "Output" << name << "is duplicated";
++                    m_outputSettings.insert(name, outputSettings);
++                }
++            }
++        }
++    }
++
++    qDebug() << "useFixedAssociationForTouch:" << m_useFixedAssociationForTouch;
++
++    m_touchDiscovery = WebOSDeviceDiscoveryUDevSorted::create(QDeviceDiscovery::Device_Touchpad | QDeviceDiscovery::Device_Touchscreen, this);
++
++    QStringList scannedTouchDevices = m_touchDiscovery->scanConnectedDevices();
++    if (m_useFixedAssociationForTouch)
++        prepareFixedOutputMapping(scannedTouchDevices, QLatin1String("touchDevice"));
++    else
++        prepareOutputMapping(scannedTouchDevices);
++
++    QString touchDevs = initializeDevices(scannedTouchDevices);
++
++    bool useDummyTouchDevice = false;
++    // to disable device discovery in QEvdevTouchManager when no device is connected.
++    if (touchDevs.isEmpty()) {
++        touchDevs = "/dev/null";
++        useDummyTouchDevice = true;
++    }
++
++    QString env = QString::fromLocal8Bit(qgetenv("QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS"));
++    qDebug() << "createInputHandlers, touchDevs" << touchDevs << env;
++    if (!env.isEmpty()) {
++        env.append(":" + touchDevs);
++        qWarning() << "Updating QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS to" << env;
++        qputenv("QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS", env.toUtf8());
++    }
++
++    m_touchMgr = new QEvdevTouchManager(QLatin1String("EvdevTouch"), touchDevs, this);
++    // Remove the null device to prevent reading it
++    if (m_touchMgr && useDummyTouchDevice)
++        m_touchMgr->removeDevice("/dev/null");
++
++    if (m_touchDiscovery && m_touchMgr) {
++        connect(m_touchDiscovery, &QDeviceDiscovery::deviceDetected,
++                this, &WebOSEglFSIntegration::arrangeTouchDevices);
++        connect(m_touchDiscovery, &QDeviceDiscovery::deviceRemoved,
++                this, &WebOSEglFSIntegration::removeTouchDevice);
++    }
++
++    connect(this, &WebOSEglFSIntegration::platformWindowCreated, this, &WebOSEglFSIntegration::handleWindowCreated);
++
++    m_initTimer.setSingleShot(true);
++    connect(&m_initTimer, &QTimer::timeout, this, &WebOSEglFSIntegration::updateWindowMapping);
++    // End of HACK:
+ }
+ #else
+ void WebOSEglFSIntegration::createInputHandlers()
+@@ -245,6 +316,7 @@ void WebOSEglFSIntegration::createInputHandlers()
+     m_initTimer.setSingleShot(true);
+     connect(&m_initTimer, &QTimer::timeout, this, &WebOSEglFSIntegration::updateWindowMapping);
+ }
++#endif
+ 
+ QPlatformWindow *WebOSEglFSIntegration::createPlatformWindow(QWindow *window) const
+ {
+@@ -277,7 +349,6 @@ void WebOSEglFSIntegration::updateWindowMapping()
+     arrangeTouchDevices();
+     arrangeKbdDevices();
+ }
+-#endif
+ 
+ void WebOSEglFSIntegration::prepareOutputMapping(const QStringList &devices)
+ {
+diff --git a/src/eglfs_webos/weboseglfsintegration.h b/src/eglfs_webos/weboseglfsintegration.h
+index 0777721..b14747e 100644
+--- a/src/eglfs_webos/weboseglfsintegration.h
++++ b/src/eglfs_webos/weboseglfsintegration.h
+@@ -66,7 +66,6 @@ public:
+     void removeTouchDevice(const QString &deviceNode);
+     void arrangeKbdDevices();
+     void removeKbdDevice(const QString &deviceNode);
+-#if not defined(EMULATOR)
+     QPlatformWindow *createPlatformWindow(QWindow *window) const override;
+ 
+ public slots:
+@@ -76,7 +75,6 @@ public slots:
+ 
+ signals:
+     void platformWindowCreated(QWindow *) const;
+-#endif
+ 
+ private:
+     QVector<QWindow *> m_windows;
+-- 
+2.17.1
+

@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtbase"
 
 WEBOS_VERSION = "1.0.0-9_6593a06a17e92fee1d10b3c36012b35d461563dd"
-PR = "r3"
+PR = "r4"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
@@ -29,6 +29,9 @@ PACKAGECONFIG ??= ""
 # Emulator
 PACKAGECONFIG[emulator] = "CONFIG+=emulator,,nyx-lib"
 PACKAGECONFIG_append_emulator = " emulator"
+SRC_URI_append_emulator = " \
+    file://0001-virtual-touch-for-emulator.patch \
+"
 
 # Multi-plane composition
 PACKAGECONFIG[plane-composition] = "CONFIG+=plane_composition,,"
