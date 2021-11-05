@@ -1,3 +1,25 @@
+From 645e429184f7e3212e16fa1e3060220ae0a2acf1 Mon Sep 17 00:00:00 2001
+From: Hotaek Jung <hotaek.jung@lge.com>
+Date: Mon, 12 Jul 2021 19:16:26 +0900
+Subject: [PATCH] Add webos interface
+
+---
+ src/oom/com.webos.MemoryManager1.conf | 40 ++++++++++++++++++++++++
+ src/oom/meson.build                   |  7 +++++
+ src/oom/oomd-manager.c                |  7 +++++
+ src/oom/oomd.c                        |  5 +++
+ src/oom/webos-manager-bus.c           | 31 ++++++++++++++++++
+ src/oom/webos-manager-bus.h           | 10 ++++++
+ src/oom/webos-manager.c               | 45 +++++++++++++++++++++++++++
+ src/oom/webos-manager.h               |  7 +++++
+ units/systemd-oomd.service.in         |  2 +-
+ 9 files changed, 153 insertions(+), 1 deletion(-)
+ create mode 100644 src/oom/com.webos.MemoryManager1.conf
+ create mode 100644 src/oom/webos-manager-bus.c
+ create mode 100644 src/oom/webos-manager-bus.h
+ create mode 100644 src/oom/webos-manager.c
+ create mode 100644 src/oom/webos-manager.h
+
 diff --git a/src/oom/com.webos.MemoryManager1.conf b/src/oom/com.webos.MemoryManager1.conf
 new file mode 100644
 index 0000000000..cef8430362
@@ -70,7 +92,7 @@ index 4e1c8543c8..ee4c7b13fa 100644
                       install_dir : dbussystemservicedir)
  
 diff --git a/src/oom/oomd-manager.c b/src/oom/oomd-manager.c
-index 49dc5eb26e..009fee55e8 100644
+index 9cae0c9c8a..a0ca22fd17 100644
 --- a/src/oom/oomd-manager.c
 +++ b/src/oom/oomd-manager.c
 @@ -11,6 +11,8 @@
@@ -92,7 +114,7 @@ index 49dc5eb26e..009fee55e8 100644
                  r = get_monitored_cgroup_contexts_candidates(m->monitored_swap_cgroup_contexts, &candidates);
                  if (r == -ENOMEM)
                          return log_oom();
-@@ -472,6 +477,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
+@@ -468,6 +473,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
                                  log_debug_errno(r, "Failed to update monitored memory pressure candidate cgroup contexts, ignoring: %m");
                          else
                                  clear_candidates = NULL;
@@ -126,7 +148,7 @@ index deb7b094d5..9645c64bcd 100644
                  return log_error_errno(r, "Event loop failed: %m");
 diff --git a/src/oom/webos-manager-bus.c b/src/oom/webos-manager-bus.c
 new file mode 100644
-index 0000000000..67809314d4
+index 0000000000..70302125d3
 --- /dev/null
 +++ b/src/oom/webos-manager-bus.c
 @@ -0,0 +1,31 @@
@@ -242,16 +264,15 @@ index 0000000000..bed7413c6a
 +
 +int webos_manager_start(Manager *m);
 diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
-index f264a1bef0..31c5921413 100644
+index 8dfc22356e..eaba17cfe5 100644
 --- a/units/systemd-oomd.service.in
 +++ b/units/systemd-oomd.service.in
-@@ -22,7 +24,7 @@ ConditionPathExists=/proc/pressure/memory
+@@ -25,7 +25,7 @@ ConditionPathExists=/proc/pressure/memory
  AmbientCapabilities=CAP_KILL CAP_DAC_OVERRIDE
  BusName=org.freedesktop.oom1
  CapabilityBoundingSet=CAP_KILL CAP_DAC_OVERRIDE
--ExecStart=@rootlibexecdir@/systemd-oomd
-+ExecStart=@rootlibexecdir@/systemd-oomd --dry-run
+-ExecStart={{ROOTLIBEXECDIR}}/systemd-oomd
++ExecStart={{ROOTLIBEXECDIR}}/systemd-oomd --dry-run
  IPAddressDeny=any
  LockPersonality=yes
  MemoryDenyWriteExecute=yes
-

@@ -1,0 +1,21 @@
+From b2f676e891c6c2873a3be575922db4942d6dcd5d Mon Sep 17 00:00:00 2001
+From: Hotaek Jung <hotaek.jung@lge.com>
+Date: Mon, 12 Jul 2021 19:16:26 +0900
+Subject: [PATCH] systemd-oomd: modify oomd.conf
+
+---
+ src/oom/oomd.conf | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/oom/oomd.conf b/src/oom/oomd.conf
+index b3a457f887..e19052d0f8 100644
+--- a/src/oom/oomd.conf
++++ b/src/oom/oomd.conf
+@@ -16,5 +16,5 @@
+ 
+ [OOM]
+ #SwapUsedLimit=90%
+-#DefaultMemoryPressureLimit=60%
+-#DefaultMemoryPressureDurationSec=30s
++DefaultMemoryPressureLimit=0.05%
++DefaultMemoryPressureDurationSec=1s

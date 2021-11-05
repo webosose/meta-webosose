@@ -1,5 +1,14 @@
+From e30822273d616cf65f4891a7f932eacd6743100a Mon Sep 17 00:00:00 2001
+From: Hotaek Jung <hotaek.jung@lge.com>
+Date: Mon, 12 Jul 2021 19:16:26 +0900
+Subject: [PATCH] systemd-oomd: depend on swap-on
+
+---
+ units/systemd-oomd.service.in | 2 ++
+ 1 file changed, 2 insertions(+)
+
 diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
-index f264a1bef0..f141c94873 100644
+index 0d2d409881..ca3ca8f0a3 100644
 --- a/units/systemd-oomd.service.in
 +++ b/units/systemd-oomd.service.in
 @@ -12,6 +12,8 @@ Description=Userspace Out-Of-Memory (OOM) Killer

@@ -1,12 +1,12 @@
 # Copyright (c) 2017-2021 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos7"
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+EXTENDPRAUTO_append = "webos8"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI_append_webos = " \
-    file://0001-depend-on-swapon.patch \
-    file://0002-add-webos-interface.patch \
-    file://0003-oomd-conf.patch \
+    file://0001-systemd-oomd-depend-on-swap-on.patch \
+    file://0002-Add-webos-interface.patch \
+    file://0003-systemd-oomd-modify-oomd.conf.patch \
 "
 
 inherit webos_prerelease_dep
