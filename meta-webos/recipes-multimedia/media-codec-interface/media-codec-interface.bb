@@ -22,13 +22,13 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS_append_rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-3_13f4a0e50c95f7ecf04be37949c0da266ba221d3"
-PR = "r3"
+PR = "r4"
 
 SRCREV_mcil = "ef2a9b183262a04e8246df951acf4693a18b3cd6"
 
 WEBOS_REPO_NAME_MCIL ?= "media-codec-ose"
 WEBOS_GIT_REPO_MCIL ?= "${WEBOSOSE_GIT_REPO}"
-WEBOS_GIT_REPO_COMPLETE_MCIL ?= "${WEBOS_GIT_REPO_MCIL}/${WEBOS_REPO_NAME_MCIL}${WEBOSOSE_GIT_PROTOCOL}"
+WEBOS_GIT_REPO_COMPLETE_MCIL ?= "${WEBOS_GIT_REPO_MCIL}/${WEBOS_REPO_NAME_MCIL}${WEBOSOSE_GIT_PROTOCOL};branch=master"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 
