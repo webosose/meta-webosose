@@ -24,7 +24,7 @@ RDEPENDS_${PN} = "\
 "
 
 WEBOS_VERSION = "1.0.0-33_74ed31aea11d95bacaf22682b8c0651d0ed02357"
-PR = "r30"
+PR = "r31"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -46,6 +46,6 @@ EXTRA_OECMAKE += "${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTN
 EXTRA_OECMAKE += "-DAUDIOD_PALM_LEGACY:BOOLEAN=True"
 EXTRA_OECMAKE += "-DAUDIOD_TEST_API:BOOLEAN=True"
 
-FILES_${PN} += "${datadir}/alsa/"
-FILES_${PN} += "/data"
-FILES_${PN} += "${webos_mediadir}/internal"
+FILES:${PN} += "${datadir}/systemsounds"
+
+SRC_URI += "file://0001-CmakeLists.txt-move-systemsounds-from-media-internal.patch"
