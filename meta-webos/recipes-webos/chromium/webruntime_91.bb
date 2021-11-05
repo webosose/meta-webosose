@@ -6,7 +6,7 @@ require webruntime-repo${REPO_VERSION}.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
 PACKAGECONFIG[debug] = "symbol_level=2 optimize_for_size=true use_debug_fission=true,symbol_level=0"
 PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
@@ -42,7 +42,8 @@ GN_ARGS_append = " \
   enable_js_type_check=false\
 "
 
-# TODO: qemux86 build fails
+# TODO: qemux build fails
 PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav"
+PACKAGECONFIG_remove_qemux86-64 = "gstreamer umediaserver neva-media gav"
 #END TODO
 
