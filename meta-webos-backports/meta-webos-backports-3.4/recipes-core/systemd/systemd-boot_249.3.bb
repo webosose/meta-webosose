@@ -3,15 +3,15 @@ FILESEXTRAPATHS =. "${FILE_DIRNAME}/systemd:"
 
 require conf/image-uefi.conf
 
-DEPENDS = "intltool-native libcap util-linux gnu-efi gperf-native"
+DEPENDS = "intltool-native libcap util-linux gnu-efi gperf-native python3-jinja2-native"
 
 inherit meson pkgconfig gettext
 inherit deploy
 
-LDFLAGS_prepend = "${@ " ".join(d.getVar('LD').split()[1:])} "
+LDFLAGS:prepend = "${@ " ".join(d.getVar('LD').split()[1:])} "
 
 do_write_config[vardeps] += "CC OBJCOPY"
-do_write_config_append() {
+do_write_config:append() {
     cat >${WORKDIR}/meson-${PN}.cross <<EOF
 [binaries]
 efi_cc = ${@meson_array('CC', d)}
@@ -19,11 +19,14 @@ objcopy = ${@meson_array('OBJCOPY', d)}
 EOF
 }
 
+# need to use ${HOST_PREFIX} here, otherwise ld.bfd could be used from HOSTTOOLS_NONFATAL
+EFI_LD = "${HOST_PREFIX}ld.bfd"
+
 EXTRA_OEMESON += "-Defi=true \
                   -Dgnu-efi=true \
                   -Defi-includedir=${STAGING_INCDIR}/efi \
                   -Defi-libdir=${STAGING_LIBDIR} \
-                  -Defi-ld=${@ d.getVar('LD').split()[0]} \
+                  -Defi-ld=${EFI_LD} \
                   -Dman=false \
                   --cross-file ${WORKDIR}/meson-${PN}.cross \
                   "
@@ -41,15 +44,15 @@ python __anonymous () {
     d.setVar("SYSTEMD_BOOT_IMAGE_PREFIX", prefix)
 }
 
-FILES_${PN} = "${EFI_FILES_PATH}/${SYSTEMD_BOOT_IMAGE}"
+FILES:${PN} = "${EFI_FILES_PATH}/${SYSTEMD_BOOT_IMAGE}"
 
-RDEPENDS_${PN} += "virtual/systemd-bootconf"
+RDEPENDS:${PN} += "virtual-systemd-bootconf"
 
 # Imported from the old gummiboot recipe
-TUNE_CCARGS_remove = "-mfpmath=sse"
+TUNE_CCARGS:remove = "-mfpmath=sse"
 
 COMPATIBLE_HOST = "(aarch64.*|arm.*|x86_64.*|i.86.*)-linux"
-COMPATIBLE_HOST_x86-x32 = "null"
+COMPATIBLE_HOST:x86-x32 = "null"
 
 do_compile() {
 	ninja \
@@ -68,3 +71,4 @@ do_deploy () {
 }
 
 addtask deploy before do_build after do_compile
+
