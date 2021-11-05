@@ -1,4 +1,4 @@
-From e30822273d616cf65f4891a7f932eacd6743100a Mon Sep 17 00:00:00 2001
+From 464334b6179a848b22fe2aef2f3abf860d327726 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: depend on swap-on
@@ -8,7 +8,7 @@ Subject: [PATCH] systemd-oomd: depend on swap-on
  1 file changed, 2 insertions(+)
 
 diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
-index 0d2d409881..ca3ca8f0a3 100644
+index 44f71c9e36..8dfc22356e 100644
 --- a/units/systemd-oomd.service.in
 +++ b/units/systemd-oomd.service.in
 @@ -12,6 +12,8 @@ Description=Userspace Out-Of-Memory (OOM) Killer
@@ -19,4 +19,4 @@ index 0d2d409881..ca3ca8f0a3 100644
 +After=swap-on.service
  Conflicts=shutdown.target
  ConditionControlGroupController=v2
- ConditionPathExists=/proc/pressure/cpu
+ ConditionControlGroupController=memory
