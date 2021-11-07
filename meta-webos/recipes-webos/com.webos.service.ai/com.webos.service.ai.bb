@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libgoogleassistant"
 
 WEBOS_VERSION = "1.0.0-11_6bc7a16f334f58dfa4b439b6f849d79a1b72871b"
-PR = "r6"
+PR = "r7"
 
 inherit systemd
 inherit webos_public_repo
@@ -25,3 +25,8 @@ inherit webos_machine_impl_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+# The same restriction as in
+# meta-webos/recipes-upstreamable/snowboy/snowboy_%.bbappend
+# libgoogleassistant depends on snowboy
+COMPATIBLE_MACHINE = "rpi|aarch64|x86-64|qemux86-64"
