@@ -18,7 +18,7 @@
 
 [Unit]
 Description=webos - "%n"
-ConditionHost=(!qemux86 && !qemux86-64)
+ConditionHost=!qemux86*
 Requires=ls-hubd.service
 After=ls-hubd.service
 
