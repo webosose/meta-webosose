@@ -3,10 +3,10 @@
 DESCRIPTION = "CMake modules used by webOS"
 LICENSE = "Apache-2.0"
 SECTION = "webos/devel/tools"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.6.3-3_a7010cb34dd263b63369c83a530890026b8c5a25"
-PR = "r3"
+WEBOS_VERSION = "1.6.3-5_7056e27bcabc4656baa1a4e972a7b0f345f4b02d"
+PR = "r4"
 
 inherit webos_component
 inherit webos_public_repo
