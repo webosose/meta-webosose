@@ -21,5 +21,7 @@ If you're looking for backports from thud to sumo, check sumo branch.
 If you're looking for backports from warrior to thud, check thud branch.
 If you're looking for backports from zeus to warrior, check warrior branch.
 If you're looking for backports from dunfell to zeus, check zeus branch.
+Backports from 3.2 (Gatesgarth) to 3.1 (Dunfell) are in "meta-webos-backports-3.2" subdirectory.
+Backports from 3.3 (Hardknott) to 3.1 (Dunfell) are in "meta-webos-backports-3.3" subdirectory.
 
 See https://wiki.yoctoproject.org/wiki/Releases for complete list of releases.
