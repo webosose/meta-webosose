@@ -149,6 +149,7 @@ VIRTUAL-RUNTIME_unifiedsearch ?= "com.webos.service.unifiedsearch com.webos.serv
 # subset should there be a device that will only be used within some region.
 WEBOS_PACKAGESET_TZDATA ?= " \
     tzdata \
+    tzdata-core \
     tzdata-africa \
     tzdata-americas \
     tzdata-antarctica \
