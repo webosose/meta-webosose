@@ -1,4 +1,4 @@
-From 543a68313d7b15f0b2f0582605bfdbef8fecf1d0 Mon Sep 17 00:00:00 2001
+From 560baf686515dcacd94dbc26895a974048dcc308 Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Wed, 26 May 2021 17:45:05 +0900
 Subject: [PATCH] Fix compile error with g++ 7.5.0
@@ -13,23 +13,23 @@ Upstream-Status : Inappropriate [workaround]
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/corelib/kernel/qproperty_p.h b/src/corelib/kernel/qproperty_p.h
-index 2883308299..1fdd50e445 100644
+index 71f4f9f5e9..1bf3d490f1 100644
 --- a/src/corelib/kernel/qproperty_p.h
 +++ b/src/corelib/kernel/qproperty_p.h
-@@ -540,7 +540,7 @@ public:
-         const bool inWrapper = inBindingWrapper(storage);
-         if (bd && !inWrapper)
-             notify(bd);
+@@ -551,7 +551,7 @@ public:
+             if (!inBindingWrapper(storage))
+                 notify(bd);
+         }
 -        if constexpr (Signal != nullptr) {
 +        if constexpr (!std::is_same_v<decltype(Signal), nullptr_t>) {
              if constexpr (SignalTakesValue::value)
                  (owner()->*Signal)(value());
              else
 diff --git a/src/corelib/time/qdatetime.cpp b/src/corelib/time/qdatetime.cpp
-index 94ea0112d4..b641fbea8f 100644
+index f0841ca853..98e20ae921 100644
 --- a/src/corelib/time/qdatetime.cpp
 +++ b/src/corelib/time/qdatetime.cpp
-@@ -4012,7 +4012,7 @@ void QDateTime::setMSecsSinceEpoch(qint64 msecs)
+@@ -4000,7 +4000,7 @@ void QDateTime::setMSecsSinceEpoch(qint64 msecs)
          status |= QDateTimePrivate::ValidWhenMask;
          break;
      case Qt::OffsetFromUTC:

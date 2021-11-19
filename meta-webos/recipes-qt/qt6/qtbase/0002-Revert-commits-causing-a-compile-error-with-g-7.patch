@@ -1,4 +1,4 @@
-From 54f09c2fbb037da71f4402cce2d53cc71b7e08c6 Mon Sep 17 00:00:00 2001
+From 6062916b3c9537745be032eb8d218593f9ff490a Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 25 Oct 2021 09:53:13 +0900
 Subject: [PATCH] Revert commits causing a compile error with g++ 7

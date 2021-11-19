@@ -1,4 +1,4 @@
-From b567443edc6beb02d43c47739b687de8424b0c7b Mon Sep 17 00:00:00 2001
+From f501a8a29d84dcb10ee4520897ceb3ce515bf42b Mon Sep 17 00:00:00 2001
 From: Roman Genhel <roman.genhel@lge.com>
 Date: Fri, 18 Sep 2020 11:56:37 +0300
 Subject: [PATCH] Disable Faux bolding in Qts FreeType FontEngine
@@ -13,18 +13,19 @@ Upstream-Status : Inappropriate [webOS specific]
  1 file changed, 2 insertions(+)
 
 diff --git a/src/gui/text/freetype/qfontengine_ft.cpp b/src/gui/text/freetype/qfontengine_ft.cpp
-index 42cf147901..ac214812ae 100644
+index 4ad7740cdb..4e551234f7 100644
 --- a/src/gui/text/freetype/qfontengine_ft.cpp
 +++ b/src/gui/text/freetype/qfontengine_ft.cpp
-@@ -748,12 +748,14 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+@@ -748,6 +748,7 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
          FT_Set_Transform(face, &matrix, nullptr);
          freetype->matrix = matrix;
          // fake bold
 +#ifndef Q_OS_WEBOS
          if ((fontDef.weight >= QFont::Bold) && !(face->style_flags & FT_STYLE_FLAG_BOLD) && !FT_IS_FIXED_WIDTH(face)  && !qEnvironmentVariableIsSet("QT_NO_SYNTHESIZED_BOLD")) {
              if (const TT_OS2 *os2 = reinterpret_cast<const TT_OS2 *>(FT_Get_Sfnt_Table(face, ft_sfnt_os2))) {
-                 if (os2->usWeightClass < 700 && fontDef.pixelSize < 64)
-                     embolden = true;
+                 if (os2->usWeightClass < 700 &&
+@@ -756,6 +757,7 @@ bool QFontEngineFT::init(FaceId faceId, bool antialias, GlyphFormat format,
+                 }
              }
          }
 +#endif

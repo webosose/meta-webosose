@@ -2,19 +2,23 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos74"
+EXTENDPRAUTO_append = "webos75"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
+# Apply webOS specific patches to only SRCREV tested
+WEBOS_PATCH_SRCREV = "00c352c4d4b61f8c7a6243768bc5375c3dca3e76"
+PATCHTOOL = "git"
+
 # Upstream-Status: Backport, Submitted
 SRC_URI_append_class-target = " \
-    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch \
+    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch;rev=${WEBOS_PATCH_SRCREV} \
 "
 
 # Upstream-Status: Inappropriate
 SRC_URI_append = " \
-    file://0001-Revert-use-boolean-for-when-property.patch \
-    file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch \
+    file://0001-Revert-use-boolean-for-when-property.patch;rev=${WEBOS_PATCH_SRCREV} \
+    file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch;rev=${WEBOS_PATCH_SRCREV} \
 "
 
 # Supplement tool for qmllint
