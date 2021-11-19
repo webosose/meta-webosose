@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos73"
+EXTENDPRAUTO_append = "webos74"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -15,11 +15,6 @@ SRC_URI_append_class-target = " \
 SRC_URI_append = " \
     file://0001-Revert-use-boolean-for-when-property.patch \
     file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch \
-"
-
-# Needed to workaround qmllint error
-SRC_URI_append_class-native = " \
-    file://0001-Allow-warnings-from-qmllint.patch \
 "
 
 # Supplement tool for qmllint
