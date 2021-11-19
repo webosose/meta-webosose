@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos94"
+EXTENDPRAUTO_append = "webos95"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -102,3 +102,12 @@ TARGET_CXXFLAGS_append = " \
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
+
+# Workaround needed since https://codereview.qt-project.org/c/yocto/meta-qt6/+/366219
+# otherwise you get:
+# ERROR: Nothing RPROVIDES 'libssl-native' (but virtual:native:/home/noelma/work/webos/build-webos/meta-qt6/recipes-qt/qt6/qtbase_git.bb RDEPENDS on or otherwise requires it)
+# NOTE: Runtime target 'libssl-native' is unbuildable, removing...
+# Missing or unbuildable dependency chain was: ['libssl-native']
+# ERROR: Required build target 'qtbase' has no buildable providers.
+# Missing or unbuildable dependency chain was: ['qtbase', 'qtbase-native', 'libssl-native']
+PACKAGECONFIG_class-native_remove = "openssl"
