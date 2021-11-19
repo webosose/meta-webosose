@@ -5,7 +5,7 @@ SECTION = "webos/base"
 AUTHOR = "Maksym Sditanov <maxim.sditanov@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -21,8 +21,8 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.2.0-15_d800ccad05c94aa79420f185ba3f87d24c1dd295"
-PR = "r35"
+WEBOS_VERSION = "3.2.0-17_01e4377cada38dd59d431e7d74944c17adf9e549"
+PR = "r36"
 
 inherit webos_component
 inherit webos_public_repo
