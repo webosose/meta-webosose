@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-56_1faf20c6a14e8d3ede826e170097f6c4e68324be"
-PR = "r43"
+PR = "r44"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM_webos = "webos_cmake"
@@ -38,7 +38,6 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-build-with-gcc-11.patch \
-    file://0002-add_oomd_option.patch \
 "
 
 S = "${WORKDIR}/git"

@@ -1,0 +1,12 @@
+diff -uNr systemd_org/src/oom/oomd-manager.h systemd/src/oom/oomd-manager.h
+--- systemd_org/src/oom/oomd-manager.h	2021-12-22 18:30:06.043055789 +0900
++++ systemd/src/oom/oomd-manager.h	2021-12-23 10:34:54.359782129 +0900
+@@ -23,7 +23,7 @@
+ #define THRESHOLD_SWAP_USED_PERCENT 5
+ 
+ #define RECLAIM_DURATION_USEC (30 * USEC_PER_SEC)
+-#define POST_ACTION_DELAY_USEC (15 * USEC_PER_SEC)
++#define POST_ACTION_DELAY_USEC (1 * USEC_PER_SEC)
+ 
+ typedef struct Manager Manager;
+ 

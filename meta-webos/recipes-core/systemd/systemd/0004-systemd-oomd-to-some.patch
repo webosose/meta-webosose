@@ -1,0 +1,13 @@
+diff --git a/src/oom/oomd-util.c b/src/oom/oomd-util.c
+index 5bf81479c9..44f1f2c364 100644
+--- a/src/oom/oomd-util.c
++++ b/src/oom/oomd-util.c
+@@ -294,7 +294,7 @@ int oomd_cgroup_context_acquire(const char *path, OomdCGroupContext **ret) {
+         if (r < 0)
+                 return log_debug_errno(r, "Error getting cgroup memory pressure path from %s: %m", path);
+ 
+-        r = read_resource_pressure(p, PRESSURE_TYPE_FULL, &ctx->memory_pressure);
++        r = read_resource_pressure(p, PRESSURE_TYPE_SOME, &ctx->memory_pressure);
+         if (r < 0)
+                 return log_debug_errno(r, "Error parsing memory pressure from %s: %m", p);
+ 

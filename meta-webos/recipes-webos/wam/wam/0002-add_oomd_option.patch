@@ -1,9 +1,0 @@
-diff --git a/files/launch/systemd/webapp-mgr.service b/files/launch/systemd/webapp-mgr.service
-index e7703fa..c5ca32e 100644
---- a/files/launch/systemd/webapp-mgr.service
-+++ b/files/launch/systemd/webapp-mgr.service
-@@ -31,3 +31,4 @@ ExecStart=/etc/systemd/system/scripts/webapp-mgr.sh
- ExecStartPost=-/bin/chgrp compositor /dev/mem
- ExecStartPost=-/bin/chmod 660 /dev/mem
- Restart=on-failure
-+ManagedOOMMemoryPressure=kill
