@@ -12,14 +12,14 @@ SRC_URI += "file://etcetera.patch"
 inherit webos_filesystem_paths
 
 do_compile () {
-        for zone in ${TZONES}; do \
-            ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo -L /dev/null \
-                ${S}/${zone} ; \
-            ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo/posix -L /dev/null \
-                ${S}/${zone} ; \
-            ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo/right -L ${S}/leapseconds \
-                ${S}/${zone} ; \
-        done
+    for zone in ${TZONES}; do \
+        ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo -L /dev/null \
+            ${S}/${zone} ; \
+        ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo/posix -L /dev/null \
+            ${S}/${zone} ; \
+        ${STAGING_BINDIR_NATIVE}/zic -b fat -d ${WORKDIR}${datadir}/zoneinfo/right -L ${S}/leapseconds \
+            ${S}/${zone} ; \
+    done
 }
 
 do_install_append() {
