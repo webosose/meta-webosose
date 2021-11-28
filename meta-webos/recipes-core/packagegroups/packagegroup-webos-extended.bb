@@ -15,6 +15,8 @@ inherit webos_prerelease_dep
 VIRTUAL-RUNTIME_ai ?= "com.webos.service.ai"
 # The same restriction as libgoogleassistant (snowboy doesn't support i686;x86)
 VIRTUAL-RUNTIME_ai_i686 = ""
+VIRTUAL-RUNTIME_ai_arm = ""
+VIRTUAL-RUNTIME_ai_rpi = "com.webos.service.ai"
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
