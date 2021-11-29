@@ -23,7 +23,7 @@ SRCREV_FORMAT = "main"
 do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/iotivity"
-PR = "r4"
+PR = "r5"
 
 inherit scons pkgconfig webos_component webos_filesystem_paths
 
@@ -53,9 +53,7 @@ do_install_append() {
     install -d ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
 
     install -v -m 0755 ${S}/out/webos/${IOTIVITY_TARGET_ARCH}/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/* ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-    if [ "${IOTIVITY_TARGET_ARCH}" = "i686" ]; then
-        install -v -m 0755 ${S}/out/webos/arm/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/* ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
-    fi
+    install -v -m 0755 ${S}/out/webos/arm/release/resource/csdk/stack/samples/webos/secure/ocserverbasicops/* ${D}${webos_servicesdir}/org.ocf.webossample.ocserverbasicops
     # ACG configuration files
     install -d ${D}${datadir}/luna-service2/roles.d
     install -d ${D}${datadir}/luna-service2/services.d
