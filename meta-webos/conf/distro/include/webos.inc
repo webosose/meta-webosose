@@ -348,6 +348,9 @@ PACKAGE_ARCH:pn-meta-toolchain = "${TUNE_PKGARCH}"
 # since oe-core/c26569320817263a487eceb610e3c70badba0b52 it's ${TUNE_PKGARCH} but it depends
 # on strace, which in our strange default PACKAGE_ARCH is MACHINE_ARCH
 PACKAGE_ARCH:pn-packagegroup-core-tools-debug = "${MACHINE_ARCH}"
+# depends on pkgconfig which depends on libtool-cross which is MACHINE_ARCH in webOS
+# and since oe-core/ac6ec1979caa4032b710eb6f6523bcca29d42cd4 this packagegroup was TUNE_PKGARCH
+PACKAGE_ARCH:pn-packagegroup-core-buildessential = "${MACHINE_ARCH}"
 
 # Respect PACKAGE_ARCH set in recipe, otherwise building sdk will fail to find
 # packagegroup-cross-canadian-qemux86 package in MACHINE_ARCH feed (opkg-sdk.conf
