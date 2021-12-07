@@ -8,6 +8,8 @@ require ${COREBASE}/meta/classes/sstate.bbclass
 
 inherit webos_deploy
 
+sstate_package[vardepsexclude] += "SSTATE_SIG_KEY"
+
 def sstate_package(ss, d):
     import oe.path
 
