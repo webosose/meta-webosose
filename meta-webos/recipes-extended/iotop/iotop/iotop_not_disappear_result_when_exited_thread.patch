@@ -1,4 +1,4 @@
-From 118dc100098c768906f9bb7ee6706491f666c984 Mon Sep 17 00:00:00 2001
+From 7acb1ccc9e17695e278c4b5bab75a4e8f22abbaf Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Sun, 26 Jan 2020 01:42:46 -0800
 Subject: [PATCH] don't let result disappear when thread exits
@@ -9,7 +9,7 @@ Signed-off-by: Martin Jansa <martin.jansa@lge.com>
  1 file changed, 28 insertions(+), 7 deletions(-)
 
 diff --git a/iotop/data.py b/iotop/data.py
-index 3874974..864d28c 100644
+index 3874974..70d75ca 100644
 --- a/iotop/data.py
 +++ b/iotop/data.py
 @@ -43,7 +43,8 @@ except (ImportError, RuntimeError):
@@ -87,7 +87,7 @@ index 3874974..864d28c 100644
 +            stats_delta.blkio_delay_total /= nr_threads
 +            stats_delta.swapin_delay_total /= nr_threads
 +        elif self.pid < overPid:
-+            self.cmdline = '[' + `self.pid` + ']' + self.cmdline
++            self.cmdline = '[' + repr(self.pid) + ']' + self.cmdline
 +            self.pid = overPid+overIndex
 +            overIndex = overIndex+1
  
@@ -97,10 +97,13 @@ index 3874974..864d28c 100644
          self.processes = dict([(pid, process) for pid, process in
                                 self.processes.items() if
                                 process.update_stats()])
-+        for (key, value) in self.processes.items():
++        for (key, value) in list(self.processes.items()):
 +            if key!= value.pid:
 +                self.processes[value.pid] = value
 +                del self.processes[key]
  
          return total_read_and_write
  
+-- 
+2.17.1
+
