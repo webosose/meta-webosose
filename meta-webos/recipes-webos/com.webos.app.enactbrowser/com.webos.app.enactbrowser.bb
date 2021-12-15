@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2021 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
-AUTHOR = "Mikyung Kim <mikyung27.kim@lge.com>"
+AUTHOR = "Anish.td <anish.td@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = " \
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-48_1bb8f409d6376d2a7fb14043c3fb310adcc82a5a"
+WEBOS_VERSION = "1.0.0-49_ee995d5f4affd66ca013cc912a5816ecbf692832"
 PR = "r16"
 
 inherit webos_public_repo
