@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 WEBRUNTIME_REPO_VERSION = "91"
 
 require webruntime.inc
@@ -6,7 +6,7 @@ require webruntime-repo${REPO_VERSION}.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
 
 PACKAGECONFIG[debug] = "symbol_level=2 optimize_for_size=true use_debug_fission=true,symbol_level=0"
 PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
@@ -43,3 +43,4 @@ PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav"
 PACKAGECONFIG_remove_qemux86-64 = "gstreamer umediaserver neva-media gav"
 #END TODO
 
+TUNE_FEATURES_remove_raspberrypi4-64 = "crypto"
