@@ -1,0 +1,76 @@
+From efba7ee751563a57f29d7ea1e076fb1bc188b11f Mon Sep 17 00:00:00 2001
+From: Elvis Lee <kwangwoong.lee@lge.com>
+Date: Wed, 29 Sep 2021 11:19:11 +0900
+Subject: [PATCH] Support to get timing from pagefilp
+
+Handle the timing from drmEvent when page flip finished.
+The information can be used to optimize rendering timing.
+
+Change-Id: I14612ca48a8fea5208aa74949d7543787e860c5f
+Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
+Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/384012]
+---
+ .../eglfs_kms_support/qeglfskmseventreader.cpp           | 7 ++++---
+ .../eglfs_kms_support/qeglfskmsscreen.cpp                | 9 +++++++++
+ .../eglfs_kms_support/qeglfskmsscreen_p.h                | 1 +
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp
+index 67606f895f..a3ac9205a9 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmseventreader.cpp
+@@ -39,6 +39,7 @@
+ 
+ #include "qeglfskmseventreader_p.h"
+ #include "qeglfskmsdevice_p.h"
++#include "qeglfskmsscreen_p.h"
+ #include <QSocketNotifier>
+ #include <QCoreApplication>
+ #include <QLoggingCategory>
+@@ -50,12 +51,12 @@ Q_DECLARE_LOGGING_CATEGORY(qLcEglfsKmsDebug)
+ static void pageFlipHandler(int fd, unsigned int sequence, unsigned int tv_sec, unsigned int tv_usec, void *user_data)
+ {
+     Q_UNUSED(fd);
+-    Q_UNUSED(sequence);
+-    Q_UNUSED(tv_sec);
+-    Q_UNUSED(tv_usec);
+ 
+     QEglFSKmsEventReaderThread *t = static_cast<QEglFSKmsEventReaderThread *>(QThread::currentThread());
+     t->eventHost()->handlePageFlipCompleted(user_data);
++
++    QEglFSKmsScreen *screen = static_cast<QEglFSKmsScreen *>(user_data);
++    screen->pageFlipped(sequence, tv_sec, tv_usec);
+ }
+ 
+ class RegisterWaitFlipEvent : public QEvent
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
+index 0a77e3e642..3bbdd55d34 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen.cpp
+@@ -254,4 +254,13 @@ void QEglFSKmsScreen::setPowerState(QPlatformScreen::PowerState state)
+     m_powerState = state;
+ }
+ 
++/* Informs exact page flip timing which can be used rendering optimization.
++   Consider this is from drm event reader thread. */
++void QEglFSKmsScreen::pageFlipped(unsigned int sequence, unsigned int tv_sec, unsigned int tv_usec)
++{
++    Q_UNUSED(sequence);
++    Q_UNUSED(tv_sec);
++    Q_UNUSED(tv_usec);
++}
++
+ QT_END_NAMESPACE
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h
+index db0aca0bd2..16ed6f4c30 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_kms_support/qeglfskmsscreen_p.h
+@@ -115,6 +115,7 @@ public:
+     bool isCursorOutOfRange() const { return m_cursorOutOfRange; }
+     void setCursorOutOfRange(bool b) { m_cursorOutOfRange = b; }
+ 
++    virtual void pageFlipped(unsigned int sequence, unsigned int tv_sec, unsigned int tv_usec);
+ protected:
+     QEglFSKmsDevice *m_device;
+ 

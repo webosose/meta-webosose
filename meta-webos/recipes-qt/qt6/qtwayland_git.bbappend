@@ -2,9 +2,19 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos25"
+EXTENDPRAUTO_append = "webos26"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
+
+# Apply webOS specific patches to only SRCREV tested
+WEBOS_PATCH_SRCREV = "e9ac64ab5e5364ae4d309227422588417463efdd"
+PATCHTOOL = "git"
+
+# Upstream-Status: Backport
+SRC_URI_append = " \
+    file://0001-Support-presentation-time-protocol.patch;rev=${WEBOS_PATCH_SRCREV} \
+    file://0002-Use-scope-resolution-operator-for-request.patch;rev=${WEBOS_PATCH_SRCREV} \
+"
 
 # More options for fine-tuned configuration
 PACKAGECONFIG[brcm] = "-DFEATURE_wayland_brcm=ON,-DFEATURE_wayland_brcm=OFF,"

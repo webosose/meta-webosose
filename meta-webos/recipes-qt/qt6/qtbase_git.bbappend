@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos95"
+EXTENDPRAUTO_append = "webos96"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -83,6 +83,11 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 # Apply webOS specific patches to only SRCREV tested
 WEBOS_PATCH_SRCREV = "eae95814a46386f8930eeae5486513a78a7a4ddc"
 PATCHTOOL = "git"
+
+# Upstream-Status: Backport
+SRC_URI_append = " \
+    file://0001-Support-to-get-timing-from-pagefilp.patch;rev=${WEBOS_PATCH_SRCREV} \
+"
 
 # Upstream-Status: Inappropriate
 SRC_URI_append = " \
