@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
 
-WEBOS_VERSION = "1.0.0-4_e147b3bc8dc6a5edbcf5f4431611bd4fcf520e3b"
+WEBOS_VERSION = "1.0.0-5_176952582c70131e26b4ae68ac4e5ff257ee03cc"
 PR = "r4"
 
 inherit webos_qmake6
