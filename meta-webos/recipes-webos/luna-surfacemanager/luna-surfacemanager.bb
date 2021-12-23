@@ -9,10 +9,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2c7c706c6a586a6abec428c64006d86b \
 "
 
-DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0"
+DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
-WEBOS_VERSION = "2.0.0-360_5c3a00a694cc9c4ef33e910a7a20a241445b1083"
-PR = "r52"
+WEBOS_VERSION = "2.0.0-361_d7a69e76ba6f56d2f978c14d8c247362fae02d68"
+PR = "r53"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
