@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
@@ -65,6 +65,7 @@ WEBOS_PACKAGESET_TESTAPPS = " \
     com.webos.app.test.webosose \
     com.webos.app.test.webrtc \
     com.webos.app.test.youtube \
+    test.redirection.backgroundmedia \
 "
 
 MEDIA = " \
