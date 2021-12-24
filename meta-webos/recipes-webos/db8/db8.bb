@@ -21,7 +21,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.2.0-18_98fe9007a708a4831e3694b8afd8c3a260343aa5"
+WEBOS_VERSION = "3.2.0-20_1ba9dae12c33a7a6b6161333172463161d93d9fd"
 PR = "r36"
 
 inherit webos_component
