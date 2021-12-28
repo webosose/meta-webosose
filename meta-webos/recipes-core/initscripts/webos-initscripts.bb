@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2021 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "Systemd service files for system services"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
@@ -18,7 +18,7 @@ RDEPENDS_${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_bash} python
 PROVIDES = "initscripts"
 RPROVIDES_${PN} = "initscripts initd-functions"
 
-WEBOS_VERSION = "3.0.0-81_f5674f46df823203daaf8cafb037be0d086d4dd8"
+WEBOS_VERSION = "3.0.0-82_831e1faabe5a69a0f44c0741b099b8d1eab251db"
 PR = "r17"
 
 inherit webos_component
