@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2021 LG Electronics, Inc.
+# Copyright (c) 2016-2022 LG Electronics, Inc.
 
 DESCRIPTION = "enact-dev command-line tools used by webOS"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -41,7 +41,7 @@ SRCREV_FORMAT = "main_cli-legacy_jsdoc-to-ts"
 PV = "4.1.6"
 SRCREV = "af42d9de312dab537e8a7539b434d1c3ef42cbb7"
 SRCREV_cli-legacy = "bf5012e50bdca62ff596b73a55a5b5f93ccf1069"
-SRCREV_jsdoc-to-ts = "91e3709da01f4a8e0d57c2ed80d068789acf37eb"
+SRCREV_jsdoc-to-ts = "344e1bf9fe3615380be513a8f7a7bab7a3f71b1b"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"

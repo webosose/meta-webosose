@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "Enact Sandstone standard override used for Enact apps"
 AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
@@ -22,10 +22,10 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.1.0"
+PV = "2.1.2"
 
-SRCREV = "e69d6dcdf0993bc00b79495af68c1796dc027193"
-SRCREV_enact = "d2d5262c8d026fbfd8fa635e5364491dc83cba7c"
+SRCREV = "74bb529f7703bccf409b37fc9076bcff0c03f604"
+SRCREV_enact = "ae1ef854432b0dedd75b0f104f6c2d3b1033753f"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
@@ -45,7 +45,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     object-assign@4.1.1 \
     parse-headers@2.0.4 \
     process@0.11.10 \
-    prop-types@15.7.2 \
+    prop-types@15.8.0 \
     ramda@0.24.1 \
     react@17.0.2 \
     react-dom@17.0.2 \
@@ -59,7 +59,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r7"
+PR = "r8"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
