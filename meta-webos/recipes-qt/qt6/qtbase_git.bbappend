@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos97"
+EXTENDPRAUTO_append = "webos98"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -93,12 +93,6 @@ SRC_URI_append = " \
 # Upstream-Status: Inappropriate
 SRC_URI_append = " \
     file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch;rev=${WEBOS_PATCH_SRCREV} \
-"
-# TODO: qtbase-native fails to build with g++ from hosttools(7.5.0)
-# Drop this once our build host has a newer version of g++.
-SRC_URI_append_class-native = " \
-    file://0001-Fix-compile-error-with-g-7.5.0.patch;rev=${WEBOS_PATCH_SRCREV} \
-    file://0002-Revert-commits-causing-a-compile-error-with-g-7.patch;rev=${WEBOS_PATCH_SRCREV} \
 "
 
 # Flags needed for webOS
