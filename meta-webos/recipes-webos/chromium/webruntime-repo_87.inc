@@ -1,9 +1,9 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=28f5b870e5e06b9af5b96c9dd65b31c8"
 
 WEBOS_REPO_NAME = "chromium87"
-WEBOS_VERSION = "87.0.4280.88-11_2aef2811320afb9a448930558f9183231c433b49"
+WEBOS_VERSION = "87.0.4280.88-12_7c9f2fe947810b7ea95f3609e0795f674ad4bfe4"
 
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium87"
