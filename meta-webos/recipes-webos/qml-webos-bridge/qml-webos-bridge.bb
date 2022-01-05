@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS QML LS2 bridge"
 AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 RDEPENDS_${PN} += "qml-webos-components"
 
-WEBOS_VERSION = "1.0.0-126_5279a79c5525127f6ab5d865343f418cad6dbfb7"
+WEBOS_VERSION = "1.0.0-127_5eaac8692103b9f67c9da7f6d69a6ce6bb2c4dd2"
 PR = "r18"
 
 inherit webos_qmake6
