@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2021 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS Audiod daemon and utilities"
 AUTHOR = "Manohar Babu <manohar.babu@lge.com>"
@@ -23,7 +23,7 @@ RDEPENDS_${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-34_92400a08ffb30408d7042a709e0b7a64994ccb15"
+WEBOS_VERSION = "1.0.0-35_7aa5d5b4bad1216ed4169fb5bc8add54aece2f9c"
 PR = "r31"
 
 inherit webos_component
