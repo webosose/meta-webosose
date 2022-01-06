@@ -1,6 +1,6 @@
-# Copyright (c) 2015-2021 LG Electronics, Inc.
+# Copyright (c) 2015-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webos12"
+EXTENDPRAUTO_append = "webos13"
 
 # Assign to PE, because empty PKGE in KERNEL_IMAGE_NAME causes two hyphens.
 PE = "1"
@@ -16,6 +16,7 @@ SRC_URI_append_qemux86 = " file://crypto.cfg \
                            file://0001-change-keymax-value.patch \
                            file://file_system.cfg \
                            file://bluetooth_ext.cfg \
+                           file://oomd.cfg \
 "
 SRC_URI_append_qemux86-64 = " file://crypto.cfg \
                            file://my_gfx.cfg \
@@ -26,6 +27,7 @@ SRC_URI_append_qemux86-64 = " file://crypto.cfg \
                            file://0001-change-keymax-value.patch \
                            file://file_system.cfg \
                            file://bluetooth_ext.cfg \
+                           file://oomd.cfg \
 "
 
 KERNEL_FEATURES_append_qemux86 = " features/bluetooth/bluetooth-usb.scc"
