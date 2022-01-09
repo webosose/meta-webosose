@@ -1,0 +1,96 @@
+From 7b7965aca49a01f5494667a7c53a3a71d20c5418 Mon Sep 17 00:00:00 2001
+From: Jungi Byun <jungi.byun@lge.com>
+Date: Tue, 21 Dec 2021 14:37:36 +0900
+Subject: [PATCH] evdev: Prevent race condition in touch events processing
+
+Unlike other input devices, touch devices are managed by corresponding
+handler threads which are not the main thread. InputEvent that is
+inherited by TouchEvent has a constant pointer member for device, but in
+touch events case, handler threads may destroy the device which is
+pointed by events while processing these events in main thread,
+and this may cause critical potential issues such as crash. In order to
+prevent this race condition, move device of QEvdevTouchScreenHandler
+into main thread and delete this device later if QGuiApplication
+instance exists when handler thread quits, and check event's device is
+valid when processing touch events.
+
+Change-Id: I02583238d97d768abcc544ee882160eda3178282
+Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
+Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/387428]
+
+%% original patch: 0002-evdev-Prevent-race-condition-in-touch-events-process.patch
+---
+ src/gui/kernel/qguiapplication.cpp            |  3 ++
+ .../input/evdevtouch/qevdevtouchhandler.cpp   | 39 ++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/kernel/qguiapplication.cpp b/src/gui/kernel/qguiapplication.cpp
+index cfe1e48e04..a03be84423 100644
+--- a/src/gui/kernel/qguiapplication.cpp
++++ b/src/gui/kernel/qguiapplication.cpp
+@@ -2786,6 +2786,9 @@ void QGuiApplicationPrivate::processContextMenuEvent(QWindowSystemInterfacePriva
+ 
+ void QGuiApplicationPrivate::processTouchEvent(QWindowSystemInterfacePrivate::TouchEvent *e)
+ {
++    if (!QInputDevicePrivate::isRegistered(e->device))
++        return;
++
+     modifier_buttons = e->modifiers;
+     QPointingDevice *device = const_cast<QPointingDevice *>(static_cast<const QPointingDevice *>(e->device));
+     QPointingDevicePrivate *devPriv = QPointingDevicePrivate::get(device);
+diff --git a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
+index eb693426d9..c318b2220e 100644
+--- a/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
++++ b/src/platformsupport/input/evdevtouch/qevdevtouchhandler.cpp
+@@ -474,9 +474,46 @@ void QEvdevTouchScreenHandler::registerPointingDevice()
+     QWindowSystemInterface::registerInputDevice(m_device);
+ }
+ 
++/*! \internal
++
++    QEvdevTouchScreenHandler::unregisterPointingDevice can be called by several cases.
++
++    First of all, the case that an application is terminated, and destroy all input devices
++    immediately to unregister in this case.
++
++    Secondly, the case that removing a device without touch events for the device while the
++    application is still running. In this case, the destructor of QEvdevTouchScreenHandler from
++    the connection with QDeviceDiscovery::deviceRemoved in QEvdevTouchManager calls this method.
++    And this method moves a device into the main thread and then deletes it later but there is no
++    touch events for the device so that the device would be deleted in appropriate time.
++
++    Finally, this case is similar as the second one but with touch events, that is, a device is
++    removed while touch events are given to the device and the application is still running.
++    In this case, this method is called by readData with ENODEV error and the destructor of
++    QEvdevTouchScreenHandler. So in order to prevent accessing the device which is already nullptr,
++    check the nullity of a device first. And as same as the second case, move the device into the
++    main thread and then delete it later. But in this case, cannot guarantee which event is
++    handled first since the list or queue where posting QDeferredDeleteEvent and appending touch
++    events are different.
++    If touch events are handled first, there is no problem because the device which is used for
++    these events is registered. However if QDeferredDeleteEvent for deleting the device is
++    handled first, this may cause a crash due to using unregistered device when processing touch
++    events later. In order to prevent processing such touch events, check a device which is used
++    for touch events is registered when processing touch events.
++
++    see QGuiApplicationPrivate::processTouchEvent().
++ */
+ void QEvdevTouchScreenHandler::unregisterPointingDevice()
+ {
+-    delete m_device;
++    if (!m_device)
++        return;
++
++    if (QGuiApplication::instance()) {
++        m_device->moveToThread(QGuiApplication::instance()->thread());
++        m_device->deleteLater();
++    } else {
++        delete m_device;
++    }
+     m_device = nullptr;
+ }
+ 
+-- 
+2.17.1
+

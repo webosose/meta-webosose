@@ -1,8 +1,8 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos96"
+EXTENDPRAUTO_append = "webos97"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -86,7 +86,8 @@ PATCHTOOL = "git"
 
 # Upstream-Status: Backport
 SRC_URI_append = " \
-    file://0001-Support-to-get-timing-from-pagefilp.patch;rev=${WEBOS_PATCH_SRCREV} \
+    file://0001-Support-to-get-timing-from-pagefilp.patch;maxver=6.2.* \
+    file://0002-evdev-Prevent-race-condition-in-touch-events-process.patch;maxver=6.2.* \
 "
 
 # Upstream-Status: Inappropriate
