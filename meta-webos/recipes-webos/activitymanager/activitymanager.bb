@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 DESCRIPTION = "webOS component to manage all running activities."
 AUTHOR = "Ludovic Legrand <ludovic.legrand@lge.com>"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 
 DEPENDS = "luna-service2 db8 boost libpbnjson glib-2.0 pmloglib ${VIRTUAL-RUNTIME_init_manager}"
 
-WEBOS_VERSION = "3.0.0-29_f828935d78361b413460178d805bc441ef0ecbbb"
+WEBOS_VERSION = "3.0.0-30_1af21315a64f99247660b7c4e6f5648bceb4f737"
 PR = "r11"
 
 inherit webos_component
