@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 
 # Confidential computer software. Valid license from LG required for
 # possession, use or copying. Consistent with FAR 12.211 and 12.212,
@@ -19,7 +19,7 @@ DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) ==
 
 RDEPENDS_${PN} += "qml-webos-framework qml-webos-bridge"
 
-WEBOS_VERSION = "1.0.0-15_2726294995afb54941df42713727f6ba9d86fcba"
+WEBOS_VERSION = "1.0.0-16_dc86d074c62414f5f7e560145ebe237ff9d87ecc"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r2"

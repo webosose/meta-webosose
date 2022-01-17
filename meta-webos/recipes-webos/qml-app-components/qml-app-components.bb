@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS QML app components"
 AUTHOR = "Jongson Kim <jongson.kim@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"
 DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
 
-WEBOS_VERSION = "1.0.0-5_176952582c70131e26b4ae68ac4e5ff257ee03cc"
+WEBOS_VERSION = "1.0.0-6_ad9b0aee66408b214d5f4d61b9912ed411da2f00"
 PR = "r4"
 
 inherit webos_qmake6
