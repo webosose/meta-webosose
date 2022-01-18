@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 LG Electronics, Inc.
+# Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "g-camera-pipeline is a player which uses GStreamer"
 AUTHOR = "Praveen P <praveen.p@lge.com>"
@@ -24,7 +24,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS_append_rpi = " userland"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-13.gav.26_e153a18d97245a5db980b31d4b63c157c9789d56"
+WEBOS_VERSION = "1.0.0-13.gav.27_e68fd50c6837edd62501448bcdf75e2c8a766a01"
 
 
 WEBOS_GIT_PARAM_BRANCH_raspberrypi3 = "master"
