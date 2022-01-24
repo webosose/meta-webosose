@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Node-red based context intent manager (CIM)"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "nodejs-module-node-red"
 
-WEBOS_VERSION = "1.0.0-15_164dac6257c940674dd1e00657d40bdc200144f2"
+WEBOS_VERSION = "1.0.0-16_81772cbd310891d4df004000a9b1af3173a8185e"
 PR = "r4"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
