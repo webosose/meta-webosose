@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2021 LG Electronics, Inc.
+# Copyright (c) 2015-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS LS2 security configuration"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
@@ -9,7 +9,7 @@ file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.2-23_d5cf2bd0b11d801d6177bd6cc54633843c24b033"
+WEBOS_VERSION = "1.0.2-24_408d29b850749c79ecd6356ed8917df53116b4b3"
 PR = "r6"
 
 inherit webos_component
