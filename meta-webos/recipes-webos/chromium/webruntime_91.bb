@@ -6,7 +6,7 @@ require webruntime-repo${REPO_VERSION}.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.3"
+PR = "${INC_PR}.4"
 
 PACKAGECONFIG[debug] = "symbol_level=2 optimize_for_size=true use_debug_fission=true,symbol_level=0"
 PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
@@ -36,6 +36,7 @@ GN_ARGS_append = " \
   includedir=\"${includedir}\"\
   enable_mojom_closure_compile=false\
   enable_js_type_check=false\
+  use_neva_media_player_camera=true\
 "
 
 # TODO: qemux build fails
