@@ -1,0 +1,95 @@
+From 215332793335f6db8fa47e99797adc7488175802 Mon Sep 17 00:00:00 2001
+From: "milan.shah" <milan.shah@lge.com>
+Date: Wed, 12 Jan 2022 11:59:16 +0000
+Subject: [PATCH 3/3] gator: modified driver Makefile to allow compilation
+
+Signed-off-by: milan.shah <milan.shah@lge.com>
+---
+ Makefile | 46 ++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 14 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index fff8603..088f67d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,10 +1,22 @@
+-ifneq ($(KERNELRELEASE),)
++#ifneq ($(KERNELRELEASE),)
+ 
+ # Uncomment the following line to enable kernel stack unwinding within gator, or update gator_backtrace.c
+ # EXTRA_CFLAGS +=   -DGATOR_KERNEL_STACK_UNWINDING
+ 
++TARGET = gator
+ CONFIG_GATOR ?= m
+-obj-$(CONFIG_GATOR) := gator.o
++
++$(TARGET)-objs := gator_main.o \
++	gator_events_block.o \
++	gator_events_irq.o \
++	gator_events_meminfo.o \
++	gator_events_mmapped.o \
++	gator_events_net.o \
++	gator_events_sched.o
++
++obj-m := $(TARGET).o
++
++SRC := $(shell pwd)
+ 
+ gator-y :=  gator_main.o \
+             gator_events_block.o \
+@@ -74,34 +86,40 @@ gator-additional-dependencies := $(obj)/generated_gator_src_md5.h
+ clean-files := generated_gator_src_md5.h
+ 
+ # Should the original or new block_rq_complete API be used?
+-OLD_BLOCK_RQ_COMPLETE := $(shell grep -A3 block_rq_complete $(srctree)/include/trace/events/block.h | grep nr_bytes -q; echo $$?)
++OLD_BLOCK_RQ_COMPLETE := $(shell grep -A3 block_rq_complete $(KERNEL_SRC)/include/trace/events/block.h | grep nr_bytes -q; echo $$?)
+ EXTRA_CFLAGS += -DOLD_BLOCK_RQ_COMPLETE=$(OLD_BLOCK_RQ_COMPLETE)
+ 
+ gator-$(CONFIG_ARM) +=  gator_events_l2c-310.o
+ 
+ gator-$(CONFIG_ARM64) +=
+ 
+-$(obj)/gator_main.o: $(gator-additional-dependencies)
++#gator_main.o: $(gator-additional-dependencies)
+ 
+ # Note, in the recipe below we use "cd $(srctree) && cd $(src)" rather than
+ # "cd $(srctree)/$(src)" because under DKMS $(src) is an absolute path, and we
+ # can't just use $(src) because for normal kernel builds this is relative to
+ # $(srctree)
+-$(obj)/generated_gator_src_md5.h: $(wildcard $(src)/gator_*.h $(src)/gator_*.c $(src)/mali/*.h)
+-	@$($(quiet)chk_events.h)
+-	$(Q)cd $(srctree) && cd $(src) ; $(CONFIG_SHELL) -c "echo 'static char * gator_src_md5 = \"'\`ls gator_*.c gator_*.h mali/*.h | grep -Ev '^(generated_gator_src_md5\.h|gator\.mod\.c)$$' | LC_ALL=C sort | xargs cat | md5sum | cut -b 1-32\`'\";'" > $(abspath $@)
++#$(obj)/generated_gator_src_md5.h: $(wildcard $(src)/gator_*.h $(src)/gator_*.c $(src)/mali/*.h)
++#	@$($(quiet)chk_events.h)
++#	$(Q)cd $(srctree) && cd $(src) ; $(CONFIG_SHELL) -c "echo 'static char * gator_src_md5 = \"'\`ls gator_*.c gator_*.h mali/*.h | grep -Ev '^(generated_gator_src_md5\.h|gator\.mod\.c)$$' | LC_ALL=C sort | xargs cat | md5sum | cut -b 1-32\`'\";'" > $(abspath $@)
+ 
+-else
++#else
++
++#all:
++#	@echo
++#	@echo "usage:"
++#	@echo "      make -C <kernel_build_dir> M=\`pwd\` ARCH=arm CROSS_COMPILE=<...> modules"
++#	@echo
++#	$(error)
+ 
+ all:
+-	@echo
+-	@echo "usage:"
+-	@echo "      make -C <kernel_build_dir> M=\`pwd\` ARCH=arm CROSS_COMPILE=<...> modules"
+-	@echo
+-	$(error)
++	$(MAKE) -C $(KERNEL_SRC) M=$(PWD)
++
++modules_install:
++	$(MAKE) -C $(KERNEL_SRC) M=$(PWD) modules_install
+ 
+ clean:
+ 	rm -f *.o .*.cmd generated_gator_src_md5.h modules.order Module.symvers gator.ko gator.mod.c
+ 	rm -rf .tmp_versions
+ 
+-endif
++#endif
+-- 
+2.17.1
+
