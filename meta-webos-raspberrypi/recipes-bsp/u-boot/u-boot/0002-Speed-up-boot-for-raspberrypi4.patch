@@ -1,17 +1,31 @@
-From 53e10e07fad23b654de9e7bdee2a792fcee4d68f Mon Sep 17 00:00:00 2001
+From b5dc7328c736df776c6945f063d32d11a1e46bda Mon Sep 17 00:00:00 2001
 From: JeongBong Seo <jb.seo@lge.com>
-Date: Wed, 18 Mar 2020 19:25:47 +0900
-Subject: Speed up boot for raspberrypi4
+Date: Wed, 9 Feb 2022 12:05:35 +0900
+Subject: [PATCH 2/2] Speed up boot for raspberrypi4
 
 ---
  configs/rpi_4_32b_defconfig | 5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+ configs/rpi_4_defconfig     | 5 +++++
+ 2 files changed, 10 insertions(+)
 
 diff --git a/configs/rpi_4_32b_defconfig b/configs/rpi_4_32b_defconfig
-index a31a617a5f..e60be126fe 100644
+index 47ea466454..908275bd01 100644
 --- a/configs/rpi_4_32b_defconfig
 +++ b/configs/rpi_4_32b_defconfig
-@@ -31,3 +31,8 @@ CONFIG_SYS_WHITE_ON_BLACK=y
+@@ -59,3 +59,8 @@ CONFIG_PHYS_TO_BUS=y
+ CONFIG_ADDR_MAP=y
+ CONFIG_SYS_NUM_ADDR_MAP=2
+ CONFIG_OF_LIBFDT_OVERLAY=y
++
++CONFIG_BOOTCOUNT_LIMIT=y
++CONFIG_BOOTCOUNT_ENV=y
++ 
++CONFIG_BOOTDELAY=0
+diff --git a/configs/rpi_4_defconfig b/configs/rpi_4_defconfig
+index 9cd1477107..431b300b8d 100644
+--- a/configs/rpi_4_defconfig
++++ b/configs/rpi_4_defconfig
+@@ -57,3 +57,8 @@ CONFIG_SYS_WHITE_ON_BLACK=y
  CONFIG_CONSOLE_SCROLL_LINES=10
  CONFIG_PHYS_TO_BUS=y
  CONFIG_OF_LIBFDT_OVERLAY=y
@@ -21,5 +35,5 @@ index a31a617a5f..e60be126fe 100644
 +
 +CONFIG_BOOTDELAY=0
 -- 
-2.17.1
+2.25.1
 
