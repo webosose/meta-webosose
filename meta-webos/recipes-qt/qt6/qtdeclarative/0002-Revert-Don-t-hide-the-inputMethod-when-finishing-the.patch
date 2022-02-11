@@ -1,4 +1,4 @@
-From 7fff5212e03134f1a76a81219f1abe95dd790394 Mon Sep 17 00:00:00 2001
+From eef03385338dc2b40b2bd5ed86d6c6150bcbe677 Mon Sep 17 00:00:00 2001
 From: Beomjoong Yun <bj.yun@lge.com>
 Date: Wed, 9 Jun 2021 15:41:43 +0900
 Subject: [PATCH] Revert "Don't hide the inputMethod when finishing the edit"
@@ -13,10 +13,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 2 insertions(+)
 
 diff --git a/src/quick/items/qquicktextinput.cpp b/src/quick/items/qquicktextinput.cpp
-index f0cb66fa40..e0adac786b 100644
+index 42720c6753..7f45e938b6 100644
 --- a/src/quick/items/qquicktextinput.cpp
 +++ b/src/quick/items/qquicktextinput.cpp
-@@ -4417,6 +4417,8 @@ void QQuickTextInputPrivate::processKeyEvent(QKeyEvent* event)
+@@ -4424,6 +4424,8 @@ void QQuickTextInputPrivate::processKeyEvent(QKeyEvent* event)
  
              QInputMethod *inputMethod = QGuiApplication::inputMethod();
              inputMethod->commit();
@@ -25,6 +25,3 @@ index f0cb66fa40..e0adac786b 100644
  
              if (activeFocus) {
                  // If we lost focus after hiding the virtual keyboard, we've already emitted
--- 
-2.17.1
-

@@ -1,4 +1,4 @@
-From c81ac4495cdaf0fb7d6f9c02fd2e0ba234eef26c Mon Sep 17 00:00:00 2001
+From efd9cc70922656a364315fa0f0aed19e598129af Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 15 Jun 2021 13:49:55 +0900
 Subject: [PATCH] Check if a device in knownPointingDevices is destroyed before
@@ -19,7 +19,7 @@ Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative
  2 files changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/src/quick/util/qquickdeliveryagent.cpp b/src/quick/util/qquickdeliveryagent.cpp
-index 344024ab7c..2b602f35ef 100644
+index 0cea513b78..a8b7bccb74 100644
 --- a/src/quick/util/qquickdeliveryagent.cpp
 +++ b/src/quick/util/qquickdeliveryagent.cpp
 @@ -269,9 +269,16 @@ void QQuickDeliveryAgentPrivate::removeGrabber(QQuickItem *grabber, bool mouse,
@@ -42,7 +42,7 @@ index 344024ab7c..2b602f35ef 100644
          }
          return;
      }
-@@ -1639,7 +1646,6 @@ void QQuickDeliveryAgentPrivate::ensureDeviceConnected(const QPointingDevice *de
+@@ -1642,7 +1649,6 @@ void QQuickDeliveryAgentPrivate::ensureDeviceConnected(const QPointingDevice *de
          return;
      knownPointingDevices.append(dev);
      connect(dev, &QPointingDevice::grabChanged, this, &QQuickDeliveryAgentPrivate::onGrabChanged);

@@ -1,8 +1,8 @@
-# Copyright (c) 2014-2021 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos75"
+EXTENDPRAUTO_append = "webos76"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -10,14 +10,18 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 WEBOS_PATCH_SRCREV = "00c352c4d4b61f8c7a6243768bc5375c3dca3e76"
 PATCHTOOL = "git"
 
-# Upstream-Status: Backport, Submitted
-SRC_URI_append_class-target = " \
+# Upstream-Status: Backport
+SRC_URI_append = " \
+    file://0001-Correctly-handle-QQuickState-when.patch;maxver=6.2.3 \
+"
+
+# Upstream-Status: Submitted
+SRC_URI_append = " \
     file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch;rev=${WEBOS_PATCH_SRCREV} \
 "
 
 # Upstream-Status: Inappropriate
 SRC_URI_append = " \
-    file://0001-Revert-use-boolean-for-when-property.patch;rev=${WEBOS_PATCH_SRCREV} \
     file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch;rev=${WEBOS_PATCH_SRCREV} \
 "
 

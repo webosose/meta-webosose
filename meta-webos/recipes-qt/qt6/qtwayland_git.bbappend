@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos27"
+EXTENDPRAUTO_append = "webos28"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -11,7 +11,7 @@ PATCHTOOL = "git"
 # Upstream-Status: Backport
 SRC_URI_append = " \
     file://0001-Support-presentation-time-protocol.patch;maxver=6.2.* \
-    file://0002-Use-scope-resolution-operator-for-request.patch \
+    file://0002-Use-scope-resolution-operator-for-request.patch;maxver=6.2.* \
 "
 
 # More options for fine-tuned configuration
