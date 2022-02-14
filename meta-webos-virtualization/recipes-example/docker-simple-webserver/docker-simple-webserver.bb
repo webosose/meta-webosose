@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Simple webserver container with docker-compose"
 LICENSE = "Apache-2.0"
@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 inherit systemd webos_filesystem_paths
 
 PV = "0.1.0"
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "file://docker-simple-webserver_${PV}.tar.bz2"
 SRC_URI[md5sum] = "7b24cf1e091a13933b82effa635d418a"
@@ -29,7 +29,7 @@ do_install() {
 
     # copy docker-compose file and related files
     install -d ${D}${datadir}
-    cp -rav ${S}/docker-simple-webserver ${D}${datadir}
+    cp -rv ${S}/docker-simple-webserver ${D}${datadir}
 }
 
 FILES_${PN} += "${webos_mountablestoragedir}"
