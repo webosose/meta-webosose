@@ -19,7 +19,7 @@ DEPENDS_append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) ==
 
 RDEPENDS_${PN} += "qml-webos-framework qml-webos-bridge"
 
-WEBOS_VERSION = "1.0.0-16_dc86d074c62414f5f7e560145ebe237ff9d87ecc"
+WEBOS_VERSION = "1.0.0-17_4fe324a62ee8d06e344e935f17cbda3d3e568b59"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r2"
