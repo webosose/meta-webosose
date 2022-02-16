@@ -1,0 +1,413 @@
+From 94caa7a426a84d7978580fa393a43fc3a2968786 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Tue, 27 Jan 2015 16:45:01 +0900
+Subject: [PATCH] Enhance Wayland debug print
+
+1) Enable or disable print through the named pipe.
+2) Redirect logs into a file.
+3) Print additional information including PIDs.
+not included yet:
+4) Output wl_log and wl_abort to PmLog if available.
+
+Signed-off-by: hyunsook.park <hyunsook.park@lge.com>
+Signed-off-by: cathy.park <cathy.park@lge.com>
+Signed-off-by: jaehak.lee <jaehak.lee@lge.com>
+Signed-off-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Signed-off-by: Roman Genhel <roman.genhel@lge.com>
+
+Upstream-Status: Inappropriate [webOS specific]
+---
+ meson.build              |  4 ++
+ meson_options.txt        |  4 ++
+ src/connection.c         | 70 ++++++++++++++++++++++++++++++++++-
+ src/meson.build          |  5 ++-
+ src/wayland-client.c     |  8 ++--
+ src/wayland-private.h    |  2 +-
+ src/wayland-server.c     | 79 +++++++++++++++++++++++++++++++++++++++-
+ src/wayland-util.c       | 18 +++++++++
+ src/wayland-version.h.in |  2 +
+ 9 files changed, 181 insertions(+), 11 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 3bc25c9..f23a74d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -14,6 +14,10 @@ config_h = configuration_data()
+ config_h.set_quoted('PACKAGE', meson.project_name())
+ config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
+ 
++if get_option('pmlog')
++	config_h.set('HAVE_PMLOG', 1)
++endif
++
+ compiler_flags = [
+ 	'-Wno-unused-parameter',
+ 	'-Wstrict-prototypes',
+diff --git a/meson_options.txt b/meson_options.txt
+index 4433fa0..e7cebb3 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -22,3 +22,7 @@ option('icon_directory',
+   description: 'Location used to look for cursors (defaults to ${datadir}/icons if unset)',
+   type: 'string',
+   value: '')
++option('pmlog',
++  description: 'Enable pmlog for stderr logging',
++  type: 'boolean',
++  value: 'true')
+diff --git a/src/connection.c b/src/connection.c
+index dc499ea..3e6a9b4 100644
+--- a/src/connection.c
++++ b/src/connection.c
+@@ -39,6 +39,8 @@
+ #include <sys/socket.h>
+ #include <time.h>
+ #include <ffi.h>
++#include <pthread.h>
++#include <sys/time.h>
+ 
+ #include "wayland-util.h"
+ #include "wayland-private.h"
+@@ -64,6 +66,48 @@ struct wl_ring_buffer {
+ #define MAX_FDS_OUT	28
+ #define CLEN		(CMSG_LEN(MAX_FDS_OUT * sizeof(int32_t)))
+ 
++#ifndef UNIX_PATH_MAX
++#define UNIX_PATH_MAX 1024
++#endif
++
++static FILE* open_file(void)
++{
++	char *debug_path;
++	char proc_name[UNIX_PATH_MAX] = {0,};
++	char filename[UNIX_PATH_MAX];
++	FILE *tmp_debug_fp = NULL;
++	extern char *program_invocation_short_name;
++
++	debug_path = getenv("WAYLAND_DEBUG_PATH");
++	if (program_invocation_short_name)
++		snprintf(proc_name, UNIX_PATH_MAX, "%s_%d", program_invocation_short_name, getpid());
++	else
++		snprintf(proc_name, UNIX_PATH_MAX, "%d", getpid());
++
++	if (!debug_path)
++		snprintf(filename, UNIX_PATH_MAX, "/tmp/wayland_%s.log",proc_name);
++	else
++		snprintf(filename, UNIX_PATH_MAX, "%s/wayland_%s.log",debug_path,proc_name);
++
++	tmp_debug_fp = fopen(filename, "a+");
++	if (!tmp_debug_fp) {
++		fprintf(stderr,"Error! Cannot open file...\n");
++		return NULL;
++	}
++	return tmp_debug_fp;
++}
++
++static void get_time(struct timeval *now_Tv, struct tm *now_Tm)
++{
++	time_t now;
++
++	memset(now_Tv, 0, sizeof(struct timeval));
++	gettimeofday(now_Tv, NULL);
++	now = now_Tv->tv_sec;
++	memset(now_Tm, 0, sizeof(struct tm));
++	gmtime_r(&now, now_Tm);
++}
++
+ struct wl_connection {
+ 	struct wl_ring_buffer in, out;
+ 	struct wl_ring_buffer fds_in, fds_out;
+@@ -1264,7 +1308,7 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection)
+ 
+ void
+ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
+-		 int send, int discarded, uint32_t (*n_parse)(union wl_argument *arg))
++		 int send, int discarded, uint32_t (*n_parse)(union wl_argument *arg), const char *supplement)
+ {
+ 	int i;
+ 	struct argument_details arg;
+@@ -1280,9 +1324,30 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
+ 	if (f == NULL)
+ 		return;
+ 
++	static FILE *debug_fp = NULL;
++	struct timeval  nowTv;
++	struct tm       nowTm;
++	pid_t pid = getpid();
++	pthread_t tid = pthread_self();
++
++	if (!debug_fp) {
++		debug_fp = open_file();
++		if (!debug_fp) {
++			fprintf(stderr, "*** Warning: Cannot print debug message in file.");
++			debug_fp = stderr;
++		}
++	}
++
++	get_time(&nowTv, &nowTm);
+ 	clock_gettime(CLOCK_REALTIME, &tp);
+ 	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
+ 
++	fprintf(f, "[%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ][pid:%d][tid:0x%lx]",
++			1900 + nowTm.tm_year, 1 + nowTm.tm_mon, nowTm.tm_mday,
++			nowTm.tm_hour, nowTm.tm_min, nowTm.tm_sec, nowTv.tv_usec,
++			pid,
++			tid);
++
+ 	fprintf(f, "[%7u.%03u] %s%s%s@%u.%s(",
+ 		time / 1000, time % 1000,
+ 		discarded ? "discarded " : "",
+@@ -1356,8 +1421,9 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
+ 	fprintf(f, ")\n");
+ 
+ 	if (fclose(f) == 0) {
+-		fprintf(stderr, "%s", buffer);
++		fprintf(debug_fp, "%s", buffer);
+ 		free(buffer);
++	        fflush(debug_fp);
+ 	}
+ }
+ 
+diff --git a/src/meson.build b/src/meson.build
+index ae8f387..5cb4f86 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -3,6 +3,7 @@ wayland_version_h.set('WAYLAND_VERSION', meson.project_version())
+ wayland_version_h.set('WAYLAND_VERSION_MAJOR', wayland_version[0].to_int())
+ wayland_version_h.set('WAYLAND_VERSION_MINOR', wayland_version[1].to_int())
+ wayland_version_h.set('WAYLAND_VERSION_MICRO', wayland_version[2].to_int())
++
+ configure_file(
+ 	input: 'wayland-version.h.in',
+ 	output: 'wayland-version.h',
+@@ -11,10 +12,10 @@ configure_file(
+ 	install_dir: join_paths(get_option('prefix'), get_option('includedir'))
+ )
+ 
+-
+ wayland_util = static_library(
+ 	'wayland-util',
+-	sources: 'wayland-util.c'
++	sources: 'wayland-util.c',
++	dependencies: [dependency('PmLogLib', required: get_option('pmlog'))]
+ )
+ 
+ wayland_util_dep = declare_dependency(
+diff --git a/src/wayland-client.c b/src/wayland-client.c
+index 22f007d..b562a52 100644
+--- a/src/wayland-client.c
++++ b/src/wayland-client.c
+@@ -854,7 +854,7 @@ wl_proxy_marshal_array_flags(struct wl_proxy *proxy, uint32_t opcode,
+ 	}
+ 
+ 	if (debug_client)
+-		wl_closure_print(closure, &proxy->object, true, false, NULL);
++		wl_closure_print(closure, &proxy->object, true, false, NULL, NULL);
+ 
+ 	if (wl_closure_send(closure, proxy->display->connection)) {
+ 		wl_log("Error sending request: %s\n", strerror(errno));
+@@ -1570,7 +1570,7 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
+ 	proxy_destroyed = !!(proxy->flags & WL_PROXY_FLAG_DESTROYED);
+ 	if (proxy_destroyed) {
+ 		if (debug_client)
+-			wl_closure_print(closure, &proxy->object, false, true, id_from_object);
++			wl_closure_print(closure, &proxy->object, false, true, id_from_object, NULL);
+ 		destroy_queued_closure(closure);
+ 		return;
+ 	}
+@@ -1579,13 +1579,13 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
+ 
+ 	if (proxy->dispatcher) {
+ 		if (debug_client)
+-			wl_closure_print(closure, &proxy->object, false, false, id_from_object);
++			wl_closure_print(closure, &proxy->object, false, false, id_from_object, NULL);
+ 
+ 		wl_closure_dispatch(closure, proxy->dispatcher,
+ 				    &proxy->object, opcode);
+ 	} else if (proxy->object.implementation) {
+ 		if (debug_client)
+-			wl_closure_print(closure, &proxy->object, false, false, id_from_object);
++			wl_closure_print(closure, &proxy->object, false, false, id_from_object, NULL);
+ 
+ 		wl_closure_invoke(closure, WL_CLOSURE_INVOKE_CLIENT,
+ 				  &proxy->object, opcode, proxy->user_data);
+diff --git a/src/wayland-private.h b/src/wayland-private.h
+index 210451e..7aeb51f 100644
+--- a/src/wayland-private.h
++++ b/src/wayland-private.h
+@@ -212,7 +212,7 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection);
+ void
+ wl_closure_print(struct wl_closure *closure,
+ 		 struct wl_object *target, int send, int discarded,
+-		 uint32_t (*n_parse)(union wl_argument *arg));
++		 uint32_t (*n_parse)(union wl_argument *arg), const char *supplement);
+ 
+ void
+ wl_closure_destroy(struct wl_closure *closure);
+diff --git a/src/wayland-server.c b/src/wayland-server.c
+index ec3949c..71d5132 100644
+--- a/src/wayland-server.c
++++ b/src/wayland-server.c
+@@ -145,6 +145,7 @@ struct wl_protocol_logger {
+ };
+ 
+ static int debug_server = 0;
++static char debug_fifo_path[UNIX_PATH_MAX];
+ 
+ static void
+ log_closure(struct wl_resource *resource,
+@@ -155,8 +156,14 @@ log_closure(struct wl_resource *resource,
+ 	struct wl_protocol_logger *protocol_logger;
+ 	struct wl_protocol_logger_message message;
+ 
+-	if (debug_server)
+-		wl_closure_print(closure, object, send, false, NULL);
++	if (debug_server) {
++		struct wl_client *client = resource->client;
++		pid_t pid;
++		char supplement[32];
++		wl_client_get_credentials(client, &pid, NULL, NULL);
++		snprintf(supplement, sizeof(supplement), "[client:%d(0x%p)]", pid, client);
++		wl_closure_print(closure, object, send, false, NULL, supplement);
++	}
+ 
+ 	if (!wl_list_empty(&display->protocol_loggers)) {
+ 		message.resource = resource;
+@@ -1044,6 +1051,70 @@ handle_display_terminate(int fd, uint32_t mask, void *data) {
+ 	return 0;
+ }
+ 
++#define CMD_LINE_MAX_LEN 1024
++
++static int
++cmd_line_data(int fd, uint32_t mask, void *data)
++{
++	int len;
++	char cmd_buf[CMD_LINE_MAX_LEN];
++
++	len = read(fd, cmd_buf, sizeof(cmd_buf));
++	if (len < 0) {
++		wl_log("error:read file errno(%d), strerror(%s)",errno,strerror(errno));
++		close(fd);
++		return 1;
++	}
++
++	if (len > 2)
++		return 1;
++
++	if (cmd_buf[0] == '0')
++		debug_server = 0;
++	else if (cmd_buf[0] == '1')
++		debug_server = 1;
++	return 1;
++}
++
++static void
++create_cmd_line(struct wl_display *display)
++{
++	int fd;
++	const char *runtime_dir;
++	struct wl_event_source *cmd_source;
++
++	runtime_dir = getenv("XDG_RUNTIME_DIR");
++	if (!runtime_dir) {
++		return;
++	}
++
++	snprintf(debug_fifo_path, sizeof debug_fifo_path,
++			"%s/%s", runtime_dir, "wayland_debug");
++
++	unlink(debug_fifo_path);
++	if (mkfifo(debug_fifo_path, 0600) < 0) {
++		wl_log("error: failed to mkfifo %d\n", errno);
++		return;
++	}
++
++	fd = open(debug_fifo_path, O_RDWR|O_CLOEXEC);
++	if (fd < 0) {
++		wl_log("error: cannot open FIFO file for cmd line %d\n", errno);
++		unlink(debug_fifo_path);
++		return;
++	}
++
++	cmd_source = wl_event_loop_add_fd(display->loop, fd,
++			WL_EVENT_READABLE,
++			cmd_line_data, debug_fifo_path);
++	if (!cmd_source) {
++		wl_log("error: failed to wl_event_loop_add_fd %d %s\n", fd, debug_fifo_path);
++		unlink(debug_fifo_path);
++		close(fd);
++		return;
++	}
++}
++
+ /** Create Wayland display object.
+  *
+  * \return The Wayland display object. Null if failed to create
+@@ -1102,6 +1173,8 @@ wl_display_create(void)
+ 
+ 	wl_array_init(&display->additional_shm_formats);
+ 
++	create_cmd_line(display);
++
+ 	return display;
+ 
+ err_term_source:
+@@ -1182,6 +1255,8 @@ wl_display_destroy(struct wl_display *display)
+ 
+ 	wl_list_remove(&display->protocol_loggers);
+ 
++	unlink(debug_fifo_path);
++
+ 	free(display);
+ }
+ 
+diff --git a/src/wayland-util.c b/src/wayland-util.c
+index c89a67b..6e5cb23 100644
+--- a/src/wayland-util.c
++++ b/src/wayland-util.c
+@@ -30,8 +30,12 @@
+ #include <string.h>
+ #include <stdarg.h>
+ 
++#include "../config.h"
+ #include "wayland-util.h"
+ #include "wayland-private.h"
++#ifdef HAVE_PMLOG
++#include <PmLogLib.h>
++#endif
+ 
+ WL_EXPORT void
+ wl_list_init(struct wl_list *list)
+@@ -395,6 +399,20 @@ wl_map_for_each(struct wl_map *map, wl_iterator_func_t func, void *data)
+ static void
+ wl_log_stderr_handler(const char *fmt, va_list arg)
+ {
++#ifdef HAVE_PMLOG
++	static bool contextCreated = false;
++	static PmLogContext ctx;
++	char szMessage[4096] = {0, };
++
++	if (!contextCreated) {
++		PmLogGetContext("wayland", &ctx);
++		contextCreated = true;
++	}
++
++	vsnprintf(szMessage, sizeof(szMessage), fmt, arg);
++	PmLogError(ctx, "WAYLAND", 0, "[pid:%d][tid:0x%x] %s", getpid(), pthread_self(), szMessage);
++#endif
++
+ 	vfprintf(stderr, fmt, arg);
+ }
+ 
+diff --git a/src/wayland-version.h.in b/src/wayland-version.h.in
+index c5d786e..7e356dc 100644
+--- a/src/wayland-version.h.in
++++ b/src/wayland-version.h.in
+@@ -31,4 +31,6 @@
+ #define WAYLAND_VERSION_MICRO @WAYLAND_VERSION_MICRO@
+ #define WAYLAND_VERSION "@WAYLAND_VERSION@"
+ 
++#mesondefine HAVE_PMLOG
++
+ #endif
