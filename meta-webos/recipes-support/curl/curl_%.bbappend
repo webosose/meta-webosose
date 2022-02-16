@@ -13,7 +13,7 @@ PACKAGECONFIG:remove = "gnutls"
 # NB. It doesn't appear to be necessary to give --with-ssl a =PATH value; what
 # configure says is the default value (/usr/local/ssl) doesn't appear anywhere
 # in the build or temp directories when PATH is not specified.
-PACKAGECONFIG:append = " ssl"
+PACKAGECONFIG:append = " openssl"
 
 PACKAGECONFIG:append = " rtsp"
 
