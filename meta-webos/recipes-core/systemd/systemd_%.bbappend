@@ -7,8 +7,8 @@ SRC_URI:append:webos = " \
     file://0001-systemd-oomd-depend-on-swap-on.patch \
     file://0002-Add-webos-interface.patch \
     file://0003-systemd-oomd-modify-oomd.conf.patch \
-    file://0004-systemd-oomd-to-some.patch \
-    file://0005-systemd-oomd-change-duration.patch \
+    file://0004-oomd-to-some.patch \
+    file://0005-oomd-change-duration.patch \
 "
 
 inherit webos_prerelease_dep

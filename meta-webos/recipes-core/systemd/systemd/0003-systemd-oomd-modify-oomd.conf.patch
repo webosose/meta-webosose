@@ -1,4 +1,4 @@
-From b2f676e891c6c2873a3be575922db4942d6dcd5d Mon Sep 17 00:00:00 2001
+From 76be09a8864e6127f57a5048a5f5c8ec200a3f92 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: modify oomd.conf
@@ -8,7 +8,7 @@ Subject: [PATCH] systemd-oomd: modify oomd.conf
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/oom/oomd.conf b/src/oom/oomd.conf
-index b3a457f887..e19052d0f8 100644
+index b3a457f887..636edc6e87 100644
 --- a/src/oom/oomd.conf
 +++ b/src/oom/oomd.conf
 @@ -16,5 +16,5 @@

@@ -1,0 +1,22 @@
+From dfa8236753cbf72b82fb147d90fdaaead8bb298d Mon Sep 17 00:00:00 2001
+From: Hotaek Jung <hotaek.jung@lge.com>
+Date: Tue, 23 Nov 2021 10:42:42 +0900
+Subject: [PATCH] oomd: change duration
+
+---
+ src/oom/oomd-manager.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/oom/oomd-manager.h b/src/oom/oomd-manager.h
+index 8f0dd412da..6120621f74 100644
+--- a/src/oom/oomd-manager.h
++++ b/src/oom/oomd-manager.h
+@@ -25,7 +25,7 @@
+ #define THRESHOLD_SWAP_USED_PERCENT 5
+ 
+ #define RECLAIM_DURATION_USEC (30 * USEC_PER_SEC)
+-#define POST_ACTION_DELAY_USEC (15 * USEC_PER_SEC)
++#define POST_ACTION_DELAY_USEC (1 * USEC_PER_SEC)
+ 
+ typedef struct Manager Manager;
+ 
