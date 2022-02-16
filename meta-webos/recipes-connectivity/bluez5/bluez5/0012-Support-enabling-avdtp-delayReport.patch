@@ -1,4 +1,4 @@
-From a528b7b717e1c0cdfc4f9dd05f0f5e85ccf988c0 Mon Sep 17 00:00:00 2001
+From b2998b5ba0f27144b4cfe29032b2b4f73e9cd88f Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 4 Jun 2020 04:49:48 +0000
 Subject: [PATCH] Support enabling avdtp delayReport
@@ -34,10 +34,10 @@ Upstream Status: Pending
  11 files changed, 104 insertions(+)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index 031ece628..84e15e6aa 100644
+index d0808c77a..60f6c96e9 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
-@@ -2334,6 +2334,14 @@ found:
+@@ -2360,6 +2360,14 @@ found:
  	return avdtp_ref(chan->session);
  }
  
@@ -90,7 +90,7 @@ index 102a2603e..b167f2dab 100644
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 006082327..25f1daf2a 100644
+index 6ae11de49..e096a737a 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
 @@ -120,6 +120,19 @@ struct media_player {
@@ -123,7 +123,7 @@ index 006082327..25f1daf2a 100644
  
  	if (strcasecmp(uuid, A2DP_SOURCE_UUID) == 0)
  		succeeded = endpoint_init_a2dp_source(endpoint,
-@@ -2419,6 +2435,7 @@ int media_register(struct btd_adapter *btd_adapter)
+@@ -2420,6 +2436,7 @@ int media_register(struct btd_adapter *btd_adapter)
  		return -1;
  	}
  
@@ -149,7 +149,7 @@ index 96bea9db4..e9d10fd3c 100644
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index 5846f0396..3d2954492 100644
+index c49f42cfb..e454ac587 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
 @@ -68,6 +68,7 @@
@@ -182,7 +182,7 @@ index 5846f0396..3d2954492 100644
  static struct btd_adapter *btd_adapter_lookup(uint16_t index)
  {
  	GList *list;
-@@ -534,6 +543,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
+@@ -535,6 +544,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
  
  	g_key_file_set_boolean(key_file, "General", "Discoverable",
  							discoverable);
@@ -191,7 +191,7 @@ index 5846f0396..3d2954492 100644
  
  	if (adapter->discoverable_timeout != btd_opts.discovto)
  		g_key_file_set_integer(key_file, "General",
-@@ -3301,6 +3312,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
+@@ -3306,6 +3317,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
  
  	return TRUE;
  }
@@ -222,7 +222,7 @@ index 5846f0396..3d2954492 100644
  
  static void property_append_experimental(void *data, void *user_data)
  {
-@@ -3705,6 +3740,7 @@ static const GDBusPropertyTable adapter_properties[] = {
+@@ -3710,6 +3745,7 @@ static const GDBusPropertyTable adapter_properties[] = {
  	{ "Roles", "as", property_get_roles },
  	{ "ExperimentalFeatures", "as", property_get_experimental, NULL,
  					property_experimental_exits },
@@ -230,7 +230,7 @@ index 5846f0396..3d2954492 100644
  	{ }
  };
  
-@@ -5094,6 +5130,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
+@@ -5113,6 +5149,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
  	return false;
  }
  
@@ -242,7 +242,7 @@ index 5846f0396..3d2954492 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter)
  {
  	if (!adapter)
-@@ -6548,6 +6589,15 @@ static void load_config(struct btd_adapter *adapter)
+@@ -6647,6 +6688,15 @@ static void load_config(struct btd_adapter *adapter)
  		gerr = NULL;
  	}
  
@@ -258,7 +258,7 @@ index 5846f0396..3d2954492 100644
  	g_key_file_free(key_file);
  }
  
-@@ -6580,6 +6630,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6679,6 +6729,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  						btd_opts.did_version);
  	adapter->discoverable_timeout = btd_opts.discovto;
  	adapter->pairable_timeout = btd_opts.pairto;
@@ -266,7 +266,7 @@ index 5846f0396..3d2954492 100644
  
  	DBG("System name: %s", adapter->system_name);
  	DBG("Major class: %u", adapter->major_class);
-@@ -6587,6 +6638,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6686,6 +6737,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  	DBG("Modalias: %s", adapter->modalias);
  	DBG("Discoverable timeout: %u seconds", adapter->discoverable_timeout);
  	DBG("Pairable timeout: %u seconds", adapter->pairable_timeout);
@@ -275,7 +275,7 @@ index 5846f0396..3d2954492 100644
  	adapter->auths = g_queue_new();
  	adapter->exps = queue_new();
 diff --git a/src/adapter.h b/src/adapter.h
-index db3c17f23..d4aafc5b3 100644
+index 35deb1d11..cb5f3fce5 100644
 --- a/src/adapter.h
 +++ b/src/adapter.h
 @@ -26,6 +26,7 @@
@@ -296,10 +296,10 @@ index db3c17f23..d4aafc5b3 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter);
  
 diff --git a/src/btd.h b/src/btd.h
-index f83591f8f..0d5804599 100644
+index a805a40d7..606382a3f 100644
 --- a/src/btd.h
 +++ b/src/btd.h
-@@ -112,6 +112,7 @@ struct btd_opts {
+@@ -114,6 +114,7 @@ struct btd_opts {
  	gboolean	fast_conn;
  	gboolean	refresh_discovery;
  	struct queue	*experimental;
@@ -308,10 +308,10 @@ index f83591f8f..0d5804599 100644
  	uint16_t	did_source;
  	uint16_t	did_vendor;
 diff --git a/src/main.c b/src/main.c
-index 5ca8d5644..78bffa36e 100644
+index 8cc2dfca6..f71fbe4d8 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -78,6 +78,7 @@ static const char *supported_options[] = {
+@@ -79,6 +79,7 @@ static const char *supported_options[] = {
  	"ControllerMode",
  	"MultiProfile",
  	"FastConnectable",
@@ -319,8 +319,8 @@ index 5ca8d5644..78bffa36e 100644
  	"Privacy",
  	"JustWorksRepairing",
  	"TemporaryTimeout",
-@@ -800,6 +801,16 @@ static void parse_config(GKeyFile *config)
- 		g_strfreev(strlist);
+@@ -828,6 +829,16 @@ static void parse_config(GKeyFile *config)
+ 		btd_opts.name_request_retry_delay = val;
  	}
  
 +        boolean = g_key_file_get_boolean(config, "General",
@@ -337,7 +337,7 @@ index 5ca8d5644..78bffa36e 100644
  	if (err) {
  		DBG("%s", err->message);
 diff --git a/src/main.conf b/src/main.conf
-index e05291d8e..4db84ff2c 100644
+index 49b9e6755..299bf5f66 100644
 --- a/src/main.conf
 +++ b/src/main.conf
 @@ -65,6 +65,9 @@
@@ -349,4 +349,4 @@ index e05291d8e..4db84ff2c 100644
 +
  # Default privacy setting.
  # Enables use of private address.
- # Possible values: "off", "device", "network"
+ # Possible values for LE mode: "off", "network/on", "device"

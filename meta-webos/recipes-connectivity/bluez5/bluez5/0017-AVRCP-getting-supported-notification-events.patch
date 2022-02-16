@@ -1,4 +1,4 @@
-From 65746c75f82fd3e8823bb5b5f22302e00e4bd5fe Mon Sep 17 00:00:00 2001
+From 092bd4be31f720ca7d11362e494d3f0d12ae36e3 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -38,10 +38,10 @@ index 59f1dc750..ac46e387e 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index 18e370a15..debdb3483 100644
+index 9691791fc..834aed0fd 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -282,6 +282,7 @@ struct btd_device {
+@@ -286,6 +286,7 @@ struct btd_device {
  	struct key_code passththough_key;
  	uint8_t		avrcp_ct_features;
  	uint8_t		avrcp_tg_features;
@@ -49,7 +49,7 @@ index 18e370a15..debdb3483 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1380,6 +1381,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+@@ -1458,6 +1459,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -67,7 +67,7 @@ index 18e370a15..debdb3483 100644
  static gboolean dev_property_get_avrcp_ct_feature(const GDBusPropertyTable *property,
  					DBusMessageIter *iter, void *data)
  {
-@@ -2027,6 +2039,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
+@@ -2133,6 +2145,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
  	}
  }
  
@@ -82,7 +82,7 @@ index 18e370a15..debdb3483 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3237,6 +3257,7 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3357,6 +3377,7 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_avrcp_ct_feature_exist},
  	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
  				NULL, dev_property_avrcp_tg_feature_exist},

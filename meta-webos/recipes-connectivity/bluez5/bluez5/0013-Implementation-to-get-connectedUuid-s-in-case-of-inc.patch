@@ -1,4 +1,4 @@
-From 0c4bf5ee45976909c068f37aeb677d82f9e810fc Mon Sep 17 00:00:00 2001
+From 7fd000b0405a72301425f476d9d1db4efacc6811 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 6 Apr 2020 12:14:43 +0530
 Subject: [PATCH] Implementation to get connectedUuid's in case of incoming
@@ -24,10 +24,10 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/src/device.c b/src/device.c
-index d70712e69..8f39fb144 100644
+index 589b5516c..c509fb04e 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -7235,9 +7235,11 @@ static void service_state_changed(struct btd_service *service,
+@@ -7496,9 +7496,11 @@ static void service_state_changed(struct btd_service *service,
  				new_state == BTD_SERVICE_STATE_DISCONNECTING)
  		return;
  

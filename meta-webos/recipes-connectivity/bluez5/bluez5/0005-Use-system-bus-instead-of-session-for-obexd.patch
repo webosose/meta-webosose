@@ -1,4 +1,4 @@
-From 974bdad458d5550211f0a8e2c41913ed0952c5d1 Mon Sep 17 00:00:00 2001
+From 1cc80b9b33719cf6444cf2c3383b39c38ae9033a Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd
@@ -113,10 +113,10 @@ index 92faf4434..c1147897c 100644
  		return -EIO;
  
 diff --git a/obexd/plugins/pcsuite.c b/obexd/plugins/pcsuite.c
-index b2232ea09..b5a76c415 100644
+index f5a9d9ae8..88f412aba 100644
 --- a/obexd/plugins/pcsuite.c
 +++ b/obexd/plugins/pcsuite.c
-@@ -320,7 +320,7 @@ static gboolean send_backup_dbus_message(const char *oper,
+@@ -322,7 +322,7 @@ static gboolean send_backup_dbus_message(const char *oper,
  
  	file_size = size ? *size : 0;
  

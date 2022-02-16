@@ -1,4 +1,4 @@
-From b0938ee03614d3d1512d6c26d9f4fadbaa711b75 Mon Sep 17 00:00:00 2001
+From 7b450de719653a1bc4898edee7fb8f4c0b8dff42 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 13:27:14 +0530
 Subject: [PATCH] Added MessageHandle property in org.bluez.obex.Transfer1
@@ -98,7 +98,7 @@ index f16e4426c..434beecf8 100644
  guint g_obex_get_req(GObex *obex, GObexDataConsumer data_func,
  			GObexFunc complete_func, gpointer user_data,
 diff --git a/obexd/client/transfer.c b/obexd/client/transfer.c
-index 744d8f106..ab06dbac7 100644
+index dccce03b4..48eca4d30 100644
 --- a/obexd/client/transfer.c
 +++ b/obexd/client/transfer.c
 @@ -67,6 +67,7 @@ struct obc_transfer {
@@ -143,7 +143,7 @@ index 744d8f106..ab06dbac7 100644
  	{ }
  };
  
-@@ -445,6 +466,7 @@ static void obc_transfer_free(struct obc_transfer *transfer)
+@@ -448,6 +469,7 @@ static void obc_transfer_free(struct obc_transfer *transfer)
  	g_free(transfer->type);
  	g_free(transfer->session);
  	g_free(transfer->path);
@@ -151,7 +151,7 @@ index 744d8f106..ab06dbac7 100644
  	g_free(transfer);
  }
  
-@@ -664,6 +686,28 @@ static void xfer_complete(GObex *obex, GError *err, gpointer user_data)
+@@ -670,6 +692,28 @@ static void xfer_complete(GObex *obex, GError *err, gpointer user_data)
  		callback->func(transfer, err, callback->data);
  }
  
@@ -180,7 +180,7 @@ index 744d8f106..ab06dbac7 100644
  static void get_xfer_progress_first(GObex *obex, GError *err, GObexPacket *rsp,
  							gpointer user_data)
  {
-@@ -862,8 +906,8 @@ static gboolean transfer_start_put(struct obc_transfer *transfer, GError **err)
+@@ -868,8 +912,8 @@ static gboolean transfer_start_put(struct obc_transfer *transfer, GError **err)
  	}
  
  	transfer->xfer = g_obex_put_req_pkt(transfer->obex, req,

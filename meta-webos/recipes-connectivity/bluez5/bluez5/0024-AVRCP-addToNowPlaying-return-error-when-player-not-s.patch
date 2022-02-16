@@ -1,4 +1,4 @@
-From 7018eaf3f827aba6c50eab269c445a761a41bf67 Mon Sep 17 00:00:00 2001
+From ce19211305eae5c251b9d2ad4826d317fcd00de6 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 11 Aug 2020 15:18:43 +0530
 Subject: [PATCH] AVRCP addToNowPlaying return error when player not supports

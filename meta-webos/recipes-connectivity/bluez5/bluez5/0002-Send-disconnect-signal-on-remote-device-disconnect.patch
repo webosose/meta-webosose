@@ -1,4 +1,4 @@
-From 428a1134186ed11fcbc750463dc16729f76baaa3 Mon Sep 17 00:00:00 2001
+From c146a47611ffdec2995214160c9003880cc26f2c Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Thu, 17 May 2018 18:15:48 +0530
 Subject: [PATCH] Send disconnect signal on remote device disconnect

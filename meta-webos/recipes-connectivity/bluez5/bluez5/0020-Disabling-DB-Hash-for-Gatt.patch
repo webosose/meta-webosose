@@ -1,4 +1,4 @@
-From 2ed67591c2aa656502d2d85f1789177b2da87994 Mon Sep 17 00:00:00 2001
+From 8685cf7a18483a2fef62c19db7080e8e1a800ab2 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Tue, 28 Jul 2020 16:04:27 +0530
 Subject: [PATCH] Disabling DB Hash for Gatt
@@ -22,7 +22,7 @@ Upstream-Status: Inappropriate[webos specific]
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/src/gatt-database.c b/src/gatt-database.c
-index 475e7873c..0388e43ec 100644
+index dbe9415a3..88858066a 100644
 --- a/src/gatt-database.c
 +++ b/src/gatt-database.c
 @@ -1186,11 +1186,13 @@ static void db_hash_read_cb(struct gatt_db_attribute *attrib,

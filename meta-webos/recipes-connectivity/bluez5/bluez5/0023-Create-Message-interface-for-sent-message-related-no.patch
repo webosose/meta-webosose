@@ -1,4 +1,4 @@
-From 0dd99e5b5eb76ee224de605990c339c6fc8a43ab Mon Sep 17 00:00:00 2001
+From e7a69e44d0c09a01b7aac4a9db00a9a4e71ef74c Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 16:21:17 +0530
 Subject: [PATCH] Create Message interface for sent message related
