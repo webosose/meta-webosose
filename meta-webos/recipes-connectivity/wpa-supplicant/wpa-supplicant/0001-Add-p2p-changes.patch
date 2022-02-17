@@ -1,4 +1,4 @@
-From 4ea5d446e9725bbbccd3182fd4cd58f479f6865f Mon Sep 17 00:00:00 2001
+From ddaf58852e2b0bc7176e3132940fcf3a1cf22687 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 27 Jan 2021 18:56:41 +0530
 Subject: [PATCH] Add p2p changes
@@ -22,7 +22,6 @@ N/A
               and p2p/setgointent Luna API
 
 Upstream-Status: Inappropriate[webos specific]
-
 ---
  src/ap/drv_callbacks.c                      |  11 ++
  src/ap/hostapd.c                            |  23 ++++
@@ -55,10 +54,10 @@ Upstream-Status: Inappropriate[webos specific]
  28 files changed, 655 insertions(+), 71 deletions(-)
 
 diff --git a/src/ap/drv_callbacks.c b/src/ap/drv_callbacks.c
-index 34ca379..dcbfb40 100644
+index a50e6f2af..13737dcd8 100644
 --- a/src/ap/drv_callbacks.c
 +++ b/src/ap/drv_callbacks.c
-@@ -175,6 +175,17 @@ int hostapd_notif_assoc(struct hostapd_data *hapd, const u8 *addr,
+@@ -202,6 +202,17 @@ int hostapd_notif_assoc(struct hostapd_data *hapd, const u8 *addr,
  			   "STA did not include WPS/RSN/WPA IE in (Re)AssocReq");
  	}
  
@@ -77,10 +76,10 @@ index 34ca379..dcbfb40 100644
  	if (sta) {
  		ap_sta_no_session_timeout(hapd, sta);
 diff --git a/src/ap/hostapd.c b/src/ap/hostapd.c
-index bf1975f..65a0bb4 100644
+index 4b88641a2..b537fe9e7 100644
 --- a/src/ap/hostapd.c
 +++ b/src/ap/hostapd.c
-@@ -352,6 +352,12 @@ static void hostapd_free_hapd_data(struct hostapd_data *hapd)
+@@ -366,6 +366,12 @@ void hostapd_free_hapd_data(struct hostapd_data *hapd)
  	hapd->p2p_beacon_ie = NULL;
  	wpabuf_free(hapd->p2p_probe_resp_ie);
  	hapd->p2p_probe_resp_ie = NULL;
@@ -93,7 +92,7 @@ index bf1975f..65a0bb4 100644
  #endif /* CONFIG_P2P */
  
  	if (!hapd->started) {
-@@ -2229,6 +2235,11 @@ hostapd_alloc_bss_data(struct hostapd_iface *hapd_iface,
+@@ -2376,6 +2382,11 @@ hostapd_alloc_bss_data(struct hostapd_iface *hapd_iface,
  	if (conf)
  		hapd->driver = conf->driver;
  	hapd->ctrl_sock = -1;
@@ -105,10 +104,10 @@ index bf1975f..65a0bb4 100644
  	dl_list_init(&hapd->ctrl_dst);
  	dl_list_init(&hapd->nr_db);
  	hapd->dhcp_sock = -1;
-@@ -3571,3 +3582,15 @@ void hostapd_periodic_iface(struct hostapd_iface *iface)
- #endif /* CONFIG_NO_RADIUS */
+@@ -3768,3 +3779,15 @@ void hostapd_ocv_check_csa_sa_query(void *eloop_ctx, void *timeout_ctx)
  	}
  }
+ #endif /* CONFIG_OCV */
 +
 +#ifdef CONFIG_P2P
 +void clear_rejected_peer_timeout(void *eloop_ctx, void *timeout_ctx)
@@ -122,10 +121,10 @@ index bf1975f..65a0bb4 100644
 +}
 +#endif /* CONFIG_P2P */
 diff --git a/src/ap/hostapd.h b/src/ap/hostapd.h
-index 518c7f1..d0603f0 100644
+index f3ca7529a..dc40c6a88 100644
 --- a/src/ap/hostapd.h
 +++ b/src/ap/hostapd.h
-@@ -263,7 +263,7 @@ struct hostapd_data {
+@@ -273,7 +273,7 @@ struct hostapd_data {
  	void *wps_event_cb_ctx;
  
  	void (*sta_authorized_cb)(void *ctx, const u8 *mac_addr,
@@ -134,7 +133,7 @@ index 518c7f1..d0603f0 100644
  	void *sta_authorized_cb_ctx;
  
  	void (*setup_complete_cb)(void *ctx);
-@@ -290,6 +290,8 @@ struct hostapd_data {
+@@ -300,6 +300,8 @@ struct hostapd_data {
  	struct wpabuf *p2p_beacon_ie;
  	struct wpabuf *p2p_probe_resp_ie;
  
@@ -143,7 +142,7 @@ index 518c7f1..d0603f0 100644
  	/* Number of non-P2P association stations */
  	int num_sta_no_p2p;
  
-@@ -655,4 +657,8 @@ void fst_hostapd_fill_iface_obj(struct hostapd_data *hapd,
+@@ -692,4 +694,8 @@ void fst_hostapd_fill_iface_obj(struct hostapd_data *hapd,
  				struct fst_wpa_obj *iface_obj);
  #endif /* CONFIG_FST */
  
@@ -153,10 +152,10 @@ index 518c7f1..d0603f0 100644
 +
  #endif /* HOSTAPD_H */
 diff --git a/src/ap/sta_info.c b/src/ap/sta_info.c
-index 51d7884..bc1ec32 100644
+index ccd1ed931..7402731a3 100644
 --- a/src/ap/sta_info.c
 +++ b/src/ap/sta_info.c
-@@ -1223,6 +1223,8 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
+@@ -1268,6 +1268,8 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
  #ifdef CONFIG_P2P
  	u8 addr[ETH_ALEN];
  	u8 ip_addr_buf[4];
@@ -165,7 +164,7 @@ index 51d7884..bc1ec32 100644
  #endif /* CONFIG_P2P */
  
  	if (!!authorized == !!(sta->flags & WLAN_STA_AUTHORIZED))
-@@ -1248,23 +1250,27 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
+@@ -1293,23 +1295,27 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
  #endif /* CONFIG_P2P */
  		os_snprintf(buf, sizeof(buf), MACSTR, MAC2STR(sta->addr));
  
@@ -197,7 +196,7 @@ index 51d7884..bc1ec32 100644
  		}
  #endif /* CONFIG_P2P */
  
-@@ -1291,6 +1297,15 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
+@@ -1336,6 +1342,15 @@ void ap_sta_set_authorized(struct hostapd_data *hapd, struct sta_info *sta,
  					  AP_STA_DISCONNECTED "%s", buf);
  	}
  
@@ -214,10 +213,10 @@ index 51d7884..bc1ec32 100644
  	if (hapd->iface->fst) {
  		if (authorized)
 diff --git a/src/ap/wpa_auth.c b/src/ap/wpa_auth.c
-index c560770..72ff1f7 100644
+index 6d60f2629..824c3b195 100644
 --- a/src/ap/wpa_auth.c
 +++ b/src/ap/wpa_auth.c
-@@ -685,6 +685,7 @@ void wpa_auth_sta_no_wpa(struct wpa_state_machine *sm)
+@@ -729,6 +729,7 @@ void wpa_auth_sta_no_wpa(struct wpa_state_machine *sm)
  
  static void wpa_free_sta_sm(struct wpa_state_machine *sm)
  {
@@ -225,19 +224,19 @@ index c560770..72ff1f7 100644
  #ifdef CONFIG_P2P
  	if (WPA_GET_BE32(sm->ip_addr)) {
  		u32 start;
-@@ -698,6 +699,7 @@ static void wpa_free_sta_sm(struct wpa_state_machine *sm)
+@@ -743,6 +744,7 @@ static void wpa_free_sta_sm(struct wpa_state_machine *sm)
  			       WPA_GET_BE32(sm->ip_addr) - start);
  	}
  #endif /* CONFIG_P2P */
 +#endif
  	if (sm->GUpdateStationKeys) {
  		sm->group->GKeyDoneStations--;
- 		sm->GUpdateStationKeys = FALSE;
+ 		sm->GUpdateStationKeys = false;
 diff --git a/src/common/ieee802_11_defs.h b/src/common/ieee802_11_defs.h
-index b0aa913..7446deb 100644
+index 928b53500..6f1e824bc 100644
 --- a/src/common/ieee802_11_defs.h
 +++ b/src/common/ieee802_11_defs.h
-@@ -1647,6 +1647,7 @@ enum p2p_role_indication {
+@@ -1715,6 +1715,7 @@ enum p2p_role_indication {
  
  #define P2P_WILDCARD_SSID "DIRECT-"
  #define P2P_WILDCARD_SSID_LEN 7
@@ -246,10 +245,10 @@ index b0aa913..7446deb 100644
  /* P2P action frames */
  enum p2p_act_frame_type {
 diff --git a/src/p2p/p2p.c b/src/p2p/p2p.c
-index 079270f..3047220 100644
+index 598a449c1..a045f4aa7 100644
 --- a/src/p2p/p2p.c
 +++ b/src/p2p/p2p.c
-@@ -1314,6 +1314,7 @@ void p2p_stop_find_for_freq(struct p2p_data *p2p, int freq)
+@@ -1319,6 +1319,7 @@ void p2p_stop_find_for_freq(struct p2p_data *p2p, int freq)
  	p2p->go_neg_peer = NULL;
  	p2p->sd_peer = NULL;
  	p2p->invite_peer = NULL;
@@ -257,7 +256,7 @@ index 079270f..3047220 100644
  	p2p_stop_listen_for_freq(p2p, freq);
  	p2p->send_action_in_progress = 0;
  }
-@@ -1321,6 +1322,10 @@ void p2p_stop_find_for_freq(struct p2p_data *p2p, int freq)
+@@ -1326,6 +1327,10 @@ void p2p_stop_find_for_freq(struct p2p_data *p2p, int freq)
  
  void p2p_stop_listen_for_freq(struct p2p_data *p2p, int freq)
  {
@@ -265,10 +264,10 @@ index 079270f..3047220 100644
 +		p2p_dbg(p2p, "p2p data is null");
 +		return;
 +	}
- 	if (freq > 0 && p2p->drv_in_listen == freq && p2p->in_listen) {
- 		p2p_dbg(p2p, "Skip stop_listen since we are on correct channel for response");
- 		return;
-@@ -1626,15 +1631,26 @@ int p2p_connect(struct p2p_data *p2p, const u8 *peer_addr,
+ 	if (freq > 0 &&
+ 	    ((p2p->drv_in_listen == freq && p2p->in_listen) ||
+ 	     p2p->pending_listen_freq == (unsigned int) freq)) {
+@@ -1646,15 +1651,26 @@ int p2p_connect(struct p2p_data *p2p, const u8 *peer_addr,
  	dev->go_neg_req_sent = 0;
  	dev->go_state = UNKNOWN_GO;
  	p2p_set_dev_persistent(dev, persistent_group);
@@ -297,7 +296,7 @@ index 079270f..3047220 100644
  
  	if (p2p->p2p_scan_running) {
  		p2p_dbg(p2p, "p2p_scan running - delay connect send");
-@@ -1726,6 +1742,11 @@ void p2p_add_dev_info(struct p2p_data *p2p, const u8 *addr,
+@@ -1746,6 +1762,11 @@ void p2p_add_dev_info(struct p2p_data *p2p, const u8 *addr,
  		}
  	}
  
@@ -309,7 +308,7 @@ index 079270f..3047220 100644
  	if (msg->wfd_subelems) {
  		wpabuf_free(dev->info.wfd_subelems);
  		dev->info.wfd_subelems = wpabuf_dup(msg->wfd_subelems);
-@@ -1760,9 +1781,12 @@ void p2p_build_ssid(struct p2p_data *p2p, u8 *ssid, size_t *ssid_len)
+@@ -1780,9 +1801,12 @@ void p2p_build_ssid(struct p2p_data *p2p, u8 *ssid, size_t *ssid_len)
  {
  	os_memcpy(ssid, P2P_WILDCARD_SSID, P2P_WILDCARD_SSID_LEN);
  	p2p_random((char *) &ssid[P2P_WILDCARD_SSID_LEN], 2);
@@ -324,7 +323,7 @@ index 079270f..3047220 100644
  }
  
  
-@@ -2957,7 +2981,8 @@ struct p2p_data * p2p_init(const struct p2p_config *cfg)
+@@ -2985,7 +3009,8 @@ struct p2p_data * p2p_init(const struct p2p_config *cfg)
  	p2p->dev_capab |= P2P_DEV_CAPAB_INVITATION_PROCEDURE;
  	if (cfg->concurrent_operations)
  		p2p->dev_capab |= P2P_DEV_CAPAB_CONCURRENT_OPER;
@@ -334,7 +333,7 @@ index 079270f..3047220 100644
  
  	dl_list_init(&p2p->devices);
  
-@@ -3231,6 +3256,9 @@ void p2p_continue_find(struct p2p_data *p2p)
+@@ -3259,6 +3284,9 @@ void p2p_continue_find(struct p2p_data *p2p)
  	struct p2p_device *dev;
  	int found, res;
  
@@ -344,7 +343,7 @@ index 079270f..3047220 100644
  	p2p_set_state(p2p, P2P_SEARCH);
  
  	/* Continue from the device following the last iteration */
-@@ -4578,10 +4606,8 @@ static void p2p_ext_listen_timeout(void *eloop_ctx, void *timeout_ctx)
+@@ -4622,10 +4650,8 @@ static void p2p_ext_listen_timeout(void *eloop_ctx, void *timeout_ctx)
  				       p2p_ext_listen_timeout, p2p, NULL);
  	}
  
@@ -357,7 +356,7 @@ index 079270f..3047220 100644
  		p2p_dbg(p2p, "Operation in progress - skip Extended Listen timeout (%s)",
  			p2p_state_txt(p2p->state));
  		return;
-@@ -4599,6 +4625,14 @@ static void p2p_ext_listen_timeout(void *eloop_ctx, void *timeout_ctx)
+@@ -4643,6 +4669,14 @@ static void p2p_ext_listen_timeout(void *eloop_ctx, void *timeout_ctx)
  		p2p_set_state(p2p, P2P_IDLE);
  	}
  
@@ -372,7 +371,7 @@ index 079270f..3047220 100644
  	if (p2p->state != P2P_IDLE) {
  		p2p_dbg(p2p, "Skip Extended Listen timeout in active state (%s)", p2p_state_txt(p2p->state));
  		return;
-@@ -4626,13 +4660,13 @@ int p2p_ext_listen(struct p2p_data *p2p, unsigned int period,
+@@ -4670,13 +4704,13 @@ int p2p_ext_listen(struct p2p_data *p2p, unsigned int period,
  	eloop_cancel_timeout(p2p_ext_listen_timeout, p2p, NULL);
  
  	if (interval == 0) {
@@ -388,7 +387,7 @@ index 079270f..3047220 100644
  		period, interval);
  	p2p->ext_listen_period = period;
  	p2p->ext_listen_interval = interval;
-@@ -4737,6 +4771,7 @@ int p2p_set_listen_channel(struct p2p_data *p2p, u8 reg_class, u8 channel,
+@@ -4781,6 +4815,7 @@ int p2p_set_listen_channel(struct p2p_data *p2p, u8 reg_class, u8 channel,
  		reg_class, channel);
  
  	if (p2p->state == P2P_IDLE) {
@@ -397,10 +396,10 @@ index 079270f..3047220 100644
  		p2p->cfg->channel = channel;
  		p2p->cfg->channel_forced = forced;
 diff --git a/src/p2p/p2p.h b/src/p2p/p2p.h
-index 425b037..6816174 100644
+index f606fbb14..6b934bfd9 100644
 --- a/src/p2p/p2p.h
 +++ b/src/p2p/p2p.h
-@@ -375,6 +375,11 @@ struct p2p_peer_info {
+@@ -377,6 +377,11 @@ struct p2p_peer_info {
  	 */
  	u8 group_capab;
  
@@ -413,7 +412,7 @@ index 425b037..6816174 100644
  	 * wps_sec_dev_type_list - WPS secondary device type list
  	 *
 diff --git a/src/p2p/p2p_build.c b/src/p2p/p2p_build.c
-index 63eb2e8..0274ec2 100644
+index 4229d9b34..5f23caa2b 100644
 --- a/src/p2p/p2p_build.c
 +++ b/src/p2p/p2p_build.c
 @@ -223,10 +223,14 @@ void p2p_buf_add_device_info(struct wpabuf *buf, struct p2p_data *p2p,
@@ -455,7 +454,7 @@ index 63eb2e8..0274ec2 100644
  				WPS_DEV_TYPE_LEN *
  				p2p->cfg->num_sec_dev_types);
 diff --git a/src/p2p/p2p_go_neg.c b/src/p2p/p2p_go_neg.c
-index c94bf41..d34c417 100644
+index 1d53d52f1..a69b4f5e9 100644
 --- a/src/p2p/p2p_go_neg.c
 +++ b/src/p2p/p2p_go_neg.c
 @@ -171,6 +171,18 @@ static struct wpabuf * p2p_build_go_neg_req(struct p2p_data *p2p,
@@ -477,8 +476,8 @@ index c94bf41..d34c417 100644
  	p2p_buf_add_go_intent(buf, (p2p->go_intent << 1) | peer->tie_breaker);
  	p2p_buf_add_config_timeout(buf, p2p->go_timeout, p2p->client_timeout);
  	p2p_buf_add_listen_channel(buf, p2p->cfg->country, p2p->cfg->reg_class,
-@@ -454,6 +466,18 @@ void p2p_reselect_channel(struct p2p_data *p2p,
- 		}
+@@ -463,6 +475,18 @@ void p2p_reselect_channel(struct p2p_data *p2p,
+ 		return;
  	}
  
 +	/*
@@ -496,7 +495,7 @@ index c94bf41..d34c417 100644
  	/* Try a channel where we might be able to use VHT */
  	if (p2p_channel_select(intersection, op_classes_vht,
  			       &p2p->op_reg_class, &p2p->op_channel) == 0) {
-@@ -478,18 +502,6 @@ void p2p_reselect_channel(struct p2p_data *p2p,
+@@ -487,18 +511,6 @@ void p2p_reselect_channel(struct p2p_data *p2p,
  		return;
  	}
  
@@ -515,7 +514,7 @@ index c94bf41..d34c417 100644
  	/*
  	 * Fall back to whatever is included in the channel intersection since
  	 * no better options seems to be available.
-@@ -831,14 +843,14 @@ void p2p_process_go_neg_req(struct p2p_data *p2p, const u8 *sa,
+@@ -840,14 +852,14 @@ void p2p_process_go_neg_req(struct p2p_data *p2p, const u8 *sa,
  	else if ((dev->flags & P2P_DEV_PROBE_REQ_ONLY) ||
  		  !(dev->flags & P2P_DEV_REPORTED))
  		p2p_add_dev_info(p2p, sa, dev, &msg);
@@ -533,7 +532,7 @@ index c94bf41..d34c417 100644
  		p2p_add_dev_info(p2p, sa, dev, &msg);
  	}
 diff --git a/src/p2p/p2p_group.c b/src/p2p/p2p_group.c
-index aa18af6..4e42601 100644
+index aa18af6c1..4e4260125 100644
 --- a/src/p2p/p2p_group.c
 +++ b/src/p2p/p2p_group.c
 @@ -349,6 +349,13 @@ static int wifi_display_add_dev_info_descr(struct wpabuf *buf,
@@ -572,7 +571,7 @@ index aa18af6..4e42601 100644
  		return 1; /* Match with own device type */
  
 diff --git a/src/p2p/p2p_invitation.c b/src/p2p/p2p_invitation.c
-index 77d662a..51b8582 100644
+index ab0072219..8ac71026f 100644
 --- a/src/p2p/p2p_invitation.c
 +++ b/src/p2p/p2p_invitation.c
 @@ -170,6 +170,43 @@ static struct wpabuf * p2p_build_invitation_resp(struct p2p_data *p2p,
@@ -646,7 +645,7 @@ index 77d662a..51b8582 100644
  			p2p->op_reg_class, p2p->op_channel);
  
 diff --git a/src/p2p/p2p_pd.c b/src/p2p/p2p_pd.c
-index 05fd593..027cdfc 100644
+index 338b47e4e..f7a84f344 100644
 --- a/src/p2p/p2p_pd.c
 +++ b/src/p2p/p2p_pd.c
 @@ -602,6 +602,13 @@ void p2p_process_prov_disc_req(struct p2p_data *p2p, const u8 *sa,
@@ -664,7 +663,7 @@ index 05fd593..027cdfc 100644
  		wpabuf_free(dev->info.wfd_subelems);
  		dev->info.wfd_subelems = wpabuf_dup(msg.wfd_subelems);
 diff --git a/src/wps/wps_attr_build.c b/src/wps/wps_attr_build.c
-index 4e872f3..d25aa53 100644
+index f37225676..6459f20fc 100644
 --- a/src/wps/wps_attr_build.c
 +++ b/src/wps/wps_attr_build.c
 @@ -9,6 +9,11 @@
@@ -679,7 +678,7 @@ index 4e872f3..d25aa53 100644
  #include "crypto/aes_wrap.h"
  #include "crypto/crypto.h"
  #include "crypto/dh_group5.h"
-@@ -202,6 +207,117 @@ int wps_build_version(struct wpabuf *msg)
+@@ -204,6 +209,117 @@ int wps_build_version(struct wpabuf *msg)
  	return 0;
  }
  
@@ -798,7 +797,7 @@ index 4e872f3..d25aa53 100644
  int wps_build_wfa_ext(struct wpabuf *msg, int req_to_enroll,
  		      const u8 *auth_macs, size_t auth_macs_count,
 diff --git a/src/wps/wps_defs.h b/src/wps/wps_defs.h
-index 9fccb4e..374ae96 100644
+index ddaeda56d..39f8f11a1 100644
 --- a/src/wps/wps_defs.h
 +++ b/src/wps/wps_defs.h
 @@ -144,6 +144,7 @@ enum wps_attribute {
@@ -826,7 +825,7 @@ index 9fccb4e..374ae96 100644
  
  /* Device Password ID */
 diff --git a/src/wps/wps_i.h b/src/wps/wps_i.h
-index 2cf22d4..423f577 100644
+index 2cf22d4b7..423f5774e 100644
 --- a/src/wps/wps_i.h
 +++ b/src/wps/wps_i.h
 @@ -167,6 +167,7 @@ int wps_build_version(struct wpabuf *msg);
@@ -838,10 +837,10 @@ index 2cf22d4..423f577 100644
  int wps_build_enrollee_nonce(struct wps_data *wps, struct wpabuf *msg);
  int wps_build_registrar_nonce(struct wps_data *wps, struct wpabuf *msg);
 diff --git a/wpa_supplicant/ap.c b/wpa_supplicant/ap.c
-index 4e3c281..ce6acfc 100644
+index 6a0a69e68..ba4983b55 100644
 --- a/wpa_supplicant/ap.c
 +++ b/wpa_supplicant/ap.c
-@@ -627,9 +627,9 @@ static void ap_wps_event_cb(void *ctx, enum wps_event event,
+@@ -832,9 +832,9 @@ static void ap_wps_event_cb(void *ctx, enum wps_event event,
  
  
  static void ap_sta_authorized_cb(void *ctx, const u8 *mac_addr,
@@ -854,7 +853,7 @@ index 4e3c281..ce6acfc 100644
  
  
 diff --git a/wpa_supplicant/dbus/dbus_new.c b/wpa_supplicant/dbus/dbus_new.c
-index fc2fc2e..ce520ed 100644
+index 9279ae4d5..c770128cd 100644
 --- a/wpa_supplicant/dbus/dbus_new.c
 +++ b/wpa_supplicant/dbus/dbus_new.c
 @@ -27,6 +27,8 @@
@@ -866,7 +865,7 @@ index fc2fc2e..ce520ed 100644
  #ifdef CONFIG_AP /* until needed by something else */
  
  /*
-@@ -1471,10 +1473,12 @@ static void peer_groups_changed(struct wpa_supplicant *wpa_s)
+@@ -1564,10 +1566,12 @@ static void peer_groups_changed(struct wpa_supplicant *wpa_s)
   * @persistent: 0 - non persistent group, 1 - persistent group
   * @ip: When group role is client, it contains local IP address, netmask, and
   *	GO's IP address, if assigned; otherwise, NULL
@@ -880,7 +879,7 @@ index fc2fc2e..ce520ed 100644
  {
  	DBusMessage *msg;
  	DBusMessageIter iter, dict_iter;
-@@ -1514,6 +1518,10 @@ void wpas_dbus_signal_p2p_group_started(struct wpa_supplicant *wpa_s,
+@@ -1607,6 +1611,10 @@ void wpas_dbus_signal_p2p_group_started(struct wpa_supplicant *wpa_s,
  	    !wpa_dbus_dict_append_string(&dict_iter, "role",
  					 client ? "client" : "GO") ||
  	    !wpa_dbus_dict_append_bool(&dict_iter, "persistent", persistent) ||
@@ -891,7 +890,7 @@ index fc2fc2e..ce520ed 100644
  	    !wpa_dbus_dict_append_object_path(&dict_iter, "group_object",
  					      wpa_s->dbus_groupobj_path) ||
  	    (ip &&
-@@ -1705,13 +1713,14 @@ void wpas_dbus_signal_p2p_invitation_result(struct wpa_supplicant *wpa_s,
+@@ -1798,13 +1806,14 @@ void wpas_dbus_signal_p2p_invitation_result(struct wpa_supplicant *wpa_s,
   * @peer_addr: P2P Device Address of the peer joining the group
   */
  void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
@@ -907,7 +906,7 @@ index fc2fc2e..ce520ed 100644
  
  	iface = wpa_s->global->dbus;
  
-@@ -1733,6 +1742,9 @@ void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
+@@ -1826,6 +1835,9 @@ void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
  			COMPACT_MACSTR,
  			parent->dbus_new_path, MAC2STR(peer_addr));
  
@@ -917,7 +916,7 @@ index fc2fc2e..ce520ed 100644
  	msg = dbus_message_new_signal(wpa_s->dbus_groupobj_path,
  				      WPAS_DBUS_NEW_IFACE_P2P_GROUP,
  				      "PeerJoined");
-@@ -1741,9 +1753,78 @@ void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
+@@ -1834,9 +1846,78 @@ void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
  
  	dbus_message_iter_init_append(msg, &iter);
  	path = peer_obj_path;
@@ -996,7 +995,7 @@ index fc2fc2e..ce520ed 100644
  	} else {
  		dbus_connection_send(iface->con, msg, NULL);
  		wpas_dbus_signal_peer_groups_changed(parent, peer_addr);
-@@ -1762,13 +1843,14 @@ void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
+@@ -1855,13 +1936,14 @@ void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
   * @peer_addr: P2P Device Address of the peer joining the group
   */
  void wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
@@ -1012,7 +1011,7 @@ index fc2fc2e..ce520ed 100644
  
  	iface = wpa_s->global->dbus;
  
-@@ -1790,6 +1872,9 @@ void wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
+@@ -1883,6 +1965,9 @@ void wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
  			COMPACT_MACSTR,
  			parent->dbus_new_path, MAC2STR(peer_addr));
  
@@ -1022,7 +1021,7 @@ index fc2fc2e..ce520ed 100644
  	msg = dbus_message_new_signal(wpa_s->dbus_groupobj_path,
  				      WPAS_DBUS_NEW_IFACE_P2P_GROUP,
  				      "PeerDisconnected");
-@@ -1798,10 +1883,13 @@ void wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
+@@ -1891,10 +1976,13 @@ void wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
  
  	dbus_message_iter_init_append(msg, &iter);
  	path = peer_obj_path;
@@ -1036,7 +1035,7 @@ index fc2fc2e..ce520ed 100644
  	} else {
  		dbus_connection_send(iface->con, msg, NULL);
  		wpas_dbus_signal_peer_groups_changed(parent, peer_addr);
-@@ -2105,6 +2193,9 @@ void wpas_dbus_signal_p2p_group_formation_failure(struct wpa_supplicant *wpa_s,
+@@ -2198,6 +2286,9 @@ void wpas_dbus_signal_p2p_group_formation_failure(struct wpa_supplicant *wpa_s,
  	if (wpa_s->p2p_mgmt)
  		wpa_s = wpa_s->parent;
  
@@ -1046,7 +1045,7 @@ index fc2fc2e..ce520ed 100644
  	msg = dbus_message_new_signal(wpa_s->dbus_new_path,
  				      WPAS_DBUS_NEW_IFACE_P2PDEVICE,
  				      "GroupFormationFailure");
-@@ -2129,12 +2220,13 @@ void wpas_dbus_signal_p2p_group_formation_failure(struct wpa_supplicant *wpa_s,
+@@ -2222,12 +2313,13 @@ void wpas_dbus_signal_p2p_group_formation_failure(struct wpa_supplicant *wpa_s,
   * @bssid: P2P Group BSSID or %NULL if not received
   * @id: Persistent group id or %0 if not persistent group
   * @op_freq: Operating frequency for the group
@@ -1061,7 +1060,7 @@ index fc2fc2e..ce520ed 100644
  {
  	DBusMessage *msg;
  	DBusMessageIter iter, dict_iter;
-@@ -2149,6 +2241,9 @@ void wpas_dbus_signal_p2p_invitation_received(struct wpa_supplicant *wpa_s,
+@@ -2242,6 +2334,9 @@ void wpas_dbus_signal_p2p_invitation_received(struct wpa_supplicant *wpa_s,
  	if (wpa_s->p2p_mgmt)
  		wpa_s = wpa_s->parent;
  
@@ -1071,7 +1070,7 @@ index fc2fc2e..ce520ed 100644
  	msg = dbus_message_new_signal(wpa_s->dbus_new_path,
  				      WPAS_DBUS_NEW_IFACE_P2PDEVICE,
  				      "InvitationReceived");
-@@ -2157,6 +2252,7 @@ void wpas_dbus_signal_p2p_invitation_received(struct wpa_supplicant *wpa_s,
+@@ -2250,6 +2345,7 @@ void wpas_dbus_signal_p2p_invitation_received(struct wpa_supplicant *wpa_s,
  
  	dbus_message_iter_init_append(msg, &iter);
  	if (!wpa_dbus_dict_open_write(&iter, &dict_iter) ||
@@ -1079,7 +1078,7 @@ index fc2fc2e..ce520ed 100644
  	    (sa &&
  	     !wpa_dbus_dict_append_byte_array(&dict_iter, "sa",
  					      (const char *) sa, ETH_ALEN)) ||
-@@ -3745,6 +3841,10 @@ static const struct wpa_dbus_property_desc wpas_dbus_interface_properties[] = {
+@@ -3851,6 +3947,10 @@ static const struct wpa_dbus_property_desc wpas_dbus_interface_properties[] = {
  	  wpas_dbus_setter_p2p_device_config,
  	  NULL
  	},
@@ -1090,7 +1089,7 @@ index fc2fc2e..ce520ed 100644
  	{ "Peers", WPAS_DBUS_NEW_IFACE_P2PDEVICE, "ao",
  	  wpas_dbus_getter_p2p_peers,
  	  NULL,
-@@ -3803,6 +3903,11 @@ static const struct wpa_dbus_property_desc wpas_dbus_interface_properties[] = {
+@@ -4521,6 +4621,11 @@ static const struct wpa_dbus_property_desc wpas_dbus_p2p_peer_properties[] = {
  	  NULL,
  	  NULL
  	},
@@ -1102,7 +1101,7 @@ index fc2fc2e..ce520ed 100644
  	{ NULL, NULL, NULL, NULL, NULL, NULL }
  };
  
-@@ -4692,12 +4797,22 @@ static const struct wpa_dbus_signal_desc wpas_dbus_p2p_group_signals[] = {
+@@ -4843,12 +4948,22 @@ static const struct wpa_dbus_signal_desc wpas_dbus_p2p_group_signals[] = {
  	{ "PeerJoined", WPAS_DBUS_NEW_IFACE_P2P_GROUP,
  	  {
  		  { "peer", "o", ARG_OUT },
@@ -1126,10 +1125,10 @@ index fc2fc2e..ce520ed 100644
  	  }
  	},
 diff --git a/wpa_supplicant/dbus/dbus_new.h b/wpa_supplicant/dbus/dbus_new.h
-index 42db389..0f6b847 100644
+index 26bdcb548..b504c1be2 100644
 --- a/wpa_supplicant/dbus/dbus_new.h
 +++ b/wpa_supplicant/dbus/dbus_new.h
-@@ -208,7 +208,7 @@ void wpas_dbus_signal_p2p_go_neg_req(struct wpa_supplicant *wpa_s,
+@@ -213,7 +213,7 @@ void wpas_dbus_signal_p2p_go_neg_req(struct wpa_supplicant *wpa_s,
  				     u8 go_intent);
  void wpas_dbus_signal_p2p_group_started(struct wpa_supplicant *wpa_s,
  					int client, int persistent,
@@ -1138,7 +1137,7 @@ index 42db389..0f6b847 100644
  void wpas_dbus_signal_p2p_group_formation_failure(struct wpa_supplicant *wpa_s,
  						  const char *reason);
  void wpas_dbus_register_p2p_group(struct wpa_supplicant *wpa_s,
-@@ -224,7 +224,7 @@ int wpas_dbus_unregister_persistent_group(struct wpa_supplicant *wpa_s,
+@@ -229,7 +229,7 @@ int wpas_dbus_unregister_persistent_group(struct wpa_supplicant *wpa_s,
  void wpas_dbus_signal_p2p_invitation_result(struct wpa_supplicant *wpa_s,
  					    int status, const u8 *bssid);
  void wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
@@ -1147,7 +1146,7 @@ index 42db389..0f6b847 100644
  void wpas_dbus_signal_p2p_sd_request(struct wpa_supplicant *wpa_s,
  				     int freq, const u8 *sa, u8 dialog_token,
  				     u16 update_indic, const u8 *tlvs,
-@@ -233,7 +233,7 @@ void wpas_dbus_signal_p2p_sd_response(struct wpa_supplicant *wpa_s,
+@@ -238,7 +238,7 @@ void wpas_dbus_signal_p2p_sd_response(struct wpa_supplicant *wpa_s,
  				      const u8 *sa, u16 update_indic,
  				      const u8 *tlvs, size_t tlvs_len);
  void wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
@@ -1156,7 +1155,7 @@ index 42db389..0f6b847 100644
  void wpas_dbus_signal_p2p_wps_failed(struct wpa_supplicant *wpa_s,
  				     struct wps_event_fail *fail);
  void wpas_dbus_signal_certification(struct wpa_supplicant *wpa_s,
-@@ -254,7 +254,7 @@ void wpas_dbus_signal_sta_deauthorized(struct wpa_supplicant *wpa_s,
+@@ -259,7 +259,7 @@ void wpas_dbus_signal_sta_deauthorized(struct wpa_supplicant *wpa_s,
  void wpas_dbus_signal_p2p_invitation_received(struct wpa_supplicant *wpa_s,
  					      const u8 *sa, const u8 *dev_addr,
  					      const u8 *bssid, int id,
@@ -1165,7 +1164,7 @@ index 42db389..0f6b847 100644
  void wpas_dbus_signal_mesh_group_started(struct wpa_supplicant *wpa_s,
  					 struct wpa_ssid *ssid);
  void wpas_dbus_signal_mesh_group_removed(struct wpa_supplicant *wpa_s,
-@@ -440,7 +440,7 @@ static inline void wpas_dbus_signal_p2p_go_neg_req(struct wpa_supplicant *wpa_s,
+@@ -452,7 +452,7 @@ static inline void wpas_dbus_signal_p2p_go_neg_req(struct wpa_supplicant *wpa_s,
  static inline void
  wpas_dbus_signal_p2p_group_started(struct wpa_supplicant *wpa_s,
  				   int client, int persistent,
@@ -1174,7 +1173,7 @@ index 42db389..0f6b847 100644
  {
  }
  
-@@ -514,7 +514,13 @@ wpas_dbus_unregister_p2p_groupmember(struct wpa_supplicant *wpa_s,
+@@ -526,7 +526,13 @@ wpas_dbus_unregister_p2p_groupmember(struct wpa_supplicant *wpa_s,
  
  static inline void
  wpas_dbus_signal_p2p_peer_joined(struct wpa_supplicant *wpa_s,
@@ -1189,7 +1188,7 @@ index 42db389..0f6b847 100644
  {
  }
  
-@@ -537,7 +543,7 @@ wpas_dbus_signal_peer_device_lost(struct wpa_supplicant *wpa_s,
+@@ -549,7 +555,7 @@ wpas_dbus_signal_peer_device_lost(struct wpa_supplicant *wpa_s,
  
  static inline void
  wpas_dbus_signal_p2p_peer_disconnected(struct wpa_supplicant *wpa_s,
@@ -1199,10 +1198,10 @@ index 42db389..0f6b847 100644
  }
  
 diff --git a/wpa_supplicant/dbus/dbus_new_handlers.c b/wpa_supplicant/dbus/dbus_new_handlers.c
-index 6c36d91..938cad6 100644
+index 959a68b4c..6a1a81591 100644
 --- a/wpa_supplicant/dbus/dbus_new_handlers.c
 +++ b/wpa_supplicant/dbus/dbus_new_handlers.c
-@@ -3091,6 +3091,56 @@ dbus_bool_t wpas_dbus_getter_disconnect_reason(
+@@ -3481,6 +3481,56 @@ dbus_bool_t wpas_dbus_getter_disconnect_reason(
  						&reason, error);
  }
  
@@ -1259,7 +1258,7 @@ index 6c36d91..938cad6 100644
  
  /**
   * wpas_dbus_getter_auth_status_code - Get most recent auth status code
-@@ -4904,6 +4954,12 @@ dbus_bool_t wpas_dbus_getter_network_properties(
+@@ -5507,6 +5557,12 @@ dbus_bool_t wpas_dbus_getter_network_properties(
  
  	iterator = props;
  	while (*iterator) {
@@ -1273,10 +1272,10 @@ index 6c36d91..938cad6 100644
  						 *(iterator + 1))) {
  			dbus_set_error_const(error, DBUS_ERROR_NO_MEMORY,
 diff --git a/wpa_supplicant/dbus/dbus_new_handlers.h b/wpa_supplicant/dbus/dbus_new_handlers.h
-index d922ce1..5afcba2 100644
+index a421083f7..fc15ed81b 100644
 --- a/wpa_supplicant/dbus/dbus_new_handlers.h
 +++ b/wpa_supplicant/dbus/dbus_new_handlers.h
-@@ -152,6 +152,7 @@ DECLARE_ACCESSOR(wpas_dbus_getter_disconnect_reason);
+@@ -168,6 +168,7 @@ DECLARE_ACCESSOR(wpas_dbus_getter_disconnect_reason);
  DECLARE_ACCESSOR(wpas_dbus_getter_disassociate_reason);
  DECLARE_ACCESSOR(wpas_dbus_getter_auth_status_code);
  DECLARE_ACCESSOR(wpas_dbus_getter_assoc_status_code);
@@ -1285,10 +1284,10 @@ index d922ce1..5afcba2 100644
  DECLARE_ACCESSOR(wpas_dbus_getter_roam_complete);
  DECLARE_ACCESSOR(wpas_dbus_getter_session_length);
 diff --git a/wpa_supplicant/dbus/dbus_new_handlers_p2p.c b/wpa_supplicant/dbus/dbus_new_handlers_p2p.c
-index 8cdd885..1d39f0d 100644
+index de79178f4..75e9832c5 100644
 --- a/wpa_supplicant/dbus/dbus_new_handlers_p2p.c
 +++ b/wpa_supplicant/dbus/dbus_new_handlers_p2p.c
-@@ -1166,6 +1166,34 @@ dbus_bool_t wpas_dbus_setter_p2p_device_config(
+@@ -1219,6 +1219,34 @@ dbus_bool_t wpas_dbus_setter_p2p_device_config(
  }
  
  
@@ -1323,7 +1322,7 @@ index 8cdd885..1d39f0d 100644
  dbus_bool_t wpas_dbus_getter_p2p_peers(
  	const struct wpa_dbus_property_desc *property_desc,
  	DBusMessageIter *iter, DBusError *error, void *user_data)
-@@ -1849,8 +1877,10 @@ static int match_group_where_peer_is_client(struct p2p_group *group,
+@@ -1902,8 +1930,10 @@ static int match_group_where_peer_is_client(struct p2p_group *group,
  		goto out_of_memory;
  
  	data->paths = paths;
@@ -1337,7 +1336,7 @@ index 8cdd885..1d39f0d 100644
  	return 1;
  
 diff --git a/wpa_supplicant/dbus/dbus_new_handlers_p2p.h b/wpa_supplicant/dbus/dbus_new_handlers_p2p.h
-index b3c45c1..4cb7013 100644
+index b3c45c110..4cb7013c6 100644
 --- a/wpa_supplicant/dbus/dbus_new_handlers_p2p.h
 +++ b/wpa_supplicant/dbus/dbus_new_handlers_p2p.h
 @@ -91,6 +91,8 @@ DBusMessage *wpas_dbus_handler_p2p_serv_disc_external(
@@ -1350,10 +1349,10 @@ index b3c45c1..4cb7013 100644
  DECLARE_ACCESSOR(wpas_dbus_getter_p2p_role);
  DECLARE_ACCESSOR(wpas_dbus_getter_p2p_group);
 diff --git a/wpa_supplicant/notify.c b/wpa_supplicant/notify.c
-index e41d7c4..dc9b432 100644
+index 821c916c1..8c1e782a8 100644
 --- a/wpa_supplicant/notify.c
 +++ b/wpa_supplicant/notify.c
-@@ -604,6 +604,9 @@ void wpas_notify_p2p_device_found(struct wpa_supplicant *wpa_s,
+@@ -616,6 +616,9 @@ void wpas_notify_p2p_device_found(struct wpa_supplicant *wpa_s,
  		wpas_dbus_register_peer(wpa_s, dev_addr);
  	}
  
@@ -1363,7 +1362,7 @@ index e41d7c4..dc9b432 100644
  	/* Notify a new peer has been detected*/
  	wpas_dbus_signal_peer_device_found(wpa_s, dev_addr);
  }
-@@ -696,12 +699,13 @@ void wpas_notify_p2p_provision_discovery(struct wpa_supplicant *wpa_s,
+@@ -708,12 +711,13 @@ void wpas_notify_p2p_provision_discovery(struct wpa_supplicant *wpa_s,
  
  void wpas_notify_p2p_group_started(struct wpa_supplicant *wpa_s,
  				   struct wpa_ssid *ssid, int persistent,
@@ -1379,7 +1378,7 @@ index e41d7c4..dc9b432 100644
  }
  
  
-@@ -722,11 +726,11 @@ void wpas_notify_p2p_wps_failed(struct wpa_supplicant *wpa_s,
+@@ -734,11 +738,11 @@ void wpas_notify_p2p_wps_failed(struct wpa_supplicant *wpa_s,
  
  void wpas_notify_p2p_invitation_received(struct wpa_supplicant *wpa_s,
  					 const u8 *sa, const u8 *go_dev_addr,
@@ -1393,7 +1392,7 @@ index e41d7c4..dc9b432 100644
  }
  
  #endif /* CONFIG_P2P */
-@@ -734,8 +738,11 @@ void wpas_notify_p2p_invitation_received(struct wpa_supplicant *wpa_s,
+@@ -746,8 +750,11 @@ void wpas_notify_p2p_invitation_received(struct wpa_supplicant *wpa_s,
  
  static void wpas_notify_ap_sta_authorized(struct wpa_supplicant *wpa_s,
  					  const u8 *sta,
@@ -1406,7 +1405,7 @@ index e41d7c4..dc9b432 100644
  #ifdef CONFIG_P2P
  	wpas_p2p_notify_ap_sta_authorized(wpa_s, p2p_dev_addr);
  
-@@ -743,8 +750,12 @@ static void wpas_notify_ap_sta_authorized(struct wpa_supplicant *wpa_s,
+@@ -755,8 +762,12 @@ static void wpas_notify_ap_sta_authorized(struct wpa_supplicant *wpa_s,
  	 * Create 'peer-joined' signal on group object -- will also
  	 * check P2P itself.
  	 */
@@ -1421,7 +1420,7 @@ index e41d7c4..dc9b432 100644
  #endif /* CONFIG_P2P */
  
  	/* Register the station */
-@@ -764,8 +775,8 @@ static void wpas_notify_ap_sta_deauthorized(struct wpa_supplicant *wpa_s,
+@@ -776,8 +787,8 @@ static void wpas_notify_ap_sta_deauthorized(struct wpa_supplicant *wpa_s,
  	 * Create 'peer-disconnected' signal on group object if this
  	 * is a P2P group.
  	 */
@@ -1432,7 +1431,7 @@ index e41d7c4..dc9b432 100644
  #endif /* CONFIG_P2P */
  
  	/* Notify listeners a station has been deauthorized */
-@@ -778,10 +789,10 @@ static void wpas_notify_ap_sta_deauthorized(struct wpa_supplicant *wpa_s,
+@@ -790,10 +801,10 @@ static void wpas_notify_ap_sta_deauthorized(struct wpa_supplicant *wpa_s,
  
  void wpas_notify_sta_authorized(struct wpa_supplicant *wpa_s,
  				const u8 *mac_addr, int authorized,
@@ -1445,7 +1444,7 @@ index e41d7c4..dc9b432 100644
  	else
  		wpas_notify_ap_sta_deauthorized(wpa_s, mac_addr, p2p_dev_addr);
  }
-@@ -886,7 +897,6 @@ void wpas_notify_network_type_changed(struct wpa_supplicant *wpa_s,
+@@ -899,7 +910,6 @@ void wpas_notify_network_type_changed(struct wpa_supplicant *wpa_s,
  #endif /* CONFIG_P2P */
  }
  
@@ -1454,10 +1453,10 @@ index e41d7c4..dc9b432 100644
  
  void wpas_notify_mesh_group_started(struct wpa_supplicant *wpa_s,
 diff --git a/wpa_supplicant/notify.h b/wpa_supplicant/notify.h
-index e843aa1..042a3c4 100644
+index c46e7986e..c9c783dd9 100644
 --- a/wpa_supplicant/notify.h
 +++ b/wpa_supplicant/notify.h
-@@ -91,7 +91,7 @@ void wpas_notify_resume(struct wpa_global *global);
+@@ -92,7 +92,7 @@ void wpas_notify_resume(struct wpa_global *global);
  
  void wpas_notify_sta_authorized(struct wpa_supplicant *wpa_s,
  				const u8 *mac_addr, int authorized,
@@ -1466,7 +1465,7 @@ index e843aa1..042a3c4 100644
  void wpas_notify_p2p_find_stopped(struct wpa_supplicant *wpa_s);
  void wpas_notify_p2p_device_found(struct wpa_supplicant *wpa_s,
  				  const u8 *dev_addr, int new_device);
-@@ -120,7 +120,7 @@ void wpas_notify_p2p_provision_discovery(struct wpa_supplicant *wpa_s,
+@@ -121,7 +121,7 @@ void wpas_notify_p2p_provision_discovery(struct wpa_supplicant *wpa_s,
  					 unsigned int generated_pin);
  void wpas_notify_p2p_group_started(struct wpa_supplicant *wpa_s,
  				   struct wpa_ssid *ssid, int persistent,
@@ -1475,7 +1474,7 @@ index e843aa1..042a3c4 100644
  void wpas_notify_p2p_group_formation_failure(struct wpa_supplicant *wpa_s,
  					     const char *reason);
  void wpas_notify_persistent_group_added(struct wpa_supplicant *wpa_s,
-@@ -146,7 +146,7 @@ void wpas_notify_network_type_changed(struct wpa_supplicant *wpa_s,
+@@ -147,7 +147,7 @@ void wpas_notify_network_type_changed(struct wpa_supplicant *wpa_s,
  				      struct wpa_ssid *ssid);
  void wpas_notify_p2p_invitation_received(struct wpa_supplicant *wpa_s,
  					 const u8 *sa, const u8 *go_dev_addr,
@@ -1485,10 +1484,10 @@ index e843aa1..042a3c4 100644
  				    struct wpa_ssid *ssid);
  void wpas_notify_mesh_group_removed(struct wpa_supplicant *wpa_s,
 diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
-index 55b3b08..72c02b0 100644
+index ce44dfb9e..74d14f76d 100644
 --- a/wpa_supplicant/p2p_supplicant.c
 +++ b/wpa_supplicant/p2p_supplicant.c
-@@ -1397,7 +1397,7 @@ static void wpas_group_formation_completed(struct wpa_supplicant *wpa_s,
+@@ -1455,7 +1455,7 @@ static void wpas_group_formation_completed(struct wpa_supplicant *wpa_s,
  	}
  
  	if (!client) {
@@ -1497,7 +1496,7 @@ index 55b3b08..72c02b0 100644
  		os_get_reltime(&wpa_s->global->p2p_go_wait_client);
  	}
  }
-@@ -1832,7 +1832,7 @@ static void p2p_go_configured(void *ctx, void *data)
+@@ -1890,7 +1890,7 @@ static void p2p_go_configured(void *ctx, void *data)
  
  		wpas_notify_p2p_group_started(wpa_s, ssid,
  					      params->persistent_group, 0,
@@ -1506,7 +1505,7 @@ index 55b3b08..72c02b0 100644
  		wpas_p2p_cross_connect_setup(wpa_s);
  		wpas_p2p_set_group_idle_timeout(wpa_s);
  
-@@ -1965,6 +1965,8 @@ static void wpas_start_wps_go(struct wpa_supplicant *wpa_s,
+@@ -2124,6 +2124,8 @@ static void wpas_start_wps_go(struct wpa_supplicant *wpa_s,
  	wpa_s->connect_without_scan = ssid;
  	wpa_s->reassociate = 1;
  	wpa_s->disconnected = 0;
@@ -1515,16 +1514,16 @@ index 55b3b08..72c02b0 100644
  	wpa_dbg(wpa_s, MSG_DEBUG, "P2P: Request scan (that will be skipped) to "
  		"start GO)");
  	wpa_supplicant_req_scan(wpa_s, 0, 0);
-@@ -3088,6 +3090,8 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+@@ -3252,6 +3254,8 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
  					       " persistent=%d",
  					       MAC2STR(sa), s->id);
  			}
 +			wpas_notify_p2p_invitation_received(wpa_s, sa, go_dev_addr, bssid,
 +					    s->id, op_freq, status);
  			wpas_p2p_group_add_persistent(
- 				wpa_s, s, go, 0, op_freq, 0, 0, 0, 0, 0, NULL,
- 				go ? P2P_MAX_INITIAL_CONN_WAIT_GO_REINVOKE : 0,
-@@ -3100,6 +3104,8 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+ 				wpa_s, s, go, 0, op_freq, 0,
+ 				wpa_s->conf->p2p_go_ht40,
+@@ -3269,6 +3273,8 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
  				       " bssid=" MACSTR " unknown-network",
  				       MAC2STR(sa), MAC2STR(go_dev_addr),
  				       MAC2STR(bssid));
@@ -1533,7 +1532,7 @@ index 55b3b08..72c02b0 100644
  			wpas_p2p_join(wpa_s, bssid, go_dev_addr,
  				      wpa_s->p2p_wps_method, 0, op_freq,
  				      ssid, ssid_len);
-@@ -3129,7 +3135,7 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+@@ -3298,7 +3304,7 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
  				       MAC2STR(sa), MAC2STR(go_dev_addr));
  		}
  		wpas_notify_p2p_invitation_received(wpa_s, sa, go_dev_addr,
@@ -1542,7 +1541,7 @@ index 55b3b08..72c02b0 100644
  		return;
  	}
  
-@@ -3143,7 +3149,7 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+@@ -3312,7 +3318,7 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
  			       MAC2STR(sa), s->id);
  	}
  	wpas_notify_p2p_invitation_received(wpa_s, sa, go_dev_addr, bssid,
@@ -1551,7 +1550,7 @@ index 55b3b08..72c02b0 100644
  }
  
  
-@@ -6413,6 +6419,8 @@ static int wpas_start_p2p_client(struct wpa_supplicant *wpa_s,
+@@ -6906,6 +6912,8 @@ static int wpas_start_p2p_client(struct wpa_supplicant *wpa_s,
  	wpa_s->p2p_invite_go_freq = freq;
  	wpa_s->p2p_go_group_formation_completed = 0;
  	wpa_s->global->p2p_group_formation = wpa_s;
@@ -1560,7 +1559,7 @@ index 55b3b08..72c02b0 100644
  
  	eloop_cancel_timeout(wpas_p2p_group_formation_timeout, wpa_s->p2pdev,
  			     NULL);
-@@ -6887,6 +6895,10 @@ static void wpas_p2p_stop_find_oper(struct wpa_supplicant *wpa_s)
+@@ -7385,6 +7393,10 @@ static void wpas_p2p_stop_find_oper(struct wpa_supplicant *wpa_s)
  
  void wpas_p2p_stop_find(struct wpa_supplicant *wpa_s)
  {
@@ -1571,7 +1570,7 @@ index 55b3b08..72c02b0 100644
  	wpas_p2p_stop_find_oper(wpa_s);
  	if (!wpa_s->global->pending_group_iface_for_p2ps)
  		wpas_p2p_remove_pending_group_interface(wpa_s);
-@@ -7282,7 +7294,7 @@ void wpas_p2p_completed(struct wpa_supplicant *wpa_s)
+@@ -7788,7 +7800,7 @@ void wpas_p2p_completed(struct wpa_supplicant *wpa_s)
  		wpas_p2p_store_persistent_group(wpa_s->p2pdev,
  						ssid, go_dev_addr);
  
@@ -1580,7 +1579,7 @@ index 55b3b08..72c02b0 100644
  }
  
  
-@@ -8328,13 +8340,19 @@ static void wpas_p2p_remove_client_go(struct wpa_supplicant *wpa_s,
+@@ -8837,13 +8849,19 @@ static void wpas_p2p_remove_client_go(struct wpa_supplicant *wpa_s,
  		sta = ap_get_sta(hapd, peer);
  	else
  		sta = ap_get_sta_p2p(hapd, peer);
@@ -1600,7 +1599,7 @@ index 55b3b08..72c02b0 100644
  	}
  }
  
-@@ -9578,3 +9596,22 @@ int wpas_p2p_lo_stop(struct wpa_supplicant *wpa_s)
+@@ -10105,3 +10123,22 @@ int wpas_p2p_lo_stop(struct wpa_supplicant *wpa_s)
  	wpa_s->p2p_lo_started = 0;
  	return ret;
  }
@@ -1624,10 +1623,10 @@ index 55b3b08..72c02b0 100644
 +	return 0;
 +}
 diff --git a/wpa_supplicant/p2p_supplicant.h b/wpa_supplicant/p2p_supplicant.h
-index 24ec2ca..d6c9431 100644
+index 5a869e730..9ff43557a 100644
 --- a/wpa_supplicant/p2p_supplicant.h
 +++ b/wpa_supplicant/p2p_supplicant.h
-@@ -212,6 +212,7 @@ int wpas_p2p_lo_start(struct wpa_supplicant *wpa_s, unsigned int freq,
+@@ -221,6 +221,7 @@ int wpas_p2p_lo_start(struct wpa_supplicant *wpa_s, unsigned int freq,
  		      unsigned int count);
  int wpas_p2p_lo_stop(struct wpa_supplicant *wpa_s);
  int wpas_p2p_mac_setup(struct wpa_supplicant *wpa_s);
@@ -1636,18 +1635,18 @@ index 24ec2ca..d6c9431 100644
  #else /* CONFIG_P2P */
  
 diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
-index 911d79d..7323d58 100644
+index d37a994f9..fbe4a762d 100644
 --- a/wpa_supplicant/wpa_supplicant.c
 +++ b/wpa_supplicant/wpa_supplicant.c
-@@ -126,6 +126,7 @@ static void wpa_bss_tmp_disallow_timeout(void *eloop_ctx, void *timeout_ctx);
- static void wpas_update_fils_connect_params(struct wpa_supplicant *wpa_s);
- #endif /* CONFIG_FILS && IEEE8021X_EAPOL */
+@@ -130,6 +130,7 @@ static void wpas_update_fils_connect_params(struct wpa_supplicant *wpa_s);
+ static void wpas_update_owe_connect_params(struct wpa_supplicant *wpa_s);
+ #endif /* CONFIG_OWE */
  
 +static int prefer_channel = 0;
  
+ #ifdef CONFIG_WEP
  /* Configure default/group WEP keys for static WEP */
- int wpa_set_wep_keys(struct wpa_supplicant *wpa_s, struct wpa_ssid *ssid)
-@@ -7225,8 +7226,12 @@ int get_shared_radio_freqs_data(struct wpa_supplicant *wpa_s,
+@@ -8231,8 +8232,12 @@ int get_shared_radio_freqs_data(struct wpa_supplicant *wpa_s,
  		if (idx == len)
  			break;
  
@@ -1661,7 +1660,7 @@ index 911d79d..7323d58 100644
  
  		if (ifs->current_ssid->mode == WPAS_MODE_AP ||
  		    ifs->current_ssid->mode == WPAS_MODE_P2P_GO ||
-@@ -7249,9 +7254,19 @@ int get_shared_radio_freqs_data(struct wpa_supplicant *wpa_s,
+@@ -8255,9 +8260,19 @@ int get_shared_radio_freqs_data(struct wpa_supplicant *wpa_s,
  			freqs_data[i].flags |= ifs->current_ssid->p2p_group ?
  				WPA_FREQ_USED_BY_P2P_CLIENT :
  				WPA_FREQ_USED_BY_INFRA_STATION;
