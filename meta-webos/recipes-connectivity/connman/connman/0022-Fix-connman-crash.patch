@@ -1,4 +1,4 @@
-From 42003869b7c824eb9b705e27bcced34ec1119045 Mon Sep 17 00:00:00 2001
+From d34d635a6e8723af2522ce64ee108c0eb5bde1c9 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Thu, 22 Jul 2021 16:26:18 +0530
 Subject: [PATCH] Fix connman crash
@@ -27,10 +27,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 7107fab..ac7da59 100644
+index 35bd8ffd..1fc6158a 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -4195,7 +4195,7 @@ static void interface_removed(GSupplicantInterface *interface)
+@@ -4219,7 +4219,7 @@ static void interface_removed(GSupplicantInterface *interface)
  		if (connman_technology_get_p2p_listen(p2p_technology) == false &&
  				!__connman_peer_get_connected_exists()) {
  			if (!connman_technology_get_enable_p2p_listen(p2p_technology))
@@ -39,6 +39,3 @@ index 7107fab..ac7da59 100644
  			err = apply_p2p_listen_on_iface(wifi, &params);
  			if (err == 0)
  				connman_technology_set_p2p_listen(p2p_technology, true);
--- 
-2.26.0
-

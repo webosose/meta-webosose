@@ -1,4 +1,4 @@
-From 7eb3acb20d20417b40976dc50bd178050fe7ed32 Mon Sep 17 00:00:00 2001
+From d0ff7ef0f932d99dd0b76a21aab4f40eedce9413 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Wed, 10 Mar 2021 06:48:18 -0800
 Subject: [PATCH] Revert "storage: Remove unused

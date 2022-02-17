@@ -1,4 +1,4 @@
-From 70a331cc07d59d1036700853b79de1721a8e8c38 Mon Sep 17 00:00:00 2001
+From d7ce88ad658b64276cf0953d06f8f5c4666d348e Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Wed, 28 Aug 2019 15:35:45 +0900
 Subject: [PATCH] Support channel frequency of scanned AP
@@ -17,10 +17,10 @@ Support channel frequency of scanned AP
  9 files changed, 583 insertions(+), 2 deletions(-)
 
 diff --git a/gsupplicant/gsupplicant.h b/gsupplicant/gsupplicant.h
-index 56cd61ee..46a12191 100644
+index 7a80c4f0..a88f71e8 100644
 --- a/gsupplicant/gsupplicant.h
 +++ b/gsupplicant/gsupplicant.h
-@@ -307,6 +307,14 @@ GSupplicantPeer *g_supplicant_interface_peer_lookup(GSupplicantInterface *interf
+@@ -316,6 +316,14 @@ GSupplicantPeer *g_supplicant_interface_peer_lookup(GSupplicantInterface *interf
  						const char *identifier);
  bool g_supplicant_interface_is_p2p_finding(GSupplicantInterface *interface);
  
@@ -35,7 +35,7 @@ index 56cd61ee..46a12191 100644
  /* Network and Peer API */
  struct _GSupplicantNetwork;
  struct _GSupplicantGroup;
-@@ -329,6 +337,17 @@ dbus_bool_t g_supplicant_network_is_wps_active(GSupplicantNetwork *network);
+@@ -338,6 +346,17 @@ dbus_bool_t g_supplicant_network_is_wps_active(GSupplicantNetwork *network);
  dbus_bool_t g_supplicant_network_is_wps_pbc(GSupplicantNetwork *network);
  dbus_bool_t g_supplicant_network_is_wps_advertizing(GSupplicantNetwork *network);
  
@@ -54,10 +54,10 @@ index 56cd61ee..46a12191 100644
  const char *g_supplicant_peer_get_path(GSupplicantPeer *peer);
  const char *g_supplicant_peer_get_identifier(GSupplicantPeer *peer);
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 13e27206..9ed96f36 100644
+index e7aefe2c..366d3fe4 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -169,6 +169,10 @@ struct _GSupplicantInterface {
+@@ -170,6 +170,10 @@ struct _GSupplicantInterface {
  	unsigned int scan_capa;
  	unsigned int mode_capa;
  	unsigned int max_scan_ssids;
@@ -68,7 +68,7 @@ index 13e27206..9ed96f36 100644
  	bool p2p_support;
  	bool p2p_finding;
  	bool ap_create_in_progress;
-@@ -1159,6 +1163,38 @@ unsigned int g_supplicant_interface_get_max_scan_ssids(
+@@ -1161,6 +1165,38 @@ unsigned int g_supplicant_interface_get_max_scan_ssids(
  	return interface->max_scan_ssids;
  }
  
@@ -107,7 +107,7 @@ index 13e27206..9ed96f36 100644
  static void set_network_enabled(DBusMessageIter *iter, void *user_data)
  {
  	dbus_bool_t enable = *(dbus_bool_t *)user_data;
-@@ -1308,6 +1344,46 @@ dbus_bool_t g_supplicant_network_is_wps_advertizing(GSupplicantNetwork *network)
+@@ -1310,6 +1346,46 @@ dbus_bool_t g_supplicant_network_is_wps_advertizing(GSupplicantNetwork *network)
  	return FALSE;
  }
  
@@ -154,7 +154,7 @@ index 13e27206..9ed96f36 100644
  GSupplicantInterface *g_supplicant_peer_get_interface(GSupplicantPeer *peer)
  {
  	if (!peer)
-@@ -2302,6 +2378,36 @@ static void wps_property(const char *key, DBusMessageIter *iter,
+@@ -2315,6 +2391,36 @@ static void wps_property(const char *key, DBusMessageIter *iter,
  
  }
  
@@ -191,7 +191,7 @@ index 13e27206..9ed96f36 100644
  static void interface_property(const char *key, DBusMessageIter *iter,
  							void *user_data)
  {
-@@ -2429,6 +2535,9 @@ static void interface_property(const char *key, DBusMessageIter *iter,
+@@ -2442,6 +2548,9 @@ static void interface_property(const char *key, DBusMessageIter *iter,
  	} else if (g_strcmp0(key, "Networks") == 0) {
  		supplicant_dbus_array_foreach(iter, interface_network_added,
  								interface);
@@ -201,7 +201,7 @@ index 13e27206..9ed96f36 100644
  	} else if (g_strcmp0(key, "DisconnectReason") == 0) {
  		int reason_code;
  		if (dbus_message_iter_get_arg_type(iter) != DBUS_TYPE_INVALID) {
-@@ -6002,3 +6111,48 @@ void g_supplicant_unregister(const GSupplicantCallbacks *callbacks)
+@@ -6038,3 +6147,48 @@ void g_supplicant_unregister(const GSupplicantCallbacks *callbacks)
  	callbacks_pointer = NULL;
  	eap_methods = 0;
  }
@@ -336,10 +336,10 @@ index 8f9dd94a..1a8f57ad 100644
  							const char *name);
  int connman_network_set_strength(struct connman_network *network,
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 23782ff8..feff1f66 100644
+index 42e8bbf2..8b16bca3 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -179,6 +179,12 @@ struct disconnect_data {
+@@ -183,6 +183,12 @@ struct disconnect_data {
  	struct connman_network *network;
  };
  
@@ -352,8 +352,8 @@ index 23782ff8..feff1f66 100644
  static GList *iface_list = NULL;
  
  static GList *pending_wifi_device = NULL;
-@@ -190,6 +196,27 @@ static int tech_set_tethering(struct connman_technology *technology,
- 				const char *identifier, const char *passphrase,
+@@ -193,6 +199,27 @@ static void start_autoscan(struct connman_device *device);
+ static int tech_set_tethering(struct connman_technology *technology,
  				const char *bridge, bool enabled);
  
 +static void bss_foreach(gpointer key, gpointer value, gpointer user_data)
@@ -380,7 +380,7 @@ index 23782ff8..feff1f66 100644
  static int p2p_tech_probe(struct connman_technology *technology)
  {
  	p2p_technology = technology;
-@@ -2301,6 +2328,52 @@ static int wifi_cancel_wps(struct connman_device *device)
+@@ -2305,6 +2332,52 @@ static int wifi_cancel_wps(struct connman_device *device)
  	return cancel_wps(wifi);
  }
  
@@ -433,7 +433,7 @@ index 23782ff8..feff1f66 100644
  static struct connman_device_driver wifi_ng_driver = {
  	.name		= "wifi",
  	.type		= CONNMAN_DEVICE_TYPE_WIFI,
-@@ -2313,7 +2386,8 @@ static struct connman_device_driver wifi_ng_driver = {
+@@ -2317,7 +2390,8 @@ static struct connman_device_driver wifi_ng_driver = {
  	.stop_scan	= wifi_stop_scan,
  	.set_regdom	= wifi_set_regdom,
  	.start_wps	= wifi_start_wps,
@@ -443,7 +443,7 @@ index 23782ff8..feff1f66 100644
  };
  
  static void system_ready(void)
-@@ -3166,6 +3240,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3172,6 +3246,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  	bool wps_pbc;
  	bool wps_ready;
  	bool wps_advertizing;
@@ -451,7 +451,7 @@ index 23782ff8..feff1f66 100644
  
  	mode = g_supplicant_network_get_mode(supplicant_network);
  	identifier = g_supplicant_network_get_identifier(supplicant_network);
-@@ -3185,6 +3260,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3191,6 +3266,7 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  	wps_ready = g_supplicant_network_is_wps_active(supplicant_network);
  	wps_advertizing = g_supplicant_network_is_wps_advertizing(
  							supplicant_network);
@@ -459,7 +459,7 @@ index 23782ff8..feff1f66 100644
  
  	if (!wifi)
  		return;
-@@ -3251,6 +3327,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
+@@ -3264,6 +3340,11 @@ static void network_added(GSupplicantNetwork *supplicant_network)
  			wifi->hidden = NULL;
  		}
  	}
@@ -471,7 +471,7 @@ index 23782ff8..feff1f66 100644
  }
  
  static void network_removed(GSupplicantNetwork *network)
-@@ -3287,11 +3368,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+@@ -3301,11 +3382,13 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
  	const char *name, *identifier;
  	struct connman_network *connman_network;
  	bool update_needed;
@@ -485,7 +485,7 @@ index 23782ff8..feff1f66 100644
  
  	DBG("name %s", name);
  
-@@ -3302,6 +3385,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
+@@ -3316,6 +3399,11 @@ static void network_changed(GSupplicantNetwork *network, const char *property)
  	if (!connman_network)
  		return;
  
@@ -598,7 +598,7 @@ index d3048379..ce70da90 100644
  {
  	struct ifreq ifr;
 diff --git a/src/network.c b/src/network.c
-index b12bbc09..be2efc54 100644
+index 1cbdf9cf..41197ab2 100644
 --- a/src/network.c
 +++ b/src/network.c
 @@ -55,6 +55,12 @@
@@ -658,7 +658,7 @@ index b12bbc09..be2efc54 100644
  
  	network_list = g_slist_prepend(network_list, network);
  
-@@ -2052,6 +2064,90 @@ int connman_network_set_domain(struct connman_network *network,
+@@ -2050,6 +2062,90 @@ int connman_network_set_domain(struct connman_network *network,
  	return 0;
  }
  
@@ -750,10 +750,10 @@ index b12bbc09..be2efc54 100644
   * connman_network_set_name:
   * @network: network structure
 diff --git a/src/service.c b/src/service.c
-index 3b35c188..90839f88 100644
+index 7b876a68..696536e1 100644
 --- a/src/service.c
 +++ b/src/service.c
-@@ -156,6 +156,7 @@ static struct connman_ipconfig *create_ip6config(struct connman_service *service
+@@ -157,6 +157,7 @@ static struct connman_ipconfig *create_ip6config(struct connman_service *service
  		int index);
  static void dns_changed(struct connman_service *service);
  static void vpn_auto_connect(void);
@@ -761,7 +761,7 @@ index 3b35c188..90839f88 100644
  
  struct find_data {
  	const char *path;
-@@ -1673,6 +1674,13 @@ static void strength_changed(struct connman_service *service)
+@@ -1685,6 +1686,13 @@ static void strength_changed(struct connman_service *service)
  	connman_dbus_property_changed_basic(service->path,
  				CONNMAN_SERVICE_INTERFACE, "Strength",
  					DBUS_TYPE_BYTE, &service->strength);
@@ -775,7 +775,7 @@ index 3b35c188..90839f88 100644
  }
  
  static void favorite_changed(struct connman_service *service)
-@@ -2529,6 +2537,57 @@ int connman_service_iterate_services(connman_service_iterate_cb cb,
+@@ -2541,6 +2549,57 @@ int connman_service_iterate_services(connman_service_iterate_cb cb,
  	return ret;
  }
  
@@ -833,7 +833,7 @@ index 3b35c188..90839f88 100644
  static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
  					struct connman_service *service)
  {
-@@ -2594,9 +2653,21 @@ static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
+@@ -2606,9 +2665,21 @@ static void append_properties(DBusMessageIter *dict, dbus_bool_t limited,
  						append_ethernet, service);
  		break;
  	case CONNMAN_SERVICE_TYPE_WIFI:
@@ -857,10 +857,10 @@ index 3b35c188..90839f88 100644
  						append_ethernet, service);
  		break;
 diff --git a/src/technology.c b/src/technology.c
-index d5855640..13c056cd 100644
+index b061b2ce..7981250c 100644
 --- a/src/technology.c
 +++ b/src/technology.c
-@@ -77,6 +77,7 @@ struct connman_technology {
+@@ -78,6 +78,7 @@ struct connman_technology {
  	guint pending_timeout;
  
  	GSList *scan_pending;
@@ -868,7 +868,7 @@ index d5855640..13c056cd 100644
  
  	bool rfkill_driven;
  	bool softblocked;
-@@ -544,6 +545,19 @@ static bool connman_technology_load_offlinemode(void)
+@@ -560,6 +561,19 @@ static bool connman_technology_load_offlinemode(void)
  	return offlinemode;
  }
  
@@ -888,7 +888,7 @@ index d5855640..13c056cd 100644
  static void append_properties(DBusMessageIter *iter,
  		struct connman_technology *technology)
  {
-@@ -579,6 +593,11 @@ static void append_properties(DBusMessageIter *iter,
+@@ -595,6 +609,11 @@ static void append_properties(DBusMessageIter *iter,
  					DBUS_TYPE_BOOLEAN,
  					&val);
  
@@ -900,7 +900,7 @@ index d5855640..13c056cd 100644
  	if (technology->tethering_ident)
  		connman_dbus_dict_append_basic(&dict, "TetheringIdentifier",
  					DBUS_TYPE_STRING,
-@@ -1246,6 +1265,51 @@ static DBusMessage *cancel_wps(DBusConnection *conn, DBusMessage *msg, void *dat
+@@ -1274,6 +1293,51 @@ static DBusMessage *cancel_wps(DBusConnection *conn, DBusMessage *msg, void *dat
  	return g_dbus_create_reply(msg, DBUS_TYPE_INVALID);
  }
  

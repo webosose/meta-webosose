@@ -1,4 +1,4 @@
-From 3eb7e531625c7cbca6cc21d1d080eb7bc90b82eb Mon Sep 17 00:00:00 2001
+From a56c3882eb2f419b3c6cc2ced0d2f56e26913cbc Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Tue, 4 Aug 2020 09:42:25 +0900
 Subject: [PATCH] Read WpaSupplicantConfigFile from main configuration
@@ -20,10 +20,10 @@ connman_setting_get_string API was added in upstream 1.40 with:
  2 files changed, 13 insertions(+), 22 deletions(-)
 
 diff --git a/plugins/wifi.c b/plugins/wifi.c
-index 6b38df9e..6c1cd2d6 100644
+index b1346418..ac545c89 100644
 --- a/plugins/wifi.c
 +++ b/plugins/wifi.c
-@@ -1628,27 +1628,6 @@ static void interface_create_callback(int result,
+@@ -1632,27 +1632,6 @@ static void interface_create_callback(int result,
  	}
  }
  
@@ -51,7 +51,7 @@ index 6b38df9e..6c1cd2d6 100644
  static int wifi_enable(struct connman_device *device)
  {
  	struct wifi_data *wifi = connman_device_get_data(device);
-@@ -1667,7 +1646,7 @@ static int wifi_enable(struct connman_device *device)
+@@ -1671,7 +1650,7 @@ static int wifi_enable(struct connman_device *device)
  		return -EINPROGRESS;
  
  	interface = connman_inet_ifname(index);
@@ -61,10 +61,10 @@ index 6b38df9e..6c1cd2d6 100644
  						interface_create_callback,
  							wifi);
 diff --git a/src/main.c b/src/main.c
-index 6480caa6..88f5fe24 100644
+index e209cf26..fcf46f18 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -91,6 +91,7 @@ static struct {
+@@ -94,6 +94,7 @@ static struct {
  	bool allow_hostname_updates;
  	bool allow_domainname_updates;
  	bool single_tech;
@@ -72,7 +72,7 @@ index 6480caa6..88f5fe24 100644
  	char **tethering_technologies;
  	bool persistent_tethering_mode;
  	bool enable_6to4;
-@@ -116,6 +117,7 @@ static struct {
+@@ -121,6 +122,7 @@ static struct {
  	.allow_hostname_updates = true,
  	.allow_domainname_updates = true,
  	.single_tech = false,
@@ -80,7 +80,7 @@ index 6480caa6..88f5fe24 100644
  	.tethering_technologies = NULL,
  	.persistent_tethering_mode = false,
  	.enable_6to4 = false,
-@@ -142,6 +144,7 @@ static struct {
+@@ -149,6 +151,7 @@ static struct {
  #define CONF_ALLOW_HOSTNAME_UPDATES     "AllowHostnameUpdates"
  #define CONF_ALLOW_DOMAINNAME_UPDATES   "AllowDomainnameUpdates"
  #define CONF_SINGLE_TECH                "SingleConnectedTechnology"
@@ -88,7 +88,7 @@ index 6480caa6..88f5fe24 100644
  #define CONF_TETHERING_TECHNOLOGIES      "TetheringTechnologies"
  #define CONF_PERSISTENT_TETHERING_MODE  "PersistentTetheringMode"
  #define CONF_ENABLE_6TO4                "Enable6to4"
-@@ -168,6 +171,7 @@ static const char *supported_options[] = {
+@@ -177,6 +180,7 @@ static const char *supported_options[] = {
  	CONF_ALLOW_HOSTNAME_UPDATES,
  	CONF_ALLOW_DOMAINNAME_UPDATES,
  	CONF_SINGLE_TECH,
@@ -96,7 +96,7 @@ index 6480caa6..88f5fe24 100644
  	CONF_TETHERING_TECHNOLOGIES,
  	CONF_PERSISTENT_TETHERING_MODE,
  	CONF_ENABLE_6TO4,
-@@ -300,6 +304,7 @@ static void parse_config(GKeyFile *config)
+@@ -311,6 +315,7 @@ static void parse_config(GKeyFile *config)
  	char **timeservers;
  	char **interfaces;
  	char **str_list;
@@ -104,7 +104,7 @@ index 6480caa6..88f5fe24 100644
  	char **tethering;
  	char *string;
  	gsize len;
-@@ -438,6 +443,13 @@ static void parse_config(GKeyFile *config)
+@@ -451,6 +456,13 @@ static void parse_config(GKeyFile *config)
  
  	g_clear_error(&error);
  

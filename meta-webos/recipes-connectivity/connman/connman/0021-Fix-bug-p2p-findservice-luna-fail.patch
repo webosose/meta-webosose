@@ -1,4 +1,4 @@
-From 6ea842a512de9c25a2bd941a27cae6cae81b4544 Mon Sep 17 00:00:00 2001
+From 10d2548598c8cd534194427ab4e6e311239b39e3 Mon Sep 17 00:00:00 2001
 From: "marudhupandian.a" <sanju.bisanal@lge.com>
 Date: Wed, 16 Jun 2021 14:37:55 +0530
 Subject: [PATCH] Fix bug p2p/findservice luna fail
@@ -26,10 +26,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 27e9e55..b43dc8b 100644
+index 1ec481ed..bdd5837f 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -7028,7 +7028,7 @@ int g_supplicant_interface_remove(GSupplicantInterface *interface,
+@@ -7040,7 +7040,7 @@ int g_supplicant_interface_remove(GSupplicantInterface *interface,
  	struct interface_data *data;
  	int ret;
  
@@ -38,6 +38,3 @@ index 27e9e55..b43dc8b 100644
  		return -EINVAL;
  
  	if (!system_available)
--- 
-2.26.0
-

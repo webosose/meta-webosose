@@ -1,4 +1,4 @@
-From 43e4681dc94b8eb6d14f2854ac870919d889fcf1 Mon Sep 17 00:00:00 2001
+From 5872a244f7085fbba4a8185699e411898c596421 Mon Sep 17 00:00:00 2001
 From: "sachin.shetty" <sachin.shetty@lge.com>
 Date: Mon, 24 Jun 2019 16:55:43 +0530
 Subject: [PATCH] Multiple wi-fi networks are connected via WPS PIN.
@@ -29,10 +29,10 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 3398340d..13e27206 100644
+index 5e2f4d4f..e7aefe2c 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -2417,7 +2417,7 @@ static void interface_property(const char *key, DBusMessageIter *iter,
+@@ -2430,7 +2430,7 @@ static void interface_property(const char *key, DBusMessageIter *iter,
  				g_strdup(interface->ifname), g_strdup(str));
  		}
  	} else if (g_strcmp0(key, "CurrentBSS") == 0) {

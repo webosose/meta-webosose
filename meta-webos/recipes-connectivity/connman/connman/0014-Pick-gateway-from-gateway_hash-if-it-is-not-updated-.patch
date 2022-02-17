@@ -1,4 +1,4 @@
-From 982bd4cb8c883b4b65e8b6c89342a876bc9c07ba Mon Sep 17 00:00:00 2001
+From 636aadd11a2ef390adc6c364bb75ad34f3781f3a Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Tue, 19 Jan 2021 17:53:14 +0530
 Subject: [PATCH] Pick gateway from gateway_hash if it is not updated in ipv4
@@ -76,10 +76,10 @@ index 63fe06d3..67886e5d 100644
  int __connman_connection_get_vpn_phy_index(int vpn_index);
  
 diff --git a/src/ipconfig.c b/src/ipconfig.c
-index 1551826b..484dd720 100644
+index 34b1724a..45583e87 100644
 --- a/src/ipconfig.c
 +++ b/src/ipconfig.c
-@@ -1890,7 +1890,7 @@ int __connman_ipconfig_ipv6_set_privacy(struct connman_ipconfig *ipconfig,
+@@ -1896,7 +1896,7 @@ int __connman_ipconfig_ipv6_set_privacy(struct connman_ipconfig *ipconfig,
  }
  
  void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
@@ -88,7 +88,7 @@ index 1551826b..484dd720 100644
  {
  	struct connman_ipaddress *append_addr = NULL;
  	const char *str;
-@@ -1941,6 +1941,13 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
+@@ -1947,6 +1947,13 @@ void __connman_ipconfig_append_ipv4(struct connman_ipconfig *ipconfig,
  	if (append_addr->gateway)
  		connman_dbus_dict_append_basic(iter, "Gateway",
  				DBUS_TYPE_STRING, &append_addr->gateway);
@@ -103,7 +103,7 @@ index 1551826b..484dd720 100644
  
  void __connman_ipconfig_append_ipv6(struct connman_ipconfig *ipconfig,
 diff --git a/src/service.c b/src/service.c
-index c63c1edc..068679d5 100644
+index 10241e00..af14d1e5 100644
 --- a/src/service.c
 +++ b/src/service.c
 @@ -37,6 +37,7 @@
@@ -114,7 +114,7 @@ index c63c1edc..068679d5 100644
  #include "connman.h"
  
  #define CONNECT_TIMEOUT		120
-@@ -1833,7 +1834,7 @@ static void append_ipv4(DBusMessageIter *iter, void *user_data)
+@@ -1845,7 +1846,7 @@ static void append_ipv4(DBusMessageIter *iter, void *user_data)
  		return;
  
  	if (service->ipconfig_ipv4)

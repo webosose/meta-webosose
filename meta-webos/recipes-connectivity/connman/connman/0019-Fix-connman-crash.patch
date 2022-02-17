@@ -1,4 +1,4 @@
-From f1428532fed35565d4cf592104c12c24c5205ae8 Mon Sep 17 00:00:00 2001
+From 37ce969e8faf889ac01df77745f083112ecc5703 Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Wed, 26 May 2021 17:24:34 +0530
 Subject: [PATCH] Fix connman crash
@@ -39,10 +39,10 @@ index c0347374..c28b835c 100644
  
  	method_call = g_try_new0(struct method_call_data, 1);
 diff --git a/gsupplicant/supplicant.c b/gsupplicant/supplicant.c
-index 6546ca93..59b02c23 100644
+index bc78f401..be2b3e90 100644
 --- a/gsupplicant/supplicant.c
 +++ b/gsupplicant/supplicant.c
-@@ -6876,7 +6876,7 @@ static void interface_get_result(const char *error,
+@@ -6888,7 +6888,7 @@ static void interface_get_result(const char *error,
  	}
  
  	dbus_message_iter_get_basic(iter, &path);
