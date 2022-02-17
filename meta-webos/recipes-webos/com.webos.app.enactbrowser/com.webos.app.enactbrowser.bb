@@ -72,3 +72,6 @@ do_install:append() {
 }
 
 FILES:${PN} += "${webos_applicationsdir}"
+
+# Workaround for network access issue during do_compile task
+do_compile[network] = "1"

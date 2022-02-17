@@ -43,3 +43,6 @@ COMPATIBLE_MACHINE:armv7a = "(.*)"
 COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
+
+# Workaround for network access issue during do_compile task
+do_compile[network] = "1"

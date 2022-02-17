@@ -48,3 +48,6 @@ RDEPENDS:${PN}:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_P
 
 # From 0.19.0 https://github.com/node-red/node-red/commit/4bcf13cb58869902e3d62294af91eeece5c93497
 SRC_URI += "file://python3.patch"
+
+# Workaround for network access issue during do_compile task
+do_compile[network] = "1"

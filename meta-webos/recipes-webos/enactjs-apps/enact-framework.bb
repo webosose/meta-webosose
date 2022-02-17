@@ -118,3 +118,6 @@ sysroot_stage_all:append() {
 }
 
 FILES:${PN} += "${datadir}"
+
+# Workaround for network access issue during do_compile task
+do_compile[network] = "1"

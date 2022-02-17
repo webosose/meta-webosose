@@ -46,3 +46,6 @@ do_compile:append() {
 FILES:${PN} += "${webos_servicesdir}"
 
 SRC_URI += "file://0001-webpack-use-sha256-instead-of-ancient-md4-to-fix-bui.patch"
+
+# Workaround for network access issue during do_compile task
+do_compile[network] = "1"

@@ -22,3 +22,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.camera"
+
+# Workaround for network access issue during do_compile task
+do_compile[network] = "1"
