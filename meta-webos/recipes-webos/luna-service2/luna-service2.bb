@@ -14,7 +14,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-26_090febd0c42c556e43a6ac06ea9c6cc2fe627f0b"
+WEBOS_VERSION = "3.21.2-27_0ee0f9692363f615f9e70c251827be79810d4f27"
 PR = "r28"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
