@@ -84,10 +84,10 @@ python do_write_abi_xml_data() {
         # nothing was staged, we don't need to run ABI checker on this
         return
     import re
-    re_headers = re.compile("\.h$")
-    re_solibs = re.compile("\.so\..*$")
+    re_headers = re.compile(r"\.h$")
+    re_solibs = re.compile(r"\.so\..*$")
     # in some libraries we don't set proper SONAME and versioning
-    re_solibsdev = re.compile("\.so$")
+    re_solibsdev = re.compile(r"\.so$")
     with open(datafile, "w") as f:
         f.write("<!-- generated from %s -->\n" % manifest)
         f.write("<version>%s</version>\n" % d.getVar("PV", True))
