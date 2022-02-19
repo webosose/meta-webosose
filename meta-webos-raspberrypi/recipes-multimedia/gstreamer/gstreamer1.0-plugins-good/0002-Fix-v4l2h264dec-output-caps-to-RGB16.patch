@@ -1,18 +1,18 @@
-From 5265c6c37c21d0d07b5224c937f3996fad5a8a81 Mon Sep 17 00:00:00 2001
+From 52d66651e0b45a266cfb4a56c8d88e5466b0c14d Mon Sep 17 00:00:00 2001
 From: "sapna.kumari" <sapna.kumari@lge.com>
 Date: Thu, 27 Aug 2020 06:39:27 +0000
 Subject: [PATCH] Fix v4l2h264dec output caps to RGB16
 
 gstreamer1.0-plugins-good=webosrpi3
 ---
- sys/v4l2/gstv4l2videodec.c | 25 +++++++++++++++++++++++++
+ .../sys/v4l2/gstv4l2videodec.c                | 25 +++++++++++++++++++
  1 file changed, 25 insertions(+)
 
-diff --git a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
-index 735464698..ea1bf6168 100644
---- a/sys/v4l2/gstv4l2videodec.c
-+++ b/sys/v4l2/gstv4l2videodec.c
-@@ -719,6 +719,31 @@ gst_v4l2_video_dec_handle_frame (GstVideoDecoder * decoder,
+diff --git a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
+index 562b304777..b3d4b693c1 100644
+--- a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
++++ b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
+@@ -753,6 +753,31 @@ gst_v4l2_video_dec_handle_frame (GstVideoDecoder * decoder,
  
      GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
  

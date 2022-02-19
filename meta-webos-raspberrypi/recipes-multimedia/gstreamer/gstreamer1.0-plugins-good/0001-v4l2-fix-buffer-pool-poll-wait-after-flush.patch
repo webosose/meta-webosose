@@ -1,4 +1,4 @@
-From a55669dd33e4600e7aefd2b1936449c5baab5750 Mon Sep 17 00:00:00 2001
+From 17d31d8f03e471c6d91429356b5bd6ba1ad671f6 Mon Sep 17 00:00:00 2001
 From: Pankaj Maharana <pankaj.maharana@lge.com>
 Date: Tue, 10 Dec 2019 16:38:26 +0530
 Subject: [PATCH] v4l2: fix buffer pool poll wait after flush
@@ -33,16 +33,16 @@ Tested the 1080p video plays with 22fps in raspberrypi4
 
 Upstream-Status: Unknown
 ---
- sys/v4l2/gstv4l2allocator.c |  2 +-
- sys/v4l2/gstv4l2object.c    |  1 +
- sys/v4l2/gstv4l2transform.c | 15 +++++++++++----
- sys/v4l2/gstv4l2videodec.c  | 35 ++++++++++++++++++++---------------
- 4 files changed, 33 insertions(+), 20 deletions(-)
+ .../sys/v4l2/gstv4l2allocator.c               |  2 +-
+ .../gst-plugins-good/sys/v4l2/gstv4l2object.c |  1 +
+ .../sys/v4l2/gstv4l2transform.c               | 15 +++++---
+ .../sys/v4l2/gstv4l2videodec.c                | 34 +++++++++++--------
+ 4 files changed, 33 insertions(+), 19 deletions(-)
 
-diff --git a/sys/v4l2/gstv4l2allocator.c b/sys/v4l2/gstv4l2allocator.c
-index e82a8532d..bac75d286 100644
---- a/sys/v4l2/gstv4l2allocator.c
-+++ b/sys/v4l2/gstv4l2allocator.c
+diff --git a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2allocator.c b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2allocator.c
+index e82a8532d6..bac75d286a 100644
+--- a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2allocator.c
++++ b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2allocator.c
 @@ -375,7 +375,7 @@ gst_v4l2_allocator_release (GstV4l2Allocator * allocator, GstV4l2Memory * mem)
    }
  
@@ -52,11 +52,11 @@ index e82a8532d..bac75d286 100644
  }
  
  static void
-diff --git a/sys/v4l2/gstv4l2object.c b/sys/v4l2/gstv4l2object.c
-index 1e96cb9d6..9ea214adb 100644
---- a/sys/v4l2/gstv4l2object.c
-+++ b/sys/v4l2/gstv4l2object.c
-@@ -4372,6 +4372,7 @@ gst_v4l2_object_stop (GstV4l2Object * v4l2object)
+diff --git a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2object.c b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2object.c
+index 9eb3b8e181..d6c5a5f050 100644
+--- a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2object.c
++++ b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2object.c
+@@ -4453,6 +4453,7 @@ gst_v4l2_object_stop (GstV4l2Object * v4l2object)
    GST_V4L2_SET_INACTIVE (v4l2object);
  
  done:
@@ -64,11 +64,11 @@ index 1e96cb9d6..9ea214adb 100644
    return TRUE;
  }
  
-diff --git a/sys/v4l2/gstv4l2transform.c b/sys/v4l2/gstv4l2transform.c
-index cc5564d44..a640b5c16 100644
---- a/sys/v4l2/gstv4l2transform.c
-+++ b/sys/v4l2/gstv4l2transform.c
-@@ -934,8 +934,10 @@ gst_v4l2_transform_prepare_output_buffer (GstBaseTransform * trans,
+diff --git a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2transform.c b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2transform.c
+index edb3203630..5d3ed615f4 100644
+--- a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2transform.c
++++ b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2transform.c
+@@ -935,8 +935,10 @@ gst_v4l2_transform_prepare_output_buffer (GstBaseTransform * trans,
    do {
      pool = gst_base_transform_get_buffer_pool (trans);
  
@@ -81,7 +81,7 @@ index cc5564d44..a640b5c16 100644
  
      GST_DEBUG_OBJECT (self, "Dequeue output buffer");
      ret = gst_buffer_pool_acquire_buffer (pool, outbuf, NULL);
-@@ -1012,10 +1014,15 @@ gst_v4l2_transform_sink_event (GstBaseTransform * trans, GstEvent * event)
+@@ -1015,10 +1017,15 @@ gst_v4l2_transform_sink_event (GstBaseTransform * trans, GstEvent * event)
        GST_DEBUG_OBJECT (self, "flush stop");
        gst_v4l2_object_unlock_stop (self->v4l2capture);
        gst_v4l2_object_unlock_stop (self->v4l2output);
@@ -99,10 +99,10 @@ index cc5564d44..a640b5c16 100644
        break;
      default:
        break;
-diff --git a/sys/v4l2/gstv4l2videodec.c b/sys/v4l2/gstv4l2videodec.c
-index 8c06c9013..735464698 100644
---- a/sys/v4l2/gstv4l2videodec.c
-+++ b/sys/v4l2/gstv4l2videodec.c
+diff --git a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
+index abd01333cb..562b304777 100644
+--- a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
++++ b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
 @@ -331,33 +331,37 @@ gst_v4l2_video_dec_flush (GstVideoDecoder * decoder)
  
    GST_DEBUG_OBJECT (self, "Flushed");
@@ -129,29 +129,29 @@ index 8c06c9013..735464698 100644
    gst_v4l2_object_unlock_stop (self->v4l2capture);
  
 +  /* Ensure our internal pools are flushed properly*/
++  if (self->v4l2output->pool)
++    gst_buffer_pool_set_active (self->v4l2output->pool, FALSE);
++
++  if (self->v4l2capture->pool)
++    gst_buffer_pool_set_active (self->v4l2capture->pool, FALSE);
++
++  self->output_flow = GST_FLOW_OK;
++
++  /* Ensure our internal pools are reactivated properly*/
    if (self->v4l2output->pool)
 -    gst_v4l2_buffer_pool_flush (self->v4l2output->pool);
-+    gst_buffer_pool_set_active (self->v4l2output->pool, FALSE);
++    gst_buffer_pool_set_active (self->v4l2output->pool, TRUE);
  
 -  /* gst_v4l2_buffer_pool_flush() calls streamon the capture pool and must be
 -   * called after gst_v4l2_object_unlock_stop() stopped flushing the buffer
 -   * pool. */
    if (self->v4l2capture->pool)
 -    gst_v4l2_buffer_pool_flush (self->v4l2capture->pool);
-+    gst_buffer_pool_set_active (self->v4l2capture->pool, FALSE);
-+
-+  self->output_flow = GST_FLOW_OK;
-+
-+  /* Ensure our internal pools are reactivated properly*/
-+  if (self->v4l2output->pool)
-+    gst_buffer_pool_set_active (self->v4l2output->pool, TRUE);
-+
-+  if (self->v4l2capture->pool)
 +    gst_buffer_pool_set_active (self->v4l2capture->pool, TRUE);
  
    return TRUE;
  }
-@@ -529,14 +533,13 @@ gst_v4l2_video_dec_loop (GstVideoDecoder * decoder)
+@@ -525,7 +529,7 @@ gst_v4l2_video_dec_loop (GstVideoDecoder * decoder)
      }
  
      ret = gst_buffer_pool_acquire_buffer (pool, &buffer, NULL);
@@ -160,14 +160,7 @@ index 8c06c9013..735464698 100644
  
      if (ret != GST_FLOW_OK)
        goto beach;
- 
-     GST_LOG_OBJECT (decoder, "Process output buffer");
-     ret = gst_v4l2_buffer_pool_process (v4l2_pool, &buffer);
--
-   } while (ret == GST_V4L2_FLOW_CORRUPTED_BUFFER);
- 
-   if (ret != GST_FLOW_OK)
-@@ -738,9 +741,11 @@ gst_v4l2_video_dec_handle_frame (GstVideoDecoder * decoder,
+@@ -771,9 +775,11 @@ gst_v4l2_video_dec_handle_frame (GstVideoDecoder * decoder,
      }
  
      /* Ensure our internal pool is activated */
