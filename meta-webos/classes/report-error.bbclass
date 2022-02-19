@@ -1,7 +1,7 @@
 #
 # Collects debug information in order to create error report files.
 #
-# Copyright (C) 2014-2017 LG Electronics, Inc.
+# Copyright (C) 2014-2022 LG Electronics, Inc.
 # Copyright (C) 2013 Intel Corporation
 # Author: Andreea Brandusa Proca <andreea.b.proca@intel.com>
 #
@@ -129,16 +129,16 @@ def errorreport_get_gitmirror():
     gitmirror = "N/A"
     try:
         # number of "redirects"
-        gitmirror = subprocess.check_output('git config --get-regexp "^url\..*\.insteadof" | wc -l', shell=True).decode("utf-8")
+        gitmirror = subprocess.check_output(r'git config --get-regexp "^url\..*\.insteadof" | wc -l', shell=True).decode("utf-8")
         # one example to know what mirror was used
         try:
-            gitmirror += subprocess.check_output('git config --get-regexp "^url\..*\.insteadof" "git://github.com/openembedded"', shell=True).decode("utf-8")
+            gitmirror += subprocess.check_output(r'git config --get-regexp "^url\..*\.insteadof" "git://github.com/openembedded"', shell=True).decode("utf-8")
         except:
             # git config returns error return code when option doesn't exist
             gitmirror += "\nNo mirror for git://github.com/openembedded\n"
             # some jenkins slaves and developers have .gitconfig which redirects whole github.com (and doesn't have entry for git://github.com/openembedded)
             try:
-                gitmirror += subprocess.check_output('git config --get-regexp "^url\..*\.insteadof" "git://github.com"', shell=True).decode("utf-8")
+                gitmirror += subprocess.check_output(r'git config --get-regexp "^url\..*\.insteadof" "git://github.com"', shell=True).decode("utf-8")
             except:
                 # git config returns error return code when option doesn't exist
                 gitmirror += "\nNo mirror for git://github.com"
@@ -231,7 +231,7 @@ def errorreport_get_top_20_tasks(e, jsondata):
     bsdir = e.data.expand("${BUILDSTATS_BASE}/${BUILDNAME}")
     # it can be empty (with only build_stat file), so check that there are at least 2 entries before calling grep
     if len(os.listdir(bsdir)) > 1:
-        top20 = subprocess.check_output("grep -R '^.*Elapsed time' %s/ | sed 's/^\(.*\)\/\([^\/]*\/[^\/]*\):Elapsed time: \([^ ]*\) .*$/\\3 \\2/g' | sort -n | tail -n 20" % bsdir, shell=True).decode("utf-8")
+        top20 = subprocess.check_output(r"grep -R '^.*Elapsed time' %s/ | sed 's/^\(.*\)\/\([^\/]*\/[^\/]*\):Elapsed time: \([^ ]*\) .*$/\3 \2/g' | sort -n | tail -n 20" % bsdir, shell=True).decode("utf-8")
         for line in top20.splitlines():
             bsdata={}
             (time, task) = line.split()
