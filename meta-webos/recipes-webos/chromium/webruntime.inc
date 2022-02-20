@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Chromium webruntime for webOS"
 AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
@@ -96,10 +96,6 @@ GN_ARGS += "\
     use_gnome_keyring=false\
     use_pulseaudio=false\
 "
-
-# Disable closure_compile
-# Else we need HOSTTOOLS += "java"
-GN_ARGS_append = " closure_compile=false"
 
 # TODO: drop this after we migrate to ubuntu 16.04 or above
 GN_ARGS += "\
