@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 # This file configures common SRC_URI for both of mksnapshot and webruntime
 # Also it contains variables for gn command such as GN_ARGS
 
@@ -69,7 +69,6 @@ GN_ARGS = "\
     cros_host_extra_cflags=\"${BUILD_CFLAGS}\"\
     cros_host_extra_cppflags=\"${BUILD_CPPFLAGS}\"\
     cros_host_extra_cxxflags=\"${BUILD_CXXFLAGS}\"\
-    cros_host_extra_lsflags=\"${BUILD_LDFLAGS}\"\
     cros_target_ar=\"${AR}\"\
     cros_target_cc=\"${CC}\"\
     cros_target_cxx=\"${CXX}\"\

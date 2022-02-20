@@ -34,7 +34,6 @@ GN_ARGS_OVERRIDES="\
     cros_host_extra_cflags=\"$BUILD_CFLAGS\" \
     cros_host_extra_cppflags=\"$BUILD_CPPFLAGS\" \
     cros_host_extra_cxxflags=\"$BUILD_CXXFLAGS\" \
-    cros_host_extra_lsflags=\"$BUILD_LDFLAGS\" \
     cros_target_ar=\"$AR\" \
     cros_target_cc=\"$CC\" \
     cros_target_cxx=\"$CXX\" \
