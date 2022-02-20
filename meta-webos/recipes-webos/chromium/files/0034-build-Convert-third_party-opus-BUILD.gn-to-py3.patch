@@ -1,0 +1,84 @@
+From 25e5f5d75cc9c68d026ca4ac6867a8acf5d1dad4 Mon Sep 17 00:00:00 2001
+From: Nico Weber <thakis@chromium.org>
+Date: Wed, 12 May 2021 21:58:20 +0000
+Subject: [PATCH] build: Convert third_party/opus/BUILD.gn to py3
+
+Bug: 1205620
+Change-Id: I35aaf8490efc00a36ad93ea6612009f859028120
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/2892215
+Commit-Queue: Nico Weber <thakis@chromium.org>
+Commit-Queue: Dirk Pranke <dpranke@google.com>
+Auto-Submit: Nico Weber <thakis@chromium.org>
+Reviewed-by: Dirk Pranke <dpranke@google.com>
+Cr-Commit-Position: refs/heads/master@{#882313}
+---
+ src/third_party/opus/BUILD.gn                  |  4 +---
+ src/third_party/opus/convert_rtcd_assembler.py | 18 ++++++++++--------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/src/third_party/opus/BUILD.gn b/src/third_party/opus/BUILD.gn
+index 075bccec3f..2394f5cd46 100644
+--- a/src/third_party/opus/BUILD.gn
++++ b/src/third_party/opus/BUILD.gn
+@@ -3,7 +3,6 @@
+ # found in the LICENSE file.
+ 
+ import("//build/config/arm.gni")
+-import("//build/config/python.gni")
+ import("//testing/test.gni")
+ 
+ # If fixed point implementation shall be used (otherwise float).
+@@ -170,8 +169,7 @@ config("opus_test_no_nonnull_config") {
+ }
+ 
+ if (use_opus_arm_rtcd) {
+-  # TODO(crbug.com/1112471): Get this to run cleanly under Python 3.
+-  python2_action("convert_rtcd_assembler") {
++  action("convert_rtcd_assembler") {
+     script = "convert_rtcd_assembler.py"
+     outputs = [ "$target_gen_dir/celt_pitch_xcorr_arm_gnu.S" ]
+     args = [
+diff --git a/src/third_party/opus/convert_rtcd_assembler.py b/src/third_party/opus/convert_rtcd_assembler.py
+index 2f6071f412..ad7e36d3ac 100755
+--- a/src/third_party/opus/convert_rtcd_assembler.py
++++ b/src/third_party/opus/convert_rtcd_assembler.py
+@@ -6,6 +6,8 @@
+ # Script for converting celt_pitch_xcorr_arm.s -> celt_pitch_xcorr_arm.S
+ # using the arm2gnu.pl script.
+ 
++from __future__ import print_function
++
+ import os
+ import sys
+ 
+@@ -16,22 +18,22 @@ USAGE = ('Usage:\n'
+ 
+ def main(argv):
+   if len(argv) != 3:
+-    print >> sys.stderr, ('Error: You must pass the following arguments:\n'
+-                          ' * arm2gnu_script_path\n'
+-                          ' * input_file\n'
+-                          ' * output_file')
+-    print USAGE
++    print('Error: You must pass the following arguments:\n'
++          ' * arm2gnu_script_path\n'
++          ' * input_file\n'
++          ' * output_file', file=sys.stderr)
++    print(USAGE)
+     return 1
+ 
+   arm2gnu_script = os.path.abspath(argv[0])
+   if not os.path.exists(arm2gnu_script):
+-    print >> sys.stderr, ('Error: Cannot find arm2gnu.pl script at: %s.' %
+-                          arm2gnu_script)
++    print('Error: Cannot find arm2gnu.pl script at: %s.' %
++          arm2gnu_script, file=sys.stderr)
+     return 2
+ 
+   input_file = os.path.abspath(argv[1])
+   if not os.path.exists(input_file):
+-    print >> sys.stderr, 'Error: Cannot find input file at: %s.' % input_file
++    print('Error: Cannot find input file at: %s.' % input_file, file=sys.stderr)
+     return 3
+ 
+   output_file = argv[2]

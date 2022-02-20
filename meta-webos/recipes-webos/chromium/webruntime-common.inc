@@ -15,24 +15,6 @@ inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_prerelease_dep
 
-# make sure that python(2) is available, otherwise gn fails to execute python after it was removed from HOSTTOOLS in:
-# http://git.openembedded.org/openembedded-core/commit/?id=5f8f16b17f66966ae91aeabc23e97de5ecd17447
-#
-# /jenkins/mjansa/build-ros-v3/artifacts/BUILD-webos-melodic-master.mcf/work/qemux86-webos-linux/webruntime/68.0.3440.106-75-r24.1/git/depot_tools/gn: line 8: exec: python: not found
-# using python3 isn't supported in this old gn, it fails e.g. in gclient_utils.py because of invalid syntax for python3:
-# Traceback (most recent call last):
-#  File "/jenkins/mjansa/build-ros-v3/artifacts/BUILD-webos-melodic-master.mcf/work/qemux86-webos-linux/webruntime/68.0.3440.106-75-r24.1/git/depot_tools/gn.py", line 15, in <module>
-#    import gclient_utils
-#  File "/jenkins/mjansa/build-ros-v3/artifacts/BUILD-webos-melodic-master.mcf/work/qemux86-webos-linux/webruntime/68.0.3440.106-75-r24.1/git/depot_tools/gclient_utils.py", line 271
-#    except OSError, e:
-#                  ^
-# SyntaxError: invalid syntax
-# most (maybe all) of these issues were already fixed upstream in:
-# https://chromium-review.googlesource.com/c/chromium/tools/depot_tools/+/1854900
-# but there is a lot of conflicts in old gn used by this webruntime and there are many other places also still using python(2) here
-# so lets use native python2 for now
-inherit pythonnative
-
 REPO_VERSION := "${@['','_${WEBRUNTIME_REPO_VERSION}'][d.getVar('WEBRUNTIME_REPO_VERSION').strip() != '']}"
 
 WEBOS_REPO_NAME ?= "chromium84"
@@ -132,7 +114,7 @@ do_configure() {
     echo GN_ARGS is "${GN_ARGS}"
     echo BUILD_TARGETS are ${TARGET}
     cd ${S}/src
-    gn gen ${OUT_DIR} --args="${GN_ARGS}"
+    gn --script-executable=${PYTHON} gen ${OUT_DIR} --args="${GN_ARGS}"
 }
 
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"

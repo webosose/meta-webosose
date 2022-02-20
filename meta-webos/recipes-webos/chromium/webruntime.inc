@@ -9,6 +9,7 @@ require exportbuildscript.inc
 
 inherit gettext
 inherit pkgconfig
+inherit python3native
 inherit webruntime_apps
 inherit webos_filesystem_paths
 inherit webos_lttng
@@ -17,9 +18,9 @@ inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 inherit webos_system_bus
 
-DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python-six-native python-beautifulsoup4-native python-lxml-native python-html5lib-native python-webencodings-native"
+DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
 
-INC_PR = "r52"
+INC_PR = "r53"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"

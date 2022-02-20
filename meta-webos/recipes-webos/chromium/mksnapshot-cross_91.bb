@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 inherit cross
 inherit pkgconfig
@@ -14,11 +14,11 @@ UNINATIVE_LOADER = ""
 PROVIDES = "mksnapshot-cross-${TARGET_ARCH}"
 PN = "mksnapshot-cross-${TARGET_ARCH}"
 BPN = "mksnapshot"
-PR = "r1"
+PR = "r2"
 
 TARGET = "v8_snapshot_clang_${TARGET_CPU}/mksnapshot"
 
-DEPENDS = "glib-2.0-native python-native gcc-runtime"
+DEPENDS = "glib-2.0-native gcc-runtime"
 
 GN_ARGS_append = "\
     use_pmlog=false \
@@ -32,7 +32,7 @@ do_configure() {
     echo GN_ARGS is ${GN_ARGS}
     echo BUILD_TARGETS are ${TARGET}
     cd ${S}/src
-    gn --root=${S}/src --dotfile=mksnapshot.gn gen ${OUT_DIR} --args="${GN_ARGS}"
+    gn --script-executable=${PYTHON} --root=${S}/src --dotfile=mksnapshot.gn gen ${OUT_DIR} --args="${GN_ARGS}"
 }
 
 do_install() {
