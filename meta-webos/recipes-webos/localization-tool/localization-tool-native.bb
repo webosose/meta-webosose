@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "A localization tool is written in JavaScript"
 AUTHOR = "Goun Lee<goun.lee@lge.com>"
@@ -6,9 +6,8 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
-PR = "r6"
+PR = "r7"
 
-inherit pythonnative
 inherit webos_npm_env
 inherit native
 DEPENDS = "nodejs-native node-gyp-packages-native"
