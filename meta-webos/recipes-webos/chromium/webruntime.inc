@@ -45,7 +45,7 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
-PACKAGECONFIG ?= "jumbo neva-media"
+PACKAGECONFIG ?= "neva-media"
 PACKAGECONFIG_append_hardware = " gstreamer umediaserver gav"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
@@ -57,13 +57,6 @@ PACKAGECONFIG[neva-media] = "use_neva_media=true, use_neva_media=false"
 PACKAGECONFIG[av1-codec] = "enable_av1_decoder=true, enable_av1_decoder=false"
 PACKAGECONFIG[gav] = "use_gav=true,use_gav=false"
 PACKAGECONFIG[neva-webrtc] = "use_neva_webrtc=true,use_neva_webrtc=false,media-codec-interface,media-codec-interface"
-
-# Set a default value for jumbo file merge of 8. This should be good for build
-# servers and workstations with a big number of cores. In case build is
-# happening in a machine with less cores but still enough RAM a good value could
-# be 50.
-JUMBO_FILE_MERGE_LIMIT="8"
-PACKAGECONFIG[jumbo] = "use_jumbo_build=true jumbo_file_merge_limit=${JUMBO_FILE_MERGE_LIMIT}, use_jumbo_build=false"
 
 PACKAGECONFIG_append = " ${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', 'lttng', '', d)}"
 PACKAGECONFIG[lttng] = "use_lttng=true,use_lttng=false,lttng-ust,lttng-tools lttng-modules babeltrace"

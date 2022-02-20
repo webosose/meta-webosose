@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 WEBRUNTIME_REPO_VERSION = "87"
 
 require webruntime.inc
@@ -23,8 +23,6 @@ PACKAGECONFIG[google_ozone_wayland] = "\
    ozone_platform_wayland=false ozone_platform_wayland_external=true"
 
 PACKAGECONFIG[v8_lite] = "v8_enable_lite_mode=true,v8_enable_lite_mode=false"
-
-PACKAGECONFIG_remove="jumbo"
 
 GN_ARGS_append = " \
   libdir=\"${libdir}\"\
