@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 # A blacklisted recipe is ignored by bitbake. The reason it is useful to be able
 # to have bitbake ignore a recipe is because, although PREFERRED_PROVIDER can be
@@ -164,11 +164,3 @@ PNBLACKLIST[xen] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Depe
 
 # meta-openembedded/meta-oe/recipes-multimedia/pipewire/pipewire_git.bb
 PNBLACKLIST[pipewire] ?= "Doesn't like our old pulseaudio from meta-webos: meson.build:234:2: ERROR: Invalid version of dependency, need 'libpulse' ['>= 11.1'] found '9.0-14-gdf81'."
-
-# the following python recipes are an exception, because they need to be blacklisted even when python(2) itself is unblacklisted with I_SWEAR_TO_MIGRATE_TO_PYTHON3
-# meta-python2/recipes-devtools/python/python-snimpy_0.8.13.bb
-# libsmi should be unblacklisted in hardknott
-PNBLACKLIST[python-snimpy] ?= "Depends on blacklisted libsmi"
-
-# all target python2 recipes from meta-python2 and meta-oe
-require conf/distro/include/python2-target-recipes-blacklist.inc
