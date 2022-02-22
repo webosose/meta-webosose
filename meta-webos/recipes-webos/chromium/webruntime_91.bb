@@ -14,16 +14,9 @@ PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
 PACKAGECONFIG[v8_lite] = "v8_enable_lite_mode=true,v8_enable_lite_mode=false"
 
 GN_ARGS_append = " use_x11=false"
-GN_ARGS_remove = "ozone_platform_wayland_external=true"
-GN_ARGS_remove = "use_xkbcommon=true"
 PACKAGECONFIG[google_ozone_wayland] = "import(\"//neva/gow.gn\")"
 PACKAGECONFIG[intel_ozone_wayland] = "import(\"//neva/iow.gn\")"
 PACKAGECONFIG += "intel_ozone_wayland"
-
-# TODO: get rid of this when (and if) we adopt GPU info collector patch
-GN_ARGS_remove = "use_webos_gpu_info_collector=true"
-# TODO: get rid of this when we adopt system debugger patch
-GN_ARGS_remove = "use_system_debugger_abort=true"
 
 GN_ARGS_append = " \
   libdir=\"${libdir}\"\

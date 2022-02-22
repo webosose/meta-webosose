@@ -74,8 +74,6 @@ GN_ARGS_append = " \
     use_local_storage_tracker=true\
     use_ozone=true\
     use_pmlog=true\
-    use_system_debugger_abort=true\
-    use_xkbcommon=true\
     ${WAM_DEMO_CONFARGS}\
     ${PACKAGECONFIG_CONFARGS}\
 "
