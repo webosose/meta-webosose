@@ -4,7 +4,7 @@ require recipes-multimedia/pulseaudio/pulseaudio.inc
 
 # Restore the LIC_FILES_CHKSUM for 9.0 version
 # pulseaudio.inc is already using different one for 10.0
-LICENSE = "GPLv2+ & LGPLv2.1"
+LICENSE = "GPL-2.0-or-later & LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d9ae089c8dc5339f8ac9d8563038a29f \
                     file://GPL;md5=4325afd396febcb659c36b49533135d4 \
                     file://LGPL;md5=2d5025d4aa3495befef8f17206a5b0a1 \

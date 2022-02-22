@@ -268,7 +268,7 @@ LICENSE_semver-2.2.1 = "ISC"
 LICENSE_sigmund-1.0.0 = "ISC"
 LICENSE_sntp-0.2.4 = "BSD-3-Clause"
 LICENSE_tar-0.1.19 = "ISC & MIT"
-LICENSE_tough-cookie-0.12.1 = "CC0-1.0 & (MPL-1.1 | GPL-2.0 | LGPL-2.1) & MIT"
+LICENSE_tough-cookie-0.12.1 = "CC0-1.0 & (MPL-1.1 | GPL-2.0-only | LGPL-2.1-only) & MIT"
 LICENSE_tunnel-agent-0.3.0 = "Apache-2.0"
 LICENSE_which-1.0.5 = "MIT"
 

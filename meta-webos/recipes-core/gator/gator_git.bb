@@ -4,7 +4,7 @@
 SUMMARY = "DS-5 Gator daemon"
 DESCRIPTION = "Target-side daemon gathering data for ARM Streamline Performance Analyzer."
 
-LICENSE = "GPL-2"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://driver/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
 SRCREV = "3ff46fedd4d097813156069edab9704cc65e0a42"

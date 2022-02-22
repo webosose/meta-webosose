@@ -4,7 +4,7 @@ SUMMARY = "Pinyin input method library"
 AUTHOR = "pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 HOMEPAGE = "https://github.com/sunpinyin/sunpinyin"
 SECTION = "libs"
-LICENSE = "LGPLv2.1"
+LICENSE = "LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=0fb040b9b86a214885e3285fe25d74bc"
 
 DEPENDS = "sqlite3"

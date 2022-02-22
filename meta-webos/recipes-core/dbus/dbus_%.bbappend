@@ -3,8 +3,8 @@
 EXTENDPRAUTO:append = "webos5"
 
 PACKAGES =+ "${PN}-gpl"
-LICENSE += "& GPL-2.0"
-LICENSE:${PN}-gpl = "GPL-2.0"
+LICENSE += "& GPL-2.0-only"
+LICENSE:${PN}-gpl = "GPL-2.0-only"
 
 # using "dbus" instead of "${PN}" due to:
 # WARNING: Variable key RDEPENDS:${PN} ( ${PN}-gpl) replaces original key RDEPENDS:dbus

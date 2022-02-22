@@ -3,7 +3,7 @@
 SUMMARY = "FUSE filesystem module to mount camera"
 HOMEPAGE = "http://www.gphoto.org/proj/gphotofs/"
 SECTION = "console/utils"
-LICENSE = "GPL-2.0"
+LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=94d55d512a9ba36caa9b7df079bae19f"
 DEPENDS = "fuse glib-2.0 libgphoto2 glib-2.0-native"
 

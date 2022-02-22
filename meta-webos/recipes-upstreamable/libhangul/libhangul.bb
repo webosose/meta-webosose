@@ -4,7 +4,7 @@ SUMMARY = "Hangul input method library"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 HOMEPAGE = "https://github.com/choehwanjin/libhangul"
 SECTION = "libs"
-LICENSE = "LGPLv2.1"
+LICENSE = "LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=a6f89e2100d9b6cdffcea4f398e37343"
 
 PR = "r3"

@@ -4,8 +4,8 @@ EXTENDPRAUTO:append = "webos2"
 
 PACKAGES =+ "${PN}-gpl"
 
-LICENSE += "& GPL-2.0"
-LICENSE:${PN}-gpl = "GPL-2.0"
+LICENSE += "& GPL-2.0-only"
+LICENSE:${PN}-gpl = "GPL-2.0-only"
 
 RDEPENDS:${PN} += "${PN}-gpl"
 

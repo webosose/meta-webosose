@@ -4,7 +4,7 @@ DESCRIPTION = "C++ utility and widget library based on glibmm and gtkmm"
 HOMEPAGE = "http://code.google.com/p/gtkmm-utils/"
 SECTION = "libs"
 
-LICENSE = "LGPLv2.1"
+LICENSE = "LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=9740aaebee0708fe3dd67fdc3f6902b2"
 
 DEPENDS = "glibmm"

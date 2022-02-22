@@ -4,7 +4,7 @@ SUMMARY = "The Chinese PinYin and Bopomofo conversion library"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 HOMEPAGE = "https://github.com/pyzy/pyzy"
 SECTION = "libs"
-LICENSE = "LGPLv2.1+"
+LICENSE = "LGPL-2.1-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=4b54a1fd55a448865a0b32d41598759d"
 
 DEPENDS = "sqlite3 sqlite3-native glib-2.0 util-linux"

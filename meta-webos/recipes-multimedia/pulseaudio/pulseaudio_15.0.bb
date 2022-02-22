@@ -2,7 +2,7 @@
 
 require pulseaudio_15.0.inc
 
-LICENSE = "GPLv2+ & LGPLv2.1"
+LICENSE = "GPL-2.0-or-later & LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=0e5cd938de1a7a53ea5adac38cc10c39 \
                     file://GPL;md5=4325afd396febcb659c36b49533135d4 \
                     file://LGPL;md5=2d5025d4aa3495befef8f17206a5b0a1 \
