@@ -1,6 +1,6 @@
-# Copyright (c) 2017-2021 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO_append = "webosrpi29"
+EXTENDPRAUTO_append = "webosrpi30"
 
 CMDLINE_append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 CMDLINE_remove_sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
@@ -19,6 +19,7 @@ SRC_URI += "\
     file://gps.cfg \
     file://usb-serial-ftdi-sio.cfg \
     file://oomd.cfg \
+    file://ebpf.cfg \
 "
 
 KERNEL_MODULE_AUTOLOAD_append = " \
