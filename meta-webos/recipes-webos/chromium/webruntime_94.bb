@@ -22,10 +22,6 @@ PACKAGECONFIG += "google_ozone_wayland"
 PACKAGECONFIG[intel_ozone_wayland] = "import(\"//neva/iow.gn\")"
 PACKAGECONFIG += "intel_ozone_wayland"
 
-# TODO: get rid of this when it will be removed on RP side from
-# meta-lg-webos/meta-webos/recipes-webos/chromium/webruntime.inc
-GN_ARGS_remove = "linux_use_bundled_binutils=false"
-
 # TODO: get rid of this when (and if) we adopt GPU info collector patch
 GN_ARGS_remove = "use_webos_gpu_info_collector=true"
 # TODO: get rid of this when we adopt system debugger patch
