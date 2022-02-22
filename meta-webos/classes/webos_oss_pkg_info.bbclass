@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 #
 # webos_oss_pkg_info
 #
@@ -15,12 +15,11 @@ do_write_oss_pkg_info[doc] = "Collects oss package information of the image"
 do_write_oss_pkg_info[nostamp] = "1"
 
 python do_write_oss_pkg_info() {
-    imagename    = d.getVar("IMAGE_BASENAME")
-    machine      = d.getVar("MACHINE")
+    imagename    = d.getVar("IMAGE_NAME")
     oss_filename = d.getVar("OSS_FILENAME")
-    manifest     = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), "%s-%s" % (imagename, machine)), "license.manifest")
-    default_oss  = os.path.join(d.getVar("TOPDIR")+'/build-templates', "%s-%s-%s" % (imagename, machine, oss_filename))
-    target_oss   = os.path.join(d.getVar("DEPLOY_DIR_IMAGE"), "%s-%s" % (imagename, oss_filename))
+    manifest     = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), "%s" % imagename), "license.manifest")
+    default_oss  = os.path.join(d.getVar("TOPDIR")+'/build-templates', "%s-%s" % (imagename, oss_filename))
+    target_oss   = os.path.join(d.getVar("DEPLOY_DIR_IMAGE"), "%s-%s" % (d.getVar("IMAGE_BASENAME"), oss_filename))
 
     if os.path.isfile(manifest):
         with open(target_oss, "w") as output:
