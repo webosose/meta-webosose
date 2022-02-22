@@ -2,13 +2,26 @@ bootcmd_resetvars=setenv kernel_image; setenv bootargs; setenv kernel_image2; se
 bootcmd_otenv=run bootcmd_resetvars; load mmc 0:2 $loadaddr /boot/loader/uEnv.txt; env import -t $loadaddr $filesize
 bootcmd_rollbackenv=setenv kernel_image ${kernel_image2}; setenv bootargs ${bootargs2}
 
+# =========== BEGIN: rootfs as '/dev/mmblk0p2' =========== #
+## Warn: If you want to use nfs, please comment out this block
 bootcmd_args_fdt=fdt addr ${fdt_addr} && fdt get value bootargs_fdt /chosen bootargs
 bootcmd_args=setenv bootargs "$bootargs $bootargs_fdt ostree_root=/dev/mmcblk0p2 root=/dev/ram0 rw rootwait rootdelay=2 ramdisk_size=8192 panic=1"
+bootcmd_load=load mmc 0:2 $kernel_addr_r "/boot"$kernel_image; load mmc 0:2 $ramdisk_addr_r "/boot"$ramdisk_image
+bootcmd_run=@@KERNEL_BOOTCMD@@ ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr}
+# =========== END: rootfs as '/dev/mmblk0p2' ============= #
+
+# =========== BEGIN: rootfs via NFS ====================== #
+## Warn: Fill in NFS Server IP at <serverip>, rootfs path at <rootfs_path> in the bootargs
+## In my case, NFS Server: 10.177.xxx.xx and It exports /nfs/client1 for rootfs, so that nfsroot=10.177.xxx.xx:/nfs/client1
+## You can get the rootfs for nfs from official build artifacts at fileserver as <image>.tar.bz2
+#bootcmd_args_fdt=fdt addr ${fdt_addr}
+#bootcmd_args=setenv bootargs "earlyprintk dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=/dev/nfs rootfstype=nfs nfsroot=<serverip>:<rootfs_path>,v3,tcp ip=dhcp rootwait noinitrdit"
+#bootcmd_load=load mmc 0:2 $kernel_addr_r "/boot"$kernel_image
+#bootcmd_run=booti ${kernel_addr_r} - ${fdt_addr}
+# =========== END: rootfs via NFS ======================== #
 
 bootcmd_getroot=setexpr ostree_root gsub "^.*ostree=([^ ]*).*$" "\\\\1" "${bootargs}";
 
-bootcmd_load=load mmc 0:2 $kernel_addr_r "/boot"$kernel_image; load mmc 0:2 $ramdisk_addr_r "/boot"$ramdisk_image
-bootcmd_run=@@KERNEL_BOOTCMD@@ ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr}
 
 bootcmd_create_envfile=if test ! -e mmc 0:1 uboot.env; then saveenv; fi;
 
