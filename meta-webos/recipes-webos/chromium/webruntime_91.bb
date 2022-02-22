@@ -26,9 +26,4 @@ GN_ARGS_append = " \
   use_neva_media_player_camera=true\
 "
 
-# TODO: qemux build fails
-PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav"
-PACKAGECONFIG_remove_qemux86-64 = "gstreamer umediaserver neva-media gav"
-#END TODO
-
 TUNE_FEATURES_remove_raspberrypi4-64 = "crypto"

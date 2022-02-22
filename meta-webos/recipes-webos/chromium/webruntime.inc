@@ -45,8 +45,10 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
-PACKAGECONFIG ?= "neva-media"
-PACKAGECONFIG_append_hardware = " gstreamer umediaserver gav"
+PACKAGECONFIG_NEVA_WEBRTC ?= "neva-webrtc"
+PACKAGECONFIG_MEDIA ?= "neva-media gstreamer umediaserver gav"
+PACKAGECONFIG ?= ""
+PACKAGECONFIG_append_hardware = " ${PACKAGECONFIG_MEDIA} ${PACKAGECONFIG_NEVA_WEBRTC}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build

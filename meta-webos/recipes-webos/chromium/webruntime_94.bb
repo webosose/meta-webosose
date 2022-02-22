@@ -27,9 +27,3 @@ GN_ARGS_append = " \
   enable_js_type_check=false\
   system_wayland_scanner_path=\"${RECIPE_SYSROOT_NATIVE}/usr/bin/wayland-scanner\" \
 "
-
-# TODO: qemux build fails
-PACKAGECONFIG_remove_qemux86 = "gstreamer umediaserver neva-media gav"
-PACKAGECONFIG_remove_qemux86-64 = "gstreamer umediaserver neva-media gav"
-#END TODO
-
