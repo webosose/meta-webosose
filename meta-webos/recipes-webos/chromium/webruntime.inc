@@ -19,11 +19,6 @@ inherit webos_system_bus
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python-six-native python-beautifulsoup4-native python-lxml-native python-html5lib-native python-webencodings-native"
 
-# Build for raspberrypi4
-# Mesa 19.1.1 uses xorgproto instead of xproto series.
-DEPENDS_remove_raspberrypi4 = " xproto"
-DEPENDS_append_raspberrypi4 = " xorgproto"
-
 INC_PR = "r52"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
