@@ -377,10 +377,10 @@ BB_DISKMON_DIRS = "\
     STOPTASKS,${DL_DIR},2G,100K \
     STOPTASKS,${SSTATE_DIR},2G,100K \
     STOPTASKS,/tmp,200M,100K \
-    ABORT,${TMPDIR},1G,10K \
-    ABORT,${DL_DIR},1G,10K \
-    ABORT,${SSTATE_DIR},1G,10K \
-    ABORT,/tmp,100M,10K \
+    HALT,${TMPDIR},1G,10K \
+    HALT,${DL_DIR},1G,10K \
+    HALT,${SSTATE_DIR},1G,10K \
+    HALT,/tmp,100M,10K \
 "
 
 # Select at most one of the two choices here for the console:
