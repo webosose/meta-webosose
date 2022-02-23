@@ -62,7 +62,7 @@ clean_python_installation () {
 # run LS2 ACG verification code
 python verify_acg () {
     def herror(c, m):
-        package_qa_handle_error(c, m, d)
+        oe.qa.handle_error(c, m, d)
 
     import verify_ls2_acg
     verify_ls2_acg.handle_error = herror

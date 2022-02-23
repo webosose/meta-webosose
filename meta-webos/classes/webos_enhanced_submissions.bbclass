@@ -104,7 +104,7 @@ python webos_enhsub_srcrev_sanity_check() {
         pn = d.getVar('PN', True)
         file = d.getVar('FILE', True)
         msg = "WEBOS_VERSION '%s' for recipe '%s' (file '%s') contains submission 0, which indicates using AUTOREV or SHA-1 without matching tag and cannot be used in official builds." % (webos_version, pn, file)
-        package_qa_handle_error("webos-enh-sub-autorev-error", msg, d)
+        oe.qa.handle_error("webos-enh-sub-autorev-error", msg, d)
     elif (len(srcrev) != 40 or (False in [c in "abcdef0123456789" for c in srcrev])):
         file = d.getVar('FILE', True)
         bb.error("%s: SRCREV needs to contain 40-character SHA1" % file)
@@ -134,14 +134,14 @@ python submission_sanity_check() {
             output = bb.fetch.runfetchcmd(cmd, d, quiet=True)
         except bb.fetch2.FetchError:
             msg = "Unable to update '%s' checkout for recipe '%s'" % (localpath, pn)
-            package_qa_handle_error("webos-enh-sub-error", msg, d)
+            oe.qa.handle_error("webos-enh-sub-error", msg, d)
         # and the same in WORKDIR
         cmd = "cd %s && git remote update" % (checkout)
         try:
             output = bb.fetch.runfetchcmd(cmd, d, quiet=True)
         except bb.fetch2.FetchError:
             msg = "Unable to update '%s' checkout for recipe '%s'" % (checkout, pn)
-            package_qa_handle_error("webos-enh-sub-error", msg, d)
+            oe.qa.handle_error("webos-enh-sub-error", msg, d)
 
 
     def webos_enhsub_tag_sanity_check(d, fetcher, u, pn, tag_param, rev, webos_git_repo_tag, checkout, file, first=True):
@@ -162,7 +162,7 @@ python submission_sanity_check() {
             else:
                 localpath = fetcher.localpath(u)
                 msg = "The tag '%s' for recipe '%s' (file '%s') doesn't exist in local checkout of SHA-1 '%s'. It's possible that the tag already exists in a remote repository, but your local checkout (or checkout downloaded as a tarball from PREMIRROR) contains the requested SHA-1 without a tag assigned to it (this cannot happen with annotated tags, because they have their own SHA-1 which either exists or not). Please update your checkout in %s by executing git fetch --tags and run again." % (webos_git_repo_tag, pn, file, rev, localpath)
-                package_qa_handle_error("webos-enh-sub-error", msg, d)
+                oe.qa.handle_error("webos-enh-sub-error", msg, d)
                 return
         # for annotated tags there are 2 SHA-1s and we don't care which one is used (same source)
         # $ git show-ref -d --tags 0.5
@@ -179,7 +179,7 @@ python submission_sanity_check() {
         found_srcrev = False
         if len(tag_srcrevs) > 2:
             msg = "The reference refs/tags/%s is matching more than 2 entries for recipe '%s' (file '%s'):\n%s" % (webos_git_repo_tag, pn, file, '\n'.join(tag_srcrevs))
-            package_qa_handle_error("webos-enh-sub-error", msg, d)
+            oe.qa.handle_error("webos-enh-sub-error", msg, d)
         if len(tag_srcrevs) == 1:
             if first:
                 webos_enhsub_remote_update(d, u, pn, checkout)
@@ -187,14 +187,14 @@ python submission_sanity_check() {
                 return
             else:
                 msg = "The tag '%s' for recipe '%s' (file '%s') is lightweight tag, please use annotated tag in next submission" % (webos_git_repo_tag, pn, file)
-                package_qa_handle_error("webos-enh-sub-error", msg, d)
+                oe.qa.handle_error("webos-enh-sub-error", msg, d)
         for tag_srcrev in tag_srcrevs:
             (sha, name) = tag_srcrev.split()
             if sha == rev:
                 found_srcrev = True
                 if tag_srcrev != tag_srcrevs[0] or tag_srcrev.find("^{}") == len(tag_srcrev) - 3:
                     msg = "The tag '%s' for recipe '%s' (file '%s') is annotated, but WEBOS_VERSION '%s' is using SHA-1 of last commit included, not of the tag itself '%s'" % (webos_git_repo_tag, pn, file, webos_version, tag_srcrevs[0].split()[0])
-                    package_qa_handle_error("webos-enh-sub-error", msg, d)
+                    oe.qa.handle_error("webos-enh-sub-error", msg, d)
 
         if not found_srcrev:
             if first:
@@ -204,13 +204,13 @@ python submission_sanity_check() {
             else:
                 if len(tag_srcrevs) < 1:
                     msg = "The SHA-1 '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') doesn't match with tag '%s', tag couldn't be found in refs/tags/" % (rev, pn, file, webos_git_repo_tag)
-                    package_qa_handle_error("webos-enh-sub-error", msg, d)
+                    oe.qa.handle_error("webos-enh-sub-error", msg, d)
                 elif len(tag_srcrevs) == 1:
                     msg = "The SHA-1 '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') doesn't match with tag '%s', which is seen as SHA-1 '%s'" % (rev, pn, file, webos_git_repo_tag, tag_srcrevs[0].split()[0])
-                    package_qa_handle_error("webos-enh-sub-error", msg, d)
+                    oe.qa.handle_error("webos-enh-sub-error", msg, d)
                 else:
                     msg = "The SHA-1 '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') doesn't match with tag '%s', which is seen as SHA-1s:\n%s" % (rev, pn, file, webos_git_repo_tag, '\n'.join(tag_srcrevs))
-                    package_qa_handle_error("webos-enh-sub-error", msg, d)
+                    oe.qa.handle_error("webos-enh-sub-error", msg, d)
 
     def webos_enhsub_branch_sanity_check(d, u, fetcher, branch_in_webos_version, branch_in_src_uri, pn, file, checkout, rev, first=True):
         """ Checks that selected SRCREV is included in selected branch
@@ -222,16 +222,16 @@ python submission_sanity_check() {
         bb.debug(2, "sanity check for branch in pn '%s', branch_in_webos_version '%s', branch_in_src_uri '%s', rev '%s', checkout '%s'" % (pn, branch_in_webos_version, branch_in_src_uri, rev, checkout))
         if branch_in_src_uri != branch_in_webos_version:
             msg = "Branch is set in WEBOS_VERSION '%s' for recipe '%s' (file '%s') as well as in SRC_URI '%s' and they don't match" % (branch_in_webos_version, pn, file, branch_in_src_uri)
-            package_qa_handle_error("webos-enh-sub-error", msg, d)
+            oe.qa.handle_error("webos-enh-sub-error", msg, d)
         cmd = "cd %s && git branch -a --contains %s --list origin/%s 2> /dev/null | wc -l" % (checkout, rev, branch_in_webos_version)
         try:
             output = bb.fetch.runfetchcmd(cmd, d, quiet=True)
         except bb.fetch2.FetchError:
             msg = "Unable to check if SHA-1 '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') is included in branch '%s'" % (rev, pn, file, branch)
-            package_qa_handle_error("webos-enh-sub-error", msg, d)
+            oe.qa.handle_error("webos-enh-sub-error", msg, d)
         if len(output.split()) > 1:
             msg = "Unable to check if SHA-1 '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') is included in branch '%s', unexpected output from '%s': '%s'" % (rev, pn, file, branch_in_webos_version, cmd, output)
-            package_qa_handle_error("webos-enh-sub-error", msg, d)
+            oe.qa.handle_error("webos-enh-sub-error", msg, d)
         if output.split()[0] == "0":
             if first:
                 webos_enhsub_remote_update(d, u, pn, checkout)
@@ -239,7 +239,7 @@ python submission_sanity_check() {
                 return
             else:
                 msg = "Revision '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') isn't included in branch '%s'" % (rev, pn, file, branch_in_webos_version)
-                package_qa_handle_error("webos-enh-sub-error", msg, d)
+                oe.qa.handle_error("webos-enh-sub-error", msg, d)
 
     src_uri = (d.getVar('SRC_URI', True) or "").split()
     if len(src_uri) == 0:
@@ -262,7 +262,7 @@ python submission_sanity_check() {
         if urldata[u].type == 'git' and name_param == 'main':
             if found_first:
                 msg = "webos_enhanced_submission bbclass has limited support for recipes with multiple git repos in SRC_URI. They have to have different 'name' parameter and the one which points to repository with submissions tag should have 'name=main'. Recipe '%s' (file '%s') has multiple git repos with 'main' name or without names" % (pn, file)
-                package_qa_handle_error("webos-enh-sub-warning", msg, d)
+                oe.qa.handle_error("webos-enh-sub-warning", msg, d)
                 break
             found_first = True
             destsuffix_param = urldata[u].parm['destsuffix'] if 'destsuffix' in urldata[u].parm else 'git'
@@ -287,12 +287,12 @@ python submission_sanity_check() {
                 # Recipe needs to have SRCREV set one way or another
                 # it could be in WEBOS_VERSION, from AUTOREV or by explicit SRCREV assignment
                 msg = "Recipe '%s' (file '%s') doesn't contain SRCREV" % (pn, file)
-                package_qa_handle_error("webos-enh-sub-error", msg, d)
+                oe.qa.handle_error("webos-enh-sub-error", msg, d)
             if not webos_git_repo_tag:
                 webos_git_repo_tag = default_webos_git_repo_tag
             elif webos_git_repo_tag == default_webos_git_repo_tag:
                 msg = "Don't set WEBOS_GIT_REPO_TAG when the component is using default scheme 'submissions/${WEBOS_SUBMISSION}' in recipe '%s' (file '%s')" % (pn, file)
-                package_qa_handle_error("webos-enh-sub-error", msg, d)
+                oe.qa.handle_error("webos-enh-sub-error", msg, d)
             checkout = "%s/%s" % (workdir, destsuffix_param)
 
             # '0' in 'webos_submission' is used with AUTOREV -> so don't check AUTOREV against submissions/0 tag
@@ -305,5 +305,5 @@ python submission_sanity_check() {
                 webos_enhsub_branch_sanity_check(d, u, fetcher, branch_in_webos_version, branch_in_src_uri, pn, file, checkout, rev)
     if not found_first:
         msg = "Recipe '%s' (file '%s') doesn't have git repository without 'name' parameter or with 'name=main' in SRC_URI, webos_enhanced_submission bbclass shouldn't be inherited here (it has nothing to do)" % (pn, file)
-        package_qa_handle_error("webos-enh-sub-warning", msg, d)
+        oe.qa.handle_error("webos-enh-sub-warning", msg, d)
 }
