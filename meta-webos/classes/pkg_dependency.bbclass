@@ -1,10 +1,50 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 # Write package dependency data as a json file
 python create_pkg_dependency_data () {
     from oe.rootfs import image_list_installed_packages
+    import os
     import subprocess
     import json
+
+    rootfs_dir = d.getVar('IMAGE_ROOTFS')
+    ipkconf_target = d.getVar('IPKGCONF_TARGET')
+
+    def initOpkgInfoFromIpkConf():
+        with open(ipkconf_target, 'r', encoding='utf-8') as ipkconf_fd:
+            ipk_info_dir = ''
+            for var in ipkconf_fd:
+                if var.startswith('option info_dir'):
+                    opkg_info_path = rootfs_dir + var.strip().split()[-1]
+                    break
+            if not os.path.exists(opkg_info_path):
+                bb.fatal("[ERROR] Cannot find opkg info directory while creating package info data.")
+            return opkg_info_path
+
+    opkg_info_path = initOpkgInfoFromIpkConf()
+
+    def getInfo(pkg, key):
+        key_match_val=dict({'recipe': 'Source', 'license': 'License', 'section': 'Section'})
+        pkg_control = os.path.join(opkg_info_path, f'{pkg}.control')
+        if not os.path.exists(pkg_control):
+            bb.warn(f"[WARN] There isn\'t {pkg}.control, couldn\'t get {key} of {pkg}")
+        else:
+            with open(pkg_control, 'r', encoding='utf-8') as pkg_control_fd:
+                for var in pkg_control_fd:
+                    if var.startswith(key_match_val[key]):
+                        return var.strip().split(':')[-1].strip()
+
+    def getInstall_files(pkg):
+        pkg_list = os.path.join(opkg_info_path, f'{pkg}.list')
+        if not os.path.exists(pkg_list):
+            bb.warn(f"[WARN] There isn\'t {pkg}.list, couldn\'t get install_files from {pkg}")
+        else:
+            pkg_list_fd = open(pkg_list, 'r', encoding='utf-8')
+            file_list=list()
+            for var in pkg_list_fd:
+                file_list.append(var.strip().split()[0])
+            pkg_list_fd.close()
+            return file_list
 
     output = dict()
     installed_packages = image_list_installed_packages(d)
@@ -29,6 +69,11 @@ python create_pkg_dependency_data () {
         output[pkg].update({"version":val["ver"]})
         output[pkg].update({"arch":val["arch"]})
         output[pkg].update({"ipk":val["filename"]})
+
+        output[pkg]['recipe'] = getInfo(pkg,'recipe')
+        output[pkg]['license'] = getInfo(pkg,'license')
+        output[pkg]['section'] = getInfo(pkg,'section')
+        output[pkg]['install_file'] = getInstall_files(pkg)
         for dep in val["deps"]:
             if '[REC]' in dep:
                 if output.get(dep.split()[0]):
