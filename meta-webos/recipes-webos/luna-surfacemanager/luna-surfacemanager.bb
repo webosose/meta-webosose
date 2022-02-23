@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
-WEBOS_VERSION = "2.0.0-367_b14e03da1678f7d9380aaf17c7ff5f3cfcf4cce7"
-PR = "r53"
+WEBOS_VERSION = "2.0.0-368_bbcf324c6b91dcfb932d1a87ecb61d3f22318890"
+PR = "r54"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -45,7 +45,15 @@ do_install_append() {
         install -d ${D}${datadir}/webos-keymap
         ${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/generate_qmap ${D}${datadir}/webos-keymap/webos-keymap.qmap
     fi
+
+    if ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', 'true', 'false', d)}; then
+        mkdir -p ${D}${libdir}/${BPN}
+        find ${B} -name \*.gcno -exec cp -t ${D}${libdir}/${BPN} {} \;
+    fi
 }
+
+TARGET_CXXFLAGS_append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage -fprofile-dir=/tmp/luna-surfacemanager-gcov -O0', '', d)}"
+TARGET_LDFLAGS_append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage', '', d)}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
@@ -66,6 +74,12 @@ PACKAGECONFIG[multi-input] = ",CONFIG+=no_multi_input,"
 PACKAGECONFIG[cursor-theme] = "CONFIG+=cursor_theme,,"
 
 PACKAGECONFIG_webos = "compositor cursor-theme"
+
+PACKAGE_BEFORE_PN = "${PN}-gcov"
+
+FILES_${PN}-gcov = " \
+    ${libdir}/${BPN}/*.gcno \
+"
 
 PACKAGES =+ "${PN}-conf ${PN}-base ${PN}-base-tests"
 
