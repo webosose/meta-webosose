@@ -235,6 +235,7 @@ RDEPENDS_${PN}_append_webos = " \
     com.webos.app.videoplayer \
     com.webos.service.storageaccess \
     com.webos.service.uwb \
+    ebd \
     gssdp \
     gupnp \
     ${VIRTUAL-RUNTIME_ai} \

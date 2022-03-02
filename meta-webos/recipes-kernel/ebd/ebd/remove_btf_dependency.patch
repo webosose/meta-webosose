@@ -1,0 +1,25 @@
+diff --git a/src/cc/libbpf/src/libbpf.c b/src/cc/libbpf/src/libbpf.c
+index 7fcea11..c5b85c0 100644
+--- a/src/cc/libbpf/src/libbpf.c
++++ b/src/cc/libbpf/src/libbpf.c
+@@ -2887,7 +2890,7 @@ static int bpf_object__load_vmlinux_btf(struct bpf_object *obj, bool force)
+ 	if (err) {
+ 		pr_warn("Error loading vmlinux BTF: %d\n", err);
+ 		obj->btf_vmlinux = NULL;
+-		return err;
++		//return err;
+ 	}
+ 	return 0;
+ }
+@@ -5489,6 +5493,11 @@ bpf_object__relocate_core(struct bpf_object *obj, const char *targ_btf_path)
+ 	const char *sec_name;
+ 	int i, err = 0, insn_idx, sec_idx;
+ 
++	if (!obj->btf_vmlinux) {
++		pr_warn("No valid BTF, skipping relocation\n");
++		return 0;
++	}
++
+ 	if (obj->btf_ext->core_relo_info.len == 0)
+ 		return 0;
+ 
