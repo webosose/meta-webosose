@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "Common Qt features for webOS components"
 AUTHOR = "Anupam Kaul <anulam.kaul@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-50_e3cd3c25717605a153d10fcccbf35893a38ebb8b"
+WEBOS_VERSION = "1.0.0-51_a6e68f215a9f795c7ee84200dead431ed95e6dab"
 PR = "r8"
 
 inherit webos_qmake6

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "Wayland protocol extensions for webOS"
 AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "wayland wayland-native"
 
-WEBOS_VERSION = "1.0.0-42_bac07bee30665b5f33440c61cff1fcd8f670a24c"
+WEBOS_VERSION = "1.0.0-43_a0fe7d92b4d6c935f626ccd64087b372850b5d65"
 PR = "r6"
 
 inherit webos_component
