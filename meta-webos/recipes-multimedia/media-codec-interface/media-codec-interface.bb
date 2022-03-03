@@ -21,25 +21,13 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^r
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS:append:rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-3_13f4a0e50c95f7ecf04be37949c0da266ba221d3"
-PR = "r4"
-
-SRCREV_mcil = "ef2a9b183262a04e8246df951acf4693a18b3cd6"
-
-WEBOS_REPO_NAME_MCIL ?= "media-codec-ose"
-WEBOS_GIT_REPO_MCIL ?= "${WEBOSOSE_GIT_REPO}"
-WEBOS_GIT_REPO_COMPLETE_MCIL ?= "${WEBOS_GIT_REPO_MCIL}/${WEBOS_REPO_NAME_MCIL}${WEBOSOSE_GIT_PROTOCOL};branch=master"
+WEBOS_VERSION = "1.0.0-7_e987aaf361d9e6d94c0b446c6e3bee544c5fdf47"
+PR = "r5"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 
-SRC_URI:append = "\
-    ${WEBOS_GIT_REPO_COMPLETE_MCIL};destsuffix=git/src/codec_impl;name=mcil \
-"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-SRC_URI:append = "\
-    file://0001-Include-webOS-module-for-replacing-webos-variables.patch \
-"
+USE_ENCODER ?= "GST"
+EXTRA_OECMAKE += "-DUSE_ENCODER_BUILD:STRING=${USE_ENCODER}"
 
 S = "${WORKDIR}/git"
 
