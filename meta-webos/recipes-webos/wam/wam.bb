@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-58_abdd3a3484ada38b4691628588008d974d7c2f22"
-PR = "r44"
+WEBOS_VERSION = "1.0.2-59_9a5ce61cdbfb7ccf5dd925237ddf683306adf78f"
+PR = "r45"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -73,7 +73,7 @@ TOUCH_ENABLED ?= "true"
 PLATFORM_DECODER_ENABLED ?= "true"
 
 # Flag to control runtime flag for platform encoder
-PLATFORM_ENCODER_ENABLED ?= "true"
+PLATFORM_ENCODER_ENABLED ?= "false"
 
 do_configure:append() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
@@ -82,7 +82,7 @@ do_configure:append() {
     cp ${S}/files/launch/systemd/webapp-mgr.service ${B}/webapp-mgr.service
     sed -i -e "s/NETWORK_STABLE_TIMEOUT/NETWORK_QUIET_TIMEOUT/gI" -e "s/network-stable-timeout/network-quiet-timeout/gI" ${B}/webapp-mgr.sh
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-in-process-stack-traces \\' ${B}/webapp-mgr.sh
-    sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension/' ${B}/webapp-mgr.sh
+    sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension,WebCodecs,MediaStreamInsertableStreams/' ${B}/webapp-mgr.sh
     sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" ${B}/webapp-mgr.sh
 
     # disable pinch zoom
