@@ -3,7 +3,7 @@
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=c31f1ae166739be9ca186deacf4b32e4"
 
 WEBOS_REPO_NAME = "chromium91"
-WEBOS_VERSION = "91.0.4472.114-12_49e8b3dd250a71fb8953bfec39956fd3f5479d73"
+WEBOS_VERSION = "91.0.4472.114-13_bf7656914f8cd80cafbf4e90bd21fdaccf795f14"
 
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium91"
