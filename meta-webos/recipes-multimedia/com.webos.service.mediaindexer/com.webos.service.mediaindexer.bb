@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "Media indexer service"
 AUTHOR = "Jaehoon Lee <jaehoon85.lee@lge.com>"
@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
                     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
                     "
 
-WEBOS_VERSION = "1.0.0-17_fc620525ae820a32bd6c2e7d2e3be8007d3ac328"
+WEBOS_VERSION = "1.0.0-19_da31ffd538555aec12529dea813257a2ee7c0c21"
 PR = "r8"
 
 inherit webos_component
