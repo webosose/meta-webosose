@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Google assistant engine library"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"
@@ -15,7 +15,7 @@ RDEPENDS_${PN}_class-target = "snowboy-models"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_class-target += "${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "1.0.1-9_33a4b718c378e8b54330dece6093c7b0ea716316"
+WEBOS_VERSION = "1.0.1-10_b8610f05673d48b498e38cb774d6f1056c3b5522"
 PR = "r7"
 
 inherit webos_library
