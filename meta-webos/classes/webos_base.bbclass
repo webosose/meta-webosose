@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 #
 # webos_base
 #
@@ -65,6 +65,8 @@ python do_write_bom_data() {
         json.dump(jsondata, f, sort_keys=True, cls=WebosBomJSONEncoder)
         f.write(',\n')
     bb.utils.unlockfile(lock)
+
+    write_compile_option(d)
 }
 
 do_write_abi_xml_data[nostamp] = "1"
@@ -115,3 +117,103 @@ def webos_base_get_metadata_git_describe(path, d):
     except bb.process.ExecutionError:
         description = '<unknown>'
     return description.strip()
+
+def write_compile_option(d):
+    import json
+    def pruneString(string: str, plist=None, isFullPath=False):
+        if plist is None:
+            plist = ['-isystem', 'sysroot', 'prefix-map']
+        if not isFullPath:
+            for pword in plist:
+                string = ' '.join([x for x in string.strip().split() if x.find(pword) == -1])
+        else:
+            for pword in (plist.split()):
+                string = string.replace(pword,'').strip()
+
+        return string
+
+    def getSameOption(opt1: str, opt2: str):
+        same_opt = list()
+        for o1 in (opt1.split()):
+            for o2 in (opt2.split()):
+                if o1 == o2:
+                    same_opt.append(o1)
+                    break
+        if len(same_opt) == 0:
+            return ''
+        return ' '.join(same_opt)
+
+    # Write Compile option data
+    compile_data = {}
+    compile_data["arch"] = d.getVar('PACKAGE_ARCH', True)
+    compile_data["recipe"] = d.getVar('PN', True)
+    CFLAGS = d.getVar('CFLAGS',True)
+    CXXFLAGS = d.getVar('CXXFLAGS',True)
+    if CFLAGS.find('none') == -1:
+        compile_data["cflags"] = pruneString(CFLAGS)
+        compile_data["cc"] = pruneString(d.getVar('CC',True))
+
+    if CXXFLAGS.find('none') == -1:
+        compile_data["cxxflags"] = pruneString(CXXFLAGS)
+        compile_data["cxx"] = pruneString(d.getVar('CXX', True))
+
+    if compile_data.get("cc") != None or compile_data.get("cxx") != None:
+        compile_data["ldflags"] = pruneString(d.getVar('LDFLAGS', True))
+
+    if compile_data.get("cc") is None and compile_data.get("cxx") is None:
+        return
+
+    compile_datafile = os.path.join(d.getVar("TOPDIR", True), "webos-compile-option.json")
+    lock = bb.utils.lockfile(compile_datafile + '.lock')
+    with open(compile_datafile, "a") as fp:
+        json.dump(compile_data, fp)
+        fp.write(',\n')
+    bb.utils.unlockfile(lock)
+
+    if bb.data.inherits_class('image',d):
+        # image recipe is usually has all depends, so that it will be build at the end.
+        fp = open(compile_datafile, 'r')
+        FIELD = ['cc', 'cflags', 'cxx', 'cxxflags', 'ldflags']
+        common_options = dict()
+        try:
+            jsondata = json.load(fp)
+        except json.decoder.JSONDecodeError:
+            fp.seek(os.SEEK_SET)
+            while True:
+                try:
+                    line = fp.readline().strip()
+                except:
+                    break
+                if not line:
+                    break
+                if line[-1] == ',':
+                    line = line[:-1]
+                line = json.loads(line)
+                ARCH = line['arch']
+                if common_options.get(ARCH) is None:
+                    common_options.update({ARCH: {'cc': None, 'cflags': None, 'cxx': None, 'cxxflags': None, 'ldflags': None}})
+
+                for field in FIELD:
+                    if line.get(field) is not None:
+                        if common_options[ARCH][field] == None:
+                            common_options[ARCH][field] = line[field]
+                        elif common_options[ARCH][field] == '':
+                            continue
+                        else:
+                            common_options[ARCH][field] = getSameOption(common_options[ARCH][field], line[field])
+        cnt = 0
+        for arch in common_options.keys():
+            try:
+                for field in common_options[arch]:
+                    if common_options[arch][field] is None:
+                        cnt +=1
+                    if len(FIELD) == cnt:
+                        common_options.pop(arch)
+            except:
+                pass
+            cnt = 0
+
+        result_file = os.path.join(d.getVar("TOPDIR", True), "webos-common-compile-option.json")
+        with open(result_file,'w') as rfp:
+            json.dump(common_options,rfp)
+        fp.close()
