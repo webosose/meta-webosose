@@ -1,0 +1,69 @@
+From 44be507eb53c7dd21a2dab3e57be2ee092c57621 Mon Sep 17 00:00:00 2001
+From: Jungi Byun <jungi.byun@lge.com>
+Date: Thu, 24 Mar 2022 12:09:39 +0900
+Subject: [PATCH] Fix to have presentation feedback sequence timely
+
+In the case connections in PresentationFeedback are QueuedConnection,
+there are sometimes a signal to be connected is emitted before creating
+another connection on the signal from the connection's slot method, and
+this makes wrong feedbacks.
+In order to send proper feedbacks to clients, create related connection
+earlier and make to work properly by checking some conditions.
+
+Pick-to: 6.3
+Change-Id: Ic8f02139ca08713c419b0341b9a1e8add6f5a095
+Upstream-Status: Pending [https://codereview.qt-project.org/c/qt/qtwayland/+/402294]
+---
+ src/compositor/extensions/qwaylandpresentationtime.cpp   | 9 ++++++---
+ src/compositor/extensions/qwaylandpresentationtime_p_p.h | 1 +
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/compositor/extensions/qwaylandpresentationtime.cpp b/src/compositor/extensions/qwaylandpresentationtime.cpp
+index 81bed5e8..b17fb597 100644
+--- a/src/compositor/extensions/qwaylandpresentationtime.cpp
++++ b/src/compositor/extensions/qwaylandpresentationtime.cpp
+@@ -266,6 +266,7 @@ void PresentationFeedback::connectToWindow(QQuickWindow *window)
+     m_connectedWindow = window;
+ 
+     connect(window, &QQuickWindow::beforeSynchronizing, this, &PresentationFeedback::onSync);
++    connect(window, &QQuickWindow::afterFrameEnd, this, &PresentationFeedback::onSwapped);
+ }
+ 
+ void PresentationFeedback::onSync()
+@@ -275,7 +276,7 @@ void PresentationFeedback::onSync()
+     if (m_committed) {
+         disconnect(m_surface, &QWaylandSurface::damaged, this, &PresentationFeedback::onSurfaceCommit);
+         disconnect(window, &QQuickWindow::beforeSynchronizing, this, &PresentationFeedback::onSync);
+-        connect(window, &QQuickWindow::afterFrameEnd, this, &PresentationFeedback::onSwapped);
++        m_sync = true;
+     }
+ }
+ 
+@@ -283,8 +284,10 @@ void PresentationFeedback::onSwapped()
+ {
+     QQuickWindow *window = qobject_cast<QQuickWindow *>(sender());
+ 
+-    disconnect(window, &QQuickWindow::afterFrameEnd, this, &PresentationFeedback::onSwapped);
+-    connect(m_presentationTime, &QWaylandPresentationTime::presented, this, &PresentationFeedback::sendPresented);
++    if (m_sync) {
++        disconnect(window, &QQuickWindow::afterFrameEnd, this, &PresentationFeedback::onSwapped);
++        connect(m_presentationTime, &QWaylandPresentationTime::presented, this, &PresentationFeedback::sendPresented);
++    }
+ }
+ 
+ void PresentationFeedback::discard()
+diff --git a/src/compositor/extensions/qwaylandpresentationtime_p_p.h b/src/compositor/extensions/qwaylandpresentationtime_p_p.h
+index 7f984958..fc56a048 100644
+--- a/src/compositor/extensions/qwaylandpresentationtime_p_p.h
++++ b/src/compositor/extensions/qwaylandpresentationtime_p_p.h
+@@ -89,6 +89,7 @@ public:
+     QQuickWindow *m_connectedWindow = nullptr;
+ 
+     bool m_committed = false;
++    bool m_sync = false;
+ };
+ 
+ class QWaylandPresentationTimePrivate : public QWaylandCompositorExtensionPrivate, public QtWaylandServer::wp_presentation
+-- 
+2.17.1
+

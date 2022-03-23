@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos28"
+EXTENDPRAUTO_append = "webos29"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
@@ -12,6 +12,7 @@ PATCHTOOL = "git"
 SRC_URI_append = " \
     file://0001-Support-presentation-time-protocol.patch;maxver=6.2.* \
     file://0002-Use-scope-resolution-operator-for-request.patch;maxver=6.2.* \
+    file://0003-Fix-to-have-presentation-feedback-sequence-timely.patch;maxver=6.3.* \
 "
 
 # More options for fine-tuned configuration

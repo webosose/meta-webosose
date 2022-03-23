@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native wayland-protocols"
 
-WEBOS_VERSION = "2.0.0-76_a1637db6357c2eb9d09ad6629b5a09209e5bc92a"
+WEBOS_VERSION = "2.0.0-77_06206d9e24f73c3317ecebee95d427ffb61587c5"
 PR = "r16"
 
 inherit webos_qmake6
