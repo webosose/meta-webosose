@@ -20,7 +20,7 @@ SRC_URI = " \
     file://remove_btf_dependency.patch \
 "
 
-WEBOS_VERSION = "1.0.0-3_00e6dcdd1ec324baf75f503fe3906cb8e37c59f1"
+WEBOS_VERSION = "1.0.0-5_1daddf9cbd43dd931ab462a2869f3fe30b44eca5"
 
 SRCREV_libbpf = "26e768783ce99bd16540a5064cee8677818d2358"
 
