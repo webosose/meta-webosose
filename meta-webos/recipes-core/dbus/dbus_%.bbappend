@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos5"
+EXTENDPRAUTO:append = "webos6"
 
 PACKAGES =+ "${PN}-gpl"
 LICENSE += "& GPL-2.0-only"
@@ -15,3 +15,7 @@ FILES:${PN}-gpl = " \
     ${bindir}/dbus-send \
     ${bindir}/dbus-uuidgen \
 "
+
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS:${PN}-ptest:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}-ptest:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
