@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Image Viewer application"
 AUTHOR = "Anish TD <anish.td@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
-WEBOS_VERSION = "0.0.1-13_21dfaf5c7af80b30f11bb9edc357667035feaac1"
+WEBOS_VERSION = "0.0.1-14_6a2b6e9efd05e9b18d2ae8a754a314bcae79d141"
 PR = "r0"
 
 inherit webos_component
