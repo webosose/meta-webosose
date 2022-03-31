@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS text to speech service"
 SECTION = "webos/base"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleapis grpc"
 
-WEBOS_VERSION = "1.0.0-20_dba2c3804230e47b90b317282debcf938b6656c3"
+WEBOS_VERSION = "1.0.0-22_041c2f0d43aba0c485fa67bd78339c0ec0ff254b"
 PR = "r6"
 
 inherit webos_component

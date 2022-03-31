@@ -1,0 +1,26 @@
+From a92b00bc4aa724cd4bf0434062ebf0cce1f7768f Mon Sep 17 00:00:00 2001
+From: "mukul.jha" <mukul.jha@lge.com>
+Date: Thu, 31 Mar 2022 16:08:34 +0530
+Subject: [PATCH] Fix MessageReceived
+
+---
+ src/libcec/adapter/RPi/RPiCECAdapterMessageQueue.cpp | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/src/libcec/adapter/RPi/RPiCECAdapterMessageQueue.cpp b/src/libcec/adapter/RPi/RPiCECAdapterMessageQueue.cpp
+index 1f827204..a8490091 100644
+--- a/src/libcec/adapter/RPi/RPiCECAdapterMessageQueue.cpp
++++ b/src/libcec/adapter/RPi/RPiCECAdapterMessageQueue.cpp
+@@ -122,9 +122,6 @@ void CRPiCECAdapterMessageQueue::MessageReceived(cec_opcode opcode, cec_logical_
+   /* send the received message to each entry in the queue until it is handled */
+   for (std::map<uint64_t, CRPiCECAdapterMessageQueueEntry *>::iterator it = m_messages.begin(); !bHandled && it != m_messages.end(); it++)
+     bHandled = it->second->MessageReceived(opcode, initiator, destination, response);
+-
+-  if (!bHandled)
+-    LIB_CEC->AddLog(CEC_LOG_WARNING, "unhandled response received: opcode=%x initiator=%x destination=%x response=%x", (int)opcode, (int)initiator, (int)destination, response);
+ }
+ 
+ uint32_t CRPiCECAdapterMessageQueueEntry::Result() const
+-- 
+2.17.1
+

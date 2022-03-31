@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Storage Access Framework for OSE"
 AUTHOR = "RajeshGopu IV <rajeshgopu.iv@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
 
 DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupnp"
 
-WEBOS_VERSION = "1.0.0-17_8d99527ad0e8d42668c570293b4204f77fe1a458"
+WEBOS_VERSION = "1.0.0-18_7a13d2e0d80a506bcf1d44f664a651927d9006a2"
 PR = "r6"
 
 inherit webos_component
