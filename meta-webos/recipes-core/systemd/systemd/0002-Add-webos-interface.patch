@@ -1,4 +1,4 @@
-From 7e03560cae5b89b8f337d702bce9020e721b2826 Mon Sep 17 00:00:00 2001
+From 22a3d9b7a017ba260bc08599a9a6fe731f22081f Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] Add webos interface
@@ -67,21 +67,21 @@ index 0000000000..cef8430362
 +
 +</busconfig>
 diff --git a/src/oom/meson.build b/src/oom/meson.build
-index 4e1c8543c8..ee4c7b13fa 100644
+index 579bc0d4eb..bc0cecc83e 100644
 --- a/src/oom/meson.build
 +++ b/src/oom/meson.build
-@@ -8,6 +8,10 @@ systemd_oomd_sources = files('''
-         oomd-util.c
-         oomd-util.h
-         oomd.c
-+        webos-manager-bus.c
-+        webos-manager-bus.h
-+        webos-manager.c
-+        webos-manager.h
- '''.split())
+@@ -8,6 +8,10 @@ systemd_oomd_sources = files(
+         'oomd-util.c',
+         'oomd-util.h',
+         'oomd.c',
++        'webos-manager-bus.c',
++        'webos-manager-bus.h',
++        'webos-manager.c',
++        'webos-manager.h',
+ )
  
- oomctl_sources = files('''
-@@ -18,6 +22,9 @@ if conf.get('ENABLE_OOMD') == 1
+ oomctl_sources = files('oomctl.c')
+@@ -16,6 +20,9 @@ if conf.get('ENABLE_OOMD') == 1
          install_data('org.freedesktop.oom1.conf',
                       install_dir : dbuspolicydir)
  
@@ -92,7 +92,7 @@ index 4e1c8543c8..ee4c7b13fa 100644
                       install_dir : dbussystemservicedir)
  
 diff --git a/src/oom/oomd-manager.c b/src/oom/oomd-manager.c
-index 9f4f083ab9..a114296828 100644
+index b0a81474cc..cbb4749b96 100644
 --- a/src/oom/oomd-manager.c
 +++ b/src/oom/oomd-manager.c
 @@ -14,6 +14,8 @@

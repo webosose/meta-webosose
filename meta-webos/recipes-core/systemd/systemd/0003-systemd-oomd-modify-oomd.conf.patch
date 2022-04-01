@@ -1,4 +1,4 @@
-From 76be09a8864e6127f57a5048a5f5c8ec200a3f92 Mon Sep 17 00:00:00 2001
+From 698bae2cf5af3e8fb1665260640fba806cce6afc Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: modify oomd.conf
