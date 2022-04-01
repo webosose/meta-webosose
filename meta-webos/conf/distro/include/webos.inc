@@ -97,6 +97,12 @@ EXTRA_WEBOS_WERROR:pn-mtools = ""
 # https://git.openembedded.org/meta-openembedded/commit/?id=912be5179c9e65fa33e9ca98c7f82d32ba31e827
 # http://gecko.lge.com/Errors/Details/192773
 EXTRA_WEBOS_WERROR:pn-rocksdb = ""
+# grpc/1.45.0-r0/git/src/core/lib/transport/metadata_batch.h: In static member function 'static std::string grpc_core::GrpcStreamNetworkState::DisplayValue(grpc_core::GrpcStreamNetworkState::ValueType)':
+# grpc/1.45.0-r0/git/src/core/lib/transport/metadata_batch.h:533:3: error: control reaches end of non-void function [-Werror=return-type]
+# introduced in 1.45.0 version in:
+# https://git.openembedded.org/meta-openembedded/commit/?id=df5b764f99dbb19048ebef9d6b85e4d3625b4272
+# https://github.com/grpc/grpc/commit/9454ab091243b0539ac9ba578e9ae9d5de5d26f0#diff-78e2a4b53390e4455f4e90b043d1bb887686ffa1323968ccf161422298c543c9R514
+EXTRA_WEBOS_WERROR:pn-grpc = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
