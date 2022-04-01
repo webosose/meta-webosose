@@ -1,4 +1,4 @@
-From 1dc53291cf96ecb3e0cb91dc9c506eef86f78229 Mon Sep 17 00:00:00 2001
+From 0d12b11442e536f820e39eddb9751458a8e9f868 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Wed, 3 Jun 2020 18:08:39 +0530
 Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
@@ -264,58 +264,59 @@ index e1f1a5c53..43164c522 100644
  	int (*getpacketopt) (GIOChannel *io, int *tx_mtu, int *rx_mtu);
  	void (*disconnect) (guint id);
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index 056701306..81777a719 100644
+index 8678b86c9..3efff7ddf 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -114,6 +114,7 @@ static void connect_reply(DBusMessage *message, void *user_data)
- struct connect_args {
+@@ -115,6 +115,7 @@ struct connect_args {
  	char *dev;
  	char *target;
+ 	uint8_t channel;
 +	char *instanceName;
  };
  
  static void connect_args_free(void *data)
-@@ -144,6 +145,8 @@ static void connect_setup(DBusMessageIter *iter, void *user_data)
- 
- 	g_dbus_dict_append_entry(&dict, "Target",
+@@ -143,6 +144,8 @@ static void connect_setup(DBusMessageIter *iter, void *user_data)
+ 	if (args->target)
+ 		g_dbus_dict_append_entry(&dict, "Target",
  					DBUS_TYPE_STRING, &args->target);
 +	g_dbus_dict_append_entry(&dict, "InstanceName",
 +					DBUS_TYPE_STRING, &args->instanceName);
  
- done:
- 	dbus_message_iter_close_container(iter, &dict);
-@@ -153,6 +156,7 @@ static void cmd_connect(int argc, char *argv[])
- {
+ 	if (args->channel)
+ 		g_dbus_dict_append_entry(&dict, "Channel",
+@@ -156,6 +159,7 @@ static void cmd_connect(int argc, char *argv[])
  	struct connect_args *args;
  	const char *target = "opp";
+ 	int channel = 0;
 +	const char *instanceName = "";
  
  	if (!client) {
  		bt_shell_printf("Client proxy not available\n");
-@@ -162,9 +166,13 @@ static void cmd_connect(int argc, char *argv[])
- 	if (argc > 2)
- 		target = argv[2];
+@@ -175,10 +179,14 @@ static void cmd_connect(int argc, char *argv[])
+ 		}
+ 	}
  
-+	if (argc > 3)
-+		instanceName = argv[3];
++	if (argc > 4)
++		instanceName = argv[4];
 +
  	args = g_new0(struct connect_args, 1);
  	args->dev = g_strdup(argv[1]);
  	args->target = g_strdup(target);
+ 	args->channel = channel;
 +	args->instanceName = g_strdup(instanceName);
  
  	if (g_dbus_proxy_method_call(client, "CreateSession", connect_setup,
  			connect_reply, args, connect_args_free) == FALSE) {
-@@ -1832,7 +1840,7 @@ static void cmd_mkdir(int argc, char *argv[])
+@@ -1846,7 +1854,7 @@ static void cmd_mkdir(int argc, char *argv[])
  static const struct bt_shell_menu main_menu = {
  	.name = "main",
  	.entries = {
--	{ "connect",      "<dev> [uuid]", cmd_connect, "Connect session" },
-+	{ "connect",      "<dev> [uuid] [instanceName]", cmd_connect, "Connect session" },
+-	{ "connect",      "<dev> [uuid] [channel]", cmd_connect,
++	{ "connect",      "<dev> [uuid] [channel] [instanceName]", cmd_connect,
+ 						"Connect session" },
  	{ "disconnect",   "[session]", cmd_disconnect, "Disconnect session",
  						session_generator },
- 	{ "list",         NULL,       cmd_list, "List available sessions" },
-@@ -1852,7 +1860,8 @@ static const struct bt_shell_menu main_menu = {
+@@ -1867,7 +1875,8 @@ static const struct bt_shell_menu main_menu = {
  	{ "pull",	  "<file>",   cmd_pull,
  					"Pull Vobject & stores in file" },
  	{ "cd",           "<path>",   cmd_cd, "Change current folder" },

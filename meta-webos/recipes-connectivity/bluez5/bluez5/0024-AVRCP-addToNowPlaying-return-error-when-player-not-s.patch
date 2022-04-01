@@ -1,4 +1,4 @@
-From ce19211305eae5c251b9d2ad4826d317fcd00de6 Mon Sep 17 00:00:00 2001
+From 684817d1d91858bc459821c2028441431a2ecde7 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 11 Aug 2020 15:18:43 +0530
 Subject: [PATCH] AVRCP addToNowPlaying return error when player not supports
@@ -26,7 +26,7 @@ Upstream-Status: Inappropriate[webos specific]
  3 files changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index ac46e387e..5d3d50596 100644
+index ff9d9f97d..85db0883a 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
 @@ -2901,6 +2901,9 @@ static void avrcp_player_parse_features(struct avrcp_player *player,
@@ -40,7 +40,7 @@ index ac46e387e..5d3d50596 100644
  		media_player_create_folder(mp, "/NowPlaying",
  						PLAYER_FOLDER_TYPE_MIXED, 0);
 diff --git a/profiles/audio/player.c b/profiles/audio/player.c
-index d34b39168..c74039f95 100644
+index c995697fe..13ac07f28 100644
 --- a/profiles/audio/player.c
 +++ b/profiles/audio/player.c
 @@ -75,6 +75,7 @@ struct media_player {
@@ -51,7 +51,7 @@ index d34b39168..c74039f95 100644
  	struct media_folder	*scope;		/* Player current scope */
  	struct media_folder	*folder;	/* Player current folder */
  	struct media_folder	*search;	/* Player search folder */
-@@ -1502,6 +1503,16 @@ bool media_player_get_browsable(struct media_player *mp)
+@@ -1510,6 +1511,16 @@ bool media_player_get_browsable(struct media_player *mp)
  	return mp->browsable;
  }
  
@@ -68,7 +68,7 @@ index d34b39168..c74039f95 100644
  void media_player_set_searchable(struct media_player *mp, bool enabled)
  {
  	if (mp->searchable == enabled)
-@@ -1605,7 +1616,7 @@ static DBusMessage *media_item_add_to_nowplaying(DBusConnection *conn,
+@@ -1613,7 +1624,7 @@ static DBusMessage *media_item_add_to_nowplaying(DBusConnection *conn,
  	struct player_callback *cb = mp->cb;
  	int err;
  
@@ -78,10 +78,10 @@ index d34b39168..c74039f95 100644
  
  	err = cb->cbs->add_to_nowplaying(mp, item->path, item->uid,
 diff --git a/profiles/audio/player.h b/profiles/audio/player.h
-index 69f08735b..2de9e55f7 100644
+index 74fb7d771..25c1ebf58 100644
 --- a/profiles/audio/player.h
 +++ b/profiles/audio/player.h
-@@ -78,6 +78,7 @@ void media_player_set_subtype(struct media_player *mp, const char *subtype);
+@@ -80,6 +80,7 @@ void media_player_set_subtype(struct media_player *mp, const char *subtype);
  void media_player_set_name(struct media_player *mp, const char *name);
  void media_player_set_browsable(struct media_player *mp, bool enabled);
  bool media_player_get_browsable(struct media_player *mp);

@@ -1,4 +1,4 @@
-From 1cc80b9b33719cf6444cf2c3383b39c38ae9033a Mon Sep 17 00:00:00 2001
+From d267808418d7260138b9932356b7e5f6eb2ac57f Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 15 Nov 2018 11:08:44 +0530
 Subject: [PATCH] Use system bus instead of session for obexd
@@ -166,10 +166,10 @@ index b6c614908..f8879c8bb 100644
  
  </busconfig>
 diff --git a/tools/obexctl.c b/tools/obexctl.c
-index e671d253b..056701306 100644
+index 56a76915c..8678b86c9 100644
 --- a/tools/obexctl.c
 +++ b/tools/obexctl.c
-@@ -2139,7 +2139,7 @@ int main(int argc, char *argv[])
+@@ -2154,7 +2154,7 @@ int main(int argc, char *argv[])
  	bt_shell_set_menu(&main_menu);
  	bt_shell_set_prompt(PROMPT_OFF);
  

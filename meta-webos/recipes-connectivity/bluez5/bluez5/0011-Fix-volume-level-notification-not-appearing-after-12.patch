@@ -1,4 +1,4 @@
-From c82d3285e35f3dbb636fa22c54b301a85fc7980c Mon Sep 17 00:00:00 2001
+From 142df4ef4442772730de5fdfe4f816d78bd343c0 Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Tue, 10 Dec 2019 16:15:43 +0530
 Subject: [PATCH] Fix volume level notification not appearing after 127
@@ -28,10 +28,10 @@ Upstream-Status: Inappropriate[webos specific]
  2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 332f50a63..6ae11de49 100644
+index 09a82b2d1..d51d3b315 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1237,8 +1237,8 @@ static void media_player_set_volume(int8_t volume, struct btd_device *dev,
+@@ -1242,8 +1242,8 @@ static void media_player_set_volume(int8_t volume, struct btd_device *dev,
  {
  	struct media_player *mp = user_data;
  

@@ -1,4 +1,4 @@
-From f19215c99e454c28539a78b8635e3efa62635f46 Mon Sep 17 00:00:00 2001
+From e27f2b863529a3fe46d84c0f28c394d8f2357ec4 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 11 Apr 2018 11:03:20 +0530
 Subject: [PATCH] Fix advertise time out when default is set to zero
