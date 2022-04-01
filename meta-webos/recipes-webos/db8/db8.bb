@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "A userspace service that provides access to the webOS database"
 SECTION = "webos/base"
@@ -21,7 +21,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS_${PN}_append_class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS_${PN}-tests_append_class-target = " ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.2.0-20_1ba9dae12c33a7a6b6161333172463161d93d9fd"
+WEBOS_VERSION = "3.2.0-21_cbfacb6919591304618706e7a5aeaf15a626a28e"
 PR = "r36"
 
 inherit webos_component
