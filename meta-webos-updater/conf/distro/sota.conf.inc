@@ -9,6 +9,7 @@
 # https://git.openembedded.org/openembedded-core/commit/?id=d0d3abdf9e2dec57f3849813faa5e7e3d34b83a4
 # and git was included since the initial HOSTTOOLS implementation in:
 # https://git.openembedded.org/openembedded-core/commit/?id=fa764a403da34bb0ca9fa3767a9e9dba8d685965
+# Apply https://github.com/uptane/meta-updater/pull/35
 
 # Common settings to enable SOTA
 # This can be pulled into a custom distribution, or included in
@@ -19,10 +20,6 @@
 DISTRO_FEATURES:append = " sota usrmerge"
 DISTRO_FEATURES_NATIVE:append = " sota"
 INHERIT += " sota"
-
-# Enable reproducible builds. Use 0 as mtime, the same as OSTree is using.
-export SOURCE_DATE_EPOCH = "0"
-REPRODUCIBLE_TIMESTAMP_ROOTFS = "0"
 
 HOSTTOOLS += "sync"
 HOSTTOOLS_NONFATAL += "java repo"
