@@ -6,16 +6,12 @@ require webruntime-repo${REPO_VERSION}.inc
 
 PROVIDES = "virtual/webruntime"
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
 PACKAGECONFIG[debug] = "symbol_level=2 optimize_for_size=true use_debug_fission=true,symbol_level=0"
 PACKAGECONFIG[debug-blink] = "blink_symbol_level=2,blink_symbol_level=1"
 
 PACKAGECONFIG[v8_lite] = "v8_enable_lite_mode=true,v8_enable_lite_mode=false"
-
-# FIXME(neva): LTTng impl is incompatible with Perfetto feature in Chromium v.91
-# https://chromium-review.googlesource.com/c/chromium/src/+/2632755
-PACKAGECONFIG[lttng] = "use_lttng=false,,"
 
 PACKAGECONFIG_remove="jumbo"
 
