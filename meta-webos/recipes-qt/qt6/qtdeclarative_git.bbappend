@@ -2,12 +2,10 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos76"
+EXTENDPRAUTO_append = "webos77"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Apply webOS specific patches to only SRCREV tested
-WEBOS_PATCH_SRCREV = "00c352c4d4b61f8c7a6243768bc5375c3dca3e76"
 PATCHTOOL = "git"
 
 # Upstream-Status: Backport
@@ -16,13 +14,15 @@ SRC_URI_append = " \
 "
 
 # Upstream-Status: Submitted
+# NOTE: Increase maxver when upgrading Qt version
 SRC_URI_append = " \
-    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch;rev=${WEBOS_PATCH_SRCREV} \
+    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch;maxver=6.3.0 \
 "
 
 # Upstream-Status: Inappropriate
+# NOTE: Increase maxver when upgrading Qt version
 SRC_URI_append = " \
-    file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch;rev=${WEBOS_PATCH_SRCREV} \
+    file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch;maxver=6.3.0 \
 "
 
 # Supplement tool for qmllint

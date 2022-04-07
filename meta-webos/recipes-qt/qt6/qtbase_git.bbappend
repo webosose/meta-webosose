@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO_append = "webos98"
+EXTENDPRAUTO_append = "webos99"
 
 # Remove LGPL3-only files
 python do_patch_append() {
@@ -80,8 +80,6 @@ PACKAGECONFIG_remove = "tests"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-# Apply webOS specific patches to only SRCREV tested
-WEBOS_PATCH_SRCREV = "eae95814a46386f8930eeae5486513a78a7a4ddc"
 PATCHTOOL = "git"
 
 # Upstream-Status: Backport
@@ -91,8 +89,9 @@ SRC_URI_append = " \
 "
 
 # Upstream-Status: Inappropriate
+# NOTE: Increase maxver when upgrading Qt version
 SRC_URI_append = " \
-    file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch;rev=${WEBOS_PATCH_SRCREV} \
+    file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch;maxver=6.3.0 \
 "
 
 # Flags needed for webOS
