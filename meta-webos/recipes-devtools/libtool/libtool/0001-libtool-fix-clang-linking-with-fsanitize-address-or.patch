@@ -1,29 +1,25 @@
-From b421a1d2f2406bb1fe7219b430da57832057fc94 Mon Sep 17 00:00:00 2001
+From 0071cf9c364e2410591434907442903f3f1c0bbb Mon Sep 17 00:00:00 2001
 From: "jaekyu.lee" <jaekyu.lee@lge.com>
 Date: Mon, 22 Nov 2021 14:53:08 +0900
 Subject: [PATCH] libtool fix clang linking with fsanitize address or
 
 ---
- build-aux/ltmain.in | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ build-aux/ltmain.in | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/build-aux/ltmain.in b/build-aux/ltmain.in
-index bdda9b4..40a2e1d 100644
+index 7d9ce99..b12abae 100644
 --- a/build-aux/ltmain.in
 +++ b/build-aux/ltmain.in
-@@ -5425,9 +5425,11 @@ func_mode_link ()
+@@ -5424,9 +5424,10 @@ func_mode_link ()
+       # --sysroot=*          for sysroot support
        # -O*, -g*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
        # -stdlib=*            select c++ std lib with clang
-       # -f*-prefix-map*      needed for lto linking
 +      # -fsanitize=*         Clang memory and address sanitizer
        -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
        -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*|--sysroot=*| \
--      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*|-f*-prefix-map*)
-+      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*|-f*-prefix-map*| \
-+      -specs=*|-fsanitize=*)
+-      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*)
++      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*|-fsanitize=*)
          func_quote_for_eval "$arg"
  	arg=$func_quote_for_eval_result
          func_append compile_command " $arg"
--- 
-2.17.1
-
