@@ -1,8 +1,8 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO_append = "webos19"
+EXTENDPRAUTO_append = "webos20"
 SYSTEMD_SERVICE_${PN}_remove = "connman.service"
 
 SRC_URI += " \
@@ -28,6 +28,7 @@ SRC_URI += " \
     file://0020-Fix-connman-crash-when-interface-removed.patch \
     file://0021-Fix-bug-p2p-findservice-luna-fail.patch \
     file://0022-Fix-connman-crash.patch \
+    file://0023-Fix-connman-crash-on-p2p-connect.patch \
 "
 
 do_install_append() {
