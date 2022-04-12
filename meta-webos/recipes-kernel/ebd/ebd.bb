@@ -6,7 +6,7 @@ SECTION = "console/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=e3fc50a88d0a364313df4b21ef20c29e"
 
-PR = "r0"
+PR = "r1"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -16,7 +16,7 @@ WEBOS_GIT_PARAM_BRANCH = "webos-5.4"
 
 SRC_URI = " \
     ${WEBOS_KERNEL_GIT_REPO_COMPLETE} \
-    git://github.com/libbpf/libbpf.git;protocol=http;destsuffix=git/src/cc/libbpf;name=libbpf \
+    git://github.com/libbpf/libbpf.git;protocol=https;branch=master;destsuffix=git/src/cc/libbpf;name=libbpf \
     file://remove_btf_dependency.patch \
 "
 
