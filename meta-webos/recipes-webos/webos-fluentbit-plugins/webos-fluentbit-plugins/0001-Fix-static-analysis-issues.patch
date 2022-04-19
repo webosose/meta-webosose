@@ -1,0 +1,57 @@
+From 0acb5f0f876d6b5812aa4cf7480bf9ddb80178b6 Mon Sep 17 00:00:00 2001
+From: Myungchul Kim <myungchul.kim@lge.com>
+Date: Tue, 19 Apr 2022 14:18:40 +0900
+Subject: [PATCH] Fix static analysis issues
+
+:Release Notes:
+Fix static analysis issues
+
+:Detailed Notes:
+Fix static analysis issues
+
+:Testing Performed:
+Local test : OK
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+N/A
+
+Change-Id: Ic445f1ec3490ee7cf47edfa7af506865a1f776f1
+---
+ input_simulator/Main.cpp | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/input_simulator/Main.cpp b/input_simulator/Main.cpp
+index ece7274..acbbe06 100644
+--- a/input_simulator/Main.cpp
++++ b/input_simulator/Main.cpp
+@@ -824,11 +824,14 @@ static int migration_mode(const char *capture_path)
+         ret = EXIT_FAILURE;
+         goto Exit;
+     }
++Exit:
++    if (contents != NULL) {
++        free(contents);
++    }
+     if (capture_file != -1 && close(capture_file) != 0) {
+         perror("Close close_all_files capture_file");
+         ret = EXIT_FAILURE;
+     }
+-Exit:
+     return ret;
+ }
+ 
+@@ -858,7 +861,7 @@ static int playback_mode(const char *capture_path)
+         goto exit;
+     }
+     while ((nRead = read(capture_file, &device, sizeof(device))) > 0) {
+-        if (device.m_handler == 0 && device.m_ev == 0 && strlen(device.m_name) == 0)
++        if (device.m_handler == 0 && device.m_ev == 0 /*&& strlen(device.m_name) == 0*/)
+             break;
+         captureDevices.push_back(device);
+     }
+-- 
+2.25.1
+
