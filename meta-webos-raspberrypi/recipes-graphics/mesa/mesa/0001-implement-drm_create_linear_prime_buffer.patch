@@ -1,4 +1,4 @@
-From d3de903d6829bf5466249b6e9e6adbe70fa32d9c Mon Sep 17 00:00:00 2001
+From e4d49beb139de7f822b8acdc9aae6204b724ce99 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 7 Feb 2020 07:10:42 -0800
 Subject: [PATCH] implement drm_create_linear_prime_buffer
@@ -6,23 +6,21 @@ Subject: [PATCH] implement drm_create_linear_prime_buffer
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
  include/GL/internal/dri_interface.h         |  1 +
- src/egl/drivers/dri2/egl_dri2.c             |  3 ++-
+ src/egl/drivers/dri2/egl_dri2.c             |  3 +-
  src/egl/wayland/wayland-drm/meson.build     |  1 +
- src/egl/wayland/wayland-drm/wayland-drm.c   | 28 +++++++++++++++++----
+ src/egl/wayland/wayland-drm/wayland-drm.c   | 28 ++++++++++++++---
  src/egl/wayland/wayland-drm/wayland-drm.h   |  2 +-
- src/egl/wayland/wayland-drm/wayland-drm.xml | 12 +++++++++
- src/gallium/frontends/dri/dri2.c            | 19 +++++++++++---
+ src/egl/wayland/wayland-drm/wayland-drm.xml | 12 +++++++
+ src/gallium/frontends/dri/dri2.c            | 35 ++++++++++-----------
  src/gbm/backends/dri/gbm_dri.c              |  1 +
  src/loader/loader_dri3_helper.c             |  1 +
- src/mesa/drivers/dri/i915/intel_screen.c    |  2 +-
- src/mesa/drivers/dri/i965/brw_screen.c      |  2 +-
- 11 files changed, 60 insertions(+), 12 deletions(-)
+ 9 files changed, 58 insertions(+), 26 deletions(-)
 
 diff --git a/include/GL/internal/dri_interface.h b/include/GL/internal/dri_interface.h
-index 9b85e67ce49..2c6654e9010 100644
+index 10ce61e8eda..db38cacddcd 100644
 --- a/include/GL/internal/dri_interface.h
 +++ b/include/GL/internal/dri_interface.h
-@@ -1594,6 +1594,7 @@ struct __DRIimageExtensionRec {
+@@ -1433,6 +1433,7 @@ struct __DRIimageExtensionRec {
      */
     __DRIimage *(*createImageFromFds)(__DRIscreen *screen,
                                       int width, int height, int fourcc,
@@ -31,10 +29,10 @@ index 9b85e67ce49..2c6654e9010 100644
                                       int *strides, int *offsets,
                                       void *loaderPrivate);
 diff --git a/src/egl/drivers/dri2/egl_dri2.c b/src/egl/drivers/dri2/egl_dri2.c
-index 0e48b965656..4072fd86ae8 100644
+index 93e3af618f9..41a6f307d23 100644
 --- a/src/egl/drivers/dri2/egl_dri2.c
 +++ b/src/egl/drivers/dri2/egl_dri2.c
-@@ -3180,7 +3180,7 @@ dri2_destroy_image_khr(_EGLDisplay *disp, _EGLImage *image)
+@@ -3188,7 +3188,7 @@ dri2_destroy_image_khr(_EGLDisplay *disp, _EGLImage *image)
  
  static void
  dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
@@ -43,7 +41,7 @@ index 0e48b965656..4072fd86ae8 100644
  {
     _EGLDisplay *disp = user_data;
     struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
-@@ -3201,6 +3201,7 @@ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
+@@ -3209,6 +3209,7 @@ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
                                                  buffer->width,
                                                  buffer->height,
                                                  buffer->format,
@@ -185,10 +183,10 @@ index eaf2654ab26..d6913d680ba 100644
  
  </protocol>
 diff --git a/src/gallium/frontends/dri/dri2.c b/src/gallium/frontends/dri/dri2.c
-index 59698719978..a7c360fb5e0 100644
+index 4b77601a82c..7bc1721ce32 100644
 --- a/src/gallium/frontends/dri/dri2.c
 +++ b/src/gallium/frontends/dri/dri2.c
-@@ -1423,13 +1423,26 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
+@@ -1509,30 +1509,27 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
     return img;
  }
  
@@ -200,9 +198,24 @@ index 59698719978..a7c360fb5e0 100644
  dri2_from_fds(__DRIscreen *screen, int width, int height, int fourcc,
 -              int *fds, int num_fds, int *strides, int *offsets,
 -              void *loaderPrivate)
+-{
+-   return dri2_create_image_from_fd(screen, width, height, fourcc,
+-                                   DRM_FORMAT_MOD_INVALID, fds, num_fds,
+-                                   strides, offsets, 0, NULL, loaderPrivate);
+-}
+-
+-static __DRIimage *
+-dri2_from_fds2(__DRIscreen *screen, int width, int height, int fourcc,
+-              int *fds, int num_fds, uint32_t flags, int *strides,
 +              uint64_t modifier, int *fds, int num_fds, int *strides,
-+              int *offsets, void *loaderPrivate)
+               int *offsets, void *loaderPrivate)
  {
+-   unsigned bind = 0;
+-   if (flags & __DRI_IMAGE_PROTECTED_CONTENT_FLAG)
+-      bind |= PIPE_BIND_PROTECTED;
+-   if (flags & __DRI_IMAGE_PRIME_LINEAR_BUFFER)
+-      bind |= PIPE_BIND_DRI_PRIME;
+-
 +   if (modifier != DRM_FORMAT_MOD_LINEAR) {
 +      /* For RGB16 format data since we are getting correct value of modifer
 +       * as DRM_FORMAT_MOD_LINEAR no need for query of modifiers
@@ -214,15 +227,17 @@ index 59698719978..a7c360fb5e0 100644
 +   }
     return dri2_create_image_from_fd(screen, width, height, fourcc,
 -                                   DRM_FORMAT_MOD_INVALID, fds, num_fds,
+-                                   strides, offsets, bind, NULL, loaderPrivate);
 +                                   modifier, fds, num_fds,
-                                    strides, offsets, false, NULL, loaderPrivate);
++                                   strides, offsets, false, NULL, loaderPrivate);
  }
  
+ static boolean
 diff --git a/src/gbm/backends/dri/gbm_dri.c b/src/gbm/backends/dri/gbm_dri.c
-index 751b2e56497..09051b1f035 100644
+index 560b97f2b70..bc38c6991ca 100644
 --- a/src/gbm/backends/dri/gbm_dri.c
 +++ b/src/gbm/backends/dri/gbm_dri.c
-@@ -995,6 +995,7 @@ gbm_dri_bo_import(struct gbm_device *gbm,
+@@ -1032,6 +1032,7 @@ gbm_dri_bo_import(struct gbm_device *gbm,
                                               fd_data->width,
                                               fd_data->height,
                                               fourcc,
@@ -231,10 +246,10 @@ index 751b2e56497..09051b1f035 100644
                                               &stride, &offset,
                                               NULL);
 diff --git a/src/loader/loader_dri3_helper.c b/src/loader/loader_dri3_helper.c
-index 6c4b704ae5b..5c36a5d19e1 100644
+index 8e775a4735f..49aefb46613 100644
 --- a/src/loader/loader_dri3_helper.c
 +++ b/src/loader/loader_dri3_helper.c
-@@ -1689,6 +1689,7 @@ loader_dri3_create_image(xcb_connection_t *c,
+@@ -1853,6 +1853,7 @@ loader_dri3_create_image(xcb_connection_t *c,
                                              bp_reply->width,
                                              bp_reply->height,
                                              image_format_to_fourcc(format),
@@ -242,29 +257,3 @@ index 6c4b704ae5b..5c36a5d19e1 100644
                                              fds, 1,
                                              &stride, &offset, loaderPrivate);
     close(fds[0]);
-diff --git a/src/mesa/drivers/dri/i915/intel_screen.c b/src/mesa/drivers/dri/i915/intel_screen.c
-index 33ca0321722..8e87723608d 100644
---- a/src/mesa/drivers/dri/i915/intel_screen.c
-+++ b/src/mesa/drivers/dri/i915/intel_screen.c
-@@ -586,7 +586,7 @@ intel_create_image_from_names(__DRIscreen *screen,
- 
- static __DRIimage *
- intel_create_image_from_fds(__DRIscreen *screen,
--                            int width, int height, int fourcc,
-+                            int width, int height, int fourcc, uint64_t modifier,
-                             int *fds, int num_fds, int *strides, int *offsets,
-                             void *loaderPrivate)
- {
-diff --git a/src/mesa/drivers/dri/i965/brw_screen.c b/src/mesa/drivers/dri/i965/brw_screen.c
-index 23eb5f57fce..9a9d87a1cec 100644
---- a/src/mesa/drivers/dri/i965/brw_screen.c
-+++ b/src/mesa/drivers/dri/i965/brw_screen.c
-@@ -1258,7 +1258,7 @@ brw_create_image_from_fds_common(__DRIscreen *dri_screen,
- 
- static __DRIimage *
- brw_create_image_from_fds(__DRIscreen *dri_screen,
--                          int width, int height, int fourcc,
-+                          int width, int height, int fourcc, uint64_t modifier,
-                           int *fds, int num_fds, int *strides, int *offsets,
-                           void *loaderPrivate)
- {
