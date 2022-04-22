@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 LG Electronics, Inc.
+# Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "General System Launcher application"
 AUTHOR = "Jongson Kim<jongson.kim@lge.com>"
@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
 "
 
-WEBOS_VERSION = "0.1.0-18_8accb8308fa1625c2d7478a41990a2d26180e058"
+WEBOS_VERSION = "0.1.0-19_c696682500bf6cbdc02a79f6879bf1294e7ecfd0"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r3"
