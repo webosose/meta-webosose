@@ -1,0 +1,29 @@
+From 2b1f316404ffcff3995a25b690f077b85a34ad20 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@lge.com>
+Date: Fri, 22 Apr 2022 10:01:55 +0000
+Subject: [PATCH] Fix build with gcc-10
+
+* fixes:
+http://gecko.lge.com/Errors/Details/384977
+
+qemux86_64-webos-linux/com.webos.service.memorymanager/1.0.0-52-r6/git/src/common/util/Cgroup.cpp: In static member function 'static void Cgroup::iterateDir(std::map<std::__cxx11::basic_string<char>, std::__cxx11::list<int> >&, std::string)':
+qemux86_64-webos-linux/com.webos.service.memorymanager/1.0.0-52-r6/git/src/common/util/Cgroup.cpp:49:18: error: variable 'std::ifstream ifs' has initializer but incomplete type
+   49 |     ifstream ifs(procs.c_str());
+      |                  ^~~~~
+---
+ src/common/util/Cgroup.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/common/util/Cgroup.cpp b/src/common/util/Cgroup.cpp
+index ad4f4e0..478c4ab 100644
+--- a/src/common/util/Cgroup.cpp
++++ b/src/common/util/Cgroup.cpp
+@@ -15,6 +15,8 @@
+ 
+ #include "Cgroup.h"
+ 
++#include <fstream>
++
+ #include <boost/filesystem.hpp>
+ #include <boost/algorithm/string.hpp>
+ 

@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 libpbnjson pmloglib procps"
 
 WEBOS_VERSION = "1.0.0-52_57bec9e60709001d9a135076a54b24d4d7646fd7"
-PR = "r6"
+PR = "r7"
 
 inherit webos_component
 inherit webos_cmake
@@ -25,7 +25,7 @@ inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-build-with-gcc-10.patch \
+"
 S = "${WORKDIR}/git"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
