@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc
+# Copyright (c) 2020 LG Electronics, Inc.
 
 DESCRIPTION = "webOS IoT image"
 LICENSE = "CLOSED"
