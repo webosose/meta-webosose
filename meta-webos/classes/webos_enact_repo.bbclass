@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 # The default repo name is the "base" component name (no -native, etc.)
 WEBOS_REPO_NAME ??= "${BPN}"

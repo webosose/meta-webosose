@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "JavaScript loader for foundation frameworks and other loadable libraries"
 AUTHOR = "Suresh Arumugam <suresh.arumugam@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
 # workaround for the upstream branch name change from master to main.
 # inherit line below can be removed when the request is applied upstream.

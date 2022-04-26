@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 LG Electronics, Inc.
+# Copyright (c) 2016-2022 LG Electronics, Inc.
 
 require webos-open-test-apps.inc
 

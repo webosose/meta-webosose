@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2014 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 """checkicecc
 
 Script to check the icecc installation and running status.

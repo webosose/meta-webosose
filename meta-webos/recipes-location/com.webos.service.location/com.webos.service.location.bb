@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 
 DESCRIPTION = "location framework which provides location based services implementing location handlers, plugins, and Luna location service"
 AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"

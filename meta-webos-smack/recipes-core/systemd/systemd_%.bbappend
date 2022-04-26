@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 LG Electronics, Inc.
+# Copyright (c) 2019-2022 LG Electronics, Inc.
 
 EXTENDPRAUTO:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack4', '', d)}"
 

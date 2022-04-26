@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 # IMAGE_FEATURES controls the contents of webOS OSE images
 #

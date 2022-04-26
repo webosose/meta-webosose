@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 LG Electronics, Inc.
+# Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "Pinyin input method library"
 AUTHOR = "pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"

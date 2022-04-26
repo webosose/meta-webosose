@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2017 LG Electronics, Inc.
+# Copyright (c) 2015-2022 LG Electronics, Inc.
 
 inherit deploy
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 DESCRIPTION = "webOS audiofocusmanager"
 AUTHOR = "Mallikarjun Hanganalli <mallikarjun.h@lge.com>"

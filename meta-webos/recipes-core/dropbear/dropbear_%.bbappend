@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 inherit webos_machine_impl_dep
 

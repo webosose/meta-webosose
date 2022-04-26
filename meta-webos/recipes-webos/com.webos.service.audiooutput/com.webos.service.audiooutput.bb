@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Service which controls audio output"
 AUTHOR = "Premalatha MVS <premalatha.mvs@lge.com>"

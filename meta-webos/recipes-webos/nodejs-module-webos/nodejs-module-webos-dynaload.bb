@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 require nodejs-module-webos.inc
 

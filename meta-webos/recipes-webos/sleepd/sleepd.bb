@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Sleep scheduling policy daemon"
 AUTHOR = "Sapna Todwal <sapna.todwal@lge.com>"

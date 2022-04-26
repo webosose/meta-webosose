@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 require gstreamer1.0-webos-common.inc
 

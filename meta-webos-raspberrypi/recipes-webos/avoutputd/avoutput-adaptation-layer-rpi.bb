@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "AVAL API implementation for Raspberry Pi"
 AUTHOR = "Soumya Aithal <soumya.aithal@lge.com>"

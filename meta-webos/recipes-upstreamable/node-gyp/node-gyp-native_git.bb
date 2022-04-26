@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 DESCRIPTION = "Node.js native addon build tool"
 HOMEPAGE = "https://github.com/nodejs/node-gyp"

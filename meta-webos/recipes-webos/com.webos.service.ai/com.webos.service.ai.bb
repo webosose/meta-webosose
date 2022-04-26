@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2021 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Ai service for voice/face/gesture recognition"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 
 DESCRIPTION = "meta-webos-iot components used in webOS OSE"
 LICENSE = "Apache-2.0"

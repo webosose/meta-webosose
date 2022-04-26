@@ -1,4 +1,4 @@
-# Copyright (c) 2020 LG Electronics, Inc.
+# Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS IoT developer/test image"
 DESCRIPTION = "This image contains additional packages useful during \

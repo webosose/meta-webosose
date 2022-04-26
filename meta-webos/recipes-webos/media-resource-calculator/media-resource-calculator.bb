@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2021 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
 DESCRIPTION = "Media Resource Calculator for webOS"
 AUTHOR = "Bhooshan Supe <bhooshan.supe@lge.com>"

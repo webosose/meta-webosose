@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS connman adapter support library"
 AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 EXTENDPRAUTO:append = "webos3"

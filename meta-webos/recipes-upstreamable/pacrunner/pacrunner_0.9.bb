@@ -1,4 +1,4 @@
-# Copyright (c) 2016 LG Electronics, Inc.
+# Copyright (c) 2016-2022 LG Electronics, Inc.
 
 SUMMARY = "Proxy daemon"
 AUTHOR = "Sungmok Shin <sungmok.shin@lge.com>"

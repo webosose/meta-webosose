@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2018 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS logging library - private interface"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 # For now it's the same as DISTRO_FEATURES_LIBC_DEFAULT in
 # oe-core/meta/conf/distro/include/default-distrovars.inc

@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 # Pre-defined macro for OS identification
 TARGET_CFLAGS:append = " -D__WEBOS__"

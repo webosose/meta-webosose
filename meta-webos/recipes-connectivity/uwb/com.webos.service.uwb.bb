@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Webos UwbService"
 AUTHOR = "Bojung.Ko <bojung.ko@lge.com>"

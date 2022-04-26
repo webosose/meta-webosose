@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2020 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS logging control application"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2021 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "Components for testing added to webOS OSE -devel images"
 LICENSE = "Apache-2.0"

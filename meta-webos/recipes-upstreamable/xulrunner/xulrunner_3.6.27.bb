@@ -1,4 +1,4 @@
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "XULRunner Open Source Project"
 DESCRIPTION = "SDK to make NPAPI plugins"

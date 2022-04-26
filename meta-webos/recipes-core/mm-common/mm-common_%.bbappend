@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2017 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 EXTENDPRAUTO:append = "webos4"
 

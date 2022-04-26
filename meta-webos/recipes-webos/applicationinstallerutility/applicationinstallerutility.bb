@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY="The Application Installer Utility supports the installing and removing of applications on a HP webOS device."
 AUTHOR = "Seokjun Lee <sseokjun.lee@lge.com>"

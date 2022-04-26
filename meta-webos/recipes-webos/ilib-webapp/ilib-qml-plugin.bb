@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2021 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "iLib Qml loader"
 AUTHOR = "Goun Lee <goun.lee@lge.com>"
