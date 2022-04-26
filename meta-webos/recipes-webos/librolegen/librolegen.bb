@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Library for dynamically generating webOS system bus role files for webOS JavaScript services"
 SECTION = "webos/libs"

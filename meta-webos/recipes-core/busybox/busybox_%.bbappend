@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 PKGV .= "-0webos3"
 EXTENDPRAUTO:append = "webos14"

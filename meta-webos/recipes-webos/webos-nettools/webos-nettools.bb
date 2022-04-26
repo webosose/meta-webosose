@@ -1,4 +1,4 @@
-# Copyright (c) 2021 LG Electronics, Inc.
+# Copyright (c) 2021-2022 LG Electronics, Inc.
 
 DESCRIPTION = "Luna-service2 service providing network utility tools like ping and arping"
 AUTHOR = "Rakes Pani <rakes.pani@lge.com>"

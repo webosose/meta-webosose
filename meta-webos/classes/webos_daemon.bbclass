@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2013 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 #
 # webos_daemon
 #

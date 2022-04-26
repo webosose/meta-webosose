@@ -1,4 +1,4 @@
-# Copyright (c) 2014 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 #
 # webos_soc_family_dep
 #

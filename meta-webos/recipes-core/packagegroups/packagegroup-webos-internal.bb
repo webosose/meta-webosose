@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 DESCRIPTION = "Internal components used in webOS OSE"
 LICENSE = "Apache-2.0"

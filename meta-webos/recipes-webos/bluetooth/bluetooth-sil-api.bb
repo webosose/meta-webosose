@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2021 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS Bluetooth SIL API"
 AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"

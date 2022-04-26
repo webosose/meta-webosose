@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2020 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 #
 # Intercept the upstream image.bbclass so that when there's
 # a webos_deploy_fixup task.

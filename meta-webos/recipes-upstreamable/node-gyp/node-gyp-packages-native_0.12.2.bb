@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2015 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 require node-gyp-packages-native.inc
 

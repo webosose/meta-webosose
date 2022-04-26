@@ -1,4 +1,4 @@
-# Copyright (c) 2018 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 #
 # Intercept the upstream fontcache.bbclass so that it doesn't add
 # dependency on fontconfig-utils.

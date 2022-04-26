@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2014 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 #
 # webos_version
 #

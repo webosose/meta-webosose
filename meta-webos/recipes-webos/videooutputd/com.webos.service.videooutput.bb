@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2020 LG Electronics, Inc.
+# Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Service which controls video output"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"

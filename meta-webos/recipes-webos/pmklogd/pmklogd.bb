@@ -1,4 +1,4 @@
-# Copyright (c) 2011-2020 LG Electronics, Inc.
+# Copyright (c) 2011-2022 LG Electronics, Inc.
 
 SUMMARY = "Kernel logging daemon"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"

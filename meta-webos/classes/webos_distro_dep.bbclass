@@ -1,4 +1,4 @@
-# Copyright (c) 2015 LG Electronics, Inc.
+# Copyright (c) 2015-2022 LG Electronics, Inc.
 #
 # webos_distro_dep
 #

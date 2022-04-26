@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 DESCRIPTION = "uchardet is a C language binding of the original C++ \
 implementation of the universal charset detection library by Mozilla."

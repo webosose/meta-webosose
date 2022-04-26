@@ -1,4 +1,4 @@
-# Copyright (c) 2019 LG Electronics, Inc.
+# Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "FUSE filesystem module to mount camera"
 HOMEPAGE = "http://www.gphoto.org/proj/gphotofs/"

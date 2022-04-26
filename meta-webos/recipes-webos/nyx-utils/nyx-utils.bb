@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Command line utilities for the webOS Platform Portability Layer"
 AUTHOR = "Ed Chejlava <ed.chejlava@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "An extensible object oriented component used to add service components to webOS"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"

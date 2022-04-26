@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2021 LG Electronics, Inc.
+# Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "LevelDB Template Library"
 DESCRIPTION = "Template library to build a more complex storage schema with leveldb as a backend"

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2020 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 AUTHOR = "Bhooshan Supe <bhooshan.supe@lge.com>"
 EXTENDPRAUTO:append = "webos1"

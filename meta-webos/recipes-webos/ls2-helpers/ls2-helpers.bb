@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 LG Electronics, Inc.
+# Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "Luna service C++11 helpers library"
 AUTHOR = "Viesturs Zarins <viesturs.zarins@lge.com>"

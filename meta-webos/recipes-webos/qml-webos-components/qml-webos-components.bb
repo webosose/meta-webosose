@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2021 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "Shareable QML components for webOS"
 AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"

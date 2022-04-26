@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2021 LG Electronics, Inc.
+# Copyright (c) 2015-2022 LG Electronics, Inc.
 #
 # webos_app_generate_security_files
 #

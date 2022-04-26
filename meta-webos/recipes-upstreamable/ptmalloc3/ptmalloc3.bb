@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2018 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SECTION = "libs"
 DESCRIPTION = "Multi-thread malloc implementation"

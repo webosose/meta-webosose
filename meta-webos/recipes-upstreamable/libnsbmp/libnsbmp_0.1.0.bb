@@ -1,4 +1,4 @@
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "BMP Library"
 DESCRIPTION = "Libnsbmp is a decoding library for BMP and ICO image file formats, written in C"

@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021 LG Electronics, Inc.
+# Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "A service to expand rootfs to whole media"
 AUTHOR = "JeongBong Seo <jb.seo@lge.com>"
