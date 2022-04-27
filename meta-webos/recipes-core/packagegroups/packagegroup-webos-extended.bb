@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS_${PN} variable.
-PR = "r40"
+PR = "r41"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -273,6 +273,7 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
 # These packages that are installed in the qemux86 image only.
 RRECOMMENDS_${PN}_append_qemux86 = " \
     fuse-utils \
+    kernel-module-8021q \
     kernel-module-ac97-bus \
     kernel-module-bluetooth \
     kernel-module-btbcm \
@@ -303,6 +304,7 @@ RRECOMMENDS_${PN}_append_qemux86 = " \
 
 RRECOMMENDS_${PN}_append_qemux86-64 = " \
     fuse-utils \
+    kernel-module-8021q \
     kernel-module-ac97-bus \
     kernel-module-bluetooth \
     kernel-module-btbcm \
