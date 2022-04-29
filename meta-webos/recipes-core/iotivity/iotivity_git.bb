@@ -35,6 +35,7 @@ SRC_URI = " \
     file://0001-OCApi.h-prevent-multiple-definitions-of-OC-detail-oc.patch \
     file://0002-Fix-segmentation-fault.patch \
     file://0002-Add-os_arch-x86_64.patch \
+    file://0001-mbedtls-tinycbor-add-DONT_CHECK_GIT_TAGS-env-variabl.patch \
 "
 SRCREV_main = "255060695e4de0e8f357aeab6e3e2c46e3c68bac"
 SRCREV_tinycbor = "ae64a3d9da39f3bf310b9a7b38427c096d8bcd43"
@@ -49,7 +50,7 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r7"
+PR = "r8"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_filesystem_paths
