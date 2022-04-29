@@ -13,6 +13,7 @@ SRC_URI += " \
     git://github.com/iotivity/iotivity.git;branch=webos;protocol=https;name=main;destsuffix=iotivity \
     git://github.com/intel/tinycbor.git;destsuffix=iotivity/extlibs/tinycbor/tinycbor;protocol=https;name=tinycbor;branch=master \
     git://github.com/ARMmbed/mbedtls.git;destsuffix=iotivity/extlibs/mbedtls/mbedtls;protocol=https;branch=archive/mbedtls-2.4;name=mbedtls \
+    file://0001-mbedtls-tinycbor-add-DONT_CHECK_GIT_TAGS-env-variabl.patch \
 "
 
 SRCREV_main = "8fe09d4c9859d3ff32b4e8ca2ed996a156fccb81"
@@ -23,7 +24,7 @@ SRCREV_FORMAT = "main"
 do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/iotivity"
-PR = "r5"
+PR = "r6"
 
 inherit scons pkgconfig webos_component webos_filesystem_paths
 

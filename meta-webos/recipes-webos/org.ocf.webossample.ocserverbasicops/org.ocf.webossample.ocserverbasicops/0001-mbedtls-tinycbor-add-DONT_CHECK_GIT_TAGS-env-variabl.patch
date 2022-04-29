@@ -1,0 +1,95 @@
+From 2989ea36d1acb2b77ae12ede858dbdfa0032f421 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 29 Apr 2022 15:37:05 +0000
+Subject: [PATCH] mbedtls, tinycbor: add DONT_CHECK_GIT_TAGS env variable
+
+With newer git on host iotivity now fails to build with:
+| scons: Reading SConscript files ...
+| Processing using SCons version 3.1.2
+| Python 3.8.13 (default, Jan  1 1970, 00:00:00) [GCC 11.2.0] on linux
+| warning: importing some environment variables for OS: webos
+| Checking for POSIX Thread Support...(cached) yes
+| fatal: unsafe repository ('/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/git/extlibs/tinycbor/tinycbor' is owned by someone else)
+| To add an exception for this directory, call:
+|
+|       git config --global --add safe.directory /OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/git/extlibs/tinycbor/tinycbor
+| CalledProcessError: Command 'git tag -l v0.5.1' returned non-zero exit status 128.:
+|   File "/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/git/SConstruct", line 32:
+|     SConscript('build_common/SConscript')
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 660:
+|     return method(*args, **kw)
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 597:
+|     return _SConscript(self.fs, *files, **subst_kw)
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 286:
+|     exec(compile(scriptdata, scriptname, 'exec'), call_stack[-1].globals)
+|   File "/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/git/build_common/SConscript", line 933:
+|     env.SConscript('external_libs.scons')
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 597:
+|     return _SConscript(self.fs, *files, **subst_kw)
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 286:
+|     exec(compile(scriptdata, scriptname, 'exec'), call_stack[-1].globals)
+|   File "/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/git/build_common/external_libs.scons", line 57:
+|     SConscript('#extlibs/tinycbor/SConscript')
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 660:
+|     return method(*args, **kw)
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 597:
+|     return _SConscript(self.fs, *files, **subst_kw)
+|   File "//OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/bin/../../usr/lib/python3.8/site-packages/SCons/Script/SConscript.py", line 286:
+|     exec(compile(scriptdata, scriptname, 'exec'), call_stack[-1].globals)
+|   File "/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/git/extlibs/tinycbor/SConscript", line 50:
+|     out = subprocess.check_output('git tag -l ' + cborRevision, shell=True).rstrip()
+|   File "/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/lib/python3.8/subprocess.py", line 415:
+|     return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+|   File "/OE/lge/build/webos/dunfell/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+gitAUTOINC+255060695e-r7/recipe-sysroot-native/usr/lib/python3.8/subprocess.py", line 516:
+|     raise CalledProcessError(retcode, process.args,
+
+there is a work around for this in oe-core master (not even in kirkstone yet):
+https://git.openembedded.org/openembedded-core/commit/?id=8bed8e6993e7297bdcd68940aa0d47ef47120117
+
+but exporting GIT_CONFIG_PARAMETERS doesn't work for this SConscript, because
+it filters the environment as in:
+https://scons.org/doc/2.4.0/HTML/scons-api/SCons.Script.SConscript%27.DefaultEnvironmentCall-class.html
+---
+ build_common/SConscript     | 1 +
+ extlibs/mbedtls/SConscript  | 2 +-
+ extlibs/tinycbor/SConscript | 3 ++-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/build_common/SConscript b/build_common/SConscript
+index d5abaaf84..2a0ffc3cf 100644
+--- a/build_common/SConscript
++++ b/build_common/SConscript
+@@ -368,6 +368,7 @@ if target_os in targets_support_cc:
+ # Import env variables only if reproductibility is ensured
+ if target_os in ['yocto', 'webos']:
+     env['CONFIG_ENVIRONMENT_IMPORT'] = True
++    env['DONT_CHECK_GIT_TAGS'] = True
+ else:
+     env['CONFIG_ENVIRONMENT_IMPORT'] = False
+ 
+diff --git a/extlibs/mbedtls/SConscript b/extlibs/mbedtls/SConscript
+index 47388d89c..d6cd553ad 100644
+--- a/extlibs/mbedtls/SConscript
++++ b/extlibs/mbedtls/SConscript
+@@ -54,7 +54,7 @@ os.chdir(mbedtls_dir)
+ # the script will always conclude the repo is not up to date because a tag
+ # with that name doesn't exist.
+ # Tizen uses its own process to prepare the mbedTLS repo in gbsbuild.sh.
+-if os.path.exists('.git/HEAD'):
++if os.path.exists('.git/HEAD') and not env.get('DONT_CHECK_GIT_TAGS'):
+     out = subprocess.check_output('git tag -l ' + mbedtls_revision, shell=True).rstrip()
+     if mbedtls_revision not in SCons.Util.to_String(out):
+         msg = '''
+diff --git a/extlibs/tinycbor/SConscript b/extlibs/tinycbor/SConscript
+index bf0ec8b17..5cbe284dc 100644
+--- a/extlibs/tinycbor/SConscript
++++ b/extlibs/tinycbor/SConscript
+@@ -46,7 +46,7 @@ os.chdir(cborDir)
+ # Make sure tinycbor_revision stays in sync with extlibs/tinycbor/prep.sh.
+ # This code also assumes tinycbor_revision is a tag; if it changes to a branch
+ # or an arbitrary commit, disable this check below.
+-if target_os != 'tizen' and os.path.exists('.git/HEAD'):
++if target_os != 'tizen' and target_os != 'webos' and os.path.exists('.git/HEAD') and not env.get('DONT_CHECK_GIT_TAGS'):
+     out = subprocess.check_output('git tag -l ' + cborRevision, shell=True).rstrip()
+     if cborRevision not in SCons.Util.to_String(out):
+         print(out)
