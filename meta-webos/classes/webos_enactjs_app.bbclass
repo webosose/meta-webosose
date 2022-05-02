@@ -140,10 +140,10 @@ do_compile() {
         fi
     fi
 
-    NPM_OPTS="--arch=${TARGET_ARCH} --loglevel=verbose install"
+    NPM_OPTS="${WEBOS_NPM_INSTALL_FLAGS} install"
     if [ -z "${WEBOS_ENACTJS_PACK_OVERRIDE}" ] ; then
         # When a standard Enact app, we can safely skip installing any devDependencies
-        NPM_OPTS="${NPM_OPTS} --only=production"
+        NPM_OPTS="${WEBOS_NPM_INSTALL_FLAGS} install --only=production"
     fi
 
     # compile and install node modules in source directory
