@@ -37,8 +37,8 @@ SRCREV_FORMAT = "main_jsdoc-to-ts"
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "5.0.2"
-SRCREV = "37876eebfa39545cabad4c4d1aa30ecfec6417fc"
+PV = "5.1.0"
+SRCREV = "1c2d897abd95f7a310382edc5233e0384ed71cc4"
 SRCREV_jsdoc-to-ts = "059b9395e5804f943c3eef1afe7a0f80ef7c42ca"
 
 # Skip unneeded tasks
