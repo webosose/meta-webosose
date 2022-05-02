@@ -1,0 +1,30 @@
+From 13985f878ffce283564df2eab23ab89070c7417b Mon Sep 17 00:00:00 2001
+From: Roman Genkhel <roman.genhel@lge.com>
+Date: Thu, 28 Apr 2022 12:53:38 +0300
+Subject: [PATCH] Fix: Access nullptr returned by QWaylandSurface::client()
+
+surface()->client() could return null at the moment when
+QWaylandQuickItem::takeFocus invoked, which cause using nullptr
+
+Pick-to: 6.3
+Change-Id: I89432882bd7117f45bac889bc85b2f86c77b21e8
+---
+ src/compositor/compositor_api/qwaylandquickitem.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/compositor/compositor_api/qwaylandquickitem.cpp b/src/compositor/compositor_api/qwaylandquickitem.cpp
+index bf1d0a44..63be7ada 100644
+--- a/src/compositor/compositor_api/qwaylandquickitem.cpp
++++ b/src/compositor/compositor_api/qwaylandquickitem.cpp
+@@ -1115,7 +1115,7 @@ void QWaylandQuickItem::takeFocus(QWaylandSeat *device)
+ {
+     forceActiveFocus();
+ 
+-    if (!surface())
++    if (!surface() || !surface()->client())
+         return;
+ 
+     QWaylandSeat *target = device;
+-- 
+2.17.1
+
