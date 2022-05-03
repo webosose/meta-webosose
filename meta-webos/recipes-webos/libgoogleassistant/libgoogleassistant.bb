@@ -13,10 +13,11 @@ DEPENDS = "snowboy glib-2.0 googleapis grpc json-c pmloglib pulseaudio"
 RDEPENDS:${PN}:class-target = "snowboy-models"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
-RDEPENDS:${PN}:class-target += "${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
 WEBOS_VERSION = "1.0.1-10_b8610f05673d48b498e38cb774d6f1056c3b5522"
-PR = "r7"
+PR = "r8"
 
 inherit webos_library
 inherit webos_cmake
