@@ -30,6 +30,7 @@ WEBOS_LOCALIZATION_TARGET_LOCALES = "\
     hr-HR \
     hu-HU \
     id-ID \
+    is-IS \
     it-IT \
     ja-JP \
     kk-Cyrl-KZ \
