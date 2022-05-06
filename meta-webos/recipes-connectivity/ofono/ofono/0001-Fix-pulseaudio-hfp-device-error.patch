@@ -1,0 +1,42 @@
+From 389dd8daedf97ee3e97319185c7682eaff99a675 Mon Sep 17 00:00:00 2001
+From: Thomas George C <thomas.georgec@lge.com>
+Date: Wed, 1 Jun 2022 14:36:27 +0530
+Subject: [PATCH] Fix pulseaudio hfp device error
+
+:Release Notes:
+Implement Fix pulseaudio hfp device error
+
+:Detailed Notes:
+To fix the hfp sink creation from pulseaudio ofono backend,
+permission for pulseaudio to use ofono is added in ofono conf
+
+:Testing Performed:
+NA
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+NA
+---
+ src/ofono.conf | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/ofono.conf b/src/ofono.conf
+index 45cb15c1..9c546618 100644
+--- a/src/ofono.conf
++++ b/src/ofono.conf
+@@ -19,6 +19,10 @@
+     <allow send_interface="org.ofono.intel.LteCoexistenceAgent"/>
+   </policy>
+ 
++  <policy user="pulse">
++    <allow send_destination="org.ofono"/>
++  </policy>
++
+   <policy at_console="true">
+     <allow send_destination="org.ofono"/>
+   </policy>
+-- 
+2.17.1
+
