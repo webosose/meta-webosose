@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2021 LG Electronics, Inc.
+# Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Provides preference, timezone and ringtone services"
 AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
@@ -14,7 +14,7 @@ DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib ny
 
 RDEPENDS_${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode"
 
-WEBOS_VERSION = "4.4.0-20_6da3eade3c0a3b08e660097e8a57a58260cf68e1"
+WEBOS_VERSION = "4.4.0-21_2d1e59312b516465d40ebcf45559cc3a40578ac6"
 PR = "r9"
 
 inherit webos_component
