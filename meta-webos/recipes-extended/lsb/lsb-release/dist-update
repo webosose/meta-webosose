@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+
+__DIST_UPDATE_VERSION__ = "1.0.0"
+PACKAGE_FEED_URI = "@PACKAGE_FEED_URI@"
+PACKAGE_FEED_BASE_PATH = "@PACKAGE_FEED_BASE_PATH@"
+PACKAGE_DISTRO = "@PACKAGE_DISTRO@"
+TRIMED_DISTRO_VERSION = "@TRIMED_DISTRO_VERSION@"
+
+import errno
+import argparse
+import subprocess
+import os
+import sys
+
+def parse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-V','--version', help="Show installed distro image version", action="store_true", dest='installed_version')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--show_versions', help="Show All Fetchable versions", action="store_true", dest='show_all_versions')
+    group.add_argument('--update', help="Update package list", action="store_true", dest='update')
+    group.add_argument('--upgrade', help="Upgrade package list to <version>", metavar="<version>", default=None)
+    args = parser.parse_args()
+    if len(sys.argv) <= 1:
+        parser.print_help()
+        exit(0)
+    if args.installed_version:
+        os.system('lsb_release -rs')
+        exit(0)
+    opkg = Opkg()
+    if args.show_all_versions:
+        opkg.show_all_versions = True
+    elif args.update:
+        opkg.update = True
+    elif args.upgrade is None:
+        print('Specify Upgrade version')
+    else:
+        opkg.upgrade = True
+        opkg.upgrade_version = args.upgrade
+    return opkg
+
+def bash_cmd(cmd: str):
+    proc = subprocess.Popen(cmd, shell=True, executable='/bin/bash', stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    ret = proc.communicate()
+    if not proc.returncode:
+        return (0,ret[0])
+    else:
+        return (proc.returncode,ret[1])
+
+class Opkg():
+    def __init__(self):
+        self.installed_version = self.getInstalledVersionString()
+        self.feed_uri = self.getCorrectURI()
+        self.support_version = self.getSupportVersions()
+        self.sysconfdir = '/etc/opkg'
+        self.upgradable_version = list()
+        self.show_all_versions = False
+        self.update = False
+        self.upgrade = False
+        self.upgrade_version = None
+
+    def getInstalledVersionString(self):
+        ret = bash_cmd('lsb_release -rs')
+        if ret[0] != 0:
+            print('Error: %s' % (ret[1]))
+            exit(ret[0])
+        installed_version=ret[1].strip()
+        return installed_version
+
+    def getCorrectURI(self):
+        return os.path.join(PACKAGE_FEED_URI,PACKAGE_FEED_BASE_PATH,PACKAGE_DISTRO,TRIMED_DISTRO_VERSION)
+
+    def getSupportVersions(self):
+        print("[INFO] fetch : %s" % self.feed_uri)
+        ret = bash_cmd('curl -sL %s --list-only | egrep \'\[DIR\]\' | awk -F \'<a |</a>\' \'{print$2}\' | awk -F \'>\' \'{print$NF}\'' % (self.feed_uri))
+        if ret[0] != 0:
+            print('Error occured in curl : %s' % (ret[1]))
+            exit(ret[0])
+        dirs=ret[1].strip().split('\n')
+        for idx,var in (enumerate(reversed(dirs))):
+            if (len(var) == 0) or not var[0].isalpha():
+                dirs.pop()
+        return dirs
+
+    def showAllVersions(self):
+        print('show all versions')
+        for i in self.support_version:
+            print(i[:-1])
+        exit(0)
+
+    def Update(self, silent=False):
+        if not silent:
+            print("Installed image version: %s" % self.installed_version)
+        for i in self.support_version:
+            if self.installed_version < i[:-1]:
+                self.upgradable_version.append(i[:-1])
+        if not silent:
+            print('Upgradable image version')
+            for i in self.upgradable_version:
+                print(i)
+
+    def Upgrade(self, version: str):
+        self.Update(silent=True)
+        if not self.isUpgradable(version):
+            print('Not Found version : %s' % version)
+            exit(1)
+        try:
+            os.makedirs(self.sysconfdir)
+        except OSError as exception:
+            if exception.errno != errno.EEXIST:
+                raise
+        os.chdir(self.sysconfdir)
+        with open('%s.conf' % (version), 'w') as f:
+            os.fchmod(f.fileno(), 0o644)
+            f.write('src/gz %s \"%s\"' % (version, os.path.join(self.feed_uri,version)))
+        print('Add package feed version : %s' % (version))
+
+    def isUpgradable(self, version: str):
+        for i in self.upgradable_version:
+            if i == version:
+                return True
+        return False
+
+if __name__ == '__main__':
+    opkg = parse()
+    if opkg.show_all_versions:
+        opkg.showAllVersions()
+    elif opkg.update:
+        opkg.Update()
+    elif opkg.upgrade:
+        opkg.Upgrade(opkg.upgrade_version)
