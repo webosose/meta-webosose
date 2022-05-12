@@ -168,3 +168,6 @@ FILES:${PN} += " \
     ${datadir}/localization/${BPN} \
     ${WEBOS_SYSTEM_BUS_DIRS} \
 "
+
+# http://gecko.lge.com/Errors/Details/400153
+CXXFLAGS += "-Wno-error=uninitialized -Wno-error=maybe-uninitialized"
