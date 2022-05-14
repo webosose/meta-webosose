@@ -371,6 +371,16 @@ PACKAGE_ARCH:pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFI
 # because -cpu options are missing in QEMU_OPTIONS
 PACKAGE_ARCH:pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
 
+# This is needed e.g. for nodejs where PACKAGE_ARCH is set to MACHINE_ARCH
+# but instead of depending on qemuwrapper-cross it creates its own qemu wrapper
+# with help of qemu.bbclass's qemu_wrapper_cmdline which uses QEMU_OPTIONS with:
+# ${@d.getVar("QEMU_EXTRAOPTIONS_%s" % d.getVar('PACKAGE_ARCH')) or ""}
+# which was always empty in our builds, causing Illegal instructions.
+# Also notice qemux86_64 instead of qemux86-64, because it's _${MACHINE_ARCH}, not
+# an old syntax override _${MACHINE}.
+QEMU_EXTRAOPTIONS_qemux86 = "${QEMU_EXTRAOPTIONS_core2-32}"
+QEMU_EXTRAOPTIONS_qemux86_64 = "${QEMU_EXTRAOPTIONS_core2-64}"
+
 PATH:prepend = "${WEBOS_EXTRA_PATH}"
 
 EXTRAOPKGCONFIG = ""
