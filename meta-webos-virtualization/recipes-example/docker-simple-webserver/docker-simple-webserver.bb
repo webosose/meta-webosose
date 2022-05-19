@@ -6,26 +6,26 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 inherit systemd webos_filesystem_paths
 
-PV = "0.1.0"
-PR = "r1"
+PV = "0.1.1"
+PR = "r2"
 
 SRC_URI = "file://docker-simple-webserver_${PV}.tar.bz2"
-SRC_URI[md5sum] = "7b24cf1e091a13933b82effa635d418a"
-SRC_URI[sha256sum] = "274032c6a3c854cc3d9412ec73b05ffc28527e31b57e4fed685f2c36f57974d5"
+SRC_URI[md5sum] = "77751dcfeb4ac270d94c9ff4ff02f2aa"
+SRC_URI[sha256sum] = "c0d05406d9e5a7e7b3fcc76b0a3a2808b3a9a35ba49b273b5ba3ed81ecb42a6c"
 
 S = "${WORKDIR}/docker-simple-webserver"
 
 do_install() {
-    # install systemd service file
+    # install systemd service files
     install -d ${D}${sysconfdir}/systemd/system
+    install -d ${D}${sysconfdir}/systemd/system/docker.service.d
+    install -d ${D}${sysconfdir}/systemd/system/scripts
     install -m 644 ${S}/docker-simple-webserver.service ${D}${sysconfdir}/systemd/system
+    install -m 644 ${S}/docker.service.d/override.conf ${D}${sysconfdir}/systemd/system/docker.service.d
+    install -m 755 ${S}/allow_docker_dev_server.sh ${D}${sysconfdir}/systemd/system/scripts
 
     # don't start service automatically
     sed -i '/\[Install\]/,+2d' ${D}${sysconfdir}/systemd/system/docker-simple-webserver.service
-
-    # install docker daemon file to access webosdev.lge.com regisgry
-    install -d ${D}${webos_mountablestoragedir}/docker
-    install -m 644 ${S}/daemon.json ${D}${webos_mountablestoragedir}/docker
 
     # copy docker-compose file and related files
     install -d ${D}${datadir}
