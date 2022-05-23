@@ -1,0 +1,59 @@
+From 04c07804930faad708218a3134c81de06a9c742a Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@windriver.com>
+Date: Fri, 6 Apr 2018 23:58:22 -0400
+Subject: [PATCH] libnetwork: use $(GO) instead of go
+
+Ensure that the libnetwork makefile uses the go cross flags and
+utilities.
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@windriver.com>
+---
+ Makefile | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+Index: git/libnetwork/Makefile
+===================================================================
+--- git.orig/libnetwork/Makefile
++++ git/libnetwork/Makefile
+@@ -45,9 +45,9 @@
+ build-local:
+ 	@echo "🐳 $@"
+ 	@mkdir -p "bin"
+-	go build -tags experimental -o "bin/dnet" ./cmd/dnet
+-	go build -o "bin/docker-proxy" ./cmd/proxy
+-	CGO_ENABLED=0 go build -o "bin/diagnosticClient" ./cmd/diagnostic
++	$(GO) build -tags experimental -o "bin/dnet" ./cmd/dnet
++	$(GO) build -o "bin/proxy" ./cmd/proxy
++	CGO_ENABLED=0 $(GO) build -o "bin/diagnosticClient" ./cmd/diagnostic
+ 	CGO_ENABLED=0 go build -o "bin/testMain" ./cmd/networkdb-test/testMain.go
+ 
+ build-images:
+@@ -82,8 +82,8 @@
+ 
+ cross-local:
+ 	@echo "🐳 $@"
+-	go build -o "bin/dnet-$$GOOS-$$GOARCH" ./cmd/dnet
+-	go build -o "bin/docker-proxy-$$GOOS-$$GOARCH" ./cmd/proxy
++	@$(GO) build -linkshared $(GOBUILDFLAGS) -o "bin/docker-proxy-$$GOOS-$$GOARCH" ./cmd/proxy
++	@$(GO) build -linkshared $(GOBUILDFLAGS) -o "bin/dnet-$$GOOS-$$GOARCH" ./cmd/dnet
+ 
+ # Rebuild protocol buffers.
+ # These may need to be rebuilt after vendoring updates, so .proto files are declared .PHONY so they are always rebuilt.
+@@ -130,7 +130,7 @@
+ 	if ls $$dir/*.go &> /dev/null; then \
+ 		pushd . &> /dev/null ; \
+ 		cd $$dir ; \
+-		go test ${INSIDECONTAINER} -test.parallel 5 -test.v -covermode=count -coverprofile=./profile.tmp ; \
++		$(GO) test ${INSIDECONTAINER} -test.parallel 5 -test.v -covermode=count -coverprofile=./profile.tmp ; \
+ 		ret=$$? ;\
+ 		if [ $$ret -ne 0 ]; then exit $$ret; fi ;\
+ 		popd &> /dev/null; \
+@@ -145,7 +145,7 @@
+ # Depends on binaries because vet will silently fail if it can not load compiled imports
+ vet: ## run go vet
+ 	@echo "🐳 $@"
+-	@test -z "$$(go vet ${PACKAGES} 2>&1 | grep -v 'constant [0-9]* not a string in call to Errorf' | egrep -v '(timestamp_test.go|duration_test.go|exit status 1)' | tee /dev/stderr)"
++	@test -z "$$($(GO) vet ${PACKAGES} 2>&1 | grep -v 'constant [0-9]* not a string in call to Errorf' | egrep -v '(timestamp_test.go|duration_test.go|exit status 1)' | tee /dev/stderr)"
+ 
+ misspell:
+ 	@echo "🐳 $@"

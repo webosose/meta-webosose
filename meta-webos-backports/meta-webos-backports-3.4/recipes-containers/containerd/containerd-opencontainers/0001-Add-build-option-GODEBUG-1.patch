@@ -1,0 +1,32 @@
+From 84874e47aa2025b8e73df0286c44f3b8a1d9fdb2 Mon Sep 17 00:00:00 2001
+From: Hongxu Jia <hongxu.jia@windriver.com>
+Date: Mon, 2 Sep 2019 16:20:07 +0800
+Subject: [PATCH] Add build option "GODEBUG=1"
+
+Make will generate GDB friendly binary with this build option.
+
+Signed-off-by: Hui Zhu <teawater@hyper.sh>
+
+Upstream-Status: Backport [c5a0c7f491b435e4eb45972903b00e2d8ed46495]
+
+Partly backport and refresh to v1.2.7
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ src/import/Makefile | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+Index: git/src/import/Makefile
+===================================================================
+--- git.orig/src/import/Makefile	2020-10-12 08:09:41.638977052 -0700
++++ git/src/import/Makefile	2020-10-12 08:10:49.783074373 -0700
+@@ -72,6 +72,10 @@
+ COMMANDS=ctr containerd containerd-stress
+ MANPAGES=ctr.8 containerd.8 containerd-config.8 containerd-config.toml.5
+ 
++ifndef GODEBUG
++   EXTRA_LDFLAGS += -s -w
++endif
++
+ ifdef BUILDTAGS
+     GO_BUILDTAGS = ${BUILDTAGS}
+ endif
