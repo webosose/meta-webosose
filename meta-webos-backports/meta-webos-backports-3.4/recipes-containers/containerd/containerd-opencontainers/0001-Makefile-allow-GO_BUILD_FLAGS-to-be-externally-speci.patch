@@ -1,0 +1,38 @@
+From 474b93f8f643651144304a6971ef476add7f06f8 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Tue, 25 May 2021 12:49:41 -0400
+Subject: [PATCH] Makefile: allow GO_BUILD_FLAGS to be externally specified
+
+Since our oe-core go infrastructure insists on both -pie and static
+builds (for the most part), and that is not recommended by many
+packages, we end up with errors like:
+
+  cannot find package runtime/cgo (using -importcfg)
+          ...
+         recipe-sysroot-native/usr/lib/aarch64-poky-linux/go/pkg/tool/linux_amd64/link:
+         cannot open file : open : no such file or directory
+
+Upstream-Status: Inappropriate: specific to OE go configuration and build
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git git.orig/src/import/Makefile  git.orig/src/import/Makefile
+index c61418e60..54a10eb42 100644
+--- git.orig/src/import/Makefile
++++ git.orig/src/import/Makefile
+@@ -112,7 +112,8 @@ endif
+ GOPATHS=$(shell echo ${GOPATH} | tr ":" "\n" | tr ";" "\n")
+ 
+ TESTFLAGS_RACE=
+-GO_BUILD_FLAGS=
++# allow flags to be exported and picked up.
++# GO_BUILD_FLAGS=
+ # See Golang issue re: '-trimpath': https://github.com/golang/go/issues/13809
+ GO_GCFLAGS=$(shell				\
+ 	set -- ${GOPATHS};			\
+-- 
+2.19.1
+

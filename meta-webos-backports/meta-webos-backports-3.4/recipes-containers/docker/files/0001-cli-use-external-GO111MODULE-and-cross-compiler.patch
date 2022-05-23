@@ -1,0 +1,27 @@
+From 650c882d3c53db118b01dd5e15fa1bc0ddaa36f1 Mon Sep 17 00:00:00 2001
+From: Bruce Ashfield <bruce.ashfield@gmail.com>
+Date: Thu, 15 Apr 2021 11:28:05 -0400
+Subject: [PATCH] cli: use external GO111MODULE and cross compiler
+
+Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
+---
+ git/cli/scripts/build/binary | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git git/cli/scripts/build/binary git/cli/scripts/build/binary
+index e4c5e12a6b..7c47b75c2f 100755
+--- git/cli/scripts/build/binary
++++ git/cli/scripts/build/binary
+@@ -73,8 +73,7 @@ fi
+ 
+ echo "Building $GO_LINKMODE $(basename "${TARGET}")"
+ 
+-export GO111MODULE=auto
+ 
+-go build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
++${GO} build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
+ 
+ ln -sf "$(basename "${TARGET}")" "$(dirname "${TARGET}")/docker"
+-- 
+2.19.1
+
