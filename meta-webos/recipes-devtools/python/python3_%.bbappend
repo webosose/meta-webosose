@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2020 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos1"
+EXTENDPRAUTO:append = "webos2"
 
 # We need to revert changes from
 #
@@ -20,6 +20,7 @@ RDEPENDS:${PN}-ptest:remove:libc-glibc = " \
 "
 
 # ERROR: python3-3.8.1-r0 do_package_qa: QA Issue: /usr/lib/python3.8/test/ziptestdata/header.sh contained in package python3-tests requires /bin/bash, but no providers found in RDEPENDS:python3-tests? [file-rdeps]
+# ERROR: lib32-python3-3.10.4-r0 do_package_qa: QA Issue: lib32-python3-tests rdepends on lib32-bash, but it isn't a build dependency, missing lib32-bash in DEPENDS or PACKAGECONFIG? [build-deps]
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-tests:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
-RDEPENDS:${PN}-tests:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+RDEPENDS:${PN}-tests:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash ${MLPREFIX}bash', '', d)}"
