@@ -43,8 +43,11 @@ QT_MODULE_BRANCH = "dev"
 SRCREV_qtmultimedia = "e22a4c82ee24d3d574a6be629e3049248cfba9d9"
 PV = "6.0.0"
 
+PR = "r1"
+
 SRC_URI += "\
     file://0001-Fix-build-error-for-qtmultimedia-dev-branch.patch \
+    file://0001-Fix-build-issue-with-QPluginParsedMetaData.patch \
 "
 
 # this is already in the upstream recipe since:

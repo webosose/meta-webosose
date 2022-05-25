@@ -1,0 +1,30 @@
+From 7f604b901f58dda232781f2435668da8da9e4834 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Wed, 25 May 2022 11:31:41 +0900
+Subject: [PATCH] Fix build issue with QPluginParsedMetaData
+
+qtmultimedia/6.0.0-r0/git/src/multimedia/qmediapluginloader.cpp:154:56: error: conversion from 'QList<QPluginParsedMetaData>' to non-scalar type 'QList<QJsonObject>' requested
+  154 |     QList<QJsonObject> meta = m_factoryLoader->metaData();
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~^~
+
+Change-Id: Id3d1547edec549eb9ebf397fb0a342c629450252
+---
+ src/multimedia/qmediapluginloader.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/multimedia/qmediapluginloader.cpp b/src/multimedia/qmediapluginloader.cpp
+index 3e9e6cc21..2d741271e 100644
+--- a/src/multimedia/qmediapluginloader.cpp
++++ b/src/multimedia/qmediapluginloader.cpp
+@@ -151,9 +151,9 @@ void QMediaPluginLoader::loadMetadata()
+         return;
+     }
+ 
+-    QList<QJsonObject> meta = m_factoryLoader->metaData();
++    QList<QPluginParsedMetaData> meta = m_factoryLoader->metaData();
+     for (int i = 0; i < meta.size(); i++) {
+-        QJsonObject jsonobj = meta.at(i).value(QStringLiteral("MetaData")).toObject();
++        QJsonObject jsonobj = meta.at(i).value(QtPluginMetaDataKeys::MetaData).toMap().toJsonObject();
+         jsonobj.insert(QStringLiteral("index"), i);
+ #if !defined QT_NO_DEBUG
+         if (showDebug)
