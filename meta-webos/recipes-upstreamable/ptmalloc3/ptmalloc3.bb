@@ -3,10 +3,13 @@
 SECTION = "libs"
 DESCRIPTION = "Multi-thread malloc implementation"
 HOMEPAGE = "http://www.malloc.de/en/"
-LICENSE = "LGPLv2"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD;md5=3775480a712fc46a69647678acb234cb"
+LICENSE = "LGPLv2 & PD"
+LIC_FILES_CHKSUM = " \
+    file://COPYRIGHT;md5=5c8ad593874e48b27ded5334b58f1e0c \
+    file://README;beginline=25;endline=30;md5=8bf336b6ed939dc95c1c22ebc255a082 \
+"
 
-PR = "r4"
+PR = "r5"
 
 SRC_URI = "http://www.malloc.de/malloc/ptmalloc3-current.tar.gz \
            file://ptmalloc3-current-webos.patch "

@@ -3,7 +3,7 @@
 SUMMARY = "Open Source Full Database Encryption for SQLite"
 DESCRIPTION = "SQLCipher is an open source library that provides transparent, secure 256-bit AES encryption of SQLite database files."
 SECTION = "webos/libs"
-LICENSE = "BSD"
+LICENSE = "BSD-3-Clause"
 DEPENDS = "tcl-native openssl"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=7edde5c030f9654613438a18b9b56308"
 
