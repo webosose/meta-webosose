@@ -22,9 +22,6 @@ VIRTUAL-RUNTIME_tar = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_TAR
 PREFERRED_PROVIDER_jpeg = "libjpeg-turbo"
 PREFERRED_PROVIDER_jpeg-native = "libjpeg-turbo-native"
 
-# This line is required until all of the references to libjson are changed in metadata to json-c.
-PREFERRED_PROVIDER_libjson = "json-c"
-
 PREFERRED_PROVIDER_stat = "busybox"
 VIRTUAL-RUNTIME_stat = "busybox"
 VIRTUAL-RUNTIME_webos-ime = "imemanager"
