@@ -106,6 +106,8 @@ COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
+EXTRA_OEGN ?= ""
+
 do_configure() {
     export GYP_CHROMIUM_NO_ACTION=1
     export PATH="${S}/depot_tools:$PATH"
@@ -120,7 +122,7 @@ do_configure() {
     echo GN_ARGS is "${GN_ARGS}"
     echo BUILD_TARGETS are ${TARGET}
     cd ${S}/src
-    gn --script-executable=${PYTHON} gen ${OUT_DIR} --args="${GN_ARGS}"
+    gn --script-executable=${PYTHON} ${EXTRA_OEGN} gen ${OUT_DIR} --args="${GN_ARGS}"
 }
 
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
