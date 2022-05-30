@@ -24,16 +24,7 @@ GN_ARGS:append = "\
     use_pmlog=false \
 "
 
-do_configure() {
-    export GYP_CHROMIUM_NO_ACTION=1
-    export PATH="${S}/depot_tools:$PATH"
-
-    GN_ARGS="${GN_ARGS}"
-    echo GN_ARGS is ${GN_ARGS}
-    echo BUILD_TARGETS are ${TARGET}
-    cd ${S}/src
-    gn --script-executable=${PYTHON} --root=${S}/src --dotfile=mksnapshot.gn gen ${OUT_DIR} --args="${GN_ARGS}"
-}
+EXTRA_OEGN = "--root=${S}/src --dotfile=mksnapshot.gn"
 
 do_install() {
     echo "Installing ${PN}"
