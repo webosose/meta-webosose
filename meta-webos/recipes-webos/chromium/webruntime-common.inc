@@ -110,6 +110,12 @@ do_configure() {
     export GYP_CHROMIUM_NO_ACTION=1
     export PATH="${S}/depot_tools:$PATH"
 
+    # Prevent using this prebuilt libstdc++.so.6 which ends with GLIBCXX_3.4.28
+    # when linking with host's /usr/lib64/libicuuc.so.71 which might be linked
+    # against newer version (e.g. GLIBCXX_3.4.30 from gcc12) when linking
+    # gen-regexp-special-case, bytecode_builtins_list_generator
+    rm -f ${S}/src/third_party/llvm-build/Release+Asserts/lib/libstdc++.so.6
+
     GN_ARGS="${GN_ARGS}"
     echo GN_ARGS is "${GN_ARGS}"
     echo BUILD_TARGETS are ${TARGET}
