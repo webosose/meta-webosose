@@ -26,6 +26,10 @@ PREFERRED_PROVIDER_stat = "busybox"
 VIRTUAL-RUNTIME_stat = "busybox"
 VIRTUAL-RUNTIME_webos-ime = "imemanager"
 
+# Backport from gatesgarth https://git.openembedded.org/openembedded-core/commit/?h=gatesgarth&id=c23f9e80492e4b1d47c0ada8eae3decf736253c7
+# can be dropped after we upgrade to newer oe-core
+PREFERRED_PROVIDER_go-native = "go-native"
+
 VIRTUAL-RUNTIME_bluetooth_service = "com.webos.service.bluetooth2"
 
 # Options are: bluez4, bluez5. This will only be used if "bluetooth" appears in
