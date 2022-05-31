@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosvirt3"
+EXTENDPRAUTO:append = "webosvirt4"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-contrib:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
@@ -23,6 +23,7 @@ RRECOMMENDS:${PN}:append = " \
 do_install:append() {
     # don't start by default
     sed -i '/\[Install\]/,+1 d' ${D}${systemd_system_unitdir}/docker.service
+    sed -i '/\[Install\]/,+1 d' ${D}${systemd_system_unitdir}/docker.socket
 
     # create symlink for /etc/docker because of it's on the R/O partition.
     if ${@bb.utils.contains('IMAGE_FEATURES','read-only-rootfs','true','false',d)}; then
