@@ -34,6 +34,7 @@ WEBOS_IMAGE_BASE_INSTALL = '\
     '
 
 WEBOS_IMAGE_EXTRA_INSTALL ?= ""
+WEBOS_IMAGE_EXTRA_INSTALL += "${@bb.utils.contains('DISTRO_FEATURES', 'aiframework', 'packagegroup-webos-ml', '', d)}"
 
 IMAGE_INSTALL ?= "${WEBOS_IMAGE_BASE_INSTALL}"
 

@@ -1,0 +1,7 @@
+Name: libedgetpu c++ shared library
+Description: libedgetpu runtime library
+Version: @version@
+Requires:
+Libs: -L@libdir@ -ledgetpu
+Cflags: -I@includedir@
+

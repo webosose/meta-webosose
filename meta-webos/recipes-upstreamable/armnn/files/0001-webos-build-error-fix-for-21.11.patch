@@ -1,0 +1,47 @@
+From bfed8b48c6934d9eb5c266b3e1a3969778f2cc07 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Wed, 23 Feb 2022 15:38:15 +0900
+Subject: [PATCH] webos build error fix for 21.11
+
+---
+ delegate/CMakeLists.txt              | 8 +++++---
+ src/armnnTfLiteParser/CMakeLists.txt | 3 ++-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/delegate/CMakeLists.txt b/delegate/CMakeLists.txt
+index bae1d31e7..ebaa368aa 100644
+--- a/delegate/CMakeLists.txt
++++ b/delegate/CMakeLists.txt
+@@ -71,10 +71,12 @@ endif()
+ target_link_libraries(armnnDelegate PUBLIC Armnn::Armnn)
+ 
+ ## Add TfLite dependency
+-find_package(TfLiteSrc REQUIRED MODULE)
+-find_package(TfLite REQUIRED MODULE)
++#find_package(TfLiteSrc REQUIRED MODULE)
++#find_package(TfLite REQUIRED MODULE)
++find_package(PkgConfig)
++pkg_check_modules(TfLite REQUIRED tensorflowlite)
+ 
+-target_link_libraries(armnnDelegate PUBLIC ${TfLite_LIB})
++target_link_libraries(armnnDelegate PUBLIC ${TfLite_LIBRARIES})
+ 
+ #  lpthread and ldl are not required for Android
+ if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL Android)
+diff --git a/src/armnnTfLiteParser/CMakeLists.txt b/src/armnnTfLiteParser/CMakeLists.txt
+index f9653b675..acac684b1 100755
+--- a/src/armnnTfLiteParser/CMakeLists.txt
++++ b/src/armnnTfLiteParser/CMakeLists.txt
+@@ -23,7 +23,8 @@ if(BUILD_TF_LITE_PARSER)
+     # using the armnn/delegate/cmake/Modules/FindTfLiteSrc.cmake to find the TfLite sources
+     # so that we can use the tensorflow/lite/version.h to determine which version of
+     # tensorflow lite we are compiling against
+-    find_package(TfLiteSrc REQUIRED MODULE)
++    #find_package(TfLiteSrc REQUIRED MODULE)
++    find_package(TfLite REQUIRED tensorflowlite)
+ 
+     # Various tflite header files are not warning clean
+     # We can't change compilation flags on header files directly, so we need to add them to an interface library first
+-- 
+2.17.1
+
