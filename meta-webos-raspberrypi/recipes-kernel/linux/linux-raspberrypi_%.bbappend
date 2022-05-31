@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi30"
+EXTENDPRAUTO:append = "webosrpi31"
 
 CMDLINE:append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 CMDLINE:remove:sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
