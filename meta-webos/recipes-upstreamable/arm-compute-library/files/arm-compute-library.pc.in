@@ -1,0 +1,7 @@
+Name: ARM ComputeLibrary
+Description: ARM ComputeLibrary c++ shared library
+Version: @version@
+Requires:
+Libs: -L@libdir@ -larm_compute -larm_compute_core -larm_compute_graph
+Cflags: -I@includedir@ -I@includedir@/arm_compute
+

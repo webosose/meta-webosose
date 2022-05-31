@@ -1,0 +1,55 @@
+From bd5e3027dcee5d8abecf74e6da9c197bacce6f8d Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Tue, 16 Nov 2021 04:59:33 +0000
+Subject: [PATCH] arm: Fix arm.c build error
+
+---
+ gcc/config/arm/arm.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
+index 71b42ae24..73f6ea3da 100644
+--- a/gcc/config/arm/arm.c
++++ b/gcc/config/arm/arm.c
+@@ -3113,6 +3113,7 @@ arm_option_override_internal (struct gcc_options *opts,
+ }
+ 
+ static sbitmap isa_all_fpubits;
++static sbitmap isa_all_fpbits;
+ static sbitmap isa_quirkbits;
+ 
+ /* Configure a build target TARGET from the user-specified options OPTS and
+@@ -3181,6 +3182,11 @@ arm_configure_build_target (struct arm_build_target *target,
+ 	  /* Ignore (for now) any bits that might be set by -mfpu.  */
+ 	  bitmap_and_compl (isa_delta, isa_delta, isa_all_fpubits);
+ 
++      /* And if the target ISA lacks floating point, ignore any
++         extensions that depend on that.  */
++      if (!bitmap_bit_p (target->isa, isa_bit_vfpv2))
++        bitmap_and_compl (isa_delta, isa_delta, isa_all_fpbits);
++
+ 	  if (!bitmap_empty_p (isa_delta))
+ 	    {
+ 	      if (warn_compatible)
+@@ -3371,6 +3377,8 @@ arm_option_override (void)
+ {
+   static const enum isa_feature fpu_bitlist[]
+     = { ISA_ALL_FPU_INTERNAL, isa_nobit };
++  static const enum isa_feature fp_bitlist[]
++    = { ISA_ALL_FP, isa_nobit };
+   static const enum isa_feature quirk_bitlist[] = { ISA_ALL_QUIRKS, isa_nobit};
+   cl_target_option opts;
+ 
+@@ -3378,7 +3386,9 @@ arm_option_override (void)
+   arm_initialize_isa (isa_quirkbits, quirk_bitlist);
+ 
+   isa_all_fpubits = sbitmap_alloc (isa_num_bits);
++  isa_all_fpbits = sbitmap_alloc (isa_num_bits);
+   arm_initialize_isa (isa_all_fpubits, fpu_bitlist);
++  arm_initialize_isa (isa_all_fpbits, fp_bitlist);
+ 
+   arm_active_target.isa = sbitmap_alloc (isa_num_bits);
+ 
+-- 
+2.17.1
+

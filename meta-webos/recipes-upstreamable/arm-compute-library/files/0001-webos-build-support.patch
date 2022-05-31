@@ -1,0 +1,43 @@
+From 7391b4397e4e15504c549e801741b396e4a19c90 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Tue, 22 Feb 2022 16:06:36 +0900
+Subject: [PATCH] webos build support
+
+---
+ SConstruct | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/SConstruct b/SConstruct
+index 400228c71..295566a36 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -94,7 +94,7 @@ vars.AddVariables(
+                   allowed_values=("armv7a", "armv7a-hf", "arm64-v8a", "arm64-v8.2-a", "arm64-v8.2-a-sve", "arm64-v8.2-a-sve2", "x86_32", "x86_64",
+                                   "armv8a", "armv8.2-a", "armv8.2-a-sve", "armv8.6-a", "armv8.6-a-sve", "armv8.6-a-sve2", "armv8r64", "x86")),
+     EnumVariable("estate", "Execution State", "auto", allowed_values=("auto", "32", "64")),
+-    EnumVariable("os", "Target OS", "linux", allowed_values=("linux", "android", "tizen", "macos", "bare_metal")),
++    EnumVariable("os", "Target OS", "linux", allowed_values=("linux", "android", "tizen", "macos", "bare_metal", "webos")),
+     EnumVariable("build", "Build type", "cross_compile", allowed_values=("native", "cross_compile", "embed_only")),
+     BoolVariable("examples", "Build example programs", True),
+     BoolVariable("gemm_tuner", "Build gemm_tuner programs", True),
+@@ -186,7 +186,7 @@ if env['os'] == 'bare_metal':
+          print("ERROR: OpenMP and C++11 threads not supported in bare_metal. Use cppthreads=0 openmp=0")
+          Exit(1)
+ 
+-if env['opencl'] and env['embed_kernels'] and env['compress_kernels'] and env['os'] not in ['android']:
++if env['opencl'] and env['embed_kernels'] and env['compress_kernels'] and env['os'] not in ['android', 'webos']:
+     print("Compressed kernels are supported only for android builds")
+     Exit(1)
+ 
+@@ -252,7 +252,7 @@ if 'v7a' in env['estate'] and env['estate'] == '64':
+ prefix = ""
+ if 'v7a' in env['arch']:
+     env.Append(CXXFLAGS = ['-march=armv7-a', '-mthumb', '-mfpu=neon'])
+-    if (env['os'] == 'android' or env['os'] == 'tizen') and not 'hf' in env['arch']:
++    if (env['os'] == 'android' or env['os'] == 'tizen' or env['os'] == 'webos') and not 'hf' in env['arch']:
+         env.Append(CXXFLAGS = ['-mfloat-abi=softfp'])
+     else:
+         env.Append(CXXFLAGS = ['-mfloat-abi=hard'])
+-- 
+2.17.1
+

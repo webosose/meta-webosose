@@ -1,0 +1,40 @@
+diff --git a/delegate/src/armnn_delegate.cpp b/delegate/src/armnn_delegate.cpp
+index 0069b4fe0..54c9ce462 100644
+--- a/delegate/src/armnn_delegate.cpp
++++ b/delegate/src/armnn_delegate.cpp
+@@ -198,14 +198,23 @@ TfLiteIntArray* Delegate::IdentifyOperatorsToDelegate(TfLiteContext* tfLiteConte
+             continue;
+         }
+ 
+-        if (ArmnnSubgraph::VisitNode(
+-                   delegateData, tfLiteContext, tfLiteRegistration, tfLiteNode, nodeIndex) != kTfLiteOk)
++        try
+         {
+-            // node is not supported by ArmNN
++            if (ArmnnSubgraph::VisitNode(
++                       delegateData, tfLiteContext, tfLiteRegistration, tfLiteNode, nodeIndex) != kTfLiteOk)
++            {
++                // node is not supported by ArmNN
++                continue;
++            }
++
++            nodesToDelegate->data[nodesToDelegate->size++] = nodeIndex;
++        }
++        catch (const armnn::Exception& error)
++        {
++            TFLITE_LOG_PROD(tflite::TFLITE_LOG_ERROR,
++                            "ArmnnException: Skip this node! %s.", error.what());
+             continue;
+         }
+-
+-        nodesToDelegate->data[nodesToDelegate->size++] = nodeIndex;
+     }
+ 
+     std::sort(&nodesToDelegate->data[0], &nodesToDelegate->data[nodesToDelegate->size]);
+@@ -941,4 +950,4 @@ TfLiteStatus ArmnnSubgraph::VisitNode(DelegateData& delegateData,
+     }
+ }
+ 
+-} // armnnDelegate namespace
+\ No newline at end of file
++} // armnnDelegate namespace

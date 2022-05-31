@@ -1,0 +1,39 @@
+From dd3130a64c88faab57a2613861b1f689aa444a30 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Wed, 27 Oct 2021 04:13:32 +0000
+Subject: [PATCH] remove label_image benchmark_model exclude option
+
+---
+ tensorflow/lite/examples/label_image/CMakeLists.txt | 2 +-
+ tensorflow/lite/tools/benchmark/CMakeLists.txt      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tensorflow/lite/examples/label_image/CMakeLists.txt b/tensorflow/lite/examples/label_image/CMakeLists.txt
+index 1bf259aad10..1e6cf0f240f 100644
+--- a/tensorflow/lite/examples/label_image/CMakeLists.txt
++++ b/tensorflow/lite/examples/label_image/CMakeLists.txt
+@@ -56,7 +56,7 @@ if(TFLITE_ENABLE_GPU)
+ endif()  # TFLITE_ENABLE_GPU
+ 
+ add_executable(label_image
+-  EXCLUDE_FROM_ALL
++#  EXCLUDE_FROM_ALL
+   ${TFLITE_LABEL_IMAGE_SRCS}
+ )
+ target_compile_options(label_image
+diff --git a/tensorflow/lite/tools/benchmark/CMakeLists.txt b/tensorflow/lite/tools/benchmark/CMakeLists.txt
+index 5de9ab30086..cdddc596367 100644
+--- a/tensorflow/lite/tools/benchmark/CMakeLists.txt
++++ b/tensorflow/lite/tools/benchmark/CMakeLists.txt
+@@ -72,7 +72,7 @@ if(TFLITE_ENABLE_GPU)
+ endif()  # TFLITE_ENABLE_GPU
+ 
+ add_executable(benchmark_model
+-  EXCLUDE_FROM_ALL
++#  EXCLUDE_FROM_ALL
+   ${TFLITE_BENCHMARK_SRCS}
+ )
+ target_compile_options(benchmark_model
+-- 
+2.17.1
+

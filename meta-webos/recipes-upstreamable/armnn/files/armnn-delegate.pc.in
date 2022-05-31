@@ -1,0 +1,6 @@
+Name: ArmNN TfLite Delegate Library
+Description: ArmNN TfLite Delgate c++ shared library
+Version: @version@
+Requires:
+Libs: -L@libdir@ -larmnn -larmnnBasePipeServer -ltimelineDecoder -ltimelineDecoderJson -larmnnDelegate 
+Cflags: -I@includedir@ -I@includedir@/armnn
