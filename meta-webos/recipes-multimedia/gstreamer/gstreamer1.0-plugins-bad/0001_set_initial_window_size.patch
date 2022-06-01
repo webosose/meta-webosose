@@ -1,0 +1,17 @@
+--- a/ext/wayland/gstwaylandsink.c	2019-04-19 18:16:36.000000000 +0900
++++ b/ext/wayland/gstwaylandsink.c	2020-12-04 22:16:24.000000000 +0900
+@@ -700,6 +700,14 @@
+           &sink->video_info, sink->fullscreen, &sink->render_lock);
+       g_signal_connect_object (sink->window, "closed",
+           G_CALLBACK (on_window_closed), sink, 0);
++    } else {
++      gint width;
++      /* set the initial size to be the same as the reported video size
++      * since the app does not pass the size even if it set window handle */
++      width = gst_util_uint64_scale_int_round (sink->video_info.width,
++        sink->video_info.par_n, sink->video_info.par_d);
++      gst_wl_window_set_render_rectangle (sink->window, 0, 0, width,
++        sink->video_info.height);
+     }
+   }
+ 

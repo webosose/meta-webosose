@@ -1,0 +1,49 @@
+--- a/ext/wayland/gstwaylandsink.c	2019-04-19 18:16:36.000000000 +0900
++++ b/ext/wayland/gstwaylandsink.c	2020-12-07 22:34:22.000000000 +0900
+@@ -541,6 +541,34 @@
+ }
+ 
+ static gboolean
++gst_wayland_sink_post_video_info_message (GstWaylandSink * sink)
++{
++  g_return_val_if_fail (sink != NULL, FALSE);
++  g_return_val_if_fail (&sink->video_info != NULL, FALSE);
++
++  /* get video information */
++  gint width  = GST_VIDEO_INFO_WIDTH(&sink->video_info);
++  gint height = GST_VIDEO_INFO_HEIGHT(&sink->video_info);
++  gint fps_n  = GST_VIDEO_INFO_FPS_N(&sink->video_info);
++  gint fps_d  = GST_VIDEO_INFO_FPS_D(&sink->video_info);
++  gint par_n  = GST_VIDEO_INFO_PAR_N(&sink->video_info);
++  gint par_d  = GST_VIDEO_INFO_PAR_D(&sink->video_info);
++  GST_DEBUG_OBJECT (sink, "video-info width[%d] height[%d] framerate[%d/%d] pixel-aspect-ratio[%d/%d]",
++      width, height, fps_n, fps_d, par_n, par_d);
++
++  /* post an application message as video-info */
++  gboolean ret = gst_element_post_message (GST_ELEMENT_CAST (sink),
++                     gst_message_new_application (GST_OBJECT (sink),
++                         gst_structure_new ("video-info",
++                             "width", G_TYPE_INT, width,
++                             "height", G_TYPE_INT, height,
++                             "framerate", GST_TYPE_FRACTION, fps_n, fps_d,
++                             "pixel-aspect-ratio", GST_TYPE_FRACTION, par_n, par_d,
++                             NULL)));
++  return ret;
++}
++
++static gboolean
+ gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
+ {
+   GstWaylandSink *sink;
+@@ -558,6 +586,11 @@
+   format = GST_VIDEO_INFO_FORMAT (&sink->video_info);
+   sink->video_info_changed = TRUE;
+ 
++  GST_INFO_OBJECT (sink, "Post video-info message to application!");
++  if (!gst_wayland_sink_post_video_info_message(sink)) {
++    GST_ERROR_OBJECT (sink, "Failed to post video-fino message to application!");
++  }
++
+   /* create a new pool for the new caps */
+   if (sink->pool)
+     gst_object_unref (sink->pool);
