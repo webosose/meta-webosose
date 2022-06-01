@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit"
 RDEPENDS:${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
-WEBOS_VERSION = "1.0.0-31_17e38d808d4a0e6f6aa819f3e20dc5bd1fa9a512"
+WEBOS_VERSION = "1.0.0-32_2d41ac17e6a120dc8c24121583de864546b3f407"
 PR = "r5"
 
 inherit webos_component
