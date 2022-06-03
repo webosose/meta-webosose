@@ -1,4 +1,4 @@
-From 4eb72551f63ecc71c753e4e30915315f846915a2 Mon Sep 17 00:00:00 2001
+From abbc69ffeb861c52fa73f611b6a387b8ea3d63d4 Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Thu, 29 Jul 2021 11:00:31 +0100
 Subject: [PATCH] arm: reorder assembler architecture directives [PR101723]
@@ -61,6 +61,7 @@ gcc/testsuite/ChangeLog:
 	* gcc.target/arm/mve/intrinsics/mve_fpu1.c: Convert to dg-do assemble.
 	Add a non-no-op function body.
 	* gcc.target/arm/mve/intrinsics/mve_fpu2.c: Likewise.
+	* gcc.target/arm/pr98636.c (dg-options): Add -mfloat-abi=softfp.
 	* gcc.target/arm/attr-neon.c: Tighten scan-assembler tests.
 	* gcc.target/arm/attr-neon2.c: Use -Ofast, convert test to use
 	check-function-bodies.
@@ -78,21 +79,22 @@ Upstream-Status: Backport [releases/gcc-9 (9.5.0) 04c568961e793a1d7ad86248b4ca92
  gcc/testsuite/gcc.target/arm/attr-neon.c      |   9 +-
  gcc/testsuite/gcc.target/arm/attr-neon2.c     |  35 ++--
  gcc/testsuite/gcc.target/arm/attr-neon3.c     |  48 +++--
- .../arm/cortex-m55-nofp-flag-hard.c           |   4 +-
- .../arm/cortex-m55-nofp-flag-softfp.c         |   4 +-
- .../arm/cortex-m55-nofp-nomve-flag-softfp.c   |   4 +-
+ .../arm/cortex-m55-nofp-flag-hard.c           |   2 +-
+ .../arm/cortex-m55-nofp-flag-softfp.c         |   2 +-
+ .../arm/cortex-m55-nofp-nomve-flag-softfp.c   |   2 +-
  .../gcc.target/arm/mve/intrinsics/mve_fpu1.c  |   5 +-
  .../gcc.target/arm/mve/intrinsics/mve_fpu2.c  |   5 +-
  gcc/testsuite/gcc.target/arm/pr69245.c        |   6 +-
+ gcc/testsuite/gcc.target/arm/pr98636.c        |   3 +-
  .../gcc.target/arm/pragma_fpu_attribute.c     |   7 +-
  .../gcc.target/arm/pragma_fpu_attribute_2.c   |   7 +-
- 13 files changed, 170 insertions(+), 151 deletions(-)
+ 14 files changed, 169 insertions(+), 149 deletions(-)
 
 diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
-index db0b93f6bb7..660d2b2f4cd 100644
+index ab4b6acf5ea..249995a6bca 100644
 --- a/gcc/config/arm/arm-cpus.in
 +++ b/gcc/config/arm/arm-cpus.in
-@@ -1078,6 +1078,7 @@ begin cpu generic-armv7-a
+@@ -1080,6 +1080,7 @@ begin cpu generic-armv7-a
   cname genericv7a
   tune flags LDSCHED
   architecture armv7-a+fp
@@ -101,7 +103,7 @@ index db0b93f6bb7..660d2b2f4cd 100644
   option sec add sec
   option vfpv3-d16 add VFPv3 FP_DBL
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index c151fdc84e4..60e29b233af 100644
+index a238118bd77..e7b92a725c6 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
 @@ -77,10 +77,6 @@
@@ -115,15 +117,15 @@ index c151fdc84e4..60e29b233af 100644
  void (*arm_lang_output_object_attributes_hook)(void);
  
  struct four_ints
-@@ -332,6 +328,7 @@ static HOST_WIDE_INT arm_constant_alignment (const_tree, HOST_WIDE_INT);
- static rtx_insn * thumb1_md_asm_adjust (vec<rtx> &, vec<rtx> &,
- 					vec<const char *> &, vec<rtx> &,
- 					HARD_REG_SET &);
+@@ -332,6 +328,7 @@ static rtx_insn *thumb1_md_asm_adjust (vec<rtx> &, vec<rtx> &,
+ 				       vec<machine_mode> &,
+ 				       vec<const char *> &, vec<rtx> &,
+ 				       HARD_REG_SET &);
 +static const char *arm_identify_fpu_from_isa (sbitmap);
  
  /* Table of machine attributes.  */
  static const struct attribute_spec arm_attribute_table[] =
-@@ -3406,6 +3403,11 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3409,6 +3406,11 @@ arm_configure_build_target (struct arm_build_target *target,
        bitmap_ior (target->isa, target->isa, fpu_bits);
      }
  
@@ -135,7 +137,7 @@ index c151fdc84e4..60e29b233af 100644
    /* There may be implied bits which we still need to enable. These are
       non-named features which are needed to complete other sets of features,
       but cannot be enabled from arm-cpus.in due to being shared between
-@@ -28039,20 +28041,65 @@ arm_print_tune_info (void)
+@@ -28090,20 +28092,65 @@ arm_print_tune_info (void)
  	       (int) current_tune->sched_autopref);
  }
  
@@ -205,7 +207,7 @@ index c151fdc84e4..60e29b233af 100644
    if (!arch->common.extensions)
      return;
  
-@@ -28078,13 +28125,12 @@ arm_print_asm_arch_directives ()
+@@ -28129,13 +28176,12 @@ arm_print_asm_arch_directives ()
  		  && !TARGET_HAVE_MVE_FLOAT))
  	    continue;
  
@@ -224,7 +226,7 @@ index c151fdc84e4..60e29b233af 100644
  	}
      }
  }
-@@ -28094,46 +28140,23 @@ arm_file_start (void)
+@@ -28145,46 +28191,23 @@ arm_file_start (void)
  {
    int val;
  
@@ -280,7 +282,7 @@ index c151fdc84e4..60e29b233af 100644
  	}
  
        if (print_tune_info)
-@@ -28201,6 +28224,13 @@ arm_file_end (void)
+@@ -28249,6 +28272,13 @@ arm_file_end (void)
  {
    int regno;
  
@@ -294,7 +296,7 @@ index c151fdc84e4..60e29b233af 100644
    if (NEED_INDICATE_EXEC_STACK)
      /* Add .note.GNU-stack.  */
      file_end_indicate_exec_stack ();
-@@ -32677,58 +32707,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+@@ -33140,58 +33170,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
      targ_options = TREE_TARGET_OPTION (target_option_current_node);
    gcc_assert (targ_options);
  
@@ -354,7 +356,7 @@ index c151fdc84e4..60e29b233af 100644
  
    fprintf (stream, "\t.syntax unified\n");
  
-@@ -32746,17 +32725,6 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+@@ -33209,17 +33188,6 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
    else
      fprintf (stream, "\t.arm\n");
  
@@ -536,14 +538,13 @@ index 17e429ad739..0fbce6e4cd4 100644
 +/* { dg-final { scan-assembler "\.fpu\\s+crypto-neon-fp-armv8\n" } } */
 +/* { dg-final { check-function-bodies "**" "" } } */
 diff --git a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c
-index da1cc25e83b..e0fb307ac30 100644
+index 6a92dedcc59..e0fb307ac30 100644
 --- a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c
 +++ b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c
 @@ -1,12 +1,12 @@
  /* { dg-do assemble } */
  /* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
--/* { dg-additional-options "-mcpu=cortex-m55+nofp -mfloat-abi=hard -mfpu=auto --save-temps" } */
-+/* { dg-additional-options "-mcpu=cortex-m55+nofp -mthumb -mfloat-abi=hard -mfpu=auto --save-temps" } */
+ /* { dg-additional-options "-mcpu=cortex-m55+nofp -mthumb -mfloat-abi=hard -mfpu=auto --save-temps" } */
 +/* { dg-final { scan-assembler "\.fpu softvfp" } } */
  /* { dg-final { scan-assembler "\.arch_extension mve" } } */
  /* { dg-final { scan-assembler "\.arch_extension dsp" } } */
@@ -555,14 +556,13 @@ index da1cc25e83b..e0fb307ac30 100644
  int
  f ()
 diff --git a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c
-index 0a4fb14bd9b..50645e8cd0f 100644
+index 25e80e9bd64..50645e8cd0f 100644
 --- a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c
 +++ b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c
 @@ -1,12 +1,12 @@
  /* { dg-do assemble } */
  /* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
--/* { dg-additional-options "-mcpu=cortex-m55+nofp -mfloat-abi=softfp -mfpu=auto --save-temps" } */
-+/* { dg-additional-options "-mcpu=cortex-m55+nofp -mthumb -mfloat-abi=softfp -mfpu=auto --save-temps" } */
+ /* { dg-additional-options "-mcpu=cortex-m55+nofp -mthumb -mfloat-abi=softfp -mfpu=auto --save-temps" } */
 +/* { dg-final { scan-assembler "\.fpu softvfp" } } */
  /* { dg-final { scan-assembler "\.arch_extension mve" } } */
  /* { dg-final { scan-assembler "\.arch_extension dsp" } } */
@@ -574,14 +574,13 @@ index 0a4fb14bd9b..50645e8cd0f 100644
  int
  f ()
 diff --git a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c
-index 2ae7f34d456..948f622633c 100644
+index 38042cc490c..948f622633c 100644
 --- a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c
 +++ b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c
 @@ -1,12 +1,12 @@
  /* { dg-do assemble } */
  /* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
--/* { dg-additional-options "-mcpu=cortex-m55+nomve+nofp -mfloat-abi=softfp -mfpu=auto --save-temps" } */
-+/* { dg-additional-options "-mcpu=cortex-m55+nomve+nofp -mthumb -mfloat-abi=softfp -mfpu=auto --save-temps" } */
+ /* { dg-additional-options "-mcpu=cortex-m55+nomve+nofp -mthumb -mfloat-abi=softfp -mfpu=auto --save-temps" } */
 +/* { dg-final { scan-assembler "\.fpu softvfp" } } */
  /* { dg-final { scan-assembler-not "\.arch_extension mve" } } */
  /* { dg-final { scan-assembler-not "\.arch_extension mve.fp" } } */
@@ -644,6 +643,18 @@ index bd505187728..34b97a22e15 100644
 +   least once.  */
 +/* { dg-final { scan-assembler "\.fpu\s+vfp\n" } } */
 +/* { dg-final { scan-assembler "\.fpu\s+neon-vfpv4\n" } } */
+diff --git a/gcc/testsuite/gcc.target/arm/pr98636.c b/gcc/testsuite/gcc.target/arm/pr98636.c
+index c4d235cb43d..559f9a26c1e 100644
+--- a/gcc/testsuite/gcc.target/arm/pr98636.c
++++ b/gcc/testsuite/gcc.target/arm/pr98636.c
+@@ -1,5 +1,6 @@
+ /* { dg-do compile } */
+-/* { dg-options "-mfp16-format=alternative" } */
++/* { dg-require-effective-target arm_softfp_ok } */
++/* { dg-options "-mfp16-format=alternative -mfloat-abi=softfp" } */
+ 
+ #pragma GCC push_options
+ # pragma GCC target ("arch=armv8.2-a+fp16") /* { dg-error "selected fp16 options are incompatible" } */
 diff --git a/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute.c b/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute.c
 index 174be85f3f7..7e63cf53013 100644
 --- a/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute.c

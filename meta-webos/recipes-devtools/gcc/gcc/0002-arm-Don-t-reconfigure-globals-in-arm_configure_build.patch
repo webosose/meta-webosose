@@ -1,4 +1,4 @@
-From 02511e81cf73cf05ffafade72d25d0fd32970311 Mon Sep 17 00:00:00 2001
+From 7a628d707bdbb37eece4ca77b15c8cbca6d0520c Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Tue, 27 Jul 2021 15:44:57 +0100
 Subject: [PATCH] arm: Don't reconfigure globals in arm_configure_build_target
@@ -35,7 +35,7 @@ Upstream-Status: Backport [releases/gcc-9 (9.5.0) 9a48ce5c29158af88c0b98a97f5336
  2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/config/arm/arm-c.c b/gcc/config/arm/arm-c.c
-index 17b05567101..36b12215243 100644
+index ae2139c4bfa..cc7901bca8d 100644
 --- a/gcc/config/arm/arm-c.c
 +++ b/gcc/config/arm/arm-c.c
 @@ -409,6 +409,7 @@ arm_pragma_target_parse (tree args, tree pop_target)
@@ -47,18 +47,18 @@ index 17b05567101..36b12215243 100644
  
    /* Update macros if target_node changes. The global state will be restored
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index 95ffb966cad..c151fdc84e4 100644
+index daafeb34683..a238118bd77 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
-@@ -3058,6 +3058,7 @@ arm_option_restore (struct gcc_options *opts, struct cl_target_option *ptr)
-   opts->x_arm_cpu_string = ptr->x_arm_cpu_string;
-   opts->x_arm_tune_string = ptr->x_arm_tune_string;
+@@ -3056,6 +3056,7 @@ arm_option_restore (struct gcc_options */* opts */,
+ 		    struct cl_target_option *ptr)
+ {
    arm_configure_build_target (&arm_active_target, ptr, false);
 +  arm_option_reconfigure_globals ();
  }
  
  /* Reset options between modes that the user has specified.  */
-@@ -3436,7 +3437,6 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3439,7 +3440,6 @@ arm_configure_build_target (struct arm_build_target *target,
    target->tune_flags = tune_data->tune_flags;
    target->tune = tune_data->tune;
    target->tune_core = tune_data->scheduler;
