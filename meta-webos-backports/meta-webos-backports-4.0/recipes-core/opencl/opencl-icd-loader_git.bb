@@ -8,7 +8,7 @@ inherit pkgconfig cmake
 
 DEPENDS += "opencl-headers"
 
-#PROVIDES = "virtual/opencl-icd"
+PROVIDES = "virtual/opencl-icd"
 
 S = "${WORKDIR}/git"
 PV = "v2022.01.04+git${SRCPV}"
@@ -51,10 +51,3 @@ FILES:libicdlog = "${libdir}/libIcdLog.so"
 FILES:libicdlog-dbg = "${libdir}/.debug/libIcdLog.so"
 
 RDEPENDS:${PN} = "libicdlog"
-
-FILES:${PN}-dev = ""
-
-INSANE_SKIP:${PN} = "dev-so"
-INSANE_SKIP:${PN}-dev += "dev-elf"
-
-FILES:${PN} += "${libdir}/libOpenCL*"

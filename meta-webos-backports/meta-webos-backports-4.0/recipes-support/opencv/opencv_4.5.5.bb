@@ -52,7 +52,6 @@ SRC_URI = "git://github.com/opencv/opencv.git;name=opencv;branch=master;protocol
            file://download.patch \
            file://0001-Make-ts-module-external.patch \
            file://0001-core-vsx-update-vec_absd-workaround-condition.patch \
-           file://opencv4.pc \
            "
 SRC_URI:append:riscv64 = " file://0001-Use-Os-to-compile-tinyxml2.cpp.patch;patchdir=../contrib"
 
@@ -106,10 +105,8 @@ EXTRA_OECMAKE:append:x86 = " -DX86=ON"
 # https://github.com/opencv/opencv/issues/21597
 EXTRA_OECMAKE:remove:x86 = " -DENABLE_SSE41=1 -DENABLE_SSE42=1"
 
-PACKAGECONFIG ??= "gapi eigen jpeg png tiff v4l libv4l gstreamer opencl gphoto2 dnn text \
+PACKAGECONFIG ??= "gapi python3 eigen jpeg png tiff v4l libv4l gstreamer samples tbb gphoto2 \
     ${@bb.utils.contains("DISTRO_FEATURES", "x11", "gtk", "", d)} \
-    ${@bb.utils.contains("DISTRO_FEATURES", "ml-library-size-reduction", "", "samples", d)} \
-    ${@bb.utils.contains("LICENSE_FLAGS_WHITELIST", "commercial", "libav", "", d)} \
     "
 
 # TBB does not build for powerpc so disable that package config
@@ -132,7 +129,7 @@ PACKAGECONFIG[java] = "-DJAVA_INCLUDE_PATH=${JAVA_HOME}/include -DJAVA_INCLUDE_P
 PACKAGECONFIG[jpeg] = "-DWITH_JPEG=ON,-DWITH_JPEG=OFF,jpeg,"
 PACKAGECONFIG[libav] = "-DWITH_FFMPEG=ON,-DWITH_FFMPEG=OFF,libav,"
 PACKAGECONFIG[libv4l] = "-DWITH_LIBV4L=ON,-DWITH_LIBV4L=OFF,v4l-utils,"
-PACKAGECONFIG[opencl] = "-DWITH_OPENCL=ON,-DWITH_OPENCL=OFF,opencl-headers opencl-icd-loader,"
+PACKAGECONFIG[opencl] = "-DWITH_OPENCL=ON,-DWITH_OPENCL=OFF,opencl-headers virtual/opencl-icd,"
 PACKAGECONFIG[oracle-java] = "-DJAVA_INCLUDE_PATH=${ORACLE_JAVA_HOME}/include -DJAVA_INCLUDE_PATH2=${ORACLE_JAVA_HOME}/include/linux -DJAVA_AWT_INCLUDE_PATH=${ORACLE_JAVA_HOME}/include -DJAVA_AWT_LIBRARY=${ORACLE_JAVA_HOME}/lib/amd64/libjawt.so -DJAVA_JVM_LIBRARY=${ORACLE_JAVA_HOME}/lib/amd64/server/libjvm.so,,ant-native oracle-jse-jdk oracle-jse-jdk-native,"
 PACKAGECONFIG[png] = "-DWITH_PNG=ON,-DWITH_PNG=OFF,libpng,"
 PACKAGECONFIG[python2] = "-DPYTHON2_NUMPY_INCLUDE_DIRS:PATH=${STAGING_LIBDIR}/${PYTHON_DIR}/site-packages/numpy/core/include,,python-numpy,"
@@ -239,18 +236,5 @@ do_install:append() {
     # remove setup_vars_opencv4.sh as its content is confusing and useless
     if [ -f ${D}${bindir}/setup_vars_opencv4.sh ]; then
         rm -rf ${D}${bindir}/setup_vars_opencv4.sh
-    fi
-
-    # install pkgconfig file
-    install -d ${D}${libdir}/pkgconfig
-    install -m 0644 ${WORKDIR}/opencv4.pc ${D}${libdir}/pkgconfig/opencv4.pc
-
-    # remove openc-apps for size reduction(about 40MB over)
-    if ${@bb.utils.contains('DISTRO_FEATURES', 'ml-library-size-reduction', 'true', 'false', d)}; then
-        rm -rf ${D}/${bindir}/opencv_annotation
-        rm -rf ${D}/${bindir}/opencv_interactive-calibration
-        rm -rf ${D}/${bindir}/opencv_model_diagnostics
-        rm -rf ${D}/${bindir}/opencv_version
-        rm -rf ${D}/${bindir}/opencv_visualisation
     fi
 }

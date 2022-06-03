@@ -18,6 +18,6 @@ EXTRA_OECMAKE = " \
                   -DBUILD_EXAMPLES=OFF \
                   -DBUILD_TESTS=OFF \
                   "
+
 # Headers only so PN is empty
 RDEPENDS:${PN}-dev = ""
-
