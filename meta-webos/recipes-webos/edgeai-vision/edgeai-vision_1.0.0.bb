@@ -24,7 +24,7 @@ inherit webos_public_repo
 inherit webos_test_provider
 
 DEPENDS = " \
-    msgpack-c \
+    msgpack-cpp \
     rapidjson \
     flatbuffers \
     opencv \
