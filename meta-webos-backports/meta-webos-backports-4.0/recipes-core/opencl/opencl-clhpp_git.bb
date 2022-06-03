@@ -19,5 +19,5 @@ EXTRA_OECMAKE = " \
                   -DBUILD_TESTS=OFF \
                   "
 # Headers only so PN is empty
-RDEPENDS_${PN}-dev = ""
+RDEPENDS:${PN}-dev = ""
 
