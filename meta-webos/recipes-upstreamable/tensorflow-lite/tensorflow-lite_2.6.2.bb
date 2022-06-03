@@ -1,6 +1,6 @@
 # Copyright (c) 2022 LG Electronics, Inc.
 
-DESCRIPTION = "TensorFlow Lite CPP Library"
+SUMMARY = "TensorFlow Lite CPP Library"
 LICENSE = "Apache-2.0"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c7e17cca1ef4230861fb7868e96c387e"
@@ -9,10 +9,11 @@ BPV = "${@'.'.join(d.getVar('PV').split('.')[0:2])}"
 DPV = "${@'.'.join(d.getVar('PV').split('.')[0:3])}"
 
 # Since they tag off of something resembling ${PV}, use it.
-SRCREV = "v${PV}"
+# Matches v${PV}
+SRCREV = "c2363d6d025981c661f8cbecf4c73ca7fbf38caf"
 
 SRC_URI = " \
-    git://github.com/tensorflow/tensorflow.git;branch=r${BPV} \
+    git://github.com/tensorflow/tensorflow.git;branch=r${BPV};protocol=https \
     file://0001-remove-label_image-benchmark_model-exclude-option.patch \
     file://0002-enable-external-delegate-in-benchmarktool.patch \
     file://tensorflowlite.pc.in \

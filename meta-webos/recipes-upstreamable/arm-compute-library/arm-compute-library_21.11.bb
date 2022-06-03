@@ -4,7 +4,8 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=9598101cf48c5f479cfda9f3fc6fc566"
 
 SRCBRANCH = "master"
-SRCREV = "v${PV}"
+# Matches v${PV}
+SRCREV = "91ee4d0a9ef128b16936921470a0e3ffef347536"
 
 SRC_URI = " \
     git://github.com/ARM-software/ComputeLibrary.git;branch=${SRCBRANCH};protocol=https \
@@ -12,7 +13,7 @@ SRC_URI = " \
     file://arm-compute-library.pc.in \
 "
 
-PR ="r0"
+PR = "r0"
 
 S = "${WORKDIR}/git"
 

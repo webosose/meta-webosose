@@ -3,12 +3,14 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c7e17cca1ef4230861fb7868e96c387e"
 
 SRC_URI = " \
-    git://github.com/tensorflow/tensorflow.git;branch=r2.6;name=tensorflow \
-    git://github.com/ARM-software/armnn.git;branch=branches/armnn_21_11;name=armnn;subdir=${WORKDIR}/armnn;destsuffix=armnn \
+    git://github.com/tensorflow/tensorflow.git;branch=r2.6;name=tensorflow;protocol=https \
+    git://github.com/ARM-software/armnn.git;branch=branches/armnn_21_11;name=armnn;subdir=${WORKDIR}/armnn;destsuffix=armnn;protocol=https \
 "
 
-SRCREV_tensorflow = "v${PV}"
-SRCREV_armnn = "v21.11"
+# Matches v${PV}
+SRCREV_tensorflow = "c2363d6d025981c661f8cbecf4c73ca7fbf38caf"
+# Matches v21.11
+SRCREV_armnn = "5e9965cae1cc6162649910f423ebd86001fc1931"
 SRCREV_FORMAT = "tensorflow"
 
 DEPENDS = " \

@@ -17,8 +17,8 @@ SRC_URI = " \
     file://armnn-delegate.pc.in \
 "
 
-SRCREV = "v${PV}"
-#SRCREV = "5e9965cae1cc6162649910f423ebd86001fc1931"
+# Matches v${PV}
+SRCREV = "5e9965cae1cc6162649910f423ebd86001fc1931"
 
 PR = "r0"
 
