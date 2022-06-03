@@ -1,6 +1,6 @@
 # Copyright (c) 2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "smartscreen1"
+EXTENDPRAUTO:append = "webos2"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
