@@ -1,4 +1,4 @@
-From dd3130a64c88faab57a2613861b1f689aa444a30 Mon Sep 17 00:00:00 2001
+From 332e70dcc147a3a86548ed504037a78e06733027 Mon Sep 17 00:00:00 2001
 From: "kijoong.lee" <kijoong.lee@lge.com>
 Date: Wed, 27 Oct 2021 04:13:32 +0000
 Subject: [PATCH] remove label_image benchmark_model exclude option
@@ -34,6 +34,3 @@ index 5de9ab30086..cdddc596367 100644
    ${TFLITE_BENCHMARK_SRCS}
  )
  target_compile_options(benchmark_model
--- 
-2.17.1
-
