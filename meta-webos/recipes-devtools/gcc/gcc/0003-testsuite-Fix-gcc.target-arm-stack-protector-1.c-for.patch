@@ -1,8 +1,8 @@
-From 071cfcbc065569dd2384f03634f991afefa9fbea Mon Sep 17 00:00:00 2001
+From 4c9b3409418700f41920e6b148e354b5156384f1 Mon Sep 17 00:00:00 2001
 From: Christophe Lyon <christophe.lyon@linaro.org>
 Date: Wed, 12 Aug 2020 09:22:38 +0000
-Subject: [PATCH 0444/1466] testsuite: Fix gcc.target/arm/stack-protector-1.c
- for Cortex-M
+Subject: [PATCH] testsuite: Fix gcc.target/arm/stack-protector-1.c for
+ Cortex-M
 
 The stack-protector-1.c test fails when compiled for Cortex-M:
 - for Cortex-M0/M1, str r0, [sp #-8]! is not supported
@@ -22,6 +22,7 @@ value.
 	restrictions.
 
 (cherry picked from commit 6606fdc0aad85cbca1bb58e1b2ffe05611aabd7a)
+Upstream-Status: Backport [9.4.0 071cfcbc065569dd2384f03634f991afefa9fbea == 11.1.0 6606fdc0aad85cbca1bb58e1b2ffe05611aabd7a]
 ---
  gcc/testsuite/gcc.target/arm/stack-protector-1.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -48,6 +49,3 @@ index b03ea14c4e2..8d28b0a847c 100644
  	CHECK (r14)
  "	ldr	r1, [sp, #4]\n"
  	CHECK (r1)
--- 
-2.17.1
-

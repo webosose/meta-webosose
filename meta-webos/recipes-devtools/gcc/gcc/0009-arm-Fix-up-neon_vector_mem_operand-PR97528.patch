@@ -1,7 +1,7 @@
-From 320d8676c770124a4baffab2d9e82224c74964ed Mon Sep 17 00:00:00 2001
+From 20fac686312b1be21181abfe74471a3ee7416b16 Mon Sep 17 00:00:00 2001
 From: Jakub Jelinek <jakub@redhat.com>
 Date: Fri, 20 Nov 2020 12:26:58 +0100
-Subject: [PATCH 0858/1466] arm: Fix up neon_vector_mem_operand [PR97528]
+Subject: [PATCH] arm: Fix up neon_vector_mem_operand [PR97528]
 
 The documentation for POST_MODIFY says:
    Currently, the compiler can only handle second operands of the
@@ -28,6 +28,7 @@ the POST_MODIFY is in the form it should be.
 	* gcc.target/arm/pr97528.c: New test.
 
 (cherry picked from commit 410b8f6f41920dad200cd709f9f3de8b840a995c)
+Upstream-Status: Backport [9.4.0 320d8676c770124a4baffab2d9e82224c74964ed == 11.1.0 410b8f6f41920dad200cd709f9f3de8b840a995c]
 ---
  gcc/config/arm/arm.c                   |  4 +++-
  gcc/testsuite/gcc.target/arm/pr97528.c | 28 ++++++++++++++++++++++++++
@@ -83,6 +84,3 @@ index 00000000000..6cc59f2158c
 +      dst += g;
 +    }
 +}
--- 
-2.17.1
-

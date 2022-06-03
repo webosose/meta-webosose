@@ -1,0 +1,214 @@
+From da4a59805e99eec6594f78a1c4b95761ccc193f5 Mon Sep 17 00:00:00 2001
+From: Alex Coplan <alex.coplan@arm.com>
+Date: Mon, 18 May 2020 16:29:04 +0100
+Subject: [PATCH] arm: Don't generate invalid LDRD insns
+
+This fixes a bug in the arm backend where GCC generates invalid LDRD
+instructions. The LDRD instruction requires the first transfer register to be
+even, but GCC attempts to use odd registers here. For example, with the
+following C code:
+
+    struct c {
+      double a;
+    } __attribute((aligned)) __attribute((packed));
+    struct c d;
+    struct c f(struct c);
+    void e() { f(d); }
+
+The struct d is passed in registers r1 and r2 to the function f, and GCC
+attempted to do this with a LDRD instruction when compiling with -march=armv7-a
+on a soft float toolchain.
+
+The fix is analogous to the corresponding one for STRD in the same function:
+https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=52057dc4ac5295caebf83147f688d769c93cbc8d
+
+gcc/:
+	* config/arm/arm.c (output_move_double): Fix codegen when loading into
+	a register pair with an odd base register.
+
+gcc/testsuite/:
+	* gcc.c-torture/compile/packed-aligned-1.c: New test.
+	* gcc.c-torture/execute/packed-aligned.c: New test.
+
+(cherry picked from commit 8b8f3117263ca79b3febadadb07732588d99d5f6)
+
+Upstream-Status: Backport [9.4.0 1b9f2e47a7d5d39df7b8248f2a199aa5c7a1778c == 11.1.0 8b8f3117263ca79b3febadadb07732588d99d5f6]
+---
+ gcc/config/arm/arm.c                          | 28 +++++++++++--------
+ .../gcc.c-torture/compile/packed-aligned-1.c  | 11 ++++++++
+ .../gcc.c-torture/execute/packed-aligned.c    | 28 +++++++++++++++++++
+ 3 files changed, 55 insertions(+), 12 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.c-torture/compile/packed-aligned-1.c
+ create mode 100644 gcc/testsuite/gcc.c-torture/execute/packed-aligned.c
+
+diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
+index cdfc0f9e72f..d4e2ad2a317 100644
+--- a/gcc/config/arm/arm.c
++++ b/gcc/config/arm/arm.c
+@@ -18408,6 +18408,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+   if (code0 == REG)
+     {
+       unsigned int reg0 = REGNO (operands[0]);
++      const bool can_ldrd = TARGET_LDRD && (TARGET_THUMB2 || (reg0 % 2 == 0));
+ 
+       otherops[0] = gen_rtx_REG (SImode, 1 + reg0);
+ 
+@@ -18419,7 +18420,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 
+ 	  if (emit)
+ 	    {
+-	      if (TARGET_LDRD
++	      if (can_ldrd
+ 		  && !(fix_cm3_ldrd && reg0 == REGNO(XEXP (operands[1], 0))))
+ 		output_asm_insn ("ldrd%?\t%0, [%m1]", operands);
+ 	      else
+@@ -18428,7 +18429,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	  break;
+ 
+ 	case PRE_INC:
+-	  gcc_assert (TARGET_LDRD);
++	  gcc_assert (can_ldrd);
+ 	  if (emit)
+ 	    output_asm_insn ("ldrd%?\t%0, [%m1, #8]!", operands);
+ 	  break;
+@@ -18436,7 +18437,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	case PRE_DEC:
+ 	  if (emit)
+ 	    {
+-	      if (TARGET_LDRD)
++	      if (can_ldrd)
+ 		output_asm_insn ("ldrd%?\t%0, [%m1, #-8]!", operands);
+ 	      else
+ 		output_asm_insn ("ldmdb%?\t%m1!, %M0", operands);
+@@ -18446,7 +18447,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	case POST_INC:
+ 	  if (emit)
+ 	    {
+-	      if (TARGET_LDRD)
++	      if (can_ldrd)
+ 		output_asm_insn ("ldrd%?\t%0, [%m1], #8", operands);
+ 	      else
+ 		output_asm_insn ("ldmia%?\t%m1!, %M0", operands);
+@@ -18454,7 +18455,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	  break;
+ 
+ 	case POST_DEC:
+-	  gcc_assert (TARGET_LDRD);
++	  gcc_assert (can_ldrd);
+ 	  if (emit)
+ 	    output_asm_insn ("ldrd%?\t%0, [%m1], #-8", operands);
+ 	  break;
+@@ -18476,6 +18477,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 		  /* Registers overlap so split out the increment.  */
+ 		  if (emit)
+ 		    {
++		      gcc_assert (can_ldrd);
+ 		      output_asm_insn ("add%?\t%1, %1, %2", otherops);
+ 		      output_asm_insn ("ldrd%?\t%0, [%1] @split", otherops);
+ 		    }
+@@ -18487,10 +18489,11 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 		  /* Use a single insn if we can.
+ 		     FIXME: IWMMXT allows offsets larger than ldrd can
+ 		     handle, fix these up with a pair of ldr.  */
+-		  if (TARGET_THUMB2
++		  if (can_ldrd
++		      && (TARGET_THUMB2
+ 		      || !CONST_INT_P (otherops[2])
+ 		      || (INTVAL (otherops[2]) > -256
+-			  && INTVAL (otherops[2]) < 256))
++			  && INTVAL (otherops[2]) < 256)))
+ 		    {
+ 		      if (emit)
+ 			output_asm_insn ("ldrd%?\t%0, [%1, %2]!", otherops);
+@@ -18513,10 +18516,11 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	      /* Use a single insn if we can.
+ 		 FIXME: IWMMXT allows offsets larger than ldrd can handle,
+ 		 fix these up with a pair of ldr.  */
+-	      if (TARGET_THUMB2
++	      if (can_ldrd
++		  && (TARGET_THUMB2
+ 		  || !CONST_INT_P (otherops[2])
+ 		  || (INTVAL (otherops[2]) > -256
+-		      && INTVAL (otherops[2]) < 256))
++		      && INTVAL (otherops[2]) < 256)))
+ 		{
+ 		  if (emit)
+ 		    output_asm_insn ("ldrd%?\t%0, [%1], %2", otherops);
+@@ -18547,7 +18551,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	  operands[1] = otherops[0];
+ 	  if (emit)
+ 	    {
+-	      if (TARGET_LDRD)
++	      if (can_ldrd)
+ 		output_asm_insn ("ldrd%?\t%0, [%1]", operands);
+ 	      else
+ 		output_asm_insn ("ldmia%?\t%1, %M0", operands);
+@@ -18592,7 +18596,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 		    }
+ 		  otherops[0] = gen_rtx_REG(SImode, REGNO(operands[0]) + 1);
+ 		  operands[1] = otherops[0];
+-		  if (TARGET_LDRD
++		  if (can_ldrd
+ 		      && (REG_P (otherops[2])
+ 			  || TARGET_THUMB2
+ 			  || (CONST_INT_P (otherops[2])
+@@ -18653,7 +18657,7 @@ output_move_double (rtx *operands, bool emit, int *count)
+ 	      if (count)
+ 		*count = 2;
+ 
+-	      if (TARGET_LDRD)
++	      if (can_ldrd)
+ 		return "ldrd%?\t%0, [%1]";
+ 
+ 	      return "ldmia%?\t%1, %M0";
+diff --git a/gcc/testsuite/gcc.c-torture/compile/packed-aligned-1.c b/gcc/testsuite/gcc.c-torture/compile/packed-aligned-1.c
+new file mode 100644
+index 00000000000..9f0923e29ee
+--- /dev/null
++++ b/gcc/testsuite/gcc.c-torture/compile/packed-aligned-1.c
+@@ -0,0 +1,11 @@
++struct c {
++  double a;
++} __attribute((packed)) __attribute((aligned));
++
++void f(struct c *, struct c);
++
++void g(struct c *ptr)
++{
++  ptr++;
++  f(ptr, *ptr);
++}
+diff --git a/gcc/testsuite/gcc.c-torture/execute/packed-aligned.c b/gcc/testsuite/gcc.c-torture/execute/packed-aligned.c
+new file mode 100644
+index 00000000000..f768af0ab02
+--- /dev/null
++++ b/gcc/testsuite/gcc.c-torture/execute/packed-aligned.c
+@@ -0,0 +1,28 @@
++struct c {
++  double a;
++} __attribute((packed)) __attribute((aligned));
++
++extern void abort(void);
++
++double g_expect = 32.25;
++
++void f(unsigned x, struct c y)
++{
++  if (x != 0)
++    abort();
++
++  if (y.a != g_expect)
++    abort();
++}
++
++struct c e = { 64.25 };
++
++int main(void)
++{
++  struct c d = { 32.25 };
++  f(0, d);
++
++  g_expect = 64.25;
++  f(0, e);
++  return 0;
++}
