@@ -20,11 +20,12 @@ SRC_URI = " \
 # Matches v${PV}
 SRCREV = "5e9965cae1cc6162649910f423ebd86001fc1931"
 
-PR = "r0"
+PR = "r1"
 
 S = "${WORKDIR}/git"
 
 inherit cmake
+inherit pkgconfig
 
 DEPENDS = " \
     boost \
@@ -159,6 +160,9 @@ do_install:append() {
 }
 
 CXXFLAGS += "-fopenmp -I${STAGING_DIR_HOST}/usr"
+
+CXXFLAGS += "-Wno-error=array-bounds -Wno-error=deprecated-declarations"
+
 LIBS += "-larmpl_lp64_mp"
 
 FILES:${PN}-dev = ""
