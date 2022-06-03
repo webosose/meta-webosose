@@ -9,10 +9,11 @@ WEBOS_VERSION = "1.0.0-7_21bd046126c31a1c503aaad418781bc03832d09a"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r1"
+PR = "r2"
 S = "${WORKDIR}/git"
 
 inherit cmake
+inherit pkgconfig
 inherit webos_filesystem_paths
 inherit webos_enhanced_submissions
 inherit webos_public_repo
