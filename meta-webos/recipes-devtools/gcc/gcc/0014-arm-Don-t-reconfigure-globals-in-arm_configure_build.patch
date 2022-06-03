@@ -1,0 +1,68 @@
+From b38ce648cb4fd3229caf55fe1b9e159d89861e99 Mon Sep 17 00:00:00 2001
+From: Richard Earnshaw <rearnsha@arm.com>
+Date: Tue, 27 Jul 2021 15:44:57 +0100
+Subject: [PATCH] arm: Don't reconfigure globals in arm_configure_build_target
+
+arm_configure_build_target is usually used to reconfigure the
+arm_active_target structure, which is then used to reconfigure a
+number of other global variables describing the current target.
+Occasionally, however, we need to use arm_configure_build_target to
+construct a temporary target structure and in that case it is wrong to
+try to reconfigure the global variables (although probably harmless,
+since arm_option_reconfigure_globals() only looks at
+arm_active_target).  At the very least, however, this is wasted work,
+so it is best not to do it unless needed.  What's more, several
+callers of arm_configure_build target call
+arm_option_reconfigure_globals themselves within a few lines, making
+the call from within arm_configure_build_target completely redundant.
+
+So this patch moves the responsibility of calling of
+arm_configure_build_target to its callers (only two places needed
+updating).
+
+gcc:
+	* config/arm/arm.c (arm_configure_build_target): Don't call
+	arm_option_reconfigure_globals.
+	(arm_option_restore): Call arm_option_reconfigure_globals after
+	reconfiguring the target.
+	* config/arm/arm-c.c (arm_pragma_target_parse): Likewise.
+(cherry picked from commit 6a37d0331c25f23628d4308e5a75624005c223b2)
+
+Upstream-Status: Backport [releases/gcc-9 (9.5.0) 9a48ce5c29158af88c0b98a97f5336c0896394a5 == 12.1 6a37d0331c25f23628d4308e5a75624005c223b2]
+---
+ gcc/config/arm/arm-c.c | 1 +
+ gcc/config/arm/arm.c   | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/config/arm/arm-c.c b/gcc/config/arm/arm-c.c
+index 38da34203d0..8cb08646ce5 100644
+--- a/gcc/config/arm/arm-c.c
++++ b/gcc/config/arm/arm-c.c
+@@ -267,6 +267,7 @@ arm_pragma_target_parse (tree args, tree pop_target)
+       target_option_current_node = cur_tree;
+       arm_configure_build_target (&arm_active_target,
+ 				  TREE_TARGET_OPTION (cur_tree), false);
++      arm_option_reconfigure_globals ();
+     }
+ 
+   /* Update macros if target_node changes. The global state will be restored
+diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
+index 4685fd88327..f4ed21ebb50 100644
+--- a/gcc/config/arm/arm.c
++++ b/gcc/config/arm/arm.c
+@@ -3007,6 +3007,7 @@ arm_option_restore (struct gcc_options *opts, struct cl_target_option *ptr)
+   opts->x_arm_cpu_string = ptr->x_arm_cpu_string;
+   opts->x_arm_tune_string = ptr->x_arm_tune_string;
+   arm_configure_build_target (&arm_active_target, ptr, false);
++  arm_option_reconfigure_globals ();
+ }
+ 
+ /* Reset options between modes that the user has specified.  */
+@@ -3366,7 +3367,6 @@ arm_configure_build_target (struct arm_build_target *target,
+   target->tune_flags = tune_data->tune_flags;
+   target->tune = tune_data->tune;
+   target->tune_core = tune_data->scheduler;
+-  arm_option_reconfigure_globals ();
+ }
+ 
+ /* Fix up any incompatible options that the user has specified.  */

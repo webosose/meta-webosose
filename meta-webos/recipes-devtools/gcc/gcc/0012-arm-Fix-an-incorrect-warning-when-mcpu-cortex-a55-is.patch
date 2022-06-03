@@ -1,0 +1,261 @@
+From eaf62130c7171417760d6e2be7e323d4f5a58ad4 Mon Sep 17 00:00:00 2001
+From: Richard Earnshaw <rearnsha@arm.com>
+Date: Wed, 11 Dec 2019 11:59:04 +0000
+Subject: [PATCH] arm: Fix an incorrect warning when -mcpu=cortex-a55 is used
+ with -mfloat-abi=soft
+
+When a CPU such as cortex-a55 is used with the soft-float ABI variant,
+the compiler is incorrectly issuing a warning about a mismatch between
+the architecture (generated internally) and the CPU.  This is not
+expected or intended.
+
+The problem stems from the fact that we generate (correctly) an
+architecture for a soft-float compilation, but then try to compare it
+against the one recorded for the CPU.  Normally we strip out the
+floating point information before doing that comparison, but we
+currently only do that for the features that can be affected by the
+-mfpu option.  For a soft-float environment we also need to strip out
+any bits that depend on having floating-point present.
+
+So this patch implements that and does a bit of housekeeping at the
+same time:
+
+- in arm-cpus.in it is not necessary for a CPU to specify both
+  +dotprod and +simd in its architecture specification, since +dotprod
+  implies +simd.
+
+- I've refactored the ALL_SIMD fgroup in arm-cpus.in to create a new
+  subgroup ALL_SIMD_EXTERNAL and containing the bits that were
+  previously added directly to ALL_SIMD.  Similarly, I've added an
+  ALL_FPU_EXTERNAL subgroup.
+
+- in arm.c rename fpu_bitlist and all_fpubits to fpu_bitlist_internal
+  and all_fpubits_internal for consistency with the fgroup bits which
+  they contain.
+
+	* config/arm/arm-cpus.in (ALL_SIMD_EXTERNAL): New fgroup.
+	(ALL_SIMD): Use it.
+	(ALL_FPU_EXTERNAL): New fgroup.
+	(ALL_FP): Use it.
+	(cortex-a55, cortex-a75, cortex-a76): Remove redundant
+	+simd from architecture specification.
+	(neoverse-n1, cortex-a75.cortex-a55): Likewise.
+	* config/arm/arm.c (isa_all_fpubits, fpu_bitlist): Rename to ...
+	(isa_all_fpubits_internal, fpu_bitlist_internal): ... these.
+	(isa_all_fpbits): New bitmap.
+	(arm_option_override): Initialize it.
+	(arm_configure_build_target): If the target isa does not have any
+	FP enabled, do not warn about mismatches in FP-related feature bits.
+
+(cherry picked from commit fd9058b6fcda19f63849a28735e3d2616cfd4e89)
+Upstream-Status: Backport [releases/gcc-9 (9.5.0) 09e0bac0d5b9548131c0dd6f69c235fb228c28e8 == 10.1 fd9058b6fcda19f63849a28735e3d2616cfd4e89]
+---
+ gcc/config/arm/arm-cpus.in | 21 ++++++++++--------
+ gcc/config/arm/arm.c       | 44 +++++++++++++++++++++++---------------
+ 2 files changed, 39 insertions(+), 26 deletions(-)
+
+diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
+index f87044fd25c..37fcf2a9a8f 100644
+--- a/gcc/config/arm/arm-cpus.in
++++ b/gcc/config/arm/arm-cpus.in
+@@ -213,15 +213,18 @@ define fgroup ALL_CRYPTO	crypto
+ # strip off 32 D-registers, but does not remove support for
+ # double-precision FP.
+ define fgroup ALL_SIMD_INTERNAL	fp_d32 neon ALL_CRYPTO
+-define fgroup ALL_SIMD	ALL_SIMD_INTERNAL dotprod fp16fml
++define fgroup ALL_SIMD_EXTERNAL dotprod fp16fml
++define fgroup ALL_SIMD	ALL_SIMD_INTERNAL ALL_SIMD_EXTERNAL
+ 
+ # List of all FPU bits to strip out if -mfpu is used to override the
+ # default.  fp16 is deliberately missing from this list.
+ define fgroup ALL_FPU_INTERNAL	vfpv2 vfpv3 vfpv4 fpv5 fp16conv fp_dbl ALL_SIMD_INTERNAL
+-
+ # Similarly, but including fp16 and other extensions that aren't part of
+ # -mfpu support.
+-define fgroup ALL_FP	fp16 ALL_FPU_INTERNAL
++define fgroup ALL_FPU_EXTERNAL fp16
++
++# Everything related to the FPU extensions (FP or SIMD).
++define fgroup ALL_FP	ALL_FPU_EXTERNAL ALL_FPU_INTERNAL ALL_SIMD
+ 
+ define fgroup ARMv4       armv4 notm
+ define fgroup ARMv4t      ARMv4 thumb
+@@ -1301,7 +1304,7 @@ begin cpu cortex-a55
+  cname cortexa55
+  tune for cortex-a53
+  tune flags LDSCHED
+- architecture armv8.2-a+fp16+dotprod+simd
++ architecture armv8.2-a+fp16+dotprod
+  option crypto add FP_ARMv8 CRYPTO
+  option nofp remove ALL_FP
+  costs cortex_a53
+@@ -1313,7 +1316,7 @@ begin cpu cortex-a75
+  cname cortexa75
+  tune for cortex-a57
+  tune flags LDSCHED
+- architecture armv8.2-a+fp16+dotprod+simd
++ architecture armv8.2-a+fp16+dotprod
+  option crypto add FP_ARMv8 CRYPTO
+  costs cortex_a73
+  vendor 41
+@@ -1324,7 +1327,7 @@ begin cpu cortex-a76
+  cname cortexa76
+  tune for cortex-a57
+  tune flags LDSCHED
+- architecture armv8.2-a+fp16+dotprod+simd
++ architecture armv8.2-a+fp16+dotprod
+  option crypto add FP_ARMv8 CRYPTO
+  costs cortex_a57
+  vendor 41
+@@ -1336,7 +1339,7 @@ begin cpu neoverse-n1
+  alias !ares
+  tune for cortex-a57
+  tune flags LDSCHED
+- architecture armv8.2-a+fp16+dotprod+simd
++ architecture armv8.2-a+fp16+dotprod
+  option crypto add FP_ARMv8 CRYPTO
+  costs cortex_a57
+  vendor 41
+@@ -1348,7 +1351,7 @@ begin cpu cortex-a75.cortex-a55
+  cname cortexa75cortexa55
+  tune for cortex-a53
+  tune flags LDSCHED
+- architecture armv8.2-a+fp16+dotprod+simd
++ architecture armv8.2-a+fp16+dotprod
+  option crypto add FP_ARMv8 CRYPTO
+  costs cortex_a73
+ end cpu cortex-a75.cortex-a55
+@@ -1357,7 +1360,7 @@ begin cpu cortex-a76.cortex-a55
+  cname cortexa76cortexa55
+  tune for cortex-a53
+  tune flags LDSCHED
+- architecture armv8.2-a+fp16+dotprod+simd
++ architecture armv8.2-a+fp16+dotprod
+  option crypto add FP_ARMv8 CRYPTO
+  costs cortex_a57
+ end cpu cortex-a76.cortex-a55
+diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
+index 3895007dcdb..19b9cc37324 100644
+--- a/gcc/config/arm/arm.c
++++ b/gcc/config/arm/arm.c
+@@ -3114,7 +3114,8 @@ arm_option_override_internal (struct gcc_options *opts,
+ #endif
+ }
+ 
+-static sbitmap isa_all_fpubits;
++static sbitmap isa_all_fpubits_internal;
++static sbitmap isa_all_fpbits;
+ static sbitmap isa_quirkbits;
+ 
+ /* Configure a build target TARGET from the user-specified options OPTS and
+@@ -3180,7 +3181,12 @@ arm_configure_build_target (struct arm_build_target *target,
+ 	  /* Ignore any bits that are quirk bits.  */
+ 	  bitmap_and_compl (isa_delta, isa_delta, isa_quirkbits);
+ 	  /* Ignore (for now) any bits that might be set by -mfpu.  */
+-	  bitmap_and_compl (isa_delta, isa_delta, isa_all_fpubits);
++	  bitmap_and_compl (isa_delta, isa_delta, isa_all_fpubits_internal);
++
++	  /* And if the target ISA lacks floating point, ignore any
++	     extensions that depend on that.  */
++	  if (!bitmap_bit_p (target->isa, isa_bit_vfpv2))
++	    bitmap_and_compl (isa_delta, isa_delta, isa_all_fpbits);
+ 
+ 	  if (!bitmap_empty_p (isa_delta))
+ 	    {
+@@ -3339,7 +3345,7 @@ arm_configure_build_target (struct arm_build_target *target,
+       auto_sbitmap fpu_bits (isa_num_bits);
+ 
+       arm_initialize_isa (fpu_bits, arm_selected_fpu->isa_bits);
+-      bitmap_and_compl (target->isa, target->isa, isa_all_fpubits);
++      bitmap_and_compl (target->isa, target->isa, isa_all_fpubits_internal);
+       bitmap_ior (target->isa, target->isa, fpu_bits);
+     }
+ 
+@@ -3365,16 +3371,20 @@ arm_configure_build_target (struct arm_build_target *target,
+ static void
+ arm_option_override (void)
+ {
+-  static const enum isa_feature fpu_bitlist[]
++  static const enum isa_feature fpu_bitlist_internal[]
+     = { ISA_ALL_FPU_INTERNAL, isa_nobit };
++  static const enum isa_feature fp_bitlist[]
++    = { ISA_ALL_FP, isa_nobit };
+   static const enum isa_feature quirk_bitlist[] = { ISA_ALL_QUIRKS, isa_nobit};
+   cl_target_option opts;
+ 
+   isa_quirkbits = sbitmap_alloc (isa_num_bits);
+   arm_initialize_isa (isa_quirkbits, quirk_bitlist);
+ 
+-  isa_all_fpubits = sbitmap_alloc (isa_num_bits);
+-  arm_initialize_isa (isa_all_fpubits, fpu_bitlist);
++  isa_all_fpubits_internal = sbitmap_alloc (isa_num_bits);
++  isa_all_fpbits = sbitmap_alloc (isa_num_bits);
++  arm_initialize_isa (isa_all_fpubits_internal, fpu_bitlist_internal);
++  arm_initialize_isa (isa_all_fpbits, fp_bitlist);
+ 
+   arm_active_target.isa = sbitmap_alloc (isa_num_bits);
+ 
+@@ -26681,7 +26691,7 @@ arm_print_asm_arch_directives ()
+ 	     don't print anything if all the bits are part of the
+ 	     FPU specification.  */
+ 	  if (bitmap_subset_p (opt_bits, arm_active_target.isa)
+-	      && !bitmap_subset_p (opt_bits, isa_all_fpubits))
++	      && !bitmap_subset_p (opt_bits, isa_all_fpubits_internal))
+ 	    asm_fprintf (asm_out_file, "\t.arch_extension %s\n", opt->name);
+ 	}
+     }
+@@ -31183,7 +31193,7 @@ arm_identify_fpu_from_isa (sbitmap isa)
+   auto_sbitmap fpubits (isa_num_bits);
+   auto_sbitmap cand_fpubits (isa_num_bits);
+ 
+-  bitmap_and (fpubits, isa, isa_all_fpubits);
++  bitmap_and (fpubits, isa, isa_all_fpubits_internal);
+ 
+   /* If there are no ISA feature bits relating to the FPU, we must be
+      doing soft-float.  */
+@@ -31243,7 +31253,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+ 		{
+ 		  arm_initialize_isa (opt_bits, opt->isa_bits);
+ 		  if (bitmap_subset_p (opt_bits, arm_active_target.isa)
+-		      && !bitmap_subset_p (opt_bits, isa_all_fpubits))
++		      && !bitmap_subset_p (opt_bits, isa_all_fpubits_internal))
+ 		    asm_fprintf (asm_out_file, "\t.arch_extension %s\n",
+ 				 opt->name);
+ 		}
+@@ -31929,28 +31939,28 @@ arm_test_cpu_arch_data (void)
+ static void
+ arm_test_fpu_data (void)
+ {
+-  auto_sbitmap isa_all_fpubits (isa_num_bits);
++  auto_sbitmap isa_all_fpubits_internal (isa_num_bits);
+   auto_sbitmap fpubits (isa_num_bits);
+   auto_sbitmap tmpset (isa_num_bits);
+ 
+-  static const enum isa_feature fpu_bitlist[]
++  static const enum isa_feature fpu_bitlist_internal[]
+     = { ISA_ALL_FPU_INTERNAL, isa_nobit };
+-  arm_initialize_isa (isa_all_fpubits, fpu_bitlist);
++  arm_initialize_isa (isa_all_fpubits_internal, fpu_bitlist_internal);
+ 
+   for (unsigned int i = 0; i < TARGET_FPU_auto; i++)
+   {
+     arm_initialize_isa (fpubits, all_fpus[i].isa_bits);
+-    bitmap_and_compl (tmpset, isa_all_fpubits, fpubits);
+-    bitmap_clear (isa_all_fpubits);
+-    bitmap_copy (isa_all_fpubits, tmpset);
++    bitmap_and_compl (tmpset, isa_all_fpubits_internal, fpubits);
++    bitmap_clear (isa_all_fpubits_internal);
++    bitmap_copy (isa_all_fpubits_internal, tmpset);
+   }
+ 
+-  if (!bitmap_empty_p (isa_all_fpubits))
++  if (!bitmap_empty_p (isa_all_fpubits_internal))
+     {
+ 	fprintf (stderr, "Error: found feature bits in the ALL_FPU_INTERAL"
+ 			 " group that are not defined by any FPU.\n"
+ 			 "       Check your arm-cpus.in.\n");
+-	ASSERT_TRUE (bitmap_empty_p (isa_all_fpubits));
++	ASSERT_TRUE (bitmap_empty_p (isa_all_fpubits_internal));
+     }
+ }
+ 

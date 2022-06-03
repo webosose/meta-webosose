@@ -1,0 +1,88 @@
+From 448af3d898ddf4978ab8f443b9c5d8bfff9b9c44 Mon Sep 17 00:00:00 2001
+From: Alex Coplan <alex.coplan@arm.com>
+Date: Tue, 29 Sep 2020 11:42:24 +0100
+Subject: [PATCH] arm: Add support for Neoverse V1 CPU
+
+This patch backports the AArch32 support for Arm's Neoverse V1 CPU to
+GCC 9.
+
+gcc/ChangeLog:
+
+	* config/arm/arm-cpus.in (neoverse-v1): New.
+	* config/arm/arm-tables.opt: Regenerate.
+	* config/arm/arm-tune.md: Regenerate.
+	* doc/invoke.texi: Document AArch32 support for Neoverse V1.
+
+Upstream-Status: Backport [9.4.0 f6d4b96180adec4fc5ea34de6d268350b98bb4ab == 11.1.0 da13b7737662da11f8fefb28eaf4ed7c50c51767]
+---
+ gcc/config/arm/arm-cpus.in    | 10 ++++++++++
+ gcc/config/arm/arm-tables.opt |  3 +++
+ gcc/config/arm/arm-tune.md    |  4 ++--
+ gcc/doc/invoke.texi           |  6 +++---
+ 4 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
+index 3a55f6ac6d2..747767ab386 100644
+--- a/gcc/config/arm/arm-cpus.in
++++ b/gcc/config/arm/arm-cpus.in
+@@ -1362,6 +1362,16 @@ begin cpu cortex-a76.cortex-a55
+  costs cortex_a57
+ end cpu cortex-a76.cortex-a55
+ 
++# Armv8.4 A-profile Architecture Processors
++begin cpu neoverse-v1
++  cname neoversev1
++  tune for cortex-a57
++  tune flags LDSCHED
++  architecture armv8.4-a+fp16
++  option crypto add FP_ARMv8 CRYPTO
++  costs cortex_a57
++end cpu neoverse-v1
++
+ # V8 M-profile implementations.
+ begin cpu cortex-m23
+  cname cortexm23
+diff --git a/gcc/config/arm/arm-tables.opt b/gcc/config/arm/arm-tables.opt
+index bba54aea3d6..5384284b53a 100644
+--- a/gcc/config/arm/arm-tables.opt
++++ b/gcc/config/arm/arm-tables.opt
+@@ -243,6 +243,9 @@ Enum(processor_type) String(cortex-a75.cortex-a55) Value( TARGET_CPU_cortexa75co
+ EnumValue
+ Enum(processor_type) String(cortex-a76.cortex-a55) Value( TARGET_CPU_cortexa76cortexa55)
+ 
++EnumValue
++Enum(processor_type) String(neoverse-v1) Value( TARGET_CPU_neoversev1)
++
+ EnumValue
+ Enum(processor_type) String(cortex-m23) Value( TARGET_CPU_cortexm23)
+ 
+diff --git a/gcc/config/arm/arm-tune.md b/gcc/config/arm/arm-tune.md
+index b9dfb66ec84..1257daff074 100644
+--- a/gcc/config/arm/arm-tune.md
++++ b/gcc/config/arm/arm-tune.md
+@@ -45,6 +45,6 @@
+ 	cortexa57cortexa53,cortexa72cortexa53,cortexa73cortexa35,
+ 	cortexa73cortexa53,cortexa55,cortexa75,
+ 	cortexa76,neoversen1,cortexa75cortexa55,
+-	cortexa76cortexa55,cortexm23,cortexm33,
+-	cortexr52"
++	cortexa76cortexa55,neoversev1,cortexm23,
++	cortexm33,cortexr52"
+ 	(const (symbol_ref "((enum attr_tune) arm_tune)")))
+diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
+index 5f04a7d2bbf..6d21f16e005 100644
+--- a/gcc/doc/invoke.texi
++++ b/gcc/doc/invoke.texi
+@@ -17583,9 +17583,9 @@ Permissible names are: @samp{arm7tdmi}, @samp{arm7tdmi-s}, @samp{arm710t},
+ @samp{cortex-m4}, @samp{cortex-m7}, @samp{cortex-m23}, @samp{cortex-m33},
+ @samp{cortex-m1.small-multiply}, @samp{cortex-m0.small-multiply},
+ @samp{cortex-m0plus.small-multiply}, @samp{exynos-m1}, @samp{marvell-pj4},
+-@samp{neoverse-n1}, @samp{xscale}, @samp{iwmmxt}, @samp{iwmmxt2},
+-@samp{ep9312}, @samp{fa526}, @samp{fa626}, @samp{fa606te}, @samp{fa626te},
+-@samp{fmp626}, @samp{fa726te}, @samp{xgene1}.
++@samp{neoverse-n1}, @samp{neoverse-v1}, @samp{xscale}, @samp{iwmmxt},
++@samp{iwmmxt2}, @samp{ep9312}, @samp{fa526}, @samp{fa626}, @samp{fa606te},
++@samp{fa626te}, @samp{fmp626}, @samp{fa726te}, @samp{xgene1}.
+ 
+ Additionally, this option can specify that GCC should tune the performance
+ of the code for a big.LITTLE system.  Permissible names are:
