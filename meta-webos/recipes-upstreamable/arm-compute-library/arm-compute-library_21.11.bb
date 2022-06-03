@@ -11,16 +11,16 @@ SRC_URI = " \
     git://github.com/ARM-software/ComputeLibrary.git;branch=${SRCBRANCH};protocol=https \
     file://0001-webos-build-support.patch \
     file://arm-compute-library.pc.in \
+    file://0001-Fix-build-with-newer-gcc.patch \
 "
 
-PR = "r0"
+PR = "r1"
 
 S = "${WORKDIR}/git"
 
 inherit scons
 
 ARM_INSTRUCTION_SET = "arm"
-#TUNE_CCARGS = "-marm -mfpu=neon -mfloat-abi=softfp -mcpu=cortex-a9 -mtune=cortex-a9 -funwind-tables -rdynamic -funsafe-math-optimizations"
 
 PACKAGECONFIG ?= "cppthreads opencl gles embed openmp examples tests"
 
@@ -37,10 +37,11 @@ PACKAGECONFIG[examples] = "examples=1,examples=0"
 
 # Specify any options you want to pass to scons using EXTRA_OESCONS:
 EXTRA_OESCONS = "build=cross_compile os=linux toolchain_prefix=' ' extra_cxx_flags='-fPIC -O2' ${PACKAGECONFIG_CONFARGS}"
-EXTRA_OESCONS += "${@bb.utils.contains('TARGET_ARCH', 'aarch64', 'arch=arm64-v8a neon=1', '', d)}"
-EXTRA_OESCONS += "${@bb.utils.contains('TARGET_ARCH', 'arm', 'os=webos arch=armv7a neon=1', '', d)}"
-EXTRA_OESCONS += "${@bb.utils.contains('TARGET_ARCH', 'i686', 'arch=x86_32 neon=0', '', d)}"
-EXTRA_OESCONS += "${@bb.utils.contains('TARGET_ARCH', 'x86_64', 'arch=x86_64 neon=0', '', d)}"
+
+EXTRA_OESCONS:append:aarch64 = " arch=arm64-v8a neon=1"
+EXTRA_OESCONS:append:arm = " os=webos neon=1 arch=armv7a${@ '-hf' if (d.getVar('TUNE_CCARGS_MFLOAT') == 'hard') else ''}"
+EXTRA_OESCONS:append:x86 = " arch=x86_32 neon=0 estate=32"
+EXTRA_OESCONS:append:x86-64 = " arch=x86_64 neon=0"
 
 TARGET_CC_ARCH += "${LDFLAGS}"
 
