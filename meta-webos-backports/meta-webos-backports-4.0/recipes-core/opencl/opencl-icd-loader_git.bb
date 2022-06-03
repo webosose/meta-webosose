@@ -15,7 +15,7 @@ PV = "v2022.01.04+git${SRCPV}"
 SRCREV = "169f05d026e65948b30cfe2200595fda92198cf7"
 SRC_URI = "git://github.com/KhronosGroup/OpenCL-ICD-Loader.git;branch=main;protocol=https"
 
-EXTRA_OECMAKE_append = " \
+EXTRA_OECMAKE:append = " \
     -DOPENCL_ICD_LOADER_HEADERS_DIR=${STAGING_INCDIR} \
 "
 
@@ -37,24 +37,24 @@ PACKAGES = "opencl-icd-loader opencl-icd-loader-dev"
 PACKAGES += "libicdlog libicdlog-dbg"
 PACKAGE_DEBUG_SPLIT_STYLE = "debug-without-src"
 
-FILES_${PN} = " \
+FILES:${PN} = " \
     ${bindir}/icd_loader_test \
     ${libdir}/libOpenCLDriverStub.so \
     ${libdir}/libOpenCL.so.1.2 \
     ${libdir}/libOpenCL.so.1 \
 "
-FILES_${PN}-dev = " \
+FILES:${PN}-dev = " \
     ${libdir}/libOpenCL.so \
 "
 
-FILES_libicdlog = "${libdir}/libIcdLog.so"
-FILES_libicdlog-dbg = "${libdir}/.debug/libIcdLog.so"
+FILES:libicdlog = "${libdir}/libIcdLog.so"
+FILES:libicdlog-dbg = "${libdir}/.debug/libIcdLog.so"
 
-RDEPENDS_${PN} = "libicdlog"
+RDEPENDS:${PN} = "libicdlog"
 
-FILES_${PN}-dev = ""
+FILES:${PN}-dev = ""
 
-INSANE_SKIP_${PN} = "dev-so"
-INSANE_SKIP_${PN}-dev += "dev-elf"
+INSANE_SKIP:${PN} = "dev-so"
+INSANE_SKIP:${PN}-dev += "dev-elf"
 
-FILES_${PN} += "${libdir}/libOpenCL*"
+FILES:${PN} += "${libdir}/libOpenCL*"

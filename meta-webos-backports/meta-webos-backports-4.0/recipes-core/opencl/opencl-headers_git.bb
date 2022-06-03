@@ -11,7 +11,7 @@ SRC_URI = "git://github.com/KhronosGroup/OpenCL-Headers.git;branch=main;protocol
 
 do_configure[noexec] = "1"
 do_compile[noexec] = "1"
-ALLOW_EMPTY_${PN} = "1"
+ALLOW_EMPTY:${PN} = "1"
 
 do_install () {
 	install -d ${D}${includedir}/CL/
