@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=c7e17cca1ef4230861fb7868e96c387e"
 
 SRC_URI = " \
     git://github.com/tensorflow/tensorflow.git;branch=r2.6;name=tensorflow;protocol=https \
-    git://github.com/ARM-software/armnn.git;branch=branches/armnn_21_11;name=armnn;subdir=${WORKDIR}/armnn;destsuffix=armnn;protocol=https \
+    git://github.com/ARM-software/armnn.git;branch=branches/armnn_21_11;name=armnn;destsuffix=git/armnn;protocol=https \
 "
 
 # Matches v${PV}
@@ -14,21 +14,18 @@ SRCREV_armnn = "5e9965cae1cc6162649910f423ebd86001fc1931"
 SRCREV_FORMAT = "tensorflow"
 
 DEPENDS = " \
-        protobuf-native \
-        flatbuffers \
+    protobuf-native \
+    flatbuffers \
 "
 
 S = "${WORKDIR}/git"
 
 do_install() {
-    bbplain "STAGING_DIR_NATIVE is ${STAGING_DIR_NATIVE}"
-    bbplain "prefix is ${prefix}"
-
     # Install TF sources + build artifacts as reuired by ARMNN
     install -d ${D}${datadir}/${BPN}
 
     # Convert protobuf sources to C sources and install
-    ${WORKDIR}/armnn/scripts/generate_tensorflow_protobuf.sh ${D}${datadir}/${BPN} ${STAGING_DIR_NATIVE}${prefix}
+    ${S}/armnn/scripts/generate_tensorflow_protobuf.sh ${D}${datadir}/${BPN} ${STAGING_DIR_NATIVE}${prefix_native}
 
     # Install sources as required by ARMNN
     install -d ${D}${datadir}/${BPN}-lite
