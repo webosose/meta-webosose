@@ -1,4 +1,4 @@
-From 4c9b3409418700f41920e6b148e354b5156384f1 Mon Sep 17 00:00:00 2001
+From d037e48dff782bdc98cc74c3d952e354ea32588d Mon Sep 17 00:00:00 2001
 From: Christophe Lyon <christophe.lyon@linaro.org>
 Date: Wed, 12 Aug 2020 09:22:38 +0000
 Subject: [PATCH] testsuite: Fix gcc.target/arm/stack-protector-1.c for

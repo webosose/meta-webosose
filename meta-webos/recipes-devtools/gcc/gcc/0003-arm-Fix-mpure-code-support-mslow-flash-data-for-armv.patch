@@ -1,4 +1,4 @@
-From d6c959d5f230c7610aa2c29bb40f0a349849b77e Mon Sep 17 00:00:00 2001
+From 52be19875d4b8828655b89999e04d5de5874698e Mon Sep 17 00:00:00 2001
 From: Christophe Lyon <christophe.lyon@linaro.org>
 Date: Wed, 19 Aug 2020 09:02:21 +0000
 Subject: [PATCH] arm: Fix -mpure-code support/-mslow-flash-data for
@@ -39,7 +39,7 @@ Upstream-Status: Backport [9.4.0 967a5f8e585a5d499870903849c0fa06c326547a == 11.
  create mode 100644 gcc/testsuite/gcc.target/arm/pure-code/pr94538-2.c
 
 diff --git a/gcc/config/arm/thumb1.md b/gcc/config/arm/thumb1.md
-index 6eca8c49c0e..8f051f87c0f 100644
+index 0ff819090d9..f0129db2c3e 100644
 --- a/gcc/config/arm/thumb1.md
 +++ b/gcc/config/arm/thumb1.md
 @@ -70,6 +70,7 @@

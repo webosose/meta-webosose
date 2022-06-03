@@ -1,4 +1,4 @@
-From b38ce648cb4fd3229caf55fe1b9e159d89861e99 Mon Sep 17 00:00:00 2001
+From 638d471b646189a7138c3ad76e9078fc67c98bb3 Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Tue, 27 Jul 2021 15:44:57 +0100
 Subject: [PATCH] arm: Don't reconfigure globals in arm_configure_build_target
@@ -35,10 +35,10 @@ Upstream-Status: Backport [releases/gcc-9 (9.5.0) 9a48ce5c29158af88c0b98a97f5336
  2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/config/arm/arm-c.c b/gcc/config/arm/arm-c.c
-index 38da34203d0..8cb08646ce5 100644
+index 17b05567101..36b12215243 100644
 --- a/gcc/config/arm/arm-c.c
 +++ b/gcc/config/arm/arm-c.c
-@@ -267,6 +267,7 @@ arm_pragma_target_parse (tree args, tree pop_target)
+@@ -409,6 +409,7 @@ arm_pragma_target_parse (tree args, tree pop_target)
        target_option_current_node = cur_tree;
        arm_configure_build_target (&arm_active_target,
  				  TREE_TARGET_OPTION (cur_tree), false);
@@ -47,10 +47,10 @@ index 38da34203d0..8cb08646ce5 100644
  
    /* Update macros if target_node changes. The global state will be restored
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index 4685fd88327..f4ed21ebb50 100644
+index 70bc258f9ce..689a6bb82a6 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
-@@ -3007,6 +3007,7 @@ arm_option_restore (struct gcc_options *opts, struct cl_target_option *ptr)
+@@ -3058,6 +3058,7 @@ arm_option_restore (struct gcc_options *opts, struct cl_target_option *ptr)
    opts->x_arm_cpu_string = ptr->x_arm_cpu_string;
    opts->x_arm_tune_string = ptr->x_arm_tune_string;
    arm_configure_build_target (&arm_active_target, ptr, false);
@@ -58,7 +58,7 @@ index 4685fd88327..f4ed21ebb50 100644
  }
  
  /* Reset options between modes that the user has specified.  */
-@@ -3366,7 +3367,6 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3422,7 +3423,6 @@ arm_configure_build_target (struct arm_build_target *target,
    target->tune_flags = tune_data->tune_flags;
    target->tune = tune_data->tune;
    target->tune_core = tune_data->scheduler;

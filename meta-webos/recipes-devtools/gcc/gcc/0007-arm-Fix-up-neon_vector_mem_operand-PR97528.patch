@@ -1,4 +1,4 @@
-From 20fac686312b1be21181abfe74471a3ee7416b16 Mon Sep 17 00:00:00 2001
+From 2a428274abb13124e6dc28b5e241044e80f4833f Mon Sep 17 00:00:00 2001
 From: Jakub Jelinek <jakub@redhat.com>
 Date: Fri, 20 Nov 2020 12:26:58 +0100
 Subject: [PATCH] arm: Fix up neon_vector_mem_operand [PR97528]
@@ -36,10 +36,10 @@ Upstream-Status: Backport [9.4.0 320d8676c770124a4baffab2d9e82224c74964ed == 11.
  create mode 100644 gcc/testsuite/gcc.target/arm/pr97528.c
 
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index 04edd637d43..4679da75dd8 100644
+index a8825ee3ee4..e7d060ae21b 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
-@@ -12730,7 +12730,9 @@ neon_vector_mem_operand (rtx op, int type, bool strict)
+@@ -13388,7 +13388,9 @@ neon_vector_mem_operand (rtx op, int type, bool strict)
    /* Allow post-increment by register for VLDn */
    if (type == 2 && GET_CODE (ind) == POST_MODIFY
        && GET_CODE (XEXP (ind, 1)) == PLUS

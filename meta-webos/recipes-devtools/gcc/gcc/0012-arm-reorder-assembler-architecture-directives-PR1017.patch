@@ -1,4 +1,4 @@
-From fb5e19b4c2492e50c8a1eeb9055bea46d5ddd680 Mon Sep 17 00:00:00 2001
+From 771887c40a0e51242b9e071467fd603174518a7e Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Thu, 29 Jul 2021 11:00:31 +0100
 Subject: [PATCH] arm: reorder assembler architecture directives [PR101723]
@@ -36,10 +36,8 @@ necessary.
 gcc/ChangeLog:
 
 	PR target/101723
-	* config/arm/arm-cpus.in (quirk_no_asmcpu): New feature bit.
-	(ALL_QUIRKS): Add it.
-	(generic-armv7-a): Add quirk to suppress writing .cpu directive in
-	asm output.
+	* config/arm/arm-cpus.in (generic-armv7-a): Add quirk to suppress
+	writing .cpu directive in asm output.
 	* config/arm/arm.c (arm_identify_fpu_from_isa): New variable.
 	(arm_last_printed_arch_string): Delete.
 	(arm_last-printed_fpu_string): Delete.
@@ -57,8 +55,15 @@ gcc/ChangeLog:
 gcc/testsuite/ChangeLog:
 
 	PR target/101723
+	* gcc.target/arm/cortex-m55-nofp-flag-hard.c: Update expected output.
+	* gcc.target/arm/cortex-m55-nofp-flag-softfp.c: Likewise.
+	* gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c: Likewise.
+	* gcc.target/arm/mve/intrinsics/mve_fpu1.c: Convert to dg-do assemble.
+	Add a non-no-op function body.
+	* gcc.target/arm/mve/intrinsics/mve_fpu2.c: Likewise.
 	* gcc.target/arm/attr-neon.c: Tighten scan-assembler tests.
-	* gcc.target/arm/attr-neon2.c: Likewise.
+	* gcc.target/arm/attr-neon2.c: Use -Ofast, convert test to use
+	check-function-bodies.
 	* gcc.target/arm/attr-neon3.c: Likewise.
 	* gcc.target/arm/pr69245.c: Tighten scan-assembler match, but allow
 	multiple instances.
@@ -66,42 +71,28 @@ gcc/testsuite/ChangeLog:
 	* gcc.target/arm/pragma_fpu_attribute_2.c: Likewise.
 
 (cherry picked from commit c1cdabe3aab817d95a8db00a8b5e9f6bcdea936f)
-Upstream-Status: Backport [releases/gcc-9 (9.5.0) 04c568961e793a1d7ad86248b4ca929fc84acf8d == 12.1 c1cdabe3aab817d95a8db00a8b5e9f6bcdea936f]
+Upstream-Status: Backport [releases/gcc-9 (9.5.0) 04c568961e793a1d7ad86248b4ca929fc84acf8d == releases/gcc-10 (10.4.0) 02d5a1988247207da46f25ce8b58515e25c1f250 == 12.1 c1cdabe3aab817d95a8db00a8b5e9f6bcdea936f]
 ---
- gcc/config/arm/arm-cpus.in                    |   6 +-
- gcc/config/arm/arm.c                          | 173 ++++++++----------
+ gcc/config/arm/arm-cpus.in                    |   1 +
+ gcc/config/arm/arm.c                          | 186 ++++++++----------
  gcc/testsuite/gcc.target/arm/attr-neon.c      |   9 +-
- gcc/testsuite/gcc.target/arm/attr-neon2.c     |   4 +-
- gcc/testsuite/gcc.target/arm/attr-neon3.c     |   6 +-
+ gcc/testsuite/gcc.target/arm/attr-neon2.c     |  35 ++--
+ gcc/testsuite/gcc.target/arm/attr-neon3.c     |  48 +++--
+ .../arm/cortex-m55-nofp-flag-hard.c           |   4 +-
+ .../arm/cortex-m55-nofp-flag-softfp.c         |   4 +-
+ .../arm/cortex-m55-nofp-nomve-flag-softfp.c   |   4 +-
+ .../gcc.target/arm/mve/intrinsics/mve_fpu1.c  |   5 +-
+ .../gcc.target/arm/mve/intrinsics/mve_fpu2.c  |   5 +-
  gcc/testsuite/gcc.target/arm/pr69245.c        |   6 +-
  .../gcc.target/arm/pragma_fpu_attribute.c     |   7 +-
  .../gcc.target/arm/pragma_fpu_attribute_2.c   |   7 +-
- 8 files changed, 111 insertions(+), 107 deletions(-)
+ 13 files changed, 170 insertions(+), 151 deletions(-)
 
 diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
-index 37fcf2a9a8f..de2caec5497 100644
+index db0b93f6bb7..660d2b2f4cd 100644
 --- a/gcc/config/arm/arm-cpus.in
 +++ b/gcc/config/arm/arm-cpus.in
-@@ -180,6 +180,9 @@ define feature quirk_armv6kz
- # Cortex-M3 LDRD quirk.
- define feature quirk_cm3_ldrd
- 
-+# Don't use .cpu assembly directive
-+define feature quirk_no_asmcpu
-+
- # (Very) slow multiply operations.  Should probably be a tuning bit.
- define feature smallmul
- 
-@@ -277,7 +280,7 @@ define fgroup DOTPROD	NEON dotprod
- # architectures.
- # xscale isn't really a 'quirk', but it isn't an architecture either and we
- # need to ignore it for matching purposes.
--define fgroup ALL_QUIRKS   quirk_no_volatile_ce quirk_armv6kz quirk_cm3_ldrd xscale
-+define fgroup ALL_QUIRKS   quirk_no_volatile_ce quirk_armv6kz quirk_cm3_ldrd xscale quirk_no_asmcpu
- 
- # Architecture entries
- # format:
-@@ -979,6 +982,7 @@ begin cpu generic-armv7-a
+@@ -1078,6 +1078,7 @@ begin cpu generic-armv7-a
   cname genericv7a
   tune flags LDSCHED
   architecture armv7-a+fp
@@ -110,10 +101,10 @@ index 37fcf2a9a8f..de2caec5497 100644
   option sec add sec
   option vfpv3-d16 add VFPv3 FP_DBL
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index f4ed21ebb50..58afc4a2647 100644
+index 6de875331b2..6f5196db2b8 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
-@@ -78,10 +78,6 @@
+@@ -77,10 +77,6 @@
  typedef struct minipool_node    Mnode;
  typedef struct minipool_fixup   Mfix;
  
@@ -124,15 +115,15 @@ index f4ed21ebb50..58afc4a2647 100644
  void (*arm_lang_output_object_attributes_hook)(void);
  
  struct four_ints
-@@ -325,6 +321,7 @@ static unsigned int arm_hard_regno_nregs (unsigned int, machine_mode);
- static bool arm_hard_regno_mode_ok (unsigned int, machine_mode);
- static bool arm_modes_tieable_p (machine_mode, machine_mode);
- static HOST_WIDE_INT arm_constant_alignment (const_tree, HOST_WIDE_INT);
+@@ -332,6 +328,7 @@ static HOST_WIDE_INT arm_constant_alignment (const_tree, HOST_WIDE_INT);
+ static rtx_insn * thumb1_md_asm_adjust (vec<rtx> &, vec<rtx> &,
+ 					vec<const char *> &, vec<rtx> &,
+ 					HARD_REG_SET &);
 +static const char *arm_identify_fpu_from_isa (sbitmap);
  
  /* Table of machine attributes.  */
  static const struct attribute_spec arm_attribute_table[] =
-@@ -3350,6 +3347,11 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3406,6 +3403,11 @@ arm_configure_build_target (struct arm_build_target *target,
        bitmap_ior (target->isa, target->isa, fpu_bits);
      }
  
@@ -141,10 +132,10 @@ index f4ed21ebb50..58afc4a2647 100644
 +  if (arm_float_abi == ARM_FLOAT_ABI_SOFT)
 +    bitmap_and_compl (target->isa, target->isa, isa_all_fpbits);
 +
-   if (!arm_selected_tune)
-     arm_selected_tune = arm_selected_cpu;
-   else /* Validate the features passed to -mtune.  */
-@@ -26663,20 +26665,65 @@ arm_print_tune_info (void)
+   /* There may be implied bits which we still need to enable. These are
+      non-named features which are needed to complete other sets of features,
+      but cannot be enabled from arm-cpus.in due to being shared between
+@@ -27990,20 +27992,65 @@ arm_print_tune_info (void)
  	       (int) current_tune->sched_autopref);
  }
  
@@ -214,9 +205,9 @@ index f4ed21ebb50..58afc4a2647 100644
    if (!arch->common.extensions)
      return;
  
-@@ -26688,13 +26735,12 @@ arm_print_asm_arch_directives ()
- 	{
- 	  arm_initialize_isa (opt_bits, opt->isa_bits);
+@@ -28029,13 +28076,12 @@ arm_print_asm_arch_directives ()
+ 		  && !TARGET_HAVE_MVE_FLOAT))
+ 	    continue;
  
 -	  /* If every feature bit of this option is set in the target
 -	     ISA specification, print out the option name.  However,
@@ -233,7 +224,7 @@ index f4ed21ebb50..58afc4a2647 100644
  	}
      }
  }
-@@ -26704,42 +26750,23 @@ arm_file_start (void)
+@@ -28045,46 +28091,23 @@ arm_file_start (void)
  {
    int val;
  
@@ -281,14 +272,15 @@ index f4ed21ebb50..58afc4a2647 100644
  	{
  	  const char* truncated_name
  	    = arm_rewrite_selected_cpu (arm_active_target.core_name);
--	  asm_fprintf (asm_out_file, "\t.cpu %s\n", truncated_name);
-+	  if (bitmap_bit_p (arm_active_target.isa, isa_bit_quirk_no_asmcpu))
-+	    asm_fprintf (asm_out_file, "\t.eabi_attribute 5, \"%s\"\n",
-+			 truncated_name);
+ 	  if (bitmap_bit_p (arm_active_target.isa, isa_bit_quirk_no_asmcpu))
+ 	    asm_fprintf (asm_out_file, "\t.eabi_attribute 5, \"%s\"\n",
+ 			 truncated_name);
+-	  else
+-	    asm_fprintf (asm_out_file, "\t.cpu %s\n", truncated_name);
  	}
  
        if (print_tune_info)
-@@ -26807,6 +26834,13 @@ arm_file_end (void)
+@@ -28152,6 +28175,13 @@ arm_file_end (void)
  {
    int regno;
  
@@ -302,7 +294,7 @@ index f4ed21ebb50..58afc4a2647 100644
    if (NEED_INDICATE_EXEC_STACK)
      /* Add .note.GNU-stack.  */
      file_end_indicate_exec_stack ();
-@@ -31226,44 +31260,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+@@ -32628,58 +32658,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
      targ_options = TREE_TARGET_OPTION (target_option_current_node);
    gcc_assert (targ_options);
  
@@ -334,6 +326,20 @@ index f4ed21ebb50..58afc4a2647 100644
 -	      if (!opt->remove)
 -		{
 -		  arm_initialize_isa (opt_bits, opt->isa_bits);
+-		  /* For the cases "-march=armv8.1-m.main+mve -mfloat-abi=soft"
+-		     and "-march=armv8.1-m.main+mve.fp -mfloat-abi=soft" MVE and
+-		     MVE with floating point instructions is disabled.  So the
+-		     following check restricts the printing of ".arch_extension
+-		     mve" and ".arch_extension fp" (for mve.fp) in the assembly
+-		     file.    MVE needs this special behaviour because the
+-		     feature bit "mve" and "mve_float" are not part of
+-		     "fpu bits", so they are not cleared when -mfloat-abi=soft
+-		     (i.e nofp) but the marco TARGET_HAVE_MVE and
+-		     TARGET_HAVE_MVE_FLOAT are disabled.  */
+-		  if ((bitmap_bit_p (opt_bits, isa_bit_mve) && !TARGET_HAVE_MVE)
+-		      || (bitmap_bit_p (opt_bits, isa_bit_mve_float)
+-			  && !TARGET_HAVE_MVE_FLOAT))
+-		    continue;
 -		  if (bitmap_subset_p (opt_bits, arm_active_target.isa)
 -		      && !bitmap_subset_p (opt_bits, isa_all_fpubits_internal))
 -		    asm_fprintf (asm_out_file, "\t.arch_extension %s\n",
@@ -348,7 +354,7 @@ index f4ed21ebb50..58afc4a2647 100644
  
    fprintf (stream, "\t.syntax unified\n");
  
-@@ -31281,16 +31278,6 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+@@ -32697,17 +32676,6 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
    else
      fprintf (stream, "\t.arm\n");
  
@@ -356,7 +362,8 @@ index f4ed21ebb50..58afc4a2647 100644
 -    = TARGET_SOFT_FLOAT
 -	? "softvfp" : arm_identify_fpu_from_isa (arm_active_target.isa);
 -
--  if (fpu_to_print != arm_last_printed_arch_string)
+-  if (!(!strcmp (fpu_to_print.c_str (), "softvfp") && TARGET_VFP_BASE)
+-      && (fpu_to_print != arm_last_printed_arch_string))
 -    {
 -      asm_fprintf (asm_out_file, "\t.fpu %s\n", fpu_to_print.c_str ());
 -      arm_last_printed_fpu_string = fpu_to_print;
@@ -391,36 +398,238 @@ index 225fb8dc3db..e8e3086247d 100644
 +/* { dg-final { scan-assembler-times "\.fpu\\s+neon\n" 1 } } */
  /* { dg-final { scan-assembler-times "vshl" 1 } } */
 diff --git a/gcc/testsuite/gcc.target/arm/attr-neon2.c b/gcc/testsuite/gcc.target/arm/attr-neon2.c
-index 29668256cf5..91cf4dde8db 100644
+index 29668256cf5..a7a72dac379 100644
 --- a/gcc/testsuite/gcc.target/arm/attr-neon2.c
 +++ b/gcc/testsuite/gcc.target/arm/attr-neon2.c
-@@ -27,8 +27,8 @@ my1 (int8x8_t __a, int8x8_t __b)
+@@ -1,7 +1,7 @@
+ /* { dg-do compile } */
+ /* { dg-require-effective-target arm_neon_ok } */
+ /* { dg-require-effective-target arm_fp_ok } */
+-/* { dg-options "-O2" } */
++/* { dg-options "-Ofast" } */
+ /* { dg-add-options arm_fp } */
+ 
+ /* Reset fpu to a value compatible with the next pragmas.  */
+@@ -12,23 +12,36 @@
+ #include <arm_neon.h>
+ 
+ /* Check that pragma target is used.  */
+-int8x8_t 
+-my (int8x8_t __a, int8x8_t __b)
++/*
++**my:
++**	...
++**	vadd.f32	d[0-9]+, d[0-9]+, d[0-9]+
++**	...
++**	bx	lr
++*/
++float32x2_t
++my (float32x2_t __a, float32x2_t __b)
+ {
+   return __a + __b;
+ }
+ 
+ #pragma GCC pop_options
+ 
+-/* Check that command line option is restored.  */
+-int8x8_t 
+-my1 (int8x8_t __a, int8x8_t __b)
++/* Check that fpu=vfp is restored.  */
++/*
++**my1:
++**	...
++**	vadd.f32	s[0-9]+, s[0-9]+, s[0-9]+
++**	vadd.f32	s[0-9]+, s[0-9]+, s[0-9]+
++**	...
++**	bx	lr
++*/
++float32x2_t
++my1 (float32x2_t __a, float32x2_t __b)
+ {
    return __a + __b;
  }
  
 -/* { dg-final { scan-assembler-times "\.fpu vfp" 1 } } */
 -/* { dg-final { scan-assembler-times "\.fpu neon" 1 } } */
-+/* { dg-final { scan-assembler {\.fpu\s+vfp\n} } } */
-+/* { dg-final { scan-assembler {\.fpu\s+neon\n} } } */
- /* { dg-final { scan-assembler "vadd" } } */
- 
- 
+-/* { dg-final { scan-assembler "vadd" } } */
+-
+-
++/* { dg-final { scan-assembler "\.fpu\\s+vfp\n" } } */
++/* { dg-final { scan-assembler "\.fpu\\s+neon\n" } } */
++/* { dg-final { check-function-bodies "**" "" } } */
 diff --git a/gcc/testsuite/gcc.target/arm/attr-neon3.c b/gcc/testsuite/gcc.target/arm/attr-neon3.c
-index 17e429ad739..0acb7f98dc6 100644
+index 17e429ad739..0fbce6e4cd4 100644
 --- a/gcc/testsuite/gcc.target/arm/attr-neon3.c
 +++ b/gcc/testsuite/gcc.target/arm/attr-neon3.c
-@@ -31,8 +31,8 @@ my1 (int8x8_t __a, int8x8_t __b)
+@@ -1,7 +1,7 @@
+ /* { dg-do compile } */
+ /* { dg-require-effective-target arm_crypto_ok } */
+ /* { dg-require-effective-target arm_fp_ok } */
+-/* { dg-options "-O2" } */
++/* { dg-options "-Ofast" } */
+ /* { dg-add-options arm_fp } */
+ 
+ /* Reset fpu to a value compatible with the next pragmas.  */
+@@ -11,28 +11,54 @@
+ #include <arm_neon.h>
+ 
+ /* Check that neon is used.  */
+-int8x8_t __attribute__ ((target("fpu=neon")))
+-my (int8x8_t __a, int8x8_t __b)
++/*
++**my:
++**	...
++**	vadd.f32	d[0-9]+, d[0-9]+, d[0-9]+
++**	...
++**	bx	lr
++*/
++float32x2_t __attribute__ ((target("fpu=neon")))
++my (float32x2_t __a, float32x2_t __b)
+ {
+   return __a + __b;
+ }
+ 
+ /* Check that crypto builtins are recognized.  */
++/*
++**foo:
++**	...
++** (
++**	vld1.64	{d[0-9]+-d[0-9]+}, \[r[0-9]+:64\]
++** |
++**	vld1.64	{d[0-9]+}, \[r[0-9]+:64\]!
++**	vld1.64	{d[0-9]+}, \[r[0-9]+:64\]
++** }
++**	...
++**	bx	lr
++*/
++
+ poly128_t __attribute__ ((target("fpu=crypto-neon-fp-armv8")))
+ foo (poly128_t* ptr)
+ {
+   return vldrq_p128 (ptr);
+ }
+ 
+-/* Check that default mode is restored.  */
+-int8x8_t
+-my1 (int8x8_t __a, int8x8_t __b)
++/* Check that fpu=vfp is restored.  */
++/*
++**my1:
++**	...
++**	vadd.f32	s[0-9]+, s[0-9]+, s[0-9]+
++**	vadd.f32	s[0-9]+, s[0-9]+, s[0-9]+
++**	...
++**	bx	lr
++*/float32x2_t
++my1 (float32x2_t __a, float32x2_t __b)
+ {
    return __a + __b;
  }
  
 -/* { dg-final { scan-assembler-times "\.fpu vfp" 1 } } */
 -/* { dg-final { scan-assembler-times "\.fpu neon" 1 } } */
 -/* { dg-final { scan-assembler-times "\.fpu crypto-neon-fp-armv8" 1 } } */
-+/* { dg-final { scan-assembler {\.fpu\s+vfp\n} } } */
-+/* { dg-final { scan-assembler {\.fpu\s+neon\n} } } */
-+/* { dg-final { scan-assembler {\.fpu\s+crypto-neon-fp-armv8\n} } } */
- /* { dg-final { scan-assembler-times "vld1" 1 } } */
- /* { dg-final { scan-assembler-times "vadd" 1} } */
+-/* { dg-final { scan-assembler-times "vld1" 1 } } */
+-/* { dg-final { scan-assembler-times "vadd" 1} } */
++/* { dg-final { scan-assembler "\.fpu\\s+vfp\n" } } */
++/* { dg-final { scan-assembler "\.fpu\\s+neon\n" } } */
++/* { dg-final { scan-assembler "\.fpu\\s+crypto-neon-fp-armv8\n" } } */
++/* { dg-final { check-function-bodies "**" "" } } */
+diff --git a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c
+index da1cc25e83b..e0fb307ac30 100644
+--- a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c
++++ b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-hard.c
+@@ -1,12 +1,12 @@
+ /* { dg-do assemble } */
+ /* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
+-/* { dg-additional-options "-mcpu=cortex-m55+nofp -mfloat-abi=hard -mfpu=auto --save-temps" } */
++/* { dg-additional-options "-mcpu=cortex-m55+nofp -mthumb -mfloat-abi=hard -mfpu=auto --save-temps" } */
++/* { dg-final { scan-assembler "\.fpu softvfp" } } */
+ /* { dg-final { scan-assembler "\.arch_extension mve" } } */
+ /* { dg-final { scan-assembler "\.arch_extension dsp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension fp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension fp.dp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension mve.fp" } } */
+-/* { dg-final { scan-assembler-not "\.fpu" } } */
+ 
+ int
+ f ()
+diff --git a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c
+index 0a4fb14bd9b..50645e8cd0f 100644
+--- a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c
++++ b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-flag-softfp.c
+@@ -1,12 +1,12 @@
+ /* { dg-do assemble } */
+ /* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
+-/* { dg-additional-options "-mcpu=cortex-m55+nofp -mfloat-abi=softfp -mfpu=auto --save-temps" } */
++/* { dg-additional-options "-mcpu=cortex-m55+nofp -mthumb -mfloat-abi=softfp -mfpu=auto --save-temps" } */
++/* { dg-final { scan-assembler "\.fpu softvfp" } } */
+ /* { dg-final { scan-assembler "\.arch_extension mve" } } */
+ /* { dg-final { scan-assembler "\.arch_extension dsp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension fp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension fp.dp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension mve.fp" } } */
+-/* { dg-final { scan-assembler-not "\.fpu" } } */
+ 
+ int
+ f ()
+diff --git a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c
+index 2ae7f34d456..948f622633c 100644
+--- a/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c
++++ b/gcc/testsuite/gcc.target/arm/cortex-m55-nofp-nomve-flag-softfp.c
+@@ -1,12 +1,12 @@
+ /* { dg-do assemble } */
+ /* { dg-require-effective-target arm_v8_1m_mve_fp_ok } */
+-/* { dg-additional-options "-mcpu=cortex-m55+nomve+nofp -mfloat-abi=softfp -mfpu=auto --save-temps" } */
++/* { dg-additional-options "-mcpu=cortex-m55+nomve+nofp -mthumb -mfloat-abi=softfp -mfpu=auto --save-temps" } */
++/* { dg-final { scan-assembler "\.fpu softvfp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension mve" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension mve.fp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension fp" } } */
+ /* { dg-final { scan-assembler-not "\.arch_extension fp.dp" } } */
+ /* { dg-final { scan-assembler "\.arch_extension dsp" } } */
+-/* { dg-final { scan-assembler-not "\.fpu" } } */
+ 
+ int
+ f ()
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu1.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu1.c
+index 611097ec956..c5acdb5e4e5 100644
+--- a/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu1.c
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu1.c
+@@ -1,3 +1,4 @@
++/* { dg-do assemble } */
+ /* { dg-require-effective-target arm_v8_1m_mve_ok } */
+ /* { dg-require-effective-target arm_hard_ok } */
+ /* { dg-add-options arm_v8_1m_mve } */
+@@ -8,8 +9,6 @@
+ int8x16_t
+ foo1 (int8x16_t value)
+ {
+-  int8x16_t b = value;
++  int8x16_t b = -value;
+   return b;
+ }
+-
+-/* { dg-final { scan-assembler-not "\.fpu softvfp" }  } */
+diff --git a/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu2.c b/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu2.c
+index b8e105111de..907db5e1572 100644
+--- a/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu2.c
++++ b/gcc/testsuite/gcc.target/arm/mve/intrinsics/mve_fpu2.c
+@@ -1,3 +1,4 @@
++/* { dg-do assemble } */
+ /* { dg-require-effective-target arm_v8_1m_mve_ok } */
+ /* { dg-require-effective-target arm_softfp_ok } */
+ /* { dg-add-options arm_v8_1m_mve } */
+@@ -8,8 +9,6 @@
+ int8x16_t
+ foo1 (int8x16_t value)
+ {
+-  int8x16_t b = value;
++  int8x16_t b = -value;
+   return b;
+ }
+-
+-/* { dg-final { scan-assembler-not "\.fpu softvfp" }  } */
 diff --git a/gcc/testsuite/gcc.target/arm/pr69245.c b/gcc/testsuite/gcc.target/arm/pr69245.c
 index bd505187728..34b97a22e15 100644
 --- a/gcc/testsuite/gcc.target/arm/pr69245.c
@@ -451,7 +660,7 @@ index 174be85f3f7..7e63cf53013 100644
 +/* { dg-final { scan-assembler {\.fpu\s+vfpv4\n} } } */
 +/* { dg-final { scan-assembler {\.fpu\s+vfpv3-d16\n} } } */
 diff --git a/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute_2.c b/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute_2.c
-index add40ddc6b8..398d8fff35c 100644
+index add40ddc6b8..3d33b04b787 100644
 --- a/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute_2.c
 +++ b/gcc/testsuite/gcc.target/arm/pragma_fpu_attribute_2.c
 @@ -25,5 +25,8 @@ uint32_t restored ()
@@ -463,5 +672,5 @@ index add40ddc6b8..398d8fff35c 100644
 +/* We can't tell exactly how many times the following tests will match because
 +   command-line options may cause additional instances to be generated, but
 +   each must be present at least once.  */
-+/* { dg-final { scan-assembler {\.fpu\s+vfpv4\n} } } */
-+/* { dg-final { scan-assembler {\.fpu\s+vfpv3-d16\n} } } */
++/* { dg-final { scan-assembler-times {\.fpu\s+vfpv4\n} } } */
++/* { dg-final { scan-assembler-times {\.fpu\s+vfpv3-d16\n} } } */

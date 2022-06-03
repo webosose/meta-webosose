@@ -1,4 +1,4 @@
-From d1651f733d2104137a83ac65f7686cc58c9e608a Mon Sep 17 00:00:00 2001
+From 18b0fb540b3d275ba31012fe5501b842f04b524b Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Thu, 27 May 2021 10:25:37 +0100
 Subject: [PATCH] arm: Remove use of opts_set in arm_configure_build_target
@@ -41,10 +41,10 @@ Upstream-Status: Backport [releases/gcc-9 (9.5.0) 255fe52e8ad859f59bb863ad75d00f
  3 files changed, 11 insertions(+), 18 deletions(-)
 
 diff --git a/gcc/config/arm/arm-c.c b/gcc/config/arm/arm-c.c
-index 6e256ee0a12..38da34203d0 100644
+index 7468a20bd98..17b05567101 100644
 --- a/gcc/config/arm/arm-c.c
 +++ b/gcc/config/arm/arm-c.c
-@@ -266,8 +266,7 @@ arm_pragma_target_parse (tree args, tree pop_target)
+@@ -408,8 +408,7 @@ arm_pragma_target_parse (tree args, tree pop_target)
         target_option_current_node, but not handle_pragma_target.  */
        target_option_current_node = cur_tree;
        arm_configure_build_target (&arm_active_target,
@@ -55,10 +55,10 @@ index 6e256ee0a12..38da34203d0 100644
  
    /* Update macros if target_node changes. The global state will be restored
 diff --git a/gcc/config/arm/arm-protos.h b/gcc/config/arm/arm-protos.h
-index 3e8bba5caea..cd16c3c35f9 100644
+index 33d162c3e00..e55e4d35c4d 100644
 --- a/gcc/config/arm/arm-protos.h
 +++ b/gcc/config/arm/arm-protos.h
-@@ -229,8 +229,7 @@ extern bool arm_change_mode_p (tree);
+@@ -239,8 +239,7 @@ extern bool arm_change_mode_p (tree);
  extern tree arm_valid_target_attribute_tree (tree, struct gcc_options *,
  					     struct gcc_options *);
  extern void arm_configure_build_target (struct arm_build_target *,
@@ -69,10 +69,10 @@ index 3e8bba5caea..cd16c3c35f9 100644
  extern void arm_options_perform_arch_sanity_checks (void);
  extern void arm_pr_long_calls (struct cpp_reader *);
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index 4679da75dd8..3895007dcdb 100644
+index e7d060ae21b..f91001e8433 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
-@@ -2985,7 +2985,7 @@ arm_override_options_after_change (void)
+@@ -3036,7 +3036,7 @@ arm_override_options_after_change (void)
  {
    arm_configure_build_target (&arm_active_target,
  			      TREE_TARGET_OPTION (target_option_default_node),
@@ -81,7 +81,7 @@ index 4679da75dd8..3895007dcdb 100644
  
    arm_override_options_after_change_1 (&global_options);
  }
-@@ -3006,8 +3006,7 @@ arm_option_restore (struct gcc_options *opts, struct cl_target_option *ptr)
+@@ -3057,8 +3057,7 @@ arm_option_restore (struct gcc_options *opts, struct cl_target_option *ptr)
    opts->x_arm_arch_string = ptr->x_arm_arch_string;
    opts->x_arm_cpu_string = ptr->x_arm_cpu_string;
    opts->x_arm_tune_string = ptr->x_arm_tune_string;
@@ -91,7 +91,7 @@ index 4679da75dd8..3895007dcdb 100644
  }
  
  /* Reset options between modes that the user has specified.  */
-@@ -3124,7 +3123,6 @@ static sbitmap isa_quirkbits;
+@@ -3181,7 +3180,6 @@ static sbitmap isa_quirkbits;
  void
  arm_configure_build_target (struct arm_build_target *target,
  			    struct cl_target_option *opts,
@@ -99,7 +99,7 @@ index 4679da75dd8..3895007dcdb 100644
  			    bool warn_compatible)
  {
    const cpu_option *arm_selected_tune = NULL;
-@@ -3139,7 +3137,7 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3196,7 +3194,7 @@ arm_configure_build_target (struct arm_build_target *target,
    target->core_name = NULL;
    target->arch_name = NULL;
  
@@ -108,7 +108,7 @@ index 4679da75dd8..3895007dcdb 100644
      {
        arm_selected_arch = arm_parse_arch_option_name (all_architectures,
  						      "-march",
-@@ -3147,7 +3145,7 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3204,7 +3202,7 @@ arm_configure_build_target (struct arm_build_target *target,
        arch_opts = strchr (opts->x_arm_arch_string, '+');
      }
  
@@ -117,7 +117,7 @@ index 4679da75dd8..3895007dcdb 100644
      {
        arm_selected_cpu = arm_parse_cpu_option_name (all_cores, "-mcpu",
  						    opts->x_arm_cpu_string);
-@@ -3157,7 +3155,7 @@ arm_configure_build_target (struct arm_build_target *target,
+@@ -3214,7 +3212,7 @@ arm_configure_build_target (struct arm_build_target *target,
  	 options for tuning.  */
      }
  
@@ -126,7 +126,7 @@ index 4679da75dd8..3895007dcdb 100644
      {
        arm_selected_tune = arm_parse_cpu_option_name (all_cores, "-mtune",
  						     opts->x_arm_tune_string);
-@@ -3392,8 +3390,7 @@ arm_option_override (void)
+@@ -3458,8 +3456,7 @@ arm_option_override (void)
      }
  
    cl_target_option_save (&opts, &global_options);
@@ -136,7 +136,7 @@ index 4679da75dd8..3895007dcdb 100644
  
  #ifdef SUBTARGET_OVERRIDE_OPTIONS
    SUBTARGET_OVERRIDE_OPTIONS;
-@@ -30938,10 +30935,8 @@ arm_can_inline_p (tree caller, tree callee)
+@@ -32334,10 +32331,8 @@ arm_can_inline_p (tree caller, tree callee)
    caller_target.isa = sbitmap_alloc (isa_num_bits);
    callee_target.isa = sbitmap_alloc (isa_num_bits);
  
@@ -149,7 +149,7 @@ index 4679da75dd8..3895007dcdb 100644
    if (!bitmap_subset_p (callee_target.isa, caller_target.isa))
      can_inline = false;
  
-@@ -31073,7 +31068,7 @@ arm_valid_target_attribute_tree (tree args, struct gcc_options *opts,
+@@ -32473,7 +32468,7 @@ arm_valid_target_attribute_tree (tree args, struct gcc_options *opts,
      return NULL_TREE;
  
    cl_target_option_save (&cl_opts, opts);
