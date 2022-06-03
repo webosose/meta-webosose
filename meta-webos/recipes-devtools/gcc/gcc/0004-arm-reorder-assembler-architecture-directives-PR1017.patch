@@ -1,4 +1,4 @@
-From 771887c40a0e51242b9e071467fd603174518a7e Mon Sep 17 00:00:00 2001
+From 4eb72551f63ecc71c753e4e30915315f846915a2 Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Thu, 29 Jul 2021 11:00:31 +0100
 Subject: [PATCH] arm: reorder assembler architecture directives [PR101723]
@@ -101,7 +101,7 @@ index db0b93f6bb7..660d2b2f4cd 100644
   option sec add sec
   option vfpv3-d16 add VFPv3 FP_DBL
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index 6de875331b2..6f5196db2b8 100644
+index c151fdc84e4..60e29b233af 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
 @@ -77,10 +77,6 @@
@@ -135,7 +135,7 @@ index 6de875331b2..6f5196db2b8 100644
    /* There may be implied bits which we still need to enable. These are
       non-named features which are needed to complete other sets of features,
       but cannot be enabled from arm-cpus.in due to being shared between
-@@ -27990,20 +27992,65 @@ arm_print_tune_info (void)
+@@ -28039,20 +28041,65 @@ arm_print_tune_info (void)
  	       (int) current_tune->sched_autopref);
  }
  
@@ -205,7 +205,7 @@ index 6de875331b2..6f5196db2b8 100644
    if (!arch->common.extensions)
      return;
  
-@@ -28029,13 +28076,12 @@ arm_print_asm_arch_directives ()
+@@ -28078,13 +28125,12 @@ arm_print_asm_arch_directives ()
  		  && !TARGET_HAVE_MVE_FLOAT))
  	    continue;
  
@@ -224,7 +224,7 @@ index 6de875331b2..6f5196db2b8 100644
  	}
      }
  }
-@@ -28045,46 +28091,23 @@ arm_file_start (void)
+@@ -28094,46 +28140,23 @@ arm_file_start (void)
  {
    int val;
  
@@ -280,7 +280,7 @@ index 6de875331b2..6f5196db2b8 100644
  	}
  
        if (print_tune_info)
-@@ -28152,6 +28175,13 @@ arm_file_end (void)
+@@ -28201,6 +28224,13 @@ arm_file_end (void)
  {
    int regno;
  
@@ -294,7 +294,7 @@ index 6de875331b2..6f5196db2b8 100644
    if (NEED_INDICATE_EXEC_STACK)
      /* Add .note.GNU-stack.  */
      file_end_indicate_exec_stack ();
-@@ -32628,58 +32658,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+@@ -32677,58 +32707,7 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
      targ_options = TREE_TARGET_OPTION (target_option_current_node);
    gcc_assert (targ_options);
  
@@ -354,7 +354,7 @@ index 6de875331b2..6f5196db2b8 100644
  
    fprintf (stream, "\t.syntax unified\n");
  
-@@ -32697,17 +32676,6 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
+@@ -32746,17 +32725,6 @@ arm_declare_function_name (FILE *stream, const char *name, tree decl)
    else
      fprintf (stream, "\t.arm\n");
  

@@ -1,4 +1,4 @@
-From 18b0fb540b3d275ba31012fe5501b842f04b524b Mon Sep 17 00:00:00 2001
+From 866a0c9c2b4ffaa7b216f2927660927448a649b0 Mon Sep 17 00:00:00 2001
 From: Richard Earnshaw <rearnsha@arm.com>
 Date: Thu, 27 May 2021 10:25:37 +0100
 Subject: [PATCH] arm: Remove use of opts_set in arm_configure_build_target
@@ -55,10 +55,10 @@ index 7468a20bd98..17b05567101 100644
  
    /* Update macros if target_node changes. The global state will be restored
 diff --git a/gcc/config/arm/arm-protos.h b/gcc/config/arm/arm-protos.h
-index 33d162c3e00..e55e4d35c4d 100644
+index bbbf67180f6..fac68cee8da 100644
 --- a/gcc/config/arm/arm-protos.h
 +++ b/gcc/config/arm/arm-protos.h
-@@ -239,8 +239,7 @@ extern bool arm_change_mode_p (tree);
+@@ -241,8 +241,7 @@ extern bool arm_change_mode_p (tree);
  extern tree arm_valid_target_attribute_tree (tree, struct gcc_options *,
  					     struct gcc_options *);
  extern void arm_configure_build_target (struct arm_build_target *,
@@ -69,7 +69,7 @@ index 33d162c3e00..e55e4d35c4d 100644
  extern void arm_options_perform_arch_sanity_checks (void);
  extern void arm_pr_long_calls (struct cpp_reader *);
 diff --git a/gcc/config/arm/arm.c b/gcc/config/arm/arm.c
-index e7d060ae21b..f91001e8433 100644
+index db37e2b8e71..083b9d4a342 100644
 --- a/gcc/config/arm/arm.c
 +++ b/gcc/config/arm/arm.c
 @@ -3036,7 +3036,7 @@ arm_override_options_after_change (void)
@@ -126,7 +126,7 @@ index e7d060ae21b..f91001e8433 100644
      {
        arm_selected_tune = arm_parse_cpu_option_name (all_cores, "-mtune",
  						     opts->x_arm_tune_string);
-@@ -3458,8 +3456,7 @@ arm_option_override (void)
+@@ -3473,8 +3471,7 @@ arm_option_override (void)
      }
  
    cl_target_option_save (&opts, &global_options);
@@ -136,7 +136,7 @@ index e7d060ae21b..f91001e8433 100644
  
  #ifdef SUBTARGET_OVERRIDE_OPTIONS
    SUBTARGET_OVERRIDE_OPTIONS;
-@@ -32334,10 +32331,8 @@ arm_can_inline_p (tree caller, tree callee)
+@@ -32397,10 +32394,8 @@ arm_can_inline_p (tree caller, tree callee)
    caller_target.isa = sbitmap_alloc (isa_num_bits);
    callee_target.isa = sbitmap_alloc (isa_num_bits);
  
@@ -149,7 +149,7 @@ index e7d060ae21b..f91001e8433 100644
    if (!bitmap_subset_p (callee_target.isa, caller_target.isa))
      can_inline = false;
  
-@@ -32473,7 +32468,7 @@ arm_valid_target_attribute_tree (tree args, struct gcc_options *opts,
+@@ -32536,7 +32531,7 @@ arm_valid_target_attribute_tree (tree args, struct gcc_options *opts,
      return NULL_TREE;
  
    cl_target_option_save (&cl_opts, opts);
