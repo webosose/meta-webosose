@@ -17,6 +17,22 @@ RDEPENDS:${PN} += " \
     libusb1 \
 "
 
+do_compile() {
+    # depends on bazel-native (or worse bazel on host), but there are also
+    # prebuilt binaries in SRC_URI, not sure what was the original intention
+    # but the default do_compile is definitely broken:
+    # http://gecko.lge.com/Errors/Details/416562
+    # NOTE: make -j 64
+    # bazel build --sandbox_debug --subcommands --experimental_repo_remote_exec --compilation_mode=opt --define darwinn_portable=1 --action_env PYTHON_BIN_PATH=TOPDIR/BUILD/hosttools/python3 --cpu=k8 --embed_label='TENSORFLOW_COMMIT=855c4c0ee34257b98ce2d01121940efb5423a059' --stamp --crosstool_top=@crosstool//:toolchains --compiler=gcc --linkopt=-l:libusb-1.0.so --linkopt=-Wl,--strip-all //tflite/public:libedgetpu_direct_all.so
+    # bazel build --sandbox_debug --subcommands --experimental_repo_remote_exec --compilation_mode=opt --define darwinn_portable=1 --action_env PYTHON_BIN_PATH=TOPDIR/BUILD/hosttools/python3 --cpu=k8 --embed_label='TENSORFLOW_COMMIT=855c4c0ee34257b98ce2d01121940efb5423a059' --stamp --crosstool_top=@crosstool//:toolchains --compiler=gcc --linkopt=-l:libusb-1.0.so --linkopt=-Wl,--strip-all --copt=-DTHROTTLE_EDGE_TPU //tflite/public:libedgetpu_direct_all.so
+    # /bin/bash: line 1: bazel: command not found
+    # /bin/bash: line 1: bazel: command not found
+    # make: *** [Makefile:105: libedgetpu-direct] Error 127
+    # make: *** Waiting for unfinished jobs....
+    # make: *** [Makefile:110: libedgetpu-throttled] Error 127
+    :
+}
+
 do_configure() {
 
     if [ ${TARGET_ARCH} = "aarch64" ]; then
