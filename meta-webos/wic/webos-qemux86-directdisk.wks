@@ -1,8 +1,0 @@
-# this file is combination of:
-# oe-core/scripts/lib/wic/canned-wks/common.wks.inc
-#     + oe-core/scripts/lib/wic/canned-wks/qemux86-directdisk.wks
-# '--ondisk sda' replaced with '--ondisk hda'
-
-part /boot --source bootimg-pcbios --ondisk hda --label boot --active --align 1024
-part / --source rootfs --use-uuid --fstype=ext4 --label platform --align 1024
-bootloader  --timeout=0  --append="vga=0 rw oprofile.timer=1 rootfstype=ext4 "

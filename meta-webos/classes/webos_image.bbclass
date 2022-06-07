@@ -92,9 +92,6 @@ inherit webos_filesystem_paths
 inherit webos_prerelease_dep
 do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
 
-WKS_FILE:qemux86 = "webos-qemux86-directdisk.wks"
-WKS_FILE:qemux86-64 = "webos-qemux86-directdisk.wks"
-
 # Build only wic.vmdk for qemux86*, otherwise wic.vmdk might conflict with tar.gz and cause errors like:
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
 IMAGE_FSTYPES:qemux86 = "wic.vmdk"
