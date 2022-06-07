@@ -43,6 +43,7 @@ SRC_URI = " \
     file://0001-remove-label_image-benchmark_model-exclude-option.patch \
     file://0002-enable-external-delegate-in-benchmarktool.patch \
     file://0003-Fix-return-type-issues.patch \
+    file://0004-opencl_wrapper-dlopen-libOpenCL.so.1-instead-of-libO.patch \
     file://tensorflowlite.pc.in \
 "
 
@@ -56,7 +57,7 @@ SRC_URI[model-mobv1.sha256sum] = "2f8054076cf655e1a73778a49bd8fd0306d32b290b7e57
 
 inherit cmake
 
-PR = "r1"
+PR = "r2"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -91,7 +92,8 @@ OECMAKE_SOURCEPATH = "${S}/tensorflow/lite"
 PACKAGECONFIG ?= "xnnpack"
 
 PACKAGECONFIG[xnnpack] = "-DTFLITE_ENABLE_XNNPACK=ON,-DTFLITE_ENABLE_XNNPACK=OFF"
-PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF,opencl-headers opencl-icd-loader"
+# opencl_wrapper only dlopens libOpenCL.so.1, so do_package shlibs cannot dynamically add the runtime dependency, add it explicitly here
+PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF,opencl-headers opencl-icd-loader,opencl-icd-loader"
 
 # There are many external dependencies fetched in do_configure if not found:
 # tensorflow/lite/tools/cmake/modules/Findgoogletest.cmake:OverridableFetchContent_GetProperties(googletest)
@@ -126,6 +128,9 @@ do_install() {
     install -d ${D}/${libdir}
     install -m 0644 $(find . -name "*.so") ${D}${libdir}
 
+    # armnn expects libtensorflowlite.so not libtensorflow-lite.sh:
+    # $ grep libtensorflowlite /OE/lge/build/webos/dunfell/BUILD/work/qemux86_64-webos-linux/armnn/21.11-r1/git/delegate/cmake/Modules/FindTfLite.cmake
+    # find_library(TfLite_LIB NAMES "libtensorflow_lite_all.so" "libtensorflowlite.so" HINTS ${TFLITE_LIB_ROOT} ${TFLITE_LIB_ROOT}/tensorflow/lite)
     ln -snf libtensorflow-lite.so ${D}/${libdir}/libtensorflowlite.so
 
     # install benchmark_model
