@@ -42,9 +42,6 @@ WEBOS_DISTRO_FEATURES_TEST = "ptest"
 # you can reduce the size of the installed library by adding this option. If this option is specified,
 # the examples and test codes are excluded from the installation.
 WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "aiframework armnn"
-WEBOS_DISTRO_FEATURES_AI_FRAMEWORK:remove:raspberrypi3 = "armnn"
-WEBOS_DISTRO_FEATURES_AI_FRAMEWORK:remove:raspberrypi4 = "armnn"
-WEBOS_DISTRO_FEATURES_AI_FRAMEWORK:remove:qemux86 = "armnn"
 
 DISTRO_FEATURES = "\
   ${WEBOS_DISTRO_FEATURES_DEFAULT} \
