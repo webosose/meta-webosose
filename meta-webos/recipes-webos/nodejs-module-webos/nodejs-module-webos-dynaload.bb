@@ -11,6 +11,8 @@ DEPENDS += "boost"
 WEBOS_VERSION = "3.0.2-3_ff4769966ef245bbe70e36296c1fb1e1a3205d23"
 PR = "r11"
 
+SRC_URI += "file://0001-Fix-build-for-nodejs-14.patch"
+
 do_configure() {
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     node-gyp --arch ${TARGET_ARCH} --nodedir "${WORKDIR}/node-v${NODE_VERSION}" configure

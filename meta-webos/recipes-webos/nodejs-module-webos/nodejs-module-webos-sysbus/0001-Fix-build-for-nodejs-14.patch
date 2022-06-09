@@ -1,0 +1,211 @@
+From 2a4c429c3aef57da1daa07ce5239474c4b023785 Mon Sep 17 00:00:00 2001
+From: Christophe Chapuis <chris.chapuis@gmail.com>
+Date: Tue, 26 Oct 2021 19:46:56 +0000
+Subject: [PATCH] Fix build for nodejs-14
+
+Signed-off-by: Christophe Chapuis <chris.chapuis@gmail.com>
+
+Imported from LuneOS:
+https://github.com/webOS-ports/nodejs-module-webos-sysbus/commit/db4c888e627f4c4afe406600563daee88dc24578
+---
+ src/node_ls2_call.cpp                   | 10 +++++-----
+ src/node_ls2_handle.cpp                 | 18 +++++++++---------
+ src/node_ls2_member_function_wrappers.h |  8 ++++----
+ src/node_ls2_message.cpp                | 14 ++++++++------
+ src/node_ls2_utils.cpp                  |  2 +-
+ 5 files changed, 27 insertions(+), 25 deletions(-)
+
+diff --git a/src/node_ls2_call.cpp b/src/node_ls2_call.cpp
+index 1a9ea59..aa4b3b3 100644
+--- a/src/node_ls2_call.cpp
++++ b/src/node_ls2_call.cpp
+@@ -43,7 +43,7 @@ void LS2Call::Initialize (Local<Object> target, v8::Local<v8::Context> context)
+ 
+     Local<FunctionTemplate> t = FunctionTemplate::New(isolate, New);
+ 
+-    t->SetClassName(v8::String::NewFromUtf8(isolate, "palmbus/Call"));
++    t->SetClassName(v8::String::NewFromUtf8(isolate, "palmbus/Call").ToLocalChecked());
+ 
+     gCallTemplate.Reset(isolate, t);
+ 
+@@ -52,9 +52,9 @@ void LS2Call::Initialize (Local<Object> target, v8::Local<v8::Context> context)
+     NODE_SET_PROTOTYPE_METHOD(t, "cancel", CancelWrapper);
+     NODE_SET_PROTOTYPE_METHOD(t, "setResponseTimeout", SetResponseTimeoutWrapper);
+ 
+-    response_symbol.Reset(isolate, String::NewFromUtf8(isolate, "response"));
++    response_symbol.Reset(isolate, String::NewFromUtf8(isolate, "response").ToLocalChecked());
+ 
+-    target->Set(String::NewFromUtf8(isolate, "Call"), t->GetFunction(currentContext).ToLocalChecked());
++    target->Set(currentContext, String::NewFromUtf8(isolate, "Call").ToLocalChecked(), t->GetFunction(currentContext).ToLocalChecked());
+ }
+ 
+ // Used by LSHandle to create a "Call" object that wraps a particular
+@@ -138,10 +138,10 @@ void LS2Call::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+         args.GetReturnValue().Set(args.This());
+     } catch( std::exception const & ex ) {
+         args.GetReturnValue().Set(args.GetIsolate()->ThrowException(v8::Exception::Error(
+-                v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), ex.what()))));
++                v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), ex.what()).ToLocalChecked())));
+     } catch( ... ) {
+         args.GetReturnValue().Set(args.GetIsolate()->ThrowException(v8::Exception::Error(
+-                v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Native function threw an unknown exception."))));
++                v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), "Native function threw an unknown exception.").ToLocalChecked())));
+     }
+ }
+ 
+diff --git a/src/node_ls2_handle.cpp b/src/node_ls2_handle.cpp
+index 0aa5795..c54dcc7 100755
+--- a/src/node_ls2_handle.cpp
++++ b/src/node_ls2_handle.cpp
+@@ -54,7 +54,7 @@ void LS2Handle::Initialize(Local<Object> target, v8::Local<v8::Context> context)
+ 
+     Local<FunctionTemplate> t = FunctionTemplate::New(isolate, New);
+ 
+-    t->SetClassName(v8::String::NewFromUtf8(isolate, "palmbus/Handle"));
++    t->SetClassName(v8::String::NewFromUtf8(isolate, "palmbus/Handle").ToLocalChecked());
+ 
+     t->InstanceTemplate()->SetInternalFieldCount(1);
+ 
+@@ -69,10 +69,10 @@ void LS2Handle::Initialize(Local<Object> target, v8::Local<v8::Context> context)
+     NODE_SET_PROTOTYPE_METHOD(t, "pushRole", PushRoleWrapper);
+     NODE_SET_PROTOTYPE_METHOD(t, "unregister", UnregisterWrapper);
+ 
+-    cancel_symbol.Reset(isolate, String::NewFromUtf8(isolate, "cancel"));
+-    request_symbol.Reset(isolate, String::NewFromUtf8(isolate, "request"));
++    cancel_symbol.Reset(isolate, String::NewFromUtf8(isolate, "cancel").ToLocalChecked());
++    request_symbol.Reset(isolate, String::NewFromUtf8(isolate, "request").ToLocalChecked());
+ 
+-    target->Set(String::NewFromUtf8(isolate, "Handle"), t->GetFunction(currentContext).ToLocalChecked());
++    target->Set(currentContext, String::NewFromUtf8(isolate, "Handle").ToLocalChecked(), t->GetFunction(currentContext).ToLocalChecked());
+     NODE_SET_METHOD(target, "setAppId", LS2Handle::SetAppId);
+ }
+ 
+@@ -132,10 +132,10 @@ void LS2Handle::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+         args.GetReturnValue().Set(args.This());
+     } catch(const std::exception& ex) {
+         isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(
+-            isolate, ex.what())));
++            isolate, ex.what()).ToLocalChecked()));
+     } catch(...) {
+         isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(
+-            isolate, "Native function threw an unknown exception.")));
++            isolate, "Native function threw an unknown exception.").ToLocalChecked()));
+     }
+ }
+ 
+@@ -315,7 +315,7 @@ Local<Value> LS2Handle::CallInternal(const char* busName, const char* payload, i
+     if (!call) {
+         v8::Isolate* isolate = v8::Isolate::GetCurrent();
+         return isolate->ThrowException(
+-                v8::String::NewFromUtf8(isolate, "Unable to unwrap native object."));
++                v8::String::NewFromUtf8(isolate, "Unable to unwrap native object.").ToLocalChecked());
+     }
+     call->SetHandle(this);
+     if (sessionId != NULL)
+@@ -420,11 +420,11 @@ void LS2Handle::SetAppId(const v8::FunctionCallbackInfo<v8::Value>& args)
+         std::stringstream err_message;
+         err_message << "SetAppId: " << e.what();
+         isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(
+-            isolate, err_message.str().c_str())));
++            isolate, err_message.str().c_str()).ToLocalChecked()));
+     }
+     catch(...) {
+         isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(
+-            isolate, "SetAppId: unknown exception")));
++            isolate, "SetAppId: unknown exception").ToLocalChecked()));
+     }
+ }
+ 
+diff --git a/src/node_ls2_member_function_wrappers.h b/src/node_ls2_member_function_wrappers.h
+index cc878c0..a6fb156 100644
+--- a/src/node_ls2_member_function_wrappers.h
++++ b/src/node_ls2_member_function_wrappers.h
+@@ -89,10 +89,10 @@ void MemberFunctionWrapper(Result (T::*MemFunc)(ArgsToMember...), const v8::Func
+ 
+ 	} catch( std::exception const & ex ) {
+ 		isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+-			ex.what())));
++			ex.what()).ToLocalChecked()));
+ 	} catch( ... ) {
+ 		isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+-			"Native function threw an unknown exception.")));
++			"Native function threw an unknown exception.").ToLocalChecked()));
+ 	}
+ }
+ 
+@@ -118,10 +118,10 @@ void MemberFunctionWrapper(Result (T::*MemFunc)(ArgsToMember...) const, const v8
+ 
+ 	} catch( std::exception const & ex ) {
+ 		isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+-			ex.what())));
++			ex.what()).ToLocalChecked()));
+ 	} catch( ... ) {
+ 		isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+-			"Native function threw an unknown exception.")));
++			"Native function threw an unknown exception.").ToLocalChecked()));
+ 	}
+ }
+ 
+diff --git a/src/node_ls2_message.cpp b/src/node_ls2_message.cpp
+index 414e545..4e1da6d 100644
+--- a/src/node_ls2_message.cpp
++++ b/src/node_ls2_message.cpp
+@@ -46,7 +46,7 @@ void LS2Message::Initialize (Local<Object> target, v8::Local<v8::Context> contex
+ 
+     Local<FunctionTemplate> t = FunctionTemplate::New(isolate, New);
+ 
+-    t->SetClassName(v8::String::NewFromUtf8(isolate, "palmbus/Message"));
++    t->SetClassName(v8::String::NewFromUtf8(isolate, "palmbus/Message").ToLocalChecked());
+ 
+     gMessageTemplate.Reset(isolate, t);
+ 
+@@ -66,7 +66,9 @@ void LS2Message::Initialize (Local<Object> target, v8::Local<v8::Context> contex
+     NODE_SET_PROTOTYPE_METHOD(t, "isSubscription", IsSubscriptionWrapper);
+     NODE_SET_PROTOTYPE_METHOD(t, "respond", RespondWrapper);
+ 
+-    target->Set(String::String::NewFromUtf8(isolate, "Message"), t->GetFunction(currentContext).ToLocalChecked());
++    target->Set(currentContext,
++                String::String::NewFromUtf8(isolate, "Message").ToLocalChecked(),
++                t->GetFunction(currentContext).ToLocalChecked());
+ }
+ 
+ // Used by LSHandle to create a "Message" object that wraps a particular
+@@ -87,7 +89,7 @@ Local<Value> LS2Message::NewFromMessage(LSMessage* message)
+         LS2Message *m = node::ObjectWrap::Unwrap<LS2Message>(messageObject);
+         if (!m) {
+             return isolate->ThrowException(
+-                    v8::String::NewFromUtf8(isolate, "Unable to unwrap native object."));
++                    v8::String::NewFromUtf8(isolate, "Unable to unwrap native object.").ToLocalChecked());
+         }
+         m->SetMessage(message);
+     } else {
+@@ -118,13 +120,13 @@ void LS2Message::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+         args.GetReturnValue().Set(args .This());
+     } catch (std::bad_alloc const & ex) {
+         syslog(LOG_USER | LOG_CRIT, "%s: throwing memory allocation exception: %s", __func__, ex.what());
+-        args.GetReturnValue().Set(args.GetIsolate()->ThrowException( v8::Exception::Error(v8::String::NewFromUtf8(args.GetIsolate(), ex.what()))));
++        args.GetReturnValue().Set(args.GetIsolate()->ThrowException( v8::Exception::Error(v8::String::NewFromUtf8(args.GetIsolate(), ex.what()).ToLocalChecked())));
+     } catch( std::exception const & ex ) {
+         syslog(LOG_USER | LOG_CRIT, "%s: throwing standard exception: %s", __func__, ex.what());
+-        args.GetReturnValue().Set(args.GetIsolate()->ThrowException( v8::Exception::Error(v8::String::NewFromUtf8(args.GetIsolate(), ex.what()))));
++        args.GetReturnValue().Set(args.GetIsolate()->ThrowException( v8::Exception::Error(v8::String::NewFromUtf8(args.GetIsolate(), ex.what()).ToLocalChecked())));
+     } catch( ... ) {
+         syslog(LOG_USER | LOG_CRIT, "%s: throwing other exception", __func__);
+-        args.GetReturnValue().Set(args.GetIsolate()->ThrowException( v8::Exception::Error(v8::String::NewFromUtf8(args.GetIsolate(), "Native function threw an unknown exception."))));
++        args.GetReturnValue().Set(args.GetIsolate()->ThrowException( v8::Exception::Error(v8::String::NewFromUtf8(args.GetIsolate(), "Native function threw an unknown exception.").ToLocalChecked())));
+     }
+ }
+ 
+diff --git a/src/node_ls2_utils.cpp b/src/node_ls2_utils.cpp
+index 6349cdb..5e4ab87 100644
+--- a/src/node_ls2_utils.cpp
++++ b/src/node_ls2_utils.cpp
+@@ -18,7 +18,7 @@
+ 
+ template <> v8::Local<v8::Value> ConvertToJS<const char*>(const char* v)
+ {
+-    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), v);
++    return v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), v).ToLocalChecked();
+ }
+ 
+ template <> v8::Local<v8::Value> ConvertToJS<uint32_t>(uint32_t v)

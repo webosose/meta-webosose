@@ -13,6 +13,8 @@ inherit webos_system_bus
 WEBOS_VERSION = "3.0.1-12_1c9251d79d7e8453506968fad595e246e5aee1e3"
 PR = "r15"
 
+SRC_URI += "file://0001-Fix-build-for-nodejs-14.patch"
+
 do_configure() {
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
     # used by binding.gyp
