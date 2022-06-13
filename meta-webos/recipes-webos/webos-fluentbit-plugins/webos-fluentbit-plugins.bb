@@ -12,7 +12,7 @@ DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit"
 RDEPENDS:${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
 WEBOS_VERSION = "1.0.0-32_2d41ac17e6a120dc8c24121583de864546b3f407"
-PR = "r5"
+PR = "r6"
 
 inherit webos_component
 inherit webos_enhanced_submissions
