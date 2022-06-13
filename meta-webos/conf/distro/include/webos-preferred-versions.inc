@@ -3,7 +3,6 @@
 PREFERRED_VERSION_webruntime = "91.%"
 PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "91.%"
 GOVERSION = "1.16.%"
-PREFERRED_VERSION_pulseaudio = "15.0-%"
 
 # Prefer gstreamer version 1.16.% for webos (instead of 1.18 from meta-webos-backports-3.3)
 GSTREAMER_VERSION = "1.16.%"
