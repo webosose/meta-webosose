@@ -28,7 +28,7 @@ PACKAGECONFIG[client-wl-shell] = "-DFEATURE_wayland_client_wl_shell=ON,-DFEATURE
 PACKAGECONFIG[client-xdg-shell] = "-DFEATURE_wayland_client_xdg_shell=ON,-DFEATURE_wayland_client_xdg_shell=OFF,"
 
 # PACKAGECONFIG for webos
-PACKAGECONFIG = "wayland-server wayland-client client-wl-shell"
+PACKAGECONFIG = "wayland-server wayland-client client-wl-shell dmabuf-client-buffer dmabuf-server-buffer drm-egl-server-buffer"
 
 # qtwayland-qmlplugins is not used in webos
 RRECOMMENDS:${PN}:remove = "${PN}-qmlplugins"
