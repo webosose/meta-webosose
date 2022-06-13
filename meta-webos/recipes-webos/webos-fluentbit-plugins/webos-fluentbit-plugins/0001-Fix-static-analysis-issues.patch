@@ -1,15 +1,32 @@
-From f374c54c9e970017966ab037b2e3a260f2420685 Mon Sep 17 00:00:00 2001
+From 458341a118a6f64b817d1b04679690eab25d73aa Mon Sep 17 00:00:00 2001
 From: Myungchul Kim <myungchul.kim@lge.com>
-Date: Thu, 26 May 2022 18:03:06 +0900
+Date: Mon, 13 Jun 2022 19:04:45 +0900
 Subject: [PATCH] Fix static analysis issues
 
-Change-Id: I98784384ad33d65a1900047eae6084ff39333c9c
+:Release Notes:
+Fix static analysis issues
+
+:Detailed Notes:
+Fix static analysis issues
+
+:Testing Performed:
+Local test : OK
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[CID-8999325]
+[CID-8999326]
+[CID-8999327]
+
+Change-Id: Ib23b80052d8ea66089a8f068483ebb0411d1dfc7
 ---
  plugins/common/util/Time.cpp            |   17 +-
  plugins/common/util/date.h              | 8234 +++++++++++++++++++++++
- plugins/in_coredump/CoredumpHandler.cpp |   14 +-
+ plugins/in_coredump/CoredumpHandler.cpp |   26 +-
  plugins/in_coredump/CoredumpHandler.h   |    4 +-
- 4 files changed, 8249 insertions(+), 20 deletions(-)
+ 4 files changed, 8255 insertions(+), 26 deletions(-)
  create mode 100644 plugins/common/util/date.h
 
 diff --git a/plugins/common/util/Time.cpp b/plugins/common/util/Time.cpp
@@ -8288,7 +8305,7 @@ index 0000000..143bc9a
 +
 +#endif  // DATE_H
 diff --git a/plugins/in_coredump/CoredumpHandler.cpp b/plugins/in_coredump/CoredumpHandler.cpp
-index 3f5e0a3..d9c918a 100644
+index 3f5e0a3..9a865aa 100644
 --- a/plugins/in_coredump/CoredumpHandler.cpp
 +++ b/plugins/in_coredump/CoredumpHandler.cpp
 @@ -227,14 +227,13 @@ int CoredumpHandler::onCollect(struct flb_input_instance *ins, struct flb_config
@@ -8329,6 +8346,51 @@ index 3f5e0a3..d9c918a 100644
          if (!(event->mask & IN_CREATE)) {
              PLUGIN_ERROR("Not create event : %s", event->name);
              continue;
+@@ -297,12 +299,12 @@ int CoredumpHandler::onCollect(struct flb_input_instance *ins, struct flb_config
+ 
+         if ((access("/run/systemd/journal/socket", F_OK) == 0)) {
+             // For consistency, change the crash report path to /tmp.
+-            sprintf(crashreport, "%s/%s-crashreport.txt", "/tmp", event->name);
++            snprintf(crashreport, sizeof(crashreport), "%s/%s-crashreport.txt", "/tmp", event->name);
+             createCrashreport(ctx->crashreport_script, event->name, crashreport);
+         } else {
+             string filename = event->name;
+             size_t extPos = filename.find_last_of('.');
+-            sprintf(crashreport, "/tmp/%s-crashreport.txt", filename.substr(0, extPos).c_str());
++            snprintf(crashreport, sizeof(crashreport), "/tmp/%s-crashreport.txt", filename.substr(0, extPos).c_str());
+         }
+ 
+         if (access(crashreport, F_OK) != 0) {
+@@ -520,9 +522,9 @@ int CoredumpHandler::parseCoredumpComm(const char *full, char *comm, char *pid,
+                 PLUGIN_DEBUG("val : (%s)", val);
+ 
+                 if (strstr(key, "pid") != NULL)
+-                    strcpy(pid, val);
++                    snprintf(pid, STR_LEN, "%s", val);
+                 if (strstr(key, "exe") != NULL)
+-                    strcpy(exe, val);
++                    snprintf(exe, STR_LEN, "%s", val);
+             }
+             free(val);
+         }
+@@ -542,7 +544,7 @@ int CoredumpHandler::parseCoredumpComm(const char *full, char *comm, char *pid,
+     {
+         PLUGIN_DEBUG("ptr : (%s)", ptr);
+         if (strcmp(ptr, "usr") != 0 && strcmp(ptr, "bin") != 0 && strcmp(ptr, "sbin") != 0) {
+-            strcpy(comm, ptr);
++            snprintf(comm, STR_LEN, "%s", ptr);
+             break;
+         }
+         ptr = strtok(NULL, "/");
+@@ -637,7 +639,7 @@ int CoredumpHandler::createCrashreport(const char *script, const char *corefile,
+     // command : webos_capture.py --coredump corefile crashreport
+ 
+     char command[STR_LEN];
+-    sprintf(command, "%s --coredump \'%s\' %s", script, corefile, crashreport);
++    snprintf(command, sizeof(command), "%s --coredump \'%s\' %s", script, corefile, crashreport);
+     PLUGIN_INFO("command : %s", command);
+ 
+     int ret = system(command);
 diff --git a/plugins/in_coredump/CoredumpHandler.h b/plugins/in_coredump/CoredumpHandler.h
 index 20ee1ce..24b831d 100644
 --- a/plugins/in_coredump/CoredumpHandler.h
