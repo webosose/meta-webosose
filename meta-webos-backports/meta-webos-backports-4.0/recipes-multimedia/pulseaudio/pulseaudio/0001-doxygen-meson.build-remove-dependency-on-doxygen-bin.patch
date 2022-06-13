@@ -21,6 +21,6 @@ index afc0e49..df55c83 100644
 @@ -6,5 +6,3 @@ doxygen_conf = configure_file(
    configuration : cdata,
  )
-
+ 
 -run_target('doxygen',
 -  command : ['doxygen', doxygen_conf])

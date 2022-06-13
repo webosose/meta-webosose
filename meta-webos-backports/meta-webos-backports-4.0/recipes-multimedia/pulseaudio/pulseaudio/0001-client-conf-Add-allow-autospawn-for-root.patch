@@ -29,7 +29,7 @@ index b88898c..e737c96 100644
 +++ b/man/pulse-client.conf.5.xml.in
 @@ -82,6 +82,15 @@ License along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
      </option>
-
+ 
      <option>
 +      <p><opt>allow-autospawn-for-root=</opt> Allow autospawning also for root.
 +      Takes a boolean value, defaults to <opt>no</opt>. If the <opt>autospawn
@@ -66,31 +66,32 @@ index 7691ec7..19db7ed 100644
 +    bool allow_autospawn_for_root;
      size_t shm_size;
  } pa_client_conf;
-
+ 
 diff --git a/src/pulse/client.conf.in b/src/pulse/client.conf.in
 index 26b7790..69830ef 100644
 --- a/src/pulse/client.conf.in
 +++ b/src/pulse/client.conf.in
 @@ -23,6 +23,7 @@
  ; default-dbus-server =
-
+ 
  ; autospawn = yes
 +; allow-autospawn-for-root = no
  ; daemon-binary = @PA_BINARY@
  ; extra-arguments = --log-target=syslog
-
+ 
 diff --git a/src/pulse/context.c b/src/pulse/context.c
 index 69be5f4..d6e13e8 100644
 --- a/src/pulse/context.c
 +++ b/src/pulse/context.c
 @@ -1027,7 +1027,7 @@ int pa_context_connect(
      if (!(flags & PA_CONTEXT_NOAUTOSPAWN) && c->conf->autospawn) {
-
+ 
  #ifdef HAVE_GETUID
 -        if (getuid() == 0)
 +        if (!c->conf->allow_autospawn_for_root && getuid() == 0)
              pa_log_debug("Not doing autospawn since we are root.");
          else {
              c->do_autospawn = true;
---
+-- 
 2.8.1
+
