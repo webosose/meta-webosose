@@ -1,0 +1,84 @@
+From b0ecee5b05259d8804b1a344d307be4bf8673f48 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Mon, 13 Jun 2022 18:43:31 +0900
+Subject: [PATCH] auto delegation support when using gpu
+
+---
+ tensorflow/lite/delegates/gpu/delegate.cc | 23 +++++++++++++++++++++++
+ tensorflow/lite/delegates/gpu/delegate.h  |  5 +++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/tensorflow/lite/delegates/gpu/delegate.cc b/tensorflow/lite/delegates/gpu/delegate.cc
+index 63ed22373dd..f044d0844fb 100644
+--- a/tensorflow/lite/delegates/gpu/delegate.cc
++++ b/tensorflow/lite/delegates/gpu/delegate.cc
+@@ -86,6 +86,11 @@ class Delegate {
+     if (options_.max_delegated_partitions <= 0) {
+       options_.max_delegated_partitions = 1;
+     }
++    if (options_.cpu_fallback_percentage < 0) {
++      options_.cpu_fallback_percentage = 0;
++    } else if (options_.cpu_fallback_percentage > 100) {
++      options_.cpu_fallback_percentage = 100;
++    }
+   }
+ 
+   TfLiteDelegate* tflite_delegate() { return &delegate_; }
+@@ -98,6 +103,7 @@ class Delegate {
+   int MaxDelegatedPartitions() const {
+     return options_.max_delegated_partitions;
+   }
++  int CPUFallbackPercentage() const { return options_.cpu_fallback_percentage; }
+   int num_delegate_kernels() const { return num_delegate_kernels_; }
+ 
+  private:
+@@ -427,6 +433,22 @@ TfLiteStatus DelegatePrepare(TfLiteContext* context, TfLiteDelegate* delegate) {
+   TfLiteIntArray* ops_to_replace =
+       GetOpsToReplace(context, gpu_delegate->IsQuantOpsAllowed(),
+                       gpu_delegate->MaxDelegatedPartitions());
++  if (gpu_delegate->CPUFallbackPercentage() != 0) {
++    auto partition_size =
++        ops_to_replace->size -
++        ops_to_replace->size * gpu_delegate->CPUFallbackPercentage() / 100;
++    TfLiteIntArray* partitioned_ops_to_replace =
++        TfLiteIntArrayCreate(partition_size);
++    for (int i = 0; i < partition_size; i++) {
++      partitioned_ops_to_replace->data[i] = ops_to_replace->data[i];
++    }
++    TFLITE_LOG_PROD(
++        TFLITE_LOG_INFO,
++        "GPU Load Balancing: %d operations are forced to run on CPU.",
++        ops_to_replace->size * gpu_delegate->CPUFallbackPercentage() / 100);
++    TfLiteIntArrayFree(ops_to_replace);
++    ops_to_replace = partitioned_ops_to_replace;
++  }
+   const auto status = context->ReplaceNodeSubsetsWithDelegateKernels(
+       context, kRegistration, ops_to_replace, delegate);
+   TFLITE_LOG_PROD(TFLITE_LOG_INFO, "Created %d GPU delegate kernels.",
+@@ -450,6 +472,7 @@ TfLiteGpuDelegateOptionsV2 TfLiteGpuDelegateOptionsV2Default() {
+   options.inference_priority3 = TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
+   options.experimental_flags = TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT;
+   options.max_delegated_partitions = 1;
++  options.cpu_fallback_percentage = 0;
+   return options;
+ }
+ 
+diff --git a/tensorflow/lite/delegates/gpu/delegate.h b/tensorflow/lite/delegates/gpu/delegate.h
+index 40a06bb4384..8a84b0771f8 100644
+--- a/tensorflow/lite/delegates/gpu/delegate.h
++++ b/tensorflow/lite/delegates/gpu/delegate.h
+@@ -101,6 +101,11 @@ typedef struct {
+   // This limits the maximum number of partitions to be delegated. By default,
+   // it's set to 1 in TfLiteGpuDelegateOptionsV2Default().
+   int32_t max_delegated_partitions;
++
++  // A value between 0 and 100, that represents percentage of nodes that are
++  // forced to run on CPU despite it is supported in GPU.
++  // it's set to 0 in TfLiteGpuDelegateOptionsV2Default().
++  int32_t cpu_fallback_percentage;
+ } TfLiteGpuDelegateOptionsV2;
+ 
+ // Populates TfLiteGpuDelegateOptionsV2 as follows:
+-- 
+2.17.1
+

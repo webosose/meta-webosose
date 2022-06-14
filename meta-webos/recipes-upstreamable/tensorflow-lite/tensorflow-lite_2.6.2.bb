@@ -44,6 +44,7 @@ SRC_URI = " \
     file://0002-enable-external-delegate-in-benchmarktool.patch \
     file://0003-Fix-return-type-issues.patch \
     file://0004-opencl_wrapper-dlopen-libOpenCL.so.1-instead-of-libO.patch \
+    file://0005-auto-delegation-support-when-using-gpu.patch \
     file://tensorflowlite.pc.in \
 "
 
@@ -57,7 +58,7 @@ SRC_URI[model-mobv1.sha256sum] = "2f8054076cf655e1a73778a49bd8fd0306d32b290b7e57
 
 inherit cmake
 
-PR = "r2"
+PR = "r3"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
