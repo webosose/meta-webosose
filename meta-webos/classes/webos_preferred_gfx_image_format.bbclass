@@ -102,7 +102,7 @@ fakeroot python do_convert_webos_preferred_gfx_image_format () {
 
     app_info_dir = webos_preferred_gfx_image_format_find_app_info_dir(d, d.getVar('D', True))
     if not app_info_dir:
-        bb.warn("Could not find %s:appinfo.json, no conversion will be performed" % pn)
+        bb.fatal("Could not find %s:appinfo.json, no conversion will be performed" % pn)
         return
 
     for app_info in app_info_dir:
