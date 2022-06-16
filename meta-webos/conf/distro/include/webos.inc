@@ -320,7 +320,9 @@ DEFAULT_WARN_QA = "\
     infodir build-deps src-uri-bad symlink-to-sysroot multilib \
     invalid-packageconfig host-user-contaminated uppercase-pn patch-fuzz \
     mime mime-xdg unlisted-pkg-lics unhandled-features-check \
-    missing-update-alternatives native-last \
+    missing-update-alternatives native-last missing-ptest \
+    license-exists license-no-generic license-syntax license-format \
+    license-incompatible license-file-missing obsolete-license \
 "
 ERROR_QA:append = " ${DEFAULT_WARN_QA}"
 WARN_QA:remove = "${DEFAULT_WARN_QA}"
