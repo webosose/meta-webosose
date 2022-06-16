@@ -5,7 +5,7 @@ DESCRIPTION = "webOS Edge AI Computer Vision Library using TensorflowLite"
 SECTION = "libs"
 LICENSE = "CLOSED"
 
-WEBOS_VERSION = "1.0.0-7_21bd046126c31a1c503aaad418781bc03832d09a"
+WEBOS_VERSION = "1.0.0-8_4c00ce905a21e4e297a8a7f77b5445780825f934"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
