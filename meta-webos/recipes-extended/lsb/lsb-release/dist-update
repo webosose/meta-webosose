@@ -6,6 +6,7 @@ PACKAGE_FEED_BASE_PATH = "@PACKAGE_FEED_BASE_PATH@"
 PACKAGE_DISTRO = "@PACKAGE_DISTRO@"
 TRIMED_DISTRO_VERSION = "@TRIMED_DISTRO_VERSION@"
 
+from collections import deque
 import errno
 import argparse
 import subprocess
@@ -76,10 +77,12 @@ class Opkg():
             print('Error occured in curl : %s' % (ret[1]))
             exit(ret[0])
         dirs=ret[1].strip().split('\n')
-        for idx,var in (enumerate(reversed(dirs))):
-            if (len(var) == 0) or not var[0].isalpha():
-                dirs.pop()
-        return dirs
+        fetch_dirs=deque()
+        for var in dirs:
+            if (len(var) == 0) or not (var[0].isalpha()):
+                fetch_dirs.append(var)
+        del dirs
+        return fetch_dirs
 
     def showAllVersions(self):
         print('show all versions')
