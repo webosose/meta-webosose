@@ -37,6 +37,8 @@ do_generate_webos_localization[depends] += "localization-tool-native:do_populate
 WEBOS_LOCALIZATION_DEPENDS += "localization-tool-native"
 WEBOS_LOCALIZATION_DATA_PATH ?= "${S}"
 WEBOS_LOCALIZATION_SOURCE_DIR ?= "${S}"
+WEBOS_LOCALIZATION_SOURCE_RESOURCES ?= "${WEBOS_LOCALIZATION_SOURCE_DIR}/resources"
+WEBOS_LOCALIZATION_SOURCE_RESOURCES_WITHOUT_TMPDIR ?= "${@d.getVar('WEBOS_LOCALIZATION_SOURCE_RESOURCES').replace(d.getVar('TMPDIR'), 'TMPDIR')}"
 
 WEBOS_JS_LOCTOOL_PATH = "${STAGING_DIR_NATIVE}/opt/js-loctool"
 WEBOS_JS_LOCTOOL = "${WEBOS_JS_LOCTOOL_PATH}/node_modules/loctool/loctool.js"
@@ -73,17 +75,17 @@ WEBOS_LOCALIZATION_INSTALL_RESOURCES ?= "true"
 
 do_install:append() {
     if "${WEBOS_LOCALIZATION_INSTALL_RESOURCES}" ; then
-        if ls ${WEBOS_LOCALIZATION_SOURCE_DIR}/resources/* >/dev/null 2>/dev/null ; then
+        if ls ${WEBOS_LOCALIZATION_SOURCE_RESOURCES}/* >/dev/null 2>/dev/null ; then
             bbnote "Installing localized files"
             install -d ${D}${webos_localization_resources_dir}
-            cp -R --no-dereference --preserve=mode,links -v ${WEBOS_LOCALIZATION_SOURCE_DIR}/resources/* ${D}${webos_localization_resources_dir}
+            cp -R --no-dereference --preserve=mode,links -v ${WEBOS_LOCALIZATION_SOURCE_RESOURCES}/* ${D}${webos_localization_resources_dir}
             find ${D}${webos_localization_resources_dir} -name \*.xliff -exec rm -vf {} \;
             find ${D}${webos_localization_resources_dir} -name \*.qm -exec rm -vf {} \;
             find ${D}${webos_localization_resources_dir} -name \*.ts -exec rm -vf {} \;
             find ${D}${webos_localization_resources_dir} -type d -empty -delete
             chown -R root:root ${D}${webos_localization_resources_dir}
         else
-            bbwarn "${PN} inherits webos_localizable, but doesn't have any localized files in ${S}/resources"
+            bbfatal "${PN} inherits webos_localizable, but doesn't have any localized files in ${WEBOS_LOCALIZATION_SOURCE_RESOURCES_WITHOUT_TMPDIR}"
         fi
     else
         bbnote "Not installing localized files, because WEBOS_LOCALIZATION_INSTALL_RESOURCES was set to false"
