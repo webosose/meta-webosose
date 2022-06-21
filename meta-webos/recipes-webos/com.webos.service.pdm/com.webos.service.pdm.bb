@@ -17,7 +17,7 @@ RDEPENDS:${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fs
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
 WEBOS_VERSION = "1.0.1-69_863dd16e6634f0f5f6964a9f87db78f2c4fee20f"
-PR = "r5"
+PR = "r6"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -39,3 +39,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES:${PN} += "${datadir}"
+
+# webos doesn't have localization data for this recipe
+WEBOS_LOCALIZATION_INSTALL_RESOURCES = "false"
