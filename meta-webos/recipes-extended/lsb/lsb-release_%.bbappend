@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos9"
+EXTENDPRAUTO:append = "webos10.${WEBOS_DISTRO_BUILD_ID}"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -33,14 +33,11 @@ do_install:append() {
     sed -i -e 's/^CHECKFIRST=.*/CHECKFIRST="\${sysconfdir}\/${BUILD_INFO_FILE}"/' ${D}${base_bindir}/lsb_release
     echo "${BUILD_DISTRIB_ID} release ${DISTRO_VERSION}-${WEBOS_DISTRO_BUILD_ID} (${WEBOS_DISTRO_RELEASE_CODENAME})" > ${D}${sysconfdir}/${BUILD_INFO_FILE}
 
-    # install dist-update
     if [ ! -z ${PACKAGE_FEED_URI} -a ! -z ${PACKAGE_FEED_BASE_PATH} ]; then
+        # install dist-update
         install -d ${D}${bindir}
         install -m 0755 ${S}/dist-update ${D}${bindir}
-    fi
-
-    # install ${TRIMED_DISTRO_VERSION}.conf
-    if [ ! -z ${PACKAGE_FEED_URI} -a ! -z ${PACKAGE_FEED_BASE_PATH} ]; then
+        # install ${TRIMED_DISTRO_VERSION}.conf
         install -d ${D}${sysconfdir}/opkg
         install -m 0644 ${S}/${TRIMED_DISTRO_VERSION}.conf ${D}${sysconfdir}/opkg
     fi
