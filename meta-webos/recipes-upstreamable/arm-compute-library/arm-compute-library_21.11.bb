@@ -12,9 +12,10 @@ SRC_URI = " \
     file://0001-webos-build-support.patch \
     file://arm-compute-library.pc.in \
     file://0001-Fix-build-with-newer-gcc.patch \
+    file://0001-OpenCL-dlopen-libOpenCL.so.1-instead-of-libO.patch \
 "
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/git"
 

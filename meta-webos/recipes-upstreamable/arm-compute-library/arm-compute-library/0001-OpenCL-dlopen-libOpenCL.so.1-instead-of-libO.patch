@@ -1,0 +1,29 @@
+From 50db5248d9f5665a9229afbd18b00a1b155bbabc Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Wed, 22 Jun 2022 18:02:47 +0900
+Subject: [PATCH] OpenCL-dlopen-libOpenCL.so.1-instead-of-libO
+
+Fixes:
+Can't load libOpenCL.so: libOpenCL.so: cannot open shared object file: No such file or directory
+Can't load libGLES_mali.so: libGLES_mali.so: cannot open shared object file: No such file or directory
+
+---
+ src/core/CL/OpenCL.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/CL/OpenCL.cpp b/src/core/CL/OpenCL.cpp
+index d8c2736ef..2c9492de1 100644
+--- a/src/core/CL/OpenCL.cpp
++++ b/src/core/CL/OpenCL.cpp
+@@ -50,7 +50,7 @@ CLSymbols &CLSymbols::get()
+
+ bool CLSymbols::load_default()
+ {
+-    static const std::vector<std::string> libraries{ "libOpenCL.so", "libGLES_mali.so", "libmali.so" };
++    static const std::vector<std::string> libraries{ "libOpenCL.so.1", "libGLES.so", "libmali.so" };
+
+     if(_loaded.first)
+     {
+--
+2.17.1
+

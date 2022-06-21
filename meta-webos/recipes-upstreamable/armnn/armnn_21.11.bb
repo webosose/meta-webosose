@@ -20,7 +20,7 @@ SRC_URI = " \
 # Matches v${PV}
 SRCREV = "5e9965cae1cc6162649910f423ebd86001fc1931"
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/git"
 
@@ -45,7 +45,7 @@ RDEPENDS:${PN}   = " \
     ${RDEPENDS_WEBOS} \
 "
 
-PACKAGECONFIG += "ref opencl tensorflow tensorflow-lite tensorflow-lite-delegate"
+PACKAGECONFIG += "ref opencl tensorflow-lite tensorflow-lite-delegate"
 PACKAGECONFIG += "${@bb.utils.contains('TARGET_ARCH', 'aarch64', 'neon', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('TARGET_ARCH', 'arm', 'neon', '', d)}"
 
@@ -62,19 +62,13 @@ PACKAGECONFIG[opencl] = " \
     opencl-headers opencl-clhpp flatbuffers flatbuffers-native \
 "
 
-PACKAGECONFIG[tensorflow] = " \
-    -DBUILD_TF_PARSER=1 \
-    -DTF_GENERATED_SOURCES=${STAGING_DATADIR}/armnn-tensorflow, \
-    -DBUILD_TF_PARSER=0, \
-    protobuf-native flatbuffers armnn-tensorflow \
-"
-
 PACKAGECONFIG[tensorflow-lite] = " \
-    -DTF_LITE_SCHEMA_INCLUDE_PATH=${STAGING_DATADIR}/armnn-tensorflow-lite \
-    -DTF_LITE_GENERATED_PATH=${STAGING_DATADIR}/armnn-tensorflow-lite \
+    -DTF_LITE_GENERATED_PATH=${STAGING_DIR_TARGET}/usr/include/tensorflow/lite/schema \
+    -DTfLite_INCLUDE_DIR=${STAGING_DIR_TARGET}/usr/include/tensorflow-lite \
+    -DTfLite_Schema_INCLUDE_PATH=${STAGING_DIR_TARGET}/usr/include/tensorflow/lite/schema \
     -DBUILD_TF_LITE_PARSER=1, \
     -DBUILD_TF_LITE_PARSER=0, \
-    flatbuffers armnn-tensorflow \
+    flatbuffers tensorflow-lite \
 "
 
 PACKAGECONFIG[tensorflow-lite-delegate] = " \
