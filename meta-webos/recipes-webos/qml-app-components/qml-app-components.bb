@@ -3,9 +3,10 @@
 SUMMARY = "webOS QML app components"
 AUTHOR = "Jongson Kim <jongson.kim@lge.com>"
 SECTION = "webos/libs"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-  file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 "
 
 DEPENDS = "qtdeclarative luna-service2 glib-2.0"

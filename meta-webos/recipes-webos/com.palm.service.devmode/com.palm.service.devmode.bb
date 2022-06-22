@@ -3,9 +3,11 @@
 SUMMARY = "JS service for Developer Mode"
 AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
 SECTION = "webos/apps"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 WEBOS_VERSION = "1.0.0-11_aaf580cc77fb3ae14f72408601040e0932699a8b"

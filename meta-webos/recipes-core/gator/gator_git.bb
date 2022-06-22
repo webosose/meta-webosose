@@ -12,10 +12,10 @@ PV = "6.7+git${SRCPV}"
 PR = "r4"
 
 SRC_URI = "git://github.com/ARM-software/gator.git;protocol=https;branch=main \
-           file://0001-disable-stripping-debug-info.patch \
-           file://0001-gator_main.c-gator_backtrace.c-fix-build-with-linux-.patch \
-           file://Mali_events_disable.patch \
-           file://git/gcc-wrapper.py \
+    file://0001-disable-stripping-debug-info.patch \
+    file://0001-gator_main.c-gator_backtrace.c-fix-build-with-linux-.patch \
+    file://Mali_events_disable.patch \
+    file://git/gcc-wrapper.py \
 "
 
 S = "${WORKDIR}/git"

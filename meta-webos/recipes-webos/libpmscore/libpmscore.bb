@@ -2,12 +2,13 @@
 
 SUMMARY = "pmscore handles device states"
 AUTHOR = "Abhsiehk Srivastava <abhishek.srivastava@lge.com>"
+SECTION = "webos/libs"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-file://oss-pkg-info.yaml;md5=ceae6b60c3da8e439a7f94eb5f011878 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=ceae6b60c3da8e439a7f94eb5f011878 \
 "
-SECTION = "webos/libs"
 
 DEPENDS = "luna-service2 glib-2.0 pmloglib libpbnjson nyx-lib"
 

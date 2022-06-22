@@ -3,9 +3,12 @@
 SUMMARY = "Storage Access Framework for OSE"
 AUTHOR = "RajeshGopu IV <rajeshgopu.iv@lge.com>"
 SECTION = "webos/base"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-                    file://oss-pkg-info.yaml;md5=13b5f44cefd7b1b0040a056eeddf6174"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+    file://oss-pkg-info.yaml;md5=13b5f44cefd7b1b0040a056eeddf6174 \
+"
 
 DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupnp"
 

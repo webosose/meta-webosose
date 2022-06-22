@@ -12,6 +12,7 @@ PR = "r1"
 inherit autotools pkgconfig cmake
 
 SRC_URI = "http://download.netsurf-browser.org/libs/releases/${BP}-src.tar.gz \
-           file://replace-makefile-with-cmake.patch"
+    file://replace-makefile-with-cmake.patch \
+"
 SRC_URI[md5sum] = "5b33ff44dfb48e628bcadbe7e51edf90"
 SRC_URI[sha256sum] = "fb576af6bd4d02d3626d5c2092bc06c80b2a80089a14decf40c813d9ec80ddc0"

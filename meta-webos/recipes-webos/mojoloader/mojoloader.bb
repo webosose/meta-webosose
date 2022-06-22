@@ -3,9 +3,12 @@
 SUMMARY = "JavaScript loader for foundation frameworks and other loadable libraries"
 AUTHOR = "Suresh Arumugam <suresh.arumugam@lge.com>"
 SECTION = "webos/frameworks"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=3603ec4c4d5216855fff467ef39c1bb4"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=3603ec4c4d5216855fff467ef39c1bb4 \
+"
 
 WEBOS_VERSION = "1.1-3_7c22039cbef6e78adc0b4165a0f6c7232eac24d8"
 PR = "r7"

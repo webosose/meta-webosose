@@ -21,7 +21,7 @@ SRC_URI = "\
     https://launchpad.net/ecryptfs/trunk/${PV}/+download/${BPN}_${PV}.orig.tar.gz \
     file://ecryptfs-utils-CVE-2016-6224.patch \
     file://ecryptfs.service \
-    "
+"
 
 SRC_URI[md5sum] = "83513228984f671930752c3518cac6fd"
 SRC_URI[sha256sum] = "112cb3e37e81a1ecd8e39516725dec0ce55c5f3df6284e0f4cc0f118750a987f"
@@ -35,11 +35,11 @@ EXTRA_OECONF = "\
     --libdir=${base_libdir} \
     --disable-pywrap \
     --disable-nls \
-    "
+"
 
 PACKAGECONFIG ??= "nss \
     ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'pam', '', d)} \
-    "
+"
 PACKAGECONFIG[nss] = "--enable-nss,--disable-nss,nss,"
 PACKAGECONFIG[openssl] = "--enable-openssl,--disable-openssl,openssl,"
 PACKAGECONFIG[pam] = "--enable-pam,--disable-pam,libpam,"

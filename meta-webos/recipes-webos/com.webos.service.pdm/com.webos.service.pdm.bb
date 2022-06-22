@@ -2,11 +2,13 @@
 
 SUMMARY = "Physical Device Manager handles physical devices using netlink events"
 DESCRIPTION = "Service for detecting and managing physical devices using netlink events. A physical device is a USB device, available internal storage device and so on."
-SECTION = "webos/services"
 AUTHOR = "Preetham Bhat <preetham.bhat@lge.com>"
+SECTION = "webos/services"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 VIRTUAL-RUNTIME_pdm-plugin ?= "pdm-plugin"

@@ -3,10 +3,11 @@
 SUMMARY = "webOS uMediaserver daemon and utilities"
 AUTHOR = "Ian Cain <ian.cain@lge.com>"
 SECTION = "webos/base"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-  file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
-  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+    file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "glib-2.0 libpbnjson libconfig swig-native libxml2 luna-service2 pmloglib boost luna-prefs"

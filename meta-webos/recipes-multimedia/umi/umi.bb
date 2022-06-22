@@ -2,10 +2,11 @@
 
 SUMMARY = "AudioOutputd adaptation layer (UMI) API definition and test harness"
 SECTION = "webos/libs"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://CMakeLists.txt;beginline=1;endline=15;md5=059bf74645cdef24f5e9a0ccb2a4cb94 \
-file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+    file://CMakeLists.txt;beginline=1;endline=15;md5=059bf74645cdef24f5e9a0ccb2a4cb94 \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 inherit webos_component

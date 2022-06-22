@@ -3,10 +3,11 @@
 SUMMARY = "Camera application"
 AUTHOR = "Muniraju <muniraju.a@lge.com>"
 SECTION = "webos/apps"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+    file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
 WEBOS_VERSION = "0.0.1-8_8939a2009fb96bb16236b59c95da3b14893c8c13"

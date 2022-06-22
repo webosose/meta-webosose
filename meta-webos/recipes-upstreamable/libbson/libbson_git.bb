@@ -13,7 +13,8 @@ PV = "0.98.0+git${SRCPV}"
 # corresponds to 0.98.0
 SRCREV = "b2d142f48676124e80578b5d491bd9aec50e748d"
 SRC_URI = "git://github.com/mongodb/${BPN};branch=master;protocol=https \
-           file://0001-Update-CMakelist-file-to-install-lib-correctly.patch"
+    file://0001-Update-CMakelist-file-to-install-lib-correctly.patch \
+"
 
 S = "${WORKDIR}/git"
 

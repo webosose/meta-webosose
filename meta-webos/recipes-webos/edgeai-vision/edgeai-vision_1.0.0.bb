@@ -5,8 +5,8 @@ DESCRIPTION = "webOS Edge AI Computer Vision Library using TensorflowLite"
 SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-  file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-  file://oss-pkg-info.yaml;md5=4b1ab5610fc16b165f0ff6bf836ad2a8 \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+    file://oss-pkg-info.yaml;md5=4b1ab5610fc16b165f0ff6bf836ad2a8 \
 "
 
 WEBOS_VERSION = "1.0.0-11_fdd8fdc48201aab1b7fcd9691f501855488a5e95"

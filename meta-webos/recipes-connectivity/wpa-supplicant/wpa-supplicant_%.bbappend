@@ -4,9 +4,10 @@ EXTENDPRAUTO:append = "webos4"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://wpa-supplicant.sh \
-            file://wpa-supplicant.service \
-            file://0001-Add-p2p-changes.patch \
+SRC_URI += " \
+    file://wpa-supplicant.sh \
+    file://wpa-supplicant.service \
+    file://0001-Add-p2p-changes.patch \
 "
 # Replace the wpa_supplicant.service from wpa-supplicant source with our own version (for some unknown reason)
 SYSTEMD_SERVICE:${PN}:remove = "wpa_supplicant.service"

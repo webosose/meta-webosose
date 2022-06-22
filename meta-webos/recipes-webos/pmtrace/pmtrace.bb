@@ -3,11 +3,13 @@
 SUMMARY = "lttng-ust tracepoints wrapper library and performance tools"
 AUTHOR = "Andre Rosa <andre.rosa@lge.com>"
 SECTION = "webos/libs"
+
 LICENSE = "LGPL-2.1-only & MIT & Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE.LGPL;md5=e2aa4f66375a24019b0ff5e99cec40ad \
-                    file://LICENSE.MIT;md5=19b5d9061141f7ab05cfcfdd4404ed08 \
-                    file://README.md;md5=35108c1521572d2a526926333b233cd7 \
-                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+LIC_FILES_CHKSUM = " \
+    file://LICENSE.LGPL;md5=e2aa4f66375a24019b0ff5e99cec40ad \
+    file://LICENSE.MIT;md5=19b5d9061141f7ab05cfcfdd4404ed08 \
+    file://README.md;md5=35108c1521572d2a526926333b233cd7 \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "lttng-ust libpbnjson pmloglib glib-2.0"

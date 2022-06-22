@@ -3,9 +3,11 @@
 SUMMARY = "Provides preference, timezone and ringtone services"
 AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
 SECTION = "webos/base"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=7bd705f8ae3d5077cbd3da7078607d8b \
-                    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=7bd705f8ae3d5077cbd3da7078607d8b \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 VIRTUAL-RUNTIME_ntp ?= "sntp"

@@ -5,8 +5,8 @@ AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-  file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
-  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+    file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 PROVIDES = "val-impl"

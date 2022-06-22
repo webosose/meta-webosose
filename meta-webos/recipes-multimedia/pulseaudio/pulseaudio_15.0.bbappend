@@ -26,9 +26,10 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
 
 S = "${WORKDIR}/git"
 
-EXTRA_OECONF += "--with-access-group=root \
-                --disable-samplerate \
-                "
+EXTRA_OECONF += " \
+    --with-access-group=root \
+    --disable-samplerate \
+"
 
 PACKAGECONFIG[palm-resampler] = "-Dpalm-resampler=true,-Dpalm-resampler=false,"
 PACKAGECONFIG[rpi] = "-Drpi=true,-Drpi=false,"

@@ -3,9 +3,12 @@
 SUMMARY = "Node-red based context intent manager (CIM)"
 AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
 SECTION = "webos/extended-service"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=fe9bd85c6f789c8ada9c8b72c7454254"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=fe9bd85c6f789c8ada9c8b72c7454254 \
+"
 
 DEPENDS = "nodejs-module-node-red"
 

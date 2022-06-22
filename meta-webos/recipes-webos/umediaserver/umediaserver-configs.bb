@@ -3,10 +3,11 @@
 SUMMARY = "umediaserver configs installation"
 AUTHOR = "Peter Nordström <peter.nordstrom@lge.com>"
 SECTION = "webos/base"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-  file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
-  file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+    file://LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 WEBOS_VERSION = "1.0.0-14_c86ef2e55ed374db383e8ca8946b7c2c73c9a61d"

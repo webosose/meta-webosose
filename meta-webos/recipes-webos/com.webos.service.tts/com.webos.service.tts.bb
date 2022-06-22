@@ -3,9 +3,12 @@
 SUMMARY = "webOS text to speech service"
 SECTION = "webos/base"
 AUTHOR = "Rachana Agarwal <rachana.agarwal@lge.com>"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-                    file://oss-pkg-info.yaml;md5=eb0fefa4904ac8820261e985096d5ad4"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+    file://oss-pkg-info.yaml;md5=eb0fefa4904ac8820261e985096d5ad4 \
+"
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleapis grpc"
 

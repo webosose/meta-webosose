@@ -4,12 +4,12 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 SRCREV = "efb73cc94dac29dc590a243109d4654c223e008c"
 SRC_URI = "git://github.com/google-coral/libedgetpu \
-           file://libedgetpu_arm.so.1.0 \
-           file://libedgetpu_aarch64.so.1.0 \
-           file://libedgetpu_x86_64.so.1.0 \
-           file://edgetpu-accelerator.rules \
-           file://edgetpu.pc.in \
-          "
+    file://libedgetpu_arm.so.1.0 \
+    file://libedgetpu_aarch64.so.1.0 \
+    file://libedgetpu_x86_64.so.1.0 \
+    file://edgetpu-accelerator.rules \
+    file://edgetpu.pc.in \
+"
 
 S = "${WORKDIR}/git"
 
@@ -73,10 +73,11 @@ do_install() {
 
 FILES:${PN}-dev = ""
 
-INSANE_SKIP:${PN} += "dev-so \
-                      already-stripped \
-                      file-rdeps \
-                     "
+INSANE_SKIP:${PN} += " \
+    dev-so \
+    already-stripped \
+    file-rdeps \
+"
 
 INSANE_SKIP:${PN}-dev += "dev-elf"
 FILES:${PN} += "${libdir}/* ${includedir}/* ${sysconfdir}/*"

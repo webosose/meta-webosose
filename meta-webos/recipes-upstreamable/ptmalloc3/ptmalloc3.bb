@@ -12,7 +12,8 @@ LIC_FILES_CHKSUM = " \
 PR = "r5"
 
 SRC_URI = "http://www.malloc.de/malloc/ptmalloc3-current.tar.gz \
-           file://ptmalloc3-current-webos.patch "
+    file://ptmalloc3-current-webos.patch \
+"
 
 SRC_URI[md5sum] = "c0b9dd5f16f8eae979166dc74b60015c"
 SRC_URI[sha256sum] = "f353606f24a579597a1ff5b51009a45d75da047b3975d82c3f613f85bcf312db"

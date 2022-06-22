@@ -3,9 +3,12 @@
 SUMMARY = "webOS component responsible for launching the node.js services"
 AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
 SECTION = "webos/frameworks"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=bc052cc0f232b815569ebc81a4ef6490"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=bc052cc0f232b815569ebc81a4ef6490 \
+"
 
 DEPENDS = "boost libpbnjson"
 RDEPENDS:${PN} = "nodejs"

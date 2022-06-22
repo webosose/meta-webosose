@@ -3,10 +3,11 @@
 SUMMARY = "Service which controls audio output"
 AUTHOR = "Premalatha MVS <premalatha.mvs@lge.com>"
 SECTION = "webos/services"
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-file://CMakeLists.txt;beginline=1;endline=15;md5=232fd0174eef9aa036a9c08ff983b67b \
-file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+    file://CMakeLists.txt;beginline=1;endline=15;md5=232fd0174eef9aa036a9c08ff983b67b \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson umi"

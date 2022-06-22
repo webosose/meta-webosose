@@ -13,7 +13,7 @@ inherit webos_cmake
 
 SRCREV = "d3029a5dc8833d9e76146259a6a4ff9bf225d9e2"
 SRC_URI = "git://github.com/VisualGPS/NMEAParser.git;branch=master;protocol=https \
-          file://0001-Changes-to-support-compilation.patch \
-          file://0002-NMEA-checksum-passing-to-nyx-module.patch \
+    file://0001-Changes-to-support-compilation.patch \
+    file://0002-NMEA-checksum-passing-to-nyx-module.patch \
 "
 S = "${WORKDIR}/git"

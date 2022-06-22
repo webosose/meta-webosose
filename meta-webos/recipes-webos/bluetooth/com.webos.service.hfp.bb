@@ -3,9 +3,11 @@
 SUMMARY = "Bluetooth HFP(Hands Free Profile) support service"
 AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
 SECTION = "webos/services"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
-                    file://oss-pkg-info.yaml;md5=63319cd2c369569050a7c0cc246fc8ba \
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \
+    file://oss-pkg-info.yaml;md5=63319cd2c369569050a7c0cc246fc8ba \
 "
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"

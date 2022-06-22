@@ -4,9 +4,12 @@ SUMMARY = "Maliit Input Method Plugins"
 DESCRIPTION = "Mallit-based virtual keyboard and input method engine for open webOS"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 SECTION = "webos/base"
+
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
-                    file://oss-pkg-info.yaml;md5=7c010a972eb989740843ee18e1577536"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=7c010a972eb989740843ee18e1577536 \
+"
 
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
 RDEPENDS:${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
