@@ -1,10 +1,10 @@
 # Copyright (c) 2021-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos3"
+EXTENDPRAUTO:append = "webos4"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-DEPENDS +="openssl"
+DEPENDS += "openssl"
 
 # fix /usr/include/features.h:397:4: error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Werror=cpp]
 SRC_URI += " \
@@ -21,13 +21,6 @@ do_install:append() {
 
     install -v -m 644 ${S}/lib/monkey/include/monkey/mk_core.h ${D}${includedir}/monkey/
     install -v -m 644 ${S}/lib/monkey/include/monkey/mk_core/*.h ${D}${includedir}/monkey/mk_core
-
-    # install msgpack.h
-    install -v -m 644 ${S}/lib/msgpack-c/include/msgpack.h ${D}${includedir}
-
-    # install msgpack/*.h
-    install -d ${D}${includedir}/msgpack/
-    install -v -m 644 ${S}/lib/msgpack-c/include/msgpack/*.h ${D}${includedir}/msgpack/
 
     # install libco.h
     install -v -m 644 ${S}/lib/flb_libco/*.h ${D}${includedir}
