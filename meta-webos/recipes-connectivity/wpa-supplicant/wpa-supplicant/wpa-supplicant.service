@@ -27,5 +27,5 @@ Type=simple
 OOMScoreAdjust=-500
 EnvironmentFile=-/var/systemd/system/env/wpa-supplicant.env
 ExecStartPre=/etc/systemd/system/scripts/wpa-supplicant.sh
-ExecStart=/usr/sbin/wpa_supplicant -u -s
+ExecStart=/usr/sbin/wpa_supplicant -u $WPA_EXTRA_PARAM -s
 Restart=on-failure

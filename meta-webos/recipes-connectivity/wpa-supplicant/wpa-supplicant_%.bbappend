@@ -1,8 +1,8 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += " \
     file://wpa-supplicant.sh \
