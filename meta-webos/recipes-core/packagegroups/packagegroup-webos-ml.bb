@@ -21,4 +21,5 @@ RDEPENDS:${PN} = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', 'armnn', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', 'libedgetpu', '', d)} \
     edgeai-vision \
+    edgeai-vision-tests \
 "

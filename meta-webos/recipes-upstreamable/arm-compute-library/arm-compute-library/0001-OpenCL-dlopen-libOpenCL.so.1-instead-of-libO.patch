@@ -20,7 +20,7 @@ index d8c2736ef..2c9492de1 100644
  bool CLSymbols::load_default()
  {
 -    static const std::vector<std::string> libraries{ "libOpenCL.so", "libGLES_mali.so", "libmali.so" };
-+    static const std::vector<std::string> libraries{ "libOpenCL.so.1", "libGLES.so", "libmali.so" };
++    static const std::vector<std::string> libraries{ "libOpenCL.so.1", "libGLESv2.so.2", "libmali.so" };
 
      if(_loaded.first)
      {
