@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-61_c35a65e0101756327c8b8198d11d8a123d00610b"
-PR = "r46"
+WEBOS_VERSION = "1.0.2-62_95556b20926075f24bc833ab4993346c60608f5d"
+PR = "r47"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -72,6 +72,9 @@ WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 # Flag to control runtime flags for touch
 TOUCH_ENABLED ?= "true"
 
+# Flag to control runtime flag for Media Player Neva
+DISABLE_NEVA_MEDIA_PLAYER ?= "true"
+
 # Flag to control runtime flag for platform decoder
 PLATFORM_DECODER_ENABLED ?= "true"
 
@@ -103,10 +106,16 @@ do_configure:append() {
 
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-neva-media-service \\' ${B}/webapp-mgr.sh
 
-    # enable platform decoding if PLATFORM_DECODER_ENABLED is true
-    if ${PLATFORM_DECODER_ENABLED}; then
+    # enable platform decoding if DISABLE_NEVA_MEDIA_PLAYER is true
+    if ${DISABLE_NEVA_MEDIA_PLAYER}; then
        # enable h/w decoding for webrtc
-       sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-decoder \\' ${B}/webapp-mgr.sh
+       sed -i '/--enable-aggressive-release-policy \\/a\    --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
+    else
+      # enable platform decoding if PLATFORM_DECODER_ENABLED is true
+      if ${PLATFORM_DECODER_ENABLED}; then
+         # enable h/w decoding for webrtc
+         sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-decoder \\' ${B}/webapp-mgr.sh
+      fi
     fi
 
     # enable platform encoding if PLATFORM_ENCODER_ENABLED is true
@@ -129,6 +138,7 @@ do_configure:append:qemux86() {
     if [ -f "${B}/webapp-mgr.sh" ]; then
         # Disable media hardware acceleration
         sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
+        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-accelerated-video-decode \\' ${B}/webapp-mgr.sh
     fi
 }
 
@@ -137,6 +147,7 @@ do_configure:append:qemux86-64() {
     if [ -f "${B}/webapp-mgr.sh" ]; then
         # Disable media hardware acceleration
         sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
+        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-accelerated-video-decode \\' ${B}/webapp-mgr.sh
     fi
 }
 

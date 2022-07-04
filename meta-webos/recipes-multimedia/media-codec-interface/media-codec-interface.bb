@@ -21,13 +21,10 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^r
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS:append:rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-8_d957796c4bd36391f12a443bdddcf5a17362a3e8"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-10_25f5d0aaeee799e84b1bb3616451a1bc94b09986"
+PR = "r6"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
-
-USE_ENCODER ?= "GST"
-EXTRA_OECMAKE += "-DUSE_ENCODER_BUILD:STRING=${USE_ENCODER}"
 
 S = "${WORKDIR}/git"
 

@@ -18,9 +18,9 @@ inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 inherit webos_system_bus
 
-DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
+DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native pulseaudio"
 
-INC_PR = "r54"
+INC_PR = "r55"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -85,7 +85,6 @@ GN_ARGS += "\
     enable_print_preview=false\
     enable_remoting=false\
     use_gnome_keyring=false\
-    use_pulseaudio=false\
 "
 
 # TODO: drop this after we migrate to ubuntu 16.04 or above
@@ -170,10 +169,12 @@ modify_run_app_shell() {
 modify_run_app_shell:append:qemux86() {
     # Disable media hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
+    sed -i '/--disable-web-security\\/a\ --disable-accelerated-video-decode\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
 modify_run_app_shell:append:qemux86-64() {
     # Disable media hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
+    sed -i '/--disable-web-security\\/a\ --disable-accelerated-video-decode\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
 
 WINDOW_SIZE ?= "1920,1080"
