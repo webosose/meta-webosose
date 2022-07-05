@@ -4,12 +4,11 @@ SUMMARY = "TensorFlow Lite CPP Library"
 LICENSE = "Apache-2.0"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=c7e17cca1ef4230861fb7868e96c387e"
-# Compute branch info from ${PV} as Base PV...
-BPV = "${@'.'.join(d.getVar('PV').split('.')[0:2])}"
-DPV = "${@'.'.join(d.getVar('PV').split('.')[0:3])}"
 
-# Since they tag off of something resembling ${PV}, use it.
-# Matches v${PV}
+BRANCH = "r${@oe.utils.trim_version('${PV}', 2)}"
+
+SRCREV_FORMAT = "tensorflow"
+# Matches v${PV} tag
 SRCREV_tensorflow = "c2363d6d025981c661f8cbecf4c73ca7fbf38caf"
 SRCREV_abseil-cpp = "997aaf3a28308eba1b9156aa35ab7bca9688e9f6"
 # v1.12.0
@@ -24,10 +23,34 @@ SRCREV_gemmlowp = "fda83bdc38b118cc6b56753bd540caa49e570745"
 SRCREV_vulkan-headers = "ec2db85225ab410bc6829251bef6c578aaed5868"
 SRCREV_egl-headers = "649981109e263b737e7735933c90626c29a306f2"
 SRCREV_opengl-headers = "0cb0880d91581d34f96899c86fc1bf35627b4b81"
-SRCREV_FORMAT = "tensorflow"
+
+# Following are needed for XNNPACK:
+# tensorflow-lite/2.6.2-r3/git $ grep 'URL ' xnnpack/cmake/Download*
+# xnnpack/cmake/DownloadCLog.cmake:  URL https://github.com/pytorch/cpuinfo/archive/d5e37adf1406cf899d7d9ec1d317c47506ccb970.tar.gz
+# xnnpack/cmake/DownloadCpuinfo.cmake:  URL https://github.com/pytorch/cpuinfo/archive/5916273f79a21551890fd3d56fc5375a78d1598d.zip
+# xnnpack/cmake/DownloadFP16.cmake:  URL https://github.com/Maratyszcza/FP16/archive/0a92994d729ff76a58f692d3028ca1b64b145d91.zip
+# xnnpack/cmake/DownloadFXdiv.cmake:  URL https://github.com/Maratyszcza/FXdiv/archive/b408327ac2a15ec3e43352421954f5b1967701d1.zip
+# xnnpack/cmake/DownloadGoogleBenchmark.cmake:  URL https://github.com/google/benchmark/archive/v1.5.3.zip
+# xnnpack/cmake/DownloadGoogleTest.cmake:  URL https://github.com/google/googletest/archive/5a509dbd2e5a6c694116e329c5a20dc190653724.zip
+# xnnpack/cmake/DownloadPThreadPool.cmake:  URL https://github.com/Maratyszcza/pthreadpool/archive/545ebe9f225aec6dca49109516fac02e973a3de2.zip
+
+# Notice that cpuinfo-source and clog-source use different revisions from the same repo:
+# the newer (by 60 commits) 5916273f79a21551890fd3d56fc5375a78d1598d for cpuinfo
+# https://github.com/pytorch/cpuinfo/compare/d5e37adf1406cf899d7d9ec1d317c47506ccb970...5916273f79a21551890fd3d56fc5375a78d1598d
+SRCREV_clog = "d5e37adf1406cf899d7d9ec1d317c47506ccb970"
+SRCREV_cpuinfo = "5916273f79a21551890fd3d56fc5375a78d1598d"
+SRCREV_fp16 = "0a92994d729ff76a58f692d3028ca1b64b145d91"
+SRCREV_fxdiv = "b408327ac2a15ec3e43352421954f5b1967701d1"
+SRCREV_pthreadpool = "545ebe9f225aec6dca49109516fac02e973a3de2"
+
+# Following is for FP16:
+# tensorflow-lite/2.6.2-r3/git $ grep 'GIT' FP16-source/cmake/Download*
+# FP16-source/cmake/DownloadPSimd.cmake:  GIT_REPOSITORY https://github.com/Maratyszcza/psimd.git
+# FP16-source/cmake/DownloadPSimd.cmake:  GIT_TAG master
+SRCREV_psimd = "072586a71b55b7f8c584153d223e95687148a900"
 
 SRC_URI = " \
-    git://github.com/tensorflow/tensorflow.git;branch=r${BPV};protocol=https;name=tensorflow \
+    git://github.com/tensorflow/tensorflow.git;branch=${BRANCH};protocol=https;name=tensorflow \
     git://github.com/abseil/abseil-cpp.git;branch=lts_2021_03_24;protocol=https;destsuffix=git/abseil-cpp;name=abseil-cpp \
     git://github.com/google/flatbuffers;branch=master;protocol=https;destsuffix=git/flatbuffers;name=flatbuffers \
     git://gitlab.com/libeigen/eigen;branch=master;protocol=https;destsuffix=git/eigen;name=eigen \
@@ -40,6 +63,12 @@ SRC_URI = " \
     git://github.com/KhronosGroup/Vulkan-Headers;branch=master;protocol=https;destsuffix=git/vulkan_headers;name=vulkan-headers \
     git://github.com/KhronosGroup/EGL-Registry;branch=main;protocol=https;destsuffix=git/egl_headers;name=egl-headers \
     git://github.com/KhronosGroup/OpenGL-Registry;branch=main;protocol=https;destsuffix=git/opengl_headers;name=opengl-headers \
+    git://github.com/pytorch/cpuinfo;branch=master;protocol=https;destsuffix=git/cpuinfo-source;name=cpuinfo \
+    git://github.com/pytorch/cpuinfo;branch=master;protocol=https;destsuffix=git/clog-source;name=clog \
+    git://github.com/Maratyszcza/FP16;branch=master;protocol=https;destsuffix=git/FP16-source;name=fp16 \
+    git://github.com/Maratyszcza/FXdiv;branch=master;protocol=https;destsuffix=git/FXdiv-source;name=fxdiv \
+    git://github.com/Maratyszcza/pthreadpool;branch=master;protocol=https;destsuffix=git/pthreadpool-source;name=pthreadpool \
+    git://github.com/Maratyszcza/psimd;branch=master;protocol=https;destsuffix=git/psimd-source;name=psimd \
     file://0001-remove-label_image-benchmark_model-exclude-option.patch \
     file://0002-enable-external-delegate-in-benchmarktool.patch \
     file://0003-Fix-return-type-issues.patch \
@@ -120,7 +149,30 @@ do_configure:prepend() {
     done
 }
 
-EXTRA_OECMAKE = "-DBUILD_SHARED_LIBS=ON"
+# For these we can set *_SOURCE_DIR to avoid copy in do_configure:prepend:
+# tensorflow-lite/2.6.2-r3/git $ grep SOURCE_DIR xnnpack/CMakeLists.txt | grep Downloading
+#    MESSAGE(STATUS "Downloading clog to ${CMAKE_BINARY_DIR}/clog-source (define CLOG_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading cpuinfo to ${CMAKE_BINARY_DIR}/cpuinfo-source (define CPUINFO_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading FP16 to ${CMAKE_BINARY_DIR}/FP16-source (define FP16_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading FXdiv to ${CMAKE_BINARY_DIR}/FXdiv-source (define FXDIV_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading pthreadpool to ${CMAKE_BINARY_DIR}/pthreadpool-source (define PTHREADPOOL_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading Google Test to ${CMAKE_BINARY_DIR}/googletest-source (define GOOGLETEST_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading Google Benchmark to ${CMAKE_BINARY_DIR}/googlebenchmark-source (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
+# tensorflow-lite/2.6.2-r3/git $ grep SOURCE_DIR FP16-source/CMakeLists.txt | grep Downloading
+#    MESSAGE(STATUS "Downloading PSimd to ${CMAKE_BINARY_DIR}/psimd-source (define PSIMD_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading Google Test to ${CMAKE_BINARY_DIR}/googletest-source (define GOOGLETEST_SOURCE_DIR to avoid it)")
+#    MESSAGE(STATUS "Downloading Google Benchmark to ${CMAKE_BINARY_DIR}/googlebenchmark-source (define GOOGLEBENCHMARK_SOURCE_DIR to avoid it)")
+
+EXTRA_OECMAKE += " \
+    -DCLOG_SOURCE_DIR=${S}/clog-source \
+    -DCPUINFO_SOURCE_DIR=${S}/cpuinfo-source \
+    -DFP16_SOURCE_DIR=${S}/FP16-source \
+    -DFXDIV_SOURCE_DIR=${S}/FXdiv-source \
+    -DPTHREADPOOL_SOURCE_DIR=${S}/pthreadpool-source \
+    -DPSIMD_SOURCE_DIR=${S}/psimd-source \
+"
+
+EXTRA_OECMAKE += "-DBUILD_SHARED_LIBS=ON"
 
 AIF_INSTALL_DIR = "${datadir}/aif"
 
