@@ -18,7 +18,7 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-63_b33aa2ebce1e121d1a48433a8aeaf89318d2dfd1"
+WEBOS_VERSION = "1.0.2-65_277cec5b40c586518933237a538eebd05956880c"
 PR = "r49"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
