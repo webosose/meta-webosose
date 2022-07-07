@@ -67,3 +67,7 @@ do_install () {
     install -d ${D}/${bindir}
     ln -snf ../lib/node_modules/node-gyp/bin/node-gyp.js ${D}/${bindir}/node-gyp
 }
+
+# Workaround for network access issue during do_install task
+# http://gecko.lge.com/Errors/Details/433062
+do_install[network] = "1"
