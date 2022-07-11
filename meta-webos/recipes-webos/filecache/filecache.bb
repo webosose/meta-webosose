@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS daemon to cache filesystem requests"
-AUTHOR = "Alekseyev Oleksandr <alekseyev.oleksandr@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

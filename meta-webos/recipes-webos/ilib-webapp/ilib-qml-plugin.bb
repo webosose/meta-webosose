@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "iLib Qml loader"
-AUTHOR = "Goun Lee <goun.lee@lge.com>"
+AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"
 SECTION = "libs/qtplugin"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

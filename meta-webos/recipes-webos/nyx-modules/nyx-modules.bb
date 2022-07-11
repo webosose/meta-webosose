@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - ${MACHINE}-specific modules"
-AUTHOR = "Keith Derrick <keith.derrick@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

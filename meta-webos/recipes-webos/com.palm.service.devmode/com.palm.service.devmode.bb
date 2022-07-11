@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "JS service for Developer Mode"
-AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/apps"
 
 LICENSE = "Apache-2.0"

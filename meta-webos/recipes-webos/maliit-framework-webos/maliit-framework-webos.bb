@@ -2,7 +2,7 @@
 
 SUMMARY = "Maliit Input Method Framework"
 DESCRIPTION = "This is the webOS edition of the Maliit input method framework. It differs from upstream in that it supports a hardware keyboard using the wayland protocol."
-AUTHOR = "Minjoong Park <minjoong.park@lgepartner.com>"
+AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "LGPL-2.0-only"
 LIC_FILES_CHKSUM = " \

@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 DESCRIPTION = "webOS component to manage all running activities."
-AUTHOR = "Ludovic Legrand <ludovic.legrand@lge.com>"
+AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"
 SECTION = "webos/dameons"
 
 LICENSE = "Apache-2.0"

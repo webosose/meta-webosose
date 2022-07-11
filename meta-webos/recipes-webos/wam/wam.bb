@@ -1,7 +1,7 @@
 # Copyright (c) 2015-2022 LG Electronics, Inc.
 
 SUMMARY = "WebAppMgr is responsible for running web applications on webOS"
-AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
+AUTHOR = "Donghyun Kim <donghyun11.kim@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=790420e31fa17284afec484d5b2ad2d8"

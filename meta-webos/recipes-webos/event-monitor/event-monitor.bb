@@ -1,7 +1,7 @@
 # Copyright (c) 2015-2022 LG Electronics, Inc.
 
 SUMMARY = "Event Monitoring Service for generic notifications"
-AUTHOR = "Viesturs Zarins <viesturs.zarins@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

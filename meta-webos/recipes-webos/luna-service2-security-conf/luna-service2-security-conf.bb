@@ -1,7 +1,7 @@
 # Copyright (c) 2015-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS LS2 security configuration"
-AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

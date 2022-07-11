@@ -1,6 +1,7 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "AudioOutputd adaptation layer (UMI) API definition and test harness"
+AUTHOR  = "Sushovan G <sushovan.g@lge.com>"
 SECTION = "webos/libs"
 
 LICENSE = "Apache-2.0"

@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "Loadable Node.js module for webOS services"
-AUTHOR = "Sergiy Kryvonos <sergiy.kryvonos@lge.com>"
+AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
 SECTION = "webOS/frameworks"
 
 LICENSE = "Apache-2.0"

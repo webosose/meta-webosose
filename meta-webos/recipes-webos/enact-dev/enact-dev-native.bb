@@ -1,7 +1,7 @@
 # Copyright (c) 2016-2022 LG Electronics, Inc.
 
 DESCRIPTION = "enact-dev command-line tools used by webOS"
-AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
+AUTHOR = "Seungho Park <seunghoh.park@lge.com>"
 SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://cli/LICENSE;md5=9456eea7fa7e9e4a4fcdf8e430bd36c8"

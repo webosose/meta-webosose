@@ -1,7 +1,7 @@
 # Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "Mediacontroller service"
-AUTHOR = "Sapna Kumari"
+AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
 SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"

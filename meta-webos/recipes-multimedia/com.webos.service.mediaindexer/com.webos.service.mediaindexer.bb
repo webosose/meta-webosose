@@ -1,7 +1,7 @@
 # Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "Media indexer service"
-AUTHOR = "Jaehoon Lee <jaehoon85.lee@lge.com>"
+AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

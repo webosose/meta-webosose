@@ -2,7 +2,7 @@
 
 SUMMARY = "A userspace service that provides access to the webOS database"
 SECTION = "webos/base"
-AUTHOR = "Maksym Sditanov <maxim.sditanov@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

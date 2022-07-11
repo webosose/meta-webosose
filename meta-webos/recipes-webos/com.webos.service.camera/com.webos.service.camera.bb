@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "Camera service framework to control camera devices"
-AUTHOR = "Gururaj Patil"
+AUTHOR = "Premalatha M V S <premalatha.mvs@lge.com>"
 SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"

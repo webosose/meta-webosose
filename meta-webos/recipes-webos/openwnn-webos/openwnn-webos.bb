@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "A Japanese IME library (input method editor for typing Japanese)"
-AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
+AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"
 SECTION = "libs"
 
 LICENSE = "Apache-2.0"

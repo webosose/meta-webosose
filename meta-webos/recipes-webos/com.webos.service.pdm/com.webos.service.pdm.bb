@@ -2,7 +2,7 @@
 
 SUMMARY = "Physical Device Manager handles physical devices using netlink events"
 DESCRIPTION = "Service for detecting and managing physical devices using netlink events. A physical device is a USB device, available internal storage device and so on."
-AUTHOR = "Preetham Bhat <preetham.bhat@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"

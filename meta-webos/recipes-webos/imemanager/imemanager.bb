@@ -2,7 +2,7 @@
 
 SUMMARY = "Maliit Input Method Plugins"
 DESCRIPTION = "Mallit-based virtual keyboard and input method engine for open webOS"
-AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
+AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

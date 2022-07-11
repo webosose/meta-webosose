@@ -2,6 +2,7 @@
 
 require nodejs-module-webos.inc
 
+AUTHOR  = "Seokhee Lee <seokhee.lee@lge.com>"
 SUMMARY = "A module for nodejs that allows Javascript access to the webOS logging system"
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=d486dd326df35bb9d577c353691f0455"
 

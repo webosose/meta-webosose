@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
-AUTHOR = "Anish.td <anish.td@lge.com>"
+AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = " \

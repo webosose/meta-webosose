@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "Settings Service"
-AUTHOR = "Radhika S <radhika.s@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

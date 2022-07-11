@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS QML LS2 bridge"
-AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
+AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

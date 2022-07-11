@@ -1,5 +1,7 @@
 # Copyright (c) 2022 LG Electronics, Inc.
 
+AUTHOR = "Sushovan G <sushovan.g@lge.com>"
+
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=5c4ec8703e42f87fdf96fa3794704163"
 
 # This is blacklisted because of the license

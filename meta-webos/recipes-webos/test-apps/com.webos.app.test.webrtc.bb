@@ -5,5 +5,5 @@ require webos-open-test-apps.inc
 PR = "${INC_PR}.0"
 
 SUMMARY = "WebRTC"
-AUTHOR = "Pankaj Kumar Maharana <pankaj.maharana@lge.com>"
+AUTHOR = "Sujeet Nayak <sujeet.nayak@lge.com>"
 

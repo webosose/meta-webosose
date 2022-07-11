@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Sleep scheduling policy daemon"
-AUTHOR = "Sapna Todwal <sapna.todwal@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

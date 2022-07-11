@@ -1,7 +1,7 @@
 # Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "QML widgets and runtime framework for webOS apps"
-AUTHOR = "Mikko Levonmaa <mikko.levonmaa@lge.com>"
+AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

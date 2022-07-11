@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "Event Monitoring for Network service"
-AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
+AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

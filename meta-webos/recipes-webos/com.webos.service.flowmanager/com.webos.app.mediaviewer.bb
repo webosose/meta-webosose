@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS OSE sample app for flow"
-AUTHOR  = "Namsu Kim  <namsu81.kim@lge.com>"
+AUTHOR  = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

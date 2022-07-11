@@ -1,7 +1,7 @@
 # Copyright (c) 2015-2022 LG Electronics, Inc.
 
 SUMMARY = "Settings Service Configs"
-AUTHOR = "Denys Romanchuk <denys.romanchuk@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"

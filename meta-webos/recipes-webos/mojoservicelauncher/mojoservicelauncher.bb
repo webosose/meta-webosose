@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS component responsible for launching the node.js services"
-AUTHOR = "Steve Lemke <steve.lemke@lge.com>"
+AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
 SECTION = "webos/frameworks"
 
 LICENSE = "Apache-2.0"

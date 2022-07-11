@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "libsandbox is a collection of APIs for separating running programs"
-AUTHOR = "Andrew Innes <andrew.innes@lge.com>"
+AUTHOR = "Vibhanshu Dhote <vibhanshu.dhote@lge.com>"
 SECTION = "webos/devel"
 
 LICENSE = "Apache-2.0"

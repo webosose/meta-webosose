@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "General System Launcher application"
-AUTHOR = "Jongson Kim<jongson.kim@lge.com>"
+AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

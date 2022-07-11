@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "Surface Manager for webOS Auto Reference UX"
-AUTHOR  = "Jaeyoon Jung <jaeyoon.jung@lge.com>"
+AUTHOR  = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

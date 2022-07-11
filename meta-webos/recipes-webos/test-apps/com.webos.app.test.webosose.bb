@@ -8,4 +8,4 @@ LIC_FILES_CHKSUM += " \
 PR = "${INC_PR}.2"
 
 SUMMARY = "webOS OSE test application"
-AUTHOR = "Anish TD <anish.td@lge.com>"
+AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"

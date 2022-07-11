@@ -1,7 +1,7 @@
 # Copyright (c) 2022 LG Electronics, Inc.
 
 SUMMARY = "Background Media Test Application"
-AUTHOR = "Kalaiselvi P <kalaiselvi.p@lge.com>"
+AUTHOR = "Sujeet Nayak <sujeet.nayak@lge.com>"
 
 require webos-open-test-apps.inc
 

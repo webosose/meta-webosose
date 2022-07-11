@@ -1,6 +1,7 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "Fonts used by webOS"
+AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"
 SECTION = "webos/fonts"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

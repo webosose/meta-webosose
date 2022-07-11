@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Camera application"
-AUTHOR = "Muniraju <muniraju.a@lge.com>"
+AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"
 SECTION = "webos/apps"
 
 LICENSE = "Apache-2.0"

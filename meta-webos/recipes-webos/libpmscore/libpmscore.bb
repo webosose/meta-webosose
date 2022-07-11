@@ -1,7 +1,7 @@
 # Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "pmscore handles device states"
-AUTHOR = "Abhsiehk Srivastava <abhishek.srivastava@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/libs"
 
 LICENSE = "Apache-2.0"

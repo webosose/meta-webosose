@@ -1,7 +1,7 @@
 # Copyright (c) 2020-2022 LG Electronics, Inc.
 
 DESCRIPTION = "Utility library used in Location Framework"
-AUTHOR = "vibhanshu.dhote <vibhanshu.dhote@lge.com>"
+AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"
 SECTION = "webos/location"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

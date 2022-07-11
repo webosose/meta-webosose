@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Initialization, setup, and font files used by luna-sysmgr and luna-sysservice"
-AUTHOR = "Alekseyev Oleksandr <alekseyev.oleksandr@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

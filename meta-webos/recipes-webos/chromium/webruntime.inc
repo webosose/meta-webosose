@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Chromium webruntime for webOS"
-AUTHOR = "Lokesh Kumar Goel <lokeshkumar.goel@lge.com>"
+AUTHOR = "Donghyun Kim <donghyun11.kim@lge.com>"
 SECTION = "webos/apps"
 
 require webruntime-common.inc

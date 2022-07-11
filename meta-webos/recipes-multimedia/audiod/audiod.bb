@@ -1,7 +1,7 @@
 # Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS Audiod daemon and utilities"
-AUTHOR = "Manohar Babu <manohar.babu@lge.com>"
+AUTHOR = "Sushovan G <sushovan.g@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

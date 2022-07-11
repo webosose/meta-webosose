@@ -1,7 +1,7 @@
 # Copyright (c) 2020-2022 LG Electronics, Inc.
 
 SUMMARY = "Bluetooth HFP(Hands Free Profile) support service"
-AUTHOR = "Sameer Mulla <sameer.mulla@lge.com>"
+AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"
 SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"

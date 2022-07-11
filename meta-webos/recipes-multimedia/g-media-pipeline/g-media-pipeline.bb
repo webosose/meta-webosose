@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "G media pipeline is a media pipeline which uses GStreamer"
-AUTHOR = "Jinwoo Ahn <jinwoo.ahn@lge.com>"
+AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
 SECTION = "webos/media"
 
 LICENSE = "Apache-2.0"

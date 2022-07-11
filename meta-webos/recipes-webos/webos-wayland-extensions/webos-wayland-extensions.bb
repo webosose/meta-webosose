@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "Wayland protocol extensions for webOS"
-AUTHOR = "Anupam Kaul <anupam.kaul@lge.com>"
+AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

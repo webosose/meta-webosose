@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 DESCRIPTION = "webOS component for managing network connections using connman"
-AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
+AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=2763f3ed850f8412903ea776e0526bea \

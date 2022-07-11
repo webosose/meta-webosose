@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "Palm's Better Native JSON library"
-AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/libs"
 
 LICENSE = "Apache-2.0"

@@ -9,4 +9,4 @@ LIC_FILES_CHKSUM += " \
 PR = "${INC_PR}.2"
 
 SUMMARY = "Bare (no-enyo) test application"
-AUTHOR = "Anish TD <anish.td@lge.com>"
+AUTHOR = "Donghyun Kim <donghyun11.kim@lge.com>"

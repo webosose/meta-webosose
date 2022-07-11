@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Peripheral Manager service for webOS OSE"
-AUTHOR  = "Yogish S <yogish.s@lge.com>"
+AUTHOR  = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webosose"
 
 LICENSE = "Apache-2.0"

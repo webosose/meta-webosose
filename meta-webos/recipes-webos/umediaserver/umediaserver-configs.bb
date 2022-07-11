@@ -1,7 +1,7 @@
 # Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "umediaserver configs installation"
-AUTHOR = "Peter Nordström <peter.nordstrom@lge.com>"
+AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

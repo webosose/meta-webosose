@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Node-red based context intent manager (CIM)"
-AUTHOR = "Tirthadeep Roy <tirthadeep.roy@lge.com>"
+AUTHOR = "Muthu Santhosh Kumar <santhosh.muthu@lge.com>"
 SECTION = "webos/extended-service"
 
 LICENSE = "Apache-2.0"

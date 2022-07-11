@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
 SUMMARY = "Service which controls audio output"
-AUTHOR = "Premalatha MVS <premalatha.mvs@lge.com>"
+AUTHOR = "Sushovan G <sushovan.g@lge.com>"
 SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"

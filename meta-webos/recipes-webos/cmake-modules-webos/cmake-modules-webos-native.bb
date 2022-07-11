@@ -2,6 +2,7 @@
 
 DESCRIPTION = "CMake modules used by webOS"
 LICENSE = "Apache-2.0"
+AUTHOR = "Vijaya Sundaram <vijaya.sundaram@lge.com>"
 SECTION = "webos/devel/tools"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 

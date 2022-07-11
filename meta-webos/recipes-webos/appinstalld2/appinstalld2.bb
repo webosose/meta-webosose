@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
 SUMMARY = "Application Install Service"
-AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
+AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

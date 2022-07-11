@@ -2,7 +2,7 @@
 
 SUMMARY = "Library for dynamically generating webOS system bus role files for webOS JavaScript services"
 SECTION = "webos/libs"
-AUTHOR = "Seokhyon Seong <seokhyon.seong@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
