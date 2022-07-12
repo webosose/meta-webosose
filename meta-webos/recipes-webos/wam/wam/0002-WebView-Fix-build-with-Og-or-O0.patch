@@ -1,0 +1,69 @@
+From 083e9a49f2d89a613e51394342def7f4de973eea Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Tue, 12 Jul 2022 17:42:39 +0000
+Subject: [PATCH] WebView: Fix build with -Og or -O0
+
+:Release Notes:
+When -Og (e.g. with DEBUG_BUILD) or -O0 is used, linking fails.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com/Errors/Details/437133
+FAILED: src/WebAppMgr
+: && TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++ -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -Og -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot  -Og -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot=                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot-native=  -pipe -fvisibility-inlines-hidden  -Wno-error=uninitialized -Wno-error=maybe-uninitialized -fno-rtti -fno-exceptions -Wall -fpermissive -funwind-tables -std=c++14 -Wno-psabi -Werror -DNDEBUG  -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -Og -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot  -Og -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot=                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot-native=  -pipe -fvisibility-inlines-hidden  -Wno-error=uninitialized -Wno-error=maybe-uninitialized -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot=                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot-native=  -Wl,-z,relro,-z,now -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45=/usr/src/debug/wam/1.0.2-60-r45                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot=                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot-native=  -Wl,-z,relro,-z,now    -Wl,--no-as-needed -Wno-psabi -rdynamic src/CMakeFiles/WebAppMgrExec.dir/wam_main.cc.o -o src/WebAppMgr  -Wl,-rpath,"\$ORIGIN/platform:\$ORIGIN/core:"  -lcbe  -LTOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot/usr/lib  -lluna-prefs  -ljson-c  -LTOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot/usr/lib  -lPmLogLib  src/platform/libWebAppMgr.so.1.0.0  src/core/libWebAppMgrCore.so.1.0.0  -lcbe  -LTOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot/usr/lib  -lglib-2.0  -lPmLogLib  TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot/usr/lib/libboost_filesystem.so.1.79.0  TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot/usr/lib/libboost_atomic.so.1.79.0  -ldl  -ljsoncpp  -lluna-prefs  -ljson-c  -llunaservice && :
+src/platform/libWebAppMgr.so.1.0.0: error: undefined reference to 'vtable for WebView'
+TOPDIR/BUILD/work/qemux86_64-webos-linux/wam/1.0.2-60-r45/recipe-sysroot-native/usr/bin/x86_64-webos-linux/../../libexec/x86_64-webos-linux/gcc/x86_64-webos-linux/12.1.0/ld: the vtable symbol may be undefined because the class is missing its key function
+collect2: error: ld returned 1 exit status
+
+Interestingly this happens only with -Og/-O0 but adding all the individual
+flags from -O1 (as defined in
+https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#Optimize-Options)
+doesn't prevent that (with -O1 there is no reference to WebView vtable, while
+with -O0 it's undefined in:
+1.0.2-60-r45/build/src/platform/CMakeFiles/WebAppMgr.dir/webengine/web_view_impl.cc.o
+and 13 UnitTests like
+1.0.2-60-r45.debug/build/src/tests/CMakeFiles/WebAppMgrUnitTest.dir/launch_app_test.cc.o
+
+As https://gcc.gnu.org/faq.html#vtables and
+https://lld.llvm.org/missingkeyfunction.html#forgetting-to-declare-a-virtual-function-in-an-abstract-class-as-pure
+say, make sure that all functions of abstract WebView are pure.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[PLAT-141293] Create GPVB with Yocto 3.4 Honister
+---
+ src/platform/webengine/web_view.h      | 2 +-
+ src/platform/webengine/web_view_impl.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/platform/webengine/web_view.h b/src/platform/webengine/web_view.h
+index 0d9b204..dd2b8ac 100644
+--- a/src/platform/webengine/web_view.h
++++ b/src/platform/webengine/web_view.h
+@@ -68,7 +68,7 @@ class WebView {
+   virtual void NotifyMemoryPressure(
+       webos::WebViewBase::MemoryPressureLevel level) = 0;
+   virtual void SetVisible(bool visible) = 0;
+-  virtual void SetPrerenderState();
++  virtual void SetPrerenderState() = 0;
+   virtual void SetVisibilityState(
+       webos::WebViewBase::WebPageVisibilityState visibilityState) = 0;
+   virtual std::string DocumentTitle() const = 0;
+diff --git a/src/platform/webengine/web_view_impl.h b/src/platform/webengine/web_view_impl.h
+index 51e2266..e5e5b81 100644
+--- a/src/platform/webengine/web_view_impl.h
++++ b/src/platform/webengine/web_view_impl.h
+@@ -66,7 +66,7 @@ class WebViewImpl : public WebView {
+   void NotifyMemoryPressure(
+       webos::WebViewBase::MemoryPressureLevel level) override;
+   void SetVisible(bool visible) override;
+-  void SetPrerenderState();
++  void SetPrerenderState() override;
+   void SetVisibilityState(
+       webos::WebViewBase::WebPageVisibilityState visibility_state) override;
+   std::string DocumentTitle() const override;
