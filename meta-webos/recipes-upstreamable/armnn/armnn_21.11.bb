@@ -20,7 +20,7 @@ SRC_URI = " \
 # Matches v${PV}
 SRCREV = "5e9965cae1cc6162649910f423ebd86001fc1931"
 
-PR = "r2"
+PR = "r3"
 
 S = "${WORKDIR}/git"
 
@@ -131,8 +131,8 @@ do_install:append() {
         install -d ${D}${libdir}/cmake
         install -d ${D}${libdir}/cmake/armnn
         cp $CP_ARGS "${B}/delegate/ArmnnDelegateConfig.cmake" "${D}${libdir}/cmake/armnn"
-        cp $CP_ARGS "${B}/delegate/CMakeFiles/Export/lib/ArmnnDelegateTargets.cmake" "${D}${libdir}/cmake/armnn"
-        cp $CP_ARGS "${B}/delegate/CMakeFiles/Export/lib/ArmnnDelegateTargets-release.cmake" "${D}${libdir}/cmake/armnn"
+        cp $CP_ARGS "${B}/delegate/CMakeFiles/Export/${baselib}/ArmnnDelegateTargets.cmake" "${D}${libdir}/cmake/armnn"
+        cp $CP_ARGS "${B}/delegate/CMakeFiles/Export/${baselib}/ArmnnDelegateTargets-release.cmake" "${D}${libdir}/cmake/armnn"
 
         #remove duplicate files
         rm ${D}${libdir}/ArmnnDelegate*.cmake
