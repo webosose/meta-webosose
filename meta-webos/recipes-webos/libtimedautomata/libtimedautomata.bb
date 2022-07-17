@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "Timed Automata library for Event translation"
-AUTHOR  = "Byunggul Koh <byunggul.koh@lge.com>"
+AUTHOR = "Byunggul Koh <byunggul.koh@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

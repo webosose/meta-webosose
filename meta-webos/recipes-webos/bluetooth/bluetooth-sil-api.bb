@@ -1,7 +1,7 @@
 # Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS Bluetooth SIL API"
-AUTHOR  = "Muralidhar N <muralidhar.n@lge.com>"
+AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"
 SECTION = "webos/services"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

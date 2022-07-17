@@ -1,7 +1,7 @@
 # Copyright (c) 2016-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - qemux86 nyx module"
-AUTHOR  = "Yogish S <yogish.s@lge.com>"
+AUTHOR = "Yogish S <yogish.s@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

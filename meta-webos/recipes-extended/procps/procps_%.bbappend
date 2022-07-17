@@ -1,6 +1,6 @@
 # Copyright (c) 2015-2022 LG Electronics, Inc.
 
-AUTHOR  = "Viesturs Zarins <viesturs.zarins@lge.com>"
+AUTHOR = "Viesturs Zarins <viesturs.zarins@lge.com>"
 EXTENDPRAUTO:append = "webos3"
 
 inherit webos_machine_impl_dep
