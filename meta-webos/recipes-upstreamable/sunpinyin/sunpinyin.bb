@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2022 LG Electronics, Inc.
 
 SUMMARY = "Pinyin input method library"
-AUTHOR = "pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
+AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"
 HOMEPAGE = "https://github.com/sunpinyin/sunpinyin"
 SECTION = "libs"
 LICENSE = "LGPL-2.1-only"

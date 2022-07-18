@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "Storage Access Framework for OSE"
-AUTHOR = "RajeshGopu IV <rajeshgopu.iv@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

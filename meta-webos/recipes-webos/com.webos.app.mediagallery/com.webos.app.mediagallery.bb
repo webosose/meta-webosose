@@ -7,7 +7,7 @@
 # under vendor's standard commercial license.
 
 SUMMARY = "Mediagallery QML App"
-AUTHOR = "Hyein Lee<hyein1.lee@lge.com>"
+AUTHOR = "Hyein Lee <hyein1.lee@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
