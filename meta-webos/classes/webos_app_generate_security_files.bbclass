@@ -92,7 +92,7 @@ def webos_app_generate_security_files_write_role_file(d, app_info):
     if type == "native":
         exe_name = app_info["main"]
         app_dir = d.getVar("webos_applicationsdir", True)
-        role["exeName"] = app_dir + "/" + d.getVar("PN", True) + "/" + exe_name
+        role["exeName"] = app_dir + "/" + d.getVar("BPN", True) + "/" + exe_name
         role["type"]  = "regular"
         role["allowedNames"] = [app_id + "*"]
         role["permissions"] = [{"service": app_id, "outbound": ["*"] }]
