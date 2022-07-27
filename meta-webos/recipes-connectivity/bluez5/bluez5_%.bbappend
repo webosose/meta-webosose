@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos26"
+EXTENDPRAUTO:append = "webos27"
 
 RRECOMMENDS:${PN} += " \
     glibc-gconv-utf-16 \
@@ -49,6 +49,7 @@ SRC_URI:append:raspberrypi4 = " \
 "
 
 PACKAGECONFIG:append = " mesh \
+    sixaxis \
     testing \
 "
 

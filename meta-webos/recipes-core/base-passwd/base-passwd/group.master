@@ -9,7 +9,7 @@ mail:x:8:mail
 wheel:x:10:root
 proxy:x:13:proxy
 kmem:x:15:
-input:x:19:input,system
+input:x:19:input,system,wam
 audio:x:29:,wam,pulse,audio,system
 www:x:33:www
 backup:x:34:backup

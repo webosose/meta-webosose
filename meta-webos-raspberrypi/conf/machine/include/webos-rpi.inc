@@ -39,6 +39,7 @@ RPI_KERNEL_MODULES = " \
     kernel-module-evdev \
     kernel-module-hci-uart \
     kernel-module-hid-multitouch \
+    kernel-module-hid-sony \
     kernel-module-i2c-bcm2708 \
     kernel-module-media \
     kernel-module-rfcomm \
@@ -48,6 +49,7 @@ RPI_KERNEL_MODULES = " \
     kernel-module-uvcvideo \
     kernel-module-vc4 \
     kernel-module-videodev \
+    kernel-module-xpad \
 "
 # Few more modules which are automatically loaded on
 # raspberrypi4 when all kernel-modules are installed
