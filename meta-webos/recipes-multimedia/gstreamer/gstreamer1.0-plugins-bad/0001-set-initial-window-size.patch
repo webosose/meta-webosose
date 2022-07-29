@@ -1,17 +1,17 @@
-From b12fabac290e41825454c2d1cf556b2765ad0d77 Mon Sep 17 00:00:00 2001
+From 86e37e689c953fa7fe63cab19621be87c97b5e75 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 25 Jan 2021 14:17:07 -0800
 Subject: [PATCH] set initial window size
 
 ---
- ext/wayland/gstwaylandsink.c | 8 ++++++++
+ subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
-index 8c6fdd0e7..ea7c0a65d 100644
---- a/ext/wayland/gstwaylandsink.c
-+++ b/ext/wayland/gstwaylandsink.c
-@@ -710,6 +710,14 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c b/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c
+index 0761304ce3..a2a7c9b933 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c
++++ b/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c
+@@ -721,6 +721,14 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
            &sink->video_info, sink->fullscreen, &sink->render_lock);
        g_signal_connect_object (sink->window, "closed",
            G_CALLBACK (on_window_closed), sink, 0);
