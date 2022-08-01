@@ -34,7 +34,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-21.gav.32_5bfbec56a19fc9e14101ed3b735278fd6679561d"
+WEBOS_VERSION = "1.0.0-21.gav.33_8832c9ee3cff5fde663b2d3f763ce4dfcc0d687d"
 
 # raspberrypi3 uses @21.master branch
 DEPENDS:remove:raspberrypi3 = "webos-wayland-extensions"
