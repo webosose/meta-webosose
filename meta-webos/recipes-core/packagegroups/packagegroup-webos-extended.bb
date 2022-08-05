@@ -234,6 +234,7 @@ RDEPENDS:${PN}:append:webos = " \
     com.webos.app.camera \
     com.webos.app.mediaviewer \
     com.webos.app.imageviewer \
+    com.webos.app.videocall \
     com.webos.app.videoplayer \
     com.webos.service.storageaccess \
     com.webos.service.uwb \
