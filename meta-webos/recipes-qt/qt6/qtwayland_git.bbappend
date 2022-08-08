@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos31"
+EXTENDPRAUTO:append = "webos32"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -32,6 +32,13 @@ PACKAGECONFIG = "wayland-server wayland-client client-wl-shell"
 
 # qtwayland-qmlplugins is not used in webos
 RRECOMMENDS:${PN}:remove = "${PN}-qmlplugins"
+
+# Set QT_SKIP_AUTO_PLUGIN_INCLUSION as otherwise
+# QtModulePluginTargets.cmake would complain during
+# do_install_ptest_base about missing files that are deleted
+# deliberately in do_install:append below.
+# See https://codereview.qt-project.org/c/qt/qtbase/+/420212.
+EXTRA_OECMAKE:append = " -DQT_SKIP_AUTO_PLUGIN_INCLUSION=ON"
 
 do_install:append() {
     # Remove files unnecessary or conflict with qtwayland-webos
