@@ -1,4 +1,4 @@
-From 79e6a25a959cd66012bda7fdf51997c891ebd560 Mon Sep 17 00:00:00 2001
+From 8099dbc33ca5b22d4e8480936157c736c9f7e7a2 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Thu, 24 Jun 2021 18:30:00 +0900
 Subject: [PATCH] CMake: Update to latest qml CMake API
@@ -11,13 +11,13 @@ compatibility.
 Upstream-Status: Inappropriate [webOS specific]
 ---
  src/effects/CMakeLists.txt         | 124 ++++++++++++++---------------
- src/effects/private/CMakeLists.txt |  36 +++------
+ src/effects/private/CMakeLists.txt |  38 ++++-----
  src/effects/private/qmldir         |   4 -
- 3 files changed, 72 insertions(+), 92 deletions(-)
+ 3 files changed, 73 insertions(+), 93 deletions(-)
  delete mode 100644 src/effects/private/qmldir
 
 diff --git a/src/effects/CMakeLists.txt b/src/effects/CMakeLists.txt
-index a080d07..60bf1cc 100644
+index a080d07..f0d3a45 100644
 --- a/src/effects/CMakeLists.txt
 +++ b/src/effects/CMakeLists.txt
 @@ -1,70 +1,7 @@
@@ -101,7 +101,7 @@ index a080d07..60bf1cc 100644
 +    URI "QtGraphicalEffects"
 +    VERSION "1.${CMAKE_PROJECT_VERSION_MINOR}"
 +    DESIGNER_SUPPORTED
-+    CLASSNAME QtGraphicalEffectsPlugin
++    CLASS_NAME QtGraphicalEffectsPlugin
 +    PLUGIN_TARGET qtgraphicaleffectsplugin
 +    NO_GENERATE_PLUGIN_SOURCE
 +    NO_PLUGIN_OPTIONAL
@@ -117,7 +117,7 @@ index a080d07..60bf1cc 100644
 +    PUBLIC_LIBRARIES
 +        Qt::Qml
 +        Qt::Quick
- )
++)
 +
 +# Resources:
 +set(qtgraphicaleffectsshaders_resource_files
@@ -149,7 +149,7 @@ index a080d07..60bf1cc 100644
 +    "shaders_ng/gaussianblur_fixedradius.frag.qsb"
 +    "shaders_ng/gaussianblur_fixedradius_masked_alphaOnly.frag.qsb"
 +    "shaders_ng/gaussianblur_fixedradius_masked.frag.qsb"
-+)
+ )
 +
 +qt_internal_add_resource(qtgraphicaleffectsplugin "qtgraphicaleffectsshaders"
 +    PREFIX
@@ -162,7 +162,7 @@ index a080d07..60bf1cc 100644
      doc/qtgraphicaleffects.qdocconf
  )
 diff --git a/src/effects/private/CMakeLists.txt b/src/effects/private/CMakeLists.txt
-index b8e0e5b..8b77cd3 100644
+index b8e0e5b..96821a8 100644
 --- a/src/effects/private/CMakeLists.txt
 +++ b/src/effects/private/CMakeLists.txt
 @@ -1,16 +1,27 @@
@@ -182,7 +182,8 @@ index b8e0e5b..8b77cd3 100644
  qt_internal_add_qml_module(qtgraphicaleffectsprivate
      URI "QtGraphicalEffects.private"
      VERSION "${CMAKE_PROJECT_VERSION}"
-     CLASSNAME QtGraphicalEffectsPrivatePlugin
+-    CLASSNAME QtGraphicalEffectsPrivatePlugin
++    CLASS_NAME QtGraphicalEffectsPrivatePlugin
 +    PLUGIN_TARGET qtgraphicaleffectsprivate
 +    NO_GENERATE_PLUGIN_SOURCE
 +    NO_PLUGIN_OPTIONAL
