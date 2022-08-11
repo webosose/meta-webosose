@@ -1,4 +1,4 @@
-From 0d12b11442e536f820e39eddb9751458a8e9f868 Mon Sep 17 00:00:00 2001
+From 9cb46738bbc32fbdb04488e56af02d2c02da3421 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Wed, 3 Jun 2020 18:08:39 +0530
 Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
@@ -184,7 +184,7 @@ index ea3d25629..2eb2c17a6 100644
  };
  
 diff --git a/obexd/client/session.c b/obexd/client/session.c
-index 9b456f69c..d5262f680 100644
+index 884013b75..0bfed30b3 100644
 --- a/obexd/client/session.c
 +++ b/obexd/client/session.c
 @@ -87,6 +87,7 @@ struct obc_session {

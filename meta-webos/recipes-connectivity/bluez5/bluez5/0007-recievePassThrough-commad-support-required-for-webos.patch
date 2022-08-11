@@ -1,4 +1,4 @@
-From 2d582220c50951ad23b3bd65f447fcf043cabf95 Mon Sep 17 00:00:00 2001
+From 76f3a04a8135315944af66b322bb646d66b6366c Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -56,10 +56,10 @@ index 6f64f162b..b002470f9 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index c3e86b3fc..dde1d936e 100644
+index fea01d20a..2eef2a8cf 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -171,6 +171,11 @@ enum {
+@@ -170,6 +170,11 @@ enum {
  	WAKE_FLAG_DISABLED,
  };
  
@@ -71,16 +71,16 @@ index c3e86b3fc..dde1d936e 100644
  struct btd_device {
  	int ref_count;
  
-@@ -276,6 +281,8 @@ struct btd_device {
- 	guint		store_id;
- 
+@@ -275,6 +280,8 @@ struct btd_device {
  	time_t		name_resolve_failed_time;
+ 
+ 	int8_t		volume;
 +
 +	struct key_code passththough_key;
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1382,6 +1389,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
+@@ -1407,6 +1414,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
  	return bt_ad_has_manufacturer_data(device->ad, NULL);
  }
  
@@ -99,7 +99,7 @@ index c3e86b3fc..dde1d936e 100644
  static void append_service_data(void *data, void *user_data)
  {
  	struct bt_ad_service_data *sd = data;
-@@ -1400,13 +1419,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1425,13 +1444,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	struct btd_device *device = data;
  	DBusMessageIter dict;
  
@@ -114,7 +114,7 @@ index c3e86b3fc..dde1d936e 100644
  	bt_ad_foreach_service_data(device->ad, append_service_data, &dict);
  
  	dbus_message_iter_close_container(iter, &dict);
-@@ -1414,6 +1433,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1439,6 +1458,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -143,7 +143,7 @@ index c3e86b3fc..dde1d936e 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -2005,6 +2046,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -2037,6 +2078,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -159,7 +159,7 @@ index c3e86b3fc..dde1d936e 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3214,6 +3264,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3065,6 +3115,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -168,7 +168,7 @@ index c3e86b3fc..dde1d936e 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4472,6 +4524,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4037,6 +4089,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->adapter = adapter;
  	device->temporary = true;
  
@@ -179,12 +179,12 @@ index c3e86b3fc..dde1d936e 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 071576d6b..28597c674 100644
+index d7f886224..b7a5aaa98 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -180,3 +180,5 @@ bool btd_device_all_services_allowed(struct btd_device *dev);
- void btd_device_update_allowed_services(struct btd_device *dev);
- void btd_device_init(void);
- void btd_device_cleanup(void);
+@@ -186,3 +186,5 @@ void btd_device_cleanup(void);
+ 
+ void btd_device_set_volume(struct btd_device *dev, int8_t volume);
+ int8_t btd_device_get_volume(struct btd_device *dev);
 +
 +void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);

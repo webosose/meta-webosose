@@ -1,4 +1,4 @@
-From 6548c1da02f4f7b5c80358c92bfe3107a4622a1a Mon Sep 17 00:00:00 2001
+From 2842f40516317da8f71401910995da7d31139fc9 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 25 Jan 2021 16:27:58 +0530
 Subject: [PATCH] Add support for meshd to use RAW channel
@@ -99,7 +99,7 @@ index dd99c3085..c68530faf 100644
  			usage();
  			status = EXIT_SUCCESS;
 diff --git a/mesh/mesh-io-generic.c b/mesh/mesh-io-generic.c
-index 6c0b8f0fd..946a6177d 100644
+index 2d7ef261e..40cf0e521 100644
 --- a/mesh/mesh-io-generic.c
 +++ b/mesh/mesh-io-generic.c
 @@ -40,6 +40,7 @@ struct mesh_io_private {
@@ -166,7 +166,7 @@ index 6c0b8f0fd..946a6177d 100644
  
  	io->pvt->rx_regs = l_queue_new();
  	io->pvt->tx_pkts = l_queue_new();
-@@ -846,7 +869,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
+@@ -847,7 +870,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
  	if (l_queue_find(pvt->rx_regs, find_active, NULL))
  		active = true;
  

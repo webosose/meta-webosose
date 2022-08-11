@@ -1,4 +1,4 @@
-From 6953e4d3b4e22e70ecbef999126d878f30751a33 Mon Sep 17 00:00:00 2001
+From 2c8891c770a2dfeec8b81983ec6e9405f836f96d Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 3 Nov 2020 11:32:38 +0530
 Subject: [PATCH] AVRCP MediaItem object path fix

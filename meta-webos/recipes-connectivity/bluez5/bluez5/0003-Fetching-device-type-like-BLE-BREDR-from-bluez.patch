@@ -1,4 +1,4 @@
-From cb31601e19ba79ab22b8590192f19d8db476905f Mon Sep 17 00:00:00 2001
+From 7084f0e9638e0c90f50c0cabe6d15ea92cd60298 Mon Sep 17 00:00:00 2001
 From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
 Date: Fri, 1 Jun 2018 11:43:15 +0530
 Subject: [PATCH] Fetching device type like BLE, BREDR from bluez
@@ -24,7 +24,7 @@ Upstream-Status : Pending
  1 file changed, 17 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index 3992f9a0c..7d890885e 100644
+index 9a4f2ce45..c21fcaa76 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -206,6 +206,7 @@ struct btd_device {
@@ -35,7 +35,7 @@ index 3992f9a0c..7d890885e 100644
  	uint16_t	vendor_src;
  	uint16_t	vendor;
  	uint16_t	product;
-@@ -955,6 +956,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
+@@ -964,6 +965,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -57,7 +57,7 @@ index 3992f9a0c..7d890885e 100644
  static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
  							uint16_t *appearance)
  {
-@@ -3111,6 +3127,7 @@ static const GDBusMethodTable device_methods[] = {
+@@ -2961,6 +2977,7 @@ static const GDBusMethodTable device_methods[] = {
  static const GDBusPropertyTable device_properties[] = {
  	{ "Address", "s", dev_property_get_address },
  	{ "AddressType", "s", property_get_address_type },

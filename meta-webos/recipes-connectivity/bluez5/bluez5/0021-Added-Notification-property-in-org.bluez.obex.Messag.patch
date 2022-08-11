@@ -1,4 +1,4 @@
-From 3eb67cca97c65cae800dfcd8a6078fe912c7d00b Mon Sep 17 00:00:00 2001
+From b6fe529764b1e78d4a8fceea2d124816a577687e Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 7 Aug 2020 18:32:03 +0530
 Subject: [PATCH] Added Notification property in org.bluez.obex.MessageAccess1

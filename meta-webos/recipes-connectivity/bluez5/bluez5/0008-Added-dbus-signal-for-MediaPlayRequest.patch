@@ -1,4 +1,4 @@
-From 4d66acb213ef1e0c19fafbe73cbfbf87156b6699 Mon Sep 17 00:00:00 2001
+From 49fb6333df5255cf3b4aba4d26c1b141b08945d7 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 30 Jan 2019 15:17:11 +0530
 Subject: [PATCH] Added dbus signal for MediaPlayRequest
@@ -49,10 +49,10 @@ index 80f34c7a7..1b3e6090a 100644
  }
  
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 8162417ce..09a82b2d1 100644
+index c5d8ab14e..97c453021 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1227,7 +1227,7 @@ static uint32_t media_player_get_position(void *user_data)
+@@ -1229,7 +1229,7 @@ static uint32_t media_player_get_position(void *user_data)
  	sec = (uint32_t) timedelta;
  	msec = (uint32_t) ((timedelta - sec) * 1000);
  
@@ -62,10 +62,10 @@ index 8162417ce..09a82b2d1 100644
  
  static uint32_t media_player_get_duration(void *user_data)
 diff --git a/src/device.c b/src/device.c
-index dde1d936e..d65e4e933 100644
+index 2eef2a8cf..275f4a9a6 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2055,6 +2055,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -2087,6 +2087,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  					DEVICE_INTERFACE, "KeyCode");
  }
  
@@ -88,7 +88,7 @@ index dde1d936e..d65e4e933 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3226,6 +3242,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -3076,6 +3092,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  	return dbus_message_new_method_return(msg);
  }
  
@@ -101,7 +101,7 @@ index dde1d936e..d65e4e933 100644
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
-@@ -4513,7 +4535,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4078,7 +4100,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  
  	if (g_dbus_register_interface(dbus_conn,
  					device->path, DEVICE_INTERFACE,
@@ -111,11 +111,11 @@ index dde1d936e..d65e4e933 100644
  					device_free) == FALSE) {
  		error("Unable to register device interface for %s", address);
 diff --git a/src/device.h b/src/device.h
-index 28597c674..4ecc2dce4 100644
+index b7a5aaa98..fe2387fb3 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -182,3 +182,6 @@ void btd_device_init(void);
- void btd_device_cleanup(void);
+@@ -188,3 +188,6 @@ void btd_device_set_volume(struct btd_device *dev, int8_t volume);
+ int8_t btd_device_get_volume(struct btd_device *dev);
  
  void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);
 +
