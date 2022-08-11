@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-62_95556b20926075f24bc833ab4993346c60608f5d"
-PR = "r47"
+PR = "r48"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -136,8 +136,7 @@ do_configure:append() {
 do_configure:append:qemux86() {
     # Remove this condition once webos wam is synchronized to get systemd initscripts
     if [ -f "${B}/webapp-mgr.sh" ]; then
-        # Disable media hardware acceleration
-        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
+        # Disable MCIL hardware acceleration
         sed -i '/--enable-aggressive-release-policy \\/a\   --disable-accelerated-video-decode \\' ${B}/webapp-mgr.sh
     fi
 }
@@ -145,8 +144,7 @@ do_configure:append:qemux86() {
 do_configure:append:qemux86-64() {
     # Remove this condition once webos wam is synchronized to get systemd initscripts
     if [ -f "${B}/webapp-mgr.sh" ]; then
-        # Disable media hardware acceleration
-        sed -i '/--enable-aggressive-release-policy \\/a\   --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
+        # Disable MCIL hardware acceleration
         sed -i '/--enable-aggressive-release-policy \\/a\   --disable-accelerated-video-decode \\' ${B}/webapp-mgr.sh
     fi
 }

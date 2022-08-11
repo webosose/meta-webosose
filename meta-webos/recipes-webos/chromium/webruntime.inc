@@ -20,7 +20,7 @@ inherit webos_system_bus
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native pulseaudio"
 
-INC_PR = "r55"
+INC_PR = "r56"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -46,6 +46,8 @@ PACKAGECONFIG_WEBOS_CODEC ?= "webos-codec"
 PACKAGECONFIG_MEDIA ?= "neva-media gstreamer umediaserver gav"
 PACKAGECONFIG ?= ""
 PACKAGECONFIG:append:hardware = " ${PACKAGECONFIG_MEDIA} ${PACKAGECONFIG_NEVA_WEBRTC} ${PACKAGECONFIG_WEBOS_CODEC}"
+PACKAGECONFIG:append:qemux86 = " ${PACKAGECONFIG_MEDIA}"
+PACKAGECONFIG:append:qemux86-64 = " ${PACKAGECONFIG_MEDIA}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline"
 PACKAGECONFIG[umediaserver] = ",,umediaserver"
 # Options to enable debug build. Add this PACKAGECONFIG to webos-local.conf to enable debug build
@@ -167,13 +169,11 @@ modify_run_app_shell() {
 }
 
 modify_run_app_shell:append:qemux86() {
-    # Disable media hardware acceleration
-    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
+    # Disable MCIL hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-accelerated-video-decode\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
 modify_run_app_shell:append:qemux86-64() {
-    # Disable media hardware acceleration
-    sed -i '/--disable-web-security\\/a\ --disable-web-media-player-neva\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
+    # Disable MCIL hardware acceleration
     sed -i '/--disable-web-security\\/a\ --disable-accelerated-video-decode\\' ${D}${APP_SHELL_RUNTIME_RUN_SCRIPT}
 }
 
