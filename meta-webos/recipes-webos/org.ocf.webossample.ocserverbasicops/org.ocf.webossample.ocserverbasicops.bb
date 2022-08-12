@@ -14,6 +14,7 @@ SRC_URI += " \
     git://github.com/intel/tinycbor.git;destsuffix=iotivity/extlibs/tinycbor/tinycbor;protocol=https;name=tinycbor;branch=master \
     git://github.com/ARMmbed/mbedtls.git;destsuffix=iotivity/extlibs/mbedtls/mbedtls;protocol=https;branch=archive/mbedtls-2.4;name=mbedtls \
     file://0001-mbedtls-tinycbor-add-DONT_CHECK_GIT_TAGS-env-variabl.patch \
+    file://0002-Add-os_arch-x86_64.patch \
 "
 
 SRCREV_main = "8fe09d4c9859d3ff32b4e8ca2ed996a156fccb81"
@@ -24,7 +25,7 @@ SRCREV_FORMAT = "main"
 do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/iotivity"
-PR = "r6"
+PR = "r7"
 
 inherit scons pkgconfig webos_component webos_filesystem_paths
 
@@ -83,6 +84,7 @@ COMPATIBLE_MACHINE:armv6 = "(.*)"
 COMPATIBLE_MACHINE:armv7a = "(.*)"
 COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 SRC_URI += " \
     file://0001-Fix-missing-return-statement.patch \

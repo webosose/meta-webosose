@@ -24,7 +24,7 @@ SRCREV_FORMAT = "main"
 do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_mbedtls"
 
 S = "${WORKDIR}/iotivity"
-PR = "r6"
+PR = "r7"
 
 inherit scons pkgconfig webos_component webos_filesystem_paths
 
@@ -35,6 +35,7 @@ SRC_URI += " \
     file://0002-webOS-Fix-build-error-detected-by-gcc8.patch \
     file://0001-webOS-Apply-new-ACG-policy-in-test-applications.patch \
     file://0001-webOS-Apply-proper-ACG-group-name-in-test-appl.patch \
+    file://0002-Add-os_arch-x86_64.patch \
 "
 
 EXTRA_OESCONS += " \
@@ -85,5 +86,6 @@ COMPATIBLE_MACHINE:armv6 = "(.*)"
 COMPATIBLE_MACHINE:armv7a = "(.*)"
 COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
+COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 SRC_URI += "file://0001-Fix-missing-return-statement.patch"

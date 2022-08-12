@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS:${PN} variable.
-PR = "r0"
+PR = "r1"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -28,7 +28,6 @@ VIRTUAL-RUNTIME_com.example.service.iotivity:armv5 = ""
 VIRTUAL-RUNTIME_org.ocf.webossample ?= "org.ocf.webossample.occlientbasicops org.ocf.webossample.ocserverbasicops"
 VIRTUAL-RUNTIME_org.ocf.webossample:armv4 = ""
 VIRTUAL-RUNTIME_org.ocf.webossample:armv5 = ""
-VIRTUAL-RUNTIME_org.ocf.webossample:x86-64 = ""
 
 RDEPENDS:${PN} = " \
     activitymanager \
