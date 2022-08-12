@@ -6,15 +6,15 @@ inherit webos_filesystem_paths
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
-EXTENDPRAUTO:append = "webos14"
+EXTENDPRAUTO:append = "webos15"
 
 dirs700 = " \
-    ${webos_db8datadir} \
     ${webos_db8datadir}/temp \
     ${webos_db8mediadir} \
 "
 
 dirs755 += " \
+    ${webos_db8datadir} \
     ${webos_cryptofsdir} \
     ${webos_preferencesdir} \
     ${webos_optdir} \
