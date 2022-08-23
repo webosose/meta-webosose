@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-62_95556b20926075f24bc833ab4993346c60608f5d"
-PR = "r48"
+WEBOS_VERSION = "1.0.2-63_b33aa2ebce1e121d1a48433a8aeaf89318d2dfd1"
+PR = "r49"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -36,12 +36,7 @@ inherit webos_public_repo
 
 WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
-# http://gpro.lge.com/c/webosose/wam/+/332989 Fix build with gcc-11
-# http://gpro.lge.com/c/webosose/wam/+/332990 WebView: Fix build with -Og or -O0
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-11.patch \
-    file://0002-WebView-Fix-build-with-Og-or-O0.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
