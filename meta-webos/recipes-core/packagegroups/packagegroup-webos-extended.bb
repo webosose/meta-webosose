@@ -64,6 +64,7 @@ VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 WEBOS_PACKAGESET_TESTAPPS = " \
     bareapp \
     com.webos.app.test.enact \
+    com.webos.app.test.v8snapshot \
     com.webos.app.test.webosose \
     com.webos.app.test.webrtc \
     com.webos.app.test.youtube \
