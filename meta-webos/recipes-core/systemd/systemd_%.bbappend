@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos9"
+EXTENDPRAUTO:append = "webos10"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -32,8 +32,8 @@ PACKAGECONFIG:remove = " \
 PACKAGECONFIG:append = " \
     ${@oe.utils.conditional('DISTRO', 'webos', 'oomd', '', d)} \
     ${@oe.utils.conditional('DISTRO', 'webos', 'cgroupv2', '', d)} \
-    ${@oe.utils.conditional('WEBOS_DISTRO_PRERELEASE', 'devel', 'coredump', '', d)} \
-    ${@oe.utils.conditional('WEBOS_DISTRO_PRERELEASE', 'devel', 'elfutils', '', d)} \
+    coredump \
+    elfutils \
 "
 
 FILES:${PN} += "${@oe.utils.conditional('DISTRO', 'webos','${datadir}/dbus-1/system.d/com.webos.MemoryManager1.conf', '', d)}"
