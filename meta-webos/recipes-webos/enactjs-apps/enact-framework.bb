@@ -22,10 +22,10 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "4.0.4"
+PV = "4.5.0"
 
-SRCREV_main = "1ce8ae701d66551db1db279fef5927509d683470"
-SRCREV_enact = "ae1ef854432b0dedd75b0f104f6c2d3b1033753f"
+SRCREV_main = "1440da6ff32008855fc7c9a570ccf66c54fc0d77"
+SRCREV_enact = "6e6668d3327d6993b0e80edb73c0fc90765c834e"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
@@ -43,14 +43,14 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     loose-envify@1.4.0 \
     min-document@2.19.0 \
     object-assign@4.1.1 \
-    parse-headers@2.0.4 \
+    parse-headers@2.0.5 \
     process@0.11.10 \
-    prop-types@15.8.0 \
-    ramda@0.24.1 \
-    react@17.0.2 \
-    react-dom@17.0.2 \
-    react-is@17.0.2 \
-    scheduler@0.20.2 \
+    prop-types@15.8.1 \
+    ramda@0.28.0 \
+    react@18.2.0 \
+    react-dom@18.2.0 \
+    react-is@18.2.0 \
+    scheduler@0.23.0 \
     warning@4.0.3 \
     xhr@2.6.0 \
     xtend@4.0.2 \
@@ -59,7 +59,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r19"
+PR = "r20"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"

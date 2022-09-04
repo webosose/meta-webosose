@@ -9,15 +9,13 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
 "
 
-WEBOS_VERSION = "0.1.0-10_80e24e405a6fffe80c0db65a1c77dd7e92d44340"
+WEBOS_VERSION = "0.1.0-11_17bd7cde218fe459c24b1628631f6cb67fe8f3f3"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r1"
+PR = "r2"
 
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
 inherit webos_public_repo
-
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.volume"

@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
-WEBOS_VERSION = "0.0.1-14_6a2b6e9efd05e9b18d2ae8a754a314bcae79d141"
-PR = "r0"
+WEBOS_VERSION = "0.0.1-15_ca49d724d66ff827acee8eb5e95c380fd3fc1de2"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -21,6 +21,5 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.imageviewer"
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 WEBOS_LOCALIZATION_DATA_PATH = "${S}"
 WEBOS_LOCALIZATION_XLIFF_BASENAME = "imageviewer"

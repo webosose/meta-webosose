@@ -9,15 +9,13 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
 "
 
-WEBOS_VERSION = "0.1.0-12_1138b6eb8a5bc82b7f4e54a2f1a26c3f9d95ae45"
+WEBOS_VERSION = "0.1.0-13_fee4ad5e044c0ba747362166d25a0d34c999be61"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r1"
+PR = "r2"
 
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
 inherit webos_public_repo
-
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.notification"

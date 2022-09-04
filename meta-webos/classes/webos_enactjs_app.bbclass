@@ -219,8 +219,8 @@ do_install() {
     # Support forcing CSS modules for apps designed for Enact <3.0
     export ENACT_FORCECSSMODULES="${WEBOS_ENACTJS_FORCE_CSS_MODULES}"
 
-    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 72
-    export BROWSERSLIST="Chrome 72"
+    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 84
+    export BROWSERSLIST="Chrome 84"
 
     # use local on-device ilib locale assets
     if [ ! -z "${WEBOS_ENACTJS_ILIB_ASSETS}" ] ; then
@@ -241,13 +241,12 @@ do_install() {
     else
         # Normal App Build
         bbnote "Bundling Enact app to ${appdir}"
-        if [ "${WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE}" = "true" ] ; then
-            bbnote "Use ENACT_DEV"
-            ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
-        else
-            bbnote "Use ENACT_DEV_LEGACY"
-            ${ENACT_DEV_LEGACY} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
-        fi
+        ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
+    fi
+
+    if [ ! -f ${appdir}/index.html ] ; then
+        bberror "No bundling results in ${appdir}; exiting!"
+        exit 1
     fi
 
     if [ -f ${appdir}/snapshot_blob.bin ] ; then

@@ -17,31 +17,28 @@ inherit native
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r11"
+PR = "r12"
 
 S = "${WORKDIR}/git"
 
 SRC_URI = " \
     ${ENACTJS_GIT_REPO}/cli.git;name=main${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/cli \
-    ${ENACTJS_GIT_REPO}/cli.git;name=cli-legacy${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/cli-legacy \
     ${ENACTJS_GIT_REPO}/jsdoc-to-ts.git;name=jsdoc-to-ts${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/jsdoc-to-ts \
 "
 
 # we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
 do_fetch[vardeps] += "SRCREV"
-do_fetch[vardeps] += "SRCREV_cli-legacy"
 do_fetch[vardeps] += "SRCREV_jsdoc-to-ts"
-SRCREV_FORMAT = "main_cli-legacy_jsdoc-to-ts"
+SRCREV_FORMAT = "main_jsdoc-to-ts"
 
 # PV is the version of the cli distribution, as tagged in the
 # enactjs/cli repository on GitHub. This version should correspond to the
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "4.1.6"
-SRCREV = "af42d9de312dab537e8a7539b434d1c3ef42cbb7"
-SRCREV_cli-legacy = "bf5012e50bdca62ff596b73a55a5b5f93ccf1069"
-SRCREV_jsdoc-to-ts = "344e1bf9fe3615380be513a8f7a7bab7a3f71b1b"
+PV = "5.0.1"
+SRCREV = "b879bf378c2cf661f015ecea6c8a165672c54ac3"
+SRCREV_jsdoc-to-ts = "059b9395e5804f943c3eef1afe7a0f80ef7c42ca"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"

@@ -14,19 +14,20 @@ SRC_URI = " \
     file://0001-webOS-Apply-new-ACG-policy-in-test-applications.patch \
     file://0001-webOS-Apply-proper-ACG-group-name-in-test-appl.patch \
     file://0001-webOS-Fix-bug-that-API-is-not-called.patch \
+    file://0001-webOS-Fix-UI-bug-in-iotivity-sampler.patch \
+    file://0001-Update-enact-version-to-4.5.patch \
 "
 
 SRCREV = "ff1837a569494cb9613c3b6c961fcf26f0014515"
 
 S = "${WORKDIR}/git"
 
-PR = "r6"
+PR = "r7"
 PV = "1.3.99+git${SRCPV}"
 
 inherit pkgconfig webos_enactjs_app webos_component
 
 WEBOS_ENACTJS_PROJECT_PATH ??= "./resource/csdk/stack/samples/webos/com.example.app.iotivity"
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 WEBOS_ENACTJS_APP_ID = "com.example.app.iotivity"
 
 FILES:${PN} = "\
@@ -42,5 +43,3 @@ COMPATIBLE_MACHINE:armv7a = "(.*)"
 COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
-
-SRC_URI += "file://0001-webOS-Fix-UI-bug-in-iotivity-sampler.patch"

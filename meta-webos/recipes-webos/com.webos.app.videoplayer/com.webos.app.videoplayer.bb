@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
-WEBOS_VERSION = "0.0.1-11_d8847b1ff4bf374b03288492d0e8e6d669c896c3"
-PR = "r0"
+WEBOS_VERSION = "0.0.1-12_ff6e0081d1b0f8ad1bf0480c5f28b2616cd646d4"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -21,6 +21,5 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.videoplayer"
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 WEBOS_LOCALIZATION_DATA_PATH = "${S}"
 WEBOS_LOCALIZATION_XLIFF_BASENAME = "videoplayer"

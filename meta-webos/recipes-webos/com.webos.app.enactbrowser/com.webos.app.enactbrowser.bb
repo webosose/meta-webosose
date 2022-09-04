@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-57_882870d4ae1dcb9a4b98851d803e5daadd42e028"
-PR = "r16"
+WEBOS_VERSION = "1.0.0-58_56efe6196fdfb90002235c44f89c3c174ad4bbe1"
+PR = "r17"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -22,7 +22,6 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
-WEBOS_ENACTJS_SHRINKWRAP_OVERRIDE = "false"
 WEBOS_ENACTJS_PACK_OPTS = "--isomorphic --production --snapshot"
 WEBOS_ENACTJS_ILIB_OVERRIDE = ""
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED="0"
@@ -31,7 +30,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 WEBOS_ENACTJS_PROJECT_PATH = "./samples/enact-based"
 WEBOS_ENACTJS_PACK_OVERRIDE = "\
-    ${ENACT_DEV_LEGACY} pack ${WEBOS_ENACTJS_PACK_OPTS} && \
+    ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} && \
     ${WEBOS_NODE_BIN} resbundler.js dist && \
     rm -fr ./dist/resources && \
     rm -fr ./dist/node_modules/@enact/moonstone/resources && \
