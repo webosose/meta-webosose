@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit msgpack-c"
 RDEPENDS:${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
-WEBOS_VERSION = "1.0.0-34_f1cb6a52b5bab41f91c2b90d01d4d1680e49fd86"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-36_943fa331cf43556faa302ebdf8ef0bbbbca0b977"
+PR = "r9"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -28,7 +28,3 @@ inherit webos_distro_variant_dep
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
-
-SRC_URI:append = " \
-    file://0001-Fix-static-analysis-issues.patch \
-"
