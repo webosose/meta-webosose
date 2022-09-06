@@ -44,3 +44,7 @@ do_install() {
 }
 
 FILES:${PN} += "${libdir}/node_modules/usocket"
+
+# Workaround for network access issue during do_configure task
+# http://gecko.lge.com:8000/Errors/Details/458031
+do_configure[network] = "1"
