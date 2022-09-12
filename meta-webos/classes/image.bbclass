@@ -64,6 +64,34 @@ do_webos_deploy_fixup:prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.rpi-sdimg ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.rpi-sdimg \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.rpi-sdimg
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ostree ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ostree \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ostree
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ostree.tar.bz2 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ostree.tar.bz2 \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ostree.tar.bz2
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ota-ext4 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.ota-ext4 \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ota-ext4
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.wic ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.wic \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.wic.bmap ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.wic.bmap \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.bmap
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.wic.bz2 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rootfs.wic.bz2 \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.bz2
+
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.testdata.json ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.testdata.json \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.testdata.json
 }
 
 # Don't append to IMAGE_LINK_NAME because in webOS we construct IMAGE_LINK_NAME from IMAGE_NAME
