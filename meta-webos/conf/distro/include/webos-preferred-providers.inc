@@ -94,7 +94,7 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
 "
 
 # Make wam preferred provider for webappmanager-webos
-PREFERRED_PROVIDER_webappmanager-webos ?= "wam"
+PREFERRED_PROVIDER_virtual/webappmanager-webos ?= "wam"
 
 VIRTUAL-RUNTIME_ntp = "ntp sntp"
 

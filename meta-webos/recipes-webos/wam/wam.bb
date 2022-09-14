@@ -7,7 +7,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=790420e31fa17284afec484d5b2ad2d8"
 
 DEPENDS = "virtual/webruntime luna-service2 sqlite3 librolegen nyx-lib openssl luna-prefs libpbnjson freetype serviceinstaller glib-2.0 pmloglib lttng-ust gtest jsoncpp boost"
-PROVIDES = "webappmanager-webos"
+PROVIDES = "virtual/webappmanager-webos"
 
 # webappmgr's upstart conf expects to be able to LD_PRELOAD ptmalloc3
 RDEPENDS:${PN} = "ptmalloc3"
@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-70_bfef8fc7b0b3e378995b95224713709833c26ab0"
-PR = "r52"
+PR = "r53"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -45,7 +45,7 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
 
 # Set the location of chromium headers
-EXTRA_OECMAKE += "-DCHROMIUM_SRC_DIR=${STAGING_INCDIR}/${PREFERRED_PROVIDER_virtual/webruntime}"
+EXTRA_OECMAKE += "-DCHROMIUM_SRC_DIR=${STAGING_INCDIR}/webruntime"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
 EXTRA_OECMAKE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"

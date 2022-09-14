@@ -20,7 +20,7 @@ inherit webos_system_bus
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
 
-INC_PR = "r60"
+INC_PR = "r61"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -159,7 +159,7 @@ install_ls2_roles_acg() {
 
 install_chromium_manifest() {
     install -d ${D}${webos_sysbus_manifestsdir}
-    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/${BPN}.manifest.json ${D}${webos_sysbus_manifestsdir}/${BPN}.manifest.json
+    install -v -m 0644 ${WEBOS_SYSTEM_BUS_FILES_LOCATION}/webruntime.manifest.json ${D}${webos_sysbus_manifestsdir}/webruntime.manifest.json
 }
 
 modify_run_app_shell() {
@@ -197,9 +197,9 @@ do_install() {
     cp -R --no-dereference --preserve=mode,links -v ${OUT_IMAGE_DIR}/${CBE_DATA_LOCALES_PATH}/*.pak ${D}${CBE_DATA_LOCALES_PATH}
     chown root:root -R ${D}${CBE_DATA_LOCALES_PATH}
 
-    install -d ${D}${includedir}/${BPN}
-    cp -R --no-dereference --preserve=mode,links -v ${OUT_IMAGE_DIR}/${includedir}/${BPN}/* ${D}${includedir}/${BPN}/
-    chown root:root -R ${D}${includedir}/${BPN}
+    install -d ${D}${includedir}/webruntime
+    cp -R --no-dereference --preserve=mode,links -v ${OUT_IMAGE_DIR}/${includedir}/webruntime/* ${D}${includedir}/webruntime/
+    chown root:root -R ${D}${includedir}/webruntime
 
     install -d ${D}${APP_SHELL_RUNTIME_DIR}
     install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/app_shell ${D}${APP_SHELL_RUNTIME_DIR}
