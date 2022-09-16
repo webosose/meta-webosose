@@ -79,12 +79,12 @@ python create_pkg_dependency_data () {
                 if output.get(dep.split()[0]):
                     output[dep.split()[0]]["requiredby"].append(pkg+' [REC]')
                 else:
-                    output[dep.split()[0]]={"requires":[],"requiredby":[pkg+' [REC]'],"rprovides":[],"version":'',"arch":'',"ipk":''}
+                    output[dep.split()[0]]={"requires":[],"requiredby":[pkg+' [REC]'],"rprovides":[],"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"install_file":''}
             else:
                 if output.get(dep):
                     output[dep]["requiredby"].append(pkg)
                 else:
-                    output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"version":'',"arch":'',"ipk":''}
+                    output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"install_file":''}
 
     file=open(os.path.join(d.getVar('IMGDEPLOYDIR',True),'{}-dependency.json'.format(d.getVar('IMAGE_BASENAME',True))),'w')
     file.write(json.dumps(output))
