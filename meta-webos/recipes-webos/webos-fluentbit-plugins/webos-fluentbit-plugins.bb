@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit msgpack-c"
 RDEPENDS:${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
-WEBOS_VERSION = "1.0.0-36_943fa331cf43556faa302ebdf8ef0bbbbca0b977"
-PR = "r9"
+WEBOS_VERSION = "1.0.0-37_63ec3ce1216cd9bb3b0f09a4083aed28440e6e64"
+PR = "r10"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -28,3 +28,7 @@ inherit webos_distro_variant_dep
 SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
+
+SRC_URI:append = " \
+    file://0001-Fix-build-error.patch \
+"
