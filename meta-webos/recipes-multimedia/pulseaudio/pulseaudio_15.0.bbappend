@@ -7,10 +7,10 @@ LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=5c4ec8703e42f87fdf96fa37947041
 # This is blacklisted because of the license
 DEPENDS:remove = "libatomic-ops"
 
-DEPENDS += "pmloglib"
+DEPENDS += "pmloglib tensorflow-lite flatbuffers"
 
-WEBOS_VERSION = "15.0-37_ceb8d7948504f181bd88575675aa3d206e13a82c"
-EXTENDPRAUTO:append = "webos1"
+WEBOS_VERSION = "15.0-39_d74431878cc06d952ea5edeb69380e2912b8fd04"
+EXTENDPRAUTO:append = "webos2"
 
 inherit webos_enhanced_submissions
 
@@ -57,14 +57,23 @@ do_install:append() {
     install -v -m 644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system/
     install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
     install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
+
+    install -v -d ${D}${libdir}/pulse-15.0/modules/ecnr
 }
 do_install:append:webos() {
     install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
+    install -v -m 644 ${S}/src/modules/ecnr/hann.txt ${D}${libdir}/pulse-15.0/modules/ecnr/hann.txt
+    install -v -m 644 ${S}/src/modules/ecnr/model_ecnr.tflite ${D}${libdir}/pulse-15.0/modules/ecnr/model_ecnr.tflite
 }
 do_install:append:qemuall() {
     install -v -m 644 ${S}/palm/qemux86_system.pa ${D}${sysconfdir}/pulse/system.pa
 }
+FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr"
+FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr/*"
 
+RDEPENDS:pulseaudio-server:append:webos = "\
+    pulseaudio-module-ecnr \
+"
 RDEPENDS:pulseaudio-server:append = "\
     pulseaudio-module-palm-policy \
     pulseaudio-module-null-source \
