@@ -10,7 +10,6 @@ BRANCH = "r${@oe.utils.trim_version('${PV}', 2)}"
 SRCREV_FORMAT = "tensorflow"
 # Matches v${PV} tag
 SRCREV_tensorflow = "c2363d6d025981c661f8cbecf4c73ca7fbf38caf"
-SRCREV_abseil-cpp = "997aaf3a28308eba1b9156aa35ab7bca9688e9f6"
 # v1.12.0
 SRCREV_flatbuffers = "6df40a2471737b27271bdd9b900ab5f3aec746c7"
 SRCREV_eigen = "7b35638ddb99a0298c5d3450de506a8e8e0203d3"
@@ -51,7 +50,6 @@ SRCREV_psimd = "072586a71b55b7f8c584153d223e95687148a900"
 
 SRC_URI = " \
     git://github.com/tensorflow/tensorflow.git;branch=${BRANCH};protocol=https;name=tensorflow \
-    git://github.com/abseil/abseil-cpp.git;branch=lts_2021_03_24;protocol=https;destsuffix=git/abseil-cpp;name=abseil-cpp \
     git://github.com/google/flatbuffers;branch=master;protocol=https;destsuffix=git/flatbuffers;name=flatbuffers \
     git://gitlab.com/libeigen/eigen;branch=master;protocol=https;destsuffix=git/eigen;name=eigen \
     git://github.com/google/XNNPACK;branch=master;protocol=https;destsuffix=git/xnnpack;name=xnnpack \
@@ -94,6 +92,7 @@ DEPENDS += " \
     unzip-native \
     python3-native \
     python3-numpy-native \
+    abseil-cpp \
 "
 
 ARM_INSTRUCTION_SET = "arm"
@@ -129,7 +128,6 @@ PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF,opencl-head
 # tensorflow/lite/tools/cmake/modules/Findgoogletest.cmake:OverridableFetchContent_GetProperties(googletest)
 # tensorflow/lite/tools/cmake/modules/Findnsync.cmake:OverridableFetchContent_GetProperties(nsync)
 # tensorflow/lite/tools/cmake/modules/Findre2.cmake:OverridableFetchContent_GetProperties(re2)
-# tensorflow/lite/tools/cmake/modules/abseil-cpp.cmake:OverridableFetchContent_GetProperties(abseil-cpp)
 # tensorflow/lite/tools/cmake/modules/egl_headers.cmake:OverridableFetchContent_GetProperties(egl_headers)
 # tensorflow/lite/tools/cmake/modules/eigen.cmake:OverridableFetchContent_GetProperties(eigen)
 # tensorflow/lite/tools/cmake/modules/farmhash.cmake:OverridableFetchContent_GetProperties(farmhash)
@@ -144,9 +142,11 @@ PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF,opencl-head
 # tensorflow/lite/tools/cmake/modules/vulkan_headers.cmake:OverridableFetchContent_GetProperties(vulkan_headers)
 # tensorflow/lite/tools/cmake/modules/xnnpack.cmake:OverridableFetchContent_GetProperties(xnnpack)
 do_configure:prepend() {
-    for i in abseil-cpp flatbuffers eigen xnnpack neon2sse fft2d farmhash ruy gemmlowp vulkan_headers egl_headers opengl_headers; do
+    for i in flatbuffers eigen xnnpack neon2sse fft2d farmhash ruy gemmlowp vulkan_headers egl_headers opengl_headers; do
         cp -ra ${S}/$i ${B}/$i
     done
+    # this prevents abslConfig.cmake to be found from system absl
+    rm -f ${OECMAKE_SOURCEPATH}/tools/cmake/modules/Findabsl.cmake
 }
 
 # For these we can set *_SOURCE_DIR to avoid copy in do_configure:prepend:
