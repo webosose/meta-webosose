@@ -9,6 +9,7 @@ SHRT_VER = "${@oe.utils.trim_version('${PV}', 2)}"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}-${SHRT_VER}:${THISDIR}/${BPN}:"
 
 SRC_URI += "\
+    file://0001-bcm2835-v4l2-codec-fix-vchiq-mmal-renable.patch \
     file://ostree.cfg \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://docker.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://ebtables.cfg', '', d)} \
@@ -20,6 +21,10 @@ SRC_URI += "\
     file://usb-serial-ftdi-sio.cfg \
     file://oomd.cfg \
     file://ebpf.cfg \
+    file://governor.cfg \
+    file://ntfs.cfg \
+    file://zram.cfg \
+    file://security.cfg \
 "
 
 KERNEL_MODULE_AUTOLOAD:append = " \
