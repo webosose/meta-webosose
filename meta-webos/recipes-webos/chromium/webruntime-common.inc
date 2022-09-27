@@ -125,6 +125,12 @@ do_configure() {
     gn --script-executable=${PYTHON} ${EXTRA_OEGN} gen ${OUT_DIR} --args="${GN_ARGS}"
 }
 
+# Unfortunately not using ninja-native
+NINJA_OPTS = "${PARALLEL_MAKE} -C ${OUT_DIR}"
+# Use -v to see the commands executed by ninja
+NINJA_VERBOSE ?= ""
+NINJA = "${S}/depot_tools/ninja ${NINJA_VERBOSE} ${NINJA_OPTS}"
+
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
 do_compile() {
     if [ ! -f ${OUT_DIR}/build.ninja ]; then
@@ -132,5 +138,5 @@ do_compile() {
     fi
 
     export PATH="${S}/depot_tools:$PATH"
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} ${TARGET}
+    ${NINJA} ${TARGET}
 }

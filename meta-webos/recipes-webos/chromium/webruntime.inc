@@ -105,22 +105,21 @@ GN_ARGS += "\
 CBE_DATA_PATH = "${libdir}/cbe"
 CBE_DATA_LOCALES_PATH = "${CBE_DATA_PATH}/neva_locales"
 
-
 do_compile:append() {
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/weboswebruntime
+    ${NINJA} webos/install/weboswebruntime
 
     if ${DEPLOY_BROWSER} ; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/default_browser
+        ${NINJA} webos/install/default_browser
     fi
 
-    ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/app_shell
+    ${NINJA} webos/install/app_shell
 
     if ${DEPLOY_CHROMEDRIVER} ; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/chromedriver
+        ${NINJA} webos/install/chromedriver
     fi
 
     if ${DEPLOY_WAM_DEMO} ; then
-        ${S}/depot_tools/ninja ${PARALLEL_MAKE} -C ${OUT_DIR} webos/install/wam_demo
+        ${NINJA} webos/install/wam_demo
     fi
 }
 
