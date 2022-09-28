@@ -36,7 +36,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     direction@1.0.4 \
     dom-walk@0.1.2 \
     global@4.4.0 \
-    ilib@14.14.0 \
+    ilib@14.15.1 \
     invariant@2.2.4 \
     is-function@1.0.2 \
     js-tokens@4.0.0 \
@@ -58,7 +58,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r10"
+PR = "r11"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
