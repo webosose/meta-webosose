@@ -7,6 +7,7 @@ LIC_FILES_CHKSUM = "\
     file://src/LICENSE;md5=0fca02217a5d49a14dfe2d11837bb34d \
     file://src/third_party/blink/renderer/core/LICENSE-LGPL-2;md5=36357ffde2b64ae177b2494445b79d21 \
     file://src/third_party/blink/renderer/core/LICENSE-LGPL-2.1;md5=a778a33ef338abbaf8b8a7c36b6eec80 \
+    file://oss-pkg-info.yaml;md5=dac1866e82f07906c382718584e415e5 \
 "
 
 require gn-utils.inc
@@ -17,8 +18,8 @@ inherit webos_prerelease_dep
 
 REPO_VERSION := "${@['','_${WEBRUNTIME_REPO_VERSION}'][d.getVar('WEBRUNTIME_REPO_VERSION').strip() != '']}"
 
-WEBOS_REPO_NAME ?= "chromium84"
-WEBOS_GIT_PARAM_BRANCH_V8 ?= "@chromium84"
+WEBOS_REPO_NAME ?= "chromium${WEBRUNTIME_REPO_VERSION}"
+WEBOS_GIT_PARAM_BRANCH_V8 ?= "@chromium${WEBRUNTIME_REPO_VERSION}"
 WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
 WEBOS_REPO_NAME_V8 ?= "chromium-v8"
 WEBOSOSE_GIT_REPO_COMPLETE_V8 ?= "${WEBOSOSE_GIT_REPO}/${WEBOS_REPO_NAME_V8}${WEBOS_GIT_BRANCH_V8}${WEBOSOSE_GIT_PROTOCOL}"
