@@ -40,7 +40,7 @@ IMAGE_INSTALL ?= "${WEBOS_IMAGE_BASE_INSTALL}"
 
 # webOS supports the generation of oss package information file.
 # $ bitbake -c write_oss_pkg_info <image>
-IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info"
+IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info webos_ls2_api_list"
 
 # Add ${webos_sysconfdir}/build/image-name during image construction that contains the image name
 ROOTFS_POSTPROCESS_COMMAND += "rootfs_set_image_name ; clean_python_installation ; verify_acg ; "
