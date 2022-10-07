@@ -92,18 +92,6 @@ VIRTUAL-RUNTIME_umediaserver ?= "umediaserver"
 VIRTUAL-RUNTIME_umediaserver:armv4 = ""
 VIRTUAL-RUNTIME_umediaserver:armv5 = ""
 
-VIRTUAL-RUNTIME_com.example.app.iotivity ?= "com.example.app.iotivity"
-VIRTUAL-RUNTIME_com.example.app.iotivity:armv4 = ""
-VIRTUAL-RUNTIME_com.example.app.iotivity:armv5 = ""
-
-VIRTUAL-RUNTIME_com.example.service.iotivity ?= "com.example.service.iotivity"
-VIRTUAL-RUNTIME_com.example.service.iotivity:armv4 = ""
-VIRTUAL-RUNTIME_com.example.service.iotivity:armv5 = ""
-
-VIRTUAL-RUNTIME_org.ocf.webossample ?= "org.ocf.webossample.occlientbasicops org.ocf.webossample.ocserverbasicops"
-VIRTUAL-RUNTIME_org.ocf.webossample:armv4 = ""
-VIRTUAL-RUNTIME_org.ocf.webossample:armv5 = ""
-
 VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
 VIRTUAL-RUNTIME_nodejs-module-node-red:armv4 = ""
 VIRTUAL-RUNTIME_nodejs-module-node-red:armv5 = ""
@@ -200,8 +188,6 @@ RDEPENDS:${PN} = " \
     ${MEDIA} \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_browser_fonts} \
-    ${VIRTUAL-RUNTIME_com.example.app.iotivity} \
-    ${VIRTUAL-RUNTIME_com.example.service.iotivity} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
     ${VIRTUAL-RUNTIME_com.webos.app.home} \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
@@ -210,7 +196,6 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
-    ${VIRTUAL-RUNTIME_org.ocf.webossample} \
     ${VIRTUAL-RUNTIME_pdm} \
     ${VIRTUAL-RUNTIME_settingsapp} \
     ${VIRTUAL-RUNTIME_surface-manager} \
