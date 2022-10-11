@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos20"
+EXTENDPRAUTO:append = "webos21"
 SYSTEMD_SERVICE:${PN}:remove = "connman.service"
 
 SRC_URI += " \
@@ -22,6 +22,7 @@ SRC_URI += " \
     file://0019-Fix-connman-crash.patch \
     file://0020-Fix-connman-crash-when-interface-removed.patch \
     file://0021-Fix-bug-p2p-findservice-luna-fail.patch \
+    file://0024-Fix-online-state-change.patch \
 "
 
 do_install:append() {
