@@ -10,7 +10,7 @@ DEPENDS = "node-gyp-native nodejs-module-nan-native"
 
 inherit webos_npm_env
 
-PR = "r6"
+PR = "r7"
 
 SRC_URI = "https://registry.npmjs.org/usocket/-/usocket-${PV}.tgz;subdir=${BP} \
     ${WEBOS_NODE_SRC_URI} \
@@ -48,3 +48,5 @@ FILES:${PN} += "${libdir}/node_modules/usocket"
 # Workaround for network access issue during do_configure task
 # http://gecko.lge.com:8000/Errors/Details/458031
 do_configure[network] = "1"
+# do_compile needs it as well, but the failure isn't fatal for do_compile
+do_compile[network] = "1"
