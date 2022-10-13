@@ -1,22 +1,8 @@
-From d53cf9969771f164894c33ac23cbe87045f72988 Mon Sep 17 00:00:00 2001
-From: Pankaj Maharana <pankaj.maharana@lge.com>
-Date: Thu, 3 Oct 2019 17:05:37 +0530
-Subject: [PATCH] rpi: gstreamer1.0*=1.16.0 gstreamer1.0-plugins-{bad,
-
----
- ext/wayland/gstwaylandsink.c | 129 +++++++++++++++++++++++++----
- ext/wayland/gstwaylandsink.h |   4 +
- ext/wayland/wldisplay.c      |   8 +-
- ext/wayland/wldisplay.h      |   1 -
- ext/wayland/wlwindow.c       | 154 ++++++-----------------------------
- ext/wayland/wlwindow.h       |   8 +-
- 6 files changed, 148 insertions(+), 156 deletions(-)
-
 diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
-index 78dd294..0a82960 100644
+index 0761304..25482b9 100644
 --- a/ext/wayland/gstwaylandsink.c
 +++ b/ext/wayland/gstwaylandsink.c
-@@ -215,6 +215,10 @@ gst_wayland_sink_init (GstWaylandSink * sink)
+@@ -220,6 +220,10 @@ gst_wayland_sink_init (GstWaylandSink * sink)
  {
    g_mutex_init (&sink->display_lock);
    g_mutex_init (&sink->render_lock);
@@ -27,27 +13,71 @@ index 78dd294..0a82960 100644
  }
  
  static void
-@@ -308,6 +312,7 @@ gst_wayland_sink_set_display_from_context (GstWaylandSink * sink,
+@@ -313,6 +317,7 @@ gst_wayland_sink_set_display_from_context (GstWaylandSink * sink,
    GError *error = NULL;
  
    display = gst_wayland_display_handle_context_get_handle (context);
-+	GST_DEBUG_OBJECT (sink, " wl_display = %p", display);
++  GST_DEBUG_OBJECT (sink, " wl_display = %p", display);
    sink->display = gst_wl_display_new_existing (display, FALSE, &error);
  
    if (error) {
-@@ -334,6 +339,7 @@ gst_wayland_sink_find_display (GstWaylandSink * sink)
+@@ -332,13 +337,19 @@ gst_wayland_sink_find_display (GstWaylandSink * sink)
+   GError *error = NULL;
+   gboolean ret = TRUE;
+ 
++  GST_DEBUG_OBJECT (sink, " gst_wayland_sink_find_display : Function Entry ");
++
+   g_mutex_lock (&sink->display_lock);
+ 
++  GST_DEBUG_OBJECT (sink, " gst_wayland_sink_find_display : After g_mutex_lock ");
++
+   if (!sink->display) {
+     /* first query upstream for the needed display handle */
      query = gst_query_new_context (GST_WAYLAND_DISPLAY_HANDLE_CONTEXT_TYPE);
++    GST_DEBUG_OBJECT (sink, " gst_wayland_sink_find_display : First query upstream ");
      if (gst_pad_peer_query (GST_VIDEO_SINK_PAD (sink), query)) {
        gst_query_parse_context (query, &context);
-+			GST_DEBUG_OBJECT (sink, " wl_display = %p", sink->display);
++      GST_DEBUG_OBJECT (sink, " wl_display = %p", sink->display);
        gst_wayland_sink_set_display_from_context (sink, context);
      }
      gst_query_unref (query);
-@@ -379,18 +385,35 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
+@@ -348,6 +359,8 @@ gst_wayland_sink_find_display (GstWaylandSink * sink)
+       msg = gst_message_new_need_context (GST_OBJECT_CAST (sink),
+           GST_WAYLAND_DISPLAY_HANDLE_CONTEXT_TYPE);
+ 
++      GST_DEBUG_OBJECT (sink, "gst_wayland_sink_find_display : Ask Application for contect before mutex unlock");
++
+       g_mutex_unlock (&sink->display_lock);
+       gst_element_post_message (GST_ELEMENT_CAST (sink), msg);
+       /* at this point we expect gst_wayland_sink_set_context
+@@ -357,6 +370,9 @@ gst_wayland_sink_find_display (GstWaylandSink * sink)
+       if (!sink->display) {
+         /* if the application didn't set a display, let's create it ourselves */
+         GST_OBJECT_LOCK (sink);
++
++        GST_DEBUG_OBJECT (sink, "gst_wayland_sink_find_display : before wl_display new");
++
+         sink->display = gst_wl_display_new (sink->display_name, &error);
+         GST_OBJECT_UNLOCK (sink);
+ 
+@@ -371,8 +387,12 @@ gst_wayland_sink_find_display (GstWaylandSink * sink)
+     }
+   }
+ 
++
++  GST_DEBUG_OBJECT (sink, "gst_wayland_sink_find_display : End of function before mutex unlock");
+   g_mutex_unlock (&sink->display_lock);
+ 
++  GST_DEBUG_OBJECT (sink, "gst_wayland_sink_find_display : End of function after mutex unlock");
++
+   return ret;
+ }
+ 
+@@ -384,18 +404,35 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
  
    switch (transition) {
      case GST_STATE_CHANGE_NULL_TO_READY:
-+			GST_DEBUG_OBJECT (sink, "GST_STATE_CHANGE_NULL_TO_READY");
++      GST_DEBUG_OBJECT (sink, "GST_STATE_CHANGE_NULL_TO_READY");
        if (!gst_wayland_sink_find_display (sink))
          return GST_STATE_CHANGE_FAILURE;
        break;
@@ -66,9 +96,10 @@ index 78dd294..0a82960 100644
  
    ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
 -  if (ret == GST_STATE_CHANGE_FAILURE)
-+  if (ret == GST_STATE_CHANGE_FAILURE) {
+-    return ret;
++  if (ret == GST_STATE_CHANGE_FAILURE){
 +    GST_DEBUG_OBJECT (sink, "change_state: Failed");
-     return ret;
++     return ret;
 +  } else {
 +    GST_DEBUG_OBJECT (sink, "change_state: Success");
 +  }
@@ -80,17 +111,15 @@ index 78dd294..0a82960 100644
      case GST_STATE_CHANGE_PAUSED_TO_READY:
        gst_buffer_replace (&sink->last_buffer, NULL);
        if (sink->window) {
-@@ -440,7 +463,8 @@ gst_wayland_sink_set_context (GstElement * element, GstContext * context)
+@@ -450,6 +487,7 @@ gst_wayland_sink_set_context (GstElement * element, GstContext * context)
      g_mutex_lock (&sink->display_lock);
      if (G_LIKELY (!sink->display)) {
        gst_wayland_sink_set_display_from_context (sink, context);
--    } else {
 +      GST_DEBUG_OBJECT (sink, "display sink->display = %p", sink->display);
-+		} else {
+     } else {
        GST_WARNING_OBJECT (element, "changing display handle is not supported");
        g_mutex_unlock (&sink->display_lock);
-       return;
-@@ -517,7 +541,7 @@ gst_wayland_sink_get_caps (GstBaseSink * bsink, GstCaps * filter)
+@@ -534,7 +572,7 @@ gst_wayland_sink_get_caps (GstBaseSink * bsink, GstCaps * filter)
  }
  
  static GstBufferPool *
@@ -99,7 +128,7 @@ index 78dd294..0a82960 100644
  {
    GstBufferPool *pool = NULL;
    GstStructure *structure;
-@@ -540,12 +564,38 @@ gst_wayland_create_pool (GstWaylandSink * sink, GstCaps * caps)
+@@ -557,12 +595,40 @@ gst_wayland_create_pool (GstWaylandSink * sink, GstCaps * caps)
    return pool;
  }
  
@@ -128,17 +157,19 @@ index 78dd294..0a82960 100644
 +  return ret;
 +}
 +
++
++
  static gboolean
  gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
  {
    GstWaylandSink *sink;
    gboolean use_dmabuf;
    GstVideoFormat format;
-+	GstBufferPool *newpool, *oldpool;
++  GstBufferPool *newpool, *oldpool;
  
    sink = GST_WAYLAND_SINK (bsink);
  
-@@ -559,10 +609,18 @@ gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
+@@ -576,9 +642,18 @@ gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
    sink->video_info_changed = TRUE;
  
    /* create a new pool for the new caps */
@@ -148,7 +179,7 @@ index 78dd294..0a82960 100644
 +  newpool = gst_wayland_sink_create_pool (sink, caps);
 +  if (!newpool)
 +    goto no_pool;
- 
++
 +  /* we don't activate the internal pool yet as it may not be needed */
 +  oldpool = sink->pool;
 +  sink->pool = newpool;
@@ -157,10 +188,10 @@ index 78dd294..0a82960 100644
 +    gst_buffer_pool_set_active (oldpool, FALSE);
 +    gst_object_unref (oldpool);
 +  }
+ 
    use_dmabuf = gst_caps_features_contains (gst_caps_get_features (caps, 0),
        GST_CAPS_FEATURE_MEMORY_DMABUF);
- 
-@@ -590,6 +648,12 @@ unsupported_format:
+@@ -607,6 +682,13 @@ unsupported_format:
          gst_video_format_to_string (format));
      return FALSE;
    }
@@ -170,26 +201,65 @@ index 78dd294..0a82960 100644
 +        "Could not create new pool %" GST_PTR_FORMAT, caps);
 +    return FALSE;
 +  }
++
  }
  
  static gboolean
-@@ -604,9 +668,9 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
+@@ -621,9 +703,10 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
    gst_query_parse_allocation (query, &caps, &need_pool);
  
    if (need_pool)
 -    pool = gst_wayland_create_pool (sink, caps);
--
--  gst_query_add_allocation_pool (query, pool, sink->video_info.size, 2, 0);
-+   pool = gst_wayland_sink_create_pool (sink, caps);
-+  
-+	gst_query_add_allocation_pool (query, pool, sink->video_info.size, 2, 0);
++    pool = gst_wayland_sink_create_pool (sink, caps);
+ 
+   gst_query_add_allocation_pool (query, pool, sink->video_info.size, 2, 0);
++
    if (pool)
      g_object_unref (pool);
  
-@@ -687,6 +751,18 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+@@ -643,6 +726,7 @@ frame_redraw_callback (void *data, struct wl_callback *callback, uint32_t time)
+   GST_LOG ("frame_redraw_cb");
+ 
+   g_mutex_lock (&sink->render_lock);
++	GST_LOG_OBJECT (sink, "render_last_buffer : Setting sink->redraw_pending = false in frame_redraw_callback");
+   sink->redraw_pending = FALSE;
+ 
+   if (sink->callback) {
+@@ -662,14 +746,20 @@ render_last_buffer (GstWaylandSink * sink, gboolean redraw)
+ {
+   GstWlBuffer *wlbuffer;
+   const GstVideoInfo *info = NULL;
+-  struct wl_surface *surface;
+-  struct wl_callback *callback;
++  struct wl_surface *surface = NULL;
++  struct wl_callback *callback = NULL;
+ 
++  GST_LOG_OBJECT (sink, "render_last_buffer : Entry");
+   wlbuffer = gst_buffer_get_wl_buffer (sink->display, sink->last_buffer);
+   surface = gst_wl_window_get_wl_surface (sink->window);
++  if(surface != NULL)
++      GST_LOG_OBJECT (sink, "render_last_buffer : surface = %p", surface);
+ 
++	GST_LOG_OBJECT (sink, "render_last_buffer : Setting sink->redraw_pending = true");
+   sink->redraw_pending = TRUE;
+   callback = wl_surface_frame (surface);
++  if(callback!= NULL)
++      GST_LOG_OBJECT (sink, "render_last_buffer : callback = %p", callback);
+   sink->callback = callback;
+   wl_callback_add_listener (callback, &frame_callback_listener, sink);
+ 
+@@ -678,6 +768,7 @@ render_last_buffer (GstWaylandSink * sink, gboolean redraw)
+     sink->video_info_changed = FALSE;
+   }
+   gst_wl_window_render (sink->window, wlbuffer, info);
++  GST_LOG_OBJECT (sink, "render_last_buffer : Exit");
+ }
+ 
+ static void
+@@ -707,6 +798,18 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+   g_mutex_lock (&sink->render_lock);
  
    GST_LOG_OBJECT (sink, "render buffer %p", buffer);
- 
 +  gint64 cur_time = 0;
 +  sink->frame_cnt_in_sec++;
 +  cur_time = g_get_monotonic_time ();
@@ -202,41 +272,46 @@ index 78dd294..0a82960 100644
 +  GST_DEBUG_OBJECT (sink, "Showing frame %d", sink->frame_count);
 +  sink->frame_count++;
 +
+ 
    if (G_UNLIKELY (!sink->window)) {
      /* ask for window handle. Unlock render_lock while doing that because
-      * set_window_handle & friends will lock it in this context */
-@@ -694,13 +770,28 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+@@ -714,14 +817,34 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
+     g_mutex_unlock (&sink->render_lock);
      gst_video_overlay_prepare_window_handle (GST_VIDEO_OVERLAY (sink));
      g_mutex_lock (&sink->render_lock);
++		GST_DEBUG_OBJECT (sink, "Parmi : Inside G_UNLIKELY before checking window null");
  
--    if (!sink->window) {
-+    GST_DEBUG_OBJECT (sink, "sink->window (%p) ", sink->window);
-+
-+		if (!sink->window) {
+     if (!sink->window) {
++		  GST_DEBUG_OBJECT (sink, "Parmi : Inside G_UNLIKELY if  window is not null");
        /* if we were not provided a window, create one ourselves */
        sink->window = gst_wl_window_new_toplevel (sink->display,
            &sink->video_info, sink->fullscreen, &sink->render_lock);
        g_signal_connect_object (sink->window, "closed",
-           G_CALLBACK (on_window_closed), sink, 0);
--    }
+-          G_CALLBACK (on_window_closed), sink, 0);
++          G_CALLBACK (on_window_closed), sink, 0); 
 +    } else {
 +      gint width;
++		  GST_DEBUG_OBJECT (sink, "Parmi : Inside G_UNLIKELY if  window is null");
 +      /* set the initial size to be the same as the reported video size
 +       * since the app does not pass the size even if it set window handle */
 +      width = gst_util_uint64_scale_int_round (sink->video_info.width,
 +          sink->video_info.par_n, sink->video_info.par_d);
++      GST_DEBUG_OBJECT (sink, "width =  %d, video_info = %dx%d", width, sink->video_info.width, sink->video_info.height);
 +      gst_wl_window_set_render_rectangle (sink->window, 0, 0, width,
 +          sink->video_info.height);
-+		}
+     }
 +
-+		g_mutex_unlock (&sink->render_lock);
-+    if (!gst_wayland_sink_post_video_info_message (sink, &sink->video_info))
++    g_mutex_unlock (&sink->render_lock);
++    if (!gst_wayland_sink_post_video_info_message (sink, &sink->video_info)){
++		  GST_DEBUG_OBJECT (sink, "Parmi : gst_wayland_sink_post_video_info_message is Failed hence goto Video_info_failed");
 +      goto video_info_failed;
++		}
++ 
 +    g_mutex_lock (&sink->render_lock);
    }
  
    /* drop buffers until we get a frame callback */
-@@ -857,6 +948,12 @@ no_window_size:
+@@ -879,6 +1002,13 @@ no_window_size:
      ret = GST_FLOW_ERROR;
      goto done;
    }
@@ -246,33 +321,36 @@ index 78dd294..0a82960 100644
 +        (sink, "failed to post video info message!"));
 +    goto done;
 +  }
++
  no_buffer:
    {
      GST_WARNING_OBJECT (sink, "could not create buffer");
-@@ -929,6 +1026,8 @@ gst_wayland_sink_set_window_handle (GstVideoOverlay * overlay, guintptr handle)
+@@ -950,6 +1080,7 @@ gst_wayland_sink_set_window_handle (GstVideoOverlay * overlay, guintptr handle)
+       (void *) handle);
  
    g_clear_object (&sink->window);
++  GST_DEBUG_OBJECT (sink, "sink->window(%p), handle(%p)", sink->window, handle);
  
-+	GST_DEBUG_OBJECT (sink, "sink->window(%p), handle(%p)", sink->window, handle);
-+
    if (handle) {
      if (G_LIKELY (gst_wayland_sink_find_display (sink))) {
-       /* we cannot use our own display with an external window handle */
-@@ -941,6 +1040,8 @@ gst_wayland_sink_set_window_handle (GstVideoOverlay * overlay, guintptr handle)
+@@ -961,8 +1092,11 @@ gst_wayland_sink_set_window_handle (GstVideoOverlay * overlay, guintptr handle)
+                 "an externally-supplied display handle. Consider providing a "
+                 "display handle from your application with GstContext"));
        } else {
++        GST_WARNING_OBJECT (sink, "gst_wayland_sink_set_window_handle : Before new_in_surface ");
          sink->window = gst_wl_window_new_in_surface (sink->display, surface,
              &sink->render_lock);
-+        GST_DEBUG_OBJECT (sink, "gst_wayland_sink_find_display sink->window %p",
++	 GST_DEBUG_OBJECT (sink, "gst_wayland_sink_find_display sink->window %p",
 +            sink->window);
        }
      } else {
        GST_ERROR_OBJECT (sink, "Failed to find display handle, "
-@@ -1005,14 +1106,13 @@ gst_wayland_sink_begin_geometry_change (GstWaylandVideo * video)
+@@ -1027,14 +1161,13 @@ gst_wayland_sink_begin_geometry_change (GstWaylandVideo * video)
    g_return_if_fail (sink != NULL);
  
    g_mutex_lock (&sink->render_lock);
 -  if (!sink->window || !sink->window->area_subsurface) {
-+	if (!sink->window) {
++  if (!sink->window) {
      g_mutex_unlock (&sink->render_lock);
      GST_INFO_OBJECT (sink,
          "begin_geometry_change called without window, ignoring");
@@ -283,12 +361,12 @@ index 78dd294..0a82960 100644
    g_mutex_unlock (&sink->render_lock);
  }
  
-@@ -1023,14 +1123,13 @@ gst_wayland_sink_end_geometry_change (GstWaylandVideo * video)
+@@ -1045,14 +1178,13 @@ gst_wayland_sink_end_geometry_change (GstWaylandVideo * video)
    g_return_if_fail (sink != NULL);
  
    g_mutex_lock (&sink->render_lock);
 -  if (!sink->window || !sink->window->area_subsurface) {
-+	if (!sink->window) {
++  if (!sink->window) {
      g_mutex_unlock (&sink->render_lock);
      GST_INFO_OBJECT (sink,
          "end_geometry_change called without window, ignoring");
@@ -300,25 +378,25 @@ index 78dd294..0a82960 100644
  }
  
 diff --git a/ext/wayland/gstwaylandsink.h b/ext/wayland/gstwaylandsink.h
-index be92fe7..3f4faae 100644
+index 7aabb6f..c6a027c 100644
 --- a/ext/wayland/gstwaylandsink.h
 +++ b/ext/wayland/gstwaylandsink.h
-@@ -67,6 +67,10 @@ struct _GstWaylandSink
-   gboolean redraw_pending;
+@@ -68,6 +68,10 @@ struct _GstWaylandSink
    GMutex render_lock;
    GstBuffer *last_buffer;
-+
+ 
 +  gint64 old_time;
 +  gint frame_cnt_in_sec;
 +  guint frame_count;
++
+   struct wl_callback *callback;
  };
  
- struct _GstWaylandSinkClass
 diff --git a/ext/wayland/wldisplay.c b/ext/wayland/wldisplay.c
-index 9400095..f3155e9 100644
+index f326091..c0e2e80 100644
 --- a/ext/wayland/wldisplay.c
 +++ b/ext/wayland/wldisplay.c
-@@ -99,9 +99,6 @@ gst_wl_display_finalize (GObject * gobject)
+@@ -105,9 +105,6 @@ gst_wl_display_finalize (GObject * gobject)
    if (self->compositor)
      wl_compositor_destroy (self->compositor);
  
@@ -328,7 +406,7 @@ index 9400095..f3155e9 100644
    if (self->registry)
      wl_registry_destroy (self->registry);
  
-@@ -205,13 +202,11 @@ registry_handle_global (void *data, struct wl_registry *registry,
+@@ -211,13 +208,11 @@ registry_handle_global (void *data, struct wl_registry *registry,
      uint32_t id, const char *interface, uint32_t version)
  {
    GstWlDisplay *self = data;
@@ -336,14 +414,14 @@ index 9400095..f3155e9 100644
  
    if (g_strcmp0 (interface, "wl_compositor") == 0) {
      self->compositor = wl_registry_bind (registry, id, &wl_compositor_interface,
-         MIN (version, 3));
+         MIN (version, 4));
 -  } else if (g_strcmp0 (interface, "wl_subcompositor") == 0) {
 -    self->subcompositor =
 -        wl_registry_bind (registry, id, &wl_subcompositor_interface, 1);
    } else if (g_strcmp0 (interface, "wl_shell") == 0) {
      self->wl_shell = wl_registry_bind (registry, id, &wl_shell_interface, 1);
    } else if (g_strcmp0 (interface, "xdg_wm_base") == 0) {
-@@ -332,7 +327,6 @@ gst_wl_display_new_existing (struct wl_display * display,
+@@ -346,7 +341,6 @@ gst_wl_display_new_existing (struct wl_display * display,
    }
  
    VERIFY_INTERFACE_EXISTS (compositor, "wl_compositor");
@@ -352,7 +430,7 @@ index 9400095..f3155e9 100644
  
  #undef VERIFY_INTERFACE_EXISTS
 diff --git a/ext/wayland/wldisplay.h b/ext/wayland/wldisplay.h
-index 4ecc0d6..aaa3235 100644
+index f2025a6..66dd00c 100644
 --- a/ext/wayland/wldisplay.h
 +++ b/ext/wayland/wldisplay.h
 @@ -53,7 +53,6 @@ struct _GstWlDisplay
@@ -364,20 +442,20 @@ index 4ecc0d6..aaa3235 100644
    struct xdg_wm_base *xdg_wm_base;
    struct zwp_fullscreen_shell_v1 *fullscreen_shell;
 diff --git a/ext/wayland/wlwindow.c b/ext/wayland/wlwindow.c
-index c3dc61d..6902417 100644
+index 66df0fc..2a8e68a 100644
 --- a/ext/wayland/wlwindow.c
 +++ b/ext/wayland/wlwindow.c
-@@ -148,7 +148,8 @@ static void
+@@ -150,7 +150,8 @@ static void
  gst_wl_window_init (GstWlWindow * self)
  {
    self->configured = TRUE;
 -  g_cond_init (&self->configure_cond);
 +  self->internal_surface = FALSE;
-+	g_cond_init (&self->configure_cond);
++       g_cond_init (&self->configure_cond);
    g_mutex_init (&self->configure_mutex);
  }
  
-@@ -169,17 +170,9 @@ gst_wl_window_finalize (GObject * gobject)
+@@ -171,17 +172,9 @@ gst_wl_window_finalize (GObject * gobject)
      wp_viewport_destroy (self->video_viewport);
  
    wl_proxy_wrapper_destroy (self->video_surface_wrapper);
@@ -397,17 +475,19 @@ index c3dc61d..6902417 100644
  
    g_clear_object (&self->display);
  
-@@ -187,44 +180,38 @@ gst_wl_window_finalize (GObject * gobject)
+@@ -189,45 +182,45 @@ gst_wl_window_finalize (GObject * gobject)
  }
  
  static GstWlWindow *
 -gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
 +gst_wl_window_new_internal (GstWlDisplay * display,
 +    struct wl_surface *surface, GMutex * render_lock)
++
  {
    GstWlWindow *window;
-+	struct wl_region *region;
+   struct wl_region *region;
  
++  GST_DEBUG ("gst_wl_window_new_internal : Entry Function ");
    window = g_object_new (GST_TYPE_WL_WINDOW, NULL);
    window->display = g_object_ref (display);
    window->render_lock = render_lock;
@@ -415,13 +495,16 @@ index c3dc61d..6902417 100644
  
 -  window->area_surface = wl_compositor_create_surface (display->compositor);
 -  window->video_surface = wl_compositor_create_surface (display->compositor);
+-
+-  window->area_surface_wrapper = wl_proxy_create_wrapper (window->area_surface);
 +  window->video_surface = surface;
 +  if (!window->video_surface) {
++    GST_DEBUG ("gst_wl_window_new_internal : !window->video_surface");
 +    window->video_surface = wl_compositor_create_surface (display->compositor);
 +    window->internal_surface = TRUE;
 +  }
- 
--  window->area_surface_wrapper = wl_proxy_create_wrapper (window->area_surface);
++ 
++  GST_DEBUG ("gst_wl_window_new_internal : window->video_surface_wrapper");
    window->video_surface_wrapper =
        wl_proxy_create_wrapper (window->video_surface);
  
@@ -439,48 +522,57 @@ index c3dc61d..6902417 100644
    if (display->viewporter) {
 -    window->area_viewport = wp_viewporter_get_viewport (display->viewporter,
 -        window->area_surface);
++    GST_DEBUG ("gst_wl_window_new_internal : display->viewporter");
      window->video_viewport = wp_viewporter_get_viewport (display->viewporter,
          window->video_surface);
    }
  
-   /* do not accept input */
--  wl_surface_set_input_region (window->area_surface, NULL);
--  wl_surface_set_input_region (window->video_surface, NULL);
--
-+  region = wl_compositor_create_region (display->compositor);
-+  wl_surface_set_input_region (window->video_surface, region);
-+  wl_region_destroy (region);
+   /* never accept input events on the video surface */
++  GST_DEBUG ("gst_wl_window_new_internal : Before creating region");
+   region = wl_compositor_create_region (display->compositor);
+   wl_surface_set_input_region (window->video_surface, region);
+   wl_region_destroy (region);
++  GST_DEBUG ("gst_wl_window_new_internal : After destroying region");
+ 
    return window;
  }
- 
-@@ -255,7 +242,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -258,7 +251,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+ {
    GstWlWindow *window;
-   gint width;
  
 -  window = gst_wl_window_new_internal (display, render_lock);
 +  window = gst_wl_window_new_internal (display, NULL, render_lock);
  
    /* Check which protocol we will use (in order of preference) */
    if (display->xdg_wm_base) {
-@@ -263,7 +250,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -266,7 +259,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
  
      /* First create the XDG surface */
      window->xdg_surface = xdg_wm_base_get_xdg_surface (display->xdg_wm_base,
 -        window->area_surface);
-+			 window->video_surface);
++        window->video_surface);
      if (!window->xdg_surface) {
        GST_ERROR ("Unable to get xdg_surface");
        goto error;
-@@ -300,7 +287,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -287,7 +280,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+ 
+     /* Finally, commit the xdg_surface state as toplevel */
+     window->configured = FALSE;
+-    wl_surface_commit (window->area_surface);
++    wl_surface_commit (window->video_surface);
+     wl_display_flush (display->display);
+ 
+     g_mutex_lock (&window->configure_mutex);
+@@ -303,7 +296,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
    } else if (display->wl_shell) {
      /* go toplevel */
      window->wl_shell_surface = wl_shell_get_shell_surface (display->wl_shell,
 -        window->area_surface);
-+				window->video_surface);
++        window->video_surface);
      if (!window->wl_shell_surface) {
        GST_ERROR ("Unable to get wl_shell_surface");
        goto error;
-@@ -311,7 +298,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -314,7 +307,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
      gst_wl_window_ensure_fullscreen (window, fullscreen);
    } else if (display->fullscreen_shell) {
      zwp_fullscreen_shell_v1_present_surface (display->fullscreen_shell,
@@ -489,57 +581,73 @@ index c3dc61d..6902417 100644
          NULL);
    } else {
      GST_ERROR ("Unable to use either wl_shell, xdg_wm_base or "
-@@ -336,14 +323,8 @@ gst_wl_window_new_in_surface (GstWlDisplay * display,
-     struct wl_surface * parent, GMutex * render_lock)
+@@ -344,18 +337,16 @@ gst_wl_window_new_in_surface (GstWlDisplay * display,
  {
    GstWlWindow *window;
+   struct wl_region *region;
 -  window = gst_wl_window_new_internal (display, render_lock);
--
++  GST_DEBUG ("gst_wl_window_new_in_surface : Before");
+ 
+-  /* do not accept input events on the area surface when embedded */
++  /* do not accept input events on the area surface when embedded
+   region = wl_compositor_create_region (display->compositor);
+-  wl_surface_set_input_region (window->area_surface, region);
+-  wl_region_destroy (region);
++  wl_surface_set_input_region (window->video_surface, region);
++  wl_region_destroy (region); */
+ 
 -  /* embed in parent */
 -  window->area_subsurface =
 -      wl_subcompositor_get_subsurface (display->subcompositor,
 -      window->area_surface, parent);
 -  wl_subsurface_set_desync (window->area_subsurface);
- 
++  GST_DEBUG ("gst_wl_window_new_in_surface : Before Window new internal ");
 +  window = gst_wl_window_new_internal (display, parent, render_lock);
++  GST_DEBUG ("gst_wl_window_new_in_surface : After Window new internal ");
+ 
    wl_surface_commit (parent);
  
-   return window;
-@@ -396,8 +377,6 @@ gst_wl_window_resize_video_surface (GstWlWindow * window, gboolean commit)
+@@ -392,6 +383,7 @@ gst_wl_window_is_toplevel (GstWlWindow * window)
+ static void
+ gst_wl_window_resize_video_surface (GstWlWindow * window, gboolean commit)
+ {
++  struct wl_region *region;
+   GstVideoRectangle src = { 0, };
+   GstVideoRectangle dst = { 0, };
+   GstVideoRectangle res;
+@@ -409,10 +401,15 @@ gst_wl_window_resize_video_surface (GstWlWindow * window, gboolean commit)
      gst_video_sink_center_rect (src, dst, &res, FALSE);
    }
  
 -  wl_subsurface_set_position (window->video_subsurface, res.x, res.y);
 -
-   if (commit) {
-     wl_surface_damage (window->video_surface_wrapper, 0, 0, res.w, res.h);
+-  if (commit)
++  if (commit){
      wl_surface_commit (window->video_surface_wrapper);
-@@ -409,8 +388,8 @@ gst_wl_window_resize_video_surface (GstWlWindow * window, gboolean commit)
-     region = wl_compositor_create_region (window->display->compositor);
-     wl_region_add (region, 0, 0, window->render_rectangle.w,
-         window->render_rectangle.h);
--    wl_surface_set_input_region (window->area_surface, region);
--    wl_region_destroy (region);
++    /* Added extra for testing
++    region = wl_compositor_create_region (window->display->compositor);
++     wl_region_add (region, 0, 0, window->render_rectangle.w,
++         window->render_rectangle.h);
 +    wl_surface_set_input_region (window->video_surface, region);
-+		wl_region_destroy (region);
-   }
++               wl_region_destroy (region); */
++  }
  
-   /* this is saved for use in wl_surface_damage */
-@@ -422,13 +401,6 @@ gst_wl_window_set_opaque (GstWlWindow * window, const GstVideoInfo * info)
+   window->video_rectangle = res;
+ }
+@@ -422,12 +419,6 @@ gst_wl_window_set_opaque (GstWlWindow * window, const GstVideoInfo * info)
  {
    struct wl_region *region;
  
 -  /* Set area opaque */
 -  region = wl_compositor_create_region (window->display->compositor);
--  wl_region_add (region, 0, 0, window->render_rectangle.w,
--      window->render_rectangle.h);
+-  wl_region_add (region, 0, 0, G_MAXINT32, G_MAXINT32);
 -  wl_surface_set_opaque_region (window->area_surface, region);
 -  wl_region_destroy (region);
 -
    if (!GST_VIDEO_INFO_HAS_ALPHA (info)) {
      /* Set video opaque */
      region = wl_compositor_create_region (window->display->compositor);
-@@ -448,7 +420,6 @@ gst_wl_window_render (GstWlWindow * window, GstWlBuffer * buffer,
+@@ -446,97 +437,35 @@ gst_wl_window_render (GstWlWindow * window, GstWlBuffer * buffer,
          gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
      window->video_height = info->height;
  
@@ -547,23 +655,42 @@ index c3dc61d..6902417 100644
      gst_wl_window_resize_video_surface (window, FALSE);
      gst_wl_window_set_opaque (window, info);
    }
-@@ -462,73 +433,11 @@ gst_wl_window_render (GstWlWindow * window, GstWlBuffer * buffer,
+ 
+   if (G_LIKELY (buffer)) {
+     gst_wl_buffer_attach (buffer, window->video_surface_wrapper);
+-    wl_surface_damage_buffer (window->video_surface_wrapper, 0, 0, G_MAXINT32,
+-        G_MAXINT32);
++    /*wl_surface_damage_buffer (window->video_surface_wrapper, 0, 0, G_MAXINT32,
++        G_MAXINT32); */
++    /* wl_surface_commit (window->video_surface_wrapper); */
++		wl_surface_damage (window->video_surface_wrapper, 0, 0,
++    window->video_rectangle.w, window->video_rectangle.h);
+     wl_surface_commit (window->video_surface_wrapper);
+ 
++
++    /* Call disabled gst_wl_window_update_borders (window); */
+     if (!window->is_area_surface_mapped) {
+-      gst_wl_window_update_borders (window);
+-      wl_surface_commit (window->area_surface_wrapper);
++      wl_surface_commit (window->video_surface_wrapper);
+       window->is_area_surface_mapped = TRUE;
+     }
+   } else {
      /* clear both video and parent surfaces */
      wl_surface_attach (window->video_surface_wrapper, NULL, 0, 0);
      wl_surface_commit (window->video_surface_wrapper);
 -    wl_surface_attach (window->area_surface_wrapper, NULL, 0, 0);
 -    wl_surface_commit (window->area_surface_wrapper);
--  }
--
+     window->is_area_surface_mapped = FALSE;
+   }
+ 
 -  if (G_UNLIKELY (info)) {
 -    /* commit also the parent (area_surface) in order to change
 -     * the position of the video_subsurface */
--    wl_surface_damage (window->area_surface_wrapper, 0, 0,
--        window->render_rectangle.w, window->render_rectangle.h);
 -    wl_surface_commit (window->area_surface_wrapper);
 -    wl_subsurface_set_desync (window->video_subsurface);
-   }
- 
+-  }
+-
    wl_display_flush (window->display->display);
  }
  
@@ -581,23 +708,26 @@ index c3dc61d..6902417 100644
 -  GstWlBuffer *gwlbuf;
 -  GstAllocator *alloc;
 -
--  if (window->no_border_update)
--    return;
+-  if (window->display->viewporter) {
+-    wp_viewport_set_destination (window->area_viewport,
+-        window->render_rectangle.w, window->render_rectangle.h);
+-
+-    if (window->is_area_surface_mapped) {
+-      /* The area_surface is already visible and only needed to get resized.
+-       * We don't need to attach a new buffer and are done here. */
+-      return;
+-    }
+-  }
 -
 -  if (window->display->viewporter) {
 -    width = height = 1;
--    window->no_border_update = TRUE;
 -  } else {
 -    width = window->render_rectangle.w;
 -    height = window->render_rectangle.h;
 -  }
 -
 -  /* we want WL_SHM_FORMAT_XRGB8888 */
--#if G_BYTE_ORDER == G_BIG_ENDIAN
--  format = GST_VIDEO_FORMAT_xRGB;
--#else
 -  format = GST_VIDEO_FORMAT_BGRx;
--#endif
 -
 -  /* draw the area_subsurface */
 -  gst_video_info_set_format (&info, format, width, height);
@@ -611,6 +741,8 @@ index c3dc61d..6902417 100644
 -      window->display, &info);
 -  gwlbuf = gst_buffer_add_wl_buffer (buf, wlbuf, window->display);
 -  gst_wl_buffer_attach (gwlbuf, window->area_surface_wrapper);
+-  wl_surface_damage_buffer (window->area_surface_wrapper, 0, 0, G_MAXINT32,
+-      G_MAXINT32);
 -
 -  /* at this point, the GstWlBuffer keeps the buffer
 -   * alive and will free it on wl_buffer::release */
@@ -621,7 +753,7 @@ index c3dc61d..6902417 100644
  void
  gst_wl_window_set_render_rectangle (GstWlWindow * window, gint x, gint y,
      gint w, gint h)
-@@ -540,24 +449,13 @@ gst_wl_window_set_render_rectangle (GstWlWindow * window, gint x, gint y,
+@@ -552,23 +481,16 @@ gst_wl_window_set_render_rectangle (GstWlWindow * window, gint x, gint y,
    window->render_rectangle.w = w;
    window->render_rectangle.h = h;
  
@@ -629,32 +761,31 @@ index c3dc61d..6902417 100644
 -  if (window->area_subsurface)
 -    wl_subsurface_set_position (window->area_subsurface, x, y);
 -
-   /* change the size of the area */
--  if (window->area_viewport)
--    wp_viewport_set_destination (window->area_viewport, w, h);
--
--  gst_wl_window_update_borders (window);
+-  if (window->is_area_surface_mapped)
+-    gst_wl_window_update_borders (window);
 +  if (window->video_viewport)
 +    wp_viewport_set_destination (window->video_viewport, w, h);
+ 
+   if (!window->configured)
+     return;
  
    if (window->video_width != 0) {
 -    wl_subsurface_set_sync (window->video_subsurface);
      gst_wl_window_resize_video_surface (window, TRUE);
    }
--
--  wl_surface_damage (window->area_surface_wrapper, 0, 0, w, h);
++  wl_surface_damage (window->video_surface_wrapper, 0, 0, w, h);
++  wl_surface_commit (window->video_surface_wrapper);
+ 
 -  wl_surface_commit (window->area_surface_wrapper);
 -
 -  if (window->video_width != 0)
 -    wl_subsurface_set_desync (window->video_subsurface);
-+  wl_surface_damage (window->video_surface_wrapper, 0, 0, w, h);
-+  wl_surface_commit (window->video_surface_wrapper);
  }
 diff --git a/ext/wayland/wlwindow.h b/ext/wayland/wlwindow.h
-index c3f0172..33731fa 100644
+index 303c336..3e8fed2 100644
 --- a/ext/wayland/wlwindow.h
 +++ b/ext/wayland/wlwindow.h
-@@ -44,13 +44,8 @@ struct _GstWlWindow
+@@ -44,13 +44,9 @@ struct _GstWlWindow
    GMutex *render_lock;
  
    GstWlDisplay *display;
@@ -662,16 +793,18 @@ index c3f0172..33731fa 100644
 -  struct wl_surface *area_surface_wrapper;
 -  struct wl_subsurface *area_subsurface;
 -  struct wp_viewport *area_viewport;
++
    struct wl_surface *video_surface;
    struct wl_surface *video_surface_wrapper;
 -  struct wl_subsurface *video_subsurface;
    struct wp_viewport *video_viewport;
    struct wl_shell_surface *wl_shell_surface;
    struct xdg_surface *xdg_surface;
-@@ -72,6 +67,9 @@ struct _GstWlWindow
-    * already been set on the area_subsurface */
-   gboolean no_border_update;
- 
+@@ -71,6 +67,10 @@ struct _GstWlWindow
+   /* when this is not set both the area_surface and the video_surface are not
+    * visible and certain steps should be skipped */
+   gboolean is_area_surface_mapped;
++
 +  /* this will be set when video_surface is created internal from
 +   * wayland compositor and not passed from external app */
 +  gboolean internal_surface;
