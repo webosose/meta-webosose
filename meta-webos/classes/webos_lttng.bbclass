@@ -14,7 +14,7 @@
 
 inherit webos_prerelease_dep
 WEBOS_LTTNG_ENABLED ??= "0"
-#WEBOS_LTTNG_ENABLED ?= "${@ '0' if '${WEBOS_DISTRO_PRERELEASE}' == '' else '1' }"
+WEBOS_LTTNG_ENABLED ?= "${@ '0' if '${WEBOS_DISTRO_PRERELEASE}' == '' else '1' }"
 # Only enable LTTng for target components
 WEBOS_LTTNG_ENABLED:class-native = "0"
 WEBOS_LTTNG_ENABLED:class-nativesdk = "0"

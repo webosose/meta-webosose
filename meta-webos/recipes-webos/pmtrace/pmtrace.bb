@@ -36,7 +36,7 @@ S = "${WORKDIR}/git"
 
 # The libmemtracker, libpmtrace, pmctl (library/header/binary files) will be installed in all builds except RELEASE mode.
 # Only libpmtrace header files need to install in all builds for other modules that are referring to the header files.
-EXTRA_OECMAKE += "-DENABLE_LIBPMTRACE:BOOLEAN=False"
+EXTRA_OECMAKE += "-DENABLE_LIBPMTRACE:BOOLEAN=${@'False' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'True'}"
 EXTRA_OECMAKE += "-DDEFAULT_LOGGING:STRING=${@'' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'pmlog'}"
 
 SRC_URI += "file://0001-use-python3.patch"
