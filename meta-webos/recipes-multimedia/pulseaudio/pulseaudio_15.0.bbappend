@@ -9,7 +9,7 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers"
 
-WEBOS_VERSION = "15.0-39_d74431878cc06d952ea5edeb69380e2912b8fd04"
+WEBOS_VERSION = "15.0-41_913611e76ffff60afc84bfd6165d3ea94a9175c1"
 EXTENDPRAUTO:append = "webos2"
 
 inherit webos_enhanced_submissions
