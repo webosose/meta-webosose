@@ -13,16 +13,14 @@ inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_library
 inherit webos_filesystem_paths
+inherit webos_npm_env
 inherit python3native
 
 export PYTHON = "python3"
 
-NODE_VERSION = "16.14.2"
-
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.xz;name=node \
+    ${WEBOS_NODE_SRC_URI} \
 "
-SRC_URI[node.sha256sum] = "e922e215cc68eb5f94d33e8a0b61e2c863b7731cc8600ab955d3822da90ff8d1"
 
 S = "${WORKDIR}/git"
 

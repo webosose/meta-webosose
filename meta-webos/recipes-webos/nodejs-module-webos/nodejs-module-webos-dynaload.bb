@@ -15,12 +15,12 @@ SRC_URI += "file://0001-Fix-build-for-nodejs-14.patch"
 
 do_configure() {
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
-    node-gyp --arch ${TARGET_ARCH} --nodedir "${WORKDIR}/node-v${NODE_VERSION}" configure
+    ${WEBOS_NODE_GYP} configure
 }
 
 do_compile() {
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"
-    node-gyp --arch ${TARGET_ARCH} --nodedir "${WORKDIR}/node-v${NODE_VERSION}" build
+    ${WEBOS_NODE_GYP} build
 }
 
 WEBOS_NODE = "webos.node"

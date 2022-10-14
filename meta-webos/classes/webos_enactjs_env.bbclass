@@ -15,7 +15,6 @@ DEPENDS:append = " enact-dev-native nodejs-native"
 WEBOS_ENACTJS_TOOL_PATH ??= "${STAGING_DIR_NATIVE}/opt/cli"
 WEBOS_ENACTJS_JSDOC_TO_TS_PATH ??= "${STAGING_DIR_NATIVE}/opt/jsdoc-to-ts"
 
-WEBOS_NODE_BIN ??= "${STAGING_BINDIR_NATIVE}/node"
 ENACT_DEV ??= "${WEBOS_NODE_BIN} ${WEBOS_ENACTJS_TOOL_PATH}/bin/enact.js"
 ENACT_JSDOC_TO_TS ??= "${WEBOS_NODE_BIN} ${WEBOS_ENACTJS_JSDOC_TO_TS_PATH}/bin/jsdoc-to-ts.js"
 ENACT_BOOTSTRAP_OVERRIDE ??= "${ENACT_DEV} bootstrap --base=false --sampler=false --link=false --override"
