@@ -224,8 +224,16 @@ RDEPENDS:${PN} = " \
     ${WEBOS_PACKAGESET_TZDATA} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
+SOLANA ?= ""
+SOLANA:raspberrypi4-64 = " \
+    solana-cli \
+    solana-keygen \
+    solana-program-library \
+    sugar \
+"
 
 RDEPENDS:${PN}:append:webos = " \
+    ${SOLANA} \
     com.webos.app.camera \
     com.webos.app.mediaviewer \
     com.webos.app.imageviewer \
