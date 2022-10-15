@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi10"
+EXTENDPRAUTO:append = "webosrpi11"
 
 do_deploy:append() {
     echo "gpu_mem=300" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
@@ -16,4 +16,5 @@ do_deploy:append:raspberrypi4() {
     echo "dtparam=i2c_arm=on" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
     echo "# Enable spi" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
     echo "dtparam=spi=on" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
+    echo "start_x=1" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
 }
