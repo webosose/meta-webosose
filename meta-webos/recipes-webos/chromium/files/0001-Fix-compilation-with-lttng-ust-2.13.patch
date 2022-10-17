@@ -1,0 +1,84 @@
+From b6e10480180bcf5e9bf6055f3e6335a54da3827c Mon Sep 17 00:00:00 2001
+From: "sukil.hong" <sukil.hong@lge.com>
+Date: Mon, 17 Oct 2022 15:16:57 +0900
+Subject: [PATCH] Fix compilation with lttng-ust >= 2.13
+
+:Release Notes:
+Fix compilation with lttng-ust >= 2.13
+
+:Detailed Notes:
+|  error: #include expects "FILENAME" or <FILENAME>
+|  1140 | #include LTTNG_UST_TRACEPOINT_INCLUDE
+|       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+long deprecated TRACEPOINT_INCLUDE_FILE macro was
+finally removed in 2.13.5, see:
+https://github.com/lttng/lttng-ust/commit/41858e2b6e8
+https://github.com/lttng/lttng-ust/commit/d2966b4b0b2
+
+:Testing Performed:
+Build Test
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRO-12611] LTTng tracing is not working
+
+Change-Id: I1d8f407ebd0c54356a237eb5d0e16656da298798
+---
+ src/base/trace_event/neva/lttng/chromium_lttng_provider.h | 8 ++++----
+ .../neva/lttng/webos/webossystem_lttng_provider.h         | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/base/trace_event/neva/lttng/chromium_lttng_provider.h b/src/base/trace_event/neva/lttng/chromium_lttng_provider.h
+index 9930e927db..b93bcdecbf 100644
+--- a/src/base/trace_event/neva/lttng/chromium_lttng_provider.h
++++ b/src/base/trace_event/neva/lttng/chromium_lttng_provider.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright 2015-2019 LG Electronics, Inc.
++ * Copyright 2015-2022 LG Electronics, Inc.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -19,9 +19,9 @@
+ #undef TRACEPOINT_PROVIDER
+ #define TRACEPOINT_PROVIDER chromium_lttng_provider
+ 
+-#undef TRACEPOINT_INCLUDE_FILE
+-#define TRACEPOINT_INCLUDE_FILE \
+-    base/trace_event/neva/lttng/chromium_lttng_provider.h
++#undef TRACEPOINT_INCLUDE
++#define TRACEPOINT_INCLUDE \
++    "base/trace_event/neva/lttng/chromium_lttng_provider.h"
+ 
+ #if !defined(BASE_TRACE_EVENT_NEVA_LTTNG_CHROMIUM_LTTNG_PROVIDER_H_) || \
+     defined(TRACEPOINT_HEADER_MULTI_READ)
+diff --git a/src/base/trace_event/neva/lttng/webos/webossystem_lttng_provider.h b/src/base/trace_event/neva/lttng/webos/webossystem_lttng_provider.h
+index e7ebe74cbb..363e746537 100644
+--- a/src/base/trace_event/neva/lttng/webos/webossystem_lttng_provider.h
++++ b/src/base/trace_event/neva/lttng/webos/webossystem_lttng_provider.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright 2015-2019 LG Electronics, Inc.
++ * Copyright 2015-2022 LG Electronics, Inc.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -26,9 +26,9 @@
+ #undef TRACEPOINT_PROVIDER
+ #define TRACEPOINT_PROVIDER webossystem_lttng_provider
+ 
+-#undef TRACEPOINT_INCLUDE_FILE
+-#define TRACEPOINT_INCLUDE_FILE \
+-    base/trace_event/neva/lttng/webos/webossystem_lttng_provider.h
++#undef TRACEPOINT_INCLUDE
++#define TRACEPOINT_INCLUDE \
++    "base/trace_event/neva/lttng/webos/webossystem_lttng_provider.h"
+ 
+ #if !defined(BASE_TRACE_EVENT_NEVA_LTTNG_WEBOS_WEBOSSYSTEM_LTTNG_PROVIDER_H_) || \
+     defined(TRACEPOINT_HEADER_MULTI_READ)
+-- 
+2.37.1
+
