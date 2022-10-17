@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-66_ed2c7585fb9db8365605f40f64ffa81026cdc2bf"
-PR = "r49"
+PR = "r50"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -124,7 +124,6 @@ do_configure:append() {
     # Extra added for chromium87
     sed -i '/--ozone-platform/d' ${B}/webapp-mgr.sh
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-gpu-vsync \\' ${B}/webapp-mgr.sh
-    sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --alsa-input-device=pulse \\' ${B}/webapp-mgr.sh
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-accurate-seek \\' ${B}/webapp-mgr.sh
 }
 
