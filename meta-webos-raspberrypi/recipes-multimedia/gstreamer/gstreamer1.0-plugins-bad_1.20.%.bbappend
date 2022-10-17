@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append:rpi = "webosrpi6"
+EXTENDPRAUTO:append:rpi = "webosrpi7"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -12,4 +12,5 @@ PACKAGECONFIG:remove:rpi = "faad"
 
 SRC_URI:append:rpi = " \
       file://0005-waylandsink-remove-unsupported-subcompositor.patch \
+      file://0006-h264parse-resolution-changed-event-support.patch \
     "
