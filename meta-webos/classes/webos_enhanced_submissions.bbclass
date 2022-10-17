@@ -259,7 +259,7 @@ python submission_sanity_check() {
     for u in urldata:
         tag_param = urldata[u].parm['tag'] if 'tag' in urldata[u].parm else None
         name_param = urldata[u].parm['name'] if 'name' in urldata[u].parm else 'main'
-        if urldata[u].type == 'git' and name_param == 'main':
+        if (urldata[u].type == 'git' or urldata[u].type == 'gitsm') and name_param == 'main':
             if found_first:
                 msg = "webos_enhanced_submission bbclass has limited support for recipes with multiple git repos in SRC_URI. They have to have different 'name' parameter and the one which points to repository with submissions tag should have 'name=main'. Recipe '%s' (file '%s') has multiple git repos with 'main' name or without names" % (pn, file)
                 oe.qa.handle_error("webos-enh-sub-warning", msg, d)
