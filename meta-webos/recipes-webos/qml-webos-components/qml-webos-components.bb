@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative pmloglib qt-features-webos luna-service2 glib-2.0"
 
 WEBOS_VERSION = "1.0.0-57_ca4bb7c2b78f0968169b2c732cbdcdb9c4afbef5"
-PR = "r18"
+PR = "r19"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -27,6 +27,10 @@ inherit webos_public_repo
 # but until that happens we need to clone from gpro
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+
+SRC_URI += "file://0001-Fix-compilation-with-lttng-ust-2.13.patch"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
