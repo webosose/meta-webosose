@@ -1,0 +1,56 @@
+From dd16da7631fddd920c3710452bfbc53782574072 Mon Sep 17 00:00:00 2001
+From: "sukil.hong" <sukil.hong@lge.com>
+Date: Mon, 17 Oct 2022 14:01:53 +0900
+Subject: [PATCH] Fix compilation with lttng-ust >= 2.13
+
+:Release Notes:
+Fix compilation with lttng-ust >= 2.13
+
+:Detailed Notes:
+|  error: #include expects "FILENAME" or <FILENAME>
+|  1140 | #include LTTNG_UST_TRACEPOINT_INCLUDE
+|       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+long deprecated TRACEPOINT_INCLUDE_FILE macro was
+finally removed in 2.13.5, see:
+https://github.com/lttng/lttng-ust/commit/41858e2b6e8
+https://github.com/lttng/lttng-ust/commit/d2966b4b0b2
+
+:Testing Performed:
+Build Test
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRO-12611] LTTng tracing is not working
+
+Change-Id: I9c8f344c011c1d1e1afe2abacdebe162345de0ca
+---
+ .../webos-wayland-egl/pmtrace_qtwaylandwebos_provider.h     | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/plugins/platforms/webos-wayland-egl/pmtrace_qtwaylandwebos_provider.h b/src/plugins/platforms/webos-wayland-egl/pmtrace_qtwaylandwebos_provider.h
+index 65a1127..531ed25 100644
+--- a/src/plugins/platforms/webos-wayland-egl/pmtrace_qtwaylandwebos_provider.h
++++ b/src/plugins/platforms/webos-wayland-egl/pmtrace_qtwaylandwebos_provider.h
+@@ -1,4 +1,4 @@
+-// Copyright (c) 2016-2018 LG Electronics, Inc.
++// Copyright (c) 2016-2022 LG Electronics, Inc.
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+ // you may not use this file except in compliance with the License.
+@@ -17,8 +17,8 @@
+ #undef TRACEPOINT_PROVIDER
+ #define TRACEPOINT_PROVIDER qtwayland_webos
+ 
+-#undef TRACEPOINT_INCLUDE_FILE
+-#define TRACEPOINT_INCLUDE_FILE ./pmtrace_qtwaylandwebos_provider.h
++#undef TRACEPOINT_INCLUDE
++#define TRACEPOINT_INCLUDE "./pmtrace_qtwaylandwebos_provider.h"
+ 
+ #ifdef __cplusplus
+ extern "C"{
+-- 
+2.37.1
+
