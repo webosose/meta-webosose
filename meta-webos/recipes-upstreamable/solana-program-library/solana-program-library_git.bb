@@ -4,12 +4,14 @@ SUMMARY = "Solana program library"
 HOMEPAGE = "https://github.com/solana-labs/solana-program-library"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${S}/../../LICENSE;md5=f75ee68af8d19d48270eec815cc414fd \
+    file://../../LICENSE;md5=f75ee68af8d19d48270eec815cc414fd \
 "
 inherit webos_cargo
 
 SRC_URI += "git://github.com/solana-labs/solana-program-library.git;protocol=https;branch=master"
-SRCREV = "${AUTOREV}"
+# matches tag token-cli-v2.1.1
+SRCREV = "88b147506d5b9515f3a4762421a0b8c309188dc9"
+PV = "2.1.1"
 
 S = "${WORKDIR}/git/token/cli"
 DEPENDS += "udev clang-native"
