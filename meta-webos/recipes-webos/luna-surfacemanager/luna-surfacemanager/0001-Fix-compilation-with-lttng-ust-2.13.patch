@@ -1,0 +1,56 @@
+From ea3d3eba175e2e4c6bc09987cc5795af876f3094 Mon Sep 17 00:00:00 2001
+From: "sukil.hong" <sukil.hong@lge.com>
+Date: Tue, 18 Oct 2022 10:18:26 +0900
+Subject: [PATCH] Fix compilation with lttng-ust >= 2.13
+
+:Release Notes:
+Fix compilation with lttng-ust >= 2.13
+
+:Detailed Notes:
+|  error: #include expects "FILENAME" or <FILENAME>
+|  1140 | #include LTTNG_UST_TRACEPOINT_INCLUDE
+|       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+long deprecated TRACEPOINT_INCLUDE_FILE macro was
+finally removed in 2.13.5, see:
+https://github.com/lttng/lttng-ust/commit/41858e2b6e8
+https://github.com/lttng/lttng-ust/commit/d2966b4b0b2
+
+:Testing Performed:
+Build Test
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRO-12611] LTTng tracing is not working
+
+Change-Id: I318ffecf815c8d1d98bae6b8eb1abff6d233c513
+---
+ modules/weboscompositor/pmtrace_surfacemanager_provider.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/modules/weboscompositor/pmtrace_surfacemanager_provider.h b/modules/weboscompositor/pmtrace_surfacemanager_provider.h
+index fe04b75..91f1576 100644
+--- a/modules/weboscompositor/pmtrace_surfacemanager_provider.h
++++ b/modules/weboscompositor/pmtrace_surfacemanager_provider.h
+@@ -1,4 +1,4 @@
+-// Copyright (c) 2013-2018 LG Electronics, Inc.
++// Copyright (c) 2013-2022 LG Electronics, Inc.
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+ // you may not use this file except in compliance with the License.
+@@ -17,8 +17,8 @@
+ #undef TRACEPOINT_PROVIDER
+ #define TRACEPOINT_PROVIDER pmtrace_surfacemanager
+ 
+-#undef TRACEPOINT_INCLUDE_FILE
+-#define TRACEPOINT_INCLUDE_FILE ./pmtrace_surfacemanager_provider.h
++#undef TRACEPOINT_INCLUDE
++#define TRACEPOINT_INCLUDE "./pmtrace_surfacemanager_provider.h"
+ 
+ #ifdef __cplusplus
+ extern "C"{
+-- 
+2.37.1
+
