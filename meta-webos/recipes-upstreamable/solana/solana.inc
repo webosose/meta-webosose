@@ -13,3 +13,5 @@ S = "${WORKDIR}/git"
 require solana-crates.inc
 
 DEPENDS += "udev clang-native"
+
+inherit cargo-update-recipe-crates

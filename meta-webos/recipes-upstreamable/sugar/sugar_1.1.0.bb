@@ -15,3 +15,5 @@ require ${BPN}-crates.inc
 
 S = "${WORKDIR}/git"
 DEPENDS += "udev clang-native openssl"
+
+inherit cargo-update-recipe-crates

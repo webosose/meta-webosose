@@ -20,3 +20,5 @@ CARGO_SRC_DIR = "token/cli"
 DEPENDS += "udev openssl clang-native"
 
 export OPENSSL_NO_VENDOR = "1"
+
+inherit cargo-update-recipe-crates
