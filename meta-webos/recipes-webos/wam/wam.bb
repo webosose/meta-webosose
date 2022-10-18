@@ -40,6 +40,10 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+
+SRC_URI += "file://0001-Fix-compilation-with-lttng-ust-2.13.patch"
+
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
 SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
