@@ -1,0 +1,28 @@
+From 09aaebccc60e7c9c14019a66125a99519d30e5ca Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 19 Oct 2022 19:02:54 +0000
+Subject: [PATCH] grit: Remove usage of 'U' mode bit for opening files in
+ python
+
+The 'U' mode bit is removed in python 3.11. It has been
+deprecated for a long time. The 'U' mode bit has no effect
+so this change doesn't change any behavior.
+
+See https://docs.python.org/3.11/whatsnew/3.11.html#changes-in-the-python-api
+---
+ src/tools/grit/grit/util.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/tools/grit/grit/util.py b/src/tools/grit/grit/util.py
+index 98433d154c..98e770b853 100644
+--- a/src/tools/grit/grit/util.py
++++ b/src/tools/grit/grit/util.py
+@@ -209,7 +209,7 @@ def ReadFile(filename, encoding):
+     mode = 'rb'
+     encoding = None
+   else:
+-    mode = 'rU'
++    mode = 'r'
+ 
+   with io.open(filename, mode, encoding=encoding) as f:
+     return f.read()
