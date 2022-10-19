@@ -10,7 +10,7 @@ DEPENDS:remove = "libatomic-ops"
 DEPENDS += "pmloglib tensorflow-lite flatbuffers"
 
 WEBOS_VERSION = "15.0-41_913611e76ffff60afc84bfd6165d3ea94a9175c1"
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
 inherit webos_enhanced_submissions
 
@@ -24,6 +24,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0002-do-not-display-CLFAGS-to-improve-reproducibility-bui.patch \
     file://0001-meson-Check-for-__get_cpuid.patch \
     file://0001-doxygen-meson.build-remove-dependency-on-doxygen-bin.patch \
+    file://0001-meson.build-use-cpp_std-c-14.patch \
 "
 
 S = "${WORKDIR}/git"

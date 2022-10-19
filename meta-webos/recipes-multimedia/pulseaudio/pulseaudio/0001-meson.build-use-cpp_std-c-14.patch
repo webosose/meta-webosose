@@ -1,0 +1,48 @@
+From c13d563615d3dd5dcc646d128259569c243c7d13 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 19 Oct 2022 15:32:32 +0000
+Subject: [PATCH] meson.build: use cpp_std=c++14
+
+:Release Notes:
+abseil-cpp was upgraded in:
+https://git.openembedded.org/meta-openembedded/commit/?id=3ab22400d180529d2ad9d18a77c1d2863c3d838e
+and it requires c++14:
+https://github.com/abseil/abseil-cpp/commit/97ab3dcfd6490434202e4ab00b2eaba9449e42a1
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/475664
+
+FAILED: src/modules/libmodule_ec_nr.so.p/ecnr_shecnr_module_ecnr_c.cc.o
+x86_64-webos-linux-g++ -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot -Isrc/modules/libmodule_ec_nr.so.p -Isrc/modules -I../git/src/modules -fdiagnostics-color=always -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wnon-virtual-dtor -std=c++11 -O0 -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/git=/usr/src/debug/pulseaudio/15.0-41-r0 -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/git=/usr/src/debug/pulseaudio/15.0-41-r0 -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/build=/usr/src/debug/pulseaudio/15.0-41-r0 -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/build=/usr/src/debug/pulseaudio/15.0-41-r0 -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot= -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot= -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot-native= -fvisibility-inlines-hidden -fPIC -MD -MQ src/modules/libmodule_ec_nr.so.p/ecnr_shecnr_module_ecnr_c.cc.o -MF src/modules/libmodule_ec_nr.so.p/ecnr_shecnr_module_ecnr_c.cc.o.d -o src/modules/libmodule_ec_nr.so.p/ecnr_shecnr_module_ecnr_c.cc.o -c ../git/src/modules/ecnr/shecnr/module_ecnr_c.cc
+In file included from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/absl/base/config.h:86,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/absl/base/attributes.h:37,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/absl/strings/string_view.h:39,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/flatbuffers/base.h:237,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/flatbuffers/array.h:20,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/flatbuffers/flatbuffers.h:22,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/tensorflow/lite/interpreter_builder.h:26,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/tensorflow/lite/model.h:21,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/tensorflow/lite/kernels/register.h:18,
+                 from ../git/src/modules/ecnr/shecnr/module_ecnr.h:9,
+                 from ../git/src/modules/ecnr/shecnr/module_ecnr_c.cc:6:
+TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/absl/base/policy_checks.h:79:2: error: #error "C++ versions less than C++14 are not supported."
+   79 | #error "C++ versions less than C++14 are not supported."
+      |  ^~~~~
+---
+ meson.build | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index bf0744862..b13f9d121 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,7 +1,7 @@
+ project('pulseaudio', 'c', 'cpp',
+         version : '15.0.0',
+         meson_version : '>= 0.50.0',
+-        default_options : [ 'c_std=gnu11', 'cpp_std=c++11' ]
++        default_options : [ 'c_std=gnu11', 'cpp_std=c++14' ]
+         )
+ 
+ meson.add_dist_script('scripts/save-tarball-version.sh', meson.project_version())
