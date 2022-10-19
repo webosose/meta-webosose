@@ -17,4 +17,6 @@ require ${BPN}-crates.inc
 
 S = "${WORKDIR}/git"
 CARGO_SRC_DIR = "token/cli"
-DEPENDS += "udev clang-native"
+DEPENDS += "udev openssl clang-native"
+
+export OPENSSL_NO_VENDOR = "1"
