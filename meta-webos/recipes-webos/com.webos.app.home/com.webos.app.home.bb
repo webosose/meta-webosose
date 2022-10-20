@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=0ec407cd2d4a192e0c60888f4ec66dd7 \
 "
 
-WEBOS_VERSION = "0.1.0-26_f45d9197ac0a5eebfd059b3eaf836b944f6601fa"
+WEBOS_VERSION = "0.1.0-27_2894d9ad34115339173123cab8f18b3467b6fe6f"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 PR = "r4"
