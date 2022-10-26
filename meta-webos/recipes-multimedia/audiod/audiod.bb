@@ -24,8 +24,8 @@ RDEPENDS:${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-52_b52d547c81ed23e011d490edd71753f2b0689cbd"
-PR = "r31"
+WEBOS_VERSION = "1.0.0-54_9a64aeb3528d19502b7f8549ec9f9103e6409e3f"
+PR = "r32"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -48,5 +48,3 @@ EXTRA_OECMAKE += "-DAUDIOD_PALM_LEGACY:BOOLEAN=True"
 EXTRA_OECMAKE += "-DAUDIOD_TEST_API:BOOLEAN=True"
 
 FILES:${PN} += "${datadir}/systemsounds"
-
-SRC_URI += "file://0001-CmakeLists.txt-move-systemsounds-from-media-internal.patch"
