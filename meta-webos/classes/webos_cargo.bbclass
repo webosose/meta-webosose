@@ -137,6 +137,8 @@ webos_cargo_do_compile() {
     cargo build ${CARGO_BUILD_FLAGS}
 }
 
+do_compile[network] = "1"
+
 webos_cargo_do_install() {
     if [ "${CARGO_BUILD_TYPE}" = "--release" ]; then
         local cargo_bindir="${CARGO_RELEASE_DIR}"
