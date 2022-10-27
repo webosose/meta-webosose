@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos33"
+EXTENDPRAUTO:append = "webos34"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -14,7 +14,6 @@ SRC_URI:append = " \
     file://0002-Use-scope-resolution-operator-for-request.patch;maxver=6.2.* \
     file://0003-Fix-to-have-presentation-feedback-sequence-timely.patch;maxver=6.3.0 \
     file://0004-Fix-Access-nullptr-returned-by-QWaylandSurface-clien.patch;maxver=6.3.0 \
-    file://0005-Revert-Use-opaque-render-list-when-client-content-is.patch;maxver=6.4.0 \
 "
 
 # More options for fine-tuned configuration
