@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleapis grpc"
 
-WEBOS_VERSION = "1.0.0-22_041c2f0d43aba0c485fa67bd78339c0ec0ff254b"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-24_ecd8e2b016d277ead33ebc69bf3ada18f6e27835"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -22,10 +22,7 @@ inherit webos_cmake
 inherit webos_pkgconfig
 inherit webos_system_bus
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-google-link-with-libgrpc-as-well.patch \
-    file://0001-CMakeLists.txt-use-std-c-14.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE += "-DGOOGLEAPIS_PATH=${STAGING_INCDIR}/google"
