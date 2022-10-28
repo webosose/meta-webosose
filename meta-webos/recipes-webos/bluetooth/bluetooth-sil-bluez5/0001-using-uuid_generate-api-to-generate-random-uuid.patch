@@ -1,0 +1,73 @@
+From 717ea58d76eec0a065f7b786a63299ee796419dc Mon Sep 17 00:00:00 2001
+From: "piyush10.asalmol" <piyush10.asalmol@lge.com>
+Date: Fri, 28 Oct 2022 07:48:56 +0530
+Subject: [PATCH] 
+ using-uuid_generate-api-to-generate-random-uuid-instead-of-RAND_bytes
+
+---
+ CMakeLists.txt        | 2 +-
+ src/bluez5meshadv.cpp | 8 ++++----
+ src/bluez5meshadv.h   | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 30642d8..16ba351 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -138,5 +138,5 @@ file(GLOB SOURCES
+ 
+ add_library(bluez5 MODULE ${SOURCES})
+ target_link_libraries(bluez5 ${GLIB2_LDFLAGS} ${PMLOG_LDFLAGS}
+-                             ${GIO2_LDFLAGS} ${GIO-UNIX_LDFLAGS} ssl crypto)
++                             ${GIO2_LDFLAGS} ${GIO-UNIX_LDFLAGS} ssl crypto uuid)
+ install(TARGETS bluez5 DESTINATION ${WEBOS_INSTALL_LIBDIR}/bluetooth-sils)
+diff --git a/src/bluez5meshadv.cpp b/src/bluez5meshadv.cpp
+index 9bc0eba..b34b8e4 100644
+--- a/src/bluez5meshadv.cpp
++++ b/src/bluez5meshadv.cpp
+@@ -25,7 +25,7 @@
+ #include "bluez5meshadvprovisioner.h"
+ #include "bluez5meshadvprovagent.h"
+ #include "bluez5meshapplication.h"
+-#include <openssl/rand.h>
++#include <uuid/uuid.h>
+ #include <cstdint>
+ #include <string>
+ #include <vector>
+@@ -130,9 +130,9 @@ Bluez5MeshAdv::~Bluez5MeshAdv()
+ 		g_bus_unwatch_name(mWatcherId);
+ }
+ 
+-void Bluez5MeshAdv::getRandomBytes(unsigned char *buf, int size)
++void Bluez5MeshAdv::getRandomBytes(unsigned char *buf)
+ {
+-	RAND_bytes(buf, size);
++	uuid_generate(buf);
+ }
+ 
+ void Bluez5MeshAdv::updateNetworkId()
+@@ -176,7 +176,7 @@ BluetoothError Bluez5MeshAdv::createNetwork()
+ 		return BLUETOOTH_ERROR_NOT_ALLOWED;
+ 
+ 	GError *error = 0;
+-	getRandomBytes(mUuid, 16);
++	getRandomBytes(mUuid);
+ 
+ 	GBytes *bytes = g_bytes_new(mUuid, 16);
+ 
+diff --git a/src/bluez5meshadv.h b/src/bluez5meshadv.h
+index 3066dd5..8ef99fa 100644
+--- a/src/bluez5meshadv.h
++++ b/src/bluez5meshadv.h
+@@ -93,7 +93,7 @@ public:
+ 								  int32_t waitTime = 0);
+ 
+ private:
+-	void getRandomBytes(unsigned char *buf, int size);
++	void getRandomBytes(unsigned char *buf);
+ 	GVariant* createEmptyStringArrayVariant();
+ 	GVariant* prepareSendDevKeyData(uint8_t *msg, uint16_t n);
+ 	void startTimer(const std::string config);
+-- 
+2.17.1
+
