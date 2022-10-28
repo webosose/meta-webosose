@@ -1,4 +1,5 @@
 # Copyright (c) 2022 LG Electronics, Inc.
+inherit python3native
 
 # A hook function to support extract_ls2_apis IMAGE_FEATURES
 do_webos_extract_ls2_apis_hook () {
@@ -28,7 +29,7 @@ do_webos_extract_ls2_apis_hook () {
             for jsonfile in $jsonfiles
             do
                 newkey=$(basename $jsonfile .manifest.json)
-                RESULT=$(cat $jsonfile | /usr/bin/python -c 'import json,sys;obj=json.load(sys.stdin);file_list=obj["apiPermissionFiles"];print(",".join(file_list))')
+                RESULT=$(cat $jsonfile | ${PYTHON} -c 'import json,sys;obj=json.load(sys.stdin);file_list=obj["apiPermissionFiles"];print(",".join(file_list))')
                 strarr=$(echo $RESULT | sed -e 's/,/\n/g')
                 local singleline
                 for singleline in $strarr
@@ -38,11 +39,9 @@ do_webos_extract_ls2_apis_hook () {
                         echo "File not found or Compat files excluded  :  "+${singlelinefullpath}
                         continue
                     fi
-                    #jsonMsg=$(cat $singlelinefullpath | /usr/bin/python -m json.tool)
-                    #jsonMsg=$(/usr/bin/python -m json.tool $singlelinefullpath)
                     file_data="${file_data} {'$newkey':"
 
-                    value=$(cat $singlelinefullpath | sed -e '/^\/\//d' -e 's@\(.*\)[[:blank:]]\{1,\}//.*@\1@' | /usr/bin/python -c 'import json,sys,os;obj=json.load(sys.stdin);json_list=[];[json_list.extend(obj[x]) for x in obj];print(json.dumps(json_list));')
+                    value=$(cat $singlelinefullpath | sed -e '/^\/\//d' -e 's@\(.*\)[[:blank:]]\{1,\}//.*@\1@' | ${PYTHON} -c 'import json,sys,os;obj=json.load(sys.stdin);json_list=[];[json_list.extend(obj[x]) for x in obj];print(json.dumps(json_list));')
                     file_data="${file_data} $value},"
                 done
             done
