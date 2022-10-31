@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS:${PN} variable.
-PR = "r42"
+PR = "r43"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -150,6 +150,11 @@ WEBOS_PACKAGESET_TZDATA ?= " \
     tzdata-right \
 "
 
+# Restricted to only these 2 MACHINEs by COMPATIBLE_MACHINE
+SOLANA ?= ""
+SOLANA:aarch64 = "solana-cli solana-keygen solana-program-library sugar"
+SOLANA:x86-64 = "solana-cli solana-keygen solana-program-library sugar"
+
 RDEPENDS:${PN} = " \
     activitymanager \
     audiod \
@@ -209,13 +214,7 @@ RDEPENDS:${PN} = " \
     ${WEBOS_PACKAGESET_TZDATA} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
-SOLANA ?= ""
-SOLANA:raspberrypi4-64 = " \
-    solana-cli \
-    solana-keygen \
-    solana-program-library \
-    sugar \
-"
+
 
 RDEPENDS:${PN}:append:webos = " \
     ${SOLANA} \
@@ -336,6 +335,7 @@ RDEPENDS:${PN}:append:qemux86 = " \
     v4l-utils \
     vmwgfx-layout \
 "
+
 RDEPENDS:${PN}:append:qemux86-64 = " \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
