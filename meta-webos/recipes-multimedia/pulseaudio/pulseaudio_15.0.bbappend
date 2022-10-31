@@ -3,14 +3,15 @@
 AUTHOR = "Sushovan G <sushovan.g@lge.com>"
 
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=5c4ec8703e42f87fdf96fa3794704163"
+LIC_FILES_CHKSUM:webos += "file://oss-pkg-info.yaml;md5=aad9c121c4d20efb9738300768a550c5"
 
 # This is blacklisted because of the license
 DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers"
 
-WEBOS_VERSION = "15.0-41_913611e76ffff60afc84bfd6165d3ea94a9175c1"
-EXTENDPRAUTO:append = "webos3"
+WEBOS_VERSION = "15.0-42_686b34e0c049152ee175ee6628078ad15b5f4508"
+EXTENDPRAUTO:append = "webos4"
 
 inherit webos_enhanced_submissions
 
