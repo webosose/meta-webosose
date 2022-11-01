@@ -94,5 +94,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "SPP GATT FTP OPP A2DP"
 SDIMG_ROOTFS_TYPE = "ext4"
 IMAGE_FSTYPES:remove = "ext3"
 
+# Use Fake KMS until surface-manager is fixed to support Full KMS, see WRP-5
+VC4DTBO = "vc4-fkms-v3d"
+
 # OSTree target
 SOTA_MACHINE:rpi = "webos-rpi"
