@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib "
 
 WEBOS_VERSION = "1.0.0-12_84f81aa4b927fec3b98c55f0e0db85f25ca5a7fc"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -31,3 +31,8 @@ FILES:${PN} += "${base_libdir}/*"
 
 SYSTEMD_SERVICE:${PN} += " com.webos.service.peripheralmanager.service"
 
+RRECOMMENDS:${PN} += " \
+    kernel-module-i2c-dev \
+    kernel-module-spidev \
+    kernel-module-spi-bcm2835 \
+"
