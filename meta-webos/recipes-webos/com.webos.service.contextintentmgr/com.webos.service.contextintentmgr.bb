@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "nodejs-module-node-red"
 
-WEBOS_VERSION = "1.0.0-16_81772cbd310891d4df004000a9b1af3173a8185e"
+WEBOS_VERSION = "1.0.0-17_af7499b3964c37bdf489819c10650ff1a8efd5ae"
 PR = "r4"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
