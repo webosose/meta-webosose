@@ -27,5 +27,4 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES:${PN} += "${libdir}/location/plugins/lib*.so"
-FILES:${PN}-dbg += "${libdir}/location/plugins/.debug"
 SECURITY_STRINGFORMAT = ""
