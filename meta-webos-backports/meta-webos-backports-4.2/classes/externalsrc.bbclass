@@ -1,16 +1,12 @@
-# imported from oe-core/kirkstone as in
-# 70f7575bfe externalsrc: Don't wipe out src dir when EXPORT_FUNCTIONS is used.
-# with small additional fix for:
-# https://bugzilla.yoctoproject.org/show_bug.cgi?id=14942
-# https://patchwork.yoctoproject.org/project/oe-core/patch/20221020230351.2712106-1-Martin.Jansa@gmail.com/
-# https://lists.openembedded.org/g/openembedded-core/message/172007
-
+# imported from oe-core/master as in
+# 9b5031ed5a externalsrc.bbclass: Remove a trailing slash from ${B}
 
 # Copyright (C) 2012 Linux Foundation
 # Author: Richard Purdie
 # Some code and influence taken from srctree.bbclass:
 # Copyright (C) 2009 Chris Larson <clarson@kergoth.com>
-# Released under the MIT license (see COPYING.MIT for the terms)
+#
+# SPDX-License-Identifier: MIT
 #
 # externalsrc.bbclass enables use of an existing source tree, usually external to
 # the build system to build a piece of software rather than the usual fetch/unpack/patch
@@ -68,7 +64,7 @@ python () {
         if externalsrcbuild:
             d.setVar('B', externalsrcbuild)
         else:
-            d.setVar('B', '${WORKDIR}/${BPN}-${PV}/')
+            d.setVar('B', '${WORKDIR}/${BPN}-${PV}')
 
         local_srcuri = []
         fetch = bb.fetch2.Fetch((d.getVar('SRC_URI') or '').split(), d)
@@ -237,15 +233,16 @@ def srctree_hash_files(d, srcdir=None):
             env['GIT_INDEX_FILE'] = tmp_index.name
             subprocess.check_output(['git', 'add', '-A', '.'], cwd=s_dir, env=env)
             git_sha1 = subprocess.check_output(['git', 'write-tree'], cwd=s_dir, env=env).decode("utf-8")
-            submodule_helper = subprocess.check_output(['git', 'submodule--helper', 'list'], cwd=s_dir, env=env).decode("utf-8")
-            for line in submodule_helper.splitlines():
-                module_dir = os.path.join(s_dir, line.rsplit(maxsplit=1)[1])
-                if os.path.isdir(module_dir):
-                    proc = subprocess.Popen(['git', 'add', '-A', '.'], cwd=module_dir, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    proc.communicate()
-                    proc = subprocess.Popen(['git', 'write-tree'], cwd=module_dir, env=env, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-                    stdout, _ = proc.communicate()
-                    git_sha1 += stdout.decode("utf-8")
+            if os.path.exists(".gitmodules"):
+                submodule_helper = subprocess.check_output(["git", "config", "--file", ".gitmodules", "--get-regexp", "path"], cwd=s_dir, env=env).decode("utf-8")
+                for line in submodule_helper.splitlines():
+                    module_dir = os.path.join(s_dir, line.rsplit(maxsplit=1)[1])
+                    if os.path.isdir(module_dir):
+                        proc = subprocess.Popen(['git', 'add', '-A', '.'], cwd=module_dir, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        proc.communicate()
+                        proc = subprocess.Popen(['git', 'write-tree'], cwd=module_dir, env=env, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+                        stdout, _ = proc.communicate()
+                        git_sha1 += stdout.decode("utf-8")
             sha1 = hashlib.sha1(git_sha1.encode("utf-8")).hexdigest()
         with open(oe_hash_file, 'w') as fobj:
             fobj.write(sha1)
