@@ -25,7 +25,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " userland"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-13.gav.32_1de2488b9590d8f5fd94dd89bf430d2d4b948436"
+WEBOS_VERSION = "1.0.0-13.gav.33_a7e392b3aa50d669dad3a0b1607017e56ab5d5b0"
 
 
 WEBOS_GIT_PARAM_BRANCH:raspberrypi3 = "master"
