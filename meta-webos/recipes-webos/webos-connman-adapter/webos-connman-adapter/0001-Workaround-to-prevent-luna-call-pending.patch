@@ -1,0 +1,34 @@
+From eaa80cf0278dc019280d2eb840ab50a41587ccdb Mon Sep 17 00:00:00 2001
+From: "piyush10.asalmol" <piyush10.asalmol@lge.com>
+Date: Wed, 9 Nov 2022 19:47:16 +0530
+Subject: [PATCH] Workaround to prevent luna call pending
+
+---
+ src/wifi_service.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/wifi_service.c b/src/wifi_service.c
+index dbbb36a..9085c5a 100644
+--- a/src/wifi_service.c
++++ b/src/wifi_service.c
+@@ -1932,7 +1932,7 @@ static gboolean signal_polling_cb(gpointer user_data)
+ 	        manager);
+ 	connman_technology_interface_t interface_properties;
+ 
+-	if (connman_technology_get_interface_properties(wifi_technology,
++	/*if (connman_technology_get_interface_properties(wifi_technology,
+ 	        CONNMAN_WIFI_INTERFACE_NAME, &interface_properties) == TRUE)
+ 	{
+ 
+@@ -1946,7 +1946,7 @@ static gboolean signal_polling_cb(gpointer user_data)
+ 			send_findnetworks_status_to_subscribers();
+ 			send_getnetworks_status_to_subscribers();
+ 		}
+-	}
++	}*/
+ 
+ 	return TRUE;
+ }
+-- 
+2.17.1
+
