@@ -1,0 +1,106 @@
+From e24cd5e09a9d900ec8250129ad89dbdfd90f6357 Mon Sep 17 00:00:00 2001
+From: Myungchul Kim <myungchul.kim@lge.com>
+Date: Thu, 17 Nov 2022 08:44:27 +0900
+Subject: [PATCH] Fix static analysis issues
+
+:Release Notes:
+Fix static analysis issues
+
+:Detailed Notes:
+Fix static analysis issues
+
+:Testing Performed:
+Local test : OK
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+N/A
+
+Change-Id: I3c139e711837cf6bf098ae69ebca677623b30d85
+---
+ CMakeLists.txt                                      |  2 +-
+ inotify_coredump_test/inotify_coredump_test.cpp     |  7 ++++++-
+ plugins/filter_webos_systemd/WebOSSystemdFilter.cpp | 10 +++++-----
+ plugins/filter_webos_systemd/WebOSSystemdFilter.h   |  2 +-
+ 4 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6e3e513..d8d5f68 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,7 +29,7 @@ add_subdirectory(plugins)
+ add_subdirectory(src/coredump_example)
+ add_subdirectory(python3-webos)
+ add_subdirectory(input_simulator)
+-add_subdirectory(inotify_coredump_test)
++# add_subdirectory(inotify_coredump_test)
+ 
+ # install
+ file(GLOB fluent-bit_conf files/conf/*.conf)
+diff --git a/plugins/filter_webos_systemd/WebOSSystemdFilter.cpp b/plugins/filter_webos_systemd/WebOSSystemdFilter.cpp
+index 7330cca..bd58dd6 100644
+--- a/plugins/filter_webos_systemd/WebOSSystemdFilter.cpp
++++ b/plugins/filter_webos_systemd/WebOSSystemdFilter.cpp
+@@ -56,7 +56,7 @@ WebOSSystemdFilter::WebOSSystemdFilter()
+     , m_monotimeDiff({0, 0})
+     , m_minPrevRealtime({0, 0})
+     , m_maxPrevRealtime({0, 0})
+-    , m_lscallLastTime(0)
++    , m_lscallLastTime({0, 0})
+     , m_isTimeSyncDone(false)
+ {
+     setClassName("WebOSSystemdFilter");
+@@ -275,7 +275,7 @@ bool WebOSSystemdFilter::isTimeSyncJustTried()
+ {
+     struct timespec ts;
+     return (0 == clock_gettime(CLOCK_MONOTONIC, &ts)) &&
+-            (ts.tv_sec - m_lscallLastTime) < 3600;
++            (ts - m_lscallLastTime) < timespec{3600, 0};
+ }
+ 
+ void WebOSSystemdFilter::pushEvent(pair<flb_time, JValue> event)
+@@ -292,7 +292,7 @@ void WebOSSystemdFilter::calcTimeCorrection()
+     gchar *output = NULL;
+     GError *error = NULL;
+     JValue jsonObj;
+-    time_t epoch;
++    int64_t epoch;
+     string command = "luna-send -w 1000 -n 1 luna://com.webos.service.systemservice/time/getNTPTime '{}'";
+     struct timespec realtimeDiff;
+     struct timespec monotimeDiff;
+@@ -321,7 +321,7 @@ void WebOSSystemdFilter::calcTimeCorrection()
+         PLUGIN_WARN("errorText : %s", jsonObj["errorText"].asString().c_str());
+         goto Error;
+     }
+-    epoch = jsonObj["utc"].asNumber<time_t>();
++    epoch = jsonObj["utc"].asNumber<int64_t>();
+     PLUGIN_INFO("Epochtime          : %10lld.", epoch);
+     if (-1 == clock_gettime(CLOCK_REALTIME, &realtimeAfterSync)) {
+         PLUGIN_ERROR("Failed to clock_gettime (REALTIME) : %s", strerror(errno));
+@@ -353,7 +353,7 @@ Error:
+     if (error)
+         g_error_free(error);
+ 
+-    m_lscallLastTime = monotonic.tv_sec;
++    m_lscallLastTime = monotonic;
+ }
+ 
+ bool WebOSSystemdFilter::packCommonMsg(msgpack_unpacked* result, flb_time* timestamp, msgpack_packer* packer, size_t mapSize)
+diff --git a/plugins/filter_webos_systemd/WebOSSystemdFilter.h b/plugins/filter_webos_systemd/WebOSSystemdFilter.h
+index 51b3d26..514b0b5 100644
+--- a/plugins/filter_webos_systemd/WebOSSystemdFilter.h
++++ b/plugins/filter_webos_systemd/WebOSSystemdFilter.h
+@@ -90,7 +90,7 @@ private:
+     struct timespec m_minPrevRealtime;
+     struct timespec m_maxPrevRealtime;
+     list<pair<flb_time, JValue>> m_pendings;
+-    time_t m_lscallLastTime;
++    struct timespec m_lscallLastTime;
+     bool m_isTimeSyncDone;
+ };
+ 
+-- 
+2.25.1
+

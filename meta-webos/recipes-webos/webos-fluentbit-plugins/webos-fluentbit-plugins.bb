@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit msgpack-c"
 RDEPENDS:${PN} = "nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
-WEBOS_VERSION = "1.0.0-37_63ec3ce1216cd9bb3b0f09a4083aed28440e6e64"
-PR = "r11"
+WEBOS_VERSION = "1.0.0-38_db051cb9544eb57640a77f72cf3ccf939ddca10e"
+PR = "r12"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -30,6 +30,5 @@ SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 SRC_URI:append = " \
-    file://0001-Fix-build-error.patch \
-    file://0001-Extract-coredump-s-comm-pid-and-exe-info-from-IN-plu.patch \
+    file://0001-Fix-static-analysis-issues.patch \
 "
