@@ -1,7 +1,8 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
+# Maintained by Seungho Park <seunghoh.park@lge.com>
 SUMMARY = "Enact moonstone standard override used for Enact apps"
-AUTHOR = "Jason Robitaille <jason.robitaille@lge.com>"
+AUTHOR = "EnactUnassigned <enact.swp@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://enact/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
