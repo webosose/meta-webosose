@@ -10,7 +10,7 @@ DEPENDS = "node-gyp-native nodejs-module-nan-native"
 
 inherit webos_npm_env
 
-PR = "r7"
+PR = "r9"
 
 SRC_URI = "https://registry.npmjs.org/usocket/-/usocket-${PV}.tgz;subdir=${BP} \
     ${WEBOS_NODE_SRC_URI} \
@@ -50,3 +50,11 @@ FILES:${PN} += "${libdir}/node_modules/usocket"
 do_configure[network] = "1"
 # do_compile needs it as well, but the failure isn't fatal for do_compile
 do_compile[network] = "1"
+
+# work around http://gecko.lge.com:8000/Errors/Details/487316
+# i686-webos-linux/gcc/i686-webos-linux/11.3.0/ld: error: Release/obj.target/uwrap/src/uwrap.o: relocation R_386_GOTOFF against preemptible symbol _ZTVN3Nan10ObjectWrapE cannot be used when making a shared object
+LDFLAGS:append:x86 = "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', ' -fuse-ld=bfd ', '', d)}"
+# ERROR: nodejs-module-usocket-0.2.1-r7 do_package_qa: QA Issue:
+# nodejs-module-usocket: ELF binary /usr/lib/node_modules/usocket/node_modules/uwrap.node has relocations in .text
+# nodejs-module-usocket: ELF binary /usr/lib/node_modules/usocket/build/Release/uwrap.node has relocations in .text [textrel]
+INSANE_SKIP:${PN} += "textrel"
