@@ -15,7 +15,8 @@ has another interface named as "wp_presentation_feedback".
 
 Pick-to: 6.3
 Change-Id: I7c007978d4aa404d10441643d5461372f33954e5
-Upstream-Status: Submitted  [https://codereview.qt-project.org/c/qt/qtwayland/+/387466]
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtwayland/+/387466]
 ---
  src/qtwaylandscanner/qtwaylandscanner.cpp | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

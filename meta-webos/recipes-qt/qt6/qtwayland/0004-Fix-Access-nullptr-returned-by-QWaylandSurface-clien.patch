@@ -6,8 +6,10 @@ Subject: [PATCH] Fix: Access nullptr returned by QWaylandSurface::client()
 surface()->client() could return null at the moment when
 QWaylandQuickItem::takeFocus invoked, which cause using nullptr
 
-Pick-to: 6.3
+Pick-to: 6.2 6.3
 Change-Id: I89432882bd7117f45bac889bc85b2f86c77b21e8
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtwayland/+/408038]
 ---
  src/compositor/compositor_api/qwaylandquickitem.cpp | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

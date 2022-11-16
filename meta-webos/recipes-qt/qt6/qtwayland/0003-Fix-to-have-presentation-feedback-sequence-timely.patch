@@ -12,7 +12,9 @@ earlier and make to work properly by checking some conditions.
 
 Pick-to: 6.3
 Change-Id: Ic8f02139ca08713c419b0341b9a1e8add6f5a095
-Upstream-Status: Pending [https://codereview.qt-project.org/c/qt/qtwayland/+/402294]
+Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtwayland/+/402294]
 ---
  src/compositor/extensions/qwaylandpresentationtime.cpp   | 9 ++++++---
  src/compositor/extensions/qwaylandpresentationtime_p_p.h | 1 +
