@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2022 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos5"
+EXTENDPRAUTO:append = "webos6"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -40,6 +40,9 @@ do_configure:append() {
     echo "CONFIG_WPS2=y" >> ${B}/wpa_supplicant/.config
     echo "CONFIG_WIFI_DISPLAY=y" >> ${B}/wpa_supplicant/.config
     echo "CONFIG_IEEE80211N=y" >> ${B}/wpa_supplicant/.config
+
+    #Enable WEP Security
+    echo "CONFIG_WEP=y" >> ${B}/wpa_supplicant/.config
 
 }
 
