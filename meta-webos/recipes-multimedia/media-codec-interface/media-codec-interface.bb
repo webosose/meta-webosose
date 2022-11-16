@@ -22,10 +22,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-15_7136c4fea1923ee473e9338bd43f66591bc9656b"
-PR = "r7"
-
-WEBOS_GIT_PARAM_BRANCH:raspberrypi3 = "master"
-WEBOS_VERSION:raspberrypi3 = "1.0.0-10_25f5d0aaeee799e84b1bb3616451a1bc94b09986"
+PR = "r8"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
 

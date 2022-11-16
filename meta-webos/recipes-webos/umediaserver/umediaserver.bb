@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-PR = "r19"
+PR = "r20"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -44,9 +44,6 @@ COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
 WEBOS_VERSION = "1.0.0-24.gav.27_2ef32a42b70d0cbdb079257441907c4bf38867b0"
-
-WEBOS_GIT_PARAM_BRANCH:raspberrypi3 = "master"
-WEBOS_VERSION:raspberrypi3 = "1.0.0-27_dad33357ba323a69885bc11661330ab07296b0c8"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
