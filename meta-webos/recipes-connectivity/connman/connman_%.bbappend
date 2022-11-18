@@ -5,7 +5,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 EXTENDPRAUTO:append = "webos22"
 SYSTEMD_SERVICE:${PN}:remove = "connman.service"
 
-WEBOS_VERSION = "1.41-4_24e5f79bc8c9b004ac7809c1811202be3d96815d"
+WEBOS_VERSION = "1.41-5_ce21cbb9034de1448ce690a722dcaf540cd35b8b"
 WEBOS_REPO_NAME = "connman-webos"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
