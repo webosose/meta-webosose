@@ -1,4 +1,4 @@
-From 6986446a63eb23d834054660a77ead3772691088 Mon Sep 17 00:00:00 2001
+From 50cca61c8a580df90132749e476426ac862356a4 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Wed, 19 Aug 2020 09:50:56 +0900
 Subject: [PATCH] Use human readable process name for chrome inspector
@@ -35,10 +35,10 @@ https://github.com/nodejs/node/pull/31633
  3 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/src/inspector_io.cc b/src/inspector_io.cc
-index 5868289a..9baf1e60 100644
+index 7e0b3ea63cf..b6b50f7e031 100644
 --- a/src/inspector_io.cc
 +++ b/src/inspector_io.cc
-@@ -362,7 +362,11 @@ std::vector<std::string> InspectorIoDelegate::GetTargetIds() {
+@@ -361,7 +361,11 @@ std::vector<std::string> InspectorIoDelegate::GetTargetIds() {
  }
  
  std::string InspectorIoDelegate::GetTargetTitle(const std::string& id) {
@@ -52,7 +52,7 @@ index 5868289a..9baf1e60 100644
  
  std::string InspectorIoDelegate::GetTargetUrl(const std::string& id) {
 diff --git a/src/node_internals.h b/src/node_internals.h
-index dec024bd..d9531dca 100644
+index f7314c906e5..88af39d6fb8 100644
 --- a/src/node_internals.h
 +++ b/src/node_internals.h
 @@ -91,6 +91,7 @@ void SignalExit(int signal, siginfo_t* info, void* ucontext);
@@ -64,7 +64,7 @@ index dec024bd..d9531dca 100644
  v8::Maybe<bool> InitializeContextRuntime(v8::Local<v8::Context> context);
  bool InitializePrimordials(v8::Local<v8::Context> context);
 diff --git a/src/util.cc b/src/util.cc
-index bae5a47a..7ea4e4bc 100644
+index b881f9f9f88..5574545a408 100644
 --- a/src/util.cc
 +++ b/src/util.cc
 @@ -164,6 +164,10 @@ std::string GetHumanReadableProcessName() {
@@ -75,6 +75,6 @@ index bae5a47a..7ea4e4bc 100644
 +  return SPrintF("%s", GetProcessTitle("Node.js"));
 +}
 +
- std::vector<std::string> SplitString(const std::string& in, char delim) {
-   std::vector<std::string> out;
-   if (in.empty())
+ std::vector<std::string> SplitString(const std::string& in,
+                                      char delim,
+                                      bool skipEmpty) {
