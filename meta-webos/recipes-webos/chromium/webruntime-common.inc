@@ -70,6 +70,7 @@ GN_ARGS = "\
     use_custom_libcxx=false\
     use_custom_libcxx_for_host=false\
     use_sysroot=false\
+    webos_toolprefix=\"${HOST_PREFIX}\"\
 "
 
 # Respect ld-is-gold in DISTRO_FEATURES when enabling gold

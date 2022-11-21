@@ -4,7 +4,7 @@ require webruntime_94.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r0"
+PR = "r1"
 
 inherit clang_libc
 
@@ -15,6 +15,8 @@ GN_ARGS:remove = "use_custom_libcxx=false"
 GN_ARGS += "use_custom_libcxx=true"
 
 GN_ARGS += "target_sysroot=\"${STAGING_DIR_TARGET}\""
+
+GN_ARGS += "webos_rpath=\"${libdir}/cbe\""
 
 PACKAGECONFIG[umediaserver] = ",,umediaserver-clang"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline-clang"
