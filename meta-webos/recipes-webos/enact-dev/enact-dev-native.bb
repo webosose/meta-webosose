@@ -48,24 +48,7 @@ do_configure[noexec] = "1"
 do_compile() {
     bbnote "Enact cli & jsdoc-to-ts npm install"
     for LOC_TOOL in ${S}/* ; do
-        ATTEMPTS=0
-        STATUS=-1
-        while [ ${STATUS} -ne 0 ] ; do
-            ATTEMPTS=$(expr ${ATTEMPTS} + 1)
-            if [ ${ATTEMPTS} -gt 5 ] ; then
-                bberror "All attempts to NPM install have failed; exiting!"
-                exit ${STATUS}
-            fi
-
-            bbnote "NPM install attempt #${ATTEMPTS} (of 5)..." && echo
-            STATUS=0
-            timeout --kill-after=5m 15m ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install -C ${LOC_TOOL} || eval "STATUS=\$?"
-            if [ ${STATUS} -ne 0 ] ; then
-                bbwarn "...NPM process failed with status ${STATUS}"
-            else
-                bbnote "...NPM process succeeded" && echo
-            fi
-        done
+        ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install -C ${LOC_TOOL}
     done
 }
 
