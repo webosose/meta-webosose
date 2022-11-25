@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-68_9fd10a4d2ac23fc25d01cfe5c97feb9d299b5b0b"
-PR = "r50"
+PR = "r51"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -77,9 +77,6 @@ DISABLE_NEVA_MEDIA_PLAYER ?= "true"
 # Flag to control runtime flag for platform decoder
 PLATFORM_DECODER_ENABLED ?= "true"
 
-# Flag to control runtime flag for platform encoder
-PLATFORM_ENCODER_ENABLED ?= "false"
-
 do_configure:append() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
       cp ${S}/files/launch/systemd/webapp-mgr.sh.in ${B}/webapp-mgr.sh
@@ -105,7 +102,7 @@ do_configure:append() {
 
     sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --enable-neva-media-service \\' ${B}/webapp-mgr.sh
 
-    # enable platform decoding if DISABLE_NEVA_MEDIA_PLAYER is true
+    # disable web media player neva if DISABLE_NEVA_MEDIA_PLAYER is true
     if ${DISABLE_NEVA_MEDIA_PLAYER}; then
        # enable h/w decoding for webrtc
        sed -i '/--enable-aggressive-release-policy \\/a\    --disable-web-media-player-neva \\' ${B}/webapp-mgr.sh
@@ -115,12 +112,6 @@ do_configure:append() {
          # enable h/w decoding for webrtc
          sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-decoder \\' ${B}/webapp-mgr.sh
       fi
-    fi
-
-    # enable platform encoding if PLATFORM_ENCODER_ENABLED is true
-    if ${PLATFORM_ENCODER_ENABLED}; then
-       # enable h/w encoding for webrtc
-       sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-encoder \\' ${B}/webapp-mgr.sh
     fi
 
     sed -i '/export WAM_MEM_FLAGS=\" \\/a\    --local-storage-limit-per-second-level-domain=10 \\' ${B}/webapp-mgr.sh
