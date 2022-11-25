@@ -6,7 +6,7 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
-PR = "r7"
+PR = "r8"
 
 inherit webos_npm_env
 inherit native
@@ -33,7 +33,10 @@ do_compile() {
 do_install() {
     install -d ${D}${base_prefix}/opt/js-loctool
     cp -R --no-dereference --preserve=mode,links -v ${S}/* ${D}${base_prefix}/opt/js-loctool
-    cd ${D}${base_prefix}/opt/js-loctool
+    # The build directory isn't needed in sysroot and python3 symlink installed with nodejs causes:
+    # ERROR: localization-tool-native-1.7.0-r7 do_populate_sysroot: sstate found an absolute path symlink /OE/BUILD/work/x86_64-linux/localization-tool-native/1.7.0-r7/recipe-sysroot-native/opt/js-loctool/node_modules/node-expat/build/node_gyp_bins/python3 pointing at /OE/BUILD/hosttools/python3. Please replace this with a relative link.
+    # caused by https://github.com/nodejs/node-gyp/commit/b9ddcd5bbd93b05b03674836b6ebdae2c2e74c8c
+    rm -rf ${D}${base_prefix}/opt/js-loctool/node_modules/node-expat/build/node_gyp_bins
 }
 
 sysroot_stage_all:append() {
