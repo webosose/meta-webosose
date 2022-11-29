@@ -8,12 +8,14 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/media-codec-interface/:"
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r0"
+PR = "r1"
 
 SRC_URI += "file://0001-chrono-namespace-changed.patch"
 
-DEPENDS = "chromium-toolchain-native chromium-stdlib"
-DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad luna-service2"
+PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
+PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
+PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+DEPENDS:remove = "media-resource-calculator umediaserver"
 DEPENDS += "media-resource-calculator-clang umediaserver-clang"
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"

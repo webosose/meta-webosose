@@ -4,17 +4,22 @@ require webruntime_94.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r1"
+PR = "r2"
 
 inherit clang_libc
+
+PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', 'system-libcxx', d)}"
+PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
 
 GN_ARGS:remove = "is_clang=false"
 GN_ARGS += "is_clang=true"
 
-GN_ARGS:remove = "use_custom_libcxx=false"
-GN_ARGS += "use_custom_libcxx=true"
-
 GN_ARGS += "target_sysroot=\"${STAGING_DIR_TARGET}\""
+
+GN_ARGS:remove = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'use_custom_libcxx=false', 'use_custom_libcxx=true', d)}"
+
+GN_ARGS += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'use_custom_libcxx=true', 'use_custom_libcxx=false', d)}"
+GN_ARGS += " ${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', 'clang_extra_cxxflags=\\\"-I${STAGING_DIR_TARGET}/usr/include/c++/v1\\\"', d)}"
 
 GN_ARGS += "webos_rpath=\"${libdir}/cbe\""
 

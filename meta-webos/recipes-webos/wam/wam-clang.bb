@@ -10,11 +10,13 @@ PROVIDES = "virtual/webappmanager-webos"
 
 WEBOS_REPO_NAME = "wam"
 
-PR = "r0"
+PR = "r1"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/wam:"
 
-DEPENDS += "chromium-toolchain-native chromium-stdlib"
+PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
+PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
+PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
 DEPENDS:remove = "jsoncpp"
 DEPENDS += "jsoncpp-clang"
 

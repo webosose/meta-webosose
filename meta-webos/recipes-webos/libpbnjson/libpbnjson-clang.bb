@@ -8,9 +8,11 @@ WEBOS_REPO_NAME = "libpbnjson"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/libpbnjson:"
 
-PR = "r0"
+PR = "r1"
 
-DEPENDS += "chromium-toolchain-native chromium-stdlib"
+PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
+PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
+PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
 
 OECMAKE_TARGET_COMPILE = "pbnjson_cpp"
 
