@@ -2,7 +2,7 @@
 
 require nodejs-module-webos.inc
 
-AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SUMMARY = "A module for nodejs that allows Javascript access to the webOS system bus"
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=ab2a5dc5745e5204bf0926e2d6ccf877"
 

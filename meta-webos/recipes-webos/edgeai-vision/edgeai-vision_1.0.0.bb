@@ -2,6 +2,7 @@
 
 SUMMARY = "webOS Edge AI Computer Vision Library"
 DESCRIPTION = "webOS Edge AI Computer Vision Library using TensorflowLite"
+AUTHOR = "Ki-Joong Lee <kijoong.lee@lge.com>"
 SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

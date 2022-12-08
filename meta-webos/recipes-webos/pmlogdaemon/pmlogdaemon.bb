@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS logging daemon"
-AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
+AUTHOR = "Sukil Hong <sukil.hong@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

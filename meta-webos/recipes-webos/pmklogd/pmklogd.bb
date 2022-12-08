@@ -1,7 +1,7 @@
 # Copyright (c) 2011-2022 LG Electronics, Inc.
 
 SUMMARY = "Kernel logging daemon"
-AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
+AUTHOR = "Sukil Hong <sukil.hong@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

@@ -2,7 +2,7 @@
 
 require nodejs-module-webos.inc
 
-AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SUMMARY = "A module for nodejs that allows dynamic loading and execution of Javascript files"
 LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=d980a35955bef62f4f06ee11e344c4d0"
 

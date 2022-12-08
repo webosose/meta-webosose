@@ -2,7 +2,7 @@
 
 SUMMARY = "Bootd single-shot launching service"
 DESCRIPTION = "Bootd is a simplified upstart-like component. It provides automatic single-shot launching at boot time"
-AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
+AUTHOR = "Sukil Hong <sukil.hong@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"

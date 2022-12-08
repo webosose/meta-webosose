@@ -1,7 +1,7 @@
 # Copyright (c) 2012-2022 LG Electronics, Inc.
 
 SUMMARY = "JavaScript loader for foundation frameworks and other loadable libraries"
-AUTHOR = "Seokhee Lee <seokhee.lee@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/frameworks"
 
 LICENSE = "Apache-2.0"

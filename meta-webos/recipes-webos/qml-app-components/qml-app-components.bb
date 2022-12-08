@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2022 LG Electronics, Inc.
 
 SUMMARY = "webOS QML app components"
-AUTHOR = "Jongson Kim <jongson.kim@lge.com>"
+AUTHOR = "KIEN TRUNG PHAM <kien2.pham@lge.com>"
 SECTION = "webos/libs"
 
 LICENSE = "Apache-2.0"

@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2022 LG Electronics, Inc.
 
 SUMMARY = "lttng-ust tracepoints wrapper library and performance tools"
-AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
+AUTHOR = "Sukil Hong <sukil.hong@lge.com>"
 SECTION = "webos/libs"
 
 LICENSE = "LGPL-2.1-only & MIT & Apache-2.0"

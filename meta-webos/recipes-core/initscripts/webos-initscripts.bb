@@ -1,7 +1,7 @@
 # Copyright (c) 2014-2022 LG Electronics, Inc.
 
 SUMMARY = "Systemd service files for system services"
-AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
+AUTHOR = "Sukil Hong <sukil.hong@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0 & MIT"
 LIC_FILES_CHKSUM = " \

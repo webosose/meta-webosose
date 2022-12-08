@@ -1,5 +1,7 @@
 # Copyright (c) 2022 LG Electronics, Inc.
 
+AUTHOR = "Donghyun Kim <donghyun11.kim@lge.com>"
+
 inherit cross
 inherit pkgconfig
 
