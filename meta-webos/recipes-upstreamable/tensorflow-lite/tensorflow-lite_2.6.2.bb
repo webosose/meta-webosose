@@ -58,11 +58,11 @@ SRC_URI = " \
     git://github.com/google/farmhash;branch=master;protocol=https;destsuffix=git/farmhash;name=farmhash \
     git://github.com/google/ruy;branch=master;protocol=https;destsuffix=git/ruy;name=ruy \
     git://github.com/google/gemmlowp;branch=master;protocol=https;destsuffix=git/gemmlowp;name=gemmlowp \
-    git://github.com/KhronosGroup/Vulkan-Headers;branch=master;protocol=https;destsuffix=git/vulkan_headers;name=vulkan-headers \
+    git://github.com/KhronosGroup/Vulkan-Headers;branch=main;protocol=https;destsuffix=git/vulkan_headers;name=vulkan-headers \
     git://github.com/KhronosGroup/EGL-Registry;branch=main;protocol=https;destsuffix=git/egl_headers;name=egl-headers \
     git://github.com/KhronosGroup/OpenGL-Registry;branch=main;protocol=https;destsuffix=git/opengl_headers;name=opengl-headers \
-    git://github.com/pytorch/cpuinfo;branch=master;protocol=https;destsuffix=git/cpuinfo-source;name=cpuinfo \
-    git://github.com/pytorch/cpuinfo;branch=master;protocol=https;destsuffix=git/clog-source;name=clog \
+    git://github.com/pytorch/cpuinfo;branch=main;protocol=https;destsuffix=git/cpuinfo-source;name=cpuinfo \
+    git://github.com/pytorch/cpuinfo;branch=main;protocol=https;destsuffix=git/clog-source;name=clog \
     git://github.com/Maratyszcza/FP16;branch=master;protocol=https;destsuffix=git/FP16-source;name=fp16 \
     git://github.com/Maratyszcza/FXdiv;branch=master;protocol=https;destsuffix=git/FXdiv-source;name=fxdiv \
     git://github.com/Maratyszcza/pthreadpool;branch=master;protocol=https;destsuffix=git/pthreadpool-source;name=pthreadpool \
@@ -85,7 +85,7 @@ SRC_URI[model-mobv1.sha256sum] = "2f8054076cf655e1a73778a49bd8fd0306d32b290b7e57
 
 inherit cmake
 
-PR = "r4"
+PR = "r5"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
