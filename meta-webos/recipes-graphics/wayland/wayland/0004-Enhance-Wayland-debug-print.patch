@@ -1,4 +1,4 @@
-From 94caa7a426a84d7978580fa393a43fc3a2968786 Mon Sep 17 00:00:00 2001
+From 0bedc5002da99dc66e883463ad33793ded8a2359 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 27 Jan 2015 16:45:01 +0900
 Subject: [PATCH] Enhance Wayland debug print
@@ -6,7 +6,6 @@ Subject: [PATCH] Enhance Wayland debug print
 1) Enable or disable print through the named pipe.
 2) Redirect logs into a file.
 3) Print additional information including PIDs.
-not included yet:
 4) Output wl_log and wl_abort to PmLog if available.
 
 Signed-off-by: hyunsook.park <hyunsook.park@lge.com>
@@ -19,14 +18,14 @@ Upstream-Status: Inappropriate [webOS specific]
 ---
  meson.build              |  4 ++
  meson_options.txt        |  4 ++
- src/connection.c         | 70 ++++++++++++++++++++++++++++++++++-
+ src/connection.c         | 73 ++++++++++++++++++++++++++++++++++++-
  src/meson.build          |  5 ++-
  src/wayland-client.c     |  8 ++--
  src/wayland-private.h    |  2 +-
  src/wayland-server.c     | 79 +++++++++++++++++++++++++++++++++++++++-
- src/wayland-util.c       | 18 +++++++++
+ src/wayland-util.c       | 23 ++++++++++++
  src/wayland-version.h.in |  2 +
- 9 files changed, 181 insertions(+), 11 deletions(-)
+ 9 files changed, 189 insertions(+), 11 deletions(-)
 
 diff --git a/meson.build b/meson.build
 index 3bc25c9..f23a74d 100644
@@ -56,7 +55,7 @@ index 4433fa0..e7cebb3 100644
 +  type: 'boolean',
 +  value: 'true')
 diff --git a/src/connection.c b/src/connection.c
-index dc499ea..3e6a9b4 100644
+index dc499ea..10a2089 100644
 --- a/src/connection.c
 +++ b/src/connection.c
 @@ -39,6 +39,8 @@
@@ -126,7 +125,7 @@ index dc499ea..3e6a9b4 100644
  {
  	int i;
  	struct argument_details arg;
-@@ -1280,9 +1324,30 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
+@@ -1280,9 +1324,33 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
  	if (f == NULL)
  		return;
  
@@ -154,10 +153,13 @@ index dc499ea..3e6a9b4 100644
 +			pid,
 +			tid);
 +
++	if (supplement)
++	    fprintf(f, "%s", supplement);
++
  	fprintf(f, "[%7u.%03u] %s%s%s@%u.%s(",
  		time / 1000, time % 1000,
  		discarded ? "discarded " : "",
-@@ -1356,8 +1421,9 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
+@@ -1356,8 +1424,9 @@ wl_closure_print(struct wl_closure *closure, struct wl_object *target,
  	fprintf(f, ")\n");
  
  	if (fclose(f) == 0) {
@@ -363,7 +365,7 @@ index ec3949c..71d5132 100644
  }
  
 diff --git a/src/wayland-util.c b/src/wayland-util.c
-index c89a67b..6e5cb23 100644
+index c89a67b..dbc9ffd 100644
 --- a/src/wayland-util.c
 +++ b/src/wayland-util.c
 @@ -30,8 +30,12 @@
