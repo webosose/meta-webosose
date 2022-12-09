@@ -12,14 +12,25 @@ inherit packagegroup
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
-RDEPENDS:${PN} = " \
-    flatbuffers \
-    tensorflow-lite \
-    opencl-icd-loader \
-    opencv \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', 'arm-compute-library', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', 'armnn', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', 'libedgetpu', '', d)} \
+USE_ARMNN = " \
+    arm-compute-library \
+    armnn \
+"
+
+AIFRAMEWORK_CORE = " \
     edgeai-vision \
     edgeai-vision-tests \
+    flatbuffers \
+    opencl-icd-loader \
+    opencv \
+    tensorflow-lite \
+"
+
+AIFRAMEWORK_EXTENDED = " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', '${USE_ARMNN}', '', d)} \
+"
+
+RDEPENDS:${PN} = " \
+    ${AIFRAMEWORK_CORE} \
+    ${AIFRAMEWORK_EXTENDED} \
 "

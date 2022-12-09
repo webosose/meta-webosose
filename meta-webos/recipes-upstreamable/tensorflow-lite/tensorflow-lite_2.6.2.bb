@@ -72,6 +72,9 @@ SRC_URI = " \
     file://0003-Fix-return-type-issues.patch \
     file://0004-opencl_wrapper-dlopen-libOpenCL.so.1-instead-of-libO.patch \
     file://0005-auto-delegation-support-when-using-gpu.patch \
+    file://0006-add-gpu-delegate-option-for-pytorch-converted-models.patch \
+    file://0007-Modify-benchmark_model-source-for-using-gpu_new_dele.patch \
+    file://0008-enable-build-with-only-opengl-in-rp4.patch \
     file://tensorflowlite.pc.in \
 "
 
@@ -85,7 +88,7 @@ SRC_URI[model-mobv1.sha256sum] = "2f8054076cf655e1a73778a49bd8fd0306d32b290b7e57
 
 inherit cmake
 
-PR = "r5"
+PR = "r6"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -119,10 +122,11 @@ TUNE_CCARGS:remove = "${MCPU_OPTS_TO_REMOVE}"
 OECMAKE_SOURCEPATH = "${S}/tensorflow/lite"
 
 PACKAGECONFIG ?= "xnnpack"
+PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'gpu-delegate', 'gpu gl-backend', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DTFLITE_ENABLE_XNNPACK=ON,-DTFLITE_ENABLE_XNNPACK=OFF"
-# opencl_wrapper only dlopens libOpenCL.so.1, so do_package shlibs cannot dynamically add the runtime dependency, add it explicitly here
-PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF,opencl-headers opencl-icd-loader,opencl-icd-loader"
+PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF"
+PACKAGECONFIG[gl-backend] = "-DTFLITE_ENABLE_GPU_GL_ONLY=ON, -DTFLITE_ENABLE_GPU_GL_ONLY=OFF, virtual/egl virtual/libgles2"
 
 # There are many external dependencies fetched in do_configure if not found:
 # tensorflow/lite/tools/cmake/modules/Findgoogletest.cmake:OverridableFetchContent_GetProperties(googletest)

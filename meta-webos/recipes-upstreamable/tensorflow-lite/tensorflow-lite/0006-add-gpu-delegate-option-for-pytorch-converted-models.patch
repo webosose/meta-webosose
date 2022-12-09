@@ -1,0 +1,100 @@
+From deada1ba4cf3e7fb277bc7fb710caea08edcfbd7 Mon Sep 17 00:00:00 2001
+From: "yeseul.joo" <yeseul.joo@lge.com>
+Date: Mon, 1 Aug 2022 17:29:50 +0900
+Subject: [PATCH] add gpu delegate option for YuNet model
+
+---
+ tensorflow/lite/delegates/gpu/common/model_builder.cc | 8 +++++++-
+ tensorflow/lite/delegates/gpu/common/model_builder.h  | 3 ++-
+ tensorflow/lite/delegates/gpu/delegate.cc             | 5 ++++-
+ tensorflow/lite/delegates/gpu/delegate.h              | 4 ++++
+ 4 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/tensorflow/lite/delegates/gpu/common/model_builder.cc b/tensorflow/lite/delegates/gpu/common/model_builder.cc
+index f5074f695f4..c2d10cb4884 100644
+--- a/tensorflow/lite/delegates/gpu/common/model_builder.cc
++++ b/tensorflow/lite/delegates/gpu/common/model_builder.cc
+@@ -3040,7 +3040,7 @@ std::unique_ptr<TFLiteOperationParser> NewOperationParser(
+ // TODO(impjdi): Check ops' parameters.
+ TfLiteIntArray* GetOpsToReplace(TfLiteContext* context, bool allow_quant_ops,
+                                 int max_delegated_partitions,
+-				int cpu_fallback_percentage) {
++				int cpu_fallback_percentage, bool is_pytorch_converted_model) {
+   delegates::IsNodeSupportedFn node_supported_fn =
+       [=](TfLiteContext* context, TfLiteNode* node,
+           TfLiteRegistration* registration,
+@@ -3070,6 +3070,12 @@ TfLiteIntArray* GetOpsToReplace(TfLiteContext* context, bool allow_quant_ops,
+     if (registration->builtin_code == kTfLiteBuiltinCast) {
+       allowed_in_types.push_back(kTfLiteBool);
+     }
++    if (is_pytorch_converted_model == true && registration->builtin_code == kTfLiteBuiltinReshape){
++      return false;
++    }
++    if (is_pytorch_converted_model == true && registration->builtin_code == kTfLiteBuiltinConcatenation) {
++      return false;
++    }
+     if (!IsAllAllowedTensors(context, node->inputs, allowed_in_types) ||
+         !IsAllAllowedTensors(context, node->outputs, allowed_out_types)) {
+       if (unsupported_details) {
+diff --git a/tensorflow/lite/delegates/gpu/common/model_builder.h b/tensorflow/lite/delegates/gpu/common/model_builder.h
+index db1969e8314..8924cf3cf0a 100644
+--- a/tensorflow/lite/delegates/gpu/common/model_builder.h
++++ b/tensorflow/lite/delegates/gpu/common/model_builder.h
+@@ -36,7 +36,8 @@ namespace gpu {
+ TfLiteIntArray* GetOpsToReplace(TfLiteContext* context,
+                                 bool allow_quant_ops = false,
+                                 int max_delegated_partitions = 1,
+-				int cpu_fallback_percentage = 0);
++				int cpu_fallback_percentage = 0,
++				bool is_pytorch_converted_model = false);
+ 
+ // Extracts TFLite delegate execution plan from the input TFLite context and
+ // converts it into generic graph format.
+diff --git a/tensorflow/lite/delegates/gpu/delegate.cc b/tensorflow/lite/delegates/gpu/delegate.cc
+index 72bc99fc040..9bb036465ae 100644
+--- a/tensorflow/lite/delegates/gpu/delegate.cc
++++ b/tensorflow/lite/delegates/gpu/delegate.cc
+@@ -104,6 +104,7 @@ class Delegate {
+     return options_.max_delegated_partitions;
+   }
+   int CPUFallbackPercentage() const { return options_.cpu_fallback_percentage; }
++  bool IsPytorchConvertedModel() const { return options_.is_pytorch_converted_model; }
+   int num_delegate_kernels() const { return num_delegate_kernels_; }
+ 
+  private:
+@@ -438,7 +439,8 @@ TfLiteStatus DelegatePrepare(TfLiteContext* context, TfLiteDelegate* delegate) {
+   TfLiteIntArray* ops_to_replace =
+       GetOpsToReplace(context, gpu_delegate->IsQuantOpsAllowed(),
+                       gpu_delegate->MaxDelegatedPartitions(),
+-		      gpu_delegate->CPUFallbackPercentage());
++		      gpu_delegate->CPUFallbackPercentage(),
++		      gpu_delegate->IsPytorchConvertedModel());
+   const auto status = context->ReplaceNodeSubsetsWithDelegateKernels(
+       context, kRegistration, ops_to_replace, delegate);
+   TFLITE_LOG_PROD(TFLITE_LOG_INFO, "Created %d GPU delegate kernels.",
+@@ -463,6 +465,7 @@ TfLiteGpuDelegateOptionsV2 TfLiteGpuDelegateOptionsV2Default() {
+   options.experimental_flags = TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT;
+   options.max_delegated_partitions = 1;
+   options.cpu_fallback_percentage = 0;
++  options.is_pytorch_converted_model = false;
+   return options;
+ }
+ 
+diff --git a/tensorflow/lite/delegates/gpu/delegate.h b/tensorflow/lite/delegates/gpu/delegate.h
+index 8a84b0771f8..4ed4acbb6e3 100644
+--- a/tensorflow/lite/delegates/gpu/delegate.h
++++ b/tensorflow/lite/delegates/gpu/delegate.h
+@@ -106,6 +106,10 @@ typedef struct {
+   // forced to run on CPU despite it is supported in GPU.
+   // it's set to 0 in TfLiteGpuDelegateOptionsV2Default().
+   int32_t cpu_fallback_percentage;
++
++  // if this variable is set, RESHAPE node and CONCATENATION node are regarded
++  // as unsupported nodes.
++  bool is_pytorch_converted_model;
+ } TfLiteGpuDelegateOptionsV2;
+ 
+ // Populates TfLiteGpuDelegateOptionsV2 as follows:
+-- 
+2.17.1
+

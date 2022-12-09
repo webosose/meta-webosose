@@ -91,19 +91,28 @@ QT += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '${USE_WAYLAND}', '', d)} \
 "
 
-RDEPENDS:${PN} = " \
-    flatbuffers-dev \
-    tensorflow-lite-dev \
-    opencl-icd-loader-dev \
-    msgpack-c-dev \
-    rapidjson-dev \
-    jsoncpp-dev \
-    edgeai-vision-dev \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', 'arm-compute-library-dev', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', 'armnn-dev', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', 'libedgetpu-dev', '', d)} \
-    googletest-dev \
-    ${OPENCV4} \
-    ${QT} \
+USE_ARMNN = " \
+    arm-compute-library-dev \
+    armnn-dev \
 "
 
+AIFRAMEWORK_CORE = " \
+    edgeai-vision-dev \
+    flatbuffers-dev \
+    googletest-dev \
+    jsoncpp-dev \
+    msgpack-c-dev \
+    opencl-icd-loader-dev \
+    ${OPENCV4} \
+    rapidjson-dev \
+    tensorflow-lite-dev \
+"
+
+AIFRAMEWORK_EXTENDED = " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', '${USE_ARMNN}', '', d)} \
+"
+
+RDEPENDS:${PN} = " \
+    ${AIFRAMEWORK_CORE} \
+    ${AIFRAMEWORK_EXTENDED} \
+"
