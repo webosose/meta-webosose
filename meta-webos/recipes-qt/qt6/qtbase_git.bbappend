@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos105"
+EXTENDPRAUTO:append = "webos106"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -58,6 +58,9 @@ PACKAGECONFIG:remove = "xlib"
 
 PACKAGECONFIG[eglfs-egldevice] = "-DFEATURE_eglfs_egldevice=ON,-DFEATURE_eglfs_egldevice=OFF"
 PACKAGECONFIG:remove = "eglfs-egldevice"
+
+PACKAGECONFIG[egl_x11] = "-DFEATURE_egl_x11=ON,-DFEATURE_egl_x11=OFF"
+PACKAGECONFIG:remove = "egl_x11"
 
 PACKAGECONFIG[system-sqlite] = "-DFEATURE_system_sqlite=ON,-DFEATURE_system_sqlite=OFF"
 PACKAGECONFIG:append = " system-sqlite"
