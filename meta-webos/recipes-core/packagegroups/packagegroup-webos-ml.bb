@@ -18,12 +18,14 @@ USE_ARMNN = " \
 "
 
 AIFRAMEWORK_CORE = " \
+    benchmark-model \
     edgeai-vision \
     edgeai-vision-tests \
     flatbuffers \
     opencl-icd-loader \
     opencv \
     tensorflow-lite \
+    xnnpack \
 "
 
 AIFRAMEWORK_EXTENDED = " \

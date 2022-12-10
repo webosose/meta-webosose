@@ -1,0 +1,11 @@
+# Compute paths
+get_filename_component(XNNPACK_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(XNNPACK_INCLUDE_DIR "${XNNPACK_CMAKE_DIR}/../../../include")
+
+find_package(pthreadpool REQUIRED)
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${XNNPACK_CMAKE_DIR}/xnnpack-targets.cmake")
+
+# These are IMPORTED targets created by xnnpack-targets.cmake
+set(XNNPACK_LIBRARIES "xnnpack")

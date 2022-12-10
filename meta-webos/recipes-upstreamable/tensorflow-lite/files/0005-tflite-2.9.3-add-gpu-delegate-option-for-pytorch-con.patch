@@ -1,0 +1,84 @@
+From d0139a4cb00e4954ca89709f3f8c5dd5f8e27772 Mon Sep 17 00:00:00 2001
+From: "yeseul.joo" <yeseul.joo@lge.com>
+Date: Fri, 18 Nov 2022 16:35:47 +0900
+Subject: [PATCH 5/6] tflite 2.9.3 add gpu delegate option for pytorch
+ converted models
+
+:Release Notes:
+add gpu delegate option for pytorch converted models
+
+:Detailed Notes:
+Regard RESHAPE and CONCATENATION node as unsupported node for
+GPU delegate.
+
+:Testing Performed:
+Local Build Test
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+N/A
+
+Change-Id: Ie0f6e9e21824e80611f94d7bed304ca8963d24f6
+Reviewed-on: http://gpro.lge.com/c/webos-pro/tensorflow-webos/+/339961
+Tested-by: <yeseul.joo@lge.com>
+Tested-by: <kijoong.lee@lge.com>
+Reviewed-by: <yeseul.joo@lge.com>
+Reviewed-by: Commit Msg Checker <commit_msg@lge.com>
+Reviewed-by: Ban Word Checker <ban_word@lge.com>
+Reviewed-by: <kijoong.lee@lge.com>
+---
+ tensorflow/lite/delegates/gpu/delegate.cc | 6 ++++++
+ tensorflow/lite/delegates/gpu/delegate.h  | 4 ++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/tensorflow/lite/delegates/gpu/delegate.cc b/tensorflow/lite/delegates/gpu/delegate.cc
+index 7dbbb11486e..d1f7f9bdfb8 100644
+--- a/tensorflow/lite/delegates/gpu/delegate.cc
++++ b/tensorflow/lite/delegates/gpu/delegate.cc
+@@ -122,6 +122,7 @@ class Delegate {
+     return options_.max_delegated_partitions;
+   }
+   int CPUFallbackPercentage() const { return options_.cpu_fallback_percentage; }
++  bool IsPytorchConvertedModel() const { return options_.is_pytorch_converted_model; }
+   int num_delegate_kernels() const { return num_delegate_kernels_; }
+ 
+  private:
+@@ -573,6 +574,10 @@ TfLiteStatus DelegatePrepare(TfLiteContext* context, TfLiteDelegate* delegate) {
+     excluded_ops.insert(kTfLiteBuiltinSplit);
+     excluded_ops.insert(kTfLiteBuiltinSplitV);
+   }
++  if(gpu_delegate->IsPytorchConvertedModel()){
++    excluded_ops.insert(kTfLiteBuiltinReshape);
++    excluded_ops.insert(kTfLiteBuiltinConcatenation);
++  }
+   if(gpu_delegate->CPUFallbackPercentage() != 0) {
+     TFLITE_LOG_PROD(TFLITE_LOG_INFO,
+     "GPU Load Balancing : %d percent CPU Fallback",
+@@ -608,6 +613,7 @@ TfLiteGpuDelegateOptionsV2 TfLiteGpuDelegateOptionsV2Default() {
+   options.model_token = nullptr;
+   options.serialization_dir = nullptr;
+   options.cpu_fallback_percentage = 0;
++  options.is_pytorch_converted_model = false;
+   return options;
+ }
+ 
+diff --git a/tensorflow/lite/delegates/gpu/delegate.h b/tensorflow/lite/delegates/gpu/delegate.h
+index 3abb0c5ed2f..62336d776e0 100644
+--- a/tensorflow/lite/delegates/gpu/delegate.h
++++ b/tensorflow/lite/delegates/gpu/delegate.h
+@@ -136,6 +136,10 @@ typedef struct {
+   // forced to run on CPU despite it is supported in GPU.
+   // it's set to 0 in TfLiteGpuDelegateOptionsV2Default().
+   int32_t cpu_fallback_percentage;
++
++  // if this variable is set, RESHAPE node and CONCATENATION node are regarded
++  // as unsupported nodes.
++  bool is_pytorch_converted_model;
+ } TfLiteGpuDelegateOptionsV2;
+ 
+ // Populates TfLiteGpuDelegateOptionsV2 as follows:
+-- 
+2.17.1
+

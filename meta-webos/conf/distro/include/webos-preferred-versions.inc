@@ -21,6 +21,6 @@ PREFERRED_VERSION_gst-validate1.0           = "${GSTREAMER_VERSION}"
 RUSTVERSION = "1.63.0"
 
 # Prefer AIFramework library version
-PREFERRED_VERSION_tensorflow-lite = "2.6.2"
+PREFERRED_VERSION_tensorflow-lite = "2.9.3"
 PREFERRED_VERSION_arm-compute-library = "21.11"
 PREFERRED_VERSION_armnn = "21.11"

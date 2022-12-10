@@ -1,0 +1,10 @@
+# Compute paths
+get_filename_component(CPUINFO_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(CPUINFO_INCLUDE_DIR "${CPUINFO_CMAKE_DIR}/../../../include")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${CPUINFO_CMAKE_DIR}/cpuinfo-targets.cmake")
+
+# These are IMPORTED targets created by cpuinfo-targets.cmake
+set(CPUINFO_LIBRARIES "cpuinfo")
+

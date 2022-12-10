@@ -1,0 +1,49 @@
+From 06d2951b3eb6261f97b462d79d403ccda77da39a Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Thu, 17 Nov 2022 04:21:07 +0000
+Subject: [PATCH 1/6] tflite 2.9.2 fix clog cpuinfo configure error
+
+| CMake Error at tools/cmake/modules/clog.cmake:38 (add_subdirectory):
+|   add_subdirectory given source
+|   "/home/worker/build-webos/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3-r0/build/clog/deps/clog"
+|   which is not an existing directory.
+| Call Stack (most recent call first):
+|   tools/cmake/modules/Findclog.cmake:16 (include)
+|   CMakeLists.txt:147 (find_package)
+|
+|
+| CMake Error at tools/cmake/modules/cpuinfo.cmake:41 (add_subdirectory):
+|   add_subdirectory given source
+|   "/home/worker/build-webos/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3-r0/build/cpuinfo"
+|   which is not an existing directory.
+| Call Stack (most recent call first):
+|   tools/cmake/modules/Findcpuinfo.cmake:16 (include)
+|   CMakeLists.txt:148 (find_package)
+
+Change-Id: I06c1472317cf82c7c6efba3360319343181b3a5e
+Reviewed-on: http://gpro.lge.com/c/webos-pro/tensorflow-webos/+/339855
+Reviewed-by: Ban Word Checker <ban_word@lge.com>
+Reviewed-by: <kijoong.lee@lge.com>
+Tested-by: <kijoong.lee@lge.com>
+---
+ tensorflow/lite/CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tensorflow/lite/CMakeLists.txt b/tensorflow/lite/CMakeLists.txt
+index 40f9485b5d6..79532fe216b 100644
+--- a/tensorflow/lite/CMakeLists.txt
++++ b/tensorflow/lite/CMakeLists.txt
+@@ -144,8 +144,8 @@ find_package(fft2d REQUIRED)
+ find_package(flatbuffers REQUIRED)
+ find_package(gemmlowp REQUIRED)
+ find_package(neon2sse REQUIRED)
+-find_package(clog REQUIRED)
+-find_package(cpuinfo REQUIRED)  #CPUINFO is used by XNNPACK and RUY library
++#find_package(clog REQUIRED)
++#find_package(cpuinfo REQUIRED)  #CPUINFO is used by XNNPACK and RUY library
+ find_package(ruy REQUIRED)
+ # Generate TensorFlow Lite FlatBuffer code.
+ # We used to have an actual compilation logic with flatc but decided to use
+-- 
+2.17.1
+

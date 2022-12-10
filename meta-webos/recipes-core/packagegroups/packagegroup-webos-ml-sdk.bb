@@ -106,6 +106,7 @@ AIFRAMEWORK_CORE = " \
     ${OPENCV4} \
     rapidjson-dev \
     tensorflow-lite-dev \
+    xnnpack-dev \
 "
 
 AIFRAMEWORK_EXTENDED = " \

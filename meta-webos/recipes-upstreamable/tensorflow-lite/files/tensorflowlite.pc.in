@@ -1,0 +1,7 @@
+Name: tensorflow lite c++ shared library
+Description: tensorflow lite c++ shared library
+Version: @version@
+Requires:
+Libs: -L@libdir@ -ltensorflowlite -lrt
+Cflags: -I@includedir@
+

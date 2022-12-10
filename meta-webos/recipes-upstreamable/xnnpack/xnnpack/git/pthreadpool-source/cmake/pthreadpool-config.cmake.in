@@ -1,0 +1,10 @@
+# Compute paths
+get_filename_component(PTHREADPOOL_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(PTHREADPOOL_INCLUDE_DIR "${PTHREADPOOL_CMAKE_DIR}/../../../include")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${PTHREADPOOL_CMAKE_DIR}/pthreadpool-targets.cmake")
+
+# These are IMPORTED targets created by pthreadpool-targets.cmake
+set(PTHREADPOOL_LIBRARIES "pthreadpool")
+

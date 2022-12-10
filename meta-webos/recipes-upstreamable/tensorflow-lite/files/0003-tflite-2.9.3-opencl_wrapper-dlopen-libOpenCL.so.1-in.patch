@@ -1,0 +1,47 @@
+From fbb9b9a5a7a8b4c783c7dcc9e78af4714259133c Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Thu, 17 Nov 2022 04:35:19 +0000
+Subject: [PATCH 3/6] tflite 2.9.3 opencl_wrapper dlopen libOpenCL.so.1 instead
+ of libOpenCL.so
+
+:Detailed Notes:
+Fixes:
+$ benchmark_model --graph=/usr/share/aif/model/pose_landmark_lite.tflite --use_gpu=true
+STARTING! Log parameter values verbosely: [0]
+Graph: [/usr/share/aif/model/pose_landmark_lite.tflite]
+Use gpu: [1]
+Loaded model /usr/share/aif/model/pose_landmark_lite.tflite
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+INFO: Created TensorFlow Lite delegate for GPU.
+GPU delegate created. Going to apply 1 delegates one after another.
+ERROR: Can not open OpenCL library on this device - libOpenCL.so: cannot open shared object file: No such file or directory
+ERROR: Falling back to OpenGL
+ERROR: TfLiteGpuDelegate Init: OpenGL-based API disabled
+INFO: Created 0 GPU delegate kernels.
+ERROR: TfLiteGpuDelegate Prepare: delegate is not initialized ERROR: Node number 305 (TfLiteGpuDelegateV2) failed to prepare.
+ERROR: Restored original execution plan after delegate application failure. Failed to apply GPU delegate. Benchmarking failed.
+
+Change-Id: Ia3e6312e5ea757796538c9abe8bed899d5015ddd
+Reviewed-on: http://gpro.lge.com/c/webos-pro/tensorflow-webos/+/339861
+Tested-by: <kijoong.lee@lge.com>
+Reviewed-by: <kijoong.lee@lge.com>
+---
+ tensorflow/lite/delegates/gpu/cl/opencl_wrapper.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tensorflow/lite/delegates/gpu/cl/opencl_wrapper.cc b/tensorflow/lite/delegates/gpu/cl/opencl_wrapper.cc
+index a7d765e70fa..0a8521c6def 100644
+--- a/tensorflow/lite/delegates/gpu/cl/opencl_wrapper.cc
++++ b/tensorflow/lite/delegates/gpu/cl/opencl_wrapper.cc
+@@ -89,7 +89,7 @@ absl::Status LoadOpenCL() {
+   static const char* kClLibName =
+       "/System/Library/Frameworks/OpenCL.framework/OpenCL";
+ #else
+-  static const char* kClLibName = "libOpenCL.so";
++  static const char* kClLibName = "libOpenCL.so.1";
+ #endif
+   libopencl = dlopen(kClLibName, RTLD_NOW | RTLD_LOCAL);
+   if (libopencl) {
+-- 
+2.17.1
+
