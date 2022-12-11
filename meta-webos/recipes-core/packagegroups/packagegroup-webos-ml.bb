@@ -17,6 +17,10 @@ USE_ARMNN = " \
     armnn \
 "
 
+USE_EDGETPU = " \
+    libedgetpu \
+"
+
 AIFRAMEWORK_CORE = " \
     benchmark-model \
     edgeai-vision \
@@ -30,6 +34,7 @@ AIFRAMEWORK_CORE = " \
 
 AIFRAMEWORK_EXTENDED = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'armnn', '${USE_ARMNN}', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', '${USE_EDGETPU}', '', d)} \
 "
 
 RDEPENDS:${PN} = " \

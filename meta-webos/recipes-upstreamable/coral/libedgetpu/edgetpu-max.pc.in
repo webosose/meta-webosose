@@ -1,0 +1,7 @@
+Name: libedgetpu c++ shared library
+Description: libedgetpu runtime library max (Max Frequency to USB device)
+Version: @version@
+Requires:
+Libs: -L@libdir@ -ledgetpu_max
+Cflags: -I@includedir@
+
