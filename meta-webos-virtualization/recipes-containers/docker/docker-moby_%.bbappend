@@ -6,6 +6,9 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-contrib:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS:${PN}-contrib:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
+# We don't have seccomp in DISTRO_FEATURES
+PACKAGECONFIG:remove = "seccomp"
+
 # required kernel modules
 RRECOMMENDS:${PN}:append = " \
     kernel-module-br-netfilter \
