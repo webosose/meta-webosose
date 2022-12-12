@@ -2,9 +2,21 @@
 
 require tensorflow-lite_2.9.3.inc
 
+inherit pkgconfig
+
+PR="r1"
+
 DEPENDS += " \
     tensorflow-lite \
 "
+
+SRC_URI += " \
+    file://0001-add-auto-delegation-option.patch \
+"
+
+PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'auto-acceleration', 'ads', '', d)}"
+
+PACKAGECONFIG[ads] = "-DENABLE_AUTO_DELEGATE=ON,-DENABLE_AUTO_DELEGATE=OFF,tflite-auto-delegation"
 
 OECMAKE_TARGET_COMPILE = "benchmark_model"
 CXXFLAGS += "-Wno-error=return-type"

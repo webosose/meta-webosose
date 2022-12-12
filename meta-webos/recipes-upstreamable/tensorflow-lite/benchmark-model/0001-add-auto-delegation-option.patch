@@ -1,0 +1,290 @@
+From 824822fbf38f9a170657ed56753549fcea1ffa57 Mon Sep 17 00:00:00 2001
+From: "yeseul.joo" <yeseul.joo@lge.com>
+Date: Thu, 8 Dec 2022 15:53:29 +0900
+Subject: [PATCH] tflite 2.9.3 add auto delegation option
+
+:Release Notes:
+add use_auto_delegate option for tflite benchmark model app
+
+:Detailed Notes:
+in order to enable this feature,
+enable USE_AUTO_DELEGATE
+<tensorflow/lite/tools/benchmark/CMakeLists.txt>
+ 19 option(ENABLE_AUTO_DELEGATE "Enable Auto Delegate option" OFF)
+
+:Testing Performed:
+Local Benchmark Test
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+N/A
+
+Change-Id: I43c556f80fb13f6c28433f5bcdfcf0311d49b6f3
+---
+ .../lite/tools/benchmark/CMakeLists.txt       |  14 ++
+ .../tools/benchmark/benchmark_tflite_model.cc | 162 +++++++++++++-----
+ .../tools/benchmark/benchmark_tflite_model.h  |   6 +
+ 3 files changed, 136 insertions(+), 46 deletions(-)
+
+diff --git a/tensorflow/lite/tools/benchmark/CMakeLists.txt b/tensorflow/lite/tools/benchmark/CMakeLists.txt
+index fce01b36d4c..cf03e226cf3 100644
+--- a/tensorflow/lite/tools/benchmark/CMakeLists.txt
++++ b/tensorflow/lite/tools/benchmark/CMakeLists.txt
+@@ -16,6 +16,8 @@
+ 
+ # The benchmark tool for Tensorflow Lite.
+ 
++option(ENABLE_AUTO_DELEGATE "Enable Auto Delegate option" OFF)
++
+ populate_source_vars("${TFLITE_SOURCE_DIR}/tools/benchmark"
+   TFLITE_BENCHMARK_SRCS
+   FILTER "(_test|_plus_flex_main|_performance_options.*)\\.cc$"
+@@ -61,6 +63,18 @@ if(TFLITE_ENABLE_EXTERNAL_DELEGATE)
+   )
+ endif()  # TFLITE_ENABLE_EXTERNAL_DELEGATE
+ 
++include(FindPkgConfig)
++if(ENABLE_AUTO_DELEGATE)
++   FIND_PACKAGE(PkgConfig REQUIRED)
++   PKG_CHECK_MODULES(AUTO-DELEGATE REQUIRED auto-delegation)
++   INCLUDE_DIRECTORIES(${AUTO-DELEGATE_INCLUDE_DIRS})
++   LINK_DIRECTORIES(${AUTO-DELEGATE_LIBRARY_DIRS})
++   ADD_DEFINITIONS(-DUSE_AUTO_DELEGATE)
++   list(APPEND TFLITE_BENCHMARK_LIBS
++     ${AUTO-DELEGATE_LIBRARIES}
++   )
++endif(ENABLE_AUTO_DELEGATE)
++
+ if(CMAKE_SYSTEM_NAME MATCHES "Android")
+   if(_TFLITE_ENABLE_NNAPI)
+     list(APPEND TFLITE_BENCHMARK_SRCS
+diff --git a/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc b/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc
+index 1d517b77138..0afa7817879 100644
+--- a/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc
++++ b/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc
+@@ -303,6 +303,14 @@ BenchmarkParams BenchmarkTfLiteModel::DefaultParams() {
+                           BenchmarkParam::Create<bool>(false));
+   default_params.AddParam("use_dynamic_tensors_for_large_tensors",
+                           BenchmarkParam::Create<int32_t>(0));
++#ifdef USE_AUTO_DELEGATE
++  default_params.AddParam("use_auto_delegate",
++                          BenchmarkParam::Create<bool>(false));
++  default_params.AddParam("ad_policy",
++                          BenchmarkParam::Create<std::string>(""));
++  default_params.AddParam("ad_cpu_fallback_percentage",
++                          BenchmarkParam::Create<int32_t>(0));
++#endif
+ 
+   tools::ProvidedDelegateList delegate_providers(&default_params);
+   delegate_providers.AddAllDelegateParams();
+@@ -378,7 +386,26 @@ std::vector<Flag> BenchmarkTfLiteModel::GetFlags() {
+                        "are not used."),
+       CreateFlag<int32_t>(
+           "use_dynamic_tensors_for_large_tensors", &params_,
+-          "Use dynamic tensor for large tensors to optimize memory usage.")};
++          "Use dynamic tensor for large tensors to optimize memory usage.")
++#ifdef USE_AUTO_DELEGATE
++    , CreateFlag<bool>("use_auto_delegate", &params_,
++                       "Whether to run benchmark_model using auto delegate. "
++                       "By default it is set to be false. "
++                       "It selects delegate according to given ad_policy. ")
++    , CreateFlag<std::string>("ad_policy", &params_,
++                       "Acceleration policy for auto delegation. "
++                       "There are 5 policies: "
++                       "  1. CPUOnly "
++                       "  2. MaximumPrecision "
++                       "  3. MinimumLatency "
++                       "  4. EnableLoadBalancing"
++                       "  5. PytorchModelGPU")
++    , CreateFlag<int32_t>("ad_cpu_fallback_percentage", &params_,
++                       "A percentage of operation that is forced to fallback "
++                       "to CPU. It is only valid when EnableLoadBalancing "
++                       "policy or PytorchModelGPU policy is set for ad_policy. ")
++#endif
++  };
+ 
+   flags.insert(flags.end(), specific_flags.begin(), specific_flags.end());
+ 
+@@ -421,6 +448,13 @@ void BenchmarkTfLiteModel::LogParams() {
+                       "Release dynamic tensor memory", verbose);
+   LOG_BENCHMARK_PARAM(int32_t, "use_dynamic_tensors_for_large_tensors",
+                       "Use dynamic tensor for large tensors", verbose);
++#ifdef USE_AUTO_DELEGATE
++  LOG_BENCHMARK_PARAM(bool, "use_auto_delegate", "Use auto delegation", verbose);
++  LOG_BENCHMARK_PARAM(std::string, "ad_policy",
++                      "Auto delegation acceleration policy", verbose);
++  LOG_BENCHMARK_PARAM(int32_t, "ad_cpu_fallback_percentage",
++                      "Auto delegation cpu fallback percentage", verbose);
++#endif
+ 
+   for (const auto& delegate_provider :
+        tools::GetRegisteredDelegateProviders()) {
+@@ -639,6 +673,86 @@ TfLiteStatus BenchmarkTfLiteModel::Init() {
+ 
+   owned_delegates_.clear();
+ 
++//TO DO: Block delegate provider codes if use_auto_delegate is enabled
++#ifdef USE_AUTO_DELEGATE
++  aif::AutoDelegateSelector ads;
++  if(params_.Get<bool>("use_auto_delegate")) {
++    TFLITE_LOG(INFO) << "INFO: use_auto_delegate is set, all the other \'use "
++                     << "delegate\' options ( ex. use_gpu ) will be ignored. "
++		     << "Also, num_thread and use_caching are ignored.";
++    aif::AccelerationPolicyManager apm;
++    std::string acceleration_policy = params_.Get<std::string>("ad_policy");
++    if (acceleration_policy == "CPUOnly") {
++      apm.SetPolicy(aif::AccelerationPolicyManager::kCPUOnly);
++    } else if (acceleration_policy == "MaximumPrecision") {
++      apm.SetPolicy(aif::AccelerationPolicyManager::kMaximumPrecision);
++    } else if (acceleration_policy == "MinimumLatency") {
++      apm.SetPolicy(aif::AccelerationPolicyManager::kMinimumLatency);
++    } else if (acceleration_policy == "EnableLoadBalancing") {
++      apm.SetPolicy(aif::AccelerationPolicyManager::kEnableLoadBalancing);
++      apm.SetCPUFallbackPercentage(
++                      params_.Get<int32_t>("ad_cpu_fallback_percentage"));
++    } else if (acceleration_policy == "PytorchModelGPU") {
++      apm.SetPolicy(aif::AccelerationPolicyManager::kPytorchModelGPU);
++      apm.SetCPUFallbackPercentage(
++                      params_.Get<int32_t>("ad_cpu_fallback_percentage"));
++    } else {
++      TFLITE_LOG(INFO) << "Please input valid auto delegation policy.";
++    }
++    ads.SelectDelegate(*interpreter_, &apm);
++  } else {
++    TF_LITE_ENSURE_STATUS(ApplyProvidedDelegates());
++  }
++#else
++  TF_LITE_ENSURE_STATUS(ApplyProvidedDelegates());
++#endif
++  auto interpreter_inputs = interpreter_->inputs();
++
++  if (!inputs_.empty()) {
++    TFLITE_TOOLS_CHECK_EQ(inputs_.size(), interpreter_inputs.size())
++        << "Inputs mismatch: Model inputs #:" << inputs_.size()
++        << " expected: " << interpreter_inputs.size();
++  }
++
++  // Check if the tensor names match, and log a warning if it doesn't.
++  for (int j = 0; j < inputs_.size(); ++j) {
++    const InputLayerInfo& input = inputs_[j];
++    int i = interpreter_inputs[j];
++    TfLiteTensor* t = interpreter_->tensor(i);
++    if (input.name != t->name) {
++      TFLITE_LOG(WARN) << "Tensor # " << i << " is named " << t->name
++                       << " but flags call it " << input.name;
++    }
++
++    if (t->type != kTfLiteString && input.shape.size() != t->dims->size) {
++      TFLITE_LOG(ERROR) << "Input tensor #" << i << " should have "
++                        << t->dims->size << " dimensions!";
++      return kTfLiteError;
++    }
++  }
++
++  // Resize all non-string tensors.
++  for (int j = 0; j < inputs_.size(); ++j) {
++    const InputLayerInfo& input = inputs_[j];
++    int i = interpreter_inputs[j];
++    TfLiteTensor* t = interpreter_->tensor(i);
++    if (t->type != kTfLiteString) {
++      interpreter_->ResizeInputTensor(i, input.shape);
++    }
++  }
++
++  if (interpreter_->AllocateTensors() != kTfLiteOk) {
++    TFLITE_LOG(ERROR) << "Failed to allocate tensors!";
++    return kTfLiteError;
++  }
++
++  AddOwnedListener(
++      std::unique_ptr<BenchmarkListener>(new RuyProfileListener()));
++
++  return kTfLiteOk;
++}
++
++TfLiteStatus BenchmarkTfLiteModel::ApplyProvidedDelegates(){
+   // Contains all ids of TfLiteNodes that have been checked to see whether it's
+   // delegated or not.
+   std::unordered_set<int> checked_node_ids;
+@@ -705,51 +819,7 @@ TfLiteStatus BenchmarkTfLiteModel::Init() {
+     }
+     owned_delegates_.emplace_back(std::move(delegate));
+   }
+-
+-  auto interpreter_inputs = interpreter_->inputs();
+-
+-  if (!inputs_.empty()) {
+-    TFLITE_TOOLS_CHECK_EQ(inputs_.size(), interpreter_inputs.size())
+-        << "Inputs mismatch: Model inputs #:" << inputs_.size()
+-        << " expected: " << interpreter_inputs.size();
+-  }
+-
+-  // Check if the tensor names match, and log a warning if it doesn't.
+-  for (int j = 0; j < inputs_.size(); ++j) {
+-    const InputLayerInfo& input = inputs_[j];
+-    int i = interpreter_inputs[j];
+-    TfLiteTensor* t = interpreter_->tensor(i);
+-    if (input.name != t->name) {
+-      TFLITE_LOG(WARN) << "Tensor # " << i << " is named " << t->name
+-                       << " but flags call it " << input.name;
+-    }
+-
+-    if (t->type != kTfLiteString && input.shape.size() != t->dims->size) {
+-      TFLITE_LOG(ERROR) << "Input tensor #" << i << " should have "
+-                        << t->dims->size << " dimensions!";
+-      return kTfLiteError;
+-    }
+-  }
+-
+-  // Resize all non-string tensors.
+-  for (int j = 0; j < inputs_.size(); ++j) {
+-    const InputLayerInfo& input = inputs_[j];
+-    int i = interpreter_inputs[j];
+-    TfLiteTensor* t = interpreter_->tensor(i);
+-    if (t->type != kTfLiteString) {
+-      interpreter_->ResizeInputTensor(i, input.shape);
+-    }
+-  }
+-
+-  if (interpreter_->AllocateTensors() != kTfLiteOk) {
+-    TFLITE_LOG(ERROR) << "Failed to allocate tensors!";
+-    return kTfLiteError;
+-  }
+-
+-  AddOwnedListener(
+-      std::unique_ptr<BenchmarkListener>(new RuyProfileListener()));
+-
+-  return kTfLiteOk;
++    return kTfLiteOk;
+ }
+ 
+ TfLiteStatus BenchmarkTfLiteModel::LoadModel() {
+diff --git a/tensorflow/lite/tools/benchmark/benchmark_tflite_model.h b/tensorflow/lite/tools/benchmark/benchmark_tflite_model.h
+index aeee08113fe..d9b74b727ac 100644
+--- a/tensorflow/lite/tools/benchmark/benchmark_tflite_model.h
++++ b/tensorflow/lite/tools/benchmark/benchmark_tflite_model.h
+@@ -28,6 +28,10 @@ limitations under the License.
+ #include "tensorflow/lite/profiling/profiler.h"
+ #include "tensorflow/lite/tools/benchmark/benchmark_model.h"
+ #include "tensorflow/lite/tools/utils.h"
++#ifdef USE_AUTO_DELEGATE
++#include <aif/auto_delegation/AccelerationPolicyManager.h>
++#include <aif/auto_delegation/AutoDelegateSelector.h>
++#endif
+ 
+ namespace tflite {
+ namespace benchmark {
+@@ -85,6 +89,8 @@ class BenchmarkTfLiteModel : public BenchmarkModel {
+ 
+   void CleanUp();
+ 
++  TfLiteStatus ApplyProvidedDelegates();
++
+   utils::InputTensorData LoadInputTensorData(
+       const TfLiteTensor& t, const std::string& input_file_path);
+ 
+-- 
+2.17.1
+

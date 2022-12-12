@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=e9325f9b6b90063538bfeda1635999ed \
 "
 
-WEBOS_VERSION = "1.0.0-23_ec7e0b762665f48971e45d43883c269450b0e066"
+WEBOS_VERSION = "1.0.0-26_645b8aad1044376dcd464d4a5b1e664ca4ec9e39"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r5"
+PR = "r6"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -70,6 +70,7 @@ FILES:${PN}-dev += " \
 PACKAGES =+ "${PN}-tests"
 FILES:${PN}-tests = " \
     ${AIF_INSTALL_TEST_DIR} \
+    ${AIF_INSTALL_TEST_DIR}/test-dl \
     ${AIF_INSTALL_DIR}/images \
 "
 
