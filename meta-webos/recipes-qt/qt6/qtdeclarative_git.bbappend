@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos81"
+EXTENDPRAUTO:append = "webos82"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 

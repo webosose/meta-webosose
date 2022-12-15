@@ -29,7 +29,7 @@ index 2bb0d52b09..8990cc040b 100644
 -        for (auto dev : knownPointingDevices) {
 -            auto devPriv = QPointingDevicePrivate::get(const_cast<QPointingDevice *>(dev));
 -            devPriv->removeGrabber(grabber, cancel);
-+        for (auto dev : qAsConst(knownPointingDevices)) {
++        for (auto dev : std::as_const(knownPointingDevices)) {
 +            if (!dev.isNull()) {
 +                auto devPriv = QPointingDevicePrivate::get(const_cast<QPointingDevice *>(dev.get()));
 +                devPriv->removeGrabber(grabber, cancel);
