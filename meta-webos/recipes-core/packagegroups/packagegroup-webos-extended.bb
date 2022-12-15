@@ -19,6 +19,7 @@ VIRTUAL-RUNTIME_ai:arm = ""
 VIRTUAL-RUNTIME_ai:rpi = "com.webos.service.ai"
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
+VIRTUAL-RUNTIME_event-monitor-pdm ?= "event-monitor-pdm"
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
@@ -198,6 +199,7 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
+    ${VIRTUAL-RUNTIME_event-monitor-pdm} \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
