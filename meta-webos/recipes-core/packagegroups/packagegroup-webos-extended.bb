@@ -123,6 +123,10 @@ VIRTUAL-RUNTIME_com.webos.app.volume ?= "com.webos.app.volume"
 VIRTUAL-RUNTIME_com.webos.app.volume:armv4 = ""
 VIRTUAL-RUNTIME_com.webos.app.volume:armv5 = ""
 
+VIRTUAL-RUNTIME_com.webos.app.statusbar ?= "com.webos.app.statusbar"
+VIRTUAL-RUNTIME_com.webos.app.statusbar:armv4 = ""
+VIRTUAL-RUNTIME_com.webos.app.statusbar:armv5 = ""
+
 VIRTUAL-RUNTIME_bluetooth_service ?= "com.webos.service.bluetooth2"
 
 VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
@@ -231,6 +235,7 @@ RDEPENDS:${PN}:append:webos = " \
     gssdp \
     gupnp \
     ${VIRTUAL-RUNTIME_ai} \
+    ${VIRTUAL-RUNTIME_com.webos.app.statusbar} \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_contextintentmgr} \
