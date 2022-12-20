@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
-WEBOS_VERSION = "2.0.0-379_2add194251866299b3381c8d5faf41556bfe208c"
+WEBOS_VERSION = "2.0.0-380_2ceca995376f43c873f8088066a48dde834bdcc4"
 PR = "r55"
 
 inherit webos_qmake6
