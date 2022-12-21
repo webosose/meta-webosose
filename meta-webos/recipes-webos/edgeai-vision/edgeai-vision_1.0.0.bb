@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=e9325f9b6b90063538bfeda1635999ed \
 "
 
-WEBOS_VERSION = "1.0.0-21_ef5bacaac3815fb4574aeba8b18e8dad593c7cdc"
+WEBOS_VERSION = "1.0.0-23_ec7e0b762665f48971e45d43883c269450b0e066"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r4"
+PR = "r5"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -49,6 +49,7 @@ PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', 'edgetpu', 
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'armnn', 'armnn', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'ml-library-size-reduction', '', 'examples', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'auto-acceleration', 'ads', '', d)}"
+PACKAGECONFIG:remove:qemuall = "armnn"
 
 PACKAGECONFIG[xnnpack] = "-DWITH_XNNPACK:BOOL=TRUE,-DWITH_XNNPACK:BOOL=FALSE"
 PACKAGECONFIG[gpu] = "-DWITH_GPU=ON, -DWITH_GPU=OFF"
