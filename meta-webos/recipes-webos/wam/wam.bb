@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-68_9fd10a4d2ac23fc25d01cfe5c97feb9d299b5b0b"
-PR = "r51"
+WEBOS_VERSION = "1.0.2-69_7e30e4008adebee99c822f67df4d8acca7b9ace0"
+PR = "r52"
 
 WAM_BUILD_SYSTEM = "webos_qmake6"
 WAM_BUILD_SYSTEM:webos = "webos_cmake"
@@ -39,10 +39,6 @@ WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-
-SRC_URI += "file://0001-Fix-compilation-with-lttng-ust-2.13.patch"
 
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
