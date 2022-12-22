@@ -34,7 +34,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-21.gav.37_4953e47014f111aa18f61feb65b2b794223f66b7"
+WEBOS_VERSION = "1.0.0-21.gav.38_d2517286c25ade299432ba67c56b47f47d0ea844"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
