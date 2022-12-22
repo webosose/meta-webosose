@@ -19,7 +19,6 @@ VIRTUAL-RUNTIME_ai:arm = ""
 VIRTUAL-RUNTIME_ai:rpi = "com.webos.service.ai"
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_event-monitor-network ?= "event-monitor-network"
-VIRTUAL-RUNTIME_event-monitor-pdm ?= "event-monitor-pdm"
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
@@ -203,7 +202,6 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
-    ${VIRTUAL-RUNTIME_event-monitor-pdm} \
     ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
@@ -233,6 +231,7 @@ RDEPENDS:${PN}:append:webos = " \
     com.webos.service.storageaccess \
     com.webos.service.uwb \
     ebd \
+    event-monitor-pdm \
     gssdp \
     gupnp \
     ${VIRTUAL-RUNTIME_ai} \
@@ -339,6 +338,7 @@ RDEPENDS:${PN}:append:qemux86 = " \
     com.webos.service.power2 \
     com.webos.service.storageaccess \
     dhcpcd \
+    event-monitor-pdm \
     ofono \
     v4l-utils \
     vmwgfx-layout \
@@ -354,6 +354,7 @@ RDEPENDS:${PN}:append:qemux86-64 = " \
     com.webos.service.power2 \
     com.webos.service.storageaccess \
     dhcpcd \
+    event-monitor-pdm \
     ofono \
     v4l-utils \
     vmwgfx-layout \
