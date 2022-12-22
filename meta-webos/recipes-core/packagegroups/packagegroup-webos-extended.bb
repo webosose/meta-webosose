@@ -229,7 +229,6 @@ RDEPENDS:${PN}:append:webos = " \
     com.webos.app.videoplayer \
     com.webos.service.sdkagent \
     com.webos.service.storageaccess \
-    com.webos.service.uwb \
     ebd \
     event-monitor-pdm \
     gssdp \
