@@ -1,7 +1,7 @@
-From 91689ae54bcb19f0164eccd6d27cbeaad3ef266d Mon Sep 17 00:00:00 2001
+From 800bc8bb273319c62dfdc169ac36ddaad7a89343 Mon Sep 17 00:00:00 2001
 From: "yeseul.joo" <yeseul.joo@lge.com>
 Date: Tue, 22 Nov 2022 14:55:14 +0900
-Subject: [PATCH 6/6] tflite 2.9.3 enable build with only opengl in rp4
+Subject: [PATCH] enable build with only opengl in rp4
 
 :Release Notes:
 enable build with only opengl in rp4
@@ -2345,6 +2345,3 @@ index 18590efc54d..007eb816cec 100644
  #define TFLITE_SUPPORTS_GPU_DELEGATE 1
  #endif
  
--- 
-2.17.1
-

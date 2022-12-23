@@ -1,8 +1,7 @@
-From d0139a4cb00e4954ca89709f3f8c5dd5f8e27772 Mon Sep 17 00:00:00 2001
+From e096229a8a99990f578fb9366773ea78f73e55c8 Mon Sep 17 00:00:00 2001
 From: "yeseul.joo" <yeseul.joo@lge.com>
 Date: Fri, 18 Nov 2022 16:35:47 +0900
-Subject: [PATCH 5/6] tflite 2.9.3 add gpu delegate option for pytorch
- converted models
+Subject: [PATCH] add gpu delegate option for pytorch converted models
 
 :Release Notes:
 add gpu delegate option for pytorch converted models
@@ -79,6 +78,3 @@ index 3abb0c5ed2f..62336d776e0 100644
  } TfLiteGpuDelegateOptionsV2;
  
  // Populates TfLiteGpuDelegateOptionsV2 as follows:
--- 
-2.17.1
-

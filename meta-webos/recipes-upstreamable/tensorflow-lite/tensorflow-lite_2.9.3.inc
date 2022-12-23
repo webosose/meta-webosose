@@ -35,11 +35,12 @@ SRC_URI += " \
     git://github.com/KhronosGroup/Vulkan-Headers;branch=main;protocol=https;destsuffix=git/vulkan_headers;name=vulkan-headers \
     git://github.com/KhronosGroup/EGL-Registry;branch=main;protocol=https;destsuffix=git/egl_headers;name=egl-headers \
     git://github.com/KhronosGroup/OpenGL-Registry;branch=main;protocol=https;destsuffix=git/opengl_headers;name=opengl-headers \
-    file://0001-tflite-2.9.3-fix-clog-cpuinfo-configure-error.patch \
-    file://0003-tflite-2.9.3-opencl_wrapper-dlopen-libOpenCL.so.1-in.patch \
-    file://0004-tflite-2.9.3-auto-delegation-support-when-using-gpu.patch \
-    file://0005-tflite-2.9.3-add-gpu-delegate-option-for-pytorch-con.patch \
-    file://0006-tflite-2.9.3-enable-build-with-only-opengl-in-rp4.patch \
+    file://0001-Fix-clog-cpuinfo-configure-error.patch \
+    file://0002-opencl_wrapper-dlopen-libOpenCL.so.1-instead-of-libO.patch \
+    file://0003-auto-delegation-support-when-using-gpu.patch \
+    file://0004-add-gpu-delegate-option-for-pytorch-converted-models.patch \
+    file://0005-enable-build-with-only-opengl-in-rp4.patch \
+    file://0006-Fix-return-type-issues.patch \
 "
 
 inherit cmake

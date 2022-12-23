@@ -1,8 +1,7 @@
-From fbb9b9a5a7a8b4c783c7dcc9e78af4714259133c Mon Sep 17 00:00:00 2001
+From d918199aee22158f2aa5304f91ded96e3f4bf988 Mon Sep 17 00:00:00 2001
 From: "kijoong.lee" <kijoong.lee@lge.com>
 Date: Thu, 17 Nov 2022 04:35:19 +0000
-Subject: [PATCH 3/6] tflite 2.9.3 opencl_wrapper dlopen libOpenCL.so.1 instead
- of libOpenCL.so
+Subject: [PATCH] opencl_wrapper dlopen libOpenCL.so.1 instead of libOpenCL.so
 
 :Detailed Notes:
 Fixes:
@@ -42,6 +41,3 @@ index a7d765e70fa..0a8521c6def 100644
  #endif
    libopencl = dlopen(kClLibName, RTLD_NOW | RTLD_LOCAL);
    if (libopencl) {
--- 
-2.17.1
-

@@ -1,7 +1,7 @@
-From 06d2951b3eb6261f97b462d79d403ccda77da39a Mon Sep 17 00:00:00 2001
+From caf3460ed592e78c5513e7aa4346f932fe0d62b6 Mon Sep 17 00:00:00 2001
 From: "kijoong.lee" <kijoong.lee@lge.com>
 Date: Thu, 17 Nov 2022 04:21:07 +0000
-Subject: [PATCH 1/6] tflite 2.9.2 fix clog cpuinfo configure error
+Subject: [PATCH] Fix clog cpuinfo configure error
 
 | CMake Error at tools/cmake/modules/clog.cmake:38 (add_subdirectory):
 |   add_subdirectory given source
@@ -44,6 +44,3 @@ index 40f9485b5d6..79532fe216b 100644
  find_package(ruy REQUIRED)
  # Generate TensorFlow Lite FlatBuffer code.
  # We used to have an actual compilation logic with flatc but decided to use
--- 
-2.17.1
-

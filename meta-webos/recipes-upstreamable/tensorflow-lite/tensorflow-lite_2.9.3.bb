@@ -7,7 +7,6 @@ SRC_URI += " \
 "
 
 EXTRA_OECMAKE += "-DBUILD_SHARED_LIBS=ON"
-CXXFLAGS += "-Wno-error=return-type"
 
 AIF_INSTALL_DIR = "${datadir}/aif"
 

@@ -1,7 +1,7 @@
-From 840cf8f8266ba97e76c71bb98ccf7864b32bef79 Mon Sep 17 00:00:00 2001
+From 12aaf6e861d1e67df18f274d77ada460162d0e91 Mon Sep 17 00:00:00 2001
 From: "yeseul.joo" <yeseul.joo@lge.com>
 Date: Fri, 18 Nov 2022 14:07:06 +0900
-Subject: [PATCH 4/6] tflite 2.9.3 auto delegation support when using gpu
+Subject: [PATCH] auto delegation support when using gpu
 
 :Release Notes:
 add tensorflow lite patch to support auto delegation
@@ -193,6 +193,3 @@ index 90dd20e34d9..d06bd12489d 100644
  };
  
  // Specialized partitioner for graphs that possibly contain fp16 tensors.
--- 
-2.17.1
-
