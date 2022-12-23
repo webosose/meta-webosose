@@ -11,10 +11,16 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native wayland-protocols"
 
-WEBOS_VERSION = "2.0.0-83_64f7b9b5fc7dc73ad7bde2d577785494f19036bb"
-PR = "r17"
+WEBOS_VERSION = "6.0.0-84_23dffb9eccca04a91021971a6931e1d8fc458741"
+PR = "r18"
 
-inherit webos_qmake6
+QT_BUILD_SYSTEM ?= "${@ 'cmake' if d.getVar('QT_VERSION', True) == '6' else 'qmake' }"
+
+PACKAGECONFIG ??= ""
+
+# qtwayland-webos_cmake.inc or qtwayland-webos_qmake.inc
+require ${BPN}_${QT_BUILD_SYSTEM}.inc
+
 inherit webos_pkgconfig
 inherit webos_enhanced_submissions
 inherit webos_lttng
@@ -27,29 +33,21 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += "file://0001-Fix-compilation-with-lttng-ust-2.13.patch"
 
+# Enable LTTng tracing capability when enabled in webos_lttng class
+PACKAGECONFIG:append = "${@ ' lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else ''}"
+
 # No debian package renaming
 DEBIAN_NOAUTONAME:${PN} = "1"
 DEBIAN_NOAUTONAME:${PN}-dbg = "1"
 DEBIAN_NOAUTONAME:${PN}-dev = "1"
 
-# Enable LTTng tracing capability when enabled in webos_lttng class
-EXTRA_QMAKEVARS_PRE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', 'CONFIG+=lttng', '', d)}"
-
-# we don't provide cmake tests
-EXTRA_QMAKEVARS_POST += "CONFIG-=create_cmake"
-
-PACKAGECONFIG ??= ""
-PACKAGECONFIG[criu] = "CONFIG+=criu,,criu-webos"
-
-EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
-
 FILES:${PN} += " \
-    ${OE_QMAKE_PATH_PLUGINS}/*/*${SOLIBSDEV} \
+    ${libdir}/plugins/*/*${SOLIBSDEV} \
 "
 
 FILES:${PN}-dev += " \
-    ${OE_QMAKE_PATH_LIBS}/*.prl \
-    ${OE_QMAKE_PATH_QT_ARCHDATA}/mkspecs/* \
+    ${libdir}/*.prl \
+    ${libdir}/mkspecs/* \
 "
 
 # FIXME: weboscompositorextensionclient is deprecated and merged into

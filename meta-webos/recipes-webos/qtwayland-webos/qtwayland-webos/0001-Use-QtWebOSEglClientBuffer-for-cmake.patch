@@ -1,0 +1,18 @@
+From 944948d8256d2b619fbd264de764d089b52d7ff7 Mon Sep 17 00:00:00 2001
+From: Hyungchan Kim <hyungchan2.kim@lge.com>
+Date: Sun, 8 Jan 2023 23:06:47 +0900
+Subject: [PATCH] Use QtWebOSEglClientBuffer for cmake
+
+---
+ sync.profile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sync.profile b/sync.profile
+index 1690cf6..33361eb 100644
+--- a/sync.profile
++++ b/sync.profile
+@@ -1,3 +1,3 @@
+ %modules = ( # path to module name map
+-    "WebOSEglClientBuffer" => "$basedir/src/plugins/hardwareintegration/compositor/webos-wayland-egl/webos-wayland-egl-support",
++    "QtWebOSEglClientBuffer" => "$basedir/src/plugins/hardwareintegration/compositor/webos-wayland-egl/webos-wayland-egl-support",
+ );
