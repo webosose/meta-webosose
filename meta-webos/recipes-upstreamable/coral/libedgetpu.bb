@@ -3,14 +3,16 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 PV = "grouper"
+PR = "r1"
+
 SRCREV_libedgetpu = "3164995622300286ef2bb14d7fdc2792dae045b7"
 SRCREV_tensorflow = "a5ed5f39b675a1c6f315e0caf3ad4b38478fa571"
 
 SRC_URI = " \
-    git://github.com/google-coral/libedgetpu.git;name=libedgetpu;branch="master";protocol=https \
+    git://github.com/google-coral/libedgetpu.git;name=libedgetpu;branch=master;protocol=https \
     git://github.com/tensorflow/tensorflow.git;name=tensorflow;destsuffix=tensorflow;branch=r2.9;protocol=https \
-    file://001-v2.9_libedgetpu_makefile.patch \
-    file://001-v2.9_libedgetpu_allocated_buffer_header.patch \
+    file://0001-allocated_buffer.h-include-stddef.h.patch \
+    file://0002-Makefile-modify.patch \
     file://edgetpu.pc.in \
     file://edgetpu-max.pc.in \
 "
@@ -46,14 +48,10 @@ do_install:append() {
     # install libedgetpu1-std(throttled) and libedgetpu1-max(direct, max frequency)
     install -d ${D}/${libdir}
     install -m 0755 ${S}/out/throttled/k8/libedgetpu.so.1 ${D}/${libdir}
-    cd ${D}/${libdir}
-    ln -snf libedgetpu.so.1 libedgetpu.so
-    cd -
+    ln -snf libedgetpu.so.1 ${D}/${libdir}/libedgetpu.so
 
     install -m 0755 ${S}/out/direct/k8/libedgetpu.so.1 ${D}/${libdir}/libedgetpu_max.so.1
-    cd ${D}/${libdir}
-    ln -snf libedgetpu_max.so.1 libedgetpu_max.so
-    cd -
+    ln -snf libedgetpu_max.so.1 ${D}/${libdir}/libedgetpu_max.so
 
     install -d ${D}/etc/udev/rules.d/
     install -m 644 ${S}/debian/edgetpu-accelerator.rules ${D}/etc/udev/rules.d/99-edgetpu-accelerator.rules
@@ -74,13 +72,5 @@ do_install:append() {
         s:@libdir@:${libdir}:g
         s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/edgetpu-max.pc
 }
-
-FILES:${PN}-dev = ""
-
-INSANE_SKIP:${PN} = "dev-so"
-
-FILES:${PN} += "${libdir}/*.so*"
-FILES:${PN}-dev += "${includedir}/* ${libdir}/pkgconfig/*.pc"
-
 
 BBCLASSEXTEND = "native nativesdk"

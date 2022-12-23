@@ -1,3 +1,12 @@
+From 3a3950583f41353972e5b6ff3a65aeac6f481174 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Sun, 11 Dec 2022 23:41:38 +0900
+Subject: [PATCH] Makefile: modify
+
+---
+ makefile_build/Makefile | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
 diff --git a/makefile_build/Makefile b/makefile_build/Makefile
 index ef7d290..ef9fb40 100644
 --- a/makefile_build/Makefile

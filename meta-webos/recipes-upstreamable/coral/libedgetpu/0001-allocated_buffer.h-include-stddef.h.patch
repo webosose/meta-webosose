@@ -1,3 +1,12 @@
+From 6dfde6cd112772cab81a48d361896ab77fddfc08 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Sun, 11 Dec 2022 23:41:38 +0900
+Subject: [PATCH] allocated_buffer.h: include stddef.h
+
+---
+ api/allocated_buffer.h | 1 +
+ 1 file changed, 1 insertion(+)
+
 diff --git a/api/allocated_buffer.h b/api/allocated_buffer.h
 index 97740f0..4311e34 100644
 --- a/api/allocated_buffer.h
