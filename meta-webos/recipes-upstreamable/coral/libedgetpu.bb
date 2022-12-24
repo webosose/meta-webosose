@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 PV = "grouper"
-PR = "r1"
+PR = "r2"
 
 SRCREV_libedgetpu = "3164995622300286ef2bb14d7fdc2792dae045b7"
 SRCREV_tensorflow = "a5ed5f39b675a1c6f315e0caf3ad4b38478fa571"
@@ -13,6 +13,7 @@ SRC_URI = " \
     git://github.com/tensorflow/tensorflow.git;name=tensorflow;destsuffix=tensorflow;branch=r2.9;protocol=https \
     file://0001-allocated_buffer.h-include-stddef.h.patch \
     file://0002-Makefile-modify.patch \
+    file://0003-Fix-return-type-issues.patch \
     file://edgetpu.pc.in \
     file://edgetpu-max.pc.in \
 "
@@ -27,9 +28,6 @@ DEPENDS = " \
     abseil-cpp \
     libusb1 \
 "
-
-#EXTRA_OEMAKE = " libedgetpu"
-CXXFLAGS += "-Wno-error=return-type"
 
 do_compile:prepend() {
 

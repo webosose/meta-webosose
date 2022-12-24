@@ -1,0 +1,166 @@
+From cdc3f420af0b4d2b89449a57af503b09a0000c93 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 24 Dec 2022 17:26:49 +0000
+Subject: [PATCH] Fix return-type issues
+
+* fixes:
+  http://gecko.lge.com/Errors/Details/508871
+
+libedgetpu/grouper-r1/git/makefile_build/../api/buffer.cc:171:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../api/layer_information.cc:125:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../api/layer_information.cc:511:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../api/watchdog.cc:120:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../api/watchdog.cc:137:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../driver/dma_chunker.cc:74:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../driver/dma_info.cc:39:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../driver/dma_info.cc:78:1: error: control reaches end of non-void function [-Werror=return-type]
+libedgetpu/grouper-r1/git/makefile_build/../driver/dma_info_extractor.cc:43:1: error: control reaches end of non-void function [-Werror=return-typ
+e]
+libedgetpu/grouper-r1/git/makefile_build/../driver/kernel/kernel_mmu_mapper.cc:91:1: error: control reaches end of non-void function [-Werror=retu
+rn-type]
+libedgetpu/grouper-r1/git/makefile_build/../driver/memory/dual_address_space.cc:52:1: error: control reaches end of non-void function [-Werror=ret
+urn-type]
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+ api/buffer.cc                       | 2 ++
+ api/layer_information.cc            | 4 ++++
+ api/watchdog.cc                     | 4 ++++
+ driver/dma_chunker.cc               | 2 ++
+ driver/dma_info.cc                  | 4 ++++
+ driver/dma_info_extractor.cc        | 2 ++
+ driver/kernel/kernel_mmu_mapper.cc  | 2 ++
+ driver/memory/dual_address_space.cc | 2 ++
+ 8 files changed, 22 insertions(+)
+
+diff --git a/api/buffer.cc b/api/buffer.cc
+index 7b37f94..cf70fdd 100644
+--- a/api/buffer.cc
++++ b/api/buffer.cc
+@@ -167,6 +167,8 @@ std::ostream& operator<<(std::ostream& stream, const Buffer::Type& type) {
+       return (stream << "kDram");
+     case Buffer::Type::kDramWrapped:
+       return (stream << "kDramWrapped");
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ }  // namespace darwinn
+diff --git a/api/layer_information.cc b/api/layer_information.cc
+index bcc47ba..29ef58d 100644
+--- a/api/layer_information.cc
++++ b/api/layer_information.cc
+@@ -121,6 +121,8 @@ bool LayerInformation::SignedDataType() const {
+     case DataType_HALF:
+     case DataType_SINGLE:
+       return false;
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+@@ -507,6 +509,8 @@ int TensorDataTypeSize(DataType data_type) {
+       return 2;
+     case DataType_SINGLE:
+       return 4;
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+diff --git a/api/watchdog.cc b/api/watchdog.cc
+index 97a50a8..7bd4a0d 100644
+--- a/api/watchdog.cc
++++ b/api/watchdog.cc
+@@ -116,6 +116,8 @@ Status TimerFdWatchdog::Signal() {
+     case WatchdogState::DESTROYED:
+       return FailedPreconditionError(
+           "Cannot signal an in-active / destroyed watchdog.");
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+@@ -133,6 +135,8 @@ Status TimerFdWatchdog::Deactivate() {
+       return OkStatus();
+     case WatchdogState::DESTROYED:
+       return FailedPreconditionError("Cannot deactivate a destroyed watchdog.");
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+diff --git a/driver/dma_chunker.cc b/driver/dma_chunker.cc
+index cbec6b6..1b90981 100644
+--- a/driver/dma_chunker.cc
++++ b/driver/dma_chunker.cc
+@@ -70,6 +70,8 @@ int DmaChunker::GetNextChunkOffset() const {
+ 
+     case HardwareProcessing::kBestEffort:
+       return transferred_bytes_;
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+diff --git a/driver/dma_info.cc b/driver/dma_info.cc
+index d39303f..cd9620e 100644
+--- a/driver/dma_info.cc
++++ b/driver/dma_info.cc
+@@ -35,6 +35,8 @@ std::string ToString(DmaState state) {
+ 
+     case DmaState::kError:
+       return "error";
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+@@ -74,6 +76,8 @@ std::string DmaInfo::Dump() const {
+       return prefix + "Local fence";
+     case DmaDescriptorType::kGlobalFence:
+       return prefix + "Global fence";
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+diff --git a/driver/dma_info_extractor.cc b/driver/dma_info_extractor.cc
+index 6d17727..8859061 100644
+--- a/driver/dma_info_extractor.cc
++++ b/driver/dma_info_extractor.cc
+@@ -39,6 +39,8 @@ std::list<DmaInfo> DmaInfoExtractor::ExtractDmaInfos(
+ 
+     case ExtractorType::kFirstInstruction:
+       return ExtractFirstInstruction(buffers);
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+diff --git a/driver/kernel/kernel_mmu_mapper.cc b/driver/kernel/kernel_mmu_mapper.cc
+index 1723faa..08872ab 100644
+--- a/driver/kernel/kernel_mmu_mapper.cc
++++ b/driver/kernel/kernel_mmu_mapper.cc
+@@ -87,6 +87,8 @@ static uint32_t DirectionFlag(DmaDirection direction) {
+       return DMA_TO_DEVICE;
+     case DmaDirection::kFromDevice:
+       return DMA_FROM_DEVICE;
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
+diff --git a/driver/memory/dual_address_space.cc b/driver/memory/dual_address_space.cc
+index bc18586..4717d6c 100644
+--- a/driver/memory/dual_address_space.cc
++++ b/driver/memory/dual_address_space.cc
+@@ -48,6 +48,8 @@ StatusOr<DeviceBuffer> DualAddressSpace::MapMemory(
+     case MappingTypeHint::kExtended:
+     case MappingTypeHint::kAny:
+       return extended_->MapMemory(buffer, direction, mapping_type);
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
