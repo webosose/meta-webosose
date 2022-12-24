@@ -1,0 +1,39 @@
+From 460095ea778abc3a2bbe65066619e1498772edd0 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sun, 25 Dec 2022 11:34:08 +0000
+Subject: [PATCH] Makefile: fix race condition
+
+* add dependency on LIBEDGETPU_FLATC_OBJS to avoid
+  api/driver_options_generated.h from flatc being used while it's incomplete:
+  http://gecko.lge.com/Errors/Details/508890
+  or missing completely:
+  http://gecko.lge.com/Errors/Details/508885
+---
+ makefile_build/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/makefile_build/Makefile b/makefile_build/Makefile
+index 3a53269..fb779ee 100644
+--- a/makefile_build/Makefile
++++ b/makefile_build/Makefile
+@@ -181,17 +181,17 @@ firmware:
+ 	@echo "} // namespace" >> $(LIBEDGETPU_FW_OUTPUT)
+ 
+ 
+-$(LIBEDGETPU_CCOBJS) : $(BUILDDIR)/%.o: %.cc
++$(LIBEDGETPU_CCOBJS) : $(BUILDDIR)/%.o: %.cc $(LIBEDGETPU_FLATC_OBJS)
+ 	@$(MKDIR)
+ 	@echo "Compiling $<"
+ 	@$(CXX) $(LIBEDGETPU_CXXFLAGS) $(LIBEDGETPU_INCLUDES) -c $< -MD -MT $@ -MF $(@:%o=%d) -o $@
+ 
+-$(LIBEDGETPU_MAX_CCOBJS) : $(BUILDDIR)/%.o: %.cc
++$(LIBEDGETPU_MAX_CCOBJS) : $(BUILDDIR)/%.o: %.cc $(LIBEDGETPU_FLATC_OBJS)
+ 	@$(MKDIR)
+ 	@echo "Compiling $<"
+ 	@$(CXX) $(LIBEDGETPU_CXXFLAGS) $(LIBEDGETPU_INCLUDES) -c $< -MD -MT $@ -MF $(@:%o=%d) -o $@
+ 
+-$(LIBEDGETPU_STD_CCOBJS) : $(BUILDDIR)/%-throttled.o: %.cc
++$(LIBEDGETPU_STD_CCOBJS) : $(BUILDDIR)/%-throttled.o: %.cc $(LIBEDGETPU_FLATC_OBJS)
+ 	@$(MKDIR)
+ 	@echo "Compiling $<"
+ 	@$(CXX) -DTHROTTLE_EDGE_TPU $(LIBEDGETPU_CXXFLAGS) $(LIBEDGETPU_INCLUDES) -c $< -MD -MT $@ -MF $(@:%o=%d) -o $@
