@@ -43,6 +43,7 @@ SRC_URI += " \
     git://github.com/Maratyszcza/FXdiv;branch=master;protocol=https;destsuffix=git/FXdiv-source;name=fxdiv \
     git://github.com/Maratyszcza/pthreadpool;branch=master;protocol=https;destsuffix=git/pthreadpool-source;name=pthreadpool \
     git://github.com/Maratyszcza/psimd;branch=master;protocol=https;destsuffix=git/psimd-source;name=psimd \
+    file://0001-Fix-return-type-issues.patch \
     file://git/CMakeLists.txt \
     file://git/cmake/xnnpack-config.cmake.in \
     file://git/cpuinfo-source/CMakeLists.txt \
@@ -53,7 +54,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r0"
+PR = "r1"
 S = "${WORKDIR}/git"
 
 ARM_INSTRUCTION_SET = "arm"
@@ -103,14 +104,10 @@ EXTRA_OECMAKE += " \
 "
 
 EXTRA_OECMAKE += "-DBUILD_SHARED_LIBS=ON"
-CFLAGS += "-Wno-error=return-type"
-CXXFLAGS += "-Wno-error=return-type"
 
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 
 FILES:${PN} += "${datadir}/*"
-
-PROVIDES += "pthreadpool"
 
 INSANE_SKIP:${PN} = "textrel"

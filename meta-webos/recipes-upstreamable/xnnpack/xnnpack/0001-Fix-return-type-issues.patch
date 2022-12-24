@@ -1,0 +1,28 @@
+From b7fc44922860a358b437991050ec57444b0e2406 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 24 Dec 2022 17:16:42 +0000
+Subject: [PATCH] Fix return-type issues
+
+* fixes:
+  http://gecko.lge.com/Errors/Details/508870
+
+xnnpack/475884903-r0/git/src/cache.c:385:1: error: control reaches end of non-void function [-Werror=return-type]
+  385 | }
+      | ^
+---
+ src/cache.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/cache.c b/src/cache.c
+index a153bbd59..1c9be00b7 100644
+--- a/src/cache.c
++++ b/src/cache.c
+@@ -381,6 +381,8 @@ enum xnn_status xnn_finalize_weights_cache(
+       cache->finalization_state = finalized_state;
+       return xnn_status_success;
+     }
++    default:
++      __builtin_unreachable ();
+   }
+ }
+ 
