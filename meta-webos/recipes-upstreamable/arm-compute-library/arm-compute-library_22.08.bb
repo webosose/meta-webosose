@@ -9,7 +9,7 @@ SRCREV = "aabef6c0584f06f4c0f4b61fb787d80374240619"
 
 SRC_URI = " \
     git://github.com/ARM-software/ComputeLibrary.git;branch=${SRCBRANCH};protocol=https \
-    file://0001-22.08-webos-build-support.patch \
+    file://0001-webos-build-support.patch \
     file://0001-OpenCL-dlopen-libOpenCL.so.1-instead-of-libO.patch \
     file://arm-compute-library.pc.in \
 "
