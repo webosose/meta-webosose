@@ -10,8 +10,8 @@ BRANCH = "branches/armnn_${BPV}"
 
 SRC_URI = " \
     git://github.com/ARM-software/armnn.git;branch=${BRANCH};protocol=https \
-    file://armnn-tflite_${PV}.pc.in \
-    file://armnn-delegate_${PV}.pc.in \
+    file://armnn-tflite.pc.in \
+    file://armnn-delegate.pc.in \
 "
 
 # Matches v${PV}
@@ -145,12 +145,12 @@ do_install:append() {
 
         #install pkgconfig
         install -d ${D}${libdir}/pkgconfig
-        install -m 0644 ${WORKDIR}/armnn-tflite_${PV}.pc.in ${D}${libdir}/pkgconfig/armnn-tflite.pc
+        install -m 0644 ${WORKDIR}/armnn-tflite.pc.in ${D}${libdir}/pkgconfig/armnn-tflite.pc
         sed -i 's:@version@:${PV}:g
             s:@libdir@:${libdir}:g
             s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/armnn-tflite.pc
 
-        install -m 0644 ${WORKDIR}/armnn-delegate_${PV}.pc.in ${D}${libdir}/pkgconfig/armnn-delegate.pc
+        install -m 0644 ${WORKDIR}/armnn-delegate.pc.in ${D}${libdir}/pkgconfig/armnn-delegate.pc
         sed -i 's:@version@:${PV}:g
             s:@libdir@:${libdir}:g
             s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/armnn-delegate.pc

@@ -3,4 +3,4 @@ Description: ArmNN TfLite Delgate c++ shared library
 Version: @version@
 Requires:
 Libs: -L@libdir@ -larmnn -larmnnTfLiteParser -larmnnBasePipeServer -ltimelineDecoder -ltimelineDecoderJson
-Cflags: -I@includedir@ -I@includedir@/armnn
+Cflags: -I@includedir@ -I@includedir@/armnn -I@includedir@/armnn/profiling
