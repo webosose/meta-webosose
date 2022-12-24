@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 PV = "grouper"
-PR = "r2"
+PR = "r3"
 
 SRCREV_libedgetpu = "3164995622300286ef2bb14d7fdc2792dae045b7"
 SRCREV_tensorflow = "a5ed5f39b675a1c6f315e0caf3ad4b38478fa571"
@@ -29,18 +29,7 @@ DEPENDS = " \
     libusb1 \
 "
 
-do_compile:prepend() {
-
-    CPU="k8"
-    if [ ${TARGET_ARCH} = "aarch64" ]; then
-        CPU="aarch64"
-    elif [ ${TARGET_ARCH} = "arm" ]; then
-        CPU="armv7a"
-    fi
-
-    echo "CPU=${CPU}"
-    export TFROOT=${WORKDIR}/tensorflow
-}
+EXTRA_OEMAKE="TFROOT=${WORKDIR}/tensorflow"
 
 do_install:append() {
     # install libedgetpu1-std(throttled) and libedgetpu1-max(direct, max frequency)

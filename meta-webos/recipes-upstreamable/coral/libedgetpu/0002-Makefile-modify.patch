@@ -28,14 +28,6 @@ index ef7d290..ef9fb40 100644
  	-fPIC \
  	-Wall \
  	-std=c++14 \
-@@ -30,7 +29,6 @@ LIBEDGETPU_LDFLAGS := \
- 	-shared \
- 	-Wl,--soname,libedgetpu.so.1 \
- 	-Wl,--version-script=$(BUILDROOT)/tflite/public/libedgetpu.lds \
--	-fuse-ld=gold \
- 	-lflatbuffers \
- 	-labsl_flags \
- 	-labsl_flags_internal \
 @@ -40,6 +38,7 @@ LIBEDGETPU_LDFLAGS := \
  	-labsl_hashtablez_sampler \
  	-labsl_raw_hash_set \
