@@ -23,7 +23,7 @@ do_install() {
     # install header files
     install -d ${D}${includedir}/tensorflow/lite
     cd ${S}/tensorflow/lite
-    for h in $(find . -name "*.h*"); do
+    for h in $(find . -name "*.h*") $(find . -name "*.cc*"); do
         [ -d ${D}${includedir}/tensorflow/lite/$(dirname $h) ] || install -d ${D}${includedir}/tensorflow/lite/$(dirname $h)
         install -m 0644 $h ${D}${includedir}/tensorflow/lite/$(dirname $h)
     done
