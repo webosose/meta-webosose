@@ -39,10 +39,7 @@ do_install() {
     rm -rf ${D}${base_prefix}/opt/js-loctool/node_modules/node-expat/build/node_gyp_bins
 }
 
-sysroot_stage_all:append() {
-    # files installed to /opt don't get staged by default so we must force /opt to be staged
-    sysroot_stage_dir ${D}${base_prefix}/opt ${SYSROOT_DESTDIR}${base_prefix}/opt
-}
+SYSROOT_DIRS += "${base_prefix}/opt"
 
 # Workaround for network access issue during do_compile task
 do_compile[network] = "1"

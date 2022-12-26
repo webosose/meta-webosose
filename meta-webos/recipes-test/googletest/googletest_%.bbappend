@@ -31,9 +31,7 @@ do_install:append() {
     install -v -m 0755 ${S}/googletest/test/*.py ${D}${bindir}/gtest
 }
 
-sysroot_stage_all:append() {
-    sysroot_stage_dir ${D}${prefix}/src ${SYSROOT_DESTDIR}${prefix}/src
-}
+SYSROOT_DIRS += "${prefix}/src"
 
 FILES:${PN} += "${bindir}/gtest"
 FILES:${PN}-dev += "${prefix}/src"

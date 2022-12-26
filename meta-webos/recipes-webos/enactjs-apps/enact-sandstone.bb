@@ -101,10 +101,7 @@ do_install() {
     cp -R --no-dereference --preserve=mode,links -v ${S}/node_modules/* ${D}${datadir}/javascript/enact-sandstone
 }
 
-sysroot_stage_all:append() {
-    # files don't get staged by default so we must force /opt to be staged
-    sysroot_stage_dir ${D}${datadir} ${SYSROOT_DESTDIR}${datadir}
-}
+SYSROOT_DIRS += "${datadir}"
 
 FILES:${PN} += "${datadir}"
 
