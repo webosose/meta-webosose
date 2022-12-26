@@ -1,4 +1,4 @@
-From 417aaa040c6937c49e62c38084e05b7fcabe3340 Mon Sep 17 00:00:00 2001
+From da55dc61e8818e84519e4d64005b2447dbee311b Mon Sep 17 00:00:00 2001
 From: Wanchang Ryu <wanchang.ryu@lge.com>
 Date: Thu, 3 Sep 2020 10:36:19 +0900
 Subject: [PATCH] waitForStop API is added for cleanup message handler thread
@@ -12,16 +12,17 @@ the destructor of the base class.
 
 This CL added |waitForStop| API to cleanup message thread before exiting
 destructor of derived class.
+
 ---
  include/public/uMediaClient.h     | 1 +
  src/media_client/uMediaClient.cpp | 5 +++++
  2 files changed, 6 insertions(+)
 
 diff --git a/include/public/uMediaClient.h b/include/public/uMediaClient.h
-index f39bdd61..8ff92f34 100755
+index ca79789..04a1097 100644
 --- a/include/public/uMediaClient.h
 +++ b/include/public/uMediaClient.h
-@@ -431,6 +431,7 @@ public :
+@@ -414,6 +414,7 @@ public :
  
  	void run();
  	void stop();
@@ -30,11 +31,11 @@ index f39bdd61..8ff92f34 100755
  protected :
  	UMSConnector *connection;
 diff --git a/src/media_client/uMediaClient.cpp b/src/media_client/uMediaClient.cpp
-index 17b4d841..57e3eb5a 100755
+index 0794bfc..96a9d90 100644
 --- a/src/media_client/uMediaClient.cpp
 +++ b/src/media_client/uMediaClient.cpp
-@@ -2535,6 +2535,11 @@ void uMediaClient::stop()
- 	connection->stop();
+@@ -1441,6 +1441,11 @@ void uMediaClient::stop()
+   connection->stop();
  }
  
 +void uMediaClient::waitForStop() {
@@ -45,6 +46,3 @@ index 17b4d841..57e3eb5a 100755
  // -----------------------------------------------
  // --- utility functions to create JSON arguments
  
--- 
-2.17.1
-
