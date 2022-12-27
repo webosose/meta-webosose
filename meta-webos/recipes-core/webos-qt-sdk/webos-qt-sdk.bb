@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 LG Electronics, Inc.
+# Copyright (c) 2019-2023 LG Electronics, Inc.
 
 SUMMARY = "webOS SDK Toolchain including qt host tools"
 

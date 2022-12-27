@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 LG Electronics, Inc.
+# Copyright (c) 2020-2023 LG Electronics, Inc.
 
 SUMMARY = "webOS extension for qtbase plugins"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"

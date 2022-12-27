@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 WEBOS_VERSION = "94.0.4606.128-16_7ed29309465c81cd55f596f855c8cd235884b4f5"
 

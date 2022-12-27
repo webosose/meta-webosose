@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2022 LG Electronics, Inc.
+# Copyright (c) 2012-2023 LG Electronics, Inc.
 
 # Prefer gstreamer version 1.20.% from oe-core for webos
 GSTREAMER_VERSION = "1.20.%"

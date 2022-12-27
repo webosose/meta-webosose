@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "Video Call Application"
 AUTHOR = "Ganesh Bhat<ganesh.bhat@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2022 LG Electronics, Inc.
+# Copyright (c) 2013-2023 LG Electronics, Inc.
 
 SUMMARY = "A library for measuring resource consumption (CPU, memory)"
 LICENSE = "LGPL-2.1-only"

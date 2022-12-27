@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "Event Monitoring for com.webos.service.pdm service"
 AUTHOR = "Manjuraehmad Momin <manjuraehmad.momin@lge.com>"

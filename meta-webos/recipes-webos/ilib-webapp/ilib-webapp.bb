@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2022 LG Electronics, Inc.
+# Copyright (c) 2017-2023 LG Electronics, Inc.
 
 SUMMARY = "iLib code and locale data"
 AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"

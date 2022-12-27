@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2022 LG Electronics, Inc.
+# Copyright (c) 2017-2023 LG Electronics, Inc.
 
 SUMMARY = "Vidououtputd Adaptation Layer (VAL) API definition and test harness"
 SECTION = "webos/libs"

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2022 LG Electronics, Inc.
+# Copyright (c) 2013-2023 LG Electronics, Inc.
 
 SUMMARY = "A collection of memory usage monitoring tools and scripts"
 LICENSE = "GPL-2.0-only"

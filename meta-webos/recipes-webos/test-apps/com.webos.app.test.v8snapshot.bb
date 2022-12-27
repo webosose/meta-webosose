@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "v8 snapshot test application"
 AUTHOR = "Wanchang Ryu <wanchang.ryu@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2022 LG Electronics, Inc.
+# Copyright (c) 2012-2023 LG Electronics, Inc.
 
 SUMMARY = "Palm's Better Native JSON library"
 AUTHOR = "Yogish S <yogish.s@lge.com>"

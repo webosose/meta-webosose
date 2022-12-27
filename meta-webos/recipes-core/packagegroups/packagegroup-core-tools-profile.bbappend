@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2022 LG Electronics, Inc.
+# Copyright (c) 2014-2023 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just the RDEPENDS:${PN} variable.
 EXTENDPRAUTO:append = "webos3"

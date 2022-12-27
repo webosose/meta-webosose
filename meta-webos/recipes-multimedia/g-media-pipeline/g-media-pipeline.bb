@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2022 LG Electronics, Inc.
+# Copyright (c) 2018-2023 LG Electronics, Inc.
 
 SUMMARY = "G media pipeline is a media pipeline which uses GStreamer"
 AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"

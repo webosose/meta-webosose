@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 LG Electronics, Inc.
+# Copyright (c) 2020-2023 LG Electronics, Inc.
 
 SUMMARY = "Memory Manager"
 AUTHOR = "Sukil Hong <sukil.hong@lge.com>"

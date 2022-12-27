@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 LG Electronics, Inc.
+# Copyright (c) 2019-2023 LG Electronics, Inc.
 
 SMACK_RULES_GEN ?= "${exec_prefix}/share/smack/smack_rules_gen"
 APP_DIR ?= "${webos_applicationsdir}"

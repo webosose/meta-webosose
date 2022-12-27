@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2022 LG Electronics, Inc.
+# Copyright (c) 2013-2023 LG Electronics, Inc.
 
 DESCRIPTION = "C++ utility and widget library based on glibmm and gtkmm"
 HOMEPAGE = "http://code.google.com/p/gtkmm-utils/"

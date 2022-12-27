@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2022 LG Electronics, Inc.
+# Copyright (c) 2014-2023 LG Electronics, Inc.
 
 SUMMARY = "Systemd service files for system services"
 AUTHOR = "Sukil Hong <sukil.hong@lge.com>"

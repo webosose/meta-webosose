@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "HDMI CEC service for webOS OSE"
 AUTHOR = "Manjuraehmad Momin <manjuraehmad.momin@lge.com>"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2013-2022 LG Electronics, Inc.
+# Copyright (c) 2013-2023 LG Electronics, Inc.
 
 # Used to prepare a submission to the build of a component
 

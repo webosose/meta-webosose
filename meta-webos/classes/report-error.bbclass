@@ -1,7 +1,7 @@
 #
 # Collects debug information in order to create error report files.
 #
-# Copyright (c) 2014-2022 LG Electronics, Inc.
+# Copyright (c) 2014-2023 LG Electronics, Inc.
 # Copyright (C) 2013 Intel Corporation
 # Author: Andreea Brandusa Proca <andreea.b.proca@intel.com>
 #

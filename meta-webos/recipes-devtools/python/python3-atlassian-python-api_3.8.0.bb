@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 LG Electronics, Inc.
+# Copyright (c) 2021-2023 LG Electronics, Inc.
 
 SUMMARY = "Python Atlassian REST API Wrapper"
 HOMEPAGE = "https://github.com/atlassian-api/atlassian-python-api"

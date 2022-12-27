@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 LG Electronics, Inc.
+# Copyright (c) 2019-2023 LG Electronics, Inc.
 
 # move /lib, /bin, /sbin to /usr
 do_install:append:sota() {

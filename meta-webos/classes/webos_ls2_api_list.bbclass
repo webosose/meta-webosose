@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 inherit python3native
 
 # A hook function to support extract_ls2_apis IMAGE_FEATURES

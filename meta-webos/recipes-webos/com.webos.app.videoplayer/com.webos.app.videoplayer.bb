@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 LG Electronics, Inc.
+# Copyright (c) 2021-2023 LG Electronics, Inc.
 
 SUMMARY = "Video Player application"
 AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"

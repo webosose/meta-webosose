@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2022 LG Electronics, Inc.
+# Copyright (c) 2014-2023 LG Electronics, Inc.
 
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT ??= ""
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_CONVERSION_LIST ??= "webos-image-converter.list"

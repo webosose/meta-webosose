@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2022 LG Electronics, Inc.
+# Copyright (c) 2017-2023 LG Electronics, Inc.
 #
 # webos_enactjs_env
 #

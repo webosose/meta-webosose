@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 SUMMARY = "XNNPACK is a based on QNNPACK library"
 
 DESCRIPTION = "XNNPACK is a highly optimized library of floating-point neural network inference \

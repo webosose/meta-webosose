@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2022 LG Electronics, Inc.
+# Copyright (c) 2013-2023 LG Electronics, Inc.
 
 EXTENDPRAUTO:append = "webos10.${WEBOS_DISTRO_BUILD_ID}"
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "webOS Edge AI Computer Vision Library"
 DESCRIPTION = "webOS Edge AI Computer Vision Library using TensorflowLite"

@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 LG Electronics, Inc.
+# Copyright (c) 2019-2023 LG Electronics, Inc.
 
 SUMMARY = "The Chinese PinYin and Bopomofo conversion library"
 AUTHOR = "Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>"

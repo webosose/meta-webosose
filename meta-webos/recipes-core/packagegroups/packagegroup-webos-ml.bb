@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 DESCRIPTION = "Machine learning components used in webOS"
 LICENSE = "Apache-2.0"

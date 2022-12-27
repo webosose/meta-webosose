@@ -5,7 +5,7 @@
 # Based on buildhistory-collect-srcrevs from branch=dora,commit=64aa7d0 of oe-core
 # Only addition is printing SRC_URIs as well (needs modified buildhistory.bbclass)
 #
-# Copyright (c) 2015-2022 LG Electronics, Inc.
+# Copyright (c) 2015-2023 LG Electronics, Inc.
 #
 # Copyright 2013 Intel Corporation
 # Authored-by:  Paul Eggleton <paul.eggleton@intel.com>

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "Camera Shared Memory library for webOS"
 AUTHOR  = "Moorthy B S <moorthy.bs@lge.com>"

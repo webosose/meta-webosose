@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2022 LG Electronics, Inc.
+# Copyright (c) 2018-2023 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
 AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"

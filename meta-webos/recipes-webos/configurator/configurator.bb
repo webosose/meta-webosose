@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2022 LG Electronics, Inc.
+# Copyright (c) 2012-2023 LG Electronics, Inc.
 
 SUMMARY = "Creates the database schema for webOS apps"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"

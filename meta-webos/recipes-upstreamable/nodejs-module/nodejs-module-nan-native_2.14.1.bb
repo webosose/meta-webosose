@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2022 LG Electronics, Inc.
+# Copyright (c) 2018-2023 LG Electronics, Inc.
 
 SUMMARY = "A module for nodejs nan"
 DESCRIPTION = "A header file filled with macro and utility goodness for making add-on development for Node.js"

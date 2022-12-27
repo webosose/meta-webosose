@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2022 LG Electronics, Inc.
+# Copyright (c) 2019-2023 LG Electronics, Inc.
 
 SUMMARY = "Camera service framework to control camera devices"
 AUTHOR = "Premalatha M V S <premalatha.mvs@lge.com>"

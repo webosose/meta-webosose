@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

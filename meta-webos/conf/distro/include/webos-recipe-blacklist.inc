@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2022 LG Electronics, Inc.
+# Copyright (c) 2013-2023 LG Electronics, Inc.
 
 # A blacklisted recipe is ignored by bitbake. The reason it is useful to be able
 # to have bitbake ignore a recipe is because, although PREFERRED_PROVIDER can be

@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2022 LG Electronics, Inc.
+# Copyright (c) 2018-2023 LG Electronics, Inc.
 
 DESCRIPTION = "Public interface definitions of Google APIs"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"

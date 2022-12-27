@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2022 LG Electronics, Inc.
+# Copyright (c) 2021-2023 LG Electronics, Inc.
 
 SUMMARY = "Storage Access Framework for OSE"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"

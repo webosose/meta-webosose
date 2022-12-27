@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2022 LG Electronics, Inc.
+# Copyright (c) 2016-2023 LG Electronics, Inc.
 
 SUMMARY = "webOS extension for Qtwayland"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2022 LG Electronics, Inc.
+# Copyright (c) 2022-2023 LG Electronics, Inc.
 WEBRUNTIME_REPO_VERSION = "94"
 
 require webruntime.inc

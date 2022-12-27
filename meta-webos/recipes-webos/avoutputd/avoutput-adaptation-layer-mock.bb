@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2022 LG Electronics, Inc.
+# Copyright (c) 2017-2023 LG Electronics, Inc.
 
 SUMMARY = "AV API implementation library mock"
 AUTHOR = "Soumya Aithal <soumya.aithal@lge.com>"
