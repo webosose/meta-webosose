@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 event-monitor pmloglib libpbnjson libwebosi18n"
 
-WEBOS_VERSION = "1.0.0-3_01f30edb20fea38af12d2f9bae469db5d8814209"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-6_a2e7f48f9c82c0a43968b4d4fcee8381a88b48c9"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -20,6 +20,9 @@ inherit webos_cmake
 inherit webos_pkgconfig
 inherit webos_event_monitor_plugin
 inherit webos_public_repo
+inherit webos_localizable
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+WEBOS_LOCALIZATION_INSTALL_RESOURCES = "true"
