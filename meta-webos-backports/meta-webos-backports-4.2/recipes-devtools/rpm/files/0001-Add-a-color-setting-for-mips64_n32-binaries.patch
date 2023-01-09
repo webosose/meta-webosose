@@ -1,0 +1,48 @@
+From 5492ac3c716020a27a25253bbffe810db43202bf Mon Sep 17 00:00:00 2001
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Thu, 9 Mar 2017 18:54:02 +0200
+Subject: [PATCH] Add a color setting for mips64_n32 binaries
+
+Upstream-Status: Inappropriate [oe-core specific]
+Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
+
+---
+ build/rpmfc.c | 4 ++++
+ rpmrc.in      | 2 ++
+ 2 files changed, 6 insertions(+)
+
+Index: git/build/rpmfc.c
+===================================================================
+--- git.orig/build/rpmfc.c
++++ git/build/rpmfc.c
+@@ -645,6 +645,7 @@ exit:
+ static const struct rpmfcTokens_s rpmfcTokens[] = {
+   { "directory",		RPMFC_INCLUDE },
+ 
++  { "N32 MIPS64",		RPMFC_ELFMIPSN32|RPMFC_INCLUDE },
+   { "ELF 32-bit",		RPMFC_ELF32|RPMFC_INCLUDE },
+   { "ELF 64-bit",		RPMFC_ELF64|RPMFC_INCLUDE },
+ 
+@@ -1150,6 +1151,9 @@ static uint32_t getElfColor(const char *
+ 		color = RPMFC_ELF32;
+ 		break;
+ 	    }
++            if (ehdr.e_machine == EM_MIPS || ehdr.e_machine == EM_MIPS_RS3_LE)
++                if (ehdr.e_flags & EF_MIPS_ABI2)
++                    color = RPMFC_ELFMIPSN32;
+ 	    elf_end(elf);
+ 	}
+ 	close(fd);
+Index: git/rpmrc.in
+===================================================================
+--- git.orig/rpmrc.in
++++ git/rpmrc.in
+@@ -139,6 +139,8 @@ archcolor: mipsr6el 1
+ archcolor: mips64r6 2
+ archcolor: mips64r6el 2
+ 
++archcolor: mips64_n32 4
++
+ archcolor: m68k 1
+ 
+ archcolor: m68kmint 1

@@ -1,0 +1,58 @@
+From 4ab6a4c5bbad65c3401016bb26b87214cdd0c59b Mon Sep 17 00:00:00 2001
+From: Alexander Kanavin <alex.kanavin@gmail.com>
+Date: Mon, 27 Feb 2017 09:43:30 +0200
+Subject: [PATCH] Do not hardcode "lib/rpm" as the installation path for
+ default configuration and macros.
+
+Upstream-Status: Denied [https://github.com/rpm-software-management/rpm/pull/263]
+Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
+
+---
+ configure.ac | 2 +-
+ macros.in    | 2 +-
+ rpm.am       | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+Index: git/configure.ac
+===================================================================
+--- git.orig/configure.ac
++++ git/configure.ac
+@@ -942,7 +942,7 @@ else
+     usrprefix=$prefix
+ fi
+ 
+-RPMCONFIGDIR="`echo ${usrprefix}/lib/rpm`"
++RPMCONFIGDIR="`echo ${libdir}/rpm`"
+ AC_SUBST(RPMCONFIGDIR)
+ 
+ AC_SUBST(OBJDUMP)
+Index: git/macros.in
+===================================================================
+--- git.orig/macros.in
++++ git/macros.in
+@@ -911,7 +911,7 @@ package or when debugging this package.\
+ %_sharedstatedir	%{_prefix}/com
+ %_localstatedir		%{_prefix}/var
+ %_lib			lib
+-%_libdir		%{_exec_prefix}/%{_lib}
++%_libdir		@libdir@
+ %_includedir		%{_prefix}/include
+ %_infodir		%{_datadir}/info
+ %_mandir		%{_datadir}/man
+Index: git/rpm.am
+===================================================================
+--- git.orig/rpm.am
++++ git/rpm.am
+@@ -1,10 +1,10 @@
+ # Internal binaries
+ ## HACK: It probably should be $(libexecdir)/rpm or $(libdir)/rpm
+-rpmlibexecdir = $(prefix)/lib/rpm
++rpmlibexecdir = $(libdir)/rpm
+ 
+ # Host independent config files
+ ## HACK: it probably should be $(datadir)/rpm
+-rpmconfigdir = $(prefix)/lib/rpm
++rpmconfigdir = $(libdir)/rpm
+ 
+ # Libtool version (current-revision-age) for all our libraries
+ rpm_version_info = 12:0:3
