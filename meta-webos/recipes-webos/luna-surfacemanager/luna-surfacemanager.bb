@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-384_8cd57795ac92f6ade0f5aa7fb51e024c6d081924"
-PR = "r55"
+PR = "r56"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -61,6 +61,10 @@ TARGET_LDFLAGS:append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
+
+# Select platform abstraction plugin
+VIRTUAL-RUNTIME_lsm-qpa ?= ""
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_lsm-qpa}"
 
 inherit webos_system_bus
 inherit webos_qmllint
