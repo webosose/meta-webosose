@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos104"
+EXTENDPRAUTO:append = "webos105"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -77,6 +77,10 @@ inherit webos_lttng
 
 # Do not build tests/ in webos
 PACKAGECONFIG:remove = "tests"
+
+# Need this flag as we don't build qtxxx-tools packages usually.
+# See https://codereview.qt-project.org/c/qt/qtbase/+/452475.
+EXTRA_OECMAKE:append = " -DQT_ALLOW_MISSING_TOOLS_PACKAGES=ON"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
