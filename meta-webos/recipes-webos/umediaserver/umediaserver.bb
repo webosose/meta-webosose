@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-PR = "r20"
+PR = "r21"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -43,7 +43,7 @@ COMPATIBLE_MACHINE:x86 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-24.gav.28_76e194d008d2014c03748711572d8b2c88f18498"
+WEBOS_VERSION = "1.0.0-24.gav.29_52041f5e03c26188763bf9b091ef083194b4e61a"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -62,8 +62,6 @@ FILES:${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${dat
 #   char message[MAX_FT_SIZE]; snprintf(message, MAX_FT_SIZE, format, args...);
 #                              ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 SECURITY_STRINGFORMAT = ""
-
-SRC_URI += "file://0001-waitForStop-API-is-added-for-cleanup-message-handler.patch"
 
 #Remove videooutputd from OSE
 PACKAGECONFIG:remove:raspberrypi4 = "com.webos.service.videooutput"
