@@ -6,7 +6,7 @@
 # overridden by higher layers whose distro .inc files are always included after
 # this one) and "MACHINE" appended to their [vardeps] flags.
 
-PREFERRED_PROVIDER_virtual/webruntime = "webruntime"
+PREFERRED_PROVIDER_virtual/webruntime = "webruntime-clang"
 VIRTUAL-RUNTIME_webruntime = "webruntime"
 
 WEBOS_PREFERRED_PROVIDER_FOR_BASH = "busybox"
@@ -46,7 +46,7 @@ VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
 VIRTUAL-RUNTIME_com.webos.app.browser:armv4 = ""
 VIRTUAL-RUNTIME_com.webos.app.browser:armv5 = ""
 
-VIRTUAL-RUNTIME_webappmanager = "wam"
+VIRTUAL-RUNTIME_webappmanager = "wam-clang"
 VIRTUAL-RUNTIME_webappmanager:armv4 = ""
 VIRTUAL-RUNTIME_webappmanager:armv5 = ""
 
@@ -94,7 +94,7 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
 "
 
 # Make wam preferred provider for webappmanager-webos
-PREFERRED_PROVIDER_virtual/webappmanager-webos ?= "wam"
+PREFERRED_PROVIDER_virtual/webappmanager-webos ?= "wam-clang"
 
 VIRTUAL-RUNTIME_ntp = "ntp sntp"
 
