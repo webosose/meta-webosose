@@ -42,7 +42,7 @@ WEBOS_DISTRO_FEATURES_TEST = "ptest"
 # ml-library-size-reduction: If the image does not have enough space to install all of the above ML libraries,
 # you can reduce the size of the installed library by adding this option. If this option is specified,
 # the examples and test codes are excluded from the installation.
-WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "aiframework armnn gpu-delegate auto-acceleration"
+WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "aiframework gpu-delegate auto-acceleration"
 WEBOS_DISTRO_FEATURES_AI_FRAMEWORK_EXTENDED = "edgetpu"
 
 DISTRO_FEATURES = "\
