@@ -17,7 +17,7 @@ Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
 :Issues Addressed:
     [PLAT-107882] Implement BlueZ API support for MAP connection support
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  obexd/client/bluetooth.c | 21 ++++++++++++++++++---
  obexd/client/manager.c   | 10 ++++++----

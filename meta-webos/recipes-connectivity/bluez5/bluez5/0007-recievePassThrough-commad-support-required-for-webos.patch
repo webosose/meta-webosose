@@ -20,7 +20,7 @@ Builded and tested
 :Issues Addressed:
 [PLAT-49637] Implement avrcp/receivePassThroughCommand for blueooth-sil-bluez
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 
 Change-Id: I9c07aa27f242247b5c3df85e0b3605d2ba055cad
 ---

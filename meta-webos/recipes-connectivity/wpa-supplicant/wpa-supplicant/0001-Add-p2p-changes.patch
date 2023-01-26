@@ -21,7 +21,7 @@ N/A
 [PLAT-131728] Integrating and verification p2p/getstate, p2p/setstate
               and p2p/setgointent Luna API
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  src/ap/drv_callbacks.c                      |  11 ++
  src/ap/hostapd.c                            |  23 ++++

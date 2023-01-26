@@ -18,7 +18,7 @@ Builded and Tested
 :Issues Addressed:
 [PLAT-73147] Implement avrcp/awaitMediaMetaDataRequest
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 
 Change-Id: Ib225395809a3b53f1c494ac4e21beabc47f7f906
 ---

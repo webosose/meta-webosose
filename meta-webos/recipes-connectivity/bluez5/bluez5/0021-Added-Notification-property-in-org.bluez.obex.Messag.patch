@@ -15,7 +15,7 @@ NA
 :Issues Addressed:
 [PLAT-107891] Implement BlueZ API for getMessageNotificationEvent
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  doc/obex-api.txt   |  48 ++++++++++++++
  obexd/client/map.c | 153 ++++++++++++++++++++++++++++++++++++++++++++-

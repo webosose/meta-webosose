@@ -17,7 +17,7 @@ Builded and Tested
 :Issues Addressed:
 [PLAT-102923] Implement disconnect to AVRCP target
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  src/device.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)

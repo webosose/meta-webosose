@@ -20,7 +20,7 @@ Builded and tested
 [PLAT-49640] Implementation of SPP profile Connect/Disconnect API in
              Bluez Sil
 
-Upstream-Status : Pending
+Upstream-Status: Pending
 ---
  src/profile.c | 4 ++++
  1 file changed, 4 insertions(+)

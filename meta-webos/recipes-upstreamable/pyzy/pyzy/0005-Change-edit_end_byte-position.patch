@@ -6,7 +6,7 @@ Subject: [PATCH] Change "edit_end_byte" position
 Changed the "edit_end_byte" position to
 fix convertion text
 
-Upstream-status: Inappropriate [webos specific change, not indented to be upstreamed]
+Upstream-Status: Inappropriate [webos specific change, not indented to be upstreamed]
 ---
  src/BopomofoContext.cc | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)

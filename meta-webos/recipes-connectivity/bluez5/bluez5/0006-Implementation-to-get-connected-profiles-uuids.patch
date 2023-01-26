@@ -17,7 +17,7 @@ Builded and Tested
 :Issues Addressed:
 [PLAT-69336] Implement AVRCP/Connect Disconnect for blueooth-sil-bluez
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 
 Change-Id: I72834cc9b4bdd8f086565dc9a2a41006f758ad39
 ---

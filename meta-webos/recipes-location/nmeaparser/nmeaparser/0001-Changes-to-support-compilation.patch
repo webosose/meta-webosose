@@ -18,7 +18,7 @@ NA
 :Issues Addressed:
 N/A
 
-Upstream-Status : Inappropriate [webOS specific]
+Upstream-Status: Inappropriate [webOS specific]
 ---
  CMakeLists.txt                        |  7 +++++++
  Software/CMakeLists.txt               |  2 +-

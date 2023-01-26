@@ -19,7 +19,7 @@ NA
 :Issues Addressed:
 N/A
 
-Upstream-Status : Inappropriate [webOS specific]
+Upstream-Status: Inappropriate [webOS specific]
 ---
  Software/NMEAParserLib/NMEAParserPacket.cpp | 8 ++++++--
  Software/NMEAParserLib/NMEAParserPacket.h   | 2 +-

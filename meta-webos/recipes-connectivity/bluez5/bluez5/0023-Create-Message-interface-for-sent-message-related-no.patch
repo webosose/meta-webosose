@@ -17,7 +17,7 @@ NA
 :Issues Addressed:
 [PLAT-107873] Add MessageHandle for pushMessage transfer in Bluez5
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  obexd/client/map.c | 16 ++++++++++++++++
  1 file changed, 16 insertions(+)

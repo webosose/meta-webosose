@@ -19,7 +19,7 @@ Built and Tested
 [PLAT-102247] [AVRCP CT] Implement
               avrcp/internal/getSupportedNotificationEvents
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  profiles/audio/avrcp.c |  1 +
  src/device.c           | 21 +++++++++++++++++++++

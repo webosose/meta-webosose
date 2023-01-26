@@ -18,7 +18,7 @@ device/getStatus luna command for device type property as ble, bredr
 [PLAT-58422] GAP functionality type of device like BLE, BREDR
              not working, always Unknown
 
-Upstream-Status : Pending
+Upstream-Status: Pending
 ---
  src/device.c | 17 +++++++++++++++++
  1 file changed, 17 insertions(+)

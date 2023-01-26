@@ -18,7 +18,7 @@ NA
 :Issues Addressed:
 [PLAT-107882] Implement BlueZ API support for MAP connection support
 
-Upstream-Status: Inappropriate[webos specific]
+Upstream-Status: Inappropriate [webos specific]
 ---
  src/device.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++++++-
  1 file changed, 167 insertions(+), 1 deletion(-)
