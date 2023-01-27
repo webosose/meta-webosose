@@ -30,10 +30,10 @@ WEBOS_NPM_INSTALL_FLAGS ?= "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_A
 WEBOS_NODE_BIN ??= "${STAGING_BINDIR_NATIVE}/node"
 
 # for node-gyp
-WEBOS_NODE_VERSION = "16.14.2"
+WEBOS_NODE_VERSION = "16.18.1"
 WEBOS_NODE_SRC_URI = "https://nodejs.org/dist/v${WEBOS_NODE_VERSION}/node-v${WEBOS_NODE_VERSION}.tar.xz;name=node"
 WEBOS_NODE_GYP = "node-gyp --arch '${TARGET_ARCH}' --nodedir '${WORKDIR}/node-v${WEBOS_NODE_VERSION}'"
-SRC_URI[node.sha256sum] = "e922e215cc68eb5f94d33e8a0b61e2c863b7731cc8600ab955d3822da90ff8d1"
+SRC_URI[node.sha256sum] = "1f8051a88f86f42064f4415fe7a980e59b0a502ecc8def583f6303bc4d445238"
 
 do_compile:prepend() {
     # this is needed to use user's gitconfig even after changing the HOME directory bellow
