@@ -25,7 +25,7 @@ RDEPENDS:${PN} = "\
 "
 
 WEBOS_VERSION = "1.0.0-57_2f4bec225e01fcc47b53f0803e9fcbb24332cc60"
-PR = "r32"
+PR = "r33"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -39,7 +39,9 @@ inherit webos_lttng
 inherit webos_public_repo
 
 WEBOS_REPO_NAME = "audiod-pro"
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-events.h-add-missing-functional-include.patch \
+"
 S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE += "${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
