@@ -1,9 +1,6 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos3"
-
-PACKAGECONFIG:append:class-native = " virglrenderer epoxy spice libusb usb-redir"
-PACKAGECONFIG:append:class-nativesdk = " virglrenderer epoxy spice libusb usb-redir"
+EXTENDPRAUTO:append = "webos4"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
