@@ -181,8 +181,8 @@ def webos_service_generate_api_file(d, service_info):
                     apiList[service["name"] + "." + group].append(command["name"])
                 else:
                     apiList[service["name"] + "." + group].append(command["name"])
-    dst_dir = d.getVar("D", True)
-    api_file_dir = d.getVar("webos_sysbus_apipermissionsdir", True)
+    dst_dir = d.getVar("D")
+    api_file_dir = d.getVar("webos_sysbus_apipermissionsdir")
     api_file = api_file_dir + "/" + service_id + ".api" + ".json"
     if not os.path.exists(dst_dir + api_file_dir):
         os.makedirs(dst_dir + api_file_dir)
@@ -198,8 +198,8 @@ def webos_service_generate_service_file(d, service_info, package_info):
     import os.path
     import json
     bb.note("service: Start generating service file")
-    dst_dir = d.getVar("D", True)
-    services_dir = d.getVar("webos_sysbus_servicedir", True)
+    dst_dir = d.getVar("D")
+    services_dir = d.getVar("webos_sysbus_servicedir")
     service_file = services_dir + "/" + service_info["id"] + ".service"
     if not os.path.exists(dst_dir + services_dir):
         os.makedirs(dst_dir + services_dir)
@@ -241,8 +241,8 @@ def webos_service_generate_perm_file(d, service_info):
         if "requiredPermissions" in perm:
             permission[service_id] = perm["requiredPermissions"]
 
-    dst_dir = d.getVar("D", True)
-    permissions_dir = d.getVar("webos_sysbus_permissionsdir", True)
+    dst_dir = d.getVar("D")
+    permissions_dir = d.getVar("webos_sysbus_permissionsdir")
     permission_file = permissions_dir + "/" + service_id + ".perm" + ".json"
     if not os.path.exists(dst_dir + permissions_dir):
         os.makedirs(dst_dir + permissions_dir)
@@ -268,8 +268,8 @@ def webos_service_generate_role_file(d, service_info):
     role["allowedNames"] = [service_id]
     role["permissions"] = [{"service": service_id, "outbound": ["*"] }]
 
-    dst_dir   = d.getVar("D", True)
-    roles_dir = d.getVar("webos_sysbus_rolesdir", True)
+    dst_dir   = d.getVar("D")
+    roles_dir = d.getVar("webos_sysbus_rolesdir")
     role_file = roles_dir + "/" + service_id + ".role" + ".json"
     if not os.path.exists(dst_dir + roles_dir):
         os.makedirs(dst_dir + roles_dir)
@@ -295,8 +295,8 @@ def webos_service_generate_group_file(d, service_info):
                 groupsList[group] = list()
                 groupsList[group]=groups["acgTrustLevel"]
 
-    dst_dir = d.getVar("D", True)
-    group_file_dir = d.getVar("webos_sysbus_groupsdir", True)
+    dst_dir = d.getVar("D")
+    group_file_dir = d.getVar("webos_sysbus_groupsdir")
     group_file = group_file_dir + "/" + service_id + ".group" + ".json"
     if not os.path.exists(dst_dir + group_file_dir):
         os.makedirs(dst_dir + group_file_dir)
@@ -336,11 +336,11 @@ fakeroot python do_configure_sysbus_files() {
 
     bb.note("Start creating sysbus files")
 
-    if d.getVar("WEBOS_SYSTEM_BUS_CONFIGURE_FILES", True) != "TRUE":
+    if d.getVar("WEBOS_SYSTEM_BUS_CONFIGURE_FILES") != "TRUE":
         return
 
-    dst_dir = d.getVar("D", True)
-    service_dir = dst_dir + d.getVar("webos_servicesdir",True)
+    dst_dir = d.getVar("D")
+    service_dir = dst_dir + d.getVar("webos_servicesdir")
 
     if not os.path.exists(service_dir):
         return

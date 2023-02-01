@@ -29,37 +29,37 @@ python do_write_bom_data() {
                 return json.JSONEncoder().iterencode(obj, _one_shot)
 
     jsondata = {}
-    jsondata["section"] = d.getVar("SECTION", True)
-    jsondata["src_uri"] = d.getVar("SRC_URI", True)
-    jsondata["srcrev"] = "".join(d.getVar("SRCREV", True).split())
-    jsondata["recipe"] = d.getVar("PN", True)
-    jsondata["file"] = d.getVar("FILE", True)[len(d.getVar("TOPDIR", True)):]
-    jsondata["arch"] = d.getVar("PACKAGE_ARCH", True)
-    jsondata["author"] = d.getVar("AUTHOR", True)
-    license = d.getVar("LICENSE", True)
-    license_flags = d.getVar("LICENSE_FLAGS", True)
-    packages = d.getVar("PACKAGES", True)
+    jsondata["section"] = d.getVar("SECTION")
+    jsondata["src_uri"] = d.getVar("SRC_URI")
+    jsondata["srcrev"] = "".join(d.getVar("SRCREV").split())
+    jsondata["recipe"] = d.getVar("PN")
+    jsondata["file"] = d.getVar("FILE")[len(d.getVar("TOPDIR")):]
+    jsondata["arch"] = d.getVar("PACKAGE_ARCH")
+    jsondata["author"] = d.getVar("AUTHOR")
+    license = d.getVar("LICENSE")
+    license_flags = d.getVar("LICENSE_FLAGS")
+    packages = d.getVar("PACKAGES")
     jsondata["license"] = license
     jsondata["license_flags"] = license_flags
     jsondata["packages"] = packages
     pkg_lic = {}
     if packages:
         for pkg in packages.split():
-            lic = d.getVar("LICENSE:%s" % pkg, True)
+            lic = d.getVar("LICENSE:%s" % pkg)
             if lic and lic != license:
                 pkg_lic[pkg] = lic
     jsondata["pkg_lic"] = pkg_lic
-    jsondata["pe"] = d.getVar("PE", True)
-    jsondata["pv"] = d.getVar("PV", True)
-    jsondata["pr"] = d.getVar("PR", True)
-    jsondata["extendprauto"] = d.getVar("EXTENDPRAUTO", True)
-    jsondata["extendpkgv"] = d.getVar("EXTENDPKGV", True)
-    jsondata["webos_version"] = d.getVar("WEBOS_VERSION", True)
-    jsondata["webos_component_version"] = d.getVar("WEBOS_COMPONENT_VERSION", True)
-    jsondata["webos_submission"] = d.getVar("WEBOS_SUBMISSION", True)
+    jsondata["pe"] = d.getVar("PE")
+    jsondata["pv"] = d.getVar("PV")
+    jsondata["pr"] = d.getVar("PR")
+    jsondata["extendprauto"] = d.getVar("EXTENDPRAUTO")
+    jsondata["extendpkgv"] = d.getVar("EXTENDPKGV")
+    jsondata["webos_version"] = d.getVar("WEBOS_VERSION")
+    jsondata["webos_component_version"] = d.getVar("WEBOS_COMPONENT_VERSION")
+    jsondata["webos_submission"] = d.getVar("WEBOS_SUBMISSION")
     jsondata["webos_prebuilt_binaries"] = bb.data.inherits_class('webos_prebuilt_binaries', d)
 
-    datafile = os.path.join(d.getVar("TOPDIR", True), "webos-bom.json")
+    datafile = os.path.join(d.getVar("TOPDIR"), "webos-bom.json")
     lock = bb.utils.lockfile(datafile + '.lock')
     with open(datafile, "a") as f:
         json.dump(jsondata, f, sort_keys=True, cls=WebosBomJSONEncoder)
@@ -72,13 +72,13 @@ python do_write_bom_data() {
 do_write_abi_xml_data[nostamp] = "1"
 addtask write_abi_xml_data
 python do_write_abi_xml_data() {
-    pn = d.getVar("PN", True)
-    solibs = d.getVar("SOLIBS", True)
-    solibsdev = d.getVar("SOLIBSDEV", True)
-    sstate_manmach = d.getVar("SSTATE_MANMACH", True)
-    datafile = os.path.join(d.getVar("TOPDIR", True), "abi", "%s.xml" % pn)
-    bb.utils.mkdirhier(os.path.join(d.getVar("TOPDIR", True), "abi"))
-    manifest = os.path.join(d.getVar("SSTATE_MANIFESTS", True), "manifest-%s-%s.populate_sysroot" % (sstate_manmach, pn))
+    pn = d.getVar("PN")
+    solibs = d.getVar("SOLIBS")
+    solibsdev = d.getVar("SOLIBSDEV")
+    sstate_manmach = d.getVar("SSTATE_MANMACH")
+    datafile = os.path.join(d.getVar("TOPDIR"), "abi", "%s.xml" % pn)
+    bb.utils.mkdirhier(os.path.join(d.getVar("TOPDIR"), "abi"))
+    manifest = os.path.join(d.getVar("SSTATE_MANIFESTS"), "manifest-%s-%s.populate_sysroot" % (sstate_manmach, pn))
     lock = bb.utils.lockfile(datafile + '.lock')
     if not os.path.isfile(manifest):
         # nothing was staged, we don't need to run ABI checker on this
@@ -90,7 +90,7 @@ python do_write_abi_xml_data() {
     re_solibsdev = re.compile(r"\.so$")
     with open(datafile, "w") as f:
         f.write("<!-- generated from %s -->\n" % manifest)
-        f.write("<version>%s</version>\n" % d.getVar("PV", True))
+        f.write("<version>%s</version>\n" % d.getVar("PV"))
         f.write("<headers>\n")
         with open(manifest, "r") as manfile:
             for line in manfile:
@@ -145,25 +145,25 @@ def write_compile_option(d):
 
     # Write Compile option data
     compile_data = {}
-    compile_data["arch"] = d.getVar('PACKAGE_ARCH', True)
-    compile_data["recipe"] = d.getVar('PN', True)
-    CFLAGS = d.getVar('CFLAGS',True)
-    CXXFLAGS = d.getVar('CXXFLAGS',True)
+    compile_data["arch"] = d.getVar('PACKAGE_ARCH')
+    compile_data["recipe"] = d.getVar('PN')
+    CFLAGS = d.getVar('CFLAGS')
+    CXXFLAGS = d.getVar('CXXFLAGS')
     if CFLAGS.find('none') == -1:
         compile_data["cflags"] = pruneString(CFLAGS)
-        compile_data["cc"] = pruneString(d.getVar('CC',True))
+        compile_data["cc"] = pruneString(d.getVar('CC'))
 
     if CXXFLAGS.find('none') == -1:
         compile_data["cxxflags"] = pruneString(CXXFLAGS)
-        compile_data["cxx"] = pruneString(d.getVar('CXX', True))
+        compile_data["cxx"] = pruneString(d.getVar('CXX'))
 
     if compile_data.get("cc") != None or compile_data.get("cxx") != None:
-        compile_data["ldflags"] = pruneString(d.getVar('LDFLAGS', True))
+        compile_data["ldflags"] = pruneString(d.getVar('LDFLAGS'))
 
     if compile_data.get("cc") is None and compile_data.get("cxx") is None:
         return
 
-    compile_datafile = os.path.join(d.getVar("TOPDIR", True), "webos-compile-option.json")
+    compile_datafile = os.path.join(d.getVar("TOPDIR"), "webos-compile-option.json")
     lock = bb.utils.lockfile(compile_datafile + '.lock')
     with open(compile_datafile, "a") as fp:
         json.dump(compile_data, fp)
@@ -213,7 +213,7 @@ def write_compile_option(d):
                 pass
             cnt = 0
 
-        result_file = os.path.join(d.getVar("TOPDIR", True), "webos-common-compile-option.json")
+        result_file = os.path.join(d.getVar("TOPDIR"), "webos-common-compile-option.json")
         with open(result_file,'w') as rfp:
             json.dump(common_options,rfp)
         fp.close()

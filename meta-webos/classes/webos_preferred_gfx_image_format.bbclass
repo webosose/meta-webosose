@@ -61,11 +61,11 @@ def webos_preferred_gfx_image_format_detect_native_usage(d, app_info):
     keys = ['splashBackground', 'bgImage']
     data = webos_preferred_gfx_image_format_parse_json(d, app_info)
 
-    extension = d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_INTERNAL', True)
+    extension = d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_INTERNAL')
     if extension == '':
         return
 
-    pn = d.getVar('PN', True)
+    pn = d.getVar('PN')
 
     offending_keys = {}
     for key in keys:
@@ -79,28 +79,28 @@ def webos_preferred_gfx_image_format_detect_native_usage(d, app_info):
 
 
 def webos_preferred_gfx_image_format_generate_conversion_file(d, base_dir, images):
-    extension = d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_INTERNAL', True)
+    extension = d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_INTERNAL')
     if extension == '' or len(images) == 0:
         return
-    out_file = base_dir + '/' + d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_CONVERSION_LIST_INTERNAL', True)
+    out_file = base_dir + '/' + d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_CONVERSION_LIST_INTERNAL')
     with open(out_file, 'w+') as the_file:
         for i in images:
             # Remove the $D from the file as that will be added correctly during the
             # post_inst step
-            source = base_dir.replace(d.getVar('D', True), '') + '/' + images[i]
+            source = base_dir.replace(d.getVar('D'), '') + '/' + images[i]
             target = source[0 : len(source) - len(extension)] + extension
             line = '%s %s\n' % (source, target)
             the_file.write(line)
 
 
 fakeroot python do_convert_webos_preferred_gfx_image_format () {
-    enabled = d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED', True)
-    pn = d.getVar('PN', True)
+    enabled = d.getVar('WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED')
+    pn = d.getVar('PN')
     if enabled != '1':
         bb.note('%s has explicitly disabled image conversion' % pn)
         return
 
-    app_info_dir = webos_preferred_gfx_image_format_find_app_info_dir(d, d.getVar('D', True))
+    app_info_dir = webos_preferred_gfx_image_format_find_app_info_dir(d, d.getVar('D'))
     if not app_info_dir:
         bb.fatal("Could not find %s:appinfo.json, no conversion will be performed" % pn)
         return

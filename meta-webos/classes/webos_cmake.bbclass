@@ -61,8 +61,8 @@ EXTRA_OECMAKE += "${EXTRA_OECMAKE_MACHINE}"
 
 # If SOC_FAMILY is empty, don't add -DWEBOS_TARGET_SOC_FAMILY.
 EXTRA_OECMAKE_SOC_FAMILY = "${@ \
-    '-DWEBOS_TARGET_SOC_FAMILY:STRING=' + d.getVar('SOC_FAMILY', True) \
-    if bb.data.inherits_class('webos_soc_family_dep', d) and not bb.data.inherits_class('native', d) and (d.getVar('SOC_FAMILY', True) or '') != '' else \
+    '-DWEBOS_TARGET_SOC_FAMILY:STRING=' + d.getVar('SOC_FAMILY') \
+    if bb.data.inherits_class('webos_soc_family_dep', d) and not bb.data.inherits_class('native', d) and (d.getVar('SOC_FAMILY') or '') != '' else \
     '' \
 }"
 EXTRA_OECMAKE_SOC_FAMILY[vardepvalue] = "${EXTRA_OECMAKE_SOC_FAMILY}"
@@ -87,8 +87,8 @@ EXTRA_OECMAKE += "${EXTRA_OECMAKE_MACHINE_VARIANT}"
 # If DISTRO is unset, don't add -DWEBOS_TARGET_DISTRO. If it is set, always pass
 # it, even for -native components.
 EXTRA_OECMAKE_DISTRO = "${@ \
-    '-DWEBOS_TARGET_DISTRO:STRING=' + d.getVar('DISTRO', True) \
-    if bb.data.inherits_class('webos_distro_dep', d) and (d.getVar('DISTRO', True) or '') != '' else \
+    '-DWEBOS_TARGET_DISTRO:STRING=' + d.getVar('DISTRO') \
+    if bb.data.inherits_class('webos_distro_dep', d) and (d.getVar('DISTRO') or '') != '' else \
     '' \
 }"
 EXTRA_OECMAKE_DISTRO[vardepvalue] = "${EXTRA_OECMAKE_DISTRO}"

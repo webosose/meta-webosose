@@ -10,8 +10,8 @@ inherit allarch
 
 python () {
     if bb.data.inherits_class('webos_machine_dep', d) or bb.data.inherits_class('webos_machine_impl_dep', d):
-        pa = d.getVar('PACKAGE_ARCH', True)
+        pa = d.getVar('PACKAGE_ARCH')
         if pa == "all":
-            pn = d.getVar('PN', True)
+            pn = d.getVar('PN')
             bb.error("%s: You should inherit webos_machine_dep or webos_machine_impl_dep _after_ webos_arch_indep to set PACKAGE_ARCH to MACHINE_ARCH" % pn)
 }

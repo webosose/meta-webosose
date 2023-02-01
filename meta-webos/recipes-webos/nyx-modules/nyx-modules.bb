@@ -32,12 +32,12 @@ EXTRA_OECMAKE += "\
 # the CMake script.
 WEBOS_DISTRO_MANUFACTURING_VERSION ??= ""
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_MANUFACTURING_VERSION:STRING="${WEBOS_DISTRO_MANUFACTURING_VERSION}"' \
-                  if d.getVar('WEBOS_DISTRO_MANUFACTURING_VERSION',True) != '' else ''}"
+                  if d.getVar('WEBOS_DISTRO_MANUFACTURING_VERSION') != '' else ''}"
 
 # NB. CMakeLists.txt arranges for the return value of the NYX_OS_INFO_WEBOS_PRERELEASE
 # query to be "" when WEBOS_DISTRO_PRERELEASE is not defined on the command line.
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="${WEBOS_DISTRO_PRERELEASE}"' \
-                  if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
+                  if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
 
 # Currently always using the modules for the rockhopper core OS.
 WEBOS_TARGET_CORE_OS = "rockhopper"

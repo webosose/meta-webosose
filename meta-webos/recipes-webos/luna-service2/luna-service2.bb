@@ -19,7 +19,7 @@ WEBOS_VERSION = "3.21.2-28_1627734739c6f9ec8446caf7139295f2517a0e13"
 PR = "r28"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
-                  if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
+                  if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
 
 inherit webos_component
 inherit webos_public_repo

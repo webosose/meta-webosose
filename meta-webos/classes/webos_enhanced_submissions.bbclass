@@ -44,7 +44,7 @@ inherit webos_submissions
 
 def webos_enhsub_get_srcrev(d, webos_v):
     webos_srcrev = webos_version_get_srcrev(webos_v)
-    webos_submission = d.getVar('WEBOS_SUBMISSION', True)
+    webos_submission = d.getVar('WEBOS_SUBMISSION')
     # submission 0 means that we're using:
     # a) AUTOREV
     # b) SHA-1 possibly not included in any tag or branch
@@ -60,8 +60,8 @@ def webos_enhsub_get_srcrev(d, webos_v):
         else:
             return "INVALID"
     if webos_srcrev == None or len(webos_srcrev) != 40 or (False in [c in "abcdef0123456789" for c in webos_srcrev]):
-        file = d.getVar('FILE', True)
-        webos_git_repo_tag = d.getVar('WEBOS_GIT_REPO_TAG', True) or "submissions/%s" % webos_submission
+        file = d.getVar('FILE')
+        webos_git_repo_tag = d.getVar('WEBOS_GIT_REPO_TAG') or "submissions/%s" % webos_submission
         bb.fatal(("%s: WEBOS_VERSION needs to end with _<SHA-1> where " +
                      "<SHA-1> is the 40-character identifier of '%s' tag")
                      % (file, webos_git_repo_tag))
@@ -69,8 +69,8 @@ def webos_enhsub_get_srcrev(d, webos_v):
     return webos_srcrev
 
 def webos_enhsub_get_tag(d, webos_v):
-    webos_submission = d.getVar('WEBOS_SUBMISSION', True)
-    webos_git_repo_tag = d.getVar('WEBOS_GIT_REPO_TAG', True) or "submissions/%s" % webos_submission
+    webos_submission = d.getVar('WEBOS_SUBMISSION')
+    webos_git_repo_tag = d.getVar('WEBOS_GIT_REPO_TAG') or "submissions/%s" % webos_submission
     return webos_git_repo_tag
 
 # Set WEBOS_SRCREV to value from WEBOS_VERSION.
@@ -97,16 +97,16 @@ do_fetch[prefuncs] += "webos_enhsub_srcrev_sanity_check"
 # '0' in 'webos_submission' is used with AUTOREV or SHA-1 without matching tag
 # show non-fatal ERROR to make sure that it's not accidentally merged in master
 python webos_enhsub_srcrev_sanity_check() {
-    srcrev = d.getVar('SRCREV', True)
-    webos_submission = d.getVar('WEBOS_SUBMISSION', True)
+    srcrev = d.getVar('SRCREV')
+    webos_submission = d.getVar('WEBOS_SUBMISSION')
     if webos_submission == '0':
-        webos_version = d.getVar('WEBOS_VERSION', True)
-        pn = d.getVar('PN', True)
-        file = d.getVar('FILE', True)
+        webos_version = d.getVar('WEBOS_VERSION')
+        pn = d.getVar('PN')
+        file = d.getVar('FILE')
         msg = "WEBOS_VERSION '%s' for recipe '%s' (file '%s') contains submission 0, which indicates using AUTOREV or SHA-1 without matching tag and cannot be used in official builds." % (webos_version, pn, file)
         oe.qa.handle_error("webos-enh-sub-autorev-error", msg, d)
     elif (len(srcrev) != 40 or (False in [c in "abcdef0123456789" for c in srcrev])):
-        file = d.getVar('FILE', True)
+        file = d.getVar('FILE')
         bb.error("%s: SRCREV needs to contain 40-character SHA1" % file)
 }
 
@@ -241,18 +241,18 @@ python submission_sanity_check() {
                 msg = "Revision '%s' defined in WEBOS_VERSION for recipe '%s' (file '%s') isn't included in branch '%s'" % (rev, pn, file, branch_in_webos_version)
                 oe.qa.handle_error("webos-enh-sub-error", msg, d)
 
-    src_uri = (d.getVar('SRC_URI', True) or "").split()
+    src_uri = (d.getVar('SRC_URI') or "").split()
     if len(src_uri) == 0:
         return
 
-    externalsrc = d.getVar('EXTERNALSRC', True) or ""
+    externalsrc = d.getVar('EXTERNALSRC') or ""
     if len(externalsrc) != 0:
         return
 
     found_first = False
-    workdir = d.getVar('WORKDIR', True)
-    pn = d.getVar('PN', True)
-    file = d.getVar('FILE', True)
+    workdir = d.getVar('WORKDIR')
+    pn = d.getVar('PN')
+    file = d.getVar('FILE')
     fetcher = bb.fetch.Fetch(src_uri, d)
     urldata = fetcher.ud
     autoinc_templ = 'AUTOINC+'
@@ -266,8 +266,8 @@ python submission_sanity_check() {
                 break
             found_first = True
             destsuffix_param = urldata[u].parm['destsuffix'] if 'destsuffix' in urldata[u].parm else 'git'
-            webos_version = d.getVar('WEBOS_VERSION', True)
-            srcrev = d.getVar('SRCREV', True)
+            webos_version = d.getVar('WEBOS_VERSION')
+            srcrev = d.getVar('SRCREV')
             name = urldata[u].parm['name'] if 'name' in urldata[u].parm else 'default'
             try:
                 rev = urldata[u].method.sortable_revision(urldata[u], d, name)
@@ -280,8 +280,8 @@ python submission_sanity_check() {
             elif rev.startswith(autoinc_templ):
                 rev = rev[len(autoinc_templ):]
 
-            webos_git_repo_tag = d.getVar('WEBOS_GIT_REPO_TAG', True)
-            webos_submission = d.getVar('WEBOS_SUBMISSION', True)
+            webos_git_repo_tag = d.getVar('WEBOS_GIT_REPO_TAG')
+            webos_submission = d.getVar('WEBOS_SUBMISSION')
             default_webos_git_repo_tag = "submissions/%s" % webos_submission
             if not srcrev:
                 # Recipe needs to have SRCREV set one way or another
@@ -301,7 +301,7 @@ python submission_sanity_check() {
 
             if not 'nobranch' in urldata[u].parm or urldata[u].parm['nobranch'] != "1":
                 branch_in_src_uri = urldata[u].parm['branch'] if 'branch' in urldata[u].parm else 'master'
-                branch_in_webos_version = d.getVar('WEBOS_GIT_PARAM_BRANCH', True)
+                branch_in_webos_version = d.getVar('WEBOS_GIT_PARAM_BRANCH')
                 webos_enhsub_branch_sanity_check(d, u, fetcher, branch_in_webos_version, branch_in_src_uri, pn, file, checkout, rev)
     if not found_first:
         msg = "Recipe '%s' (file '%s') doesn't have git repository without 'name' parameter or with 'name=main' in SRC_URI, webos_enhanced_submission bbclass shouldn't be inherited here (it has nothing to do)" % (pn, file)

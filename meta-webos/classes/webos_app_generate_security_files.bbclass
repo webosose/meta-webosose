@@ -63,12 +63,12 @@ def webos_app_generate_security_files_write_permission_file(d, app_info):
         if pub_bus:
             permission[key].append("public")
 
-    if d.getVar("DISTRO", True) == "webos" or d.getVar("DISTRO", True) == "webos-auto":
+    if d.getVar("DISTRO") == "webos" or d.getVar("DISTRO") == "webos-auto":
         if type == "qml":
             permission[key].append("application.operation")
 
-    dst_dir         = d.getVar("D", True)
-    permissions_dir = d.getVar("webos_sysbus_permissionsdir", True)
+    dst_dir         = d.getVar("D")
+    permissions_dir = d.getVar("webos_sysbus_permissionsdir")
     permission_file = permissions_dir + "/" + app_id + ".app.json"
 
     if not os.path.exists(dst_dir + permissions_dir):
@@ -91,8 +91,8 @@ def webos_app_generate_security_files_write_role_file(d, app_info):
     role = {}
     if type == "native":
         exe_name = app_info["main"]
-        app_dir = d.getVar("webos_applicationsdir", True)
-        role["exeName"] = app_dir + "/" + d.getVar("BPN", True) + "/" + exe_name
+        app_dir = d.getVar("webos_applicationsdir")
+        role["exeName"] = app_dir + "/" + d.getVar("BPN") + "/" + exe_name
         role["type"]  = "regular"
         role["allowedNames"] = [app_id + "*"]
         role["permissions"] = [{"service": app_id, "outbound": ["*"] }]
@@ -104,8 +104,8 @@ def webos_app_generate_security_files_write_role_file(d, app_info):
         role["permissions"] = [{"service": app_id + "-*", "outbound": ["*"] }]
         role["trustLevel"] = trustLevelKey
 
-    dst_dir   = d.getVar("D", True)
-    roles_dir = d.getVar("webos_sysbus_rolesdir", True)
+    dst_dir   = d.getVar("D")
+    roles_dir = d.getVar("webos_sysbus_rolesdir")
     role_file = roles_dir + "/" + app_id + ".app.json"
 
     if not os.path.exists(dst_dir + roles_dir):
@@ -149,23 +149,23 @@ fakeroot python do_configure_security() {
     import json
     import os.path
 
-    if d.getVar("WEBOS_SYSTEM_BUS_CONFIGURE_FILES", True) != "TRUE":
+    if d.getVar("WEBOS_SYSTEM_BUS_CONFIGURE_FILES") != "TRUE":
         return
 
-    dst_dir = d.getVar("D", True)
-    app_dir = dst_dir + d.getVar("webos_applicationsdir", True)
+    dst_dir = d.getVar("D")
+    app_dir = dst_dir + d.getVar("webos_applicationsdir")
 
     # ignore component that isn't app
     if not os.path.exists(app_dir):
         return
 
-    roles_dir     = dst_dir + d.getVar("webos_sysbus_rolesdir", True)
-    pub_roles_dir = dst_dir + d.getVar("webos_sysbus_pubrolesdir", True)
-    prv_roles_dir = dst_dir + d.getVar("webos_sysbus_prvrolesdir", True)
+    roles_dir     = dst_dir + d.getVar("webos_sysbus_rolesdir")
+    pub_roles_dir = dst_dir + d.getVar("webos_sysbus_pubrolesdir")
+    prv_roles_dir = dst_dir + d.getVar("webos_sysbus_prvrolesdir")
 
     apps = webos_app_generate_security_files_get_immediate_subdirectories(app_dir)
 
-    pkg_name = d.getVar("PN", True)
+    pkg_name = d.getVar("PN")
     for app in apps:
         app_info_file = app_dir + "/" + app + "/appinfo.json"
 

@@ -55,14 +55,14 @@ def relative_rpaths(paths, base):
         relpaths.add(os.path.join('$ORIGIN', os.path.relpath(p, base)))
     return '-rpath=' + ':'.join(relpaths) if len(relpaths) else ''
 
-RUST_LIB_RPATH_FLAGS ?= "${@relative_rpaths(d.getVar('RUST_RPATH_ABS', True), d.getVar('rustlibdest', True))}"
-RUST_BIN_RPATH_FLAGS ?= "${@relative_rpaths(d.getVar('RUST_RPATH_ABS', True), d.getVar('rustbindest', True))}"
+RUST_LIB_RPATH_FLAGS ?= "${@relative_rpaths(d.getVar('RUST_RPATH_ABS'), d.getVar('rustlibdest'))}"
+RUST_BIN_RPATH_FLAGS ?= "${@relative_rpaths(d.getVar('RUST_RPATH_ABS'), d.getVar('rustbindest'))}"
 
 def libfilename(d):
-    if d.getVar('CRATE_TYPE', True) == 'dylib':
-        return d.getVar('LIBNAME', True) + '.so'
+    if d.getVar('CRATE_TYPE') == 'dylib':
+        return d.getVar('LIBNAME') + '.so'
     else:
-        return d.getVar('LIBNAME', True) + '.rlib'
+        return d.getVar('LIBNAME') + '.rlib'
 
 def link_args(d, bin):
     linkargs = []
@@ -70,7 +70,7 @@ def link_args(d, bin):
         rpaths = d.getVar('RUST_BIN_RPATH_FLAGS', False)
     else:
         rpaths = d.getVar('RUST_LIB_RPATH_FLAGS', False)
-        if d.getVar('CRATE_TYPE', True) == 'dylib':
+        if d.getVar('CRATE_TYPE') == 'dylib':
             linkargs.append('-soname')
             linkargs.append(libfilename(d))
     if len(rpaths):

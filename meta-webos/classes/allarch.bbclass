@@ -9,7 +9,7 @@
 require ${COREBASE}/meta/classes/allarch.bbclass
 
 python () {
-    if d.getVar("PACKAGE_ARCH", True) == "all":
+    if d.getVar("PACKAGE_ARCH") == "all":
         # Reset *_OPTIMIZATION, because there is
         # TARGET_CFLAGS -> SELECTED_OPTIMIZATION -> FULL_OPTIMIZATION -> WEBOS_MINSIZE_CCARGS -> feature-webos-minsize.inc
         # dependency and MACHINEs with and without minsize in TUNE_FEATURE have different sstate signature for allarch recipes

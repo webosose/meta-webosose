@@ -12,18 +12,18 @@ def webos_configure_manifest_template():
     return manifest
 
 def webos_configure_manifest_warn(d, message):
-    pn = d.getVar("BPN", True)
+    pn = d.getVar("BPN")
     bb.warn("webos_configure_manifest: warning in package: %s, with message: %s" % (pn, message))
 
 def webos_configure_manifest_note(d, message):
-    pn = d.getVar("PN", True)
+    pn = d.getVar("PN")
     bb.note("webos_configure_manifest: note in package: %s, with message: %s" % (pn, message))
 
 def webos_configure_manifest_lookup_files_by_ext(d, dir_var, ext):
     ret = []
 
-    dst = d.getVar("D", True)
-    rel_dir = d.getVar(dir_var, True)
+    dst = d.getVar("D")
+    rel_dir = d.getVar(dir_var)
     abs_dir = dst + rel_dir
 
     if not os.path.exists(abs_dir):
@@ -36,8 +36,8 @@ def webos_configure_manifest_lookup_files_by_ext(d, dir_var, ext):
     return sorted(ret)
 
 def webos_configure_manifest_lookup_file_by_name(d, dir_name, srv_name):
-    dst = d.getVar("D", True)
-    rel_dir = d.getVar(dir_name, True)
+    dst = d.getVar("D")
+    rel_dir = d.getVar(dir_name)
     abs_dir = dst + rel_dir
 
     if not os.path.exists(abs_dir):
@@ -178,7 +178,7 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
         if not is_valid_version(manifest["version"]):
             webos_configure_manifest_warn(d, "Incompatible version string found in %s" % app_info_file)
 
-        dst = d.getVar("D", True)
+        dst = d.getVar("D")
 
         # Possible behaviuors:
         # 1. There is native or native_builtin type
@@ -226,13 +226,13 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
             if role_file_pub: manifest["roleFilesPub"] = [role_file_pub]
             if role_file_prv: manifest["roleFilesPrv"] = [role_file_prv]
         else:
-            role_dir_rel = d.getVar("webos_sysbus_rolesdir", True)
+            role_dir_rel = d.getVar("webos_sysbus_rolesdir")
             role_file = os.path.join(role_dir_rel, manifest["id"] + ".app.json")
             if not os.path.exists(dst + role_file):
                 webos_configure_manifest_note(d, "Can not determinate role file for application %s" % manifest["id"])
                 return None
 
-            perm_dir = d.getVar("webos_sysbus_permissionsdir", True)
+            perm_dir = d.getVar("webos_sysbus_permissionsdir")
             perm_file = os.path.join(perm_dir, manifest["id"] + ".app.json")
             if not os.path.exists(dst + perm_file):
                 webos_configure_manifest_warn(d, "Can not determinate client permissions file for application %s" % manifest["id"])
@@ -251,8 +251,8 @@ def webos_configure_manifest_application(d):
         return [name for name in os.listdir(root)
             if os.path.isdir(os.path.join(root, name))]
 
-    dst = d.getVar("D", True)
-    app_dir = dst + d.getVar("webos_applicationsdir", True)
+    dst = d.getVar("D")
+    app_dir = dst + d.getVar("webos_applicationsdir")
     if not os.path.exists(app_dir):
         return manifests
 
@@ -265,7 +265,7 @@ def webos_configure_manifest_application(d):
 
         if not os.path.exists(app_info_file):
             # ignore application template
-            if app_dir == d.getVar("BPN", True) and len(apps_dir) != 1:
+            if app_dir == d.getVar("BPN") and len(apps_dir) != 1:
                 webos_configure_manifest_warn(d, "There is no application info for %s" % app)
             continue
 
@@ -277,7 +277,7 @@ def webos_configure_manifest_application(d):
 def webos_configure_manifest_package(d):
     import os
 
-    pn = d.getVar("BPN", True)
+    pn = d.getVar("BPN")
 
     manifest = webos_configure_manifest_template()
 
@@ -314,7 +314,7 @@ fakeroot python do_configure_manifest() {
 
     manifests = []
 
-    manifest_type = d.getVar("WEBOS_SYSTEM_BUS_MANIFEST_TYPE", True)
+    manifest_type = d.getVar("WEBOS_SYSTEM_BUS_MANIFEST_TYPE")
     if manifest_type == "SERVICE":
         manifests.extend(webos_configure_manifest_service(d))
     elif manifest_type == "APPLICATION":
@@ -330,7 +330,7 @@ fakeroot python do_configure_manifest() {
         webos_configure_manifest_note(d, "No manifests were configured")
         return
 
-    man_dir = d.getVar("D", True) + d.getVar("webos_sysbus_manifestsdir", True)
+    man_dir = d.getVar("D") + d.getVar("webos_sysbus_manifestsdir")
     if not os.path.exists(man_dir):
         os.makedirs(man_dir)
 

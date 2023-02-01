@@ -15,11 +15,11 @@ inherit webos_version
 do_fetch[prefuncs] += "webos_submissions_version_sanity_check"
 
 python webos_submissions_version_sanity_check() {
-    webos_version = d.getVar('WEBOS_VERSION', True)
-    webos_component_version = d.getVar('WEBOS_COMPONENT_VERSION', True)
-    pv = d.getVar('PV', True)
-    file = d.getVar('FILE', True)
-    src_uri = d.getVar('SRC_URI', True)
+    webos_version = d.getVar('WEBOS_VERSION')
+    webos_component_version = d.getVar('WEBOS_COMPONENT_VERSION')
+    pv = d.getVar('PV')
+    file = d.getVar('FILE')
+    src_uri = d.getVar('SRC_URI')
     if not webos_version or webos_version == '0':
         bb.fatal("%s: WEBOS_VERSION needs to be defined for recipes inheriting webos_submissions or webos_enhanced_submissions" % file)
     if not webos_component_version or webos_component_version == '0':

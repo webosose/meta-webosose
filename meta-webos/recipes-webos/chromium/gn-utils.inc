@@ -71,7 +71,7 @@ def write_toolchain_file(d, file_path):
 
     native_toolchain = {
         'toolchain_name': 'yocto_native',
-        'current_cpu': gn_arch_name(d.getVar('BUILD_ARCH', True)),
+        'current_cpu': gn_arch_name(d.getVar('BUILD_ARCH')),
         'cc': d.expand('${BUILD_CC}'),
         'cxx': d.expand('${BUILD_CXX}'),
         'ar': d.expand('${BUILD_AR}'),
@@ -84,7 +84,7 @@ def write_toolchain_file(d, file_path):
     }
     target_toolchain = {
         'toolchain_name': 'yocto_target',
-        'current_cpu': gn_arch_name(d.getVar('TUNE_ARCH', True)),
+        'current_cpu': gn_arch_name(d.getVar('TUNE_ARCH')),
         'cc': d.expand('${CC}'),
         'cxx': d.expand('${CXX}'),
         'ar': d.expand('${AR}'),

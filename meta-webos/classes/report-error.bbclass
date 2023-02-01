@@ -23,7 +23,7 @@ ERR_REPORT_UPLOAD_ALL[type] = "boolean"
 ERR_REPORT_UPLOAD_ALL ?= "0"
 
 def errorreport_loadeventdata(e):
-    logpath = e.data.getVar('ERR_REPORT_DIR', True)
+    logpath = e.data.getVar('ERR_REPORT_DIR')
     jsonfile = os.path.join(logpath, "error-report.txt")
     return errorreport_loaddata(jsonfile)
 
@@ -48,7 +48,7 @@ def errorreport_loaddata(jsonfile):
 def errorreport_savedata(e, newdata, file):
     import json
     import codecs
-    logpath = e.data.getVar('ERR_REPORT_DIR', True)
+    logpath = e.data.getVar('ERR_REPORT_DIR')
     jsonfile = os.path.join(logpath, file)
     with codecs.open(jsonfile, 'w', 'utf-8') as f:
         json.dump(newdata, f, indent=4, sort_keys=True)
@@ -59,8 +59,8 @@ def errorreport_get_user_info(e):
     Read user info from variables or from git config
     """
     import subprocess
-    username = e.data.getVar('ERR_REPORT_USERNAME', True)
-    email = e.data.getVar('ERR_REPORT_EMAIL', True)
+    username = e.data.getVar('ERR_REPORT_USERNAME')
+    email = e.data.getVar('ERR_REPORT_EMAIL')
     if not username or email:
         # try to read them from git config
         try:
@@ -83,9 +83,9 @@ def errorreport_get_hostname():
 
 def errorreport_get_icecc(e):
     import subprocess
-    path = e.data.getVar("WEBOS_EXTRA_PATH", True);
+    path = e.data.getVar("WEBOS_EXTRA_PATH");
     # enabled in bitbake metadata
-    icecc = e.data.getVar("ICECC_DISABLED", True);
+    icecc = e.data.getVar("ICECC_DISABLED");
     # return code from checkicecc.py
     icecc_status = "0"
     # output with scheduler and network name from checkicecc.py
@@ -163,7 +163,7 @@ def errorreport_checkmirror(name, url):
     return ""
 
 def errorreport_get_sstatemirror(e):
-    sstatemirror = e.data.getVar("SSTATE_MIRRORS", True)
+    sstatemirror = e.data.getVar("SSTATE_MIRRORS")
     # assume simplest form:
     # file://.* file:///oe_cache/sstate-cache/PATH \n
     # errorreport_checkmirror expects path starting with file:// but without /PATH suffix
@@ -176,9 +176,9 @@ def errorreport_get_sstatemirror(e):
     return sstatemirror
 
 def errorreport_get_premirror(e):
-    premirror = e.data.getVar("PREMIRRORS", True)
+    premirror = e.data.getVar("PREMIRRORS")
     if premirror:
-        url = e.data.getVar("SOURCE_MIRROR_URL", True)
+        url = e.data.getVar("SOURCE_MIRROR_URL")
         if url:
             premirror += errorreport_checkmirror("premirror", url)
     return premirror
@@ -244,7 +244,7 @@ def errorreport_get_top_20_tasks(e, jsondata):
 
 def errorreport_get_mcf_status(e):
     import os.path
-    mcfstatus = os.path.join(e.data.getVar('TOPDIR', True), 'mcf.status')
+    mcfstatus = os.path.join(e.data.getVar('TOPDIR'), 'mcf.status')
     if os.path.isfile(mcfstatus):
         with open(mcfstatus) as f:
             content = f.read()
@@ -253,7 +253,7 @@ def errorreport_get_mcf_status(e):
 
 def errorreport_get_time_log(d):
     import os.path
-    timefile = os.path.join(d.getVar('TOPDIR', True), 'time.txt')
+    timefile = os.path.join(d.getVar('TOPDIR'), 'time.txt')
     trigger_time = "0"
     if os.path.isfile(timefile):
         trigger_line = "TIME: jenkins trigger: "
@@ -274,8 +274,8 @@ def errorreport_senddata(e, jsonfile):
     import os, json
 
     if os.path.isfile(jsonfile):
-        server = e.data.getVar('ERR_REPORT_SERVER', True)
-        port = e.data.getVar('ERR_REPORT_PORT', True)
+        server = e.data.getVar('ERR_REPORT_SERVER')
+        port = e.data.getVar('ERR_REPORT_PORT')
         bb.note("Uploading the report to %s:%s" % (server, port))
 
         try:
@@ -315,18 +315,18 @@ python errorreport_handler () {
         import json, time
         import codecs
 
-        logpath = e.data.getVar('ERR_REPORT_DIR', True)
+        logpath = e.data.getVar('ERR_REPORT_DIR')
         datafile = os.path.join(logpath, "error-report.txt")
         if isinstance(e, bb.event.BuildStarted):
             bb.utils.mkdirhier(logpath)
             jsondata = {}
-            machine = e.data.getVar("MACHINE", True)
+            machine = e.data.getVar("MACHINE")
             jsondata['version'] = '1'
             jsondata['machine'] = machine
-            jsondata['build_sys'] = e.data.getVar("BUILD_SYS", True)
-            jsondata['nativelsb'] = e.data.getVar("NATIVELSBSTRING", True)
-            jsondata['distro'] = e.data.getVar("DISTRO", True)
-            jsondata['target_sys'] = e.data.getVar("TARGET_SYS", True)
+            jsondata['build_sys'] = e.data.getVar("BUILD_SYS")
+            jsondata['nativelsb'] = e.data.getVar("NATIVELSBSTRING")
+            jsondata['distro'] = e.data.getVar("DISTRO")
+            jsondata['target_sys'] = e.data.getVar("TARGET_SYS")
             jsondata['sstatemirror'] = errorreport_get_sstatemirror(e)
             jsondata['premirror'] = errorreport_get_premirror(e)
             gitmirror = errorreport_get_gitmirror()
@@ -338,9 +338,9 @@ python errorreport_handler () {
             jsondata['cpu'] = cpu
             jsondata['disk'] = disk
             jsondata['mcf'] = errorreport_get_mcf_status(e)
-            jsondata['bb_number_threads'] = e.data.getVar("BB_NUMBER_THREADS", True)
-            jsondata['parallel_make'] = e.data.getVar("PARALLEL_MAKE", True)
-            jsondata['icecc_parallel_make'] = e.data.getVar("ICECC_PARALLEL_MAKE", True)
+            jsondata['bb_number_threads'] = e.data.getVar("BB_NUMBER_THREADS")
+            jsondata['parallel_make'] = e.data.getVar("PARALLEL_MAKE")
+            jsondata['icecc_parallel_make'] = e.data.getVar("ICECC_PARALLEL_MAKE")
             (icecc, icecc_status, icecc_check) = errorreport_get_icecc(e)
             jsondata['icecc'] = icecc
             jsondata['icecc_status'] = icecc_status
@@ -359,10 +359,10 @@ python errorreport_handler () {
             jsondata['username'] = username.strip()
             jsondata['email'] = email.strip()
             jsondata['hostname'] = errorreport_get_hostname()
-            jsondata['distro_version'] = e.data.getVar("DISTRO_VERSION", True)
-            jsondata['manufacturing_version'] = e.data.getVar("WEBOS_DISTRO_MANUFACTURING_VERSION", True)
-            jsondata['release_codename'] = e.data.getVar("WEBOS_DISTRO_RELEASE_CODENAME", True)
-            jsondata['build_id'] = e.data.getVar("WEBOS_DISTRO_BUILD_ID", True)
+            jsondata['distro_version'] = e.data.getVar("DISTRO_VERSION")
+            jsondata['manufacturing_version'] = e.data.getVar("WEBOS_DISTRO_MANUFACTURING_VERSION")
+            jsondata['release_codename'] = e.data.getVar("WEBOS_DISTRO_RELEASE_CODENAME")
+            jsondata['build_id'] = e.data.getVar("WEBOS_DISTRO_BUILD_ID")
             lock = bb.utils.lockfile(datafile + '.lock')
             errorreport_savedata(e, jsondata, "error-report.txt")
             bb.utils.unlockfile(lock)
@@ -370,7 +370,7 @@ python errorreport_handler () {
         elif isinstance(e, bb.build.TaskFailed):
             task = e.task
             taskdata={}
-            log = e.data.getVar('BB_LOGFILE', True)
+            log = e.data.getVar('BB_LOGFILE')
             taskdata['package'] = e.data.expand("${PN}")
             version = e.data.expand("${EXTENDPE}${PV}-${PR}")
             if len(version) > 200:
@@ -384,7 +384,7 @@ python errorreport_handler () {
 
                     # Replace host-specific paths so the logs are cleaner
                     for d in ("TOPDIR", "TMPDIR"):
-                        s = e.data.getVar(d, True)
+                        s = e.data.getVar(d)
                         if s:
                             logdata = logdata.replace(s, d)
 
@@ -432,7 +432,7 @@ python errorreport_handler () {
             upload_all = oe.data.typed_value('ERR_REPORT_UPLOAD_ALL', e.data)
             failures = jsondata['failures']
             if failures or (upload_all and (jsondata['all_tasks'] > 100 or jsondata['build_time'] > 300)):
-                filename = "error_report_" + e.data.getVar("BUILDNAME", True) + ".txt"
+                filename = "error_report_" + e.data.getVar("BUILDNAME") + ".txt"
                 jsonfile = errorreport_savedata(e, jsondata, filename)
                 bb.note("The report of this build is stored in: %s" % (jsonfile))
                 if upload_all or (failures and upload_failures):

@@ -155,8 +155,8 @@ WEBOS_DISTRO_BUILD_ID ?= "unofficial"
 # WEBOS_DISTRO_BRANCHPOINT_MICRO_VERSION with its hyphen replaced with a period)
 # is always prepended to the suffix, but this can be overridden.
 WEBOS_IMAGE_BUILD_CODENAME ?= "${@ \
-    '-' + d.getVar('WEBOS_DISTRO_BRANCHPOINT_MICRO_VERSION', True).replace('-', '.') \
-    if d.getVar('WEBOS_DISTRO_BRANCHPOINT_MICRO_VERSION', True) else \
+    '-' + d.getVar('WEBOS_DISTRO_BRANCHPOINT_MICRO_VERSION').replace('-', '.') \
+    if d.getVar('WEBOS_DISTRO_BRANCHPOINT_MICRO_VERSION') else \
     '-${WEBOS_DISTRO_BUILD_CODENAME}' \
 }"
 

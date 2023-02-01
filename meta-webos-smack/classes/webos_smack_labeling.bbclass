@@ -17,11 +17,11 @@ fakeroot python do_smack_labeling() {
     bb.note('Smack labeling...')
 
     # Expanded Smack variables
-    ROOTFS = d.getVar('IMAGE_ROOTFS', True)
-    LABELS_FILE = d.getVar('SMACK_LABELS_FILE', True)
-    SMACK_RULES_GEN = ROOTFS + d.expand(d.getVar('SMACK_RULES_GEN', True))
-    APP_DIR = ROOTFS + d.expand(d.getVar('APP_DIR', True))
-    APP_RULES_DIR = ROOTFS + d.expand(d.getVar('APP_RULES_DIR', True))
+    ROOTFS = d.getVar('IMAGE_ROOTFS')
+    LABELS_FILE = d.getVar('SMACK_LABELS_FILE')
+    SMACK_RULES_GEN = ROOTFS + d.expand(d.getVar('SMACK_RULES_GEN'))
+    APP_DIR = ROOTFS + d.expand(d.getVar('APP_DIR'))
+    APP_RULES_DIR = ROOTFS + d.expand(d.getVar('APP_RULES_DIR'))
 
 
     def lgetxattr(f, attr):

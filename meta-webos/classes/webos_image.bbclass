@@ -20,11 +20,11 @@ FEATURE_PACKAGES_webos-test = "packagegroup-webos-test"
 WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE = "ssh-server-dropbear"
 WEBOS_IMAGE_DEFAULT_FEATURES = "package-management"
 
-WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) != '' else ''}"
+WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}' if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
 WEBOS_IMAGE_DEFAULT_FEATURES:append:emulator = " ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}"
 
 IMAGE_FEATURES[validitems] += "webos-production-image"
-WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE',True) == '' else ''}"
+WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE') == '' else ''}"
 
 WEBOS_IMAGE_BASE_INSTALL = '\
     packagegroup-core-boot \

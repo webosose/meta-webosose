@@ -6,7 +6,7 @@
 #
 
 def get_nodejs_arch(d):
-    target_arch = d.getVar('TRANSLATED_TARGET_ARCH', True)
+    target_arch = d.getVar('TRANSLATED_TARGET_ARCH')
 
     if target_arch == "x86-64":
         target_arch = "x64"
