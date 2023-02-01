@@ -15,7 +15,7 @@ WEBOS_QMLLINT_OPTIONS ?= ""
 get_qmllint_options() {
     local options=""
     if [ "${WEBOS_QMLLINT_OPTIONS}" = "" ]; then
-        if [ "${QT_VERSION}" = "5" ]; then
+        if [ "${@d.getVar('QT_VERSION')[0]}" = "5" ]; then
             options=""
         else
             version=$(${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint -v | awk '{print $2}')
