@@ -15,7 +15,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qtdeclarative pmloglib luna-service2 libpbnjson"
-DEPENDS:append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
+DEPENDS:append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION')[0] == '6' else '' }"
 
 RDEPENDS:${PN} += "qml-webos-framework qml-webos-bridge"
 

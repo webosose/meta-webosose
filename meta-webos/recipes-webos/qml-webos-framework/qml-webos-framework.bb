@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qt-features-webos qtdeclarative qtwayland-webos pmloglib luna-service2 qttools-native"
-DEPENDS:append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION', True) == '6' else '' }"
+DEPENDS:append = " ${@ 'qtshadertools-native' if d.getVar('QT_VERSION')[0] == '6' else '' }"
 RDEPENDS:${PN} = "qtgraphicaleffects-qmlplugins"
 
 RPROVIDES:${PN}-examples = " \
