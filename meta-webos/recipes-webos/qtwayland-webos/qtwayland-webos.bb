@@ -14,7 +14,7 @@ DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos way
 WEBOS_VERSION = "6.0.0-84_23dffb9eccca04a91021971a6931e1d8fc458741"
 PR = "r18"
 
-QT_BUILD_SYSTEM ?= "${@ 'cmake' if d.getVar('QT_VERSION', True) == '6' else 'qmake' }"
+QT_BUILD_SYSTEM ?= "${@ 'cmake' if d.getVar('QT_VERSION')[0] == '6' else 'qmake' }"
 
 PACKAGECONFIG ??= ""
 
