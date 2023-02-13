@@ -8,9 +8,14 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/media-codec-interface/:"
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r1"
+PR = "r2"
 
 SRC_URI += "file://0001-chrono-namespace-changed.patch"
+
+CXXFLAGS +=" \
+    -I${STAGING_INCDIR}/media-resource-calculator-clang \
+    -I${STAGING_INCDIR}/cbe \
+"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -19,6 +24,12 @@ DEPENDS:remove = "media-resource-calculator umediaserver"
 DEPENDS += "media-resource-calculator-clang umediaserver-clang"
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"
+
+do_configure:prepend() {
+    [ -f ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator-clang.pc ] && \
+    mv -n ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator-clang.pc ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator.pc
+}
+
 do_install:append() {
     install -d ${D}/${LIBCBE_DIR}
     mv ${D}/${libdir}/*.so ${D}/${LIBCBE_DIR}

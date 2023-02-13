@@ -6,7 +6,7 @@ require g-media-pipeline.bb
 
 WEBOS_REPO_NAME = "g-media-pipeline"
 
-PR = "r1"
+PR = "r2"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -18,15 +18,25 @@ OECMAKE_TARGET_COMPILE = "gmp-player-client"
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"
 
+CXXFLAGS +=" \
+    -I${STAGING_INCDIR}/media-resource-calculator-clang \
+    -I${STAGING_INCDIR}/cbe \
+"
+
+do_configure:prepend() {
+    [ -f ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator-clang.pc ] && \
+    mv -n ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator-clang.pc ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator.pc
+}
+
 do_install() {
     install -d ${D}/${LIBCBE_DIR}
     install -v -m 644 ${B}/src/mediaplayerclient/libgmp-player-client.so ${D}/${LIBCBE_DIR}
     install -v -m 644 ${B}/src/player/libgmp-player.so ${D}/${LIBCBE_DIR}
 
     install -d ${D}/${PKGCONFIG_DIR}
-    install -v -m 644 ${S}/src/mediaplayerclient/gmp-player-client.pc ${D}/${PKGCONFIG_DIR}
+    install -v -m 644 ${S}/src/mediaplayerclient/gmp-player-client.pc ${D}/${PKGCONFIG_DIR}/gmp-player-client-clang.pc
 
-    install -d ${D}/${includedir}/gmp
+    install -d ${D}${includedir}/cbe/gmp
     install -v -m 644 \
         ${S}/src/player/Player.h \
         ${S}/src/player/PlayerTypes.h \
@@ -41,7 +51,7 @@ do_install() {
         ${S}/src/playerfactory/PlayerFactory.h \
         ${S}/src/mediaplayerclient/MediaPlayerClient.h \
         ${S}/src/lunaserviceclient/LunaServiceClient.h \
-        ${D}/${includedir}/gmp
+        ${D}/${includedir}/cbe/gmp
 }
 
 FILES:${PN} += "${LIBCBE_DIR}/lib*${SOLIBSDEV}"
