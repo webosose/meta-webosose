@@ -18,8 +18,8 @@ RDEPENDS:${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fs
 
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
-WEBOS_VERSION = "1.0.1-79_6cb1a8a1eeb0a496a88ecaa347b12f2eb47f6b31"
-PR = "r7"
+WEBOS_VERSION = "1.0.1-81_3f0b9ce85ba71c04e62fbffb7007f3340d47eeea"
+PR = "r8"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -37,11 +37,7 @@ USERADD_PARAM:${PN} = "-u 1023 -d /home/pdmuser -m -s /bin/sh pdmuser"
 GROUPADD_PARAM:${PN} = "-g 2023 pdmgroup"
 USERADD_PACKAGES = "${PN}"
 
-# [http://gpro.lge.com/c/webosose/com.webos.service.pdm/+/348182 Fix luna-service2 usage]
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-luna-service2-usage.patch \
-"
-
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES:${PN} += "${datadir}"
