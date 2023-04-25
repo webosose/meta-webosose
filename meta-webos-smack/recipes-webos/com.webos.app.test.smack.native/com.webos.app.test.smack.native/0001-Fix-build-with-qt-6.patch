@@ -1,9 +1,12 @@
-From 06d3a7c0034c0f9a28c5dcd5a6a7b2fad817316b Mon Sep 17 00:00:00 2001
+From cff03666227c901a2ff3ff7d59d33ad277dcead4 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Tue, 13 Jul 2021 02:19:52 -0700
 Subject: [PATCH] Fix build with qt-6
 
-* fixes:
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
 | ../git/main.cpp: In function 'QString readSmackLabel()':
 | ../git/main.cpp:27:12: error: variable 'QFile f' has initializer but incomplete type
 |    27 |     QFile f("/proc/self/attr/current");
@@ -15,8 +18,21 @@ Subject: [PATCH] Fix build with qt-6
 |    28 |     if (f.open(QFile::ReadOnly | QFile::Text)) {
 |       |                                         ^~~~
 
-Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-11630] Add Upstream-Status to existing .patch files in meta-lg-webos
+[WRP-11864] CCC: Various build fixes and .patch files cleanup
+
+Change-Id: Ib9e9dfbf7ea7b7e2a013295818bbc11e497487da
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.app.test.smack.native/+/349091 Fix build with qt-6]
+
  main.cpp | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
