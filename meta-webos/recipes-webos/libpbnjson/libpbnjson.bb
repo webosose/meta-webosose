@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
-WEBOS_VERSION = "2.15.0-6_0dcc5f5754f51a22e1e1342c61bb7ef08f597346"
+WEBOS_VERSION = "2.15.0-7_2ca1e9712f328595868cf9cad1454b69e497692e"
 PR = "r9"
 
 inherit webos_component
