@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "nyx-lib luna-service2 json-c libxml2 sqlite3 glib-2.0"
 
-WEBOS_VERSION = "2.0.0-15_4a25154f281188b2b5f04e1819996e405399133c"
+WEBOS_VERSION = "2.0.0-16_219e7aa3acf4813938bdcc5a13df908feb353476"
 PR = "r10"
 
 inherit webos_component
