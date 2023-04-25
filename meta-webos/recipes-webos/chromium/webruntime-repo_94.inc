@@ -34,6 +34,7 @@ SRCREV_v8 = "20f6074f6735d664fc398c1ca74aceb5d291d646"
 # [http://gpro.lge.com/c/webosose/chromium94/+/344637 third_party/blink: Fix build with gcc-13]
 # [http://gpro.lge.com/c/webosose/chromium94/+/344638 extensions/renderer: Fix build with gcc-13]
 # [http://gpro.lge.com/c/webosose/chromium94/+/344639 swiftshader-llvm: Fix build with gcc-13]
+# [http://gpro.lge.com/c/webosose/chromium94/+/347887 umediaclient_impl: Fix build with gcc-13]
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRC_URI += " \
     file://0001-Fix-build-with-gcc-13.patch;patchdir=src/v8 \
@@ -65,4 +66,5 @@ SRC_URI += " \
     file://0026-third_party-blink-Fix-build-with-gcc-13.patch \
     file://0027-extensions-renderer-Fix-build-with-gcc-13.patch \
     file://0028-swiftshader-llvm-Fix-build-with-gcc-13.patch \
+    file://0029-umediaclient_impl-Fix-build-with-gcc-13.patch \
 "
