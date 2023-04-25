@@ -1,18 +1,20 @@
-From c4df08911d1e6ead0f17c7bcaa8398cbd0ce3ff7 Mon Sep 17 00:00:00 2001
+From b335e18905ee6eb7359f349c480cdc99923011a8 Mon Sep 17 00:00:00 2001
 From: Heegoo Han <heegoo.han@lge.com>
 Date: Thu, 4 Nov 2021 16:14:14 +0900
 Subject: [PATCH] virtual touch for emulator
 
 ---
+Upstream-Status: Inappropriate [Emulator specific]
+
  src/eglfs_webos/weboseglfsintegration.cpp | 73 ++++++++++++++++++++++-
  src/eglfs_webos/weboseglfsintegration.h   |  2 -
  2 files changed, 72 insertions(+), 3 deletions(-)
 
 diff --git a/src/eglfs_webos/weboseglfsintegration.cpp b/src/eglfs_webos/weboseglfsintegration.cpp
-index 56f4671..2c00a3f 100644
+index 2fc6c55..04c7af9 100644
 --- a/src/eglfs_webos/weboseglfsintegration.cpp
 +++ b/src/eglfs_webos/weboseglfsintegration.cpp
-@@ -127,6 +127,77 @@ void WebOSEglFSIntegration::createInputHandlers()
+@@ -138,6 +138,77 @@ void WebOSEglFSIntegration::createInputHandlers()
      if ((m_emulatorKeyboardManager) && (m_emulatorMouseManager)) {
          connect(m_emulatorKeyboardManager, &QEmulatorKeyboardManager::handleKeycodeSignal, m_emulatorMouseManager, &QEmulatorMouseManager::handleKeycodeSlot);
      }
@@ -90,7 +92,7 @@ index 56f4671..2c00a3f 100644
  }
  #else
  void WebOSEglFSIntegration::createInputHandlers()
-@@ -245,6 +316,7 @@ void WebOSEglFSIntegration::createInputHandlers()
+@@ -262,6 +333,7 @@ void WebOSEglFSIntegration::createInputHandlers()
      m_initTimer.setSingleShot(true);
      connect(&m_initTimer, &QTimer::timeout, this, &WebOSEglFSIntegration::updateWindowMapping);
  }
@@ -98,7 +100,7 @@ index 56f4671..2c00a3f 100644
  
  QPlatformWindow *WebOSEglFSIntegration::createPlatformWindow(QWindow *window) const
  {
-@@ -277,7 +349,6 @@ void WebOSEglFSIntegration::updateWindowMapping()
+@@ -294,7 +366,6 @@ void WebOSEglFSIntegration::updateWindowMapping()
      arrangeTouchDevices();
      arrangeKbdDevices();
  }
@@ -107,7 +109,7 @@ index 56f4671..2c00a3f 100644
  void WebOSEglFSIntegration::prepareOutputMapping(const QStringList &devices)
  {
 diff --git a/src/eglfs_webos/weboseglfsintegration.h b/src/eglfs_webos/weboseglfsintegration.h
-index 0777721..b14747e 100644
+index 399df0a..f86dc97 100644
 --- a/src/eglfs_webos/weboseglfsintegration.h
 +++ b/src/eglfs_webos/weboseglfsintegration.h
 @@ -66,7 +66,6 @@ public:
@@ -126,6 +128,3 @@ index 0777721..b14747e 100644
  
  private:
      QVector<QWindow *> m_windows;
--- 
-2.17.1
-

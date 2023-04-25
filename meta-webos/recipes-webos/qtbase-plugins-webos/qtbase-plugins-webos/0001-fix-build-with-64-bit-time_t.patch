@@ -1,4 +1,4 @@
-From e7d9160abdb3483178f4f2c8bc1ffa23e2b160a9 Mon Sep 17 00:00:00 2001
+From 9da8679e8f716e99ed4618fff657033fe4d102bc Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin2.jansa@lgepartner.com>
 Date: Wed, 18 Jan 2023 22:28:05 +0000
 Subject: [PATCH] fix build with 64-bit time_t
@@ -49,8 +49,22 @@ TOPDIR/BUILD/work/qemux86-webos-linux/qtbase-plugins-webos/1.0.0-14-r5/git/src/e
 TOPDIR/BUILD/work/qemux86-webos-linux/qtbase-plugins-webos/1.0.0-14-r5/git/src/eglfs_webos/emulator/qemulatorkeyboardhandler.cpp:126:28: error: 'struct input_event' has no member named 'time'
   126 |     ::gettimeofday(&led_ie.time, 0);
       |                            ^~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-11630] Add Upstream-Status to existing .patch files in meta-lg-webos
+[WRP-11864] CCC: Various build fixes and .patch files cleanup
+[WRP-7187] Fix build with 64-bit time_t
+
+Change-Id: I199e4f9b90de3b7aa82a2895caa86b214aab0ca7
 ---
-Upstream-Status: Pending
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/qtbase-plugins-webos/+/349068 fix build with 64-bit time_t]
 
  src/eglfs_webos/emulator/qemulatorkeyboardhandler.cpp | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
