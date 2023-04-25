@@ -6,14 +6,14 @@ SECTION = "webos/libs"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
-WEBOS_VERSION = "2.15.0-7_2ca1e9712f328595868cf9cad1454b69e497692e"
-PR = "r9"
+WEBOS_VERSION = "2.15.0-9_22a1342c50cc1f93934263c80033dec8cf8d2051"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
@@ -42,4 +42,3 @@ S = "${WORKDIR}/git"
 
 BBCLASSEXTEND = "native"
 
-SRC_URI += "file://0001-pbnjson.h-don-t-include-all-c-header-in-extern-C.patch"
