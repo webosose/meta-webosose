@@ -1,0 +1,66 @@
+From c72a6c747bb065b9ac7192982e26ef7f35218415 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 20 Mar 2023 16:08:19 +0000
+Subject: [PATCH] Fix luna-service2 usage
+
+:Release Notes:
+Since luna-service2 submission 143 from September 2012 ls2 headers
+should be included from luna-service2 directory.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/555483
+
+FAILED: obj/neva/pal_service/luna/luna_client/luna_client.o
+x86_64-webos-linux-g++  -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/webruntime/94.0.4606.128-pro.40-r63.2/recipe-sysroot -MMD -MF obj/neva/pal_service/luna/luna_client/luna_client.o.d -DENABLE_BROWSER_CONTROL_WEBAPI=1 -DENABLE_SAMPLE_WEBAPI=1 -DENABLE_MEMORYMANAGER_WEBAPI=1 -DENABLE_NETWORK_ERROR_PAGE_CONTROLLER_WEBAPI=1 -DENABLE_WEBOS_SERVICE_BRIDGE_WEBAPI=1 -DENABLE_WEBOS_SYSTEM_WEBAPI=1 -DENABLE_NETCAST_WEBAPI=1 -DNEVA_DCHECK_ALWAYS_ON=1 -DOZONE_PLATFORM_WAYLAND_EXTERNAL=1 -DNEVA_OZONE_PLATFORM_WAYLAND=1 -DOS_WEBOS=1 -DNEVA_VIDEO_HOLE=1 -DUSE_NEVA_APPRUNTIME=1 -DENABLE_WEBM_VIDEO_CODECS=1 -DUSE_CBE=1 -DUSE_PMLOG=1 -DUSE_NEVA_SUSPEND_MEDIA_CAPTURE=1 -DUSE_FILESCHEME_CODECACHE=1 -DUSE_SINGLE_WINDOW_MODE=1 -DWEBOS_SUBMISSION_NUMBER=40 -DUSE_LOCAL_STORAGE_TRACKER=1 -DUSE_LTTNG=1 -DUSE_UDEV -DUSE_AURA=1 -DUSE_GLIB=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FORTIFY_SOURCE=2 -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_2_40 -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_40 -I../../git/src/neva -Igen/neva -I../../git/src -Igen -I../../git/src/third_party/perfetto/include -Igen/third_party/perfetto/build_config -Igen/third_party/perfetto -I../../git/src/third_party/abseil-cpp -I../../git/src/third_party/boringssl/src/include -I../../git/src/third_party/protobuf/src -Igen/protoc_out -Wno-unused-variable -fno-ident -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -pthread -m64 -march=x86-64 -msse3 -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -Wall -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-comments -Wno-packed-not-aligned -Wno-attributes -Wno-missing-field-initializers -Wno-unused-parameter -O2 -fdata-sections -ffunction-sections -fno-omit-frame-pointer -g0 -fvisibility=hidden -ITOPDIR/BUILD/work/qemux86_64-webos-linux/webruntime/94.0.4606.128-pro.40-r63.2/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/webruntime/94.0.4606.128-pro.40-r63.2/recipe-sysroot/usr/lib/glib-2.0/include -std=gnu++14 -Wno-narrowing -Wno-class-memaccess -fno-exceptions -fno-rtti -fvisibility-inlines-hidden -c ../../git/src/neva/pal_service/luna/luna_client.cc -o obj/neva/pal_service/luna/luna_client/luna_client.o
+In file included from ../../git/src/neva/pal_service/luna/luna_client.cc:21:
+../../git/src/neva/pal_service/luna/luna_client_impl.h:21:10: fatal error: lunaservice.h: No such file or directory
+   21 | #include <lunaservice.h>
+      |          ^~~~~~~~~~~~~~~
+compilation terminated.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-10642] Remove the temporary work around from 2012 from luna-service2 recipe
+[WRP-11669] webruntime: Fix luna-service2 usage
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I26371320c49dc48f4c76aa3574795d85d10d68e2
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/348180 Fix luna-service2 usage]
+
+ src/base/neva/webos/luna_service_client.h    | 2 +-
+ src/neva/pal_service/luna/luna_client_impl.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/base/neva/webos/luna_service_client.h b/src/base/neva/webos/luna_service_client.h
+index b92aae985b..529964edf0 100644
+--- a/src/base/neva/webos/luna_service_client.h
++++ b/src/base/neva/webos/luna_service_client.h
+@@ -17,7 +17,7 @@
+ #ifndef BASE_NEVA_WEBOS_LUNA_SERVICE_CLIENT_H_
+ #define BASE_NEVA_WEBOS_LUNA_SERVICE_CLIENT_H_
+ 
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ 
+ #include <map>
+ #include <string>
+diff --git a/src/neva/pal_service/luna/luna_client_impl.h b/src/neva/pal_service/luna/luna_client_impl.h
+index 42ef37737c..d4feb46785 100644
+--- a/src/neva/pal_service/luna/luna_client_impl.h
++++ b/src/neva/pal_service/luna/luna_client_impl.h
+@@ -18,7 +18,7 @@
+ #define NEVA_PAL_SERVICE_LUNA_LUNA_CLIENT_IMPL_H_
+ 
+ #include "neva/pal_service/luna/luna_client.h"
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ #include <map>
+ 
+ namespace pal {
