@@ -11,11 +11,11 @@ In file included from ../../git/src/components/autofill/core/browser/autofill_ab
    65 |                                      uint32_t ablation_weight_per_mille) const;
       |                                      ^~~~~~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344634 autofill: Fix build with gcc-13]
-
 Change-Id: I90f09b52bc55693f1cf1aad63a62331f44d2a95e
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344634 autofill: Fix build with gcc-13]
+
  src/components/autofill/core/browser/autofill_ablation_study.h   | 1 +
  .../autofill/core/browser/form_parsing/autofill_parsing_utils.h  | 1 +
  2 files changed, 2 insertions(+)

@@ -17,11 +17,11 @@ In file included from ../../git/src/net/third_party/quiche/src/quic/core/quic_ve
   +++ |+#include <cstdint>
    14 |
 
-Upstream-Status: Backport [quic_tag.h and quic_version.h change included in https://github.com/google/quiche/commit/7aaf76be08204c728fb09fdd461d9f304b5cc2d7#diff-cadee293a979fd2a384e4a8373ebe4a878f64566a2476b3bb83660d53b578336 http://gpro.lge.com/c/webosose/chromium94/+/344631 quiche: Fix build with gcc-13]
-
 Change-Id: Ice47f3525c8bf5b6a201fd90caeae40bb2dc0345
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Backport [quic_tag.h and quic_version.h change included in https://github.com/google/quiche/commit/7aaf76be08204c728fb09fdd461d9f304b5cc2d7#diff-cadee293a979fd2a384e4a8373ebe4a878f64566a2476b3bb83660d53b578336 http://gpro.lge.com/c/webosose/chromium94/+/344631 quiche: Fix build with gcc-13]
+
  src/net/third_party/quiche/src/quic/core/crypto/quic_hkdf.h   | 1 +
  src/net/third_party/quiche/src/quic/core/quic_connection_id.h | 1 +
  src/net/third_party/quiche/src/quic/core/quic_tag.h           | 1 +

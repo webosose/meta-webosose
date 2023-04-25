@@ -17,10 +17,9 @@ valid when processing touch events.
 Change-Id: I02583238d97d768abcc544ee882160eda3178282
 Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
 Reviewed-by: Shawn Rutledge <shawn.rutledge@qt.io>
+---
 Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/387428]
 
-%% original patch: 0002-evdev-Prevent-race-condition-in-touch-events-process.patch
----
  src/gui/kernel/qguiapplication.cpp            |  3 ++
  .../input/evdevtouch/qevdevtouchhandler.cpp   | 39 ++++++++++++++++++-
  2 files changed, 41 insertions(+), 1 deletion(-)

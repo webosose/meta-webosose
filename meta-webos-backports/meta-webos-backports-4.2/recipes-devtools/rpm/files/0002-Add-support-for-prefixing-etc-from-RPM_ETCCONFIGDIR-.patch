@@ -7,9 +7,10 @@ Subject: [PATCH 2/2] Add support for prefixing /etc from RPM_ETCCONFIGDIR
 This is needed so that rpm can pick up target-specific configuration
 from target rootfs instead of its own native sysroot.
 
-Upstream-Status: Inappropriate [oe-core specific]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 ---
+Upstream-Status: Inappropriate [oe-core specific]
+
  lib/rpmrc.c | 19 ++++++++++++++-----
  1 file changed, 14 insertions(+), 5 deletions(-)
 

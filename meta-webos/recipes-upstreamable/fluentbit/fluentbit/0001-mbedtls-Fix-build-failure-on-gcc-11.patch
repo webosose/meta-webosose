@@ -6,10 +6,10 @@ Subject: [PATCH] mbedtls: Fix build failure on gcc-11
 Function prototypes changed to use array parameters instead of
 pointers.
 
-Upstream-Status: Backport
-
 Signed-off-by: Rodrigo Dias Correa <rodrigo@correas.us>
 ---
+Upstream-Status: Backport
+
  lib/mbedtls-2.24.0/library/ssl_tls.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 

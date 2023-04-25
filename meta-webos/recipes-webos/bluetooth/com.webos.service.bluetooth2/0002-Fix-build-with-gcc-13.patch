@@ -29,10 +29,10 @@ No change to image.
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.bluetooth2/+/344557 Fix build with gcc-13]
-
 Change-Id: I3e6849a617d146a61e5d54eafe0c7cc1d7f12175
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.bluetooth2/+/344557 Fix build with gcc-13]
+
  src/bluetoothbinarysocket.h | 1 +
  1 file changed, 1 insertion(+)
 

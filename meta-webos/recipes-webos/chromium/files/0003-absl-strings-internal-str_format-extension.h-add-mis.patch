@@ -11,11 +11,11 @@ Without the change absl-cpp build fails on this week's gcc-13 snapshot as:
           |                                 ^
           |                                 ::
 
-Upstream-Status: Backport [https://github.com/abseil/abseil-cpp/commit/36a4b073f1e7e02ed7d1ac140767e36f82f09b7c http://gpro.lge.com/c/webosose/chromium94/+/344614 absl/strings/internal/str_format/extension.h: add missing <stdint.h> include]
-
 Change-Id: I825ac182e47536790fc5f48d0fc545d2a4bbda60
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Backport [https://github.com/abseil/abseil-cpp/commit/36a4b073f1e7e02ed7d1ac140767e36f82f09b7c http://gpro.lge.com/c/webosose/chromium94/+/344614 absl/strings/internal/str_format/extension.h: add missing <stdint.h> include]
+
  .../abseil-cpp/absl/strings/internal/str_format/extension.h      | 1 +
  1 file changed, 1 insertion(+)
 

@@ -12,8 +12,9 @@ in case a QPointingDevice is destroyed in a different thread.
 
 Pick-to: 6.2 6.1
 Change-Id: I8690e71d897021e63af6d452ceae6176a99cb716
-Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/354315]
 ---
+Upstream-Status: Submitted [https://codereview.qt-project.org/c/qt/qtdeclarative/+/354315]
+
  src/quick/util/qquickdeliveryagent.cpp   | 14 ++++++++++----
  src/quick/util/qquickdeliveryagent_p_p.h |  2 +-
  2 files changed, 11 insertions(+), 5 deletions(-)

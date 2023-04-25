@@ -3,8 +3,9 @@ From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
 Date: Thu, 24 May 2018 11:57:48 +0530
 Subject: [PATCH] Add pyzy wrapper for webOS
 
-Upstream-Status: Inappropriate [webos specific patch, not indented to be upstreamed]
 ---
+Upstream-Status: Inappropriate [webos specific patch, not indented to be upstreamed]
+
  src/Makefile.am    |   1 +
  src/PhraseEditor.h |   2 +-
  src/pyzyWarpper.cc | 111 +++++++++++++++++++++++++++++++++++++++++++++++++++++

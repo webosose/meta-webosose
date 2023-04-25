@@ -3,8 +3,9 @@ From: Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>
 Date: Wed, 29 Jul 2020 18:04:48 +0530
 Subject: [PATCH 3/3] Add "utf-16" encoding when opening the phrase file
 
-Upstream-Status: Submitted [https://github.com/pyzy/pyzy/pull/4]
 ---
+Upstream-Status: Submitted [https://github.com/pyzy/pyzy/pull/4]
+
  data/db/android/create_db.py | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 

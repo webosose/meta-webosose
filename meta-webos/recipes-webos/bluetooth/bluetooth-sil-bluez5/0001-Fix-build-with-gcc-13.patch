@@ -26,10 +26,10 @@ No change to image.
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/bluetooth-sil-bluez5/+/344555 Fix build with gcc-13]
-
 Change-Id: I92e98c2736cc90e69df6688eeb1230bbb000d2a0
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/bluetooth-sil-bluez5/+/344555 Fix build with gcc-13]
+
  src/dbusutils.h | 1 +
  1 file changed, 1 insertion(+)
 

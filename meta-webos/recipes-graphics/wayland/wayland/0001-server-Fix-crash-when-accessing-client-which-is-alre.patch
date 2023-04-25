@@ -14,8 +14,9 @@ just set the error here and destroy the client where it needs to be.
 
 Signed-off-by: Hyunkook Khang <hyunkook.khang@lge.com>
 
-Upstream-Status: Submitted
 ---
+Upstream-Status: Submitted
+
  src/wayland-server.c | 8 +++++++-
  1 file changed, 7 insertions(+), 1 deletion(-)
 

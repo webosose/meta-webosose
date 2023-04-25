@@ -13,8 +13,9 @@ webrtc/modules/audio_processing/transient/file_utils.h:17:1: note: 'uint8_t' is 
   +++ |+#include <cstdint>
    17 |
 
-Upstream-Status: Submitted [https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/merge_requests/28]
 ---
+Upstream-Status: Submitted [https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/merge_requests/28]
+
  webrtc/modules/audio_processing/transient/file_utils.h | 1 +
  1 file changed, 1 insertion(+)
 

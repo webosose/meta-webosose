@@ -9,9 +9,10 @@ used for anything in rpm so there's not even backward compatibility to
 care about. So the question becomes why do we appear to have (some)
 support for those unused algorithms? So lets don't, problem solved...
 
-Upstream-Status: Backport [https://github.com/rpm-software-management/rpm/commit/ff4b9111aeba01dd025dd133ce617fb80f7398a0]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 ---
+Upstream-Status: Backport [https://github.com/rpm-software-management/rpm/commit/ff4b9111aeba01dd025dd133ce617fb80f7398a0]
+
  rpmio/digest_beecrypt.c | 7 -------
  rpmio/digest_nss.c      | 2 --
  rpmio/digest_openssl.c  | 6 ------

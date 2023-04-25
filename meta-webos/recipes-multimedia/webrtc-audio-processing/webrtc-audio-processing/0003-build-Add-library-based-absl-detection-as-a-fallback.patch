@@ -6,9 +6,9 @@ Subject: [PATCH] build: Add library-based absl detection as a fallback
 This should help for cases where users can make abseil-cpp available but
 wiring up the CMake-build isn't that easy (for example, while
 cross-compiling).
-
-Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/e74894baebe0bba7a7fe37ae0a46a2e9b1b2e021]
 ---
+Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/e74894baebe0bba7a7fe37ae0a46a2e9b1b2e021]
+
  meson.build | 40 +++++++++++++++++++++++++++++++++++++++-
  1 file changed, 39 insertions(+), 1 deletion(-)
 

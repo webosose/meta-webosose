@@ -6,8 +6,9 @@ Subject: [PATCH] Revert "Also use text-input if QT_IM_MODULE is empty or
 
 This reverts commit 3998df839238b141056d5233fcccf15be933b15d.
 
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/client/qwaylanddisplay.cpp                      | 4 ----
  src/client/qwaylanddisplay_p.h                      | 6 +-----
  src/client/qwaylandintegration.cpp                  | 2 +-

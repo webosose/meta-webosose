@@ -15,11 +15,11 @@ In file included from ../../git/src/gpu/config/gpu_feature_info.cc:5:
   +++ |+#include <cstdint>
    13 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344624 gpu/config: Fix build with gcc-13]
-
 Change-Id: I6482a3a6ea2584f696a45f0bc4dc2d4f019d4287
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344624 gpu/config: Fix build with gcc-13]
+
  src/gpu/config/gpu_feature_info.h | 1 +
  1 file changed, 1 insertion(+)
 

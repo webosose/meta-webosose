@@ -6,9 +6,9 @@ Subject: [PATCH] Revert "Don't hide the inputMethod when finishing the edit"
 This reverts commit 6da66ff611902d8c4d485568d746f49c69f1330f.
 It is to keep the existing behavior of single-line TextInput that hides
 the input method on the enter key.
-
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/quick/items/qquicktextinput.cpp | 2 ++
  1 file changed, 2 insertions(+)
 

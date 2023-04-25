@@ -6,9 +6,9 @@ Subject: [PATCH] Fix-Narrowing-conversion-from-int-to-char-bug
 "PINYIN_ID_VOID" is being assigned to unsigned char datatype.
 unsigned char data type will not accept negative numbers.
 So changed the definition to 99 instead of -1.
-
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  src/Types.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

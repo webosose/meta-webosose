@@ -7,9 +7,9 @@ Improve DropShadow using GaussianBlur that was in QtGraphicalEffects 5.
 
 :Issues Addressed:
 [PLAT-141754] Improve DropShadow in QtGraphicalEffects 6
-
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/effects/CMakeLists.txt                    |   5 +
  src/effects/DropShadow.qml                    |  53 ++-
  src/effects/GaussianBlurFixedRadius.qml       | 370 ++++++++++++++++++

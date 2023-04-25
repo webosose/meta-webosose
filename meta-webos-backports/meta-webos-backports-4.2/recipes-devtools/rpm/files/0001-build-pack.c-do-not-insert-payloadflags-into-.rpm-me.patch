@@ -7,9 +7,10 @@ The flags look like '19T56' where 19 is the compression level
 (deterministic), and 56 is the amount of threads (varies from one
 host to the next and breaks reproducibility for .rpm).
 
-Upstream-Status: Inappropriate [oe-core specific]
 Signed-off-by: Alexander Kanavin <alex@linutronix.de>
 ---
+Upstream-Status: Inappropriate [oe-core specific]
+
  build/pack.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

@@ -3,9 +3,10 @@ From: Khem Raj <raj.khem@gmail.com>
 Date: Fri, 19 Aug 2022 10:26:43 -0700
 Subject: [PATCH] Add ENOTSUP constant for riscv32/musl
 
-Upstream-Status: Backport [https://github.com/rust-lang/libc/commit/e9fb036eeffaaa5cb7b1e6fc1dabb92ed6263f0f]
 Signed-off-by: Khem Raj <raj.khem@gmail.com>
 ---
+Upstream-Status: Backport [https://github.com/rust-lang/libc/commit/e9fb036eeffaaa5cb7b1e6fc1dabb92ed6263f0f]
+
  vendor/libc/src/unix/linux_like/linux/musl/b32/riscv32/mod.rs | 1 +
  1 file changed, 1 insertion(+)
 

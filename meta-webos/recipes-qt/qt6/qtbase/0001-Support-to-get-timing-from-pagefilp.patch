@@ -9,8 +9,9 @@ The information can be used to optimize rendering timing.
 Change-Id: I14612ca48a8fea5208aa74949d7543787e860c5f
 Reviewed-by: Elvis Lee <kwangwoong.lee@lge.com>
 Reviewed-by: Laszlo Agocs <laszlo.agocs@qt.io>
-Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/384012]
 ---
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtbase/+/384012]
+
  .../eglfs_kms_support/qeglfskmseventreader.cpp           | 7 ++++---
  .../eglfs_kms_support/qeglfskmsscreen.cpp                | 9 +++++++++
  .../eglfs_kms_support/qeglfskmsscreen_p.h                | 1 +

@@ -3,9 +3,10 @@ From: Pankaj Maharana <pankaj.maharana@lge.com>
 Date: Thu, 3 Oct 2019 17:05:37 +0530
 Subject: [PATCH] waylandsink: remove unsupported subcompositor
 
-Upstream-Status: Pending
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Pending
+
  .../ext/wayland/gstwaylandsink.c              | 158 +++++++++++++--
  .../ext/wayland/gstwaylandsink.h              |   4 +
  .../gst-plugins-bad/ext/wayland/wldisplay.c   |   8 +-

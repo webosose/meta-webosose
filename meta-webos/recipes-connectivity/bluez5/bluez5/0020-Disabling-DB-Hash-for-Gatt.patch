@@ -16,8 +16,9 @@ NA
 [PLAT-107885] Analyze and Adopt the changes for BlueZ 5.54 apis for
               GATT profile
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  src/gatt-database.c | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 

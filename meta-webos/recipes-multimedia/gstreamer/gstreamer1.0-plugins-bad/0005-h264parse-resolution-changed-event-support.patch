@@ -3,10 +3,10 @@ From: Raveendra Angadi <raveendra.angadi@lge.com>
 Date: Mon, 17 Oct 2022 20:27:49 +0530
 Subject: [PATCH] h264parse: resolution changed event support
 
-Upstream-Status: Pending
-
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Pending
+
  .../gst/videoparsers/gsth264parse.c           | 24 +++++++++++++++++++
  .../gst/videoparsers/gsth264parse.h           |  3 +++
  .../gst/videoparsers/meson.build              |  7 ++++++

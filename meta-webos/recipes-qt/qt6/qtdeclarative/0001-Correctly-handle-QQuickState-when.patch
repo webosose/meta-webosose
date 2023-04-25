@@ -25,8 +25,9 @@ Change-Id: Id10a3549935794b93b29450b0f5dfb6d1df691a1
 Reviewed-by: Ulf Hermann <ulf.hermann@qt.io>
 (cherry picked from commit a8c729d83979fb0b9939044d246e73b1d578e65b)
 Reviewed-by: Andrei Golubev <andrei.golubev@qt.io>
-Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/394606]
 ---
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtdeclarative/+/394606]
+
  src/quick/util/qquickstategroup.cpp           | 10 ++++++++-
  .../qquickstates/data/noStateOsciallation.qml | 22 +++++++++++++++++++
  .../quick/qquickstates/tst_qquickstates.cpp   | 15 +++++++++++++

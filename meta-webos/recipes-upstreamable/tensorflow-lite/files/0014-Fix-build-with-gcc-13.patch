@@ -26,10 +26,9 @@ No change to image.
 
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
-
+---
 Upstream-Status: Pending
 
----
  tensorflow/lite/kernels/internal/spectrogram.cc | 1 +
  1 file changed, 1 insertion(+)
 

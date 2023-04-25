@@ -28,9 +28,9 @@ No change to image.
 
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
-
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  driver/hardware_structures.h | 1 +
  1 file changed, 1 insertion(+)
 

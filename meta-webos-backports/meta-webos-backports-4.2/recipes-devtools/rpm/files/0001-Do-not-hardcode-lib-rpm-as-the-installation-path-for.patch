@@ -4,10 +4,11 @@ Date: Mon, 27 Feb 2017 09:43:30 +0200
 Subject: [PATCH] Do not hardcode "lib/rpm" as the installation path for
  default configuration and macros.
 
-Upstream-Status: Denied [https://github.com/rpm-software-management/rpm/pull/263]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 
 ---
+Upstream-Status: Denied [https://github.com/rpm-software-management/rpm/pull/263]
+
  configure.ac | 2 +-
  macros.in    | 2 +-
  rpm.am       | 4 ++--

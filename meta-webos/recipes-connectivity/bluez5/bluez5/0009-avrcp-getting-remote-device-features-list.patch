@@ -19,10 +19,10 @@ Builded and Tested
 :Issues Addressed:
 [PLAT-73148] Implement avrcp/internal/getRemoteFeatures
 
-Upstream-Status: Inappropriate [webos specific]
-
 Change-Id: I93393e5955c745c4df3eaddf6661177410ad3a7d
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  profiles/audio/avrcp.c | 15 ++++++++++
  src/device.c           | 68 ++++++++++++++++++++++++++++++++++++++++++
  src/device.h           |  5 ++++

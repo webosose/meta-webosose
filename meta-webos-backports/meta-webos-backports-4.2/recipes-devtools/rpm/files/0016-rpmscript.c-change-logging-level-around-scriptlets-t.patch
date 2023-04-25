@@ -7,9 +7,10 @@ Subject: [PATCH] rpmscript.c: change logging level around scriptlets to INFO
 That way we can debug scriptlet failures without writing lots of
 irrelevant noise to rootfs logs.
 
-Upstream-Status: Inappropriate [oe-core specific]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 ---
+Upstream-Status: Inappropriate [oe-core specific]
+
  lib/rpmscript.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 

@@ -16,12 +16,12 @@ qml dual video app.
 :Issues Addressed:
 [PLAT-7834] - Implement media focus API for Qt/Qml
 
-Upstream-Status: Inappropriate [platform specific]
-
 Open-webOS-DCO-1.0-Signed-off-by: Anatoliy Klymenko <anatoliy.klimenko@lge.com>
 
 Change-Id: I87fe23cc2cba06936248f7951944018f61d5ffb6
 ---
+Upstream-Status: Inappropriate [platform specific]
+
  src/multimedia/playback/qmediaplayer.cpp | 7 +++++++
  src/multimedia/playback/qmediaplayer.h   | 1 +
  2 files changed, 8 insertions(+)

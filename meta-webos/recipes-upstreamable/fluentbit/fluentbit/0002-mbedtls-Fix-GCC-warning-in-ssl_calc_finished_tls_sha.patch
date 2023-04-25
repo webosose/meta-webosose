@@ -11,7 +11,6 @@ parameter of `mbedtls_sha512_finish_ret` has the type
 Even though `ssl_calc_finished_tls_sha384` uses only 48 bytes for
 the hash output, the size of `padbuf` was increased to 64 bytes.
 
-Upstream-Status: Backport
 Signed-off-by: Rodrigo Dias Correa <rodrigo@correas.us>
 
 Adjusted for 2.24.0 version to build, there are few more improvements
@@ -20,6 +19,8 @@ https://github.com/ARMmbed/mbedtls/commit/2c424570e2a85e21273313808e8c5efcf1cfc9
 https://github.com/ARMmbed/mbedtls/commit/d596ca8a1e34b6ef2fda293250829d014e5d33af
 https://github.com/ARMmbed/mbedtls/commit/f06a6144e23a1a8dcc3dd749b993ad88a96063fb
 ---
+Upstream-Status: Backport
+
  lib/mbedtls-2.24.0/library/ssl_tls.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 

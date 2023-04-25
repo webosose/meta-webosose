@@ -15,8 +15,9 @@ xdg shell.
 
 Change-Id: I3b286420e7221aa1c9b81bf7ae9ae70d3cbe6eb6
 Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
-Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtwayland/+/383985]
 ---
+Upstream-Status: Backport [https://codereview.qt-project.org/c/qt/qtwayland/+/383985]
+
  src/3rdparty/protocol/presentation-time.xml   | 266 +++++++++++++
  src/3rdparty/protocol/qt_attribution.json     |  17 +
  src/compositor/CMakeLists.txt                 |   2 +

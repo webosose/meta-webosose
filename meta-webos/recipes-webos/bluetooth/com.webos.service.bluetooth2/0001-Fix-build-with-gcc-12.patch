@@ -24,10 +24,10 @@ No change to image.
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.bluetooth2/+/344556 Fix build with gcc-12]
-
 Change-Id: I20f9ef443be7f63e10e86d03c2d76d84c847cbff
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.bluetooth2/+/344556 Fix build with gcc-12]
+
  src/bluetoothmapprofileservice.cpp | 2 ++
  1 file changed, 2 insertions(+)
 

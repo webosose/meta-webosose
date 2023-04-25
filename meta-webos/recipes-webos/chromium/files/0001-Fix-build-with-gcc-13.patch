@@ -17,10 +17,10 @@ Commit-Queue: Clemens Backes <clemensb@chromium.org>
 Cr-Commit-Position: refs/heads/main@{#83587}
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 
-Upstream-Status: Backport [https://chromium-review.googlesource.com/c/v8/v8/+/3934140 http://gpro.lge.com/c/webosose/chromium-v8/+/344640 Fix build with gcc-13]
-
 Change-Id: I421f396b02ba37e12ee70048ee33e034f8113566
 ---
+Upstream-Status: Backport [https://chromium-review.googlesource.com/c/v8/v8/+/3934140 http://gpro.lge.com/c/webosose/chromium-v8/+/344640 Fix build with gcc-13]
+
  AUTHORS                               | 1 +
  src/base/logging.h                    | 1 +
  src/inspector/v8-string-conversions.h | 1 +

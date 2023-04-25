@@ -18,9 +18,10 @@ Builded and tested
 :Issues Addressed:
 [PLAT-51859] Implement method ble/startAdvertise
 
-Upstream-Status: Pending
 Change-Id: I60cb0c22991efa61a800b1483e232e42beff2da2
 ---
+Upstream-Status: Pending
+
  src/advertising.c | 9 +++++++--
  1 file changed, 7 insertions(+), 2 deletions(-)
 

@@ -5,9 +5,10 @@ Subject: [PATCH] configure.ac: add linux-gnux32 variant to triplet handling
 
 x32 is a 64 bit x86 ABI with 32 bit pointers.
 
-Upstream-Status: Submitted [https://github.com/rpm-software-management/rpm/pull/2143]
 Signed-off-by: Alexander Kanavin <alex@linutronix.de>
 ---
+Upstream-Status: Submitted [https://github.com/rpm-software-management/rpm/pull/2143]
+
  configure.ac | 4 ++++
  1 file changed, 4 insertions(+)
 

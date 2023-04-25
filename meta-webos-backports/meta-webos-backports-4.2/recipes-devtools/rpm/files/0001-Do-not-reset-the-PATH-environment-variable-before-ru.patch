@@ -6,10 +6,11 @@ Subject: [PATCH] Do not reset the PATH environment variable before running
 
 We add lots of native stuff into it and scriptlets rely on that.
 
-Upstream-Status: Inappropriate [oe-core specific]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 
 ---
+Upstream-Status: Inappropriate [oe-core specific]
+
  lib/rpmscript.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

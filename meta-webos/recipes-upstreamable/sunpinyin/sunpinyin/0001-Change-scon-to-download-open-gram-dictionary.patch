@@ -3,10 +3,9 @@ From: guruprasadkn <guruprasad.kn@lge.com>
 Date: Wed, 15 Nov 2017 13:41:16 +0530
 Subject: [PATCH] Change scon to download open gram dictionary
 
-Author:    guruprasadkn <guruprasad.kn@lge.com>
-
-Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
 ---
+Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
+
  SConstruct | 42 +++++++++++++++---------------------------
  1 file changed, 15 insertions(+), 27 deletions(-)
 

@@ -31,10 +31,10 @@ No change to image.
 :Issues Addressed:
 [WRP-10874] Prepare for procps 4 API
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.memorymanager/+/347409 CMakeLists.txt: remove dependency on libprocps]
-
 Change-Id: Ifd45a298f64afd4550fb3384926a582dcb1c6a50
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.memorymanager/+/347409 CMakeLists.txt: remove dependency on libprocps]
+
  src/common/util/LinuxProcess.cpp | 1 -
  src/memorymanager/CMakeLists.txt | 5 -----
  2 files changed, 6 deletions(-)

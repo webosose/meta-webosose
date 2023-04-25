@@ -19,11 +19,11 @@ Subject: [PATCH] debug: Fix build with gcc-13
 ../../git/src/base/debug/stack_trace.h:190:5: error: expected primary-expression before 'bool'
 ../../git/src/base/debug/stack_trace.h:59:13: error: 'uintptr_t' does not name a type
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344617 debug: Fix build with gcc-13]
-
 Change-Id: I6874468a606bc62c73fed66c5703cb8c02f3e405
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344617 debug: Fix build with gcc-13]
+
  src/base/debug/profiler.h    | 1 +
  src/base/debug/stack_trace.h | 1 +
  2 files changed, 2 insertions(+)

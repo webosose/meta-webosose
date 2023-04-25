@@ -5,11 +5,9 @@ Subject: [PATCH] add sunpinyin wrapper class
 
 Sunpinyin wrapper class to help integrating subpinyin
 library to webos imemanager.
-
-Author:    pugalendhi ganesan <pugalendhi.ganesan@lge.com>
-
-Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
 ---
+Upstream-Status: Inappropriate [webos specific change, not intended to be upstreamed]
+
  SConstruct          |   1 +
  src/sun_wrapper.cpp | 167 ++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 168 insertions(+)

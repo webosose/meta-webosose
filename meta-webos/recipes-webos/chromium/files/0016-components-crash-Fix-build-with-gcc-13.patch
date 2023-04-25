@@ -14,11 +14,11 @@ In file included from ../../git/src/components/crash/core/app/crash_reporter_cli
   104 |                                           uint64_t crash_pid) {
       |                                           ^~~~~~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344627 components/crash: Fix build with gcc-13]
-
 Change-Id: I2c893b5d12cd8d48626469d10667f6c04aacda24
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344627 components/crash: Fix build with gcc-13]
+
  src/components/crash/core/app/crash_reporter_client.h | 1 +
  1 file changed, 1 insertion(+)
 

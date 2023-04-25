@@ -6,8 +6,9 @@ Subject: [PATCH] Revert "Remove qmake files that provide support for building
 
 This reverts commit d8a87b6942b68c4fcba3665993ae75b29c549b02.
 
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  mkspecs/features/data/unix/findclasslist.pl |   46 +
  mkspecs/features/qt_android_deps.prf        |   93 +
  mkspecs/features/qt_app.prf                 |   65 +

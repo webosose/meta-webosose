@@ -5,9 +5,9 @@ Subject: [PATCH] Remove Cursor line | from auxiliary text
 
 Cursor line "|" is addeded to the auxilary text.
 it is inappropriate for webos, so it is removed.
-
-Upstream-Status: Inappropriate [This is webos specific change, not indented to be submitted to upstream]
 ---
+Upstream-Status: Inappropriate [This is webos specific change, not indented to be submitted to upstream]
+
  src/BopomofoContext.cc | 8 +-------
  1 file changed, 1 insertion(+), 7 deletions(-)
 

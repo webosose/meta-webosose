@@ -18,10 +18,10 @@ Built and tested
 [PLAT-86691] Implement avrcp/setAbsoluteVolume supporting multiple
              Adapters
 
-Upstream-Status: Pending
-
 Change-Id: I183357a5de4b95a6e02d39d9d51c4af715bf0a54
 ---
+Upstream-Status: Pending
+
  profiles/audio/transport.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

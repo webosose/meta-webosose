@@ -20,8 +20,9 @@ Builded and Tested
 [PLAT-117073] Does not immediately dismiss the
               outgoing call pop-up.
 
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  drivers/hfpmodem/voicecall.c |   1 +
  src/handsfree-audio.c        | 101 +++++++++++++++++++++++++++++++++--
  2 files changed, 97 insertions(+), 5 deletions(-)

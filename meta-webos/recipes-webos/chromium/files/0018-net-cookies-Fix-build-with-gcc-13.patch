@@ -15,10 +15,11 @@ In file included from ../../git/src/net/cookies/cookie_inclusion_status.cc:5:
   +++ |+#include <cstdint>
    13 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344629 net/cookies: Fix build with gcc-13]
 Change-Id: I9a6fde0782bcf61ead585f1aa6eeea247db07594
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344629 net/cookies: Fix build with gcc-13]
+
  src/net/cookies/cookie_inclusion_status.h | 1 +
  1 file changed, 1 insertion(+)
 

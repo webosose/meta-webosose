@@ -20,8 +20,9 @@ NA
 [PLAT-124915] Calling AVRCP search API results in
               icom.webos.service.bluetooth2 crash
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  profiles/audio/player.c | 38 +++++++++++++++++++++++++++++++++-----
  1 file changed, 33 insertions(+), 5 deletions(-)
 

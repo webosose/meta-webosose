@@ -25,10 +25,10 @@ No change to image.
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344639 swiftshader-llvm: Fix build with gcc-13]
-
 Change-Id: Ia6f9a739d58bf40a264790a97f95da04dda151d3
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344639 swiftshader-llvm: Fix build with gcc-13]
+
  .../third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h    | 1 +
  1 file changed, 1 insertion(+)
 

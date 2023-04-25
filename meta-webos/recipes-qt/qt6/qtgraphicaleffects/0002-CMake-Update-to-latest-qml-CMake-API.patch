@@ -7,9 +7,9 @@ Since QTBUG-91621, CMakeLists.txt should be updated as per the new API.
 Inspired by https://codereview.qt-project.org/c/qt/qt5compat/+/352146.
 Note that we keep the module name as "QtGraphicalEffects" for backward
 compatibility.
-
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/effects/CMakeLists.txt         | 124 ++++++++++++++---------------
  src/effects/private/CMakeLists.txt |  38 ++++-----
  src/effects/private/qmldir         |   4 -

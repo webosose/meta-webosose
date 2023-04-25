@@ -7,8 +7,9 @@ When Text is set to be bold, the original font glyph is displayed only.
 webOS doesn't want to apply the bolden effect by Freetype engine.
 
 Change-Id: I8cae71928f0b44526b345cc72403ccce6c7feeac
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/gui/text/freetype/qfontengine_ft.cpp | 2 ++
  1 file changed, 2 insertions(+)
 

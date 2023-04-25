@@ -3,8 +3,9 @@ From: Gunnar Hjalmarsson <gunnarhj@ubuntu.com>
 Date: Mon, 4 May 2020 19:55:45 +0200
 Subject: [PATCH 2/3] More tweaks of data/db/android/create_db.py
 
-Upstream-Status: Submitted [https://github.com/pyzy/pyzy/pull/4]
 ---
+Upstream-Status: Submitted [https://github.com/pyzy/pyzy/pull/4]
+
  data/db/android/create_db.py | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 

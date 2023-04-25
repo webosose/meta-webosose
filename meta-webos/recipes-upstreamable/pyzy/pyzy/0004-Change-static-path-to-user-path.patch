@@ -3,8 +3,9 @@ From: pugalendhi ganesan <pugalendhi.ganesan@lge.com>
 Date: Tue, 29 May 2018 15:46:28 +0530
 Subject: [PATCH] Change static path to user path
 
-Upstream-Status: Inappropriate [webos specific change, not indented to be upstreamed]
 ---
+Upstream-Status: Inappropriate [webos specific change, not indented to be upstreamed]
+
  src/Database.cc | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 

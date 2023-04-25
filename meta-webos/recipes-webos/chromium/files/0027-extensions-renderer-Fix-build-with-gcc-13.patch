@@ -24,11 +24,11 @@ In file included from ../../git/src/extensions/renderer/bindings/api_invocation_
    53 | std::string IndexError(uint32_t index, const std::string& error);
       |             ^~~~~~~~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344638 extensions/renderer: Fix build with gcc-13]
-
 Change-Id: I4a69970e077955cddcfd9ffd68888586c6f777d1
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344638 extensions/renderer: Fix build with gcc-13]
+
  src/extensions/renderer/bindings/api_invocation_errors.h | 1 +
  1 file changed, 1 insertion(+)
 

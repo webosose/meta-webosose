@@ -18,8 +18,9 @@ Builded and Tested
 :Issues Addressed:
 [PLAT-102289] Implement connect for A2DP_SINK
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  src/device.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 

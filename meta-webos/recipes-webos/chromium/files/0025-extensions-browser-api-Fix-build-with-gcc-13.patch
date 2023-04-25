@@ -11,11 +11,11 @@ In file included from ../../git/src/extensions/browser/api/audio/audio_device_id
    34 |   std::string GetStableDeviceId(uint64_t audio_service_stable_id);
       |                                 ^~~~~~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344636 extensions/browser/api: Fix build with gcc-13]
-
 Change-Id: Idf9bf8cb57ccf6dfe191bf9a41b17c978656df6d
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344636 extensions/browser/api: Fix build with gcc-13]
+
  src/extensions/browser/api/audio/audio_device_id_calculator.h | 1 +
  1 file changed, 1 insertion(+)
 

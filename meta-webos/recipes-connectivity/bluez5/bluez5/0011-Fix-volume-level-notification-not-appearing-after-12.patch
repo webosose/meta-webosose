@@ -21,8 +21,9 @@ Builded and Tested
 [PLAT-97324] There is an environment where avrcp / getRemoteVolume
              does not return.
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  profiles/audio/media.c     | 4 ++--
  profiles/audio/transport.c | 8 ++++----
  2 files changed, 6 insertions(+), 6 deletions(-)

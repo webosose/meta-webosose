@@ -24,10 +24,10 @@ preferred type. so for tri-lib system, like mips64/mips64 n32/mips(32),
 
 Fixed by performing a 'last-in-wins' resolution when "neither is preferred".
 
-Upstream-Status: Submitted <https://github.com/rpm-software-management/rpm/issues/193>
-
 Signed-off-by: Changqing Li <changqing.li@windriver.com>
 ---
+Upstream-Status: Submitted <https://github.com/rpm-software-management/rpm/issues/193>
+
  lib/transaction.c | 13 ++++++++++++-
  1 file changed, 12 insertions(+), 1 deletion(-)
 

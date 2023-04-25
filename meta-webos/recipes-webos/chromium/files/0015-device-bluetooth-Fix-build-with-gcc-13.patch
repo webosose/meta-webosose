@@ -29,11 +29,11 @@ In file included from ../../git/src/services/device/public/cpp/bluetooth/bluetoo
   122 | }
       | ^
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344626 device/bluetooth: Fix build with gcc-13]
-
 Change-Id: Idab5685992f50a361ba0cbbac0f8c07a28597fd4
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344626 device/bluetooth: Fix build with gcc-13]
+
  src/device/bluetooth/public/cpp/bluetooth_uuid.h | 1 +
  1 file changed, 1 insertion(+)
 

@@ -14,8 +14,9 @@ Signed-off-by: jaehak.lee <jaehak.lee@lge.com>
 Signed-off-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Signed-off-by: Roman Genhel <roman.genhel@lge.com>
 
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  meson.build              |  4 ++
  meson_options.txt        |  4 ++
  src/connection.c         | 73 ++++++++++++++++++++++++++++++++++++-

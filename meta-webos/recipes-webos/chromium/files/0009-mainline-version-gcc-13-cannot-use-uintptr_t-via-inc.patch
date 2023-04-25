@@ -4,13 +4,13 @@ Date: Wed, 19 Oct 2022 19:36:13 +0800
 Subject: [PATCH] mainline version gcc-13 cannot use "uintptr_t" via "#include
  <string>"
 
-Upstream-Status: Backport [https://chromium-review.googlesource.com/c/breakpad/breakpad/+/3964166 http://gpro.lge.com/c/webosose/chromium94/+/344620 mainline version gcc-13 cannot use "uintptr_t" via "#include <string>"]
-
 Change-Id: I0049bb92658b4226e32783ad4d8271787deef5f3
 Reviewed-on: https://chromium-review.googlesource.com/c/breakpad/breakpad/+/3964166
 Reviewed-by: Mike Frysinger <vapier@chromium.org>
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Backport [https://chromium-review.googlesource.com/c/breakpad/breakpad/+/3964166 http://gpro.lge.com/c/webosose/chromium94/+/344620 mainline version gcc-13 cannot use "uintptr_t" via "#include <string>"]
+
  .../breakpad/src/client/linux/handler/minidump_descriptor.h      | 1 +
  1 file changed, 1 insertion(+)
 

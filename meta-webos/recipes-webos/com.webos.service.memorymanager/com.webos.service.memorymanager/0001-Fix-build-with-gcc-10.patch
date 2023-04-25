@@ -22,10 +22,10 @@ No change to image.
 :Issues Addressed:
 [WRP-10791] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.memorymanager/+/347408 Fix build with gcc-10]
-
 Change-Id: Ia254ca5a9bb40b345e148acb49a611a9a43b1b33
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.memorymanager/+/347408 Fix build with gcc-10]
+
  src/common/util/Cgroup.cpp | 2 ++
  1 file changed, 2 insertions(+)
 

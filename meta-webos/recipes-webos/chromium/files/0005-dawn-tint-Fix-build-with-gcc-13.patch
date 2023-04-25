@@ -21,11 +21,11 @@ In file included from ../../git/src/third_party/dawn/third_party/tint/src/writer
   +++ |+#include <cstdint>
    20 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344616 dawn-tint: Fix build with gcc-13]
-
 Change-Id: I816d1a7ee1b05852da561195e6e5a6537e993e38
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344616 dawn-tint: Fix build with gcc-13]
+
  .../dawn/third_party/tint/src/reader/spirv/entry_point_info.h    | 1 +
  src/third_party/dawn/third_party/tint/src/reader/spirv/namer.h   | 1 +
  src/third_party/dawn/third_party/tint/src/reader/wgsl/token.h    | 1 +

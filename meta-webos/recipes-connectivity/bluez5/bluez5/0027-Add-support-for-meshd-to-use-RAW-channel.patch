@@ -20,8 +20,9 @@ NA
 [PLAT-123995] Analyze bluetooth-meshd and bluetoothd
               working together
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  mesh/bluetooth-mesh.service.in |  3 ++-
  mesh/main.c                    | 14 ++++++++----
  mesh/mesh-io-generic.c         | 38 +++++++++++++++++++++++++------

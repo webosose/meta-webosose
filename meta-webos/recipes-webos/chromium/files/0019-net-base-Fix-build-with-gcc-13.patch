@@ -14,11 +14,11 @@ In file included from ../../git/src/net/base/parse_number.cc:5:
   107 |                             uint64_t* output,
       |                             ^~~~~~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344630 net/base: Fix build with gcc-13]
-
 Change-Id: I43c71da76829cd2aeddb044d84606598a153468f
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344630 net/base: Fix build with gcc-13]
+
  src/net/base/parse_number.h | 1 +
  1 file changed, 1 insertion(+)
 

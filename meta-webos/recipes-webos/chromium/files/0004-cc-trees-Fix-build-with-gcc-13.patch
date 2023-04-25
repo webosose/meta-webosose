@@ -14,11 +14,11 @@ x86_64-webos-linux-g++  -m64 -march=nehalem -mtune=generic -mfpmath=sse -msse4.2
   +++ |+#include <cstdint>
     8 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344615 cc/trees: Fix build with gcc-13]
-
 Change-Id: I11ff889a88f0e606d08acd825470d052cb16919a
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344615 cc/trees: Fix build with gcc-13]
+
  src/cc/trees/target_property.cc | 2 ++
  1 file changed, 2 insertions(+)
 

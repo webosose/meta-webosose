@@ -16,9 +16,10 @@ In file included from ../../git/src/third_party/webrtc/rtc_base/third_party/base
    19 |
 
 Change-Id: I7e89efa488fdbce8819114cf1fb5c871051f6114
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344622 webrtc: Fix build with gcc-13]
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344622 webrtc: Fix build with gcc-13]
+
  src/third_party/webrtc/rtc_base/third_party/base64/base64.h | 1 +
  1 file changed, 1 insertion(+)
 

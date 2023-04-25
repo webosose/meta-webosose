@@ -23,8 +23,9 @@ Builded and Tested gatt connect from RPI to RPI
 [PLAT-62865] com.webos.bluetooth2 : gatt/connect is unstable
 
 Change-Id: I46a3a5fa56d055c54ed16167d6dc2a14ad473615
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  src/device.c | 28 ++++++++++++++++++++++++++++
  1 file changed, 28 insertions(+)
 

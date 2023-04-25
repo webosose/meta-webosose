@@ -22,8 +22,9 @@ Builded and Tested
 :QA Notes:
 NA
 
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  profiles/audio/a2dp.c | 14 +-------------
  1 file changed, 1 insertion(+), 13 deletions(-)
 

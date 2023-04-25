@@ -36,11 +36,11 @@ In file included from ../../git/src/ppapi/utility/completion_callback_factory_th
    20 | class Lock {
       |       ^~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344632 ppapi: Fix build with gcc-13]
-
 Change-Id: I0dfa1f325fc42eb2ab10e6b6acc203d3eb5be63b
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344632 ppapi: Fix build with gcc-13]
+
  src/ppapi/utility/completion_callback_factory_thread_traits.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

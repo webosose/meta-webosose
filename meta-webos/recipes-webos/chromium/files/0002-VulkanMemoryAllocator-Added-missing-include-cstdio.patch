@@ -6,11 +6,11 @@ Subject: [PATCH] VulkanMemoryAllocator: Added missing #include <cstdio>
 For snprintf, for compatibility with GCC 13.
 Fixes #312 - thanks @marxin !
 
-Upstream-Status: Backport [https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/commit/29d492b60c84ca784ea0943efc7d2e6e0f3bdaac http://gpro.lge.com/c/webosose/chromium94/+/344613 VulkanMemoryAllocator: Added missing #include <cstdio>]
-
 Change-Id: I71bac6ecb25568ae54da900ac513a5e483e1cc49
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Backport [https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/commit/29d492b60c84ca784ea0943efc7d2e6e0f3bdaac http://gpro.lge.com/c/webosose/chromium94/+/344613 VulkanMemoryAllocator: Added missing #include <cstdio>]
+
  .../vulkan_memory_allocator/include/vk_mem_alloc.h            | 4 ++++
  1 file changed, 4 insertions(+)
 

@@ -55,9 +55,9 @@ No change to image.
 
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
-
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  profiling/client/include/CounterIdMap.hpp | 1 +
  profiling/client/include/Holder.hpp       | 1 +
  profiling/common/include/Counter.hpp      | 1 +

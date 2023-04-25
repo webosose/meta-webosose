@@ -16,8 +16,9 @@ x86_64-webos-linux-g++  -m64 -march=nehalem -mtune=generic -mfpmath=sse -msse4.2
    33 | #include <new>
 
 Change-Id: I6552b014c79d147698644c68269089b8ee20f076
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344619 libgav1: Fix build with gcc-13]
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344619 libgav1: Fix build with gcc-13]
+
  src/third_party/libgav1/src/src/utils/threadpool.cc | 1 +
  1 file changed, 1 insertion(+)
 

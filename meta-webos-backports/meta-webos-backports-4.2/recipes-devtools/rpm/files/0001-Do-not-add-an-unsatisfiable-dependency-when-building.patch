@@ -7,10 +7,11 @@ Subject: [PATCH] Do not add an unsatisfiable dependency when building rpms in
 Upstream permits short-circuiting only for local testing; Yocto on the other
 hand produces rpms that way by design.
 
-Upstream-Status: Inappropriate [oe-core specific]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 
 ---
+Upstream-Status: Inappropriate [oe-core specific]
+
  build/pack.c | 4 ----
  1 file changed, 4 deletions(-)
 

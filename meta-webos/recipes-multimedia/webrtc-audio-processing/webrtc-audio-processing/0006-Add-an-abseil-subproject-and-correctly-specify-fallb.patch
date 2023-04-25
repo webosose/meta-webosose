@@ -3,8 +3,9 @@ From: Arun Raghavan <arun@asymptotic.io>
 Date: Tue, 19 Oct 2021 18:24:11 -0400
 Subject: [PATCH] Add an abseil subproject and correctly specify fallback deps
 
-Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/5a5aa66ada1f3e97d62cbd6843972bb427cbad65]
 ---
+Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/5a5aa66ada1f3e97d62cbd6843972bb427cbad65]
+
  .gitignore                  |  1 +
  meson.build                 | 22 ++++++++++++++++------
  subprojects/abseil-cpp.wrap | 23 +++++++++++++++++++++++

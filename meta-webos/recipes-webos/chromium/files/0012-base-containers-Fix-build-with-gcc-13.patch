@@ -16,11 +16,11 @@ In file included from ../../git/src/components/sync/base/user_selectable_type.h:
   +++ |+#include <cstdint>
    14 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344623 base/containers: Fix build with gcc-13]
-
 Change-Id: I96950f46bec7ed25838aee8628232474292bf7b7
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344623 base/containers: Fix build with gcc-13]
+
  src/base/containers/enum_set.h | 1 +
  1 file changed, 1 insertion(+)
 

@@ -15,11 +15,11 @@ In file included from ../../git/src/components/payments/core/autofill_card_valid
   +++ |+#include <cstdint>
    10 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344635 payments: Fix build with gcc-13]
-
 Change-Id: I58c2a7f883ca13bacbc6f77771da39144f2bef68
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344635 payments: Fix build with gcc-13]
+
  src/components/payments/core/autofill_card_validation.h | 1 +
  1 file changed, 1 insertion(+)
 

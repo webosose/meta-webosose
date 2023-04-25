@@ -28,9 +28,9 @@ No change to image.
 
 :Issues Addressed:
 [WRP-10791] CCC: Various build fixes
-
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/347887 umediaclient_impl: Fix build with gcc-13]
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/347887 umediaclient_impl: Fix build with gcc-13]
+
  src/media/neva/webos/umediaclient_impl.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

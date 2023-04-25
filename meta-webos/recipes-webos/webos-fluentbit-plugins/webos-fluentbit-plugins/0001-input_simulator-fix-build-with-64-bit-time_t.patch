@@ -77,8 +77,9 @@ webos-fluentbit-plugins/1.0.0-38-r12/git/input_simulator/Main.cpp:953:25: error:
 webos-fluentbit-plugins/1.0.0-38-r12/git/input_simulator/Main.cpp:954:25: error: 'struct input_event' has no member named 'time'
   954 |         currptr->rec.ie.time.tv_usec = 0;
       |                         ^~~~
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  input_simulator/Main.cpp | 35 +++++++++++++++++------------------
  1 file changed, 17 insertions(+), 18 deletions(-)
 

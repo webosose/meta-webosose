@@ -25,10 +25,10 @@ No change to image.
 [WRP-10636] Fix libpbnjson to build with ninja
 [WRP-10791] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/libpbnjson/+/346954 CMakeLists.txt: fix build race-condition on generated header files]
-
 Change-Id: I573017789ddddc1eaae41c102700607ad4bdf333
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/libpbnjson/+/346954 CMakeLists.txt: fix build race-condition on generated header files]
+
  src/pbnjson_c/validation/CMakeLists.txt | 6 +-----
  1 file changed, 1 insertion(+), 5 deletions(-)
 

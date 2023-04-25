@@ -49,8 +49,9 @@ TOPDIR/BUILD/work/qemux86-webos-linux/qtbase-plugins-webos/1.0.0-14-r5/git/src/e
 TOPDIR/BUILD/work/qemux86-webos-linux/qtbase-plugins-webos/1.0.0-14-r5/git/src/eglfs_webos/emulator/qemulatorkeyboardhandler.cpp:126:28: error: 'struct input_event' has no member named 'time'
   126 |     ::gettimeofday(&led_ie.time, 0);
       |                            ^~~~
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  src/eglfs_webos/emulator/qemulatorkeyboardhandler.cpp | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 

@@ -22,9 +22,10 @@ Amended 2018-07-03 by Olof Johansson <olofjn@axis.com>:
 
   Signed-off-by: Olof Johansson <olofjn@axis.com>
 
-Upstream-Status: Inappropriate [oe-core specific]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
 ---
+Upstream-Status: Inappropriate [oe-core specific]
+
  lib/rpmscript.c | 11 ++++++++---
  1 file changed, 8 insertions(+), 3 deletions(-)
 

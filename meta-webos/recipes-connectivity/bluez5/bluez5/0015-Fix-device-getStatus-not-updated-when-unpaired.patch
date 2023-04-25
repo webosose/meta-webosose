@@ -22,8 +22,9 @@ Builded and Tested
 :Issues Addressed:
 [PLAT-102335] Test and fix hfp/getStatus for multiple adapter
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  src/device.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 

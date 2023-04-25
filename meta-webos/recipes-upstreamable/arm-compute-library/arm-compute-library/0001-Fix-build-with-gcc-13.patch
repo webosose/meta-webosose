@@ -41,9 +41,9 @@ No change to image.
 
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
-
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  arm_compute/core/Strides.h            | 1 +
  arm_compute/core/utils/misc/Utility.h | 1 +
  2 files changed, 2 insertions(+)

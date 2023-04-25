@@ -19,8 +19,9 @@ NA
 :Issues Addressed:
 [PLAT-131628] Enable mesh with Bluez 5.55 in WebOS OSE
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  Makefile.am | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

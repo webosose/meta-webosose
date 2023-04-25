@@ -20,10 +20,10 @@ port goes to disabled state during populate many times.
 Checked Seek functionality in youtube test app is working
 correctly without any hang.
 
+---
 Upstream-Status: Inappropriate
     - Only GMP buffer player uses this property to set it FALSE
 
----
  omx/gstomxvideodec.c | 42 +++++++++++++++++++++++++++++-------------
  omx/gstomxvideodec.h |  2 ++
  2 files changed, 31 insertions(+), 13 deletions(-)

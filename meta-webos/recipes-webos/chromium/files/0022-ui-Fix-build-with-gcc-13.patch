@@ -28,11 +28,11 @@ In file included from ../../git/src/ui/events/gesture_event_details.h:14,
       |                              ^
       |                              ::
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344633 ui: Fix build with gcc-13]
-
 Change-Id: I9d9019f1d24d1bf8d8efcb8d1c082852e9179c44
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344633 ui: Fix build with gcc-13]
+
  src/ui/base/prediction/kalman_filter.h | 1 +
  src/ui/events/gesture_event_details.h  | 1 +
  2 files changed, 2 insertions(+)

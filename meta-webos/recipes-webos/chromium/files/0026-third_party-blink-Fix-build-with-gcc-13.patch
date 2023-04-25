@@ -28,9 +28,10 @@ In file included from ../../git/src/third_party/blink/renderer/platform/graphics
       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Change-Id: Iea8f8c7db78f6eb273a314b878fac5ee1fa99ab0
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344637 third_party/blink: Fix build with gcc-13]
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344637 third_party/blink: Fix build with gcc-13]
+
  .../platform/graphics/paint/effect_paint_property_node.h        | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

@@ -70,10 +70,10 @@ No change to image.
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/g-camera-pipeline/+/344559 Fix build with gcc-13]
-
 Change-Id: Id709c53572b60d7c621fa695f0be0274ccf17760
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/g-camera-pipeline/+/344559 Fix build with gcc-13]
+
  src/base/base.h                          | 1 +
  src/postProcess/IPostProcessSolution.hpp | 1 +
  2 files changed, 2 insertions(+)

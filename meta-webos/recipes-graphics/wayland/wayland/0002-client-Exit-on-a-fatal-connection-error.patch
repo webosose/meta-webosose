@@ -11,8 +11,9 @@ connection.
 
 Signed-off-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
 
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/wayland-client.c | 7 +++++++
  1 file changed, 7 insertions(+)
 

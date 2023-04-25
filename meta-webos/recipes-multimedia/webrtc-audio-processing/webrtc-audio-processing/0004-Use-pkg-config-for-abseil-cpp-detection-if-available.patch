@@ -4,9 +4,9 @@ Date: Tue, 19 Oct 2021 15:58:50 -0400
 Subject: [PATCH] Use pkg-config for abseil-cpp detection if available
 
 This should make things a bit easier.
-
-Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/8bf9efad15bdb8438eb858d3f8ed4a8ea2b21ff0]
 ---
+Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/8bf9efad15bdb8438eb858d3f8ed4a8ea2b21ff0]
+
  meson.build | 108 +++++++++++++++++++++++++++++++---------------------
  1 file changed, 64 insertions(+), 44 deletions(-)
 

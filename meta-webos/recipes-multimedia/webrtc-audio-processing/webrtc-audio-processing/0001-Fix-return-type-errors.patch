@@ -12,9 +12,9 @@ webrtc/modules/audio_processing/agc2/adaptive_mode_level_estimator.cc:45:1: erro
    45 | }
       | ^
 cc1plus: some warnings being treated as errors
-
-Upstream-Status: Submitted [https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/merge_requests/28]
 ---
+Upstream-Status: Submitted [https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/merge_requests/28]
+
  .../audio_processing/agc2/adaptive_mode_level_estimator.cc  | 2 ++
  webrtc/modules/audio_processing/audio_processing_impl.cc    | 3 +++
  webrtc/modules/audio_processing/include/audio_processing.cc | 6 ++++++

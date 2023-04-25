@@ -27,8 +27,9 @@ N/A
 [PLAT-118498] "Could not establish a connection to access point" Error
               popup displayed for wrong password
 
-Upstream-Status: Inappropriate [webOS specific]
 ---
+Upstream-Status: Inappropriate [webOS specific]
+
  src/drivers/driver_nl80211_capa.c | 4 ++--
  src/drivers/driver_wext.c         | 4 ++--
  2 files changed, 4 insertions(+), 4 deletions(-)

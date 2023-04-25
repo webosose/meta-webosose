@@ -19,8 +19,9 @@ Tested with obexctl command line tool, all commands are working fine
 :Issues Addressed:
 [PLAT-66305] Modify bluez to use system bus instead of session bus
              for obexd
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  obexd/client/ftp.c      |  3 ++-
  obexd/client/map.c      |  2 +-
  obexd/client/opp.c      |  2 +-

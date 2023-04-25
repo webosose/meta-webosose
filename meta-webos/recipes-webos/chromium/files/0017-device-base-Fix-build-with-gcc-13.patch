@@ -23,11 +23,11 @@ In file included from ../../git/src/device/base/synchronization/one_writer_seqlo
   +++ |+#include <cstdint>
     8 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344628 device/base: Fix build with gcc-13]
-
 Change-Id: I7c426fb082994bc9d9214a954d9ece7afd885158
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344628 device/base: Fix build with gcc-13]
+
  src/device/base/synchronization/one_writer_seqlock.cc | 1 +
  1 file changed, 1 insertion(+)
 

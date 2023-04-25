@@ -15,11 +15,11 @@ In file included from ../../git/src/components/feature_engagement/internal/featu
    29 |                           uint32_t current_day) const = 0;
       |                           ^~~~~~~~
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344618 feature_engagement: Fix build with gcc-13]
-
 Change-Id: I42126b805780245de36752d34f3c8b5c4085fd03
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344618 feature_engagement: Fix build with gcc-13]
+
  .../feature_engagement/internal/event_storage_validator.h        | 1 +
  .../internal/feature_config_event_storage_validator.h            | 1 +
  .../feature_engagement/internal/never_event_storage_validator.h  | 1 +

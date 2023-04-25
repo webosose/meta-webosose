@@ -5,10 +5,10 @@ Subject: [PATCH] connection: Make wl_closure_print output atomic
 
 When multiple threads are used, output from different threads was intermixed in one line. That what breaking parsing of the log messages. Now, intermixing is prevented by using a memstream.
 
-Upstream-Status: Backport [1.21.0 https://gitlab.freedesktop.org/wayland/wayland/-/commit/ca4678354c4a7c21bfd184e604ad7a3c8224e10c]
-
 Signed-off-by: Alexander Irion <alexander_irion@mentor.com>
 ---
+Upstream-Status: Backport [1.21.0 https://gitlab.freedesktop.org/wayland/wayland/-/commit/ca4678354c4a7c21bfd184e604ad7a3c8224e10c]
+
  src/connection.c | 44 ++++++++++++++++++++++++++++----------------
  1 file changed, 28 insertions(+), 16 deletions(-)
 

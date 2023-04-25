@@ -14,8 +14,9 @@ Subject: [PATCH] Fix build with gcc-13
 | cc1plus: all warnings being treated as errors
 
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  test/simple.cpp | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

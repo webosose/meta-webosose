@@ -18,8 +18,9 @@ NA
 [PLAT-110696] Analyze and fix addToNowPlaying support in
               bluez5 stack
 
-Upstream-Status: Inappropriate [webos specific]
 ---
+Upstream-Status: Inappropriate [webos specific]
+
  profiles/audio/avrcp.c  |  3 +++
  profiles/audio/player.c | 13 ++++++++++++-
  profiles/audio/player.h |  1 +

@@ -18,8 +18,9 @@ NA
 :Issues Addressed:
 [PLAT-98273] Implement AVDTP delay report interface
 
-Upstream-Status: Pending
 ---
+Upstream-Status: Pending
+
  profiles/audio/a2dp.c  |  8 +++++++
  profiles/audio/a2dp.h  |  1 +
  profiles/audio/avdtp.c |  5 ++++

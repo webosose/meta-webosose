@@ -15,11 +15,11 @@ In file included from ../../git/src/third_party/perfetto/src/base/uuid.cc:17:
   +++ |+#include <cstdint>
    24 |
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344621 perfetto: Fix build with gcc-13]
-
 Change-Id: Ia305e0ebd7cc188dfd70c404f1fdded4d75eb14b
 Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344621 perfetto: Fix build with gcc-13]
+
  src/third_party/perfetto/include/perfetto/ext/base/uuid.h | 1 +
  1 file changed, 1 insertion(+)
 

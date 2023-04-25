@@ -25,10 +25,10 @@ No change to image.
 :Issues Addressed:
 [WRP-8053] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.hfp/+/344554 Fix build with gcc-13]
-
 Change-Id: I18c5529a0ca26511f71ac9c0dd27025c0012a020
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.hfp/+/344554 Fix build with gcc-13]
+
  src/AG/hfpagcallstatus.h | 1 +
  src/utils.h              | 1 +
  2 files changed, 2 insertions(+)

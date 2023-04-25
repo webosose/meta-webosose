@@ -22,9 +22,10 @@ No change to image.
 :Issues Addressed:
 [WRP-6543] CCC: Various build fixes
 
-Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/audiod-pro/+/344272 events.h: add missing functional include ]
 Change-Id: Ia09aa6ae7728001c955005bae74494e244d233b4
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/audiod-pro/+/344272 events.h: add missing functional include ]
+
  include/events.h | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 

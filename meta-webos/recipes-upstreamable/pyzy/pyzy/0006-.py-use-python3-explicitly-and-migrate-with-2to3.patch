@@ -20,10 +20,10 @@ Content-Transfer-Encoding: 8bit
   Makefile:395: recipe for target 'install-main_dbDATA' failed
   make[4]: *** [install-main_dbDATA] Error 1
 
-Upstream-Status: Submitted [https://github.com/pyzy/pyzy/pull/4]
-
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
+Upstream-Status: Submitted [https://github.com/pyzy/pyzy/pull/4]
+
  data/db/android/create_db.py     | 28 ++++++++++++++--------------
  scripts/addheader.py             |  8 ++++----
  scripts/update-simptrad-table.py | 24 ++++++++++++------------
