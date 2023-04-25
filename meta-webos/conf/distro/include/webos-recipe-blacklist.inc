@@ -47,19 +47,10 @@ SKIP_RECIPE[qt3d] ?= "fails to build with assimp enabled, Feature qt3d_system_as
 SKIP_RECIPE[vboxguestdrivers] ?= "BROKEN: kernel-module-vboxguest conflicts in pkgdata with the vboxguest kernel modules we have enabled in linux-yocto"
 # meta/recipes-kernel/linux/kernel-devsrc.bb:do_install
 SKIP_RECIPE[kernel-devsrc] ?= "BROKEN for aarch64: make[4]: *** No rule to make target `kernel-devsrc/1.0-r0/image/usr/src/kernel/arch/arm64/boot/dts/broadcom/../overlays/Makefile'.  Stop http://caprica.lgsvl.com:8080/Errors/Details/1509158"
-# meta/recipes-extended/sysstat/sysstat_12.4.0.bb:do_install
-SKIP_RECIPE[sysstat] ?= "BROKEN: install: invalid group ‘man’ http://caprica.lgsvl.com:8080/Errors/Details/1509136"
-# meta/recipes-extended/man-db/man-db_2.9.4.bb:do_install
-SKIP_RECIPE[man-db] ?= "BROKEN: without --disable-cache-owner: chown: invalid user: ?man:man? our passwd doesn't have man user and since http://git.openembedded.org/openembedded-core/commit/?id=7080df4b6bc50440eed600e81f2c6fa76a80623d it's needed http://caprica.lgsvl.com:8080/Errors/Details/1509154"
 
 # meta-oe/recipes-core/packagegroups/packagegroup-meta-oe.bb
 SKIP_RECIPE[packagegroup-meta-oe] ?= "depends on blacklisted gradm, scsirastools, tomoyo-tools, s-suite, .."
 # meta-oe/recipes-support/libssh2/libssh2_1.9.0.bb
-SKIP_RECIPE[libssh2] ?= "Depends on blacklisted man-db since https://git.openembedded.org/meta-openembedded/commit/?id=b3e9b51c9ba58b01e55c5b0a9a9bec3f7f06d07a"
-# meta-oe/recipes-support/libgit2/libgit2_1.0.1.bb
-SKIP_RECIPE[libgit2] ?= "Depends on blacklisted libssh2 which depends on blacklisted man-db since https://git.openembedded.org/meta-openembedded/commit/?id=b3e9b51c9ba58b01e55c5b0a9a9bec3f7f06d07a"
-# meta-oe/recipes-benchmark/s-suite/s-suite_git.bb
-SKIP_RECIPE[s-suite] ?= "rdepends on blacklisted sysstat"
 
 # meta-virtualization/recipes-containers/cri-o/cri-o_git.bb:do_compile
 SKIP_RECIPE[cri-o] ?= "ERROR: cri-o-1.12.0+git774a29ecf6855f2dff266dc2aa2fe81d7d964465-r0 do_compile: Function failed: do_compile: | Makefile:112: recipe for target conmon/config.h failed"

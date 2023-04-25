@@ -4,6 +4,7 @@ bin:x:2:2:bin:/bin:/bin/false
 sys:x:3:3:sys:/dev:/bin/false
 sync:x:4:100:sync:/bin:/bin/sync
 mail:x:8:8:mail:/var/spool/mail:/bin/false
+man:*:6:12:man:/var/cache/man:/sbin/nologin
 proxy:x:13:13:proxy:/bin:/bin/false
 www:x:33:33:www:/pub/www:/bin/false
 backup:x:34:34:backup:/var/backups:/bin/false

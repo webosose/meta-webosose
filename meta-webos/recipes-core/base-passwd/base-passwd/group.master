@@ -7,6 +7,7 @@ tty:x:5:
 disk:x:6:system,sdcard,usb
 mail:x:8:mail
 wheel:x:10:root
+man:*:12:
 proxy:x:13:proxy
 kmem:x:15:
 input:x:19:input,system,wam
