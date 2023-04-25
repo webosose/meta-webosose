@@ -10,7 +10,7 @@ DEPENDS += "glib-2.0 luna-service2"
 
 inherit webos_system_bus
 
-WEBOS_VERSION = "3.0.1-13_e64e0494e133771b4655951797537bc540b76d35"
+WEBOS_VERSION = "3.0.1-14_44e1dbfe6a5670d54f59b82678353b37626b3f0b"
 PR = "r15"
 
 SRC_URI += "file://0001-Fix-build-for-nodejs-14.patch \
