@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-385_488cc136cec29a150457e998b6890308e2cde9cd"
-PR = "r56"
+PR = "r57"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -20,12 +20,11 @@ inherit webos_enhanced_submissions
 inherit webos_lttng
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/luna-surfacemanager/+/349064 Fix compilation with lttng-ust >= 2.13
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-compilation-with-lttng-ust-2.13.patch \
+"
 S = "${WORKDIR}/git"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-
-SRC_URI += "file://0001-Fix-compilation-with-lttng-ust-2.13.patch"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 

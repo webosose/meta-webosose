@@ -1,4 +1,4 @@
-From ea3d3eba175e2e4c6bc09987cc5795af876f3094 Mon Sep 17 00:00:00 2001
+From 33d814cb16edd984b42fb15c2ccc286c14e13eb8 Mon Sep 17 00:00:00 2001
 From: "sukil.hong" <sukil.hong@lge.com>
 Date: Tue, 18 Oct 2022 10:18:26 +0900
 Subject: [PATCH] Fix compilation with lttng-ust >= 2.13
@@ -27,11 +27,13 @@ N/A
 
 Change-Id: I318ffecf815c8d1d98bae6b8eb1abff6d233c513
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/luna-surfacemanager/+/349064 Fix compilation with lttng-ust >= 2.13]
+
  modules/weboscompositor/pmtrace_surfacemanager_provider.h | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/modules/weboscompositor/pmtrace_surfacemanager_provider.h b/modules/weboscompositor/pmtrace_surfacemanager_provider.h
-index fe04b75..91f1576 100644
+index fe04b756..91f1576b 100644
 --- a/modules/weboscompositor/pmtrace_surfacemanager_provider.h
 +++ b/modules/weboscompositor/pmtrace_surfacemanager_provider.h
 @@ -1,4 +1,4 @@
@@ -51,6 +53,3 @@ index fe04b75..91f1576 100644
  
  #ifdef __cplusplus
  extern "C"{
--- 
-2.37.1
-
