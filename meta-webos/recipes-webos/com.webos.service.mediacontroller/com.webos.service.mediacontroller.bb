@@ -6,14 +6,14 @@ SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib"
 
-WEBOS_VERSION = "1.0.0-25_ec89863c9e53517bf6f76819cf748d0c3057bdec"
-PR = "r3"
+WEBOS_VERSION = "1.0.0-27_4f035cb28f9f3ffa9f67ca27dd35dd5f03d4352f"
+PR = "r4"
 
 inherit webos_component
 inherit webos_cmake
@@ -31,4 +31,3 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi4$|^raspberrypi4-64$"
 
 FILES:${PN} += "${libdir}/*.so"
 FILES_SOLIBSDEV = ""
-INSANE_SKIP:${PN} += "dev-so"
