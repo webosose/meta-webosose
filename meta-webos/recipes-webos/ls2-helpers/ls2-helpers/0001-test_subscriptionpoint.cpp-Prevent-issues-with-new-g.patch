@@ -1,11 +1,13 @@
-From 9c4f1942f563377a71735d92474ea1dd058b60fe Mon Sep 17 00:00:00 2001
+From 02076bdffeca652bf65403da7d2a53bf0e7c2c09 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Tue, 27 Jun 2017 13:05:11 +0000
 Subject: [PATCH] test_subscriptionpoint.cpp: Prevent issues with new gtest
 
+:Release Notes:
 This is only temporary change to unblock my builds with Yocto 2.3 Pyro which
 contains gtest 1.8.0 instead of older 1.7.0 currently used in master.
 
+:Detailed Notes:
 It should be fixed correctly by ls2-helpers owner.
 
 The get() methods return JsonParseContext<T>:
@@ -57,16 +59,28 @@ It seems to be triggered by this change in gtest.h:
 +    return *this;
 +  }
 
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10791] CCC: Various build fixes
+
 Change-Id: I3416d77fa4b5fc3672f5cc4e43fab8c7afe141e5
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/ls2-helpers/+/348043 test_subscriptionpoint.cpp: Prevent issues with new gtest]
+
  test/test_subscriptionpoint.cpp | 16 ++++++++--------
  1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/test/test_subscriptionpoint.cpp b/test/test_subscriptionpoint.cpp
-index bc25770..58ec74e 100644
+index aea649d..865c3b8 100644
 --- a/test/test_subscriptionpoint.cpp
 +++ b/test/test_subscriptionpoint.cpp
-@@ -181,12 +181,12 @@ public:
+@@ -179,12 +179,12 @@ public:
  		LSHelpers::JsonParser replyJSON{reply.getPayload()};
  		EXPECT_TRUE(replyJSON.isValidJson());
  		bool returnValue = false, isSubscribed = false;
@@ -82,7 +96,7 @@ index bc25770..58ec74e 100644
  		EXPECT_EQ(std::string(TEST_CLASS_NAME), serviceClass);
  	}
  
-@@ -204,7 +204,7 @@ public:
+@@ -202,7 +202,7 @@ public:
  		LSHelpers::JsonParser postJSON{reply.getPayload()};
  		EXPECT_TRUE(postJSON.isValidJson());
  		int32_t postId{0};
@@ -91,7 +105,7 @@ index bc25770..58ec74e 100644
  		return postId;
  	}
  
-@@ -249,12 +249,12 @@ void clientThreadFunc()
+@@ -247,12 +247,12 @@ void clientThreadFunc()
  	LSHelpers::JsonParser replyJSON{reply.getPayload()};
  	EXPECT_TRUE(replyJSON.isValidJson());
  	bool returnValue = false, isSubscribed = false;
@@ -107,7 +121,7 @@ index bc25770..58ec74e 100644
  	EXPECT_EQ(std::string(TEST_CLASS_NAME), serviceClass);
  
  	reply = call.get(200);
-@@ -262,7 +262,7 @@ void clientThreadFunc()
+@@ -260,7 +260,7 @@ void clientThreadFunc()
  	LSHelpers::JsonParser postJSON{reply.getPayload()};
  	EXPECT_TRUE(postJSON.isValidJson());
  	int32_t postId{0};
@@ -116,6 +130,3 @@ index bc25770..58ec74e 100644
  	EXPECT_LE(1, postId);
  	++g_counter;
  
--- 
-1.9.1
-
