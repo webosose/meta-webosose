@@ -23,10 +23,10 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.6.1"
+PV = "2.6.2"
 
-SRCREV = "b6817b30b57eabcf6cc3940e0bffa69a1aec03e4"
-SRCREV_enact = "7bed046a2bb0db010a65636d336a1b86764d020f"
+SRCREV = "aea80d740a84ea3812f1844456d0e855d2bb9ba0"
+SRCREV_enact = "c55734567775b660c70a6c7381a82a503e32b3d4"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
@@ -37,7 +37,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     direction@1.0.4 \
     dom-walk@0.1.2 \
     global@4.4.0 \
-    ilib@14.15.1 \
+    ilib@14.17.0 \
     invariant@2.2.4 \
     is-function@1.0.2 \
     js-tokens@4.0.0 \
@@ -59,7 +59,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r12"
+PR = "r13"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
