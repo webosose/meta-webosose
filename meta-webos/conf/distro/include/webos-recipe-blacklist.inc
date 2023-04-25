@@ -34,6 +34,7 @@ SKIP_RECIPE[python3-pyqtchart] ?= "depends on blacklisted python3-pyqt5 which ne
 SKIP_RECIPE[qmllive] ?= "requires widgets module enabled in qtbase, which was disabled in PLAT-18645 http://caprica.lgsvl.com:8080/Errors/Details/1509138"
 SKIP_RECIPE[qtconnectivity] ?= "requires dbus module enabled in qtbase, which was disabled in PLAT-18268 ERROR: Feature 'bluez' was enabled, but the pre-condition 'libs.bluez && features.concurrent && features.dbus' failed. http://caprica.lgsvl.com:8080/Errors/Details/1509143"
 # since 6.2:
+SKIP_RECIPE[packagegroup-qt6-commercial-modules] ?= "depends on Commercial Qt, can be dropped once https://codereview.qt-project.org/c/yocto/meta-qt6/+/470280 is merged"
 SKIP_RECIPE[packagegroup-qt6-addons] ?= "depends on blacklisted qtconnectivity, qtmqtt, qtopcua"
 SKIP_RECIPE[packagegroup-qt6-modules] ?= "depends on blacklisted packagegroup-qt6-addons"
 SKIP_RECIPE[qtdeviceutilities] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com/Errors/Details/200304"
