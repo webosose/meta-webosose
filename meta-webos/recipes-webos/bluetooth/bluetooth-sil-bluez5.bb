@@ -18,7 +18,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 RDEPENDS:${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
 WEBOS_VERSION = "0.1.0-80_53f14e45f3234a092a1287b5825c30c29a570021"
-PR = "r8"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
@@ -30,7 +30,9 @@ inherit webos_machine_dep
 inherit webos_distro_dep
 inherit webos_bluetooth_sil
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-build-with-gcc-13.patch \
+"
 S = "${WORKDIR}/git"
 
 # http://caprica.lgsvl.com:8080/Errors/Details/1092093
