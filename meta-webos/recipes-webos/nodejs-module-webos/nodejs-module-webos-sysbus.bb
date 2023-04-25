@@ -11,9 +11,11 @@ DEPENDS += "glib-2.0 luna-service2"
 inherit webos_system_bus
 
 WEBOS_VERSION = "3.0.1-14_44e1dbfe6a5670d54f59b82678353b37626b3f0b"
-PR = "r15"
+PR = "r16"
 
-SRC_URI += "file://0001-Fix-build-for-nodejs-14.patch \
+# [http://gpro.lge.com/c/webosose/nodejs-module-webos-sysbus/+/348068 Fix build with nodejs-14]
+# [http://gpro.lge.com/c/webosose/nodejs-module-webos-sysbus/+/348069 binding: use -std=c++14]
+SRC_URI += "file://0001-Fix-build-with-nodejs-14.patch \
     file://0002-binding-use-std-c-14.patch \
 "
 

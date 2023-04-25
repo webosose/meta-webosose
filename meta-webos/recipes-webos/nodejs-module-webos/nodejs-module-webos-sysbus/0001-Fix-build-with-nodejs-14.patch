@@ -1,13 +1,28 @@
-From 2a4c429c3aef57da1daa07ce5239474c4b023785 Mon Sep 17 00:00:00 2001
+From 17dae5bcfd036bea03aa6061ef234197dd445656 Mon Sep 17 00:00:00 2001
 From: Christophe Chapuis <chris.chapuis@gmail.com>
 Date: Tue, 26 Oct 2021 19:46:56 +0000
-Subject: [PATCH] Fix build for nodejs-14
+Subject: [PATCH] Fix build with nodejs-14
 
-Signed-off-by: Christophe Chapuis <chris.chapuis@gmail.com>
-
+:Release Notes:
 Imported from LuneOS:
 https://github.com/webOS-ports/nodejs-module-webos-sysbus/commit/db4c888e627f4c4afe406600563daee88dc24578
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I471b99ac7521fbe5a025728cc933125711ef4b34
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/nodejs-module-webos-sysbus/+/348068 Fix build with nodejs-14]
+
  src/node_ls2_call.cpp                   | 10 +++++-----
  src/node_ls2_handle.cpp                 | 18 +++++++++---------
  src/node_ls2_member_function_wrappers.h |  8 ++++----
@@ -54,7 +69,7 @@ index 1a9ea59..aa4b3b3 100644
  }
  
 diff --git a/src/node_ls2_handle.cpp b/src/node_ls2_handle.cpp
-index 0aa5795..c54dcc7 100755
+index 17cc7e2..645820d 100755
 --- a/src/node_ls2_handle.cpp
 +++ b/src/node_ls2_handle.cpp
 @@ -54,7 +54,7 @@ void LS2Handle::Initialize(Local<Object> target, v8::Local<v8::Context> context)
@@ -102,7 +117,7 @@ index 0aa5795..c54dcc7 100755
      }
      call->SetHandle(this);
      if (sessionId != NULL)
-@@ -420,11 +420,11 @@ void LS2Handle::SetAppId(const v8::FunctionCallbackInfo<v8::Value>& args)
+@@ -422,11 +422,11 @@ void LS2Handle::SetAppId(const v8::FunctionCallbackInfo<v8::Value>& args)
          std::stringstream err_message;
          err_message << "SetAppId: " << e.what();
          isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(

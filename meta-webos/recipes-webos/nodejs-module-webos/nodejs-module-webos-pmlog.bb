@@ -9,9 +9,10 @@ LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=d486dd326df35bb9d577c353691f04
 DEPENDS += "pmloglib vim-native"
 
 WEBOS_VERSION = "3.0.1-7_f08fbbec80e018cccf71d4f1ddae8a3f43a8895b"
-PR = "r14"
+PR = "r15"
 
-SRC_URI += "file://0001-Fix-build-for-nodejs-14.patch"
+# [http://gpro.lge.com/c/webosose/nodejs-module-webos-pmlog/+/344284 Fix build with nodejs-14]
+SRC_URI += "file://0001-Fix-build-with-nodejs-14.patch"
 
 do_configure() {
     cd src

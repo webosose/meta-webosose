@@ -1,10 +1,11 @@
-From 7bf4246c575e32d660fdb5f19a2ddcd6134527ce Mon Sep 17 00:00:00 2001
+From dbc1b5c42e563f5da1307d83a7aeb21b26594eff Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Wed, 27 Oct 2021 14:56:51 +0200
 Subject: [PATCH] binding: use -std=c++14
 
-* fixes:
+:Release Notes:
 
+:Detailed Notes:
 DEBUG: Executing shell function do_compile
 gyp info it worked if it ends with ok
 gyp info using node-gyp@6.1.0
@@ -58,8 +59,21 @@ gyp ERR! node-gyp -v v6.1.0
 gyp ERR! not ok
 WARNING: exit code 1 from a shell command.
 
-Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10847] Fix LIC_FILES_CHKSUM usage in open-source recipes
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I881f9092e693a2b45fae4a2dd9e087701d995457
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/nodejs-module-webos-sysbus/+/348069 binding: use -std=c++14]
+
  CMakeLists.txt | 2 +-
  binding.gyp    | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)

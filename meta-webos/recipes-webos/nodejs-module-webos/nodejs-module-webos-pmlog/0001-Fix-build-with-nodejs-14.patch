@@ -1,13 +1,28 @@
-From 8d9b518f5f1f5a69d1750479b165414d23841ebd Mon Sep 17 00:00:00 2001
+From ad06808b4668f802c55116015096371ade9fbeb7 Mon Sep 17 00:00:00 2001
 From: Christophe Chapuis <chris.chapuis@gmail.com>
 Date: Tue, 26 Oct 2021 19:23:59 +0000
-Subject: [PATCH] Fix build for nodejs-14
+Subject: [PATCH] Fix build with nodejs-14
 
-Signed-off-by: Christophe Chapuis <chris.chapuis@gmail.com>
-
+:Release Notes:
 Imported from LuneOS:
 https://github.com/webOS-ports/nodejs-module-webos-pmlog/commit/50e5fa85b67d594f0fac088c041cae88b48695e7
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I48c72001b1b2f4e9eb66d8f162829f0b64a2d8b5
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/nodejs-module-webos-pmlog/+/344284 Fix build with nodejs-14]
+
  src/pmloglib.cpp | 49 +++++++++++++++++++++++++-----------------------
  1 file changed, 26 insertions(+), 23 deletions(-)
 

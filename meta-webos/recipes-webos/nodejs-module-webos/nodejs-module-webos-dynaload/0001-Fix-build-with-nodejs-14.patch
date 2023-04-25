@@ -1,13 +1,28 @@
-From 7924002ce9c80a7c24645e3332a6bebdd3735632 Mon Sep 17 00:00:00 2001
+From 36e22757734e56923cd31744ef6d22211b2f60f9 Mon Sep 17 00:00:00 2001
 From: Christophe Chapuis <chris.chapuis@gmail.com>
 Date: Tue, 26 Oct 2021 20:08:33 +0000
-Subject: [PATCH] Fix build for nodejs-14
+Subject: [PATCH] Fix build with nodejs-14
 
-Signed-off-by: Christophe Chapuis <chris.chapuis@gmail.com>
-
+:Release Notes:
 Imported from LuneOS:
 https://github.com/webOS-ports/nodejs-module-webos-dynaload/commit/ab87a7f2c59e96ec91360f3d4a1bc82f42594d6a
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: Ia07594fdfd140c83761eba65ee93238ad23b6787
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/nodejs-module-webos-dynaload/+/344286 Fix build with nodejs-14]
+
  src/external_string.cpp |  6 +--
  src/node_webos.cpp      | 84 +++++++++++++++++++++--------------------
  2 files changed, 46 insertions(+), 44 deletions(-)
