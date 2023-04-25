@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-23_0aa21e6681900e6946fdc5e65e9cf3bd83a5250b"
-PR = "r9"
+WEBOS_VERSION = "1.0.0-24_b721a6221df8a8c708ffac5eb1457240f85eb150"
+PR = "r10"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,9 +27,7 @@ DEPENDS += "luna-service2 pmloglib libpbnjson"
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 # uncomment next line to use mediaindexer in shell/interactive mode
