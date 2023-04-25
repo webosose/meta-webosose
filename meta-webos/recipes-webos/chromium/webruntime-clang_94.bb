@@ -29,7 +29,12 @@ INCLUDE_PATH_LIBCXX_EXT = " \
 
 INCLUDE_PATH_LIBCXX = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', '${INCLUDE_PATH_LIBCXX_EXT}', d)}"
 
-GN_ARGS += "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', 'clang_use_stdlib=true clang_extra_cxxflags=\\\"${INCLUDE_PATH_STDLIB}\\\"', 'clang_use_stdlib=false clang_extra_cxxflags=\\\"${INCLUDE_PATH_LIBCXX}\\\"', d)}"
+# tcmalloc build is broken with clang++ and -mthumb as shown in:
+# http://gecko.lge.com:8000/Errors/Details/528000
+# http://gecko.lge.com:8000/Errors/Details/527999
+ARM_INSTRUCTION_SET = "arm"
+
+GN_ARGS += "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', 'clang_use_stdlib=true clang_extra_cxxflags=\\\"${INCLUDE_PATH_STDLIB} ${TARGET_CC_ARCH}\\\"', 'clang_use_stdlib=false clang_extra_cxxflags=\\\"${INCLUDE_PATH_LIBCXX} ${TARGET_CC_ARCH}\\\"', d)}"
 
 GN_ARGS += "webos_rpath=\"${libdir}/cbe\""
 
