@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS:${PN} variable.
-EXTENDPRAUTO:append:rpi = "webosrpi9"
+EXTENDPRAUTO:append:rpi = "webosrpi10"
 
 # gst omx is used only for raspberrypi builds
 MEDIA:append:rpi = " \
@@ -18,6 +18,7 @@ CECSERVICE:raspberrypi4-64 = " \
 
 RDEPENDS:${PN}:append:rpi = " \
     ${CECSERVICE} \
+    alsa-utils \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.hfp \

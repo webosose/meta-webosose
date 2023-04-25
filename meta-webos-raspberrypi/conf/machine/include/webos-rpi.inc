@@ -70,8 +70,16 @@ RPI_KERNEL_MODULES:append:raspberrypi4 = " \
     kernel-module-raspberrypi-hwmon \
     kernel-module-rpivid-mem \
     kernel-module-sch-fq-codel \
+    kernel-module-snd-soc-ac108 \
+    kernel-module-snd-soc-bcm2835-i2s \
+    kernel-module-snd-soc-seeed-voicecard \
     kernel-module-uio-pdrv-genirq \
     kernel-module-v3d \
+"
+
+RPI_KERNEL_DEVICETREE_OVERLAYS += " \
+    overlays/seeed-4mic-voicecard.dtbo \
+    overlays/seeed-8mic-voicecard.dtbo \
 "
 
 KERNEL_MODULE_AUTOLOAD:append = " uinput bridge vc4"

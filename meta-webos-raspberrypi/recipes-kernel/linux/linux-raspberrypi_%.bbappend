@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi31"
+EXTENDPRAUTO:append = "webosrpi32"
 
 CMDLINE:append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 CMDLINE:remove:sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
@@ -10,6 +10,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}-${SHRT_VER}:${THISDIR}/${BPN}:"
 
 SRC_URI += "\
     file://0001-bcm2835-v4l2-codec-fix-vchiq-mmal-renable.patch \
+    file://0001-kernel-seed-voicecard.patch \
     file://ostree.cfg \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://docker.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://ebtables.cfg', '', d)} \
@@ -39,6 +40,9 @@ KERNEL_MODULE_AUTOLOAD:append = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'nf_conntrack_ipv6', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'openvswitch', '', d)} \
     bridge \
+    snd-soc-ac108 \
+    snd-soc-seeed-voicecard \
+    snd-soc-bcm2835-i2s \
 "
 
 do_deploy:append() {

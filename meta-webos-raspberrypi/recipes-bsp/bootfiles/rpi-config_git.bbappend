@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi11"
+EXTENDPRAUTO:append = "webosrpi12"
 
 do_deploy:append() {
     echo "gpu_mem=300" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
@@ -17,4 +17,7 @@ do_deploy:append:raspberrypi4() {
     echo "# Enable spi" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
     echo "dtparam=spi=on" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
     echo "start_x=1" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
+    echo "# dtoverlay=seeed-4mic-voicecard" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
+    echo "# dtoverlay=seeed-8mic-voicecard" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
+    echo "dtparam=i2s=on" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
 }
