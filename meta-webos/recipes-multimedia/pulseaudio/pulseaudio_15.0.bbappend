@@ -8,10 +8,10 @@ LIC_FILES_CHKSUM:webos += "file://oss-pkg-info.yaml;md5=aad9c121c4d20efb97383007
 # This is blacklisted because of the license
 DEPENDS:remove = "libatomic-ops"
 
-DEPENDS += "pmloglib tensorflow-lite flatbuffers"
+DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
-WEBOS_VERSION = "15.0-44_d049aba0edb7f82969b7a97349ca40525ecfafe7"
-EXTENDPRAUTO:append = "webos4"
+WEBOS_VERSION = "15.0-45_c9bc30c86eeebc7f7e2927fd4b53de1f1c9d67a4"
+EXTENDPRAUTO:append = "webos5"
 
 inherit webos_enhanced_submissions
 
@@ -75,7 +75,9 @@ FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr/*"
 
 RDEPENDS:pulseaudio-server:append:webos = "\
     pulseaudio-module-ecnr \
+    pulseaudio-module-agc \
 "
+
 RDEPENDS:pulseaudio-server:append = "\
     pulseaudio-module-palm-policy \
     pulseaudio-module-null-source \

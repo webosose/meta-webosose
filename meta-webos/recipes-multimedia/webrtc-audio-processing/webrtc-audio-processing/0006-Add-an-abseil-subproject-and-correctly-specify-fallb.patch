@@ -1,0 +1,92 @@
+From f8c7d3f64f24e7ac729ac05c9a9449a3665634c0 Mon Sep 17 00:00:00 2001
+From: Arun Raghavan <arun@asymptotic.io>
+Date: Tue, 19 Oct 2021 18:24:11 -0400
+Subject: [PATCH] Add an abseil subproject and correctly specify fallback deps
+
+Upstream-Status: Backport [1.1 https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing/-/commit/5a5aa66ada1f3e97d62cbd6843972bb427cbad65]
+---
+ .gitignore                  |  1 +
+ meson.build                 | 22 ++++++++++++++++------
+ subprojects/abseil-cpp.wrap | 23 +++++++++++++++++++++++
+ 3 files changed, 40 insertions(+), 6 deletions(-)
+ create mode 100644 subprojects/abseil-cpp.wrap
+
+diff --git a/.gitignore b/.gitignore
+index 4570708..c1d89f4 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -8,3 +8,4 @@
+ build/
+ depcomp
+ install/
++subprojects/*/
+diff --git a/meson.build b/meson.build
+index eadf282..45c3a17 100644
+--- a/meson.build
++++ b/meson.build
+@@ -44,20 +44,30 @@ have_win = false
+ # if pkg-config is not found, instead of CMake or manual library detection.
+ # This might be surprising, but is hopefully a temporary state until recent
+ # abseil versions become the norm.
+-absl_base_dep = dependency('absl_base', required : false)
+-absl_flags_dep = dependency('absl_flags', required : false)
+-absl_strings_dep = dependency('absl_strings', required : false)
+-absl_synchronization_dep = dependency('absl_synchronization', required : false)
+-absl_types_dep = dependency('absl_optional', required : false)
++absl_base_dep = dependency('absl_base', required : false,
++  fallback: [ 'abseil-cpp', 'absl_base_dep' ]
++)
++absl_flags_dep = dependency('absl_flags_parse', required : false,
++  fallback: [ 'abseil-cpp', 'absl_flags_dep' ]
++)
++absl_optional_dep = dependency('absl_optional', required : false,
++  fallback: [ 'abseil-cpp', 'absl_types_dep' ]
++)
++absl_strings_dep = dependency('absl_strings', required : false,
++  fallback: [ 'abseil-cpp', 'absl_strings_dep' ]
++)
++absl_synchronization_dep = dependency('absl_synchronization', required : false,
++  fallback: [ 'abseil-cpp', 'absl_synchronization_dep' ]
++)
+ 
+ # If we have the base dep, assume the rest should be present to
+ if absl_base_dep.found()
+   absl_dep = [
+     absl_base_dep,
+     absl_flags_dep,
++    absl_optional_dep,
+     absl_strings_dep,
+     absl_synchronization_dep,
+-    absl_types_dep,
+   ]
+ else
+   warning('Could not find abseil-cpp with pkg-config, trying CMake-based library detection.')
+diff --git a/subprojects/abseil-cpp.wrap b/subprojects/abseil-cpp.wrap
+new file mode 100644
+index 0000000..4ea394d
+--- /dev/null
++++ b/subprojects/abseil-cpp.wrap
+@@ -0,0 +1,23 @@
++[wrap-file]
++directory = abseil-cpp-20210324.2
++source_url = https://github.com/abseil/abseil-cpp/archive/20210324.2.tar.gz
++source_filename = abseil-cpp-20210324.2.tar.gz
++source_hash = 59b862f50e710277f8ede96f083a5bb8d7c9595376146838b9580be90374ee1f
++patch_filename = abseil-cpp_20210324.2-3_patch.zip
++patch_url = https://wrapdb.mesonbuild.com/v2/abseil-cpp_20210324.2-3/get_patch
++patch_hash = 87827a6ed1fcee2c5f36d57ccdadefd536bac544892d7196b578ffb671a25c0a
++
++[provide]
++absl_base = absl_base_dep
++absl_container = absl_container_dep
++absl_debugging = absl_debugging_dep
++absl_flags = absl_flags_dep
++absl_hash = absl_hash_dep
++absl_numeric = absl_numeric_dep
++absl_random = absl_random_dep
++absl_status = absl_status_dep
++absl_strings = absl_strings_dep
++absl_synchronization = absl_synchronization_dep
++absl_time = absl_time_dep
++absl_types = absl_types_dep
++
