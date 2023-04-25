@@ -11,9 +11,10 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
+DEPENDS += "edgeai-vision jpeg opencv"
 
-WEBOS_VERSION = "1.0.0-33_284ffac35b66de3da47dce62fc77a8f2f13f01d8"
-PR = "r6"
+WEBOS_VERSION = "1.0.0-35_8ec5e64470df87173c8013e7661d96541c6d544c"
+PR = "r7"
 
 inherit webos_component
 inherit webos_cmake
