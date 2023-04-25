@@ -10,21 +10,20 @@ AUTHOR = "DongJoo Kim <dongjoo.kim@lge.com>"
 LICENSE = "LGPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6762ed442b3822387a51c92d928ead0d"
 
-PR = "r2"
-DEPENDS = "gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pmloglib libxml2"
+PR = "r3"
+DEPENDS = "gstreamer1.0-plugins-base"
 
 inherit gobject-introspection
 
 # Dynamically generate packages for all enabled plugins
 PACKAGES_DYNAMIC =+ "^libgst.*"
 
-inherit webos_machine_actual_dep
 inherit webos_public_repo
 
 WEBOS_REPO_NAME = "gst-plugins-webos"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-WEBOS_VERSION = "1.18.2-4_3a2d2ffe333c172d1d936f790d25a034add0ab59"
+WEBOS_VERSION = "1.18.2-5_84ad839588752cbf240f2f9a4d707b0699cc1af5"
 
 EXTRA_OEMESON = "\
     -Ddoc=disabled \
