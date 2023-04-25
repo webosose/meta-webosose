@@ -10,9 +10,10 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "qtdeclarative"
+RDEPENDS:${PN} += "ilib-webapp"
 
 WEBOS_VERSION = "11.0.0-6_bdf1beb39a1326243eac0797791f099ca4f1c5ae"
-PR = "r6"
+PR = "r7"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
