@@ -1,0 +1,51 @@
+From 72b4eeb82ae2fb9f0d0308f855f3859fddcf6402 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 20 Mar 2023 23:42:50 +0000
+Subject: [PATCH] Fix luna-service2 usage
+
+:Release Notes:
+Since luna-service2 submission 143 from September 2012 ls2 headers
+should be included from luna-service2 directory.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/556300
+
+FAILED: src/CMakeFiles/com.webos.service.intent.dir/core/IntentManager.cpp.o
+TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++  -ITOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/git/src -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1=/usr/src/debug/com.webos.service.intent/1.0.0-17-r1                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1=/usr/src/debug/com.webos.service.intent/1.0.0-17-r1                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/recipe-sysroot=                      -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/recipe-sysroot-native=  -fvisibility-inlines-hidden  -DWEBOS_TARGET_DISTRO_WEBOS -DUSE_PMLOG_DECLARATION -DUSE_PMLOG_DECLARATION -std=c++0x -DNDEBUG -MD -MT src/CMakeFiles/com.webos.service.intent.dir/core/IntentManager.cpp.o -MF src/CMakeFiles/com.webos.service.intent.dir/core/IntentManager.cpp.o.d -o src/CMakeFiles/com.webos.service.intent.dir/core/IntentManager.cpp.o -c TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/git/src/core/IntentManager.cpp
+TOPDIR/BUILD/work/qemux86_64-webos-linux/com.webos.service.intent/1.0.0-17-r1/git/src/core/IntentManager.cpp:19:10: fatal error: lunaservice.h: No such file or directory
+   19 | #include <lunaservice.h>
+      |          ^~~~~~~~~~~~~~~
+compilation terminated.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-10642] Remove the temporary work around from 2012 from luna-service2 recipe
+[WRP-11673] com.webos.service.intent: Fix luna-service2 usage
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I3eb605e2c63f9d02756c8ad5967dd968fdc9f6ba
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.intent/+/348184 Fix luna-service2 usage]
+
+ src/core/IntentManager.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/IntentManager.cpp b/src/core/IntentManager.cpp
+index f7fda02..032fd59 100644
+--- a/src/core/IntentManager.cpp
++++ b/src/core/IntentManager.cpp
+@@ -16,7 +16,7 @@
+ 
+ #include "IntentManager.h"
+ 
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ 
+ #include "base/Handler.h"
+ #include "base/Handlers.h"
