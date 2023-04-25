@@ -24,63 +24,68 @@ PREF_DIR="/var/luna/preferences"
 DEVICE="/dev/mmcblk0"
 PART=$(mount | grep "\/ " | cut -c 14-14)
 
+SECTOR_SIZE_50M="102400"
+SECTOR_SIZE_0G5="1048576"
+SECTOR_SIZE_1G="2097152"
+# SECTOR_SIZE_2G="4194304"
+
 updatePartitionTable() {
 	# get disk size
-	DISK_BYTES=`fdisk /dev/mmcblk0 -l | head -n 1 | awk '{print $5}'`
-
-	# part
+	DISK_SECTORS=`fdisk ${DEVICE} -l | head -n 1 | awk '{print $7}'`
 	part2_start=$(fdisk -l ${DEVICE}|grep ${DEVICE}p${PART}|awk '{print $2}')
-	orgend=$(fdisk -l ${DEVICE}|grep ${DEVICE}p${PART}|awk '{print $3}')
-	end=$(fdisk -l ${DEVICE}|head -n 1|awk '{print $7}')
+	org_part2_sectors=$(fdisk -l ${DEVICE}|grep ${DEVICE}p${PART}|awk '{print $4}')
 
-	# rootfs 'A' == 2.5 GB
-	part2_sectors="+5242880"
-	part3_start=$(( $part2_start + $part2_sectors + 1024 ))
+	# rootfs 'A'
+	part2_sectors="$org_part2_sectors"
+	part3_start=$(($part2_start + $part2_sectors + 1024))
 
 	# rootfs 'B',
-	if [ $DISK_BYTES -gt 7864320000 ]; then
-		# > 7.5GB (maybe > 8GB SD),
+	if [ $DISK_SECTORS -gt $(($part2_sectors * 2 + $SECTOR_SIZE_1G + $SECTOR_SIZE_0G5)) ]; then
 		# create 'B' partition as normal size
-		part3_sectors="+5242880"
+		part3_sectors="$part2_sectors"
 	else
 		# othersize, just create as 'padding partition'
-		part3_sectors="+100"
+		part3_sectors="100"
 	fi
 	part4_start=$(( $part3_start + $part3_sectors + 1024 ))
 
 	# do fdisk
-	fdisk ${DEVICE} <<EOF
-d
-2
-n
-p
-2
-$part2_start
-$part2_sectors
-No
-n
-p
-3
-$part3_start
-$part3_sectors
-
-n
-e
-$part4_start
-
-
-n
-
-+1G
-n
-
-+100M
-n
-
-
-
-w
-EOF
+	cat > /tmp/setup-partitions.fdisk <<-EOF
+	d
+	2
+	n
+	p
+	2
+	$part2_start
+	+$part2_sectors
+	No
+	n
+	p
+	3
+	$part3_start
+	+$part3_sectors
+	
+	n
+	e
+	$part4_start
+	
+	
+	n
+	
+	+1G
+	n
+	
+	+100M
+	n
+	
+	
+	
+	w
+	EOF
+	echo "Running following fdisk commands:"
+	cat /tmp/setup-partitions.fdisk
+	fdisk ${DEVICE} < /tmp/setup-partitions.fdisk
+	rm -f /tmp/setup-partitions.fdisk
 	partprobe
 	echo "Partition table updated!"
 }
