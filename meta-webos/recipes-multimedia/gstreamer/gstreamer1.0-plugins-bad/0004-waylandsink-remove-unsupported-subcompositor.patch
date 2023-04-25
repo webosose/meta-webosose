@@ -1,7 +1,23 @@
-diff --git a/ext/wayland/gstwaylandsink.c b/ext/wayland/gstwaylandsink.c
-index 0761304..25482b9 100644
---- a/ext/wayland/gstwaylandsink.c
-+++ b/ext/wayland/gstwaylandsink.c
+From 0dfe28dced1dcada0609861dd158064ad30c04c8 Mon Sep 17 00:00:00 2001
+From: Pankaj Maharana <pankaj.maharana@lge.com>
+Date: Thu, 3 Oct 2019 17:05:37 +0530
+Subject: [PATCH] waylandsink: remove unsupported subcompositor
+
+Upstream-Status: Pending
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ .../ext/wayland/gstwaylandsink.c              | 158 +++++++++++++--
+ .../ext/wayland/gstwaylandsink.h              |   4 +
+ .../gst-plugins-bad/ext/wayland/wldisplay.c   |   8 +-
+ .../gst-plugins-bad/ext/wayland/wldisplay.h   |   1 -
+ .../gst-plugins-bad/ext/wayland/wlwindow.c    | 182 +++++-------------
+ .../gst-plugins-bad/ext/wayland/wlwindow.h    |  10 +-
+ 6 files changed, 207 insertions(+), 156 deletions(-)
+
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c b/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c
+index 0761304ce3..33e08ce643 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c
++++ b/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.c
 @@ -220,6 +220,10 @@ gst_wayland_sink_init (GstWaylandSink * sink)
  {
    g_mutex_init (&sink->display_lock);
@@ -287,8 +303,7 @@ index 0761304..25482b9 100644
        sink->window = gst_wl_window_new_toplevel (sink->display,
            &sink->video_info, sink->fullscreen, &sink->render_lock);
        g_signal_connect_object (sink->window, "closed",
--          G_CALLBACK (on_window_closed), sink, 0);
-+          G_CALLBACK (on_window_closed), sink, 0); 
+           G_CALLBACK (on_window_closed), sink, 0);
 +    } else {
 +      gint width;
 +		  GST_DEBUG_OBJECT (sink, "Parmi : Inside G_UNLIKELY if  window is null");
@@ -306,7 +321,7 @@ index 0761304..25482b9 100644
 +		  GST_DEBUG_OBJECT (sink, "Parmi : gst_wayland_sink_post_video_info_message is Failed hence goto Video_info_failed");
 +      goto video_info_failed;
 +		}
-+ 
++
 +    g_mutex_lock (&sink->render_lock);
    }
  
@@ -377,10 +392,10 @@ index 0761304..25482b9 100644
    g_mutex_unlock (&sink->render_lock);
  }
  
-diff --git a/ext/wayland/gstwaylandsink.h b/ext/wayland/gstwaylandsink.h
-index 7aabb6f..c6a027c 100644
---- a/ext/wayland/gstwaylandsink.h
-+++ b/ext/wayland/gstwaylandsink.h
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.h b/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.h
+index 7aabb6ff0e..c6a027ca98 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.h
++++ b/subprojects/gst-plugins-bad/ext/wayland/gstwaylandsink.h
 @@ -68,6 +68,10 @@ struct _GstWaylandSink
    GMutex render_lock;
    GstBuffer *last_buffer;
@@ -392,10 +407,10 @@ index 7aabb6f..c6a027c 100644
    struct wl_callback *callback;
  };
  
-diff --git a/ext/wayland/wldisplay.c b/ext/wayland/wldisplay.c
-index f326091..c0e2e80 100644
---- a/ext/wayland/wldisplay.c
-+++ b/ext/wayland/wldisplay.c
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/wldisplay.c b/subprojects/gst-plugins-bad/ext/wayland/wldisplay.c
+index f326091990..c0e2e80109 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/wldisplay.c
++++ b/subprojects/gst-plugins-bad/ext/wayland/wldisplay.c
 @@ -105,9 +105,6 @@ gst_wl_display_finalize (GObject * gobject)
    if (self->compositor)
      wl_compositor_destroy (self->compositor);
@@ -429,10 +444,10 @@ index f326091..c0e2e80 100644
    VERIFY_INTERFACE_EXISTS (shm, "wl_shm");
  
  #undef VERIFY_INTERFACE_EXISTS
-diff --git a/ext/wayland/wldisplay.h b/ext/wayland/wldisplay.h
-index f2025a6..66dd00c 100644
---- a/ext/wayland/wldisplay.h
-+++ b/ext/wayland/wldisplay.h
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/wldisplay.h b/subprojects/gst-plugins-bad/ext/wayland/wldisplay.h
+index f2025a6a03..66dd00c169 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/wldisplay.h
++++ b/subprojects/gst-plugins-bad/ext/wayland/wldisplay.h
 @@ -53,7 +53,6 @@ struct _GstWlDisplay
    /* globals */
    struct wl_registry *registry;
@@ -441,10 +456,10 @@ index f2025a6..66dd00c 100644
    struct wl_shell *wl_shell;
    struct xdg_wm_base *xdg_wm_base;
    struct zwp_fullscreen_shell_v1 *fullscreen_shell;
-diff --git a/ext/wayland/wlwindow.c b/ext/wayland/wlwindow.c
-index 66df0fc..2a8e68a 100644
---- a/ext/wayland/wlwindow.c
-+++ b/ext/wayland/wlwindow.c
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/wlwindow.c b/subprojects/gst-plugins-bad/ext/wayland/wlwindow.c
+index 66df0fce7b..2a8e68a651 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/wlwindow.c
++++ b/subprojects/gst-plugins-bad/ext/wayland/wlwindow.c
 @@ -150,7 +150,8 @@ static void
  gst_wl_window_init (GstWlWindow * self)
  {
@@ -781,10 +796,10 @@ index 66df0fc..2a8e68a 100644
 -  if (window->video_width != 0)
 -    wl_subsurface_set_desync (window->video_subsurface);
  }
-diff --git a/ext/wayland/wlwindow.h b/ext/wayland/wlwindow.h
-index 303c336..3e8fed2 100644
---- a/ext/wayland/wlwindow.h
-+++ b/ext/wayland/wlwindow.h
+diff --git a/subprojects/gst-plugins-bad/ext/wayland/wlwindow.h b/subprojects/gst-plugins-bad/ext/wayland/wlwindow.h
+index 303c336ddd..3e8fed272e 100644
+--- a/subprojects/gst-plugins-bad/ext/wayland/wlwindow.h
++++ b/subprojects/gst-plugins-bad/ext/wayland/wlwindow.h
 @@ -44,13 +44,9 @@ struct _GstWlWindow
    GMutex *render_lock;
  

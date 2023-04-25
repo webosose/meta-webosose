@@ -2,8 +2,6 @@
 
 EXTENDPRAUTO:append:rpi = "webosrpi7"
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-
 DEPENDS:append:rpi = " webos-wayland-extensions"
 
 PACKAGECONFIG:append:rpi = " kms wayland"
@@ -11,6 +9,6 @@ PACKAGECONFIG:append:rpi = " kms wayland"
 PACKAGECONFIG:remove:rpi = "faad"
 
 SRC_URI:append:rpi = " \
-      file://0005-waylandsink-remove-unsupported-subcompositor.patch \
-      file://0006-h264parse-resolution-changed-event-support.patch \
-    "
+    file://0004-waylandsink-remove-unsupported-subcompositor.patch;striplevel=3 \
+    file://0005-h264parse-resolution-changed-event-support.patch;striplevel=3 \
+"
