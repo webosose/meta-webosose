@@ -14,7 +14,7 @@ DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native 
 RDEPENDS:${PN} = "connman connman-client"
 
 WEBOS_VERSION = "1.1.0-42_83a6b8517c2f4ce630e4fe3d1498965cff5fbac3"
-PR = "r10"
+PR = "r11"
 
 inherit webos_component
 inherit webos_public_repo
@@ -32,8 +32,10 @@ EXTRA_OECMAKE += "-DENABLE_SCAN_ON_SOFTAP=true"
 PACKAGECONFIG[enable-multiple-routing-table] = "-DMULTIPLE_ROUTING_TABLE:BOOL=true,-DMULTIPLE_ROUTING_TABLE:BOOL=false,"
 PACKAGECONFIG = "enable-multiple-routing-table"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-SRC_URI += "file://0001-Workaround-to-prevent-luna-call-pending.patch"
+# http://gpro.lge.com/c/webosose/webos-connman-adapter/+/349072 Workaround to prevent luna call pending
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Workaround-to-prevent-luna-call-pending.patch \
+"
 SRC_URI:append:raspberrypi4 = " file://blacklistcdc_ether.conf"
 S = "${WORKDIR}/git"
 

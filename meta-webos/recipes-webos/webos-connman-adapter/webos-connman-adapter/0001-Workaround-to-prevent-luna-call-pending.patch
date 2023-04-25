@@ -1,14 +1,32 @@
-From eaa80cf0278dc019280d2eb840ab50a41587ccdb Mon Sep 17 00:00:00 2001
+From a469601664bde63d49910cf721388990bc6e42d7 Mon Sep 17 00:00:00 2001
 From: "piyush10.asalmol" <piyush10.asalmol@lge.com>
 Date: Wed, 9 Nov 2022 19:47:16 +0530
 Subject: [PATCH] Workaround to prevent luna call pending
 
+:Release Notes:
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-11630] Add Upstream-Status to existing .patch files in meta-lg-webos
+[WRP-11864] CCC: Various build fixes and .patch files cleanup
+
+Change-Id: I3e32d725d8cd3c6e559d895399a537aeb621f346
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/webos-connman-adapter/+/349072 Workaround to prevent luna call pending]
+
  src/wifi_service.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/wifi_service.c b/src/wifi_service.c
-index dbbb36a..9085c5a 100644
+index 9287c97..93521af 100644
 --- a/src/wifi_service.c
 +++ b/src/wifi_service.c
 @@ -1932,7 +1932,7 @@ static gboolean signal_polling_cb(gpointer user_data)
@@ -29,6 +47,3 @@ index dbbb36a..9085c5a 100644
  
  	return TRUE;
  }
--- 
-2.17.1
-
