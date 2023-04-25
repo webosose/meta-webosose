@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative pmloglib qt-features-webos luna-service2 glib-2.0"
 
 WEBOS_VERSION = "1.0.0-57_ca4bb7c2b78f0968169b2c732cbdcdb9c4afbef5"
-PR = "r19"
+PR = "r20"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -22,15 +22,11 @@ inherit webos_lttng
 inherit webos_qmllint
 inherit webos_public_repo
 
-# TODO: move to WEBOS_GIT_REPO_COMPLETE
-# Once the repo will go public this recipe should be moved to meta-webos
-# but until that happens we need to clone from gpro
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/qml-webos-components/+/349066 Fix compilation with lttng-ust >= 2.13
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-compilation-with-lttng-ust-2.13.patch \
+"
 S = "${WORKDIR}/git"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-
-SRC_URI += "file://0001-Fix-compilation-with-lttng-ust-2.13.patch"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 

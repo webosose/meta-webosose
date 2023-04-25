@@ -1,4 +1,4 @@
-From b79f7b3660251350ad6483b131fb2e36abd0ff68 Mon Sep 17 00:00:00 2001
+From f825f3a3b937cc1aa43051a050528fcfbd8b4441 Mon Sep 17 00:00:00 2001
 From: "sukil.hong" <sukil.hong@lge.com>
 Date: Mon, 17 Oct 2022 14:24:43 +0900
 Subject: [PATCH] Fix compilation with lttng-ust >= 2.13
@@ -27,6 +27,8 @@ N/A
 
 Change-Id: Iaa2e7bcf068ac584302c8562202959a0bf8b9878
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/qml-webos-components/+/349066 Fix compilation with lttng-ust >= 2.13]
+
  performancelog/plugin/pmtrace_performancelog_provider.h | 6 +++---
  pmtrace/plugin/pmtrace_qmlplugin_provider.h             | 6 +++---
  2 files changed, 6 insertions(+), 6 deletions(-)
@@ -73,6 +75,3 @@ index b7dd291..19ca59a 100644
  
  #ifdef __cplusplus
  extern "C"{
--- 
-2.37.1
-
