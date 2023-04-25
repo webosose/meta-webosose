@@ -4,6 +4,7 @@ inherit clang_cmake
 
 require g-media-pipeline.bb
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/g-media-pipeline:"
 WEBOS_REPO_NAME = "g-media-pipeline"
 
 PR = "r1"

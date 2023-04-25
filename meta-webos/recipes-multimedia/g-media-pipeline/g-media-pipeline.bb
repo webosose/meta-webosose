@@ -28,15 +28,16 @@ inherit webos_pkgconfig
 # qemux86-64
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
-# raspberrypi4 and qemux86 uses @gav branch
-PR = "r11"
+PR = "r14"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator webos-wayland-extensions"
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_GIT_PARAM_BRANCH = "@gav"
 WEBOS_VERSION = "1.0.0-21.gav.38_d2517286c25ade299432ba67c56b47f47d0ea844"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-build-with-gcc-13.patch \
+"
 S = "${WORKDIR}/git"
 
 FILES_SOLIBSDEV = ""
