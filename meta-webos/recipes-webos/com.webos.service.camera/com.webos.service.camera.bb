@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
 
-WEBOS_VERSION = "1.0.0-32_da7808d0edf4ffeecf0d39e94dd9b820e2d18228"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-33_284ffac35b66de3da47dce62fc77a8f2f13f01d8"
+PR = "r6"
 
 inherit webos_component
 inherit webos_cmake
@@ -24,9 +24,7 @@ inherit webos_machine_dep
 inherit webos_system_bus
 inherit webos_daemon
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 COMPATIBLE_MACHINE = "(.*)"
