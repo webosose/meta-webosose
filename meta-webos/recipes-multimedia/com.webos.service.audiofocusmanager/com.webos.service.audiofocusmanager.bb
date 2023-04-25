@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib"
 
 WEBOS_VERSION = "1.0.0-6_bf116ace9f497f2be05ce52f9a0e377b56c62376"
-PR = "r0"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,6 +27,9 @@ inherit webos_public_repo
 inherit webos_distro_dep
 inherit webos_machine_impl_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# [http://gpro.lge.com/c/webosose/com.webos.service.audiofocusmanager/+/348165 Fix luna-service2 usage]
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-luna-service2-usage.patch \
+"
 S = "${WORKDIR}/git"
 

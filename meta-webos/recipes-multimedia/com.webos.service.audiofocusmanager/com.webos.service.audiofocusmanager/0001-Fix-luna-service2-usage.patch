@@ -1,0 +1,107 @@
+From 3e2977f41c61377fe9c03b26fa1737597747a166 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 20 Mar 2023 16:55:44 +0000
+Subject: [PATCH] Fix luna-service2 usage
+
+:Release Notes:
+Since luna-service2 submission 143 from September 2012 ls2 headers
+should be included from luna-service2 directory.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/548214
+
+TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot-native/usr/bin/arm-webos-linux-gnueabi/arm-webos-linux-gnueabi-g++ -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/git/include -mthumb -mfpu=neon-vfpv4 -mfloat-abi=hard -mcpu=cortex-a7 -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0=/usr/src/debug/com.webos.service.audiofocusmanager/1.0.0-6-r0                      -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0=/usr/src/debug/com.webos.service.audiofocusmanager/1.0.0-6-r0                      -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot=                      -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -DNDEBUG   -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/recipe-sysroot/usr/lib/glib-2.0/include -MD -MT CMakeFiles/audiofocusmanager.dir/src/utils.cpp.o -MF CMakeFiles/audiofocusmanager.dir/src/utils.cpp.o.d -o CMakeFiles/audiofocusmanager.dir/src/utils.cpp.o -c TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/git/src/utils.cpp
+In file included from TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/git/src/utils.cpp:19:
+TOPDIR/BUILD/work/raspberrypi4-webos-linux-gnueabi/com.webos.service.audiofocusmanager/1.0.0-6-r0/git/include/common.h:22:10: fatal error: lunaservice.h: No such file or directory
+   22 | #include <lunaservice.h>
+      |          ^~~~~~~~~~~~~~~
+compilation terminated.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-10642] Remove the temporary work around from 2012 from luna-service2 recipe
+[WRP-11230] com.webos.service.audiofocusmanager: Fix luna-service2 usage
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I2ee78e0b2b86172a3910befa4de8d2b40ed72f30
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.audiofocusmanager/+/348165 Fix luna-service2 usage]
+
+ include/audioFocusManager.h | 2 +-
+ include/common.h            | 2 +-
+ include/messageUtils.h      | 2 +-
+ src/main.cpp                | 2 +-
+ src/utils.cpp               | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/include/audioFocusManager.h b/include/audioFocusManager.h
+index 80499f5..374b023 100644
+--- a/include/audioFocusManager.h
++++ b/include/audioFocusManager.h
+@@ -27,7 +27,7 @@
+ #include "common.h"
+ #include <sys/time.h>
+ #include <pbnjson.hpp>
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ #include <sstream>
+ #include "messageUtils.h"
+ #include "log.h"
+diff --git a/include/common.h b/include/common.h
+index 82841d9..18e3cad 100644
+--- a/include/common.h
++++ b/include/common.h
+@@ -19,7 +19,7 @@
+ #ifndef COMMON_H
+ #define COMMON_H
+ 
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ #include <map>
+ #include <string>
+ #include <list>
+diff --git a/include/messageUtils.h b/include/messageUtils.h
+index 863fc2f..e8ea44d 100644
+--- a/include/messageUtils.h
++++ b/include/messageUtils.h
+@@ -20,7 +20,7 @@
+ #ifndef MESSAGEUTILS_H_
+ #define MESSAGEUTILS_H_
+ 
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ #include <pbnjson.h>
+ #include <pbnjson.hpp>
+ #include "common.h"
+diff --git a/src/main.cpp b/src/main.cpp
+index 47a242f..cebd888 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -12,7 +12,7 @@
+  */
+ 
+ #include <iostream>
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ #include <glib.h>
+ #include <audioFocusManager.h>
+ #include <signal.h>
+diff --git a/src/utils.cpp b/src/utils.cpp
+index be3a2c1..1e5a49e 100644
+--- a/src/utils.cpp
++++ b/src/utils.cpp
+@@ -17,7 +17,7 @@
+ * LICENSE@@@ */
+ 
+ #include "common.h"
+-#include <lunaservice.h>
++#include <luna-service2/lunaservice.h>
+ #include "log.h"
+ 
+ 
