@@ -1,13 +1,15 @@
-From 11fd90cfbd17b816b4c8e3c73be3ee958866abfd Mon Sep 17 00:00:00 2001
+From 043075bf719f4efd87fe968e3ec80af09b460718 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 15 Oct 2021 06:31:41 -0700
 Subject: [PATCH] webpack: use sha256 instead of ancient md4 to fix build with
  openssl-3
 
-* follow the suggestion from:
-  https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported
+:Release Notes:
+Follow the suggestion from:
+https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported
 
-  to fix build with openssl-3:
+:Detailed Notes:
+To fix build with openssl-3:
 
 added 721 packages from 568 contributors in 37.661s
 
@@ -53,8 +55,20 @@ npm ERR!
 npm ERR! Failed at the com.webos.service.flowmanager@1.0.0 webpack script.
 npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
 
-Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I39a0e0edd6ef2fac9692c8d6affffe8f3b84e66f
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.flowmanager/+/348056 webpack: use sha256 instead of ancient md4 to fix build with openssl-3]
+
  webpack.config.js | 1 +
  1 file changed, 1 insertion(+)
 
