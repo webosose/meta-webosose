@@ -71,7 +71,7 @@ WEBOS_PACKAGESET_TESTAPPS = " \
     test.redirection.backgroundmedia \
 "
 
-MEDIA = " \
+VIRTUAL-RUNTIME_media = " \
     gstreamer1.0 \
     gstreamer1.0-libav \
     gstreamer1.0-plugins-bad \
@@ -132,6 +132,10 @@ VIRTUAL-RUNTIME_com.webos.app.browser ?= "com.webos.app.enactbrowser"
 
 VIRTUAL-RUNTIME_unifiedsearch ?= "com.webos.service.unifiedsearch com.webos.service.unifiedsearch-plugins"
 
+VIRTUAL-RUNTIME_com.webos.service.intent ?= "com.webos.service.intent"
+
+VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
+
 # This packageset controls which time zone packages should be included in webOS.
 # Since any application that uses localtime will indirectly depend on presence of
 # time zone data, we pull in those packages as a top-level dependency. By
@@ -162,8 +166,6 @@ RDEPENDS:${PN} = " \
     configd \
     configurator \
     com.palm.service.devmode \
-    com.webos.app.mediagallery\
-    com.webos.service.intent \
     event-monitor \
     filecache \
     fluentbit \
@@ -173,8 +175,6 @@ RDEPENDS:${PN} = " \
     luna-downloadmgr \
     luna-init \
     luna-sysservice \
-    ${VIRTUAL-RUNTIME_mojoservicelauncher} \
-    ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
     nodejs-module-webos-service \
     notificationmgr \
     pacrunner \
@@ -189,16 +189,20 @@ RDEPENDS:${PN} = " \
     webos-fluentbit-plugins \
     webos-fontconfig-files \
     webos-nettools \
-    ${MEDIA} \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_browser_fonts} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
     ${VIRTUAL-RUNTIME_com.webos.app.home} \
+    ${VIRTUAL-RUNTIME_com.webos.app.mediagallery} \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
+    ${VIRTUAL-RUNTIME_com.webos.service.intent} \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
     ${VIRTUAL-RUNTIME_initscripts} \
+    ${VIRTUAL-RUNTIME_media} \
     ${VIRTUAL-RUNTIME_memorymanager} \
+    ${VIRTUAL-RUNTIME_mojoservicelauncher} \
+    ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
     ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_pdm} \
     ${VIRTUAL-RUNTIME_settingsapp} \

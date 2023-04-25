@@ -4,20 +4,22 @@
 EXTENDPRAUTO:append:rpi = "webosrpi11"
 
 # gst omx is used only for raspberrypi builds
-MEDIA:append:rpi = " \
+VIRTUAL-RUNTIME_media:append:rpi = " \
     gstreamer1.0-omx \
 "
 # Until build issues caused by PLAT-44962 are fixed in PLAT-45700
-MEDIA:raspberrypi3-64 = ""
+VIRTUAL-RUNTIME_media:raspberrypi3-64 = ""
 
-CECSERVICE ?= ""
+VIRTUAL-RUNTIME_com.webos.service.cec ?= ""
 # CEC service functionality is supported only for webOS OSE rpi4-64
-CECSERVICE:raspberrypi4-64 = " \
+VIRTUAL-RUNTIME_com.webos.service.cec:raspberrypi4-64 = " \
     com.webos.service.cec \
 "
 
+VIRTUAL-RUNTIME_part-initializer ?= ""
+VIRTUAL-RUNTIME_part-initializer:rpi = "${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'resize-rootfs', 'setup-partitions', d)}"
+
 RDEPENDS:${PN}:append:rpi = " \
-    ${CECSERVICE} \
     alsa-utils \
     boot-verifier \
     com.webos.service.audiofocusmanager \
@@ -29,5 +31,6 @@ RDEPENDS:${PN}:append:rpi = " \
     com.webos.service.power2 \
     libbootctrl-tests \
     ofono \
+    ${VIRTUAL-RUNTIME_com.webos.service.cec} \
     ${VIRTUAL-RUNTIME_part-initializer} \
 "
