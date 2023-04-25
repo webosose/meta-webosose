@@ -1,8 +1,7 @@
-From 303e12f0f60bce9211b6ee208942a103b3987274 Mon Sep 17 00:00:00 2001
+From 753c91d9f0227d098457d17bfce99b590ee161bb Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Tue, 17 Sep 2019 03:35:42 -0700
-Subject: [PATCH 2/2] _webos_init_install_vars: change webos_testsdir default
- value
+Subject: [PATCH] _webos_init_install_vars: change webos_testsdir default value
 
 :Release Notes:
 Move from /opt to /usr/opt.
@@ -19,14 +18,16 @@ Only build tested.
 
 Change-Id: I8d49d3cab0cec1d29a0ff7feea4d7b0fb66fbe9a
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/cmake-modules-webos/+/255719 _webos_init_install_vars: change webos_testsdir default value]
+
  webOS/webOS.cmake | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/webOS/webOS.cmake b/webOS/webOS.cmake
-index 37aa2ca..48ae256 100644
+index e72e7df..7119c72 100644
 --- a/webOS/webOS.cmake
 +++ b/webOS/webOS.cmake
-@@ -486,8 +486,8 @@ macro(_webos_init_install_vars)
+@@ -487,8 +487,8 @@ macro(_webos_init_install_vars)
  	# Deprecated name for WEBOS_INSTALL_MOUNTABLESTORAGEDIR
  	_webos_set_from_env(WEBOS_INSTALL_LOCALSTORAGEDIR           webos_mountablestoragedir       ${WEBOS_INSTALL_MOUNTABLESTORAGEDIR})
  
@@ -37,6 +38,3 @@ index 37aa2ca..48ae256 100644
  
  	# This tree contains subdirectories of various types of customization data
  	_webos_set_from_env(WEBOS_INSTALL_WEBOS_CUSTOMIZATIONDIR              webos_customizationdir                  ${WEBOS_INSTALL_PREFIX}/palm/customization)
--- 
-2.17.1
-

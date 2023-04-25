@@ -1,8 +1,8 @@
-From fed43fda18fadf7f04a9bb873d8e0625f3dfbca4 Mon Sep 17 00:00:00 2001
+From 727d3cea49caf5f8c47e00dd0c6a8f7de53198f1 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Tue, 17 Sep 2019 03:24:11 -0700
-Subject: [PATCH 1/2] _webos_init_install_vars: add variables originally
- imported from pro
+Subject: [PATCH] _webos_init_install_vars: add variables originally imported
+ from pro
 
 :Release Notes:
 Add webos_customizationdir, webos_developerdir, webos_emulatorshareddir
@@ -23,14 +23,16 @@ Only build tested.
 
 Change-Id: Ib5233ffff417a3920644ad5bcdc5d5cb542c4203
 ---
- webOS/webOS.cmake | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/cmake-modules-webos/+/255718 _webos_init_install_vars: add variables originally imported from pro]
+
+ webOS/webOS.cmake | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/webOS/webOS.cmake b/webOS/webOS.cmake
-index a666adf..37aa2ca 100644
+index 7f64122..e72e7df 100644
 --- a/webOS/webOS.cmake
 +++ b/webOS/webOS.cmake
-@@ -489,6 +489,23 @@ macro(_webos_init_install_vars)
+@@ -490,6 +490,23 @@ macro(_webos_init_install_vars)
  	# The /opt/webos/tests tree contains all installed unit and/or integration test scripts and executables
  	_webos_set_from_env(WEBOS_INSTALL_TESTSDIR                  webos_testsdir                  ${WEBOS_INSTALL_ROOT}/opt/webos/tests)
  
@@ -54,6 +56,3 @@ index a666adf..37aa2ca 100644
  endmacro()
  
  
--- 
-2.17.1
-
