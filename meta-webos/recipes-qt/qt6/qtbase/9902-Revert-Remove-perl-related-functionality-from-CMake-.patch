@@ -7,7 +7,7 @@ This reverts commit 7f4aa1a3fa4610642976df549dec40364176babe.
 A difference is that it sets the default value of QT_USE_SYNCQT_CPP to
 TRUE as it seems cmake-ready Qt modules don't build with syncqt.pl.
 
-Upstream-Status : Inappropriate [webOS specific]
+Upstream-Status: Inappropriate [webOS specific]
 ---
  cmake/QtBuild.cmake                           |   4 +
  cmake/QtCMakeVersionHelpers.cmake             |  13 ++
