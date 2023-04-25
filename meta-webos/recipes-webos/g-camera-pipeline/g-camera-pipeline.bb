@@ -27,7 +27,7 @@ DEPENDS:append:rpi = " userland"
 WEBOS_VERSION = "1.0.0-gav.37_a0342c53e3f18af1f97bc30a6338a680719de578"
 
 # See the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$|^qemux86-64$"
+COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$|^qemux86-64$"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
