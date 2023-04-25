@@ -1,4 +1,4 @@
-From c13d563615d3dd5dcc646d128259569c243c7d13 Mon Sep 17 00:00:00 2001
+From 08cefc529a21c489e5da5106b3d25a0ef0c13c18 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin2.jansa@lgepartner.com>
 Date: Wed, 19 Oct 2022 15:32:32 +0000
 Subject: [PATCH] meson.build: use cpp_std=c++14
@@ -29,12 +29,27 @@ In file included from TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-4
 TOPDIR/BUILD/work/qemux86_64-webos-linux/pulseaudio/15.0-41-r0/recipe-sysroot/usr/include/absl/base/policy_checks.h:79:2: error: #error "C++ versions less than C++14 are not supported."
    79 | #error "C++ versions less than C++14 are not supported."
       |  ^~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-11630] Add Upstream-Status to existing .patch files in meta-lg-webos
+[WRP-11864] CCC: Various build fixes and .patch files cleanup
+
+Change-Id: I4c32f430924fa431f057beff05c6c6d76b7cea53
 ---
- meson.build | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349077 meson.build: use cpp_std=c++14]
+
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/meson.build b/meson.build
-index bf0744862..b13f9d121 100644
+index 6e8567ee1..4aea61e71 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -1,7 +1,7 @@

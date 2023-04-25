@@ -11,13 +11,18 @@ DEPENDS:remove = "libatomic-ops"
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
 WEBOS_VERSION = "15.0-45_c9bc30c86eeebc7f7e2927fd4b53de1f1c9d67a4"
-EXTENDPRAUTO:append = "webos5"
+EXTENDPRAUTO:append = "webos6"
 
 inherit webos_enhanced_submissions
 
 inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
+# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349073 client-conf: Add allow-autospawn-for-root
+# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349074 do not display CLFAGS to improve reproducibility build
+# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349075 meson: Check for __get_cpuid
+# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349076 doxygen/meson.build: remove dependency on doxygen binary
+# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349077 meson.build: use cpp_std=c++14
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://pulseaudio.service \
