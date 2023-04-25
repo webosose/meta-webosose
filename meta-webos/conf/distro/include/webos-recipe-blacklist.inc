@@ -67,4 +67,3 @@ SKIP_RECIPE[uxen-guest-tools] ?= "fails to build for x86 qemux86 qemux86_64-webo
 
 # meta-webos
 SKIP_RECIPE[gator-mod] ?= "Needs to be updated for newer kernels now used on rpi tracked in [WRP-577], gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0/git/driver/gator_events_mmapped.c:77:21: error: storage size of ts isnt known http://gecko.lge.com:8000/Errors/Details/565745"
-SKIP_RECIPE[sqlcipher] ?= "fails to build with: sqlcipher/3.4.2-r0/recipe-sysroot/usr/bin/crossscripts/aarch64-webos-linux-libtool: Command not found, unused since 2019 when prs was removed with 3c91edef9b74e3f42c2d77b95771ec52f11d3c88, http://gecko.lge.com:8000/Errors/Details/565725"
