@@ -1,0 +1,114 @@
+From 09be4d2ee4b0a293b9d6fb19a8584a01d84b6b98 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 2 Feb 2023 10:09:07 +0000
+Subject: [PATCH] Fix build with gcc-13
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com/Errors/Details/529944
+
+FAILED: profiling/client/src/CMakeFiles/pipeClient.dir/Holder.cpp.o
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ -DARMCOMPUTECL_ENABLED -DARMCOMPUTENEON_ENABLED -DARMNNREF_ENABLED -DARMNN_COMPILING_DLL -DARMNN_TFLITE_DELEGATE -DARMNN_TF_LITE_PARSER -DDYNAMIC_BACKEND_BUILD_DIR=\"TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build\" -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/common/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/client/include -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/third-party -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot -mcpu=cortex-a72 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -fopenmp -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot/usr -Wno-error=array-bounds -Wno-error=deprecated-declarations -std=c++14 -Wall -Wextra -Werror -Wold-style-cast -Wno-missing-braces -Wconversion -Wsign-conversion  -Wno-psabi -DNDEBUG -DNDEBUG -O3 -fPIC -MD -MT profiling/client/src/CMakeFiles/pipeClient.dir/Holder.cpp.o -MF profiling/client/src/CMakeFiles/pipeClient.dir/Holder.cpp.o.d -o profiling/client/src/CMakeFiles/pipeClient.dir/Holder.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/src/Holder.cpp
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/src/Holder.cpp:6:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/include/Holder.hpp:25:90: error: 'string' is not a member of 'std'
+   25 |     CaptureData(uint32_t capturePeriod, std::vector<uint16_t>& counterIds, std::set<std::string> activeBackends)
+      |                                                                                          ^~~~~~
+
+FAILED: profiling/client/src/CMakeFiles/pipeClient.dir/CounterIdMap.cpp.o
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ -DARMCOMPUTECL_ENABLED -DARMCOMPUTENEON_ENABLED -DARMNNREF_ENABLED -DARMNN_COMPILING_DLL -DARMNN_TFLITE_DELEGATE -DARMNN_TF_LITE_PARSER -DDYNAMIC_BACKEND_BUILD_DIR=\"TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build\" -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/common/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/client/include -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/third-party -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot -mcpu=cortex-a72 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -fopenmp -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot/usr -Wno-error=array-bounds -Wno-error=deprecated-declarations -std=c++14 -Wall -Wextra -Werror -Wold-style-cast -Wno-missing-braces -Wconversion -Wsign-conversion  -Wno-psabi -DNDEBUG -DNDEBUG -O3 -fPIC -MD -MT profiling/client/src/CMakeFiles/pipeClient.dir/CounterIdMap.cpp.o -MF profiling/client/src/CMakeFiles/pipeClient.dir/CounterIdMap.cpp.o.d -o profiling/client/src/CMakeFiles/pipeClient.dir/CounterIdMap.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/src/CounterIdMap.cpp
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/src/CounterIdMap.cpp:6:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/include/CounterIdMap.hpp:18:13: error: 'uint16_t' does not name a type
+   18 |     virtual uint16_t GetGlobalId(uint16_t backendCounterId, const std::string& backendId) const = 0;
+      |             ^~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/client/include/CounterIdMap.hpp:9:1: note: 'uint16_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+    8 | #include <string>
+  +++ |+#include <cstdint>
+    9 |
+
+FAILED: profiling/common/src/CMakeFiles/pipeCommon.dir/SwTrace.cpp.o
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ -DARMCOMPUTECL_ENABLED -DARMCOMPUTENEON_ENABLED -DARMNNREF_ENABLED -DARMNN_COMPILING_DLL -DARMNN_TFLITE_DELEGATE -DARMNN_TF_LITE_PARSER -DDYNAMIC_BACKEND_BUILD_DIR=\"TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build\" -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/common/include -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/third-party -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot -mcpu=cortex-a72 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -fopenmp -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot/usr -Wno-error=array-bounds -Wno-error=deprecated-declarations -std=c++14 -Wall -Wextra -Werror -Wold-style-cast -Wno-missing-braces -Wconversion -Wsign-conversion  -Wno-psabi -DNDEBUG -DNDEBUG -O3 -fPIC -MD -MT profiling/common/src/CMakeFiles/pipeCommon.dir/SwTrace.cpp.o -MF profiling/common/src/CMakeFiles/pipeCommon.dir/SwTrace.cpp.o.d -o profiling/common/src/CMakeFiles/pipeCommon.dir/SwTrace.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/src/SwTrace.cpp
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/include/ICounterDirectory.hpp:8,
+                 from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/include/CommonProfilingUtils.hpp:7,
+                 from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/src/SwTrace.cpp:6:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling/common/include/Counter.hpp:21:13: error: 'uint16_t' has not been declared
+   21 |             uint16_t           counterUid,
+      |             ^~~~~~~~
+
+FAILED: CMakeFiles/armnnUtilsObj.dir/src/armnnUtils/VerificationHelpers.cpp.o
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ -DARMCOMPUTECL_ENABLED -DARMCOMPUTENEON_ENABLED -DARMNNREF_ENABLED -DARMNN_TFLITE_DELEGATE -DARMNN_TF_LITE_PARSER -DDYNAMIC_BACKEND_BUILD_DIR=\"TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build\" -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/profiling -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/third-party -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot -mcpu=cortex-a72 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git=/usr/src/debug/armnn/22.08-r0  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/build=/usr/src/debug/armnn/22.08-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -fopenmp -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/recipe-sysroot/usr -Wno-error=array-bounds -Wno-error=deprecated-declarations -std=c++14 -Wall -Wextra -Werror -Wold-style-cast -Wno-missing-braces -Wconversion -Wsign-conversion  -Wno-psabi -DNDEBUG -DNDEBUG -O3 -fPIC -MD -MT CMakeFiles/armnnUtilsObj.dir/src/armnnUtils/VerificationHelpers.cpp.o -MF CMakeFiles/armnnUtilsObj.dir/src/armnnUtils/VerificationHelpers.cpp.o.d -o CMakeFiles/armnnUtilsObj.dir/src/armnnUtils/VerificationHelpers.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/src/armnnUtils/VerificationHelpers.cpp
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/src/armnnUtils/VerificationHelpers.cpp:6:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/src/armnnUtils/VerificationHelpers.hpp:20:1: error: 'uint32_t' does not name a type
+   20 | uint32_t NonNegative(const char* expr,
+      | ^~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/armnn/22.08-r0/git/src/armnnUtils/VerificationHelpers.hpp:10:1: note: 'uint32_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+    9 | #include <armnn/Exceptions.hpp>
+  +++ |+#include <cstdint>
+   10 |
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-8053] CCC: Various build fixes
+
+Upstream-Status: Pending
+---
+ profiling/client/include/CounterIdMap.hpp | 1 +
+ profiling/client/include/Holder.hpp       | 1 +
+ profiling/common/include/Counter.hpp      | 1 +
+ src/armnnUtils/VerificationHelpers.hpp    | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/profiling/client/include/CounterIdMap.hpp b/profiling/client/include/CounterIdMap.hpp
+index cce7184c4..6c8121071 100644
+--- a/profiling/client/include/CounterIdMap.hpp
++++ b/profiling/client/include/CounterIdMap.hpp
+@@ -4,6 +4,7 @@
+ //
+ #pragma once
+ 
++#include <cstdint>
+ #include <map>
+ #include <string>
+ 
+diff --git a/profiling/client/include/Holder.hpp b/profiling/client/include/Holder.hpp
+index 27d678935..12f79a162 100644
+--- a/profiling/client/include/Holder.hpp
++++ b/profiling/client/include/Holder.hpp
+@@ -8,6 +8,7 @@
+ #include <mutex>
+ #include <vector>
+ #include <set>
++#include <string>
+ 
+ namespace arm
+ {
+diff --git a/profiling/common/include/Counter.hpp b/profiling/common/include/Counter.hpp
+index ff96d257e..d11810ea4 100644
+--- a/profiling/common/include/Counter.hpp
++++ b/profiling/common/include/Counter.hpp
+@@ -5,6 +5,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace arm
+diff --git a/src/armnnUtils/VerificationHelpers.hpp b/src/armnnUtils/VerificationHelpers.hpp
+index be09ba929..555b7a54b 100644
+--- a/src/armnnUtils/VerificationHelpers.hpp
++++ b/src/armnnUtils/VerificationHelpers.hpp
+@@ -3,6 +3,7 @@
+ // SPDX-License-Identifier: MIT
+ //
+ 
++#include <cstdint>
+ #include <iostream>
+ #include <sstream>
+ 

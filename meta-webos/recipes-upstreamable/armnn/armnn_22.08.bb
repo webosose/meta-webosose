@@ -10,6 +10,7 @@ BRANCH = "branches/armnn_${BPV}"
 
 SRC_URI = " \
     git://github.com/ARM-software/armnn.git;branch=${BRANCH};protocol=https \
+    file://0001-Fix-build-with-gcc-13.patch \
     file://armnn-tflite.pc.in \
     file://armnn-delegate.pc.in \
 "
@@ -17,7 +18,7 @@ SRC_URI = " \
 # Matches v${PV}
 SRCREV = "0ba0b2bf80f1d7aff1eff8de2b67eb04081b2af0"
 
-PR = "r0"
+PR = "r1"
 
 S = "${WORKDIR}/git"
 
