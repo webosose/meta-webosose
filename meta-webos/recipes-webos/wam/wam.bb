@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-73_27f62d7a2a7465f45655fdd9da44bb647de6deff"
-PR = "r57"
+PR = "r58"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 
@@ -35,7 +35,10 @@ inherit webos_public_repo
 
 WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# [http://gpro.lge.com/c/webosose/wam/+/348188 Fix luna-service2 usage]
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-luna-service2-usage.patch \
+"
 
 S = "${WORKDIR}/git"
 
