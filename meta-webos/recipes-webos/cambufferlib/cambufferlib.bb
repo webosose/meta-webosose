@@ -18,10 +18,10 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-5_a54624cdd9faa92ec1812df1f30faf1d8e138051"
+WEBOS_VERSION = "1.0.0-6_74badce83b364f135e982164779c4877d8b5701b"
 PR = "r0"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
@@ -31,4 +31,3 @@ INSANE_SKIP:${PN} = "dev-so"
 
 FILES_SOLIBSDEV = ""
 FILES:${PN} += "${libdir}/*.so"
-FILES:${PN} += "$@bb.utils.contains('PACKAGECONFIG', 'testapp', "${bindir}/*", '', d)}"
