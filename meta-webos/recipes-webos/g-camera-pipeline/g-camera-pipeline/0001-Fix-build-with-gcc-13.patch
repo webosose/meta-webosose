@@ -1,0 +1,50 @@
+From 724c240c9551fb2ce95dceecb465689fe9a8eb5f Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 1 Feb 2023 23:08:19 +0000
+Subject: [PATCH] Fix build with gcc-13
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com/Errors/Details/529531
+
+FAILED: src/bufferencoder/CMakeFiles/buffer-encoder.dir/__/parser/serializer.cpp.o
+TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++ -DPLATFORM_QEMUX86 -Dbuffer_encoder_EXPORTS -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot/usr/include/orc-0.4 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot/usr/include/media-resource-calculator -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/build/src -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/. -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./base -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./cameraservice -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./log -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./util -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./cameraplayer -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./mediaencoderclient -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./bufferencoder -ITOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./camera-window-manager/include -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git=/usr/src/debug/g-camera-pipeline/1.0.0-13.gav.35-r10  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git=/usr/src/debug/g-camera-pipeline/1.0.0-13.gav.35-r10  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/build=/usr/src/debug/g-camera-pipeline/1.0.0-13.gav.35-r10  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/build=/usr/src/debug/g-camera-pipeline/1.0.0-13.gav.35-r10  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/recipe-sysroot-native=  -fvisibility-inlines-hidden  -std=c++14 -lrt -fPIC -MD -MT src/bufferencoder/CMakeFiles/buffer-encoder.dir/__/parser/serializer.cpp.o -MF src/bufferencoder/CMakeFiles/buffer-encoder.dir/__/parser/serializer.cpp.o.d -o src/bufferencoder/CMakeFiles/buffer-encoder.dir/__/parser/serializer.cpp.o -c TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/parser/serializer.cpp
+In file included from TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/parser/serializer.cpp:18:
+TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./base/base.h:41:3: error: 'uint64_t' does not name a type
+   41 |   uint64_t bit_rate;
+      |   ^~~~~~~~
+TOPDIR/BUILD/work/qemux86_64-webos-linux/g-camera-pipeline/1.0.0-13.gav.35-r10/git/src/./base/base.h:22:1: note: 'uint64_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+   21 | #include <vector>
+  +++ |+#include <cstdint>
+   22 |
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-8053] CCC: Various build fixes
+
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/g-camera-pipeline/+/344559 Fix build with gcc-13]
+
+Change-Id: Id709c53572b60d7c621fa695f0be0274ccf17760
+---
+ src/base/base.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/base/base.h b/src/base/base.h
+index 79e63a3..cf9c8eb 100755
+--- a/src/base/base.h
++++ b/src/base/base.h
+@@ -17,6 +17,7 @@
+ #ifndef SRC_BASE_BASE_H_
+ #define SRC_BASE_BASE_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
