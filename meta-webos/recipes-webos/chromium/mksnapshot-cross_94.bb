@@ -5,7 +5,6 @@ AUTHOR = "Donghyun Kim <donghyun11.kim@lge.com>"
 inherit cross
 inherit pkgconfig
 
-WEBRUNTIME_REPO_VERSION = "94"
 require webruntime-common.inc
 require webruntime-repo${REPO_VERSION}.inc
 

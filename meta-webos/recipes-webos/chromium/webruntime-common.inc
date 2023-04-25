@@ -16,6 +16,7 @@ inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_prerelease_dep
 
+WEBRUNTIME_REPO_VERSION ?= "94"
 REPO_VERSION := "${@['','_${WEBRUNTIME_REPO_VERSION}'][d.getVar('WEBRUNTIME_REPO_VERSION').strip() != '']}"
 
 WEBOS_REPO_NAME ?= "chromium${WEBRUNTIME_REPO_VERSION}"
