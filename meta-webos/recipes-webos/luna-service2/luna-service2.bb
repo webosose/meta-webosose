@@ -16,7 +16,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-32_b6152007b04fe58cfa1777ee88c20f0e04c2bafb"
-PR = "r29"
+PR = "r30"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
@@ -37,16 +37,6 @@ inherit webos_test_provider
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-# This fix-up will be removed shortly. luna-service2 headers must be included
-# using '#include <luna-service2/*.h>'
-do_install:append() {
-    # XXX Temporarily, create links from the old locations until all users of
-    # luna-service2 convert to using pkg-config
-    ln -svnf luna-service2/lunaservice.h ${D}${includedir}/lunaservice.h
-    ln -svnf luna-service2/lunaservice-errors.h ${D}${includedir}/lunaservice-errors.h
-    ln -svnf lib${BPN}.so ${D}${libdir}/liblunaservice.so
-}
 
 # Disable LTTng tracepoints explicitly.
 # LTTng tracepoints in LS2 can cause out of memory, because LS2 is used by many components.
