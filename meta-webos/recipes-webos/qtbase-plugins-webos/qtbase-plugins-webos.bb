@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-14_c4b4a838abb44892c6a348365f9f6b81ed5b9376"
-PR = "r6"
+WEBOS_VERSION = "1.0.0-15_8439ef07c0af89b26a6c415f7439b90db72273ca"
+PR = "r7"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
@@ -20,10 +20,8 @@ inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_qt_global
 
-# http://gpro.lge.com/c/webosose/qtbase-plugins-webos/+/349068 fix build with 64-bit time_t
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-fix-build-with-64-bit-time_t.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+
 S = "${WORKDIR}/git"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"

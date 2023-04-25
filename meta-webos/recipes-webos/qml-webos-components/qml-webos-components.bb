@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative pmloglib qt-features-webos luna-service2 glib-2.0"
 
-WEBOS_VERSION = "1.0.0-57_ca4bb7c2b78f0968169b2c732cbdcdb9c4afbef5"
-PR = "r20"
+WEBOS_VERSION = "1.0.0-58_e4773e6b2db36f7d429973e58c072ad888326578"
+PR = "r21"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -22,10 +22,8 @@ inherit webos_lttng
 inherit webos_qmllint
 inherit webos_public_repo
 
-# http://gpro.lge.com/c/webosose/qml-webos-components/+/349066 Fix compilation with lttng-ust >= 2.13
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-compilation-with-lttng-ust-2.13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+
 S = "${WORKDIR}/git"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"

@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native wayland-protocols"
 
-WEBOS_VERSION = "6.0.0-84_23dffb9eccca04a91021971a6931e1d8fc458741"
-PR = "r19"
+WEBOS_VERSION = "6.0.0-85_19a8838e3d7917220184b53e2df2684f79efb019"
+PR = "r20"
 
 QT_BUILD_SYSTEM ?= "${@ 'cmake' if d.getVar('QT_VERSION')[0] == '6' else 'qmake' }"
 
@@ -26,9 +26,8 @@ inherit webos_enhanced_submissions
 inherit webos_lttng
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-compilation-with-lttng-ust-2.13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+
 S = "${WORKDIR}/git"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
