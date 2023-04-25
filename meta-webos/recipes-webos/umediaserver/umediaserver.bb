@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-PR = "r21"
+PR = "r22"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -42,8 +42,7 @@ COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
-WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-24.gav.30_f8ac579c730b42b1e1ac982671914b9c9a1d4f76"
+WEBOS_VERSION = "1.0.0-gav.32_0e95f15cca0ff1b2e79d2391b4b4aedc38cd42c4"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -55,13 +54,6 @@ PACKAGECONFIG[com.webos.service.videooutput] = "-DUSE_VIDEOOUTPUTD:BOOL=TRUE,-DU
 PACKAGES =+ "${PN}-python"
 
 FILES:${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${datadir}/${BPN}/python/"
-
-# needs to be fixed first
-# http://caprica.lgsvl.com:8080/Errors/Details/1092075
-# 1.0.0-184.open.10-r10/git/src/logger/Logger_macro.h:186:38: error: format not a string literal and no format arguments [-Werror=format-security]
-#   char message[MAX_FT_SIZE]; snprintf(message, MAX_FT_SIZE, format, args...);
-#                              ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SECURITY_STRINGFORMAT = ""
 
 #Remove videooutputd from OSE
 PACKAGECONFIG:remove:raspberrypi4 = "com.webos.service.videooutput"
