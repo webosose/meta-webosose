@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-PR = "r22"
+PR = "r23"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -47,7 +47,7 @@ WEBOS_VERSION = "1.0.0-gav.32_0e95f15cca0ff1b2e79d2391b4b4aedc38cd42c4"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-PACKAGECONFIG = "com.webos.service.videooutput"
+PACKAGECONFIG = ""
 PACKAGECONFIG[com.webos.service.videooutput] = "-DUSE_VIDEOOUTPUTD:BOOL=TRUE,-DUSE_VIDEOOUTPUTD:BOOL=FALSE,,com.webos.service.videooutput"
 
 # umediaserver-python contains the Python bindings
@@ -55,5 +55,6 @@ PACKAGES =+ "${PN}-python"
 
 FILES:${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${datadir}/${BPN}/python/"
 
-#Remove videooutputd from OSE
-PACKAGECONFIG:remove:raspberrypi4 = "com.webos.service.videooutput"
+# Use append, because umediaserver-clang uses:
+# PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
+PACKAGECONFIG:append:qemuall = " com.webos.service.videooutput"
