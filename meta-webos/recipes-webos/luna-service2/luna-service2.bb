@@ -35,7 +35,10 @@ inherit webos_prerelease_dep
 inherit webos_lttng
 inherit webos_test_provider
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/luna-service2/+/349434 CMakeLists.txt: replace -std=c++11 with -std=c++14
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-replace-std-c-11-with-std-c-14.patch \
+"
 S = "${WORKDIR}/git"
 
 # Disable LTTng tracepoints explicitly.

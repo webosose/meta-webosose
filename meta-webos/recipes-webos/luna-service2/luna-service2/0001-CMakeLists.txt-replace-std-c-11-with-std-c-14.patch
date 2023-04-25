@@ -1,0 +1,125 @@
+From c707809aed1d880e0a96a7e55158507c079dbd0f Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 27 Mar 2023 22:27:29 +0000
+Subject: [PATCH] CMakeLists.txt: replace -std=c++11 with -std=c++14
+
+:Release Notes:
+It was commented out in root CMakeLists.txt, but some other parts were still selecting rather
+old c++11 which isn't compatible with googletest currently in mickledore.
+
+:Detailed Notes:
+With googletest 1.13.0 from:
+https://git.openembedded.org/meta-openembedded/commit/?id=46266e59ff36b38f46a67573528cee658960c764
+it fails to build with:
+http://gecko.lge.com:8000/Errors/Details/561643
+
+FAILED: src/libluna-service2++/test/CMakeFiles/test_error.dir/test_error.cpp.o
+TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++  -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/src/libluna-service2 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/include/public -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/include/private -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/include/private/tests -I/usr/src/gtest/include -ITOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/include/public/luna-service2++ -isystem TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/src/gtest/include -isystem TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/src/gtest -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git=/usr/src/debug/luna-service2/3.21.2-32-r30  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git=/usr/src/debug/luna-service2/3.21.2-32-r30  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/build=/usr/src/debug/luna-service2/3.21.2-32-r30  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/build=/usr/src/debug/luna-service2/3.21.2-32-r30  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot-native=  -fvisibility-inlines-hidden  -DWEBOS_TARGET_MACHINE_IMPL_EMULATOR -DTARGET_EMULATOR -include TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/build/Configured/webospaths.h -UNDEBUG -DUSE_PMLOG_DECLARATION -DMEMCHECK -DLSHANDLE_CHECK -Wall -Werror=switch -DSECURITY_COMPATIBILITY -Wl,--no-undefined -Wall -std=c++11 -Wl,-LTOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/lib -Wl,-lpbnjson_cpp -Wl,-lpbnjson_c -DNDEBUG -DLS_SCHEMA_ROOT=\"TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/files/schema\" -MD -MT src/libluna-service2++/test/CMakeFiles/test_error.dir/test_error.cpp.o -MF src/libluna-service2++/test/CMakeFiles/test_error.dir/test_error.cpp.o.d -o src/libluna-service2++/test/CMakeFiles/test_error.dir/test_error.cpp.o -c TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/src/libluna-service2++/test/test_error.cpp
+In file included from TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/include/gtest/gtest-message.h:57,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/include/gtest/gtest-assertion-result.h:46,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/include/gtest/gtest.h:64,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/git/src/libluna-service2++/test/test_error.cpp:17:
+TOPDIR/BUILD/work/qemux86_64-webos-linux/luna-service2/3.21.2-32-r30/recipe-sysroot/usr/include/gtest/internal/gtest-port.h:270:2: error: #error C++ versions less than C++14 are not supported.
+  270 | #error C++ versions less than C++14 are not supported.
+      |  ^~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-412] Create GPVB with Yocto 4.2 Mickledore
+
+Change-Id: I19e28f7ab38ecfbfe248d657506e237e8b648a5b
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/luna-service2/+/349434 CMakeLists.txt: replace -std=c++11 with -std=c++14]
+
+ CMakeLists.txt                        | 3 ---
+ src/examples/cpp/CMakeLists.txt       | 2 +-
+ src/libluna-service2++/CMakeLists.txt | 2 +-
+ src/ls-hubd/CMakeLists.txt            | 2 +-
+ src/ls-monitor/CMakeLists.txt         | 2 +-
+ src/luna-send/CMakeLists.txt          | 2 +-
+ 6 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e5d104a..ba01475 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -146,9 +146,6 @@ webos_add_compiler_flags(ALL -DUSE_PMLOG_DECLARATION)
+ # Debug definitions
+ webos_add_compiler_flags(ALL -DMEMCHECK -DLSHANDLE_CHECK)
+ 
+-# Specifying this causes "inline function '<function>' declared but never defined" errors.
+-# webos_add_compiler_flags(ALL -std=c99)
+-
+ # Turn on all warnings
+ webos_add_compiler_flags(ALL -Wall -Werror=switch)
+ 
+diff --git a/src/examples/cpp/CMakeLists.txt b/src/examples/cpp/CMakeLists.txt
+index fbc1f5b..d9f88ca 100644
+--- a/src/examples/cpp/CMakeLists.txt
++++ b/src/examples/cpp/CMakeLists.txt
+@@ -25,7 +25,7 @@ pkg_check_modules(LS2++ REQUIRED luna-service2++>=3)
+ include_directories(${LS2++_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${LS2++_CFLAGS})
+ 
+-webos_add_compiler_flags(ALL -std=c++11 -Wall)
++webos_add_compiler_flags(ALL -std=c++14 -Wall)
+ 
+ webos_include_install_paths()
+ 
+diff --git a/src/libluna-service2++/CMakeLists.txt b/src/libluna-service2++/CMakeLists.txt
+index e8262b5..bd8a512 100644
+--- a/src/libluna-service2++/CMakeLists.txt
++++ b/src/libluna-service2++/CMakeLists.txt
+@@ -41,7 +41,7 @@ set(HEADERS
+ 
+ include_directories(${PUBLIC_INCLUDES}/luna-service2++)
+ 
+-webos_add_compiler_flags(ALL -Wall -std=c++11)
++webos_add_compiler_flags(ALL -Wall -std=c++14)
+ 
+ add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
+ target_link_libraries(${PROJECT_NAME} luna-service2 ${PBNJSON_CXX_LIBRARIES})
+diff --git a/src/ls-hubd/CMakeLists.txt b/src/ls-hubd/CMakeLists.txt
+index dd79e24..8cfb935 100644
+--- a/src/ls-hubd/CMakeLists.txt
++++ b/src/ls-hubd/CMakeLists.txt
+@@ -45,7 +45,7 @@ set(PROJECT_SOURCES
+     service_map.cpp
+     )
+ 
+-webos_add_compiler_flags(ALL --std=c++11)
++webos_add_compiler_flags(ALL --std=c++14)
+ 
+ # The following definitions avoid the need to configure any source files
+ add_definitions(-DDEFAULT_MONITOR_EXE_PATH="${WEBOS_INSTALL_SBINDIR}/ls-monitor")
+diff --git a/src/ls-monitor/CMakeLists.txt b/src/ls-monitor/CMakeLists.txt
+index bce9fa5..e3b52bc 100644
+--- a/src/ls-monitor/CMakeLists.txt
++++ b/src/ls-monitor/CMakeLists.txt
+@@ -22,7 +22,7 @@ set(PROJECT_SOURCES
+     json_output.cpp
+     )
+ 
+-webos_add_compiler_flags(ALL --std=c++11)
++webos_add_compiler_flags(ALL --std=c++14)
+ 
+ if(WEBOS_TARGET_MACHINE_IMPL STREQUAL guest)
+ 	add_definitions(-DPID_DIR="/tmp")
+diff --git a/src/luna-send/CMakeLists.txt b/src/luna-send/CMakeLists.txt
+index f043f29..2577ff9 100644
+--- a/src/luna-send/CMakeLists.txt
++++ b/src/luna-send/CMakeLists.txt
+@@ -16,7 +16,7 @@
+ 
+ project(luna-send)
+ 
+-webos_add_compiler_flags(ALL --std=c++11)
++webos_add_compiler_flags(ALL --std=c++14)
+ 
+ add_executable(${PROJECT_NAME} luna-send.cpp)
+ target_link_libraries(${PROJECT_NAME} ${CMAKE_PROJECT_NAME})
