@@ -1,0 +1,130 @@
+From c87c38cd7ddfc76ed1e2170481ac399b7322d203 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 25 Mar 2023 13:42:12 +0100
+Subject: [PATCH] seed-voicecard: Update from HinTak to support v6.1 kernel
+
+as in:
+https://github.com/HinTak/seeed-voicecard/commits/v6.1
+https://github.com/HinTak/seeed-voicecard/commit/977a7ff321b1949e8ce4555fb0e3677fd47d46b2
+
+linux $ cp -a seeed-voicecard/ac10*[ch] seeed-voicecard/seeed-voicecard.c seeed-voicecard/sound-compatible-4.18.h sound/soc/codecs/
+linux $ cp -a seeed-voicecard/seeed-[48]mic-voicecard-overlay.dts arch/arm/boot/dts/overlays/
+linux $ chmod 644 sound/soc/codecs/ac108.h
+linux $ dos2unix sound/soc/codecs/ac108.h
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending [seeedstudio.com is hopefully trying to upstream this to upstream kernel or at least rpi kernel fork, but I haven't found any proof of that https://github.com/respeaker/seeed-voicecard/commits/master also wasn't updated for long time, luckily there is better maintained fork https://github.com/HinTak/seeed-voicecard which already supports 6.1 kernel as well (which we need to support Mickledore where meta-raspberrypi already uses 6.1 kernel like Raspberry Pi OS now)]
+
+ .../dts/overlays/seeed-4mic-voicecard-overlay.dts   |  1 +
+ .../dts/overlays/seeed-8mic-voicecard-overlay.dts   |  1 +
+ sound/soc/codecs/ac108.c                            |  4 +---
+ sound/soc/codecs/ac108.h                            |  1 +
+ sound/soc/codecs/seeed-voicecard.c                  | 13 ++++++++++---
+ sound/soc/codecs/sound-compatible-4.18.h            |  1 +
+ 6 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts b/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts
+index ed5f937ae8c1f..db0b98897da09 100644
+--- a/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts
++++ b/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts
+@@ -72,3 +72,4 @@ __overrides__ {
+ 		card-name = <&sound_overlay>,"seeed-voice-card,name";
+ 	};
+ };
++
+diff --git a/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts b/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts
+index 6d9bd26acbe5f..56a14333b8579 100644
+--- a/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts
++++ b/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts
+@@ -115,3 +115,4 @@ __overrides__ {
+ 		card-name = <&sound_overlay>,"seeed-voice-card,name";
+ 	};
+ };
++
+diff --git a/sound/soc/codecs/ac108.c b/sound/soc/codecs/ac108.c
+index d5dd12ddacb47..9709cb89ed1cd 100644
+--- a/sound/soc/codecs/ac108.c
++++ b/sound/soc/codecs/ac108.c
+@@ -1329,7 +1329,6 @@ static struct snd_soc_codec_driver ac10x_soc_codec_driver = {
+ 	.idle_bias_on 	= 1,
+ 	.use_pmdown_time 	= 1,
+ 	.endianness 	= 1,
+-	.non_legacy_dai_naming 	= 1,
+ #endif
+ };
+ 
+@@ -1494,7 +1493,7 @@ static int ac108_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *i
+ 	return ret;
+ }
+ 
+-static int ac108_i2c_remove(struct i2c_client *i2c) {
++static void ac108_i2c_remove(struct i2c_client *i2c) {
+ 	if (ac10x->codec != NULL) {
+ 		snd_soc_unregister_codec(&ac10x->i2c[_MASTER_INDEX]->dev);
+ 		ac10x->codec = NULL;
+@@ -1519,7 +1518,6 @@ static int ac108_i2c_remove(struct i2c_client *i2c) {
+ 		kfree(ac10x);
+ 		ac10x = NULL;
+ 	}
+-	return 0;
+ }
+ 
+ static const struct i2c_device_id ac108_i2c_id[] = {
+diff --git a/sound/soc/codecs/ac108.h b/sound/soc/codecs/ac108.h
+index e7f07a5e075aa..d40edfc485811 100644
+--- a/sound/soc/codecs/ac108.h
++++ b/sound/soc/codecs/ac108.h
+@@ -771,3 +771,4 @@
+ #define IS_ENCODING_MODE		 0
+ 
+ #endif
++
+diff --git a/sound/soc/codecs/seeed-voicecard.c b/sound/soc/codecs/seeed-voicecard.c
+index 399bc7e514b95..886eb0ece6b31 100644
+--- a/sound/soc/codecs/seeed-voicecard.c
++++ b/sound/soc/codecs/seeed-voicecard.c
+@@ -354,6 +354,11 @@ static int asoc_simple_init_dai(struct snd_soc_dai *dai,
+ }
+ 
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5,7,0)
++static inline int asoc_simple_component_is_codec(struct snd_soc_component *component)
++{
++	return component->driver->endianness;
++}
++
+ static int asoc_simple_init_dai_link_params(struct snd_soc_pcm_runtime *rtd)
+ {
+ 	struct snd_soc_dai_link *dai_link = rtd->dai_link;
+@@ -362,9 +367,9 @@ static int asoc_simple_init_dai_link_params(struct snd_soc_pcm_runtime *rtd)
+ 	struct snd_pcm_hardware hw;
+ 	int i, ret, stream;
+ 
+-	/* Only codecs should have non_legacy_dai_naming set. */
++	/* Only Codecs */
+ 	for_each_rtd_components(rtd, i, component) {
+-		if (!component->driver->non_legacy_dai_naming)
++		if (!asoc_simple_component_is_codec(component))
+ 			return 0;
+ 	}
+ 
+@@ -886,7 +891,9 @@ static int seeed_voice_card_remove(struct platform_device *pdev)
+ 
+ 	if (cancel_work_sync(&priv->work_codec_clk) != 0) {
+ 	}
+-	return asoc_simple_clean_reference(card);
++	asoc_simple_clean_reference(card);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id seeed_voice_of_match[] = {
+diff --git a/sound/soc/codecs/sound-compatible-4.18.h b/sound/soc/codecs/sound-compatible-4.18.h
+index 5f1dcdeccb18e..550b3a7e8f2cc 100644
+--- a/sound/soc/codecs/sound-compatible-4.18.h
++++ b/sound/soc/codecs/sound-compatible-4.18.h
+@@ -44,3 +44,4 @@
+ #endif
+ 
+ #endif//__SOUND_COMPATIBLE_4_18_H__
++
