@@ -22,8 +22,8 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS:${PN}-tests:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.2.0-22_455918e4a71249781f88d75c2785abf6f5819133"
-PR = "r37"
+WEBOS_VERSION = "3.2.0-25_cff494d933859bbefdf010b6cbaf6478ef9abb92"
+PR = "r38"
 
 inherit webos_component
 inherit webos_public_repo
@@ -47,7 +47,3 @@ FILES:${PN}-tests = "${libdir}/${BPN}/tests"
 FILES:${PN} += "${webos_sysbus_datadir}"
 
 BBCLASSEXTEND = "native"
-
-# From http://gpro.lgsvl.com/190951
-SRC_URI += "file://0001-CMakeLists.txt-explicitly-link-with-libatomic-to-fix.patch"
-SRC_URI += "file://0001-MojOsInternal.h-update-for-glibc-2.34.patch"
