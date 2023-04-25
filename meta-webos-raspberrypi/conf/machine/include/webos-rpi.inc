@@ -22,6 +22,8 @@ PREFERRED_PROVIDER_val-impl = "videooutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_val-impl = "videooutput-adaptation-layer-rpi"
 SKIP_RECIPE[videooutput-adaptation-layer-mock] ?= "videooutput-adaptation-layer-rpi is preferred"
 
+VIRTUAL-RUNTIME_part-initializer = "${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'resize-rootfs', 'setup-partitions', d)}"
+
 SKIP_RECIPE[omxplayer] ?= "not compatible with webOS Open components"
 SKIP_RECIPE[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 SKIP_RECIPE[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
@@ -84,10 +86,8 @@ RPI_KERNEL_DEVICETREE_OVERLAYS += " \
 
 KERNEL_MODULE_AUTOLOAD:append = " uinput bridge vc4"
 
-# Disabling U-Boot until IP address conflict and ALSA issues resolved (PLAT-46515)
-# RPI_USE_U_BOOT = "1"
-# Enable only for raspberrypi3-64
-RPI_USE_U_BOOT:raspberrypi3-64 = "1"
+# Always enable u-boot
+RPI_USE_U_BOOT = "1"
 
 # Always deploy the VFAT partition
 SDIMG_VFAT_DEPLOY = "1"

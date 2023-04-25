@@ -1,20 +1,24 @@
 # Copyright (c) 2019-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi4"
+EXTENDPRAUTO:append = "webosrpi5"
+EXTENDPRAUTO:append:sota = ".sota"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
+UENV_FILE = "${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'uEnv.sota.txt.in', 'uEnv.txt.in', d)}"
+
+# boot.cmd.in is in SRC_URI already and copied under 'files' of this dir
 SRC_URI:append = " \
-    file://boot.sota.cmd \
-    file://uEnv.sota.txt.in \
+    file://${UENV_FILE} \
 "
 
-do_compile:sota() {
-    sed -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' "${WORKDIR}/uEnv.sota.txt.in" > "${WORKDIR}/uEnv.sota.txt"
-    mkimage -A arm -O linux -T script -C none -a 0 -e 0 -n "Ostree boot script" -d ${WORKDIR}/boot.sota.cmd boot.scr
+do_compile:append() {
+    sed -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
+        -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' \
+        "${WORKDIR}/${UENV_FILE}" > "${WORKDIR}/uEnv.txt"
 }
 
-do_deploy:append:sota() {
+do_deploy:append() {
     install -d ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}
-    install -m 0755 ${WORKDIR}/uEnv.sota.txt ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/uEnv.txt
+    install -m 0755 ${WORKDIR}/uEnv.txt ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}
 }

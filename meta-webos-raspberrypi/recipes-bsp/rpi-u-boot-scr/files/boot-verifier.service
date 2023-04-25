@@ -1,0 +1,17 @@
+# @@@LICENSE
+#
+# Copyright (c) 2023 LG Electronics, Inc.
+#
+# LICENSE@@@
+
+[Unit]
+Description=webos - "%n"
+After=getty-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/fw_setenv -c /etc/fw_env.config now_on_upgrade 0 boot_try 0
+
+[Install]
+WantedBy=getty.target

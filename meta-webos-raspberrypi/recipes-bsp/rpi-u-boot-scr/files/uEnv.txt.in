@@ -1,0 +1,28 @@
+max_boot_try=3
+
+bootcmd_create_envfile=if test ! -e mmc 0:1 uboot.env; then saveenv; fi;
+bootcmd_args_fdt=fdt addr ${fdt_addr} && fdt get value bootargs_fdt /chosen bootargs
+
+# webOS FOTA related functions
+bootcmd_load_part_env=if printenv active_part_id; then echo "Found"; else setenv active_part_id 2; setenv now_on_upgrade 0; setenv boot_try 0; echo "Set active_part_id as default (2)"; saveenv; fi;
+bootcmd_rollback=if itest.b $active_part_id -eq 3; then setenv active_part_id 2; else setenv active_part_id 3; fi; setenv now_on_upgrade 0; setenv boot_try 0; echo "Rollback to active_part_id to ${active_part_id}"; saveenv;
+bootcmd_check_upgrade=if itest.b $now_on_upgrade -eq 1; then if itest.b $boot_try -ge $max_boot_try; then run bootcmd_rollback; else setexpr boot_try $boot_try + 1; echo "current boot_try: $boot_try"; saveenv; fi; fi
+
+# =========== BEGIN: rootfs as SDCARD =========== #
+## Warn: If you want to use nfs, please comment out this block
+bootcmd_args=setenv bootargs "$bootargs $bootargs_fdt root=/dev/mmcblk0p$active_part_id ro"
+bootcmd_load=load mmc 0:$active_part_id $kernel_addr_r /boot/@@KERNEL_IMAGETYPE@@
+# =========== END: rootfs as SDCARD ============= #
+
+# =========== BEGIN: rootfs via NFS ============= #
+## Warn: Fill in NFS Server IP at <serverip>, rootfs path at <rootfs_path> in the bootargs
+## In my case, NFS Server: 10.177.xxx.xx and It exports /srv/rootfs for rootfs, so that nfsroot=10.177.xxx.xx:/srv/rootfs
+## You can get the rootfs for nfs from official build artifacts at fileserver as <image>.tar.bz2
+## For the kernel image, uses on 1st partition's @@KERNEL_IMAGETYPE@@ and need to match ko files
+#bootcmd_args=setenv bootargs "$bootargs $bootargs_fdt root=/dev/nfs nfsroot=10.177.xxx.xx:/srv/rootfs,v3,tcp ip=dhcp rootwait noinitrdit"
+#bootcmd_load=load mmc 0:1 $kernel_addr_r /@@KERNEL_IMAGETYPE@@
+# =========== END: rootfs via NFS =============== #
+
+bootcmd_run=@@KERNEL_BOOTCMD@@ ${kernel_addr_r} - ${fdt_addr}
+
+bootcmd=run bootcmd_load_part_env; run bootcmd_check_upgrade; run bootcmd_create_envfile; run bootcmd_args_fdt; run bootcmd_args; run bootcmd_load; run bootcmd_run; reset;

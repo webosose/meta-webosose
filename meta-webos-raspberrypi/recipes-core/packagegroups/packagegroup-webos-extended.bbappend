@@ -27,10 +27,6 @@ RDEPENDS:${PN}:append:rpi = " \
     com.webos.service.peripheralmanager \
     com.webos.service.power2 \
     ofono \
-    resize-rootfs \
-"
-
-# TODO move this part to webOS FOTA service (not yet developped) later
-RDEPENDS:${PN}:append:rpi:sota = " \
-    u-boot-fw-utils \
+    boot-verifier \
+    ${VIRTUAL-RUNTIME_part-initializer} \
 "

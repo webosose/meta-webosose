@@ -1,6 +1,7 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi32"
+EXTENDPRAUTO:append = "webosrpi33"
+EXTENDPRAUTO:append:sota = ".sota"
 
 CMDLINE:append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 CMDLINE:remove:sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
@@ -11,7 +12,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}-${SHRT_VER}:${THISDIR}/${BPN}:"
 SRC_URI += "\
     file://0001-bcm2835-v4l2-codec-fix-vchiq-mmal-renable.patch \
     file://0001-kernel-seed-voicecard.patch \
-    file://ostree.cfg \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://docker.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://ebtables.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://lxc.cfg', '', d)} \
@@ -27,6 +27,8 @@ SRC_URI += "\
     file://zram.cfg \
     file://security.cfg \
 "
+
+SRC_URI:append:sota = " file://ostree.cfg"
 
 KERNEL_MODULE_AUTOLOAD:append = " \
     i2c-dev \
