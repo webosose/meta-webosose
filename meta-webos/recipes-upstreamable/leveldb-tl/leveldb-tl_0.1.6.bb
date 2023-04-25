@@ -11,7 +11,12 @@ DEPENDS = "leveldb"
 DEPENDS:append:class-target = " gtest"
 PR = "r4"
 
-SRC_URI = "git://github.com/ony/${BPN};branch=gcc-4.7;protocol=https"
+SRC_URI = "git://github.com/ony/${BPN};branch=gcc-4.7;protocol=https \
+    file://0001-util-Fix-build-with-gcc7.patch \
+    file://0001-test_corners-initialize-cookie.patch \
+    file://0001-Fix-build-with-gcc-13.patch \
+    file://0001-CMakeLists.txt-replace-std-c-0x-with-std-c-14.patch \
+"
 
 # Use gcc-4.7/v0.1.6 tag. It's backport of gcc-4.8 branch,
 # so it would work fine with both compiler versions
@@ -24,9 +29,3 @@ inherit cmake
 EXTRA_OECMAKE:append:class-native = " -DBUILD_TESTING:BOOL=false -DBUILD_MKSANDWICH:BOOL=false"
 
 BBCLASSEXTEND = "native"
-
-SRC_URI += "file://0001-util-Fix-build-with-gcc7.patch"
-
-SRC_URI += "file://0001-test_corners-initialize-cookie.patch"
-
-SRC_URI += "file://0001-Fix-build-with-gcc-13.patch"
