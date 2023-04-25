@@ -25,7 +25,7 @@ RDEPENDS:${PN} = "\
 "
 
 WEBOS_VERSION = "1.0.0-60_47d48fa0852af5cdde52044f8fd96a49a272056c"
-PR = "r33"
+PR = "r34"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -38,9 +38,12 @@ inherit gettext
 inherit webos_lttng
 inherit webos_public_repo
 
+# [http://gpro.lge.com/c/webosose/audiod-pro/+/344272 events.h: add missing functional include]
+# [http://gpro.lge.com/c/webosose/audiod-pro/+/348186 Fix luna-service2 usage]
 WEBOS_REPO_NAME = "audiod-pro"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-events.h-add-missing-functional-include.patch \
+    file://0002-Fix-luna-service2-usage.patch \
 "
 S = "${WORKDIR}/git"
 
