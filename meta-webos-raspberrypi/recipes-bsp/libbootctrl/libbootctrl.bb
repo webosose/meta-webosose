@@ -14,7 +14,7 @@ inherit webos_public_repo
 DEPENDS = "libubootenv"
 RDEPENDS:${PN} = "u-boot-env"
 
-PR = "r0"
+PR = "r1"
 WEBOS_VERSION = "1.0.0-1_43866461d03d47be64cfad513fe24221cfc23e22"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
@@ -24,3 +24,7 @@ S = "${WORKDIR}/git"
 # move test files into -tests
 PACKAGES:prepend = "${PN}-tests "
 FILES:${PN}-tests += "${bindir}/*.test"
+
+# fix depends problem when populate_sdk
+ALLOW_EMPTY:${PN} = "1"
+RDEPENDS:${PN}-dev += "${PN}-staticdev"
