@@ -19,10 +19,9 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-71_f5530295b0153cb00f7ef441f05b2b93e403ac2f"
-PR = "r54"
+PR = "r55"
 
-WAM_BUILD_SYSTEM = "webos_qmake6"
-WAM_BUILD_SYSTEM:webos = "webos_cmake"
+WAM_BUILD_SYSTEM ?= "webos_cmake"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -54,6 +53,8 @@ EXTRA_OECMAKE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_L
 
 EXTRA_OECMAKE += "-DWAM_DATA_DIR=\"\"${webos_cryptofsdir}/.webappmanager/\"\""
 EXTRA_OECMAKE += "-DPLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '_')}"
+
+EXTRA_OECMAKE += "-DWEBOS_TESTS_DIR=${webos_testsdir}"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
