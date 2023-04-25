@@ -27,21 +27,6 @@ SKIP_RECIPE[qtinterfaceframework] ?= "depends on blacklisted qtmultimedia"
 # oe-core
 SKIP_RECIPE[efivar] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, makeguids Your linker is not supported guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds http://gecko.lge.com:8000/Errors/Details/565720', '', d)}"
 SKIP_RECIPE[efibootmgr] ?= "depends on blacklisted efivar"
-SKIP_RECIPE[librsvg] ?= "fails to build probably due to our backported rust upgrade with: cp: cannot stat 'TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/librsvg/2.52.7-r0/recipe-sysroot-native/usr/lib/rustlib/aarch64-webos-linux.json': No such file or directory http://gecko.lge.com:8000/Errors/Details/565728"
-SKIP_RECIPE[librsvg-native] ?= "fails to build probably due to our backported rust upgrade with: cp: cannot stat 'TOPDIR/BUILD/work/x86_64-linux/librsvg-native/2.52.7-r0/recipe-sysroot-native/usr/lib/rustlib/x86_64-linux.json': No such file or directory http://gecko.lge.com:8000/Errors/Details/565729"
-SKIP_RECIPE[graphviz] ?= "depends on blacklisted librsvg"
-SKIP_RECIPE[adwaita-icon-theme] ?= "depends on blacklisted librsvg-native"
-SKIP_RECIPE[gtk+3] ?= "rdepends on blacklisted adwaita-icon-theme"
-SKIP_RECIPE[gst-examples] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[libdazzle] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[connman-gnome] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[webkitgtk] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[gcr] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[vte] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[l3afpad] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[libhandy] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[matchbox-terminal] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[libfm] ?= "depends on blacklisted gtk+3"
 
 # meta-oe
 SKIP_RECIPE[exprtk] ?= "fails to fetch: WARNING: Failed to fetch URL git://github.com/ArashPartow/exprtk.git;branch=master;protocol=https, attempting MIRRORS if available DEBUG: Fetcher failure: Unable to find revision 281c2ccc65b8f91c012ea3725ebcef406378a225 in branch master even from upstream: http://gecko.lge.com:8000/Errors/Details/565715"
@@ -52,10 +37,6 @@ SKIP_RECIPE[mozjs-91] ?= "fails to build probably due to our backported rust upg
 SKIP_RECIPE[netplan] ?= "fails to build with gold: aarch64-webos-linux/11.3.0/ld: error: abicompat.lds:10:8: syntax error, unexpected STRING http://gecko.lge.com:8000/Errors/Details/565730"
 SKIP_RECIPE[transmission] ?= "fails to fetch: WARNING: Failed to fetch URL gitsm://github.com/transmission/transmission;branch=master;protocol=https, attempting MIRRORS if available DEBUG: Fetcher failure: Unable to find revision bb6b5a062ee594dfd4b7a12a6b6e860c43849bfd in branch master even from upstream: http://gecko.lge.com:8000/Errors/Details/565717"
 SKIP_RECIPE[vboxguestdrivers] ?= "BROKEN: kernel-module-vboxguest conflicts in pkgdata with the vboxguest kernel modules we have enabled in linux-yocto meta-webos/recipes-kernel/linux/linux-yocto/vbox_gfx.cfg:CONFIG_VBOXGUEST=m http://gecko.lge.com:8000/Errors/Details/565857"
-SKIP_RECIPE[wxwidgets] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[blueman] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[gtkmm3] ?= "depends on blacklisted gtk+3"
-SKIP_RECIPE[libpeas] ?= "depends on blacklisted gtk+3"
 
 # meta-networking
 SKIP_RECIPE[networkmanager] ?= "fails to build with: NetworkManager-1.36.2/meson.build:821:4: ERROR: Assert failed: vala api require GObject introspection. Use -Dvapi=false to disable it: http://gecko.lge.com:8000/Errors/Details/565739"
@@ -68,7 +49,6 @@ SKIP_RECIPE[python3-grpcio-tools] ?= "depends on blacklisted python3-grpcio"
 SKIP_RECIPE[python3-google-api-core] ?= "rdepends on blacklisted python3-grpcio"
 SKIP_RECIPE[python3-googleapis-common-protos] ?= "rdepends on blacklisted python3-grpcio"
 SKIP_RECIPE[python3-google-api-python-client] ?= "rdepends on blacklisted python3-google-api-core"
-SKIP_RECIPE[python3-pydot] ?= "rdepends on blacklisted graphviz"
 
 # meta-multimedia
 SKIP_RECIPE[mycroft] ?= "rdepends on blacklisted python3-google-api-python-client"
