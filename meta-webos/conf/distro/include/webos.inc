@@ -21,6 +21,9 @@ require conf/distro/include/security_flags.inc
 
 # Enable -Werror=return-type flag
 EXTRA_WEBOS_WERROR = "-Werror=return-type"
+# http://gecko.lge.com:8000/Errors/Details/565722
+# bcm2835/1.71-r0/bcm2835-1.71/examples/spiram/spiram.c:66:1: error: control reaches end of non-void function [-Werror=return-type]
+EXTRA_WEBOS_WERROR:pn-bcm2835 = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564610
 EXTRA_WEBOS_WERROR:pn-openipmi = ""
 # http://caprica.lgsvl.com:8080/Errors/Details/1564608
