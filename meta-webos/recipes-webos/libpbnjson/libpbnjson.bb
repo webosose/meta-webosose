@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
 WEBOS_VERSION = "2.15.0-10_476ea71204d972d93b008ffad9e35b99a5af650b"
-PR = "r10"
+PR = "r11"
 
 inherit webos_component
 inherit webos_public_repo
@@ -33,12 +33,9 @@ EXTRA_OECMAKE += "-DCMAKE_AR:FILEPATH=${AR}"
 
 PACKAGECONFIG[tools] = "-DPBNJSON_INSTALL_TOOLS:BOOL=TRUE,-DPBNJSON_INSTALL_TOOLS:BOOL=FALSE"
 
-# Otherwise it fails with:
-# libpbnjson-native/2.15.0-68-r7/git/src/pbnjson_c/validation/schema_builder.c:24:10: fatal error: schema_keywords.h: No such file or directory
-OECMAKE_GENERATOR="Unix Makefiles"
-
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-fix-build-race-condition-on-generated.patch \
+"
 S = "${WORKDIR}/git"
 
 BBCLASSEXTEND = "native"
-
