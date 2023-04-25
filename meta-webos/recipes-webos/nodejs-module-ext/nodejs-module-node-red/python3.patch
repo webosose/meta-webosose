@@ -5,6 +5,8 @@ Subject: [PATCH] Let nrgpio code work with python 3
 
 (just in case that becomes default)
 ---
+Upstream-Status: Backport [0.19.0 https://github.com/node-red/node-red/commit/4bcf13cb58869902e3d62294af91eeece5c93497]
+
  nodes/core/hardware/nrgpio.py | 40 ++++++++++++++++-------------------
  1 file changed, 18 insertions(+), 22 deletions(-)
 

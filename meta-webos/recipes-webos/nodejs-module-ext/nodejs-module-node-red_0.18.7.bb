@@ -6,7 +6,7 @@ SECTION = "webOS/modules"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=d6f37569f5013072e9490d2194d10ae6"
 
-PR = "r3"
+PR = "r4"
 
 DEPENDS += "nodejs-native"
 RDEPENDS:${PN} = "nodejs"
