@@ -77,4 +77,4 @@ diff -urN libnsbmp-0.1.0/CMakeLists.txt libnsbmp-0.1.0/CMakeLists.txt
 +# ---
 +# install library
 +install(FILES ${NSBMP_HDRS} DESTINATION include)
-+install(TARGETS nsbmp LIBRARY DESTINATION lib)
++install(TARGETS nsbmp LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
