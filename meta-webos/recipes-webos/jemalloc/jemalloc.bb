@@ -10,8 +10,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=a062b932da63efa0c8ac4060de1864cf \
 "
 
-WEBOS_VERSION = "0.20080828a-0webos9-5_959943d029e341cef3839f6b2e8cba04825a852d"
-PR = "r4"
+WEBOS_VERSION = "0.20080828a-0webos9-6_f527e94e1facd3a9c801bf181d5e7cba287d04bb"
+PR = "r5"
 
 inherit webos_upstream_from_repo
 inherit webos_public_repo
@@ -21,5 +21,3 @@ inherit webos_library
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-SRC_URI += "file://0001-Fix-build-with-glibc-2.32.patch"
