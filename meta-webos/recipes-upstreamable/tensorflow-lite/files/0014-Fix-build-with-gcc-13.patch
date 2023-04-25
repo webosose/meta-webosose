@@ -1,0 +1,47 @@
+From b258c28152cc84927b0fe51c04c80c3b4e4002f0 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 1 Feb 2023 23:13:55 +0000
+Subject: [PATCH] Fix build with gcc-13
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com/Errors/Details/529517
+
+FAILED: CMakeFiles/tensorflow-lite.dir/kernels/internal/spectrogram.cc.o
+TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++ -DEIGEN_MPL2_ONLY -DNOMINMAX=1 -Dtensorflow_lite_EXPORTS -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git/tensorflow/lite/schema -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/vulkan_headers/include -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/opengl_headers/api -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/egl_headers/api -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/eigen -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/neon2sse -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/farmhash/src -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/flatbuffers/include -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/gemmlowp/public -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/gemmlowp -ITOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build/ruy -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git=/usr/src/debug/tensorflow-lite/2.9.3-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git=/usr/src/debug/tensorflow-lite/2.9.3-r0  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build=/usr/src/debug/tensorflow-lite/2.9.3-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/build=/usr/src/debug/tensorflow-lite/2.9.3-r0  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden  -DNDEBUG -fPIC -DGPU_DELEGATE_ONLY_GL -DEGL_NO_X11 -DTFLITE_BUILD_WITH_XNNPACK_DELEGATE -pthread -std=c++14 -MD -MT CMakeFiles/tensorflow-lite.dir/kernels/internal/spectrogram.cc.o -MF CMakeFiles/tensorflow-lite.dir/kernels/internal/spectrogram.cc.o.d -o CMakeFiles/tensorflow-lite.dir/kernels/internal/spectrogram.cc.o -c TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git/tensorflow/lite/kernels/internal/spectrogram.cc
+TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git/tensorflow/lite/kernels/internal/spectrogram.cc:46:1: warning: inline variables are only available with '-std=c++17' or '-std=gnu++17' [-Wc++17-extensions]
+   46 | inline int Log2Floor(uint32_t n) {
+      | ^~~~~~
+TOPDIR/BUILD/work/qemux86_64-webos-linux/tensorflow-lite/2.9.3-r0/git/tensorflow/lite/kernels/internal/spectrogram.cc:46:22: error: 'uint32_t' was not declared in this scope
+   46 | inline int Log2Floor(uint32_t n) {
+      |                      ^~~~~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-8053] CCC: Various build fixes
+
+Upstream-Status: Pending
+
+---
+ tensorflow/lite/kernels/internal/spectrogram.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tensorflow/lite/kernels/internal/spectrogram.cc b/tensorflow/lite/kernels/internal/spectrogram.cc
+index a832962a38d..3ee2d036dd4 100644
+--- a/tensorflow/lite/kernels/internal/spectrogram.cc
++++ b/tensorflow/lite/kernels/internal/spectrogram.cc
+@@ -17,6 +17,7 @@ limitations under the License.
+ 
+ #include <assert.h>
+ #include <math.h>
++#include <cstdint>
+ 
+ #include "third_party/fft2d/fft.h"
+ 

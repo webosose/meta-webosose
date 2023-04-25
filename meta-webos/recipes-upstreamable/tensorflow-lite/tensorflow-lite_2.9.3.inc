@@ -41,6 +41,7 @@ SRC_URI += " \
     file://0004-add-gpu-delegate-option-for-pytorch-converted-models.patch \
     file://0005-enable-build-with-only-opengl-in-rp4.patch \
     file://0006-Fix-return-type-issues.patch \
+    file://0014-Fix-build-with-gcc-13.patch \
 "
 
 inherit cmake
