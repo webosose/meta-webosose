@@ -18,16 +18,11 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-6_74badce83b364f135e982164779c4877d8b5701b"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-7_8ef639b99716bd1466d15d65210cc4a9c142095a"
+PR = "r1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
 PACKAGECONFIG[testapp] = "-DTEST_APP=ON, -DTEST_APP=OFF, opencv, "
-
-INSANE_SKIP:${PN} = "dev-so"
-
-FILES_SOLIBSDEV = ""
-FILES:${PN} += "${libdir}/*.so"
