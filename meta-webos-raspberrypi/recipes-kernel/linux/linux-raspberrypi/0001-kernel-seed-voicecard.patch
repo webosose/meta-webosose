@@ -1,11 +1,28 @@
-From cedaa61fe1de4c16e107b9ccd2c9efe95a9721d9 Mon Sep 17 00:00:00 2001
+From 468f39ff99c57aaa33792c0bb3512e328130e141 Mon Sep 17 00:00:00 2001
 From: "geayoung.baek" <geayoung.baek@lge.com>
 Date: Wed, 18 Jan 2023 17:58:56 +0900
 Subject: [PATCH] kernel seed-voicecard
 
+Imported from:
+https://github.com/respeaker/seeed-voicecard/tree/c52606626de050bdad85803d7e427a64cb0cf05c
+ac* and sound-compatible-4.18.h files are identical (except trailing blank lines)
+
+seeed-voicecard.c as 2 commits from HinTak fork:
+https://github.com/HinTak/seeed-voicecard/commit/6bf1dbd04e55d412abbba3832eccbcecb3f09810
+https://github.com/HinTak/seeed-voicecard/commit/b093f59250ac8ad72373712c6c4c2669c6a96b7f
+
+To refresh this patch clone
+https://github.com/HinTak/seeed-voicecard/commits/v5.13
+into seeed-voicecard and copy the files to kernel tree:
+
+linux $ cp -a seeed-voicecard/ac10*[ch] seeed-voicecard/seeed-voicecard.c seeed-voicecard/sound-compatible-4.18.h sound/soc/codecs/
+linux $ cp -a seeed-voicecard/seeed-[48]mic-voicecard-overlay.dts arch/arm/boot/dts/overlays/
+linux $ chmod 644 sound/soc/codecs/ac108.h
+linux $ dos2unix sound/soc/codecs/ac108.h
+
 Signed-off-by: geayoung.baek <geayoung.baek@lge.com>
 ---
-Upstream-Status: Pending
+Upstream-Status: Pending [seeedstudio.com is hopefully trying to upstream this to upstream kernel or at least rpi kernel fork, but I haven't found any proof of that https://github.com/respeaker/seeed-voicecard/commits/master also wasn't updated for long time, luckily there is better maintained fork https://github.com/HinTak/seeed-voicecard which already supports 6.1 kernel as well (which we need to support Mickledore where meta-raspberrypi already uses 6.1 kernel like Raspberry Pi OS now)]
 
  .../overlays/seeed-4mic-voicecard-overlay.dts |   74 +
  .../overlays/seeed-8mic-voicecard-overlay.dts |  117 ++
@@ -30,7 +47,7 @@ Upstream-Status: Pending
 
 diff --git a/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts b/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts
 new file mode 100644
-index 000000000000..ed5f937ae8c1
+index 0000000000000..ed5f937ae8c1f
 --- /dev/null
 +++ b/arch/arm/boot/dts/overlays/seeed-4mic-voicecard-overlay.dts
 @@ -0,0 +1,74 @@
@@ -110,7 +127,7 @@ index 000000000000..ed5f937ae8c1
 +};
 diff --git a/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts b/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts
 new file mode 100644
-index 000000000000..6d9bd26acbe5
+index 0000000000000..6d9bd26acbe5f
 --- /dev/null
 +++ b/arch/arm/boot/dts/overlays/seeed-8mic-voicecard-overlay.dts
 @@ -0,0 +1,117 @@
@@ -232,10 +249,10 @@ index 000000000000..6d9bd26acbe5
 +	};
 +};
 diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index 58493a2b0a6b..6b2bf1ad007f 100644
+index 52cd34e7c7131..3fe9303d72328 100644
 --- a/sound/soc/codecs/Makefile
 +++ b/sound/soc/codecs/Makefile
-@@ -332,6 +332,9 @@ snd-soc-tas2764-objs := tas2764.o
+@@ -353,6 +353,9 @@ snd-soc-tas2764-objs := tas2764.o
  # Mux
  snd-soc-simple-mux-objs := simple-mux.o
  
@@ -245,7 +262,7 @@ index 58493a2b0a6b..6b2bf1ad007f 100644
  obj-$(CONFIG_SND_SOC_88PM860X)	+= snd-soc-88pm860x.o
  obj-$(CONFIG_SND_SOC_AB8500_CODEC)	+= snd-soc-ab8500-codec.o
  obj-$(CONFIG_SND_SOC_AC97_CODEC)	+= snd-soc-ac97.o
-@@ -669,3 +672,7 @@ obj-$(CONFIG_SND_SOC_LPASS_TX_MACRO)	+= snd-soc-lpass-tx-macro.o
+@@ -711,3 +714,7 @@ obj-$(CONFIG_SND_SOC_LPASS_TX_MACRO)	+= snd-soc-lpass-tx-macro.o
  
  # Mux
  obj-$(CONFIG_SND_SOC_SIMPLE_MUX)	+= snd-soc-simple-mux.o
@@ -255,7 +272,7 @@ index 58493a2b0a6b..6b2bf1ad007f 100644
 +obj-m += snd-soc-seeed-voicecard.o
 diff --git a/sound/soc/codecs/ac101.c b/sound/soc/codecs/ac101.c
 new file mode 100644
-index 000000000000..23837a7544bd
+index 0000000000000..23837a7544bd2
 --- /dev/null
 +++ b/sound/soc/codecs/ac101.c
 @@ -0,0 +1,1699 @@
@@ -1960,7 +1977,7 @@ index 000000000000..23837a7544bd
 +MODULE_AUTHOR("PeterYang<linsheng.yang@seeed.cc>");
 diff --git a/sound/soc/codecs/ac101_regs.h b/sound/soc/codecs/ac101_regs.h
 new file mode 100644
-index 000000000000..8be570ea319f
+index 0000000000000..8be570ea319f7
 --- /dev/null
 +++ b/sound/soc/codecs/ac101_regs.h
 @@ -0,0 +1,432 @@
@@ -2398,7 +2415,7 @@ index 000000000000..8be570ea319f
 +#endif//__AC101_REGS_H__
 diff --git a/sound/soc/codecs/ac108.c b/sound/soc/codecs/ac108.c
 new file mode 100644
-index 000000000000..d5dd12ddacb4
+index 0000000000000..d5dd12ddacb47
 --- /dev/null
 +++ b/sound/soc/codecs/ac108.c
 @@ -0,0 +1,1559 @@
@@ -3963,7 +3980,7 @@ index 000000000000..d5dd12ddacb4
 +MODULE_LICENSE("GPL");
 diff --git a/sound/soc/codecs/ac108.h b/sound/soc/codecs/ac108.h
 new file mode 100644
-index 000000000000..e7f07a5e075a
+index 0000000000000..e7f07a5e075aa
 --- /dev/null
 +++ b/sound/soc/codecs/ac108.h
 @@ -0,0 +1,773 @@
@@ -4742,7 +4759,7 @@ index 000000000000..e7f07a5e075a
 +#endif
 diff --git a/sound/soc/codecs/ac10x.h b/sound/soc/codecs/ac10x.h
 new file mode 100644
-index 000000000000..a41bacf6266a
+index 0000000000000..a41bacf6266a8
 --- /dev/null
 +++ b/sound/soc/codecs/ac10x.h
 @@ -0,0 +1,126 @@
@@ -4874,7 +4891,7 @@ index 000000000000..a41bacf6266a
 +#endif//__AC10X_H__
 diff --git a/sound/soc/codecs/seeed-voicecard.c b/sound/soc/codecs/seeed-voicecard.c
 new file mode 100644
-index 000000000000..399bc7e514b9
+index 0000000000000..399bc7e514b95
 --- /dev/null
 +++ b/sound/soc/codecs/seeed-voicecard.c
 @@ -0,0 +1,913 @@
@@ -5793,7 +5810,7 @@ index 000000000000..399bc7e514b9
 +MODULE_AUTHOR("PeterYang<linsheng.yang@seeed.cc>");
 diff --git a/sound/soc/codecs/sound-compatible-4.18.h b/sound/soc/codecs/sound-compatible-4.18.h
 new file mode 100644
-index 000000000000..5f1dcdeccb18
+index 0000000000000..5f1dcdeccb18e
 --- /dev/null
 +++ b/sound/soc/codecs/sound-compatible-4.18.h
 @@ -0,0 +1,46 @@
@@ -5843,6 +5860,3 @@ index 000000000000..5f1dcdeccb18
 +#endif
 +
 +#endif//__SOUND_COMPATIBLE_4_18_H__
--- 
-2.17.1
-
