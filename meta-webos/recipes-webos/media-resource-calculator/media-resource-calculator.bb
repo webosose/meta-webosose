@@ -13,7 +13,7 @@ DEPENDS = "libpbnjson"
 
 EXTRA_OECMAKE += "-DNO_TEST=1"
 
-WEBOS_VERSION = "1.0.0-10_cba2270981d5ce488915cb60073d42f5a25722c8"
+WEBOS_VERSION = "1.0.0-11_0ce53f60eebf2e3755019436e8df42f697c4d38d"
 PR = "r6"
 
 inherit webos_component
