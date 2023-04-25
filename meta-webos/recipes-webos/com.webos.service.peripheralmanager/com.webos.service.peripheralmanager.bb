@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib "
 
-WEBOS_VERSION = "1.0.0-12_84f81aa4b927fec3b98c55f0e0db85f25ca5a7fc"
+WEBOS_VERSION = "1.0.0-13_bbd3a51b96ef9ff375de3f9f7738e6f746b4f326"
 PR = "r3"
 
 inherit webos_component

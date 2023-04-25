@@ -16,7 +16,7 @@ DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib ny
 
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode"
 
-WEBOS_VERSION = "4.4.0-23_8763e424fe5edaad1e09347f1a129de5555ea22a"
+WEBOS_VERSION = "4.4.0-24_aa543601babaf0749e8ffae7bb2b2b0096050b68"
 PR = "r9"
 
 inherit webos_component
