@@ -25,6 +25,8 @@ inherit webos_machine_dep
 inherit webos_distro_dep
 inherit webos_distro_variant_dep
 
-SRC_URI="${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-input_simulator-fix-build-with-64-bit-time_t.patch \
+"
 
 S = "${WORKDIR}/git"
