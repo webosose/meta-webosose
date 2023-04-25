@@ -1,7 +1,7 @@
 # Copyright (c) 2022-2023 LG Electronics, Inc.
 
 SUMMARY = "HDMI CEC service for webOS OSE"
-AUTHOR = "Manjuraehmad Momin <manjuraehmad.momin@lge.com>"
+AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webosose"
 
 LICENSE = "Apache-2.0"
@@ -14,8 +14,8 @@ DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib nyx-lib"
 
 COMPATIBLE_MACHINE = "^raspberrypi4-64$"
 
-WEBOS_VERSION = "1.0.0-3_d80877055cd620c136e67a0054dda88fcb285c41"
-PR = "r0"
+WEBOS_VERSION = "1.0.0-5_a2236e7706698cdd091c64e4bafe49c8eac635ab"
+PR = "r1"
 
 inherit webos_component
 inherit webos_enhanced_submissions

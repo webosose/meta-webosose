@@ -5,7 +5,7 @@ AUTHOR = "Yogish S <yogish.s@lge.com>"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 SECTION = "webos/libs"
@@ -23,8 +23,8 @@ SECTION = "webos/libs"
 
 DEPENDS = "glib-2.0 pmloglib"
 
-WEBOS_VERSION = "7.3.0-8_5c2a10d1ee724b48620523b578cc9af41d61b06c"
-PR = "r8"
+WEBOS_VERSION = "7.3.0-12_b13e91449b92ac4bc0e520ac298020d44f2b90c2"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
