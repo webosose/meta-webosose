@@ -9,7 +9,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=3b83ef96387f14655fc854ddc3c6bd57"
 DEPENDS = "leveldb"
 DEPENDS:append:class-target = " gtest"
-PR = "r3"
+PR = "r4"
 
 SRC_URI = "git://github.com/ony/${BPN};branch=gcc-4.7;protocol=https"
 
@@ -28,3 +28,5 @@ BBCLASSEXTEND = "native"
 SRC_URI += "file://0001-util-Fix-build-with-gcc7.patch"
 
 SRC_URI += "file://0001-test_corners-initialize-cookie.patch"
+
+SRC_URI += "file://0001-Fix-build-with-gcc-13.patch"

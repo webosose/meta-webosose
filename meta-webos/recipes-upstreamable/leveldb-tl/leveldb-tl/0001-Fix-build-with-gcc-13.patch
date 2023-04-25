@@ -1,0 +1,34 @@
+From 7ba1852326cacbb0bc8e5f1bd3e5bbbac5d9192b Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Wed, 1 Feb 2023 13:53:09 +0100
+Subject: [PATCH] Fix build with gcc-13
+
+* fixes:
+| FAILED: test/CMakeFiles/simple.dir/simple.cpp.o
+| /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++  -I/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/include -isystem /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot/usr/src/gtest/include -isystem /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot/usr/src/gtest -m64 -march=nehalem -mtune=generic -mfpmath=sse -msse4.2  --sysroot=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git=/usr/src/debug/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0  -fdebug-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git=/usr/src/debug/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0  -fmacro-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/build=/usr/src/debug/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0  -fdebug-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/build=/usr/src/debug/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0  -fdebug-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot=  -fmacro-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot=  -fdebug-prefix-map=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/recipe-sysroot-native=  -fvisibility-inlines-hidden -std=c++0x -Wall -Wextra -Wconversion -Werror -pthread -MD -MT test/CMakeFiles/simple.dir/simple.cpp.o -MF test/CMakeFiles/simple.dir/simple.cpp.o.d -o test/CMakeFiles/simple.dir/simple.cpp.o -c /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/simple.cpp
+| /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/simple.cpp: In member function 'virtual void Simple_sandwich_move_issue14_Test::TestBody()':
+| /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/simple.cpp:353:24: error: moving a temporary object prevents copy elision [-Werror=pessimizing-move]
+|   353 |     auto db = std::move(leveldb::SandwichDB<leveldb::MemoryDB> {});
+|       |               ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| /OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/leveldb-tl/1.0.6+gitAUTOINC+b4f56ad181-r0/git/test/simple.cpp:353:24: note: remove 'std::move' call
+| cc1plus: all warnings being treated as errors
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+Upstream-Status: Pending
+---
+ test/simple.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/simple.cpp b/test/simple.cpp
+index 90103cd..72109ef 100644
+--- a/test/simple.cpp
++++ b/test/simple.cpp
+@@ -350,7 +350,7 @@ TEST(Simple, host_order)
+ 
+ TEST(Simple, sandwich_move_issue14)
+ {
+-    auto db = std::move(leveldb::SandwichDB<leveldb::MemoryDB> {});
++    auto db = leveldb::SandwichDB<leveldb::MemoryDB> {};
+     (void) db.use("alpha");
+ }
+ 
