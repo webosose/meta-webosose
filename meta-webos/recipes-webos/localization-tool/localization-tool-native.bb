@@ -6,13 +6,13 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
-PR = "r9"
+PR = "r10"
 
 inherit webos_npm_env
 inherit native
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
-SRC_URI = "git://github.com/iLib-js/ilib-loctool-webos-dist.git;branch=master;protocol=https"
+SRC_URI = "git://github.com/iLib-js/ilib-loctool-webos-dist.git;branch=main;protocol=https"
 S = "${WORKDIR}/git"
 
 # PV is the version of the ilib-loctool-webos-dist distribution, as tagged in the
