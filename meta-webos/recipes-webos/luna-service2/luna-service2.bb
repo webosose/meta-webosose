@@ -15,8 +15,8 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-32_b6152007b04fe58cfa1777ee88c20f0e04c2bafb"
-PR = "r30"
+WEBOS_VERSION = "3.21.2-33_3685de7e1b666d4f1acb92e9135a5ce274141cfc"
+PR = "r31"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
@@ -35,12 +35,11 @@ inherit webos_prerelease_dep
 inherit webos_lttng
 inherit webos_test_provider
 
-# http://gpro.lge.com/c/webosose/luna-service2/+/349434 CMakeLists.txt: replace -std=c++11 with -std=c++14
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-replace-std-c-11-with-std-c-14.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
+PACKAGECONFIG ?= ""
+PACKAGECONFIG[ppm] = "-DWEBOS_PPM_ENABLED:BOOL=True,-DWEBOS_PPM_ENABLED:BOOL=False,,com.webos.service.ppm"
 # Disable LTTng tracepoints explicitly.
 # LTTng tracepoints in LS2 can cause out of memory, because LS2 is used by many components.
 # To enable tracepoints back use WEBOS_LTTNG_ENABLED:pn-luna-service2 = "1"
