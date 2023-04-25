@@ -10,10 +10,8 @@ LICENSE = "Apache-2.0-with-LLVM-exception"
 DEPENDS += "glib-2.0"
 
 GN_ARGS += "libcxx_is_shared=true"
-GN_ARGS:remove = "is_clang=false"
-GN_ARGS += "is_clang=true"
-GN_ARGS:remove = "use_custom_libcxx=false"
-GN_ARGS += "use_custom_libcxx=true"
+GN_ARGS_CLANG = "is_clang=true"
+GN_ARGS_LIBCXX = "use_custom_libcxx=true"
 GN_ARGS += "target_sysroot=\"${STAGING_DIR_TARGET}\""
 
 EXTRA_OEGN = "--root=${S}/src --dotfile=libc++.gn"

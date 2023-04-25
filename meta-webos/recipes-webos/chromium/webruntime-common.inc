@@ -59,7 +59,6 @@ GN_ARGS = "\
     host_pkg_config=\"pkg-config-native\"\
     host_os=\"linux\"\
     host_toolchain=\"//build/toolchain/cros:host\" \
-    is_clang=false\
     is_cross_linux_build=true\
     is_webos=true\
     is_debug=false\
@@ -67,11 +66,14 @@ GN_ARGS = "\
     target_os=\"linux\"\
     cros_host_sysroot=\"/\"\
     treat_warnings_as_errors=false\
-    use_custom_libcxx=false\
-    use_custom_libcxx_for_host=false\
     use_sysroot=false\
     webos_toolprefix=\"${HOST_PREFIX}\"\
+    ${GN_ARGS_CLANG} \
+    ${GN_ARGS_LIBCXX} \
 "
+
+GN_ARGS_CLANG = "is_clang=false"
+GN_ARGS_LIBCXX = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'use_custom_libcxx=true', 'use_custom_libcxx=false', d)}"
 
 # Respect ld-is-gold in DISTRO_FEATURES when enabling gold
 # Similar patch applied in meta-browser

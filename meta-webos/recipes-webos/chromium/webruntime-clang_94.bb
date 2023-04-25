@@ -14,13 +14,9 @@ DEPEXT = "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', '', '-clang', d)}
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', 'system-libcxx', d)}"
 PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
 
-GN_ARGS:remove = "is_clang=false"
-GN_ARGS += "is_clang=true"
+GN_ARGS_CLANG = "is_clang=true"
 
 GN_ARGS += "target_sysroot=\"${STAGING_DIR_TARGET}\""
-
-GN_ARGS:remove = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'use_custom_libcxx=false', 'use_custom_libcxx=true', d)}"
-GN_ARGS += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'use_custom_libcxx=true', 'use_custom_libcxx=false', d)}"
 
 INCLUDE_PATH_STDLIB = " \
     -I${STAGING_INCDIR}/c++/${GCC_CROSS_VER} \
