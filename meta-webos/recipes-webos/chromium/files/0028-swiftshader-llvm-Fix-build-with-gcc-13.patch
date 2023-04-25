@@ -1,0 +1,46 @@
+From dea31a5769a35bc0d48ed18bbf438875f13c23e2 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 2 Feb 2023 11:03:22 +0000
+Subject: [PATCH] swiftshader-llvm: Fix build with gcc-13
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com/Errors/Details/530036
+
+FAILED: obj/third_party/swiftshader/third_party/llvm-10.0/swiftshader_llvm_support/Signals.o
+aarch64-webos-linux-g++  -mcpu=cortex-a72 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/webruntime/94.0.4606.128-22-r61.2/recipe-sysroot -MMD -MF obj/third_party/swiftshader/third_party/llvm-10.0/swiftshader_llvm_support/Signals.o.d -DENABLE_BROWSER_CONTROL_WEBAPI=1 -DENABLE_SAMPLE_WEBAPI=1 -DENABLE_MEMORYMANAGER_WEBAPI=1 -DENABLE_WEBOS_SERVICE_BRIDGE_WEBAPI=1 -DENABLE_WEBOS_SYSTEM_WEBAPI=1 -DNEVA_DCHECK_ALWAYS_ON=1 -DOZONE_PLATFORM_WAYLAND_EXTERNAL=1 -DNEVA_OZONE_PLATFORM_WAYLAND=1 -DOS_WEBOS=1 -DNEVA_VIDEO_HOLE=1 -DUSE_NEVA_APPRUNTIME=1 -DUSE_NEVA_MEDIA=1 -DUSE_GAV=1 -DUSE_NEVA_BROWSER_SERVICE=1 -DUSE_WEBRISK_SERVICE=1 -DUSE_NEVA_PUNCH_HOLE=1 -DUSE_NEVA_V4L2_CODEC=1 -DUSE_GST_MEDIA=1 -DUSE_CBE=1 -DUSE_PMLOG=1 -DUSE_NEVA_SUSPEND_MEDIA_CAPTURE=1 -DUSE_FILESCHEME_CODECACHE=1 -DUSE_NEVA_WEBRTC=1 -DWEBOS_SUBMISSION_NUMBER=22 -DUSE_LOCAL_STORAGE_TRACKER=1 -DUSE_WEBOS_CODEC=1 -DUSE_LTTNG=1 -DUSE_UDEV -DUSE_AURA=1 -DUSE_GLIB=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -DANGLE_DISABLE_TRACE -DNO_SANITIZE_FUNCTION=__attribute__\(\(no_sanitize\(\"function\"\)\)\) -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/include -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Target/AArch64 -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Target/ARM -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Target/Mips -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Target/PowerPC -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Target/X86 -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/include -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/IR -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/Target/AArch64 -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/Target/ARM -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/Target/Mips -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/Target/PowerPC -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/Target/X86 -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/common/lib/Transforms/InstCombine -I../../git/src/third_party/swiftshader/third_party/llvm-10.0/configs/linux/include -I../../git/src/neva -Igen/neva -I../../git/src -Igen -Wno-unused-variable -fno-ident -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -pthread -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -O2 -fdata-sections -ffunction-sections -fno-omit-frame-pointer -g0 -fvisibility=hidden -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-comments -Wno-packed-not-aligned -Wno-attributes -Wno-missing-field-initializers -Wno-unused-parameter -Os -std=gnu++14 -fno-exceptions -fno-rtti -fvisibility-inlines-hidden -Wno-narrowing -Wno-class-memaccess -std=c++17 -c ../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Support/Signals.cpp -o obj/third_party/swiftshader/third_party/llvm-10.0/swiftshader_llvm_support/Signals.o
+In file included from ../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/lib/Support/Signals.cpp:14:
+../../git/src/third_party/swiftshader/third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h:117:8: error: variable or field 'CleanupOnSignal' declared void
+  117 |   void CleanupOnSignal(uintptr_t Context);
+      |        ^~~~~~~~~~~~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-8053] CCC: Various build fixes
+
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344639 swiftshader-llvm: Fix build with gcc-13]
+
+Change-Id: Ia6f9a739d58bf40a264790a97f95da04dda151d3
+---
+ .../third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h    | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/third_party/swiftshader/third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h b/src/third_party/swiftshader/third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h
+index e0a18e72f2..148216b8f8 100644
+--- a/src/third_party/swiftshader/third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h
++++ b/src/third_party/swiftshader/third_party/llvm-10.0/llvm/include/llvm/Support/Signals.h
+@@ -14,6 +14,7 @@
+ #ifndef LLVM_SUPPORT_SIGNALS_H
+ #define LLVM_SUPPORT_SIGNALS_H
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace llvm {

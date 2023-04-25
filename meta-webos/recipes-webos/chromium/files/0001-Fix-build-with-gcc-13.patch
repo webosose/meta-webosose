@@ -1,0 +1,64 @@
+From 7f343a8486e618e5247146a507d50c17a964a241 Mon Sep 17 00:00:00 2001
+From: WANG Xuerui <git@xen0n.name>
+Date: Fri, 7 Oct 2022 00:23:49 +0800
+Subject: [PATCH] Fix build with gcc-13
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+See https://gcc.gnu.org/gcc-13/porting_to.html#header-dep-changes.
+
+Also see Gentoo Linux bug report: https://bugs.gentoo.org/865981
+
+Reviewed-on: https://chromium-review.googlesource.com/c/v8/v8/+/3934140
+Reviewed-by: Clemens Backes <clemensb@chromium.org>
+Reviewed-by: Simon Zünd <szuend@chromium.org>
+Commit-Queue: Clemens Backes <clemensb@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#83587}
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+
+Upstream-Status: Backport [https://chromium-review.googlesource.com/c/v8/v8/+/3934140 http://gpro.lge.com/c/webosose/chromium-v8/+/344640 Fix build with gcc-13]
+
+Change-Id: I421f396b02ba37e12ee70048ee33e034f8113566
+---
+ AUTHORS                               | 1 +
+ src/base/logging.h                    | 1 +
+ src/inspector/v8-string-conversions.h | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/AUTHORS b/AUTHORS
+index d9eb05985c..2868b101e8 100644
+--- a/AUTHORS
++++ b/AUTHORS
+@@ -232,6 +232,7 @@ Vlad Burlik <vladbph@gmail.com>
+ Vladimir Krivosheev <develar@gmail.com>
+ Vladimir Shutoff <vovan@shutoff.ru>
+ Wael Almattar <waelsy123@gmail.com>
++WANG Xuerui <git@xen0n.name>
+ Wei Wu <lazyparser@gmail.com>
+ Wenlu Wang <kingwenlu@gmail.com>
+ Wenyu Zhao <wenyu.zhao@anu.edu.au>
+diff --git a/src/base/logging.h b/src/base/logging.h
+index 08db24a947..38be165fc1 100644
+--- a/src/base/logging.h
++++ b/src/base/logging.h
+@@ -5,6 +5,7 @@
+ #ifndef V8_BASE_LOGGING_H_
+ #define V8_BASE_LOGGING_H_
+ 
++#include <cstdint>
+ #include <cstring>
+ #include <sstream>
+ #include <string>
+diff --git a/src/inspector/v8-string-conversions.h b/src/inspector/v8-string-conversions.h
+index c1d69c18f0..eb33c6816a 100644
+--- a/src/inspector/v8-string-conversions.h
++++ b/src/inspector/v8-string-conversions.h
+@@ -5,6 +5,7 @@
+ #ifndef V8_INSPECTOR_V8_STRING_CONVERSIONS_H_
+ #define V8_INSPECTOR_V8_STRING_CONVERSIONS_H_
+ 
++#include <cstdint>
+ #include <string>
+ 
+ // Conversion routines between UT8 and UTF16, used by string-16.{h,cc}. You may

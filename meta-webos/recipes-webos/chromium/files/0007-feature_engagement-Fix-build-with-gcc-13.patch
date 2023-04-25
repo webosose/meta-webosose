@@ -1,0 +1,63 @@
+From e758089fa33a70480c6d6600e9db59f77f86f3d5 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Wed, 1 Feb 2023 17:42:42 +0100
+Subject: [PATCH] feature_engagement: Fix build with gcc-13
+
+* fixes:
+FAILED: obj/components/feature_engagement/internal/internal/feature_config_event_storage_validator.o
+x86_64-webos-linux-g++  -m64 -march=nehalem -mtune=generic -mfpmath=sse -msse4.2 --sysroot=/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/webruntime/94-r59.2/recipe-sysroot -MMD -MF obj/components/feature_engagement/internal/internal/feature_config_event_storage_validator.o.d -DENABLE_BROWSER_CONTROL_WEBAPI=1 -DENABLE_SAMPLE_WEBAPI=1 -DENABLE_MEMORYMANAGER_WEBAPI=1 -DENABLE_WEBOS_SERVICE_BRIDGE_WEBAPI=1 -DENABLE_WEBOS_SYSTEM_WEBAPI=1 -DNEVA_DCHECK_ALWAYS_ON=1 -DOZONE_PLATFORM_WAYLAND_EXTERNAL=1 -DNEVA_OZONE_PLATFORM_WAYLAND=1 -DOS_WEBOS=1 -DNEVA_VIDEO_HOLE=1 -DUSE_NEVA_APPRUNTIME=1 -DUSE_NEVA_BROWSER_SERVICE=1 -DUSE_WEBRISK_SERVICE=1 -DENABLE_WEBM_VIDEO_CODECS=1 -DUSE_CBE=1 -DUSE_PMLOG=1 -DUSE_NEVA_SUSPEND_MEDIA_CAPTURE=1 -DUSE_FILESCHEME_CODECACHE=1 -DWEBOS_SUBMISSION_NUMBER=13 -DUSE_LOCAL_STORAGE_TRACKER=1 -DUSE_UDEV -DUSE_AURA=1 -DUSE_GLIB=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D_FORTIFY_SOURCE=2 -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_2_40 -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_40 -DWEBP_EXTERN=extern -DGOOGLE_PROTOBUF_NO_RTTI -DGOOGLE_PROTOBUF_NO_STATIC_INITIALIZER -DHAVE_PTHREAD -DLEVELDB_PLATFORM_CHROMIUM=1 -I../../git/src/neva -Igen/neva -I../../git/src -Igen -I../../git/src/third_party/perfetto/include -Igen/third_party/perfetto/build_config -Igen/third_party/perfetto -I../../git/src/third_party/libwebp/src -I../../git/src/third_party/protobuf/src -Igen/protoc_out -I../../git/src/third_party/abseil-cpp -I../../git/src/third_party/boringssl/src/include -I../../git/src/third_party/leveldatabase -I../../git/src/third_party/leveldatabase/src -I../../git/src/third_party/leveldatabase/src/include -Wno-unused-variable -fno-ident -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -pthread -m64 -march=x86-64 -msse3 -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -Wall -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-comments -Wno-packed-not-aligned -Wno-attributes -Wno-missing-field-initializers -Wno-unused-parameter -O2 -fdata-sections -ffunction-sections -fno-omit-frame-pointer -g0 -fvisibility=hidden -I/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/webruntime/94-r59.2/recipe-sysroot/usr/include/glib-2.0 -I/OE/build/luneos-mickledore/webos-ports/tmp-glibc/work/corei7-64-webos-linux/webruntime/94-r59.2/recipe-sysroot/usr/lib/glib-2.0/include -std=gnu++14 -Wno-narrowing -Wno-class-memaccess -fno-exceptions -fno-rtti -fvisibility-inlines-hidden -c ../../git/src/components/feature_engagement/internal/feature_config_event_storage_validator.cc -o obj/components/feature_engagement/internal/internal/feature_config_event_storage_validator.o
+In file included from ../../git/src/components/feature_engagement/internal/feature_config_event_storage_validator.h:13,
+                 from ../../git/src/components/feature_engagement/internal/feature_config_event_storage_validator.cc:5:
+../../git/src/components/feature_engagement/internal/event_storage_validator.h:28:27: error: 'uint32_t' has not been declared
+   28 |                           uint32_t event_day,
+      |                           ^~~~~~~~
+../../git/src/components/feature_engagement/internal/event_storage_validator.h:29:27: error: 'uint32_t' has not been declared
+   29 |                           uint32_t current_day) const = 0;
+      |                           ^~~~~~~~
+
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/344618 feature_engagement: Fix build with gcc-13]
+
+Change-Id: I42126b805780245de36752d34f3c8b5c4085fd03
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+ .../feature_engagement/internal/event_storage_validator.h        | 1 +
+ .../internal/feature_config_event_storage_validator.h            | 1 +
+ .../feature_engagement/internal/never_event_storage_validator.h  | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/src/components/feature_engagement/internal/event_storage_validator.h b/src/components/feature_engagement/internal/event_storage_validator.h
+index db41c843b7..43019261fb 100644
+--- a/src/components/feature_engagement/internal/event_storage_validator.h
++++ b/src/components/feature_engagement/internal/event_storage_validator.h
+@@ -5,6 +5,7 @@
+ #ifndef COMPONENTS_FEATURE_ENGAGEMENT_INTERNAL_EVENT_STORAGE_VALIDATOR_H_
+ #define COMPONENTS_FEATURE_ENGAGEMENT_INTERNAL_EVENT_STORAGE_VALIDATOR_H_
+ 
++#include <cstdint>
+ #include <string>
+ 
+ #include "base/macros.h"
+diff --git a/src/components/feature_engagement/internal/feature_config_event_storage_validator.h b/src/components/feature_engagement/internal/feature_config_event_storage_validator.h
+index b7dd0683a1..7326b7afa9 100644
+--- a/src/components/feature_engagement/internal/feature_config_event_storage_validator.h
++++ b/src/components/feature_engagement/internal/feature_config_event_storage_validator.h
+@@ -5,6 +5,7 @@
+ #ifndef COMPONENTS_FEATURE_ENGAGEMENT_INTERNAL_FEATURE_CONFIG_EVENT_STORAGE_VALIDATOR_H_
+ #define COMPONENTS_FEATURE_ENGAGEMENT_INTERNAL_FEATURE_CONFIG_EVENT_STORAGE_VALIDATOR_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <unordered_map>
+ #include <unordered_set>
+diff --git a/src/components/feature_engagement/internal/never_event_storage_validator.h b/src/components/feature_engagement/internal/never_event_storage_validator.h
+index 10ed679817..b0a86df85e 100644
+--- a/src/components/feature_engagement/internal/never_event_storage_validator.h
++++ b/src/components/feature_engagement/internal/never_event_storage_validator.h
+@@ -5,6 +5,7 @@
+ #ifndef COMPONENTS_FEATURE_ENGAGEMENT_INTERNAL_NEVER_EVENT_STORAGE_VALIDATOR_H_
+ #define COMPONENTS_FEATURE_ENGAGEMENT_INTERNAL_NEVER_EVENT_STORAGE_VALIDATOR_H_
+ 
++#include <cstdint>
+ #include <string>
+ 
+ #include "base/macros.h"
