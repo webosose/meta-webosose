@@ -15,9 +15,12 @@ SRC_URI = " \
     file://arm-compute-library.pc.in \
 "
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/git"
+
+# scons here is too old for MAXLINELENGTH
+SCONS_MAXLINELENGTH = ""
 
 inherit scons
 
