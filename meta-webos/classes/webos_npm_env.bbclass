@@ -62,10 +62,6 @@ do_compile:prepend() {
     bbnote "webos_npm_env: config npm package-lock"
     ${WEBOS_NPM_BIN} config set package-lock true
 
-    # Tell NPM to run packages using the Node binary that started it
-    bbnote "webos_npm_env: config npm node-path"
-    ${WEBOS_NPM_BIN} config set scripts-prepend-node-path true
-
     # does not build dev packages
     bbnote "webos_npm_env: config npm dev false"
     ${WEBOS_NPM_BIN} config set dev false
