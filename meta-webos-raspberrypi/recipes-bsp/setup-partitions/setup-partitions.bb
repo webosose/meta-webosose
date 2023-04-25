@@ -10,7 +10,7 @@ RPROVIDES:${PN} = "part-initializer"
 
 RDEPENDS:${PN} = "e2fsprogs-resize2fs parted"
 
-PR = "r4"
+PR = "r5"
 
 inherit systemd
 inherit webos_filesystem_paths

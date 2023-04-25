@@ -58,13 +58,13 @@ updatePartitionTable() {
 	p
 	2
 	$part2_start
-	+$part2_sectors
+	+$(($part2_sectors - 1))
 	
 	n
 	p
 	3
 	$part3_start
-	+$part3_sectors
+	+$(($part3_sectors - 1))
 	
 	n
 	e
@@ -98,8 +98,8 @@ createPartitions() {
 	mkfs.ext4 /dev/mmcblk0p7 # /media
 
 	# assign labels
-	e2label /dev/mmcblk0p2 root_0
-	e2label /dev/mmcblk0p3 root_1
+	# e2label /dev/mmcblk0p2 root_0
+	# e2label /dev/mmcblk0p3 root_1
 	e2label /dev/mmcblk0p5 var
 	e2label /dev/mmcblk0p6 db
 	e2label /dev/mmcblk0p7 media
