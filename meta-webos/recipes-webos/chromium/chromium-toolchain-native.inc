@@ -1,5 +1,7 @@
 # Copyright (c) 2023 LG Electronics, Inc.
 
+require webruntime-common.inc
+
 LICENSE = "Apache-2.0-with-LLVM-exception"
 
 LIC_FILES_CHKSUM = "\
@@ -7,10 +9,8 @@ LIC_FILES_CHKSUM = "\
     file://oss-pkg-info.yaml;md5=dac1866e82f07906c382718584e415e5 \
 "
 
-BBCLASSEXTEND = "native"
-
-inherit webos_public_repo
-inherit webos_enhanced_submissions
+# These are prebuilt binaries, doesn't make sense to package them as target package
+inherit native
 
 OFFSET = "src/third_party/llvm-build/Release+Asserts"
 

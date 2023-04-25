@@ -2,7 +2,7 @@
 
 PR = "r0"
 
-require chromium-toolchain.inc
+require chromium-toolchain-native.inc
 
 require webruntime-repo_94.inc
 
