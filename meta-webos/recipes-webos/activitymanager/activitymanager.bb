@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 db8 boost libpbnjson glib-2.0 pmloglib ${VIRTUAL-RUNTIME_init_manager}"
 
-WEBOS_VERSION = "3.0.0-32_984034d835f3f59d95739b6ca85793f4b734913e"
+WEBOS_VERSION = "3.0.0-33_a4517b29cf9b88bdf43942c49956a75b16951cec"
 PR = "r11"
 
 inherit webos_component
