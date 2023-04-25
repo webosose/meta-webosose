@@ -45,14 +45,16 @@ do_compile:prepend() {
     bbnote "webos_npm_env: set HOME to WORKDIR"
     export HOME=${WORKDIR}
 
+    export NPM_ENV=production
+
     # configure cache to be in the WORKDIR directory
     bbnote "webos_npm_env: set npm cache"
     ${WEBOS_NPM_BIN} set cache ${WEBOS_NPM_CACHE_DIR}
 
     # clear local cache prior to each compile
     bbnote "webos_npm_env: clear npm cache and ${S}/node_modules"
-    ${WEBOS_NPM_BIN} cache clear --force
     rm -rf ${S}/node_modules
+    ${WEBOS_NPM_BIN} cache clear --force
 
     # Prefer using offline cached packages
     bbnote "webos_npm_env: config npm offline"
@@ -61,14 +63,6 @@ do_compile:prepend() {
     # Fix to prevent NPM from not honoring shrinkwrap; see https://github.com/npm/npm/issues/17960
     bbnote "webos_npm_env: config npm package-lock"
     ${WEBOS_NPM_BIN} config set package-lock true
-
-    # does not build dev packages
-    bbnote "webos_npm_env: config npm dev false"
-    ${WEBOS_NPM_BIN} config set dev false
-
-    # access npm registry using http
-    bbnote "webos_npm_env: config npm strict-ssl false"
-    ${WEBOS_NPM_BIN} set strict-ssl false
 
     # configure http proxy if neccessary
     if [ -n "${http_proxy}" ]; then
