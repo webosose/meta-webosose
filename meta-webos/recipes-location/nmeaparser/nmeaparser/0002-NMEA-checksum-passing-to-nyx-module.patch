@@ -1,7 +1,7 @@
-From e7a0b26c8e7e27e37e958f962869171ced523186 Mon Sep 17 00:00:00 2001
+From a9998f4daeb1ef039ca9e1288486529361a4d87e Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Tue, 12 May 2020 13:47:30 +0530
-Subject: [PATCH 2/2] NMEA checksum passing to nyx-module
+Subject: [PATCH] NMEA checksum passing to nyx-module
 
 :Release Notes:
 NMEA library checksum value support for nyx-modules.
@@ -18,7 +18,6 @@ NA
 
 :Issues Addressed:
 N/A
-
 ---
 Upstream-Status: Inappropriate [webOS specific]
 
@@ -88,6 +87,3 @@ index b090797..5a0888b 100644
  
  	///
  	/// \brief This method is called when receiving the start of message of the NMEA packet.
--- 
-2.17.1
-

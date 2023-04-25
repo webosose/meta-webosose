@@ -1,7 +1,7 @@
-From 74ee3ac25e868f353c7a53139a6212d777877266 Mon Sep 17 00:00:00 2001
+From a8916e1ca7c2448ee5a5d31799b3300be697fe1a Mon Sep 17 00:00:00 2001
 From: "penikelapati.kumar" <penikelapati.kumar@lge.com>
 Date: Tue, 12 May 2020 13:44:43 +0530
-Subject: [PATCH 1/2] Changes to support compilation
+Subject: [PATCH] Changes to support compilation
 
 :Release Notes:
 NMEAParser opensource library compilation support in WebOS.
@@ -17,7 +17,6 @@ NA
 
 :Issues Addressed:
 N/A
-
 ---
 Upstream-Status: Inappropriate [webOS specific]
 
@@ -34,14 +33,13 @@ new file mode 100644
 index 0000000..4241da4
 --- /dev/null
 +++ b/CMakeLists.txt
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,6 @@
 +#
 +# CMakeLists - NMEAParserLib project
 +#
 +cmake_minimum_required(VERSION 2.8)
 +add_subdirectory (Software)
-+# install(FILES nmeaparser.pc DESTINATION "${INSTALL_PKGCONFIG_DIR}")
-+install(FILES "files/pkgconfig/nmeaparser.pc" DESTINATION "/usr/lib/pkgconfig")
++install(FILES "files/pkgconfig/nmeaparser.pc" DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig")
 diff --git a/Software/CMakeLists.txt b/Software/CMakeLists.txt
 index 2484ae0..afb24c4 100644
 --- a/Software/CMakeLists.txt
@@ -54,7 +52,7 @@ index 2484ae0..afb24c4 100644
 +#add_subdirectory (NMEAParserTest)
  
 diff --git a/Software/NMEAParserLib/CMakeLists.txt b/Software/NMEAParserLib/CMakeLists.txt
-index f653a90..dc7c3aa 100644
+index f653a90..985bf95 100644
 --- a/Software/NMEAParserLib/CMakeLists.txt
 +++ b/Software/NMEAParserLib/CMakeLists.txt
 @@ -6,12 +6,15 @@ cmake_minimum_required(VERSION 2.8)
@@ -82,7 +80,7 @@ index f653a90..dc7c3aa 100644
  	NMEASentenceRMC.h
  )
  
-+install(TARGETS NMEAParserLib DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
++install(TARGETS NMEAParserLib DESTINATION ${CMAKE_INSTALL_LIBDIR})
 +install(DIRECTORY . DESTINATION ${CMAKE_INSTALL_PREFIX}/include/nmeaparser FILES_MATCHING PATTERN "*.h")
  #
  # Add additional libraries
@@ -97,6 +95,3 @@ index 0000000..7820987
 +Description: NMEA data parser for GPS data
 +Version: 1.0.0
 +Libs: -L/usr/lib -lNMEAParserLib
--- 
-2.17.1
-
