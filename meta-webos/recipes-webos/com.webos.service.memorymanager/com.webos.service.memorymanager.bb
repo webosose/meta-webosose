@@ -9,10 +9,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "glib-2.0 glib-2.0-native luna-service2 libpbnjson pmloglib procps"
+DEPENDS = "glib-2.0 glib-2.0-native luna-service2 libpbnjson pmloglib"
 
 WEBOS_VERSION = "1.0.0-52_57bec9e60709001d9a135076a54b24d4d7646fd7"
-PR = "r7"
+PR = "r8"
 
 inherit webos_component
 inherit webos_cmake
@@ -27,5 +27,6 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-build-with-gcc-10.patch \
+    file://0002-CMakeLists.txt-remove-dependency-on-libprocps.patch \
 "
 S = "${WORKDIR}/git"

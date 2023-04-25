@@ -1,0 +1,76 @@
+From f86701bdad1b20bdc0d4048708d1055c68fd30dc Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 11 Mar 2023 22:26:22 +0000
+Subject: [PATCH] CMakeLists.txt: remove dependency on libprocps
+
+:Release Notes:
+Remove unused dependency on libprocps.
+
+:Detailed Notes:
+Fixes build with procps-4:
+http://gecko.lge.com:8000/Errors/Details/551377
+
+-- Checking for module 'libprocps'
+--   No package 'libprocps' found
+
+there might be many more changes needed to adapt to procps 4 API, see:
+https://gitlab.com/procps-ng/procps/-/issues/239
+
+procps upgrade was now merged in oe-core together with igt-gpu-tools adaptation in:
+https://git.openembedded.org/openembedded-core/commit/?id=631eba02d64f1a42514e0ae4361bbecc5cce5fa7
+
+but luckily it's not actually being used here other than this pkg-config
+check and unnecessary #include, so just remove it.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-10874] Prepare for procps 4 API
+
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.memorymanager/+/347409 CMakeLists.txt: remove dependency on libprocps]
+
+Change-Id: Ifd45a298f64afd4550fb3384926a582dcb1c6a50
+---
+ src/common/util/LinuxProcess.cpp | 1 -
+ src/memorymanager/CMakeLists.txt | 5 -----
+ 2 files changed, 6 deletions(-)
+
+diff --git a/src/common/util/LinuxProcess.cpp b/src/common/util/LinuxProcess.cpp
+index 0e701ce..6a6341f 100644
+--- a/src/common/util/LinuxProcess.cpp
++++ b/src/common/util/LinuxProcess.cpp
+@@ -15,7 +15,6 @@
+ // SPDX-License-Identifier: Apache-2.0
+ 
+ #include <glib.h>
+-#include <proc/readproc.h>
+ #include <stdlib.h>
+ #include <array>
+ #include <memory>
+diff --git a/src/memorymanager/CMakeLists.txt b/src/memorymanager/CMakeLists.txt
+index 0b5d835..fadc5dd 100644
+--- a/src/memorymanager/CMakeLists.txt
++++ b/src/memorymanager/CMakeLists.txt
+@@ -44,10 +44,6 @@ find_package(Boost REQUIRED COMPONENTS regex system filesystem)
+ include_directories(${Boost_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${Boost_CFLAGS_OTHER})
+ 
+-pkg_check_modules(PROCPS REQUIRED libprocps)
+-include_directories(${PROCPS_INCLUDE_DIRS})
+-webos_add_compiler_flags(ALL ${PROCPS_CFLAGS})
+-
+ pkg_check_modules(GIO_UNIX REQUIRED gio-unix-2.0)
+ include_directories(${GIO_UNIX_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${GIO_UNIX_CFLAGS})
+@@ -88,7 +84,6 @@ set(LIBS
+     ${Boost_LIBRARIES}
+     ${PBNJSON_C_LDFLAGS}
+     ${PBNJSON_CPP_LDFLAGS}
+-    ${PROCPS_LDFLAGS}
+ )
+ target_link_libraries(${BIN_NAME} ${LIBS})
+ 
