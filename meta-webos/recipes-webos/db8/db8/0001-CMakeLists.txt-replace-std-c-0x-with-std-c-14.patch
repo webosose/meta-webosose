@@ -1,0 +1,151 @@
+From cecec39adff792c1f92bac36dded90e75864137a Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 27 Mar 2023 22:27:29 +0000
+Subject: [PATCH] CMakeLists.txt: replace -std=c++0x with -std=c++14
+
+:Release Notes:
+c++0x isn't compatible with googletest currently in mickledore.
+
+:Detailed Notes:
+With googletest 1.13.0 from:
+https://git.openembedded.org/meta-openembedded/commit/?id=46266e59ff36b38f46a67573528cee658960c764
+it fails to build with:
+http://gecko.lge.com:8000/Errors/Details/562031
+
+FAILED: Imported/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o 
+TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot-native/usr/bin/x86_64-webos-linux/x86_64-webos-linux-g++  -ITOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/git/inc -ITOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/lib/glib-2.0/include -I/include -isystem TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/src/gtest/include -isystem TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/src/gtest -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/git=/usr/src/debug/db8/3.2.0-27-r38  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/git=/usr/src/debug/db8/3.2.0-27-r38  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/build=/usr/src/debug/db8/3.2.0-27-r38  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/build=/usr/src/debug/db8/3.2.0-27-r38  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot-native=  -fvisibility-inlines-hidden  -pthread -DUSE_PMLOG -DWITH_SNAPPY_COMPRESSION -Wall -Wextra -fPIC -Wconversion --std=c++0x -Wno-unused-but-set-variable -Wno-unused-variable -fno-exceptions -frename-registers -DMOJ_LINUX -fno-strict-aliasing -Wno-psabi -DMOJ_INTERNAL -D_REENTRANT -Werror=return-type -Wno-unused-parameter -Wno-empty-body -Wl,--no-undefined -DWITH_SEARCH_QUERY_CACHE -DUSE_PMLOG_DECLARATION  -DMOJ_USE_LDB -DMOJ_USE_SANDWICH -DNDEBUG -Wall -Wshadow -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -MD -MT Imported/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -MF Imported/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o.d -o Imported/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/src/gtest/src/gtest_main.cc
+In file included from TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/include/gtest/gtest-message.h:57,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/include/gtest/gtest-assertion-result.h:46,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/include/gtest/gtest.h:64,
+                 from TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/src/gtest/src/gtest_main.cc:32:
+TOPDIR/BUILD/work/qemux86_64-webos-linux/db8/3.2.0-27-r38/recipe-sysroot/usr/include/gtest/internal/gtest-port.h:270:2: error: #error C++ versions less than C++14 are not supported.
+  270 | #error C++ versions less than C++14 are not supported.
+      |  ^~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-412] Create GPVB with Yocto 4.2 Mickledore
+
+Change-Id: I19e28f7ab38ecfbfe248d657506e237e8b648a5b
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/db8/+/349484 CMakeLists.txt: replace -std=c++0x with -std=c++14]
+
+ CMakeLists.txt                    | 2 +-
+ test/db-core/CMakeLists.txt       | 2 +-
+ test/db-media/CMakeLists.txt      | 2 +-
+ test/dbclient-perf/CMakeLists.txt | 2 +-
+ test/leveldb/CMakeLists.txt       | 2 +-
+ test/lmdb/CMakeLists.txt          | 2 +-
+ test/mojocore/CMakeLists.txt      | 2 +-
+ test/sandwich/CMakeLists.txt      | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0f376e4..4f5457d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -110,7 +110,7 @@ include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
+ webos_build_pkgconfig(files/pkgconfig/mojodb)
+ webos_build_pkgconfig(files/pkgconfig/db8)
+ 
+-webos_add_compiler_flags(ALL -Wall -Wextra -fPIC -Wconversion --std=c++0x
++webos_add_compiler_flags(ALL -Wall -Wextra -fPIC -Wconversion -std=c++14
+                          -Wno-unused-but-set-variable -Wno-unused-variable
+                          -fno-exceptions -frename-registers -DMOJ_LINUX -fno-strict-aliasing
+                          -Wno-psabi
+diff --git a/test/db-core/CMakeLists.txt b/test/db-core/CMakeLists.txt
+index dc1ea59..ca84588 100644
+--- a/test/db-core/CMakeLists.txt
++++ b/test/db-core/CMakeLists.txt
+@@ -20,7 +20,7 @@ project(gtest_db_core C CXX)
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ include_directories(../db)
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread --std=c++0x)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/db-media/CMakeLists.txt b/test/db-media/CMakeLists.txt
+index 86232f5..8e817cb 100644
+--- a/test/db-media/CMakeLists.txt
++++ b/test/db-media/CMakeLists.txt
+@@ -20,7 +20,7 @@ project(gtest_db_media C CXX)
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ include_directories(../db)
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread --std=c++0x)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/dbclient-perf/CMakeLists.txt b/test/dbclient-perf/CMakeLists.txt
+index 44e69c4..4ea5a1b 100644
+--- a/test/dbclient-perf/CMakeLists.txt
++++ b/test/dbclient-perf/CMakeLists.txt
+@@ -15,7 +15,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+-add_definitions(-Wall -Wno-deprecated -pthread --std=c++0x)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/leveldb/CMakeLists.txt b/test/leveldb/CMakeLists.txt
+index a38ac31..3a489ac 100644
+--- a/test/leveldb/CMakeLists.txt
++++ b/test/leveldb/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_leveldb C CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread --std=c++0x)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/lmdb/CMakeLists.txt b/test/lmdb/CMakeLists.txt
+index 8055bef..3b4d996 100644
+--- a/test/lmdb/CMakeLists.txt
++++ b/test/lmdb/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_lmdb CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread --std=c++0x)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/mojocore/CMakeLists.txt b/test/mojocore/CMakeLists.txt
+index f917540..bbe5c49 100644
+--- a/test/mojocore/CMakeLists.txt
++++ b/test/mojocore/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_mojocore C CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -std=c++0x -Wno-deprecated -pthread)
++add_definitions(-Wall -std=c++14 -Wno-deprecated -pthread)
+ 
+ add_executable(${PROJECT_NAME}
+                Runner.cpp
+diff --git a/test/sandwich/CMakeLists.txt b/test/sandwich/CMakeLists.txt
+index 6955a49..6617f48 100644
+--- a/test/sandwich/CMakeLists.txt
++++ b/test/sandwich/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_sandwich CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread --std=c++0x)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
