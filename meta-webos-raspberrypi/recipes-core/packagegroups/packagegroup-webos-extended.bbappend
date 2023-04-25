@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
 # You don't need to change this value when you're changing just a RDEPENDS:${PN} variable.
-EXTENDPRAUTO:append:rpi = "webosrpi10"
+EXTENDPRAUTO:append:rpi = "webosrpi11"
 
 # gst omx is used only for raspberrypi builds
 MEDIA:append:rpi = " \
@@ -19,6 +19,7 @@ CECSERVICE:raspberrypi4-64 = " \
 RDEPENDS:${PN}:append:rpi = " \
     ${CECSERVICE} \
     alsa-utils \
+    boot-verifier \
     com.webos.service.audiofocusmanager \
     com.webos.service.audiooutput \
     com.webos.service.hfp \
@@ -26,7 +27,7 @@ RDEPENDS:${PN}:append:rpi = " \
     com.webos.service.mediaindexer \
     com.webos.service.peripheralmanager \
     com.webos.service.power2 \
+    libbootctrl-tests \
     ofono \
-    boot-verifier \
     ${VIRTUAL-RUNTIME_part-initializer} \
 "

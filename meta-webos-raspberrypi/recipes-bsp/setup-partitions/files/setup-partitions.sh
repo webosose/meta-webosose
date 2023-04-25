@@ -91,6 +91,13 @@ createPartitions() {
 	mkfs.ext4 /dev/mmcblk0p6 # /var/db
 	mkfs.ext4 /dev/mmcblk0p7 # /media
 
+	# assign labels
+	e2label /dev/mmcblk0p2 root_0
+	e2label /dev/mmcblk0p3 root_1
+	e2label /dev/mmcblk0p5 var
+	e2label /dev/mmcblk0p6 db
+	e2label /dev/mmcblk0p7 media
+
 	# initialize var content from org rootfs
 	mount /dev/mmcblk0p5 /mnt
 	cp -ra /var/* /mnt
