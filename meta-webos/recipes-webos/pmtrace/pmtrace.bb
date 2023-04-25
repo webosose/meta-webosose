@@ -21,7 +21,7 @@ RDEPENDS:${PN} += " \
 "
 
 WEBOS_VERSION = "1.0.0-12_dfd20bf040d8cf1a9788c1123663da759fdd1747"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_cmake
@@ -39,4 +39,5 @@ S = "${WORKDIR}/git"
 EXTRA_OECMAKE += "-DENABLE_LIBPMTRACE:BOOLEAN=${@'False' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'True'}"
 EXTRA_OECMAKE += "-DDEFAULT_LOGGING:STRING=${@'' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'pmlog'}"
 
+# [http://gpro.lge.com/c/webosose/pmtrace/+/348041 use python3]
 SRC_URI += "file://0001-use-python3.patch"

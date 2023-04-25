@@ -1,13 +1,28 @@
-From 7803554665e7ce3a780c18fbd56d0aaac333dc03 Mon Sep 17 00:00:00 2001
+From 93a63abf1d0ac1f15673ecfd000916d39f7f4f4a Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Thu, 23 Jan 2020 12:30:40 -0800
 Subject: [PATCH] use python3
 
-* this isn't complete fix, just the initial change to resolve:
-  ERROR: pmtrace-1.0.0-7-r10 do_package_qa: QA Issue: /usr/bin/perf_log_viewer.py contained in package pmtrace requires /usr/bin/python, but no providers found in RDEPENDS_pmtrace? [file-rdeps]
+:Release Notes:
+This isn't complete fix, just the initial change to resolve:
+ERROR: pmtrace-1.0.0-7-r10 do_package_qa: QA Issue: /usr/bin/perf_log_viewer.py contained in package pmtrace requires /usr/bin/python, but no providers found in RDEPENDS_pmtrace? [file-rdeps]
 
-Signed-off-by: Martin Jansa <martin.jansa@lge.com>
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-10791] CCC: Various build fixes
+
+Change-Id: I19d7baf31ca66b038dd9a6f6645080e99d576ce7
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/pmtrace/+/348041 use python3]
+
  files/scripts/acg_migration_tracker.py | 2 +-
  files/scripts/mem_profile.py           | 4 ++--
  files/scripts/perf_log_viewer.py       | 2 +-
