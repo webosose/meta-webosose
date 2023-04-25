@@ -6,6 +6,8 @@ Subject: [PATCH 2/3] gator_main.c, gator_backtrace.c: fix build with linux-5.0
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
+Upstream-Status: Pending
+
  gator_backtrace.c | 5 +++++
  gator_main.c      | 8 +++++++-
  2 files changed, 12 insertions(+), 1 deletion(-)

@@ -4,6 +4,8 @@ Date: Mon, 1 Jul 2019 19:28:02 +0900
 Subject: [PATCH] Add os_arch x86_64 for webos
 
 ---
+Upstream-Status: Pending
+
  build_common/SConscript | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

@@ -7,6 +7,8 @@ Support wayland sink for gstreamer
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
+Upstream-Status: Pending
+
  include/GL/internal/dri_interface.h         |  1 +
  src/egl/drivers/dri2/egl_dri2.c             |  3 ++-
  src/egl/wayland/wayland-drm/meson.build     |  1 +

@@ -28,6 +28,8 @@ Reviewed-by: Commit Msg Checker <commit_msg@lge.com>
 Reviewed-by: Ban Word Checker <ban_word@lge.com>
 Reviewed-by: <kijoong.lee@lge.com>
 ---
+Upstream-Status: Pending
+
  tensorflow/lite/delegates/gpu/delegate.cc | 6 ++++++
  tensorflow/lite/delegates/gpu/delegate.h  | 4 ++++
  2 files changed, 10 insertions(+)

@@ -19,6 +19,8 @@ Verified that com.example.service.iotivity.server does not crash
 :Issues Addressed:
 [PLAT-113544] [webOS OSE]: 'File copy failed' popup is displayed.
 ---
+Upstream-Status: Pending
+
  .../csdk/connectivity/src/ip_adapter/webos/caipnwmonitor.c    | 4 ----
  1 file changed, 4 deletions(-)
 

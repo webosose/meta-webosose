@@ -12,6 +12,8 @@ strdup이 실패할 경우와 malloc이 실패할 경우에 대한 처리를 강
 
 Change-Id: I460e771228381c2fd449ed199ecb5acbad7d2fce
 ---
+Upstream-Status: Pending
+
  hangul/hanja.c |   25 ++++++++++++++++---------
  1 file changed, 16 insertions(+), 9 deletions(-)
 

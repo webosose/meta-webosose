@@ -15,6 +15,8 @@ libhangul 수준에서 제공하기로 결정한다.
 그래서 ㄳ은 초성이 결합하여 종성이 되도록 combination table을
 만든다.
 ---
+Upstream-Status: Pending
+
  hangul/hangulinputcontext.c | 10 ++++++++++
  hangul/hangulkeyboard.h     | 11 +++++++++++
  test/test.c                 |  5 +++++

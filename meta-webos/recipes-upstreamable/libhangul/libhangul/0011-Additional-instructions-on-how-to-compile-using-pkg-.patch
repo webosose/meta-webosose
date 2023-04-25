@@ -11,6 +11,8 @@ pkg-config를 사용해 컴파일하는 방법에 대한 설명 추가
 
 Change-Id: I7173ec36729062fea653c2ba0cc661112e810ebe
 ---
+Upstream-Status: Pending
+
  doc/mainpage.dox |   22 ++++++++++++++++++++++
  1 file changed, 22 insertions(+)
 

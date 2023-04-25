@@ -4,6 +4,8 @@ Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] Add webos interface
 
 ---
+Upstream-Status: Pending
+
  src/oom/com.webos.MemoryManager1.conf | 40 ++++++++++++++++++++++++
  src/oom/meson.build                   |  7 +++++
  src/oom/oomd-manager.c                |  7 +++++

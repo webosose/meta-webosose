@@ -7,6 +7,8 @@ sizeof of pointer variable returns 4 bytes.
 
 Change-Id: Iaf4444ceabff8ccc9a1f2f397e13bbf01b5feb04
 ---
+Upstream-Status: Pending
+
  hangul/hangulinputcontext.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

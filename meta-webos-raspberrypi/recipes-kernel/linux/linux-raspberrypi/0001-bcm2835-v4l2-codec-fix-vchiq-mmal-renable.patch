@@ -26,6 +26,8 @@ Tested the 1080p video plays with 22fps in raspberrypi4
 :Issues Addressed:
 [PLAT-94493] Streaming issues in bcm2835-v4l2-codec driver
 ---
+Upstream-Status: Pending
+
  drivers/staging/vc04_services/bcm2835-codec/bcm2835-v4l2-codec.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 

@@ -4,6 +4,8 @@ Date: Thu, 13 Aug 2020 05:42:37 +0000
 Subject: [PATCH] rpi : mesa=webosrpi3 webruntime=webosrpi6
 
 ---
+Upstream-Status: Pending
+
  config/rpi/gstomx.conf | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

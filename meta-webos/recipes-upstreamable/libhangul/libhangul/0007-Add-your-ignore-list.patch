@@ -10,6 +10,8 @@ ignore list 추가
 
 Change-Id: Id655cc3e350523590565ff585fffa26522e4d20e
 ---
+Upstream-Status: Pending
+
  .gitignore |   50 ++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 50 insertions(+)
  create mode 100644 .gitignore

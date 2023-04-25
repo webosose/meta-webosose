@@ -4,6 +4,8 @@ Date: Mon, 10 Nov 2014 10:11:40 +0900
 Subject: [PATCH] change-keymax-value
 
 ---
+Upstream-Status: Pending
+
  include/linux/mod_devicetable.h        | 2 +-
  include/uapi/linux/input-event-codes.h | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)

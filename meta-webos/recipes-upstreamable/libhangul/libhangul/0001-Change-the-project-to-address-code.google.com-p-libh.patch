@@ -15,6 +15,8 @@ http://code.google.com/로 바꿨다.
 
 Change-Id: If8f57fc8518c2f7eee33c00a552de7973957a849
 ---
+Upstream-Status: Pending
+
  README           |    9 +++------
  configure.ac     |    2 +-
  doc/mainpage.dox |   20 +++++++-------------

@@ -10,6 +10,8 @@ Date:   Sat Jul 20 20:51:14 2019 -0600
 
   Convert CONFIG_USE_PREBOOT and CONFIG_PREBOOT to Kconfig
 ---
+Upstream-Status: Pending
+
  configs/rpi_3_32b_defconfig    | 6 +++++-
  configs/rpi_3_b_plus_defconfig | 6 +++++-
  configs/rpi_3_defconfig        | 6 +++++-

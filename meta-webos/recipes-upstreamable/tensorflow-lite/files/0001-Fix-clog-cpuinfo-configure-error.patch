@@ -26,6 +26,8 @@ Reviewed-by: Ban Word Checker <ban_word@lge.com>
 Reviewed-by: <kijoong.lee@lge.com>
 Tested-by: <kijoong.lee@lge.com>
 ---
+Upstream-Status: Pending
+
  tensorflow/lite/CMakeLists.txt | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

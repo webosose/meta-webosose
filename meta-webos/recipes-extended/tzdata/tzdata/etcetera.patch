@@ -41,6 +41,8 @@ https://github.com/eggert/tz/commit/5659c5322976ea171e6a5afe14e9bc8172a51e24
 
 :Issues Addressed:
 ---
+Upstream-Status: Pending
+
  etcetera | 26 ++++++++++++++++++++++++++
  1 file changed, 26 insertions(+)
 

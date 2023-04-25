@@ -15,6 +15,8 @@ hangul_jongseong_decompose() 함수들은 두벌식 자판을 구현할때
 
 Change-Id: I3e0147bcae3f9eef063186165c0c9c03f183d9f5
 ---
+Upstream-Status: Pending
+
  hangul/hangul.h          |    5 -----
  hangul/hangulinternals.h |    4 ++++
  2 files changed, 4 insertions(+), 5 deletions(-)

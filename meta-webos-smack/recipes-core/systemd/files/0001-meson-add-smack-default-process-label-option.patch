@@ -4,6 +4,8 @@ Date: Wed, 29 May 2019 12:32:32 +0300
 Subject: [PATCH] meson: add smack-default-process-label option
 
 ---
+Upstream-Status: Pending
+
  meson.build       | 5 +++++
  meson_options.txt | 2 ++
  2 files changed, 7 insertions(+)

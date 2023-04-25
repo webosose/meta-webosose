@@ -10,6 +10,8 @@ hangul_jamo_to_cjamo에 대한 unit test case 추가
 
 Change-Id: I71e2d0b89ef9c90796e015681fedfa21c8281b6e
 ---
+Upstream-Status: Pending
+
  test/test.c |   15 +++++++++++++++
  1 file changed, 15 insertions(+)
 

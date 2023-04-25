@@ -4,6 +4,8 @@ Date: Mon, 26 Sep 2022 16:01:32 +0900
 Subject: [PATCH 2/2] Remove unused plugins for v1.21.4
 
 ---
+Upstream-Status: Pending
+
  plugins/aggregators/all/all.go |  18 +-
  plugins/inputs/all/all.go      | 394 ++++++++++++++++-----------------
  plugins/outputs/all/all.go     | 104 ++++-----

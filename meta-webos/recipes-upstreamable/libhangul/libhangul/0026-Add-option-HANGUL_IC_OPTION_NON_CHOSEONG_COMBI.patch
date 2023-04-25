@@ -16,6 +16,8 @@ hangul ic: HANGUL_IC_OPTION_NON_CHOSEONG_COMBI 옵션 추가
 
 관련 유닛테스트 코드도 추가한다.
 ---
+Upstream-Status: Pending
+
  hangul/hangul.h             |  1 +
  hangul/hangulinputcontext.c | 14 ++++++++++++++
  test/test.c                 | 17 +++++++++++++++++

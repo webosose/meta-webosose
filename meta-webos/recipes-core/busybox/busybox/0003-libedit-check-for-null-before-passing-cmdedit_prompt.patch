@@ -6,6 +6,8 @@ Subject: [PATCH] libedit: check for null before passing cmdedit_prompt to
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
+Upstream-Status: Pending
+
  libbb/lineedit.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 

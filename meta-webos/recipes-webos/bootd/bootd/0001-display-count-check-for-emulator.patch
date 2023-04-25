@@ -4,6 +4,8 @@ Date: Wed, 16 Sep 2020 13:13:23 +0900
 Subject: [PATCH] display count check for emulator
 
 ---
+Upstream-Status: Pending
+
  src/bootd/event/StaticEventDB.cpp | 16 ++++++++++++----
  1 file changed, 12 insertions(+), 4 deletions(-)
 

@@ -22,6 +22,8 @@ hangul ic: HANGUL_IC_OPTION_COMBI_ON_DOUBLE_STROKE 옵션 추가
 
 구현에 필요한 hangul_is_jamo_conjoinable 함수도 추가.
 ---
+Upstream-Status: Pending
+
  hangul/hangul.h             |   2 +
  hangul/hangulctype.c        |  12 ++++
  hangul/hangulinputcontext.c |  55 ++++++++++-----

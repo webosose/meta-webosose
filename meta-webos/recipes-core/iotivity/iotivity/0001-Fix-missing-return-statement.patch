@@ -22,6 +22,8 @@ Build tested.
 :Issues Addressed:
 [PLAT-79213] Missing return statements from non-void functions
 ---
+Upstream-Status: Pending
+
  .../samples/webos/secure/occlientbasicops/occlientbasicops.cpp  | 2 ++
  .../samples/webos/secure/ocserverbasicops/ocserverbasicops.cpp  | 2 ++
  2 files changed, 4 insertions(+)

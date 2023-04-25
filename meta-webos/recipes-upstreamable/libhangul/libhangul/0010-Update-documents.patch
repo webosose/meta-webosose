@@ -12,6 +12,8 @@ http://code.google.com/p/libhangul/issues/detail?id=1
 
 Change-Id: Id0b176bdd3b465b20e415c269370216f9fb74449
 ---
+Upstream-Status: Pending
+
  doc/gen_hangulkeyboards.py |    2 +-
  doc/mainpage.dox           |    1 +
  2 files changed, 2 insertions(+), 1 deletion(-)

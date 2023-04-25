@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/glibmm-utils/log-stream-utils.h b/glibmm-utils/log-stream-utils.h
 index e7621ea..bc67685 100644
 --- a/glibmm-utils/log-stream-utils.h

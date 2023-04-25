@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff -ru orig-lsb-release-1.4/lsb_release lsb-release-1.4/lsb_release
 --- orig-lsb-release-1.4/lsb_release	2013-04-17 12:41:20.282584874 +0300
 +++ lsb-release-1.4/lsb_release	2013-04-17 12:32:24.422411095 +0300

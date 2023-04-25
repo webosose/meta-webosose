@@ -183,6 +183,8 @@ TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-tensorflow-lite/2.6.2-r
  1243 |   }
       |   ^
 ---
+Upstream-Status: Pending
+
  tensorflow/lite/delegates/gpu/api.cc          |  2 ++
  .../lite/delegates/gpu/cl/cl_arguments.cc     |  2 ++
  .../lite/delegates/gpu/cl/cl_program.cc       |  2 ++

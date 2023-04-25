@@ -4,6 +4,8 @@ Date: Sun, 11 Dec 2022 17:48:24 +0900
 Subject: [PATCH] 22.08 webos build support
 
 ---
+Upstream-Status: Pending
+
  SConstruct | 20 +++++++++++---------
  1 file changed, 11 insertions(+), 9 deletions(-)
 

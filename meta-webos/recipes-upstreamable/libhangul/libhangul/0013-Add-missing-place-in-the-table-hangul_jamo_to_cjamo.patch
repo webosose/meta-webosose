@@ -14,6 +14,8 @@ patch from: 김지훈 <jihoon48.kim@samsung.com>
 
 Change-Id: If7ea37cd9906cea63b6b49a30fdb1bbf02e9de3c
 ---
+Upstream-Status: Pending
+
  hangul/hangulctype.c |    4 ++++
  1 file changed, 4 insertions(+)
 

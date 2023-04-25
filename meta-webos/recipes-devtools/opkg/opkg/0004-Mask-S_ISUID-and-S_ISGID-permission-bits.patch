@@ -4,6 +4,8 @@ Date: Mon, 30 May 2016 17:23:37 +0530
 Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
 
 ---
+Upstream-Status: Pending
+
  libopkg/opkg_archive.c | 9 +++++++++
  libopkg/opkg_conf.h    | 1 +
  src/opkg.c             | 1 +

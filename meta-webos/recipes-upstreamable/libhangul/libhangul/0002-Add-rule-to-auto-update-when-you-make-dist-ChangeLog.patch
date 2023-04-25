@@ -15,6 +15,8 @@ dist-hook에 룰을 추가했다.
 
 Change-Id: Ifafcda616e4f219f2fd19f510352e9a1f4da63e2
 ---
+Upstream-Status: Pending
+
  Makefile.am |   11 +++++------
  1 file changed, 5 insertions(+), 6 deletions(-)
 

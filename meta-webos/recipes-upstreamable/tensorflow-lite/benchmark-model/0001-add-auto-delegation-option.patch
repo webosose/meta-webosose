@@ -23,6 +23,8 @@ N/A
 
 Change-Id: I43c556f80fb13f6c28433f5bcdfcf0311d49b6f3
 ---
+Upstream-Status: Pending
+
  .../lite/tools/benchmark/CMakeLists.txt       |  14 ++
  .../tools/benchmark/benchmark_tflite_model.cc | 162 +++++++++++++-----
  .../tools/benchmark/benchmark_tflite_model.h  |   6 +

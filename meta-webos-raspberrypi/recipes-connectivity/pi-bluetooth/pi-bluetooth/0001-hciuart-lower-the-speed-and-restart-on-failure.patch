@@ -4,6 +4,8 @@ Date: Mon, 18 May 2020 16:57:25 -0700
 Subject: [PATCH] hciuart: lower the speed and restart on failure
 
 ---
+Upstream-Status: Pending
+
  debian/pi-bluetooth.hciuart.service | 1 +
  usr/bin/btuart                      | 2 +-
  2 files changed, 2 insertions(+), 1 deletion(-)

@@ -12,6 +12,8 @@ https://code.google.com/p/libhangul/issues/detail?id=9
 
 Change-Id: I3e0f696426edf23fb32ae26402746146ca6223aa
 ---
+Upstream-Status: Pending
+
  data/hanja/hanja.txt |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

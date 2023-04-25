@@ -4,6 +4,8 @@ Date: Tue, 23 Nov 2021 10:42:42 +0900
 Subject: [PATCH] oomd: to some
 
 ---
+Upstream-Status: Pending
+
  src/oom/oomd-util.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

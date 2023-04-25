@@ -5,6 +5,8 @@ Subject: [PATCH] kernel seed-voicecard
 
 Signed-off-by: geayoung.baek <geayoung.baek@lge.com>
 ---
+Upstream-Status: Pending
+
  .../overlays/seeed-4mic-voicecard-overlay.dts |   74 +
  .../overlays/seeed-8mic-voicecard-overlay.dts |  117 ++
  sound/soc/codecs/Makefile                     |    7 +

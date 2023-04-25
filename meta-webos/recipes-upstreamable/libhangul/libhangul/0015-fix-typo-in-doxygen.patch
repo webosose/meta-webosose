@@ -13,6 +13,8 @@ Signed-off-by: Jihoon Kim <jihoon48.kim@samsung.com>
 
 Change-Id: I4461beef46b533cc951505e09f245d44eb9cfe7d
 ---
+Upstream-Status: Pending
+
  hangul/hangulinputcontext.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

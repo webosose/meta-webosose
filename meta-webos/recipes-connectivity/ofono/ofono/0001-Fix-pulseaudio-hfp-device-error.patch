@@ -19,6 +19,8 @@ NA
 :Issues Addressed:
 NA
 ---
+Upstream-Status: Pending
+
  src/ofono.conf | 4 ++++
  1 file changed, 4 insertions(+)
 

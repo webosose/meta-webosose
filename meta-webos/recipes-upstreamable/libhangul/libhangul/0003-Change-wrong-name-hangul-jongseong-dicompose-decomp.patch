@@ -12,6 +12,8 @@ hangul_jongseong_dicompose 심볼이 같은 기능을 하도록 보존
 
 Change-Id: I86df313d49420930f88814728f48bf38e5577934
 ---
+Upstream-Status: Pending
+
  hangul/hangul.h             |    3 ++-
  hangul/hangulctype.c        |    8 +++++++-
  hangul/hangulinputcontext.c |    2 +-

@@ -5,6 +5,8 @@ Subject: [PATCH] Build fixes for compiling in OE
 
 Change-Id: I2b9c807088763101558f2cc5c59297a2dec0a98b
 ---
+Upstream-Status: Pending
+
  configure.ac      |    2 +-
  src/Makefile.am   |    2 --
  tests/Makefile.am |    4 ++--

@@ -14,6 +14,8 @@ mainpage도 나머지 문서와 어투를 맞춤
 
 Change-Id: I44e2e23334f778d6ffc345e1a826d627a7f2113f
 ---
+Upstream-Status: Pending
+
  doc/Makefile                |    1 +
  doc/gen_hangulkeyboards.py  |  505 +++++++++++++++++++++++++++++++++++++++++++
  doc/mainpage.dox            |   43 ++--

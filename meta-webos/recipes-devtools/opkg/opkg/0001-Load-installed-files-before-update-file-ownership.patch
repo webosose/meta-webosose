@@ -4,6 +4,8 @@ Date: Mon, 30 May 2016 16:54:15 +0530
 Subject: [PATCH] Load installed files before update file ownership
 
 ---
+Upstream-Status: Pending
+
  libopkg/opkg_install.c | 9 +++++++++
  libopkg/pkg_hash.c     | 7 ++++---
  2 files changed, 13 insertions(+), 3 deletions(-)

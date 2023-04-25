@@ -4,6 +4,8 @@ Date: Mon, 16 Sep 2019 08:14:29 +0000
 Subject: [PATCH] Add SMACK security labeling
 
 ---
+Upstream-Status: Pending
+
  tools/runner/apploader.cpp | 25 +++++++++++++++++++++++++
  tools/runner/apploader.h   |  2 ++
  2 files changed, 27 insertions(+)

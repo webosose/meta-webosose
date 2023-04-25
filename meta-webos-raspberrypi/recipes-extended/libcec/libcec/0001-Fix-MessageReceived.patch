@@ -4,6 +4,8 @@ Date: Thu, 31 Mar 2022 16:08:34 +0530
 Subject: [PATCH] Fix MessageReceived
 
 ---
+Upstream-Status: Pending
+
  src/libcec/adapter/RPi/RPiCECAdapterMessageQueue.cpp | 3 ---
  1 file changed, 3 deletions(-)
 

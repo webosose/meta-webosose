@@ -5,6 +5,8 @@ Subject: [PATCH] Add tzset applet
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
+Upstream-Status: Pending
+
  coreutils/tzset.c | 57 +++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 57 insertions(+)
  create mode 100644 coreutils/tzset.c

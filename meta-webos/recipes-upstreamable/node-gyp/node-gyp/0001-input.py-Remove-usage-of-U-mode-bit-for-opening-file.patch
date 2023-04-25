@@ -10,6 +10,8 @@ so this change doesn't change any behavior.
 
 See https://docs.python.org/3.11/whatsnew/3.11.html#changes-in-the-python-api
 ---
+Upstream-Status: Pending
+
  gyp/pylib/gyp/input.py | 7 +------
  1 file changed, 1 insertion(+), 6 deletions(-)
 

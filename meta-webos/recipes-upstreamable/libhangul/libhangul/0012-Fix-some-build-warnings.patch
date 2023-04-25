@@ -5,6 +5,8 @@ Subject: [PATCH 12/20] Fix some build warnings.
 
 Change-Id: Ica299e410e97ceb4e39f3a212f8262b4c5249840
 ---
+Upstream-Status: Pending
+
  hangul/hangulctype.c        |    2 +-
  hangul/hangulinputcontext.c |    1 +
  2 files changed, 2 insertions(+), 1 deletion(-)

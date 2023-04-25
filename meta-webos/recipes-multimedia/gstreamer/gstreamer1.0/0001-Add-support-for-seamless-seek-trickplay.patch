@@ -4,6 +4,8 @@ Date: Wed, 19 Aug 2020 06:52:43 +0000
 Subject: [PATCH] rpi : gstreamer1.0=webosrpi2 g-media-pipeline=21.gav.10
 
 ---
+Upstream-Status: Pending
+
  gst/gstpipeline.c           | 153 ++++++++++++++++++++++++++++++++++++
  gst/gstpipeline.h           |   9 +++
  libs/gst/base/gstbasesink.c | 150 +++++++++++++++++++++++++++++++++++

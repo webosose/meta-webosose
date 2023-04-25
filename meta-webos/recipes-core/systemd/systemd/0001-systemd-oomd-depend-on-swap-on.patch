@@ -4,6 +4,8 @@ Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: depend on swap-on
 
 ---
+Upstream-Status: Pending
+
  units/systemd-oomd.service.in | 2 ++
  1 file changed, 2 insertions(+)
 

@@ -9,6 +9,8 @@ qtmultimedia/6.0.0-r0/git/src/multimedia/qmediapluginloader.cpp:154:56: error: c
 
 Change-Id: Id3d1547edec549eb9ebf397fb0a342c629450252
 ---
+Upstream-Status: Pending
+
  src/multimedia/qmediapluginloader.cpp | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

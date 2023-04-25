@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/lib/mbedtls-2.24.0/CMakeLists.txt b/lib/mbedtls-2.24.0/CMakeLists.txt
 index 6366edff..73cbd124 100644
 --- a/lib/mbedtls-2.24.0/CMakeLists.txt

@@ -25,6 +25,8 @@ Reviewed-on: http://gpro.lge.com/c/webos-pro/tensorflow-webos/+/339861
 Tested-by: <kijoong.lee@lge.com>
 Reviewed-by: <kijoong.lee@lge.com>
 ---
+Upstream-Status: Pending
+
  tensorflow/lite/delegates/gpu/cl/opencl_wrapper.cc | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

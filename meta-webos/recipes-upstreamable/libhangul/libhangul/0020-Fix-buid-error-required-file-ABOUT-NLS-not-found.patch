@@ -24,6 +24,8 @@ Tested-by: Pugalendhi Ganesan <pugalendhi.ganesan@lge.com>
 Reviewed-by: Jongsoo Lee <jongsoo.lee@lge.com>
 Tested-by: Jongsoo Lee <jongsoo.lee@lge.com>
 ---
+Upstream-Status: Pending
+
  configure.ac |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

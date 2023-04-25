@@ -10,6 +10,8 @@ Content-Transfer-Encoding: 8bit
 
 Change-Id: Ib2a1bf9a974068573a0da205da3c3ffe98479239
 ---
+Upstream-Status: Pending
+
  data/hanja/hanja.txt |    3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 

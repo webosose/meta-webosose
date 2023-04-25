@@ -17,6 +17,8 @@ hangul_ic_set_option 함수를 통해서 입력 옵션 설정이 가능하다.
 첫번째 구현으로 auto reorder 옵션을 추가하고, 관련 테스트 코드도
 추가한다. 기본값은 MS IME 호환을 위해서 false로 설정한다.
 ---
+Upstream-Status: Pending
+
  hangul/hangul.h             |  6 ++++
  hangul/hangulinputcontext.c | 72 ++++++++++++++++++++++++++++++++++++++---
  test/test.c                 | 79 +++++++++++++++++++++++++++++++++++++++------

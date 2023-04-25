@@ -27,6 +27,8 @@ No change to image.
 :Issues Addressed:
 [PLAT-42189] leveldb-tl fails to build with gcc-7
 ---
+Upstream-Status: Pending
+
  test/util.hpp | 1 +
  1 file changed, 1 insertion(+)
 

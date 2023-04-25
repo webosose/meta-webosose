@@ -10,6 +10,8 @@ Doxygen에서 파일 이름에 fullpath를 사용하지 않음
 
 Change-Id: I8c3c54284cf9983da400aec512884673227679c1
 ---
+Upstream-Status: Pending
+
  doc/Doxyfile.in |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

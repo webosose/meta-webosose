@@ -19,6 +19,8 @@ NA
 :Issues Addressed:
 [PLAT-70228] libbson fails to build for aarch64 and x86_64
 ---
+Upstream-Status: Pending
+
  CMakeLists.txt | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 

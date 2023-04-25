@@ -4,6 +4,8 @@ Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: modify oomd.conf
 
 ---
+Upstream-Status: Pending
+
  src/oom/oomd.conf | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

@@ -9,6 +9,8 @@ Subject: [PATCH] Makefile: fix race condition
   or missing completely:
   http://gecko.lge.com/Errors/Details/508885
 ---
+Upstream-Status: Pending
+
  makefile_build/Makefile | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 

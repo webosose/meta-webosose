@@ -21,6 +21,8 @@ N/A
 :Issues Addressed:
 [PLAT-77793] Support Multi Display on Virtualbox
 ---
+Upstream-Status: Pending
+
  setlayout.c                 | 7 ++++---
  unit/vmwgfx-setlayout.cmake | 1 +
  2 files changed, 5 insertions(+), 3 deletions(-)

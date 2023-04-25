@@ -5,6 +5,8 @@ Subject: [PATCH] Revert "Googletest export"
 
 This reverts commit 47f819c3ca54fb602f432904443e00a0a1fe2f42.
 ---
+Upstream-Status: Pending
+
  googletest/scripts/README.md              |    5 +
  googletest/scripts/common.py              |   83 ++
  googletest/scripts/fuse_gtest_files.py    |  253 ++++

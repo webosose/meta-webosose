@@ -13,6 +13,8 @@ Doxyfile.in과 gen_hangulkeyboards.py 변경에 따라서 관련 파일이
 
 Change-Id: Idfe135ed912e42b60dbb589fb5a4f8bf866b50e2
 ---
+Upstream-Status: Pending
+
  doc/Doxyfile.in |    3 ++-
  doc/Makefile    |   13 +++++++------
  2 files changed, 9 insertions(+), 7 deletions(-)

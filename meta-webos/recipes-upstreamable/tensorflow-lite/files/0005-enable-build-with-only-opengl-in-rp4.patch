@@ -27,6 +27,8 @@ Reviewed-by: Commit Msg Checker <commit_msg@lge.com>
 Reviewed-by: <kijoong.lee@lge.com>
 Tested-by: <kijoong.lee@lge.com>
 ---
+Upstream-Status: Pending
+
  tensorflow/lite/CMakeLists.txt                |   57 +-
  tensorflow/lite/delegates/gpu/BUILD           |   33 +-
  tensorflow/lite/delegates/gpu/api.cc          |    6 +

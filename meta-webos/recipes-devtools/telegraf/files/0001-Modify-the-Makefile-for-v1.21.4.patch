@@ -6,6 +6,8 @@ Subject: [PATCH 1/2] Modify the Makefile for v1.21.4
 Modify glibc_version variable
 Modify build variables
 ---
+Upstream-Status: Pending
+
  Makefile | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

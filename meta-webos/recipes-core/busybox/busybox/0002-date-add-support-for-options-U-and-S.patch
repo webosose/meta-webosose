@@ -5,6 +5,8 @@ Subject: [PATCH] date: add support for options -U and -S
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
+Upstream-Status: Pending
+
  coreutils/date.c | 27 +++++++++++++++++++++------
  1 file changed, 21 insertions(+), 6 deletions(-)
 

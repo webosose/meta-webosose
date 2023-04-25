@@ -4,6 +4,8 @@ Date: Mon, 5 Oct 2020 15:12:24 +0900
 Subject: [PATCH] ose: com.webos.service.mediaindexer=2 webos-initscript=54
 
 ---
+Upstream-Status: Pending
+
  gst-libs/gst/pbutils/gstdiscoverer.c | 35 +++++++++++++++++++++++++++-
  tools/gst-discoverer.c               |  5 +++-
  2 files changed, 38 insertions(+), 2 deletions(-)

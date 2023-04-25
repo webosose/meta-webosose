@@ -4,6 +4,8 @@ Date: Mon, 20 Apr 2020 19:24:45 +0900
 Subject: [PATCH] Set default pairing capability as "NoInputNoOutput"
 
 ---
+Upstream-Status: Pending
+
  src/agent.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

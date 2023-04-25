@@ -6,6 +6,8 @@ Subject: [PATCH 1/2] configure: add option to disable building gtkmm-utils
 * it looks strange in project named gtkmm-utils, but in some environments it's useful
   to build only glibmm-utils
 ---
+Upstream-Status: Pending
+
  Makefile.am  |    8 ++++++--
  configure.ac |   18 +++++++++++++++---
  2 files changed, 21 insertions(+), 5 deletions(-)

@@ -1,3 +1,5 @@
+Upstream-Status: Pending
+
 diff --git a/common.mk b/common.mk
 index dfd912d..72e23f6 100644
 --- a/common.mk
