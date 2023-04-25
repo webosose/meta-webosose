@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos106"
+EXTENDPRAUTO:append = "webos107"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -99,6 +99,12 @@ SRC_URI:append = " \
 # NOTE: Increase maxver when upgrading Qt version
 SRC_URI:append = " \
     file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch;maxver=6.4.1 \
+"
+
+# FIXME: Drop this once luna-surfacemanager builds with cmake.
+# See https://bugreports.qt.io/browse/WEBOSCI-66.
+SRC_URI:append:class-native = " \
+    file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.* \
 "
 
 # Flags needed for webOS
