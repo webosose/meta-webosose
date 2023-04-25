@@ -1,4 +1,4 @@
-From 77207a965a6438287431f7b179f6f774dfcd9df2 Mon Sep 17 00:00:00 2001
+From 903674e3bbc297bdc89d6bc0c3e675c587b3799d Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 4 Mar 2016 15:39:49 +0100
 Subject: [PATCH] build-fixes
@@ -6,11 +6,11 @@ Subject: [PATCH] build-fixes
 ---
 Upstream-Status: Pending
 
- Makefile | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ Makefile | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 7741842..19a4bd6 100644
+index 7741842..92db727 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,6 +1,6 @@
@@ -43,23 +43,24 @@ index 7741842..19a4bd6 100644
 +	$(CC) $(LDFLAGS) -std=c99 -g -W -Wall -O2 -o $@ $+ -lspmeasure
  
  install:
- 	install -d  $(DESTDIR)/usr/bin
+-	install -d  $(DESTDIR)/usr/bin
 -	cp -a bin/* $(DESTDIR)/usr/bin
-+	cp -R --no-dereference --preserve=mode,links -v bin/* $(DESTDIR)/usr/bin
- 	install -d  $(DESTDIR)/usr/lib
+-	install -d  $(DESTDIR)/usr/lib
 -	cp -a lib/*.so  $(DESTDIR)/usr/lib
 -	cp -a scripts/* $(DESTDIR)/usr/bin
-+	cp -R --no-dereference --preserve=mode,links -v lib/*.so* $(DESTDIR)/usr/lib
-+	cp -R --no-dereference --preserve=mode,links -v scripts/* $(DESTDIR)/usr/bin
- 	install -d      $(DESTDIR)/usr/share/man/man1
+-	install -d      $(DESTDIR)/usr/share/man/man1
 -	cp -a man/*.1   $(DESTDIR)/usr/share/man/man1
-+	cp -R --no-dereference --preserve=mode,links -v man/*.1   $(DESTDIR)/usr/share/man/man1
- 	install -d      $(DESTDIR)/usr/share/sp-memusage-tests/
+-	install -d      $(DESTDIR)/usr/share/sp-memusage-tests/
 -	cp -a tests/*	$(DESTDIR)/usr/share/sp-memusage-tests/
-+	cp -R --no-dereference --preserve=mode,links -v tests/*	$(DESTDIR)/usr/share/sp-memusage-tests/
++	install -d  $(DESTDIR)/$(BINDIR)
++	cp -R --no-dereference --preserve=mode,links -v bin/* $(DESTDIR)/$(BINDIR)
++	install -d  $(DESTDIR)/$(LIBDIR)
++	cp -R --no-dereference --preserve=mode,links -v lib/*.so* $(DESTDIR)/$(LIBDIR)
++	cp -R --no-dereference --preserve=mode,links -v scripts/* $(DESTDIR)/$(BINDIR)
++	install -d      $(DESTDIR)/$(DATADIR)/man/man1
++	cp -R --no-dereference --preserve=mode,links -v man/*.1   $(DESTDIR)/$(DATADIR)/man/man1
++	install -d      $(DESTDIR)/$(DATADIR)/sp-memusage-tests/
++	cp -R --no-dereference --preserve=mode,links -v tests/*	$(DESTDIR)/$(DATADIR)/sp-memusage-tests/
  
  
  # other docs are installed by the Debian packaging
--- 
-2.7.0
-
