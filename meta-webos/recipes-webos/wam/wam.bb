@@ -18,10 +18,11 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-73_27f62d7a2a7465f45655fdd9da44bb647de6deff"
-PR = "r58"
+WEBOS_VERSION = "1.0.2-74_0545394dee3e41ff594d3ef5497d7e5afe6c4c4f"
+PR = "r59"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
+WAM_BUILD_DEFAULT_PLUGIN ?= "1"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -35,10 +36,7 @@ inherit webos_public_repo
 
 WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
-# [http://gpro.lge.com/c/webosose/wam/+/348188 Fix luna-service2 usage]
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-luna-service2-usage.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
@@ -53,6 +51,7 @@ EXTRA_OECMAKE += "-DWAM_DATA_DIR=\"\"${webos_cryptofsdir}/.webappmanager/\"\""
 EXTRA_OECMAKE += "-DPLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '_')}"
 
 EXTRA_OECMAKE += "-DWEBOS_TESTS_DIR=${webos_testsdir}"
+EXTRA_OECMAKE += "-DWAM_BUILD_DEFAULT_PLUGIN=${WAM_BUILD_DEFAULT_PLUGIN}"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
