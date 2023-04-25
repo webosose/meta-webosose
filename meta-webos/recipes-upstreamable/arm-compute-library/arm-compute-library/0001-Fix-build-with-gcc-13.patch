@@ -1,0 +1,74 @@
+From 47f10c744fab52f4e78d8715ea4dd0b7f4ef6a56 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 2 Feb 2023 09:48:04 +0000
+Subject: [PATCH] Fix build with gcc-13
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com/Errors/Details/529922
+
+In file included from ./arm_compute/core/TensorShape.h:29,
+                 from ./arm_compute/core/IAccessWindow.h:28,
+                 from ./arm_compute/core/Helpers.h:28,
+                 from utils/Utils.h:31,
+                 from utils/Utils.cpp:24:
+./arm_compute/core/utils/misc/Utility.h: In function 'bool arm_compute::utility::check_aligned(void*, size_t)':
+./arm_compute/core/utils/misc/Utility.h:196:35: error: 'uintptr_t' in namespace 'std' does not name a type
+  196 |     return (reinterpret_cast<std::uintptr_t>(ptr) % alignment) == 0;
+      |                                   ^~~~~~~~~
+./arm_compute/core/utils/misc/Utility.h:34:1: note: 'std::uintptr_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+   33 | #include <vector>
+  +++ |+#include <cstdint>
+   34 |
+
+In file included from ./arm_compute/core/ITensorInfo.h:28,
+                 from ./arm_compute/core/ITensor.h:27,
+                 from src/core/ITensor.cpp:24:
+./arm_compute/core/Strides.h:37:35: error: 'uint32_t' was not declared in this scope
+   37 | class Strides : public Dimensions<uint32_t>
+      |                                   ^~~~~~~~
+./arm_compute/core/Strides.h:1:1: note: 'uint32_t' is defined in header '<cstdint>'; did you forget to '#include <cstdint>'?
+  +++ |+#include <cstdint>
+    1 | /*
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-8053] CCC: Various build fixes
+
+Upstream-Status: Pending
+---
+ arm_compute/core/Strides.h            | 1 +
+ arm_compute/core/utils/misc/Utility.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/arm_compute/core/Strides.h b/arm_compute/core/Strides.h
+index 265799e41e..b59ebb0d6f 100644
+--- a/arm_compute/core/Strides.h
++++ b/arm_compute/core/Strides.h
+@@ -30,6 +30,7 @@
+ #include <algorithm>
+ #include <array>
+ #include <cstddef>
++#include <cstdint>
+ 
+ namespace arm_compute
+ {
+diff --git a/arm_compute/core/utils/misc/Utility.h b/arm_compute/core/utils/misc/Utility.h
+index 648758ca07..3bfb677184 100644
+--- a/arm_compute/core/utils/misc/Utility.h
++++ b/arm_compute/core/utils/misc/Utility.h
+@@ -28,6 +28,7 @@
+ 
+ #include <algorithm>
+ #include <array>
++#include <cstdint>
+ #include <limits>
+ #include <numeric>
+ #include <vector>
