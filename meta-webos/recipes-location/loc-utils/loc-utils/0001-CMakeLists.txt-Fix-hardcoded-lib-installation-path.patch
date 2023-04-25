@@ -1,0 +1,54 @@
+From 8e78ef0d4a784dfe65616a6039f6df7c7687270d Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sun, 9 Apr 2023 15:15:47 +0200
+Subject: [PATCH] CMakeLists.txt: Fix hardcoded 'lib' installation path
+
+:Release Notes:
+With multilib enabled the libdir is usr/lib64 instead of usr/lib.
+
+:Detailed Notes:
+Respect WEBOS_INSTALL_LIBDIR to fix:
+http://gecko.lge.com:8000/Errors/Details/574288
+
+ERROR: QA Issue: loc-utils: Files/directories were installed but not shipped in any package:
+  /usr/lib/libloc_utils.so.1
+  /usr/lib/libloc_utils.so.1.0.0
+  /usr/lib/libloc_utils.so
+Please set FILES such that these items are packaged. Alternatively if they are unneeded, avoid installing them or delete them within do_install.
+loc-utils: 3 installed and not shipped files. [installed-vs-shipped]
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-12446] CCC: Various build fixes
+[WRP-12469] Bitbake world issues 2023-04-01
+
+Change-Id: I8a15529a12eb69071e55ab78ba3cca113779d077
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/loc-utils/+/350798 CMakeLists.txt: Fix hardcoded 'lib' installation path]
+
+ src/CMakeLists.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index d570503..1983965 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -18,7 +18,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+ 
+ set(LOC_UTILS_NAME loc_utils)
+-set(LOC_UTILS_PATH ${CMAKE_INSTALL_PREFIX}/lib/)
+ set(LOC_UTILS_SRC loc_curl.c
+                   loc_filter.c
+                   loc_geometry.c
+@@ -30,4 +29,4 @@ set(LIBRARIES ${GLIB2_LDFLAGS} ${LIBCURL_LDFLAGS} ${PMLOGLIB_LDFLAGS} -lcrypt)
+ add_library(${LOC_UTILS_NAME} SHARED ${LOC_UTILS_SRC})
+ target_link_libraries(${LOC_UTILS_NAME} ${LIBRARIES})
+ set_target_properties(${LOC_UTILS_NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
+-install(TARGETS ${LOC_UTILS_NAME} DESTINATION ${LOC_UTILS_PATH})
++install(TARGETS ${LOC_UTILS_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR})
