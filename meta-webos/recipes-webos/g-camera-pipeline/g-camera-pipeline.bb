@@ -19,28 +19,20 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-PR = "r12"
+PR = "r13"
 
-DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera"
+DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_GIT_PARAM_BRANCH = "@gav"
-WEBOS_VERSION = "1.0.0-13.gav.36_73d90a640963e61da768560524a9608e398a24f3"
-
-
-WEBOS_GIT_PARAM_BRANCH:raspberrypi3 = "master"
-WEBOS_VERSION:raspberrypi3 = "1.0.0-16_e7fc787fdb52abb4ebd5c18f798976f6ebffad9f"
+WEBOS_VERSION = "1.0.0-gav.37_a0342c53e3f18af1f97bc30a6338a680719de578"
 
 # See the restrictions in CMakeLists.txt
 COMPATIBLE_MACHINE = "^raspberrypi3$|^raspberrypi4$|^qemux86$|^qemux86-64$"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+
 S = "${WORKDIR}/git"
 
 FILES_SOLIBSDEV = ""
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN} += "${libdir}/gstreamer-1.0/*.so"
-
-DEPENDS:append = " webos-wayland-extensions"
