@@ -20,7 +20,9 @@ inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_qt_global
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-fix-build-with-64-bit-time_t.patch \
+"
 S = "${WORKDIR}/git"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
