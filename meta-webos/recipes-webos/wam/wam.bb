@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-71_f5530295b0153cb00f7ef441f05b2b93e403ac2f"
-PR = "r55"
+WEBOS_VERSION = "1.0.2-72_ec0acbbec7503176ec155a8335d2d50f6f8f8dc9"
+PR = "r56"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 
@@ -35,9 +35,7 @@ inherit webos_public_repo
 
 WAM_DATA_DIR = "${webos_execstatedir}/${BPN}"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 
