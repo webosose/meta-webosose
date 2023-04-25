@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos107"
+EXTENDPRAUTO:append = "webos108"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -104,7 +104,7 @@ SRC_URI:append = " \
 # FIXME: Drop this once luna-surfacemanager builds with cmake.
 # See https://bugreports.qt.io/browse/WEBOSCI-66.
 SRC_URI:append:class-native = " \
-    file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.* \
+    file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.0 \
 "
 
 # Flags needed for webOS
