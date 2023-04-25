@@ -36,10 +36,22 @@ WEBOS_NODE_GYP = "node-gyp --arch '${TARGET_ARCH}' --nodedir '${WORKDIR}/node-v$
 SRC_URI[node.sha256sum] = "17fb716406198125b30c94dd3d1756207b297705626afe16d8dc479a65a1d8b5"
 
 do_compile:prepend() {
-    # this is needed to use user's gitconfig even after changing the HOME directory bellow
-    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real HOME of given user
-    # but also HOME might be already changed to WORKDIR or some other directory somewhere else
-    [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] && cp ${HOME}/.gitconfig ${WORKDIR}
+    # this is needed to use user's gitconfig (and other .gitconfig* gitconfig* files user might
+    # have included from main .gitconfig file)  even after changing the HOME directory bellow
+
+    # need to check ${HOME}/.gitconfig existence not only because it might be missing in real
+    # HOME of given user, but also HOME might be already changed to WORKDIR or some other
+    # directory somewhere else like in com.webos.app.enactbrowser which was using own
+    # do_compile:prepend with another "export HOME=${WORKDIR}" executed before this prepend
+    # which gets executed before this prepend and then the ~ is already ${WORKDIR} and ${WORKDIR}/.gitconfig
+    # doesn't exist as shown here:
+    # http://gecko.lge.com/Errors/Details/40702
+
+    if [ "${HOME}" != "${WORKDIR}" -a -e ${HOME}/.gitconfig ] ; then
+        bbnote "webos_npm_env: copy gitconfig files from user's HOME ${HOME} to WORKDIR ${WORKDIR}"
+        cp -rav ${HOME}/.gitconfig* ${WORKDIR}/
+        cp -rav ${HOME}/gitconfig ${WORKDIR}/ || true
+    fi
 
     # changing the home directory to the working directory, the .npmrc will be created in this directory
     bbnote "webos_npm_env: set HOME to WORKDIR"
