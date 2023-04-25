@@ -8,6 +8,8 @@ FILES:${PN}-dev += " \
     ${datadir}/modules/* \
 "
 
+# http://gpro.lge.com/c/webosose/qtwayland-webos/+/349070 Use QtWebOSEglClientBuffer for cmake]
+# Does it have to be applied only for CMake build?
 SRC_URI:append = "\
     file://0001-Use-QtWebOSEglClientBuffer-for-cmake.patch \
 "

@@ -1,4 +1,4 @@
-From dd16da7631fddd920c3710452bfbc53782574072 Mon Sep 17 00:00:00 2001
+From cc7e2cfb6432ab22a8e03f2dad4e7d3c958d485f Mon Sep 17 00:00:00 2001
 From: "sukil.hong" <sukil.hong@lge.com>
 Date: Mon, 17 Oct 2022 14:01:53 +0900
 Subject: [PATCH] Fix compilation with lttng-ust >= 2.13
@@ -27,6 +27,8 @@ N/A
 
 Change-Id: I9c8f344c011c1d1e1afe2abacdebe162345de0ca
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/qtwayland-webos/+/349069 Fix compilation with lttng-ust >= 2.13]
+
  .../webos-wayland-egl/pmtrace_qtwaylandwebos_provider.h     | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
@@ -51,6 +53,3 @@ index 65a1127..531ed25 100644
  
  #ifdef __cplusplus
  extern "C"{
--- 
-2.37.1
-

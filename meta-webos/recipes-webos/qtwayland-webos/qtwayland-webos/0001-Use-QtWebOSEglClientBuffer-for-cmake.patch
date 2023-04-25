@@ -1,9 +1,25 @@
-From 944948d8256d2b619fbd264de764d089b52d7ff7 Mon Sep 17 00:00:00 2001
+From d07da7c7e292ed5d2ad9f5001db42f2a59a166cc Mon Sep 17 00:00:00 2001
 From: Hyungchan Kim <hyungchan2.kim@lge.com>
 Date: Sun, 8 Jan 2023 23:06:47 +0900
 Subject: [PATCH] Use QtWebOSEglClientBuffer for cmake
 
+:Release Notes:
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-310] Apply .patch files for hot-fix to corresponding repositories
+[WRP-11630] Add Upstream-Status to existing .patch files in meta-lg-webos
+[WRP-11864] CCC: Various build fixes and .patch files cleanup
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/qtwayland-webos/+/349070 Use QtWebOSEglClientBuffer for cmake]
+
  sync.profile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
