@@ -4,7 +4,7 @@ SUMMARY = "Unified search service"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=175792518e4ac015ab6696d16c4f607e \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -20,12 +20,14 @@ inherit webos_pkgconfig
 inherit webos_public_repo
 inherit webos_system_bus
 
+# http://gpro.lge.com/c/webosose/com.webos.service.unifiedsearch/+/347405 Fix build with gcc-12
+# http://gpro.lge.com/c/webosose/com.webos.service.unifiedsearch/+/347406 CMakeLists.txt: update from libprocps to libproc2
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-build-with-gcc-12.patch \
 "
 S = "${WORKDIR}/git"
 
 PACKAGES += "${PN}-plugins"
-FILES:${PN}-plugins = "/usr/lib/plugins"
+FILES:${PN}-plugins = "${libdir}/plugins"
 
 EXTRA_OECMAKE += "-DUSE_BUILTIN_PLUGIN:bool=true"
