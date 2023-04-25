@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos108"
+EXTENDPRAUTO:append = "webos109"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -105,6 +105,12 @@ SRC_URI:append = " \
 # See https://bugreports.qt.io/browse/WEBOSCI-66.
 SRC_URI:append:class-native = " \
     file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.0 \
+"
+
+# FIXME: Drop this once all qmake-dependent components are switched to cmake.
+# See https://bugreports.qt.io/browse/WEBOSCI-73.
+SRC_URI:append = " \
+    file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.5.0 \
 "
 
 # Flags needed for webOS
