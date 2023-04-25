@@ -49,7 +49,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
 WEBOS_VERSION = "1.0.0-71_4a59ec7e27aab8c3a0ac80c207013156e8efc517"
-PR = "r6"
+PR = "r7"
 
 inherit webos_component
 inherit webos_public_repo
@@ -75,5 +75,6 @@ PACKAGECONFIG[support-response-bt-prepare-suspend-done] = "-DSUPPORT_RESPONSE_BT
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-build-with-gcc-12.patch \
+    file://0002-Fix-build-with-gcc-13.patch \
 "
 S = "${WORKDIR}/git"
