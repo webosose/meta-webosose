@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-65_d9632905a0df2538b2c0e66efc845324d4bcaaba"
-PR = "r17"
+WEBOS_VERSION = "1.0.0-67_84d58601e235a39e937d4999904ebc9a02dc7385"
+PR = "r18"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -40,6 +40,7 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
     cp -f background.js dist/ && \
     cp -f defaults.js dist/ && \
     cp -f manifest.json dist/ && \
+    cp -fr pdf.js dist/ && \
     ${WEBOS_NODE_BIN} extract-inline.js ./dist \
 "
 
