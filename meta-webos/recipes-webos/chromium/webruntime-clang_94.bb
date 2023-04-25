@@ -4,7 +4,7 @@ require webruntime_94.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r3"
+PR = "r4"
 
 inherit clang_libc
 
@@ -28,6 +28,11 @@ INCLUDE_PATH_LIBCXX_EXT = " \
 "
 
 INCLUDE_PATH_LIBCXX = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', '${INCLUDE_PATH_LIBCXX_EXT}', d)}"
+INCLUDE_PATH_LIBCXX += " \
+    -I${STAGING_INCDIR}/cbe \
+    -I${STAGING_INCDIR}/cbe/gmp \
+    -I${STAGING_INCDIR}/media-resource-calculator-clang \
+"
 
 # tcmalloc build is broken with clang++ and -mthumb as shown in:
 # http://gecko.lge.com:8000/Errors/Details/528000
@@ -42,3 +47,11 @@ PACKAGECONFIG[umediaserver] = ",,umediaserver${DEPEXT}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline${DEPEXT}"
 PACKAGECONFIG[neva-webrtc] = "use_neva_webrtc=true,use_neva_webrtc=false,media-codec-interface${DEPEXT}"
 PACKAGECONFIG[webos-codec] = "use_webos_codec=true,use_webos_codec=false,media-codec-interface${DEPEXT}"
+
+do_configure:prepend() {
+    [ -f ${STAGING_DATADIR}/pkgconfig/umedia_api_clang.pc ] && \
+    mv -n ${STAGING_DATADIR}/pkgconfig/umedia_api_clang.pc ${STAGING_DATADIR}/pkgconfig/umedia_api.pc
+    [ -f ${STAGING_DATADIR}/pkgconfig/gmp-player-client-clang.pc ] && \
+    mv -n ${STAGING_DATADIR}/pkgconfig/gmp-player-client-clang.pc ${STAGING_DATADIR}/pkgconfig/gmp-player-client.pc
+}
+

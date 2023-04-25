@@ -10,7 +10,7 @@ PROVIDES = "virtual/webappmanager-webos"
 
 WEBOS_REPO_NAME = "wam"
 
-PR = "r2"
+PR = "r3"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/wam:"
 
@@ -22,19 +22,24 @@ DEPENDS += "jsoncpp-clang"
 DEPENDS:remove = "gtest googletest"
 DEPENDS += "googletest-clang"
 
+CXXFLAGS +="-I${STAGING_INCDIR}/cbe"
+
 OECMAKE_CXX_FLAGS += "\
     -Wno-error=unused-command-line-argument \
     -Wno-error=inconsistent-missing-override \
     -Wno-format \
 "
 
-PKGCONFIG_DIR = "${libdir}/pkgconfig"
+do_configure:prepend() {
+    [ -f ${STAGING_LIBDIR}/pkgconfig/jsoncpp-clang.pc ] && \
+    mv -n ${STAGING_LIBDIR}/pkgconfig/jsoncpp-clang.pc ${STAGING_LIBDIR}/pkgconfig/jsoncpp.pc
+}
 
 do_compile:prepend() {
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${RECIPE_SYSROOT}/${PKGCONFIG_DIR}/gtest.pc
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${RECIPE_SYSROOT}/${PKGCONFIG_DIR}/gmock.pc
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${RECIPE_SYSROOT}/${PKGCONFIG_DIR}/gmock_main.pc
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${RECIPE_SYSROOT}/${PKGCONFIG_DIR}/gtest_main.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${STAGING_LIBDIR}/pkgconfig/gtest.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${STAGING_LIBDIR}/pkgconfig/gmock.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${STAGING_LIBDIR}/pkgconfig/gmock_main.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${STAGING_LIBDIR}/pkgconfig/gtest_main.pc
     rm -rf ${STAGING_LIBDIR}/libgtest*.a
     rm -rf ${STAGING_LIBDIR}/libgmock*.a
 }
