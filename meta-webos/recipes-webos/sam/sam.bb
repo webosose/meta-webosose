@@ -10,14 +10,14 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "glib-2.0 luna-service2 libpbnjson boost icu pmloglib procps libwebosi18n"
+DEPENDS = "glib-2.0 luna-service2 libpbnjson boost icu pmloglib libwebosi18n"
 RDEPENDS:${PN} = "ecryptfs-utils"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-66_409a292d489d853db96dfd7a89179f4c1c25a736"
-PR = "r26"
+PR = "r27"
 
 inherit webos_component
 inherit webos_cmake
@@ -28,7 +28,9 @@ inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-remove-dependency-on-libprocps.patch \
+"
 S = "${WORKDIR}/git"
 
 PACKAGES =+ "${PN}-tests"
