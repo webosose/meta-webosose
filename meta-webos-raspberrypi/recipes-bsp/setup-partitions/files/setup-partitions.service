@@ -8,7 +8,7 @@
 Description=webos - "%n"
 DefaultDependencies=no
 Conflicts=shutdown.target
-Before=sysinit.target var-db-temp.mount var-volatile.mount
+Before=ls-hubd.service sysinit.target var-db-temp.mount var-volatile.mount
 After=systemd-remount-fs.service local-fs-pre.target
 Requires=local-fs-pre.target
 
