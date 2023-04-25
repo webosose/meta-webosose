@@ -4,12 +4,12 @@ inherit clang_cmake
 
 require media-codec-interface.bb
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/media-codec-interface/:"
-
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r2"
+PR = "r3"
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/media-codec-interface/:"
+# http://gpro.lge.com/c/webosose/media-codec-interface/+/349078 chrono namespace changed
 SRC_URI += "file://0001-chrono-namespace-changed.patch"
 
 CXXFLAGS +=" \
