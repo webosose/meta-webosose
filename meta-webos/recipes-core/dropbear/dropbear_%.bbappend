@@ -29,4 +29,4 @@ do_install:append() {
 RDEPENDS:${PN} = ""
 RDEPENDS:${PN}:emulator = "dhcpcd"
 
-FILES:${PN} += "${base_libdir}"
+FILES:${PN} += "${base_libdir} ${systemd_system_unitdir}"
