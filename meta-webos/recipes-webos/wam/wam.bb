@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-72_ec0acbbec7503176ec155a8335d2d50f6f8f8dc9"
-PR = "r56"
+WEBOS_VERSION = "1.0.2-73_27f62d7a2a7465f45655fdd9da44bb647de6deff"
+PR = "r57"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 
@@ -42,9 +42,6 @@ S = "${WORKDIR}/git"
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 
 SYSTEMD_INSTALL_PATH = "${sysconfdir}/systemd/system"
-
-# Set the location of chromium headers
-EXTRA_OECMAKE += "-DCHROMIUM_SRC_DIR=${STAGING_INCDIR}/webruntime"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
 EXTRA_OECMAKE += "${@oe.utils.conditional('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
@@ -159,6 +156,3 @@ FILES:${PN} += " \
     ${datadir}/localization/${BPN} \
     ${WEBOS_SYSTEM_BUS_DIRS} \
 "
-
-# http://gecko.lge.com/Errors/Details/400153
-CXXFLAGS += "-Wno-error=uninitialized -Wno-error=maybe-uninitialized"
