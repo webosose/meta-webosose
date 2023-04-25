@@ -24,6 +24,7 @@ PREF_DIR="/var/luna/preferences"
 DEVICE="/dev/mmcblk0"
 PART=$(mount | grep "\/ " | cut -c 14-14)
 
+# Different sizes in in 512b sectors
 SECTOR_SIZE_50M="102400"
 SECTOR_SIZE_0G5="1048576"
 SECTOR_SIZE_1G="2097152"
@@ -58,7 +59,7 @@ updatePartitionTable() {
 	2
 	$part2_start
 	+$part2_sectors
-	No
+	
 	n
 	p
 	3
