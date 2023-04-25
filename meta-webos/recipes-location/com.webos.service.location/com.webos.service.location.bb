@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 libpbnjson libxml2 pmloglib luna-service2 luna-prefs loc-utils boost"
 
 WEBOS_VERSION = "1.0.0-99_95a66c93cc2df3d624353f31e930c8b720a9199b"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo
@@ -23,7 +23,10 @@ inherit webos_program
 inherit webos_system_bus
 inherit webos_machine_impl_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# [http://gpro.lge.com/c/webosose/com.webos.service.location/+/348157 Fix luna-service2 usage]
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-luna-service2-usage.patch \
+"
 S = "${WORKDIR}/git"
 
 FILES:${PN} += "${libdir}/location/plugins/lib*.so"
