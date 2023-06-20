@@ -98,9 +98,16 @@ GN_ARGS:append:armv7ve = " arm_arch=\"armv7ve\" arm_version=7 arm_float_abi=\"${
 # tcmalloc's atomicops-internals-arm-v6plus.h uses the "dmb" instruction that
 # is not available on (some?) ARMv6 models, which causes the build to fail.
 GN_ARGS:append:armv6 = ' use_allocator="none"'
+
 # The WebRTC code fails to build on ARMv6 when NEON is enabled.
 # https://bugs.chromium.org/p/webrtc/issues/detail?id=6574
-GN_ARGS:append:armv6 = ' arm_use_neon=false'
+GN_ARGS_NEON ?= ""
+GN_ARGS_NEON:armv6 = "arm_use_neon=false"
+GN_ARGS += "${GN_ARGS_NEON}"
+
+# Handle crash while building v8
+GN_ARGS:append:aarch64 = ' v8_enable_external_code_space=false'
+GN_ARGS:append:x86-64 = ' v8_enable_external_code_space=false'
 
 # Doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
@@ -143,5 +150,7 @@ do_compile() {
     fi
 
     export PATH="${S}/depot_tools:$PATH"
+    # depot_tools ninja requires current directory is chromium/src
+    cd ${S}/src
     ${NINJA} ${TARGET}
 }
