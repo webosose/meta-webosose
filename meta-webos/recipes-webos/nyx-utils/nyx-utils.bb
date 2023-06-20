@@ -6,14 +6,14 @@ SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "nyx-lib glib-2.0"
 
-WEBOS_VERSION = "1.5.0-7_eafc3df9dc8a3641ac56d1a69dc2672950971ce1"
-PR = "r3"
+WEBOS_VERSION = "1.5.0-9_1e45c59b3671f66b8a372d57a32bcc2a400ff933"
+PR = "r4"
 
 inherit webos_component
 inherit webos_public_repo

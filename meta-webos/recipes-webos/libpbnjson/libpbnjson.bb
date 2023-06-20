@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
-WEBOS_VERSION = "2.15.0-10_476ea71204d972d93b008ffad9e35b99a5af650b"
-PR = "r11"
+WEBOS_VERSION = "2.15.0-11_598b7168e0e5b69a10614d3c146613d3b5f7cca3"
+PR = "r12"
 
 inherit webos_component
 inherit webos_public_repo
@@ -33,9 +33,7 @@ EXTRA_OECMAKE += "-DCMAKE_AR:FILEPATH=${AR}"
 
 PACKAGECONFIG[tools] = "-DPBNJSON_INSTALL_TOOLS:BOOL=TRUE,-DPBNJSON_INSTALL_TOOLS:BOOL=FALSE"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-fix-build-race-condition-on-generated.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 BBCLASSEXTEND = "native"
