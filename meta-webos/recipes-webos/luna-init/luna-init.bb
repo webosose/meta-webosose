@@ -6,14 +6,14 @@ SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "tzdata python3-pytz-native"
 
-WEBOS_VERSION = "2.0.1-4_9d55ebcbfd3041d591810bd4d94c329895354c95"
-PR = "r18"
+WEBOS_VERSION = "2.0.1-8_97d9c92925ca1a88106727cbdbd7d225a327bb15"
+PR = "r19"
 
 inherit webos_arch_indep
 inherit webos_public_repo
