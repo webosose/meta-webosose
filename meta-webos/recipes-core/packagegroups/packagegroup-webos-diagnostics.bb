@@ -19,10 +19,6 @@ RDEPENDS:${PN} = " \
     pmklogd \
     pmlogctl \
     pmlogdaemon \
-    ${VIRTUAL-RUNTIME_event-monitor-network} \
-"
-
-# Add to hardware only
-RDEPENDS:${PN}:append:hardware = " \
     webos-fluentbit-plugins \
+    ${VIRTUAL-RUNTIME_event-monitor-network} \
 "
