@@ -10,7 +10,7 @@ bootcmd_check_upgrade=if itest.b $now_on_upgrade -eq 1; then if itest.b $boot_tr
 
 # =========== BEGIN: rootfs as SDCARD =========== #
 ## Warn: If you want to use nfs, please comment out this block
-bootcmd_args=setenv bootargs "$bootargs $bootargs_fdt root=/dev/mmcblk0p$active_part_id ro"
+bootcmd_args=setenv bootargs "$bootargs $bootargs_fdt root=/dev/mmcblk0p$active_part_id ro rootflags=noload"
 bootcmd_load=load mmc 0:$active_part_id $kernel_addr_r /boot/@@KERNEL_IMAGETYPE@@
 # =========== END: rootfs as SDCARD ============= #
 

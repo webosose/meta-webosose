@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi5"
+EXTENDPRAUTO:append = "webosrpi6"
 EXTENDPRAUTO:append:sota = ".sota"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
