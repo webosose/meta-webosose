@@ -14,10 +14,10 @@ VIRTUAL-RUNTIME_ntp ?= "sntp"
 
 DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib nyx-lib libwebosi18n"
 
-RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode luna-init"
 
 WEBOS_VERSION = "4.4.0-24_aa543601babaf0749e8ffae7bb2b2b0096050b68"
-PR = "r9"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
