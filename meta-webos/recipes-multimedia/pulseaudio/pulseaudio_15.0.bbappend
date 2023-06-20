@@ -11,8 +11,8 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
-WEBOS_VERSION = "15.0-47_1867258d694f9f6650c7de7eb66f5601c0c5d25d"
-EXTENDPRAUTO:append = "webos7"
+WEBOS_VERSION = "15.0-49_fd6f5c145e1415d73be3b16d1c99c911e047c8da"
+EXTENDPRAUTO:append = "webos8"
 
 inherit webos_enhanced_submissions
 
@@ -72,6 +72,7 @@ do_install:append:webos() {
     install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
     install -v -m 644 ${S}/src/modules/ecnr/hann.txt ${D}${libdir}/pulse-15.0/modules/ecnr/hann.txt
     install -v -m 644 ${S}/src/modules/ecnr/model_ecnr.tflite ${D}${libdir}/pulse-15.0/modules/ecnr/model_ecnr.tflite
+    install -v -m 644 ${S}/src/modules/drc/sndfilter.txt ${D}${sysconfdir}/pulse/sndfilter.txt
 }
 do_install:append:qemuall() {
     install -v -m 644 ${S}/palm/qemux86_system.pa ${D}${sysconfdir}/pulse/system.pa
@@ -82,6 +83,7 @@ FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr/*"
 RDEPENDS:pulseaudio-server:append:webos = "\
     pulseaudio-module-ecnr \
     pulseaudio-module-agc \
+    pulseaudio-module-drc \
 "
 
 RDEPENDS:pulseaudio-server:append = "\
