@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-PR = "r23"
+PR = "r24"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -58,3 +58,7 @@ FILES:${PN}-python = "${libdir}/${PYTHON_DIR}/site-packages/uMediaServer/* ${dat
 # Use append, because umediaserver-clang uses:
 # PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG:append:qemuall = " com.webos.service.videooutput"
+
+do_install:append:webos() {
+    install -m 755 -o media -g media -v -d ${D}${webos_execstatedir}/ums
+}

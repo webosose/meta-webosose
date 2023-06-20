@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos11"
+EXTENDPRAUTO:append = "webos12"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -9,6 +9,7 @@ SRC_URI:append:webos = " \
     file://0003-systemd-oomd-modify-oomd.conf.patch \
     file://0004-oomd-to-some.patch \
     file://0005-oomd-change-duration.patch \
+    file://0006-Changes-for-non-root-media-services.patch \
 "
 
 inherit webos_prerelease_dep

@@ -26,10 +26,11 @@ dbus:x:81:dbus
 netdev:x:82:system,network,bluetooth,wifi
 users:x:100:sync
 developer:x:504:developer,dev-func
-compositor:x:505:wam,graphics
+compositor:x:505:wam,graphics,media
 pulse-access:x:506:root,wam,system
 pulse:x:507:pulse
 se:x:509:root,wam,system
+media:x:1013:media
 nogroup:x:65534:nobody,sshd
 blemesh:x:2024:
 system:x:1016:system
