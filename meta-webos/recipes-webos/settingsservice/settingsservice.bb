@@ -11,10 +11,10 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "glib-2.0 glibmm luna-service2 libpbnjson pmloglib openssl libbson boost"
-RDEPENDS:${PN} = "settingsservice-conf"
+RDEPENDS:${PN} = "settingsservice-conf db8"
 
 WEBOS_VERSION = "1.0.22-18_f759435b2c12ab714a5ed6d8e8bed478f4e47e3a"
-PR = "r24"
+PR = "r25"
 
 inherit webos_component
 inherit webos_enhanced_submissions
