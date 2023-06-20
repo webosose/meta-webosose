@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 db8 boost libpbnjson glib-2.0 pmloglib ${VIRTUAL-RUNTIME_init_manager}"
 
-WEBOS_VERSION = "3.0.0-34_a8857428d4d0d6ba3b2c6c9befde389e9cb5a0b8"
-PR = "r11"
+WEBOS_VERSION = "3.0.0-40_8da546299f22de459467d24e2d52f1d611ce2daa"
+PR = "r12"
 
 inherit webos_component
 inherit webos_public_repo
@@ -27,5 +27,12 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES:${PN} += "${webos_sysbus_datadir}"
+FILES:${PN} += "${@oe.utils.conditional('DISTRO_NAME', 'webOS OSE', '${localstatedir}/lib/activitymanager', '', d)}"
 
 EXTRA_OECMAKE += "-DINIT_MANAGER:STRING=${VIRTUAL-RUNTIME_init_manager}"
+
+do_install:append() {
+    if ${@oe.utils.conditional('DISTRO_NAME', 'webOS OSE', 'true', 'false', d)} ; then
+        install -m 0700 -o system -g system -v -d ${D}${localstatedir}/lib/activitymanager
+    fi
+}
