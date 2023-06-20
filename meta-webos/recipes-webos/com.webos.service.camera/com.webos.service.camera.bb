@@ -24,6 +24,10 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_system_bus
 inherit webos_daemon
+inherit features_check
+
+# depends on edgeai-vision
+REQUIRED_DISTRO_FEATURES = "webos-aiframework"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
