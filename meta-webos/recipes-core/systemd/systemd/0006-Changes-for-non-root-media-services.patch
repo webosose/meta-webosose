@@ -20,4 +20,4 @@ index 9b2357cd31..63bcaa5ac1 100644
  d /var/lib/private 0700 root root -
  d /var/log/private 0700 root root -
  d /var/cache/private 0700 root root -
-+d /media 0770 media media -
++d /media 0775 media media -

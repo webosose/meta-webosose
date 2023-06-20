@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos12"
+EXTENDPRAUTO:append = "webos13"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \

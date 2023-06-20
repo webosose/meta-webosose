@@ -16,7 +16,7 @@ www:x:33:www
 backup:x:34:backup
 operator:x:37:operator
 utmp:x:43:
-video:x:44:wam,graphics,system,camera
+video:x:44:wam,graphics,system,camera,media
 plugdev:x:46:
 staff:x:50:
 games:x:60:game
@@ -30,7 +30,7 @@ compositor:x:505:wam,graphics,media
 pulse-access:x:506:root,wam,system
 pulse:x:507:pulse
 se:x:509:root,wam,system
-media:x:1013:media
+media:x:1013:media,wam
 nogroup:x:65534:nobody,sshd
 blemesh:x:2024:
 system:x:1016:system
