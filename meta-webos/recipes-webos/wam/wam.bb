@@ -18,8 +18,8 @@ RDEPENDS:${PN} += "util-linux"
 VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
-WEBOS_VERSION = "1.0.2-77_8d7bf0ec4457679bd7e8cb7456cdfea25401b4fb"
-PR = "r59"
+WEBOS_VERSION = "1.0.2-78_8a2e88fcd953a40130a987842aca5eacccd71004"
+PR = "r60"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -68,10 +68,10 @@ WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 TOUCH_ENABLED ?= "${@bb.utils.contains('DISTRO_FEATURES', 'webos-touch', 'true', 'false', d)}"
 
 # Flag to control runtime flag for Media Player Neva
-DISABLE_NEVA_MEDIA_PLAYER ?= "true"
+DISABLE_NEVA_MEDIA_PLAYER ?= "false"
 
 # Flag to control runtime flag for platform decoder
-PLATFORM_DECODER_ENABLED ?= "true"
+PLATFORM_DECODER_ENABLED ?= "false"
 
 do_configure:append() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
