@@ -6,8 +6,8 @@ AUTHOR = "Vijaya Sundaram <vijaya.sundaram@lge.com>"
 SECTION = "webos/devel/tools"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.6.3-5_7056e27bcabc4656baa1a4e972a7b0f345f4b02d"
-PR = "r5"
+WEBOS_VERSION = "1.6.3-6_b22ef30599f9af4c5b146538148552b495320ba3"
+PR = "r2"
 
 inherit webos_component
 inherit webos_public_repo
