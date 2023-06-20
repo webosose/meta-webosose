@@ -1,4 +1,4 @@
-From 919d3b6e344792f191c6ae8c101009eeff2f4a20 Mon Sep 17 00:00:00 2001
+From 3b15660cdaee1a08c3ed044b3360c26679f76065 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Fri, 14 Apr 2023 06:16:46 +0900
 Subject: [PATCH] Revert "CMake: remove tests for C++17 and C11 and earlier"
@@ -13,10 +13,10 @@ Upstream-Status: Inappropriate [webOS specific]
  3 files changed, 109 insertions(+), 4 deletions(-)
 
 diff --git a/configure.cmake b/configure.cmake
-index 53b397ab8b..c32338e0ad 100644
+index 856b4a94ed..066ab8aa26 100644
 --- a/configure.cmake
 +++ b/configure.cmake
-@@ -204,6 +204,51 @@ endif()
+@@ -203,6 +203,51 @@ endif()
  # machineTuple
  qt_config_compile_test_machine_tuple("machine tuple")
  
@@ -68,7 +68,7 @@ index 53b397ab8b..c32338e0ad 100644
  # cxx20
  qt_config_compile_test(cxx20
      LABEL "C++20 support"
-@@ -615,10 +660,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
+@@ -613,10 +658,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
      NEGATE
      NAME "no_plugin_manifest"
  )
@@ -99,7 +99,7 @@ index 53b397ab8b..c32338e0ad 100644
  )
  qt_feature_config("c++20" QMAKE_PUBLIC_QT_CONFIG)
  qt_feature("c++2a" PUBLIC
-@@ -636,6 +700,17 @@ qt_feature("c++2b" PUBLIC
+@@ -634,6 +698,17 @@ qt_feature("c++2b" PUBLIC
      AUTODETECT FALSE
      CONDITION QT_FEATURE_cxx20 AND (CMAKE_VERSION VERSION_GREATER_EQUAL "3.20") AND TEST_cxx2b
  )
@@ -117,9 +117,9 @@ index 53b397ab8b..c32338e0ad 100644
  qt_feature("precompile_header"
      LABEL "Using precompiled headers"
      CONDITION BUILD_WITH_PCH AND TEST_precompile_header
-@@ -1067,6 +1142,16 @@ qt_configure_add_summary_entry(
+@@ -1063,6 +1138,16 @@ qt_configure_add_summary_entry(
+     ARGS "optimize_full"
  )
- # special case end
  qt_configure_add_summary_entry(ARGS "shared")
 +qt_configure_add_summary_entry(
 +    TYPE "firstAvailableFeature"
@@ -169,7 +169,7 @@ index f364716717..4acf3b19d5 100644
  # This is especially important for iOS/tvOS/watchOS where no other option is possible.
  !no_default_rpath {
 diff --git a/mkspecs/features/qt.prf b/mkspecs/features/qt.prf
-index 30195189b9..a7545ace5c 100644
+index 8697237b42..d099755fe7 100644
 --- a/mkspecs/features/qt.prf
 +++ b/mkspecs/features/qt.prf
 @@ -2,9 +2,6 @@

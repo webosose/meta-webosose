@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos111"
+EXTENDPRAUTO:append = "webos112"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -98,14 +98,17 @@ SRC_URI:append = " \
 # Upstream-Status: Inappropriate
 # NOTE: Increase maxver when upgrading Qt version
 SRC_URI:append = " \
-    file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch;maxver=6.5.0 \
+    file://9901-Disable-Faux-bolding-in-Qts-FreeType-FontEngine.patch;maxver=6.5.1 \
 "
 
 # FIXME: Patches below can be dropped once all qmake-dependent components are switched to cmake.
 # https://bugreports.qt.io/browse/WEBOSCI-66
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.0"
+# https://bugreports.qt.io/browse/WEBOSCI-81
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.1;maxver=6.5.1"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.5.x.patch;minver=6.5.2;maxver=6.5.*"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.6.x.patch;minver=6.6.0"
 # https://bugreports.qt.io/browse/WEBOSCI-73
-SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.5.0 "
+SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.5.1 "
 # https://bugreports.qt.io/browse/WEBOSCI-76
 SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli.patch;minver=6.6.0"
 

@@ -19,7 +19,7 @@ SRC_URI:append = " \
 # Upstream-Status: Inappropriate
 # NOTE: Increase maxver when upgrading Qt version
 SRC_URI:append = " \
-    file://0005-Revert-Also-use-text-input-if-QT_IM_MODULE-is-empty-.patch;maxver=6.5.0 \
+    file://0005-Revert-Also-use-text-input-if-QT_IM_MODULE-is-empty-.patch;maxver=6.5.1 \
 "
 
 # More options for fine-tuned configuration
