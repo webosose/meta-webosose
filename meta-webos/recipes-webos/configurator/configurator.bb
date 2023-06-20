@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 db8 glib-2.0 pmloglib"
 
 WEBOS_VERSION = "3.0.0-9_b6917d2a03c58c6a89aa57a1ac39f637f965d84e"
-PR = "r7"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -23,6 +23,18 @@ inherit webos_system_bus
 inherit webos_daemon
 inherit webos_machine_impl_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://configurator-activity.service \
+    file://configurator-db8.service \
+    file://configurator-db8.sh \
+"
 S = "${WORKDIR}/git"
 FILES:${PN} += "${webos_sysbus_datadir}"
+
+do_install:append() {
+    install -d ${D}${sysconfdir}/systemd/system/
+    install -v -m 0644 ${WORKDIR}/configurator-activity.service ${D}${sysconfdir}/systemd/system/
+    install -v -m 0644 ${WORKDIR}/configurator-db8.service ${D}${sysconfdir}/systemd/system/
+    install -d ${D}${sysconfdir}/systemd/system/scripts
+    install -v -m 0755 ${WORKDIR}/configurator-db8.sh ${D}${sysconfdir}/systemd/system/scripts
+}
