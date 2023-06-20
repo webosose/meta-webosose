@@ -86,6 +86,8 @@ WEBOS_SYSTEM_BUS_DIRS += " \
     ${webos_sysbus_permissionsdir} \
     ${webos_sysbus_apipermissionsdir} \
     ${webos_sysbus_groupsdir} \
+    ${webos_sysbus_intentsdir} \
+    ${webos_sysbus_intentfiltersdir} \
     ${webos_sysbus_manifestsdir} \
 "
 

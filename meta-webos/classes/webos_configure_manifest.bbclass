@@ -89,6 +89,12 @@ def webos_configure_manifest_service(d):
                 groups = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_groupsdir", srv_name, ".groups.json")
                 if groups: manifest["groupsFiles"] = [groups]
 
+                intents = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_intentsdir", srv_name, ".intents.json")
+                if intents: manifest["intentFiles"] = [intents]
+
+                intent_filters = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_intentfiltersdir", srv_name, ".intent-filter.json")
+                if intent_filters: manifest["intentFilterFiles"] = [intent_filters]
+
             if role:
                 manifests.append(manifest)
             else:
@@ -306,6 +312,12 @@ def webos_configure_manifest_package(d):
 
     groups = webos_configure_manifest_lookup_files_by_ext(d, "webos_sysbus_groupsdir", ".json")
     if groups: manifest["groupsFiles"] = groups
+
+    intents = webos_configure_manifest_lookup_files_by_ext(d, "webos_sysbus_intentsdir", ".json")
+    if intents: manifest["intentFiles"] = intents
+
+    intent_filters = webos_configure_manifest_lookup_files_by_ext(d, "webos_sysbus_intentfiltersdir", ".json")
+    if intent_filters: manifest["intentFilterFiles"] = intent_filters
 
     return [manifest]
 

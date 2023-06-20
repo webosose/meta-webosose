@@ -87,6 +87,8 @@ webos_sysbus_manifestsdir = "${webos_sysbus_datadir}/manifests.d"
 webos_sysbus_dynmanifestsdir = "${webos_sysbus_dyndatadir}/manifests.d"
 webos_sysbus_devmanifestsdir = "${webos_sysbus_devdatadir}/manifests.d"
 webos_sysbus_groupsdir = "${webos_sysbus_datadir}/groups.d"
+webos_sysbus_intentsdir = "${webos_sysbus_datadir}/intents.d"
+webos_sysbus_intentfiltersdir = "${webos_sysbus_datadir}/intent-filters.d"
 
 # Legacy sysbus locations
 webos_sysbus_pubservicesdir = "${webos_sysbus_prefix}/dbus-1/services"
