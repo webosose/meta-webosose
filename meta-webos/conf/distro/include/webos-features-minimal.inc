@@ -16,5 +16,3 @@ DISTRO_FEATURES:append = " ${WEBOS_DISTRO_FEATURES_EXTENDED}"
 # Addition/removal preferred provider or version
 VIRTUAL-RUNTIME_initscripts = "webos-initscripts"
 PREFERRED_RPROVIDER_initd-functions = "webos-initscripts"
-
-NO_RECOMMENDATIONS = "0"

@@ -31,3 +31,5 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
 # the examples and test codes are excluded from the installation.
 WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework auto-acceleration edgetpu gpu-delegate"
 WEBOS_DISTRO_FEATURES_EXTENDED += "${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK}"
+
+NO_RECOMMENDATIONS = "0"

@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS:${PN} variable.
-PR = "r45"
+PR = "r46"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -26,9 +26,11 @@ VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 # to change this variable in .bbappend together with bump.
 #
 
-VIRTUAL-RUNTIME_settingsapp ?= "com.webos.app.settings"
-VIRTUAL-RUNTIME_settingsapp:armv4 = ""
-VIRTUAL-RUNTIME_settingsapp:armv5 = ""
+VIRTUAL-RUNTIME_g-media-pipeline ?= ""
+VIRTUAL-RUNTIME_g-media-pipeline:rpi = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:qemux86 = "g-media-pipeline"
+VIRTUAL-RUNTIME_g-media-pipeline:qemux86-64 = "g-media-pipeline"
+
 
 VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
 VIRTUAL-RUNTIME_nodejs-module-node-red:armv4 = ""
@@ -48,9 +50,7 @@ VIRTUAL-RUNTIME_com.webos.service.flowmanager ?= "com.webos.service.flowmanager"
 VIRTUAL-RUNTIME_com.webos.service.flowmanager:armv4 = ""
 VIRTUAL-RUNTIME_com.webos.service.flowmanager:armv5 = ""
 
-VIRTUAL-RUNTIME_com.webos.app.home ?= "com.webos.app.home"
-VIRTUAL-RUNTIME_com.webos.app.home:armv4 = ""
-VIRTUAL-RUNTIME_com.webos.app.home:armv5 = ""
+VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
 
 VIRTUAL-RUNTIME_com.webos.app.notification ?= "com.webos.app.notification"
 VIRTUAL-RUNTIME_com.webos.app.notification:armv4 = ""
@@ -74,6 +74,8 @@ VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
 
 RDEPENDS:${PN} = " \
     activitymanager \
+    com.webos.app.camera \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', 'com.webos.service.camera', '', d)} \
     configurator \
     event-monitor \
     filecache \
@@ -81,23 +83,23 @@ RDEPENDS:${PN} = " \
     luna-downloadmgr \
     luna-init \
     nodejs-module-webos-service \
-    notificationmgr \
     pacrunner \
     qml-app-components \
     sleepd \
     webos-fluentbit-plugins \
+    webos-fontconfig-files \
+    webos-nettools \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
-    ${VIRTUAL-RUNTIME_com.webos.app.home} \
     ${VIRTUAL-RUNTIME_com.webos.app.mediagallery} \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_com.webos.service.intent} \
+    ${VIRTUAL-RUNTIME_g-media-pipeline} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_mojoservicelauncher} \
     ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
     ${VIRTUAL-RUNTIME_pdm} \
-    ${VIRTUAL-RUNTIME_settingsapp} \
     ${VIRTUAL-RUNTIME_unifiedsearch} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
