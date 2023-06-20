@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
 
 SECTION = "webos/services"
 
-DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support"
+DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support nyx-lib"
 RDEPENDS:${PN} = "connman connman-client"
 
 WEBOS_VERSION = "1.1.0-42_83a6b8517c2f4ce630e4fe3d1498965cff5fbac3"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_public_repo
