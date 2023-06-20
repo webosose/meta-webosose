@@ -10,6 +10,7 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
     webos-audio \
     webos-camera \
     webos-connectivity \
+    webos-diagnostics \
     webos-graphics \
     webos-media \
     webos-media-drm \
