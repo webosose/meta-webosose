@@ -1,8 +1,9 @@
 # Copyright (c) 2023 LG Electronics, Inc.
 
-IMAGE_PR_SUFFIX = "${_pr_suffix}"
+inherit webos_image_core-boot
 
 # Increse when features are changed
-_pr_suffix = "minimal1"
+_pr_suffix = "minimal2"
 
 # Addition/removal image features
+IMAGE_FEATURES += "webos-extract-ls2-api"

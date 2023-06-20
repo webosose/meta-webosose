@@ -65,7 +65,7 @@ COMPATIBLE_MACHINE:x86-64 = "(.*)"
 WAM_ERROR_SCRIPTS_PATH = "${S}/html-ose"
 
 # Flag to control runtime flags for touch
-TOUCH_ENABLED ?= "true"
+TOUCH_ENABLED ?= "${@bb.utils.contains('DISTRO_FEATURES', 'webos-touch', 'true', 'false', d)}"
 
 # Flag to control runtime flag for Media Player Neva
 DISABLE_NEVA_MEDIA_PLAYER ?= "true"

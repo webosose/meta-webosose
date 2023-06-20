@@ -4,7 +4,7 @@ inherit webos_machine_impl_dep
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-EXTENDPRAUTO:append = "webos7"
+EXTENDPRAUTO:append = "webos8"
 
 # (In the emulator) our openssh is installed in /opt prefix, set the sftp path
 # this overrides default value set in oe-core's dropbear.inc
@@ -23,6 +23,12 @@ do_install:append() {
     install -d ${D}${sysconfdir}/systemd/system
     install -m 0644 ${WORKDIR}/dropbear.service ${D}${sysconfdir}/systemd/system/
     ln -sf /dev/null ${D}/${sysconfdir}/systemd/system/dropbear.socket
+
+    # If initscripts runtime package is not set, we need to enable the dropbear service unit.
+    if ${@oe.utils.conditional('VIRTUAL-RUNTIME_initscripts', '', 'true', 'false', d)}; then
+        install -d ${D}/${sysconfdir}/systemd/system/multi-user.target.wants
+        ln -sf ../dropbear.service ${D}/${sysconfdir}/systemd/system/multi-user.target.wants/dropbear.service
+    fi
 }
 
 # Remove runtime dependency on separate dropbear-upstart package with Upstart 0.3 job file.

@@ -151,11 +151,9 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
     hunspell \
     icu \
     iproute2 \
-    lsb-release \
     makedevs \
     ncurses \
     openssl \
-    procps \
     psmisc \
     sqlite3 \
     ${@oe.utils.conditional('VIRTUAL-RUNTIME_init_manager', 'systemd', 'systemd-analyze', 'sysvinit-pidof', d)} \

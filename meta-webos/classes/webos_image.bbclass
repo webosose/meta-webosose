@@ -11,10 +11,11 @@
 # webos-devel:              Additional packages useful for during development
 # webos-test:               Additional packages for running unit and integration tests
 #
+# webos-extract-ls2-api:    Add task to extract luna-service2 api list
 # webos-production-image:   Specific features to productize
 #
 # and IMAGE_FEATURES from core-image
-IMAGE_FEATURES[validitems] = "webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-production-image"
+IMAGE_FEATURES[validitems] = "webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-production-image"
 
 inherit webos_image_${WEBOS_TARGET_DISTRO_VARIANT}
 
@@ -55,7 +56,7 @@ IMAGE_INSTALL ?= "${WEBOS_IMAGE_BASE_INSTALL}"
 
 # webOS supports the generation of oss package information file.
 # $ bitbake -c write_oss_pkg_info <image>
-IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info webos_ls2_api_list"
+IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info ${@bb.utils.contains('IMAGE_FEATURES', 'webos-extract-ls2-api', 'webos_ls2_api_list', '', d)}"
 
 # Add ${webos_sysconfdir}/build/image-name during image construction that contains the image name
 ROOTFS_POSTPROCESS_COMMAND += "rootfs_set_image_name ; clean_python_installation ; verify_acg ; "
