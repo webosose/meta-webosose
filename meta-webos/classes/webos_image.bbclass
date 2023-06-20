@@ -7,11 +7,17 @@
 #
 # Available IMAGE_FEATURES:
 #
-# - webos-devel         - Additional packages useful for during development
-# - webos-extended      - webOS components
-# - webos-test          - Additional packages for running unit and integration tests
+# webos-extended:           webOS extended packages
+#
+# webos-devel:              Additional packages useful for during development
+# webos-test:               Additional packages for running unit and integration tests
+#
+# webos-production-image:   Specific features to productize
 #
 # and IMAGE_FEATURES from core-image
+IMAGE_FEATURES[validitems] = "webos-extended webos-devel webos-test webos-production-image"
+
+inherit webos_image_${WEBOS_TARGET_DISTRO_VARIANT}
 
 FEATURE_PACKAGES_webos-extended = "packagegroup-webos-extended"
 FEATURE_PACKAGES_webos-devel = "packagegroup-webos-devel"
@@ -23,15 +29,12 @@ WEBOS_IMAGE_DEFAULT_FEATURES = "package-management"
 WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}' if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
 WEBOS_IMAGE_DEFAULT_FEATURES:append:emulator = " ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE_FEATURE}"
 
-IMAGE_FEATURES[validitems] += "webos-production-image"
 WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE') == '' else ''}"
 
-WEBOS_IMAGE_BASE_INSTALL = '\
+WEBOS_IMAGE_BASE_INSTALL = " \
     packagegroup-core-boot \
-    packagegroup-webos-extended \
-    \
     ${WEBOS_IMAGE_EXTRA_INSTALL} \
-    '
+"
 
 WEBOS_IMAGE_EXTRA_INSTALL ?= ""
 WEBOS_IMAGE_EXTRA_INSTALL += "${@bb.utils.contains('DISTRO_FEATURES', 'aiframework', 'packagegroup-webos-ml', '', d)}"
