@@ -29,6 +29,8 @@ No change to image.
 
 Change-Id: I8a15529a12eb69071e55ab78ba3cca113779d077
 ---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.location/+/350819 CMakeLists.txt: Fix hardcoded 'lib' installation path]
+
  CMakeLists.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
