@@ -167,7 +167,7 @@ def write_compile_option(d):
     compile_datafile = os.path.join(d.getVar("TOPDIR"), "webos-compile-option.json")
     lock = bb.utils.lockfile(compile_datafile + '.lock')
     with open(compile_datafile, "a") as fp:
-        json.dump(compile_data, fp)
+        json.dump(compile_data, fp, sort_keys=True)
         fp.write(',\n')
     bb.utils.unlockfile(lock)
 
@@ -216,7 +216,7 @@ def write_compile_option(d):
 
         result_file = os.path.join(d.getVar("TOPDIR"), "webos-common-compile-option.json")
         with open(result_file,'w') as rfp:
-            json.dump(common_options,rfp)
+            json.dump(common_options,rfp,sort_keys=True)
         fp.close()
 
 # BBINCLUDED is changed after RecipeParsed fired so we need to refer it with event handler.
