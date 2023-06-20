@@ -11,8 +11,6 @@ inherit features_check
 
 REQUIRED_DISTRO_FEATURES = "webos-media"
 
-VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
-
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller ?= ""
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller:raspberrypi4 = "com.webos.service.mediacontroller"
 VIRTUAL-RUNTIME_com.webos.service.mediacontroller:qemux86 = "com.webos.service.mediacontroller"
@@ -34,7 +32,6 @@ RDEPENDS:${PN} = " \
     gstreamer1.0-plugins-base \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-ugly \
-    ${VIRTUAL-RUNTIME_com.webos.app.mediagallery} \
     ${VIRTUAL-RUNTIME_g-media-pipeline} \
     ${VIRTUAL-RUNTIME_umediaserver} \
 "

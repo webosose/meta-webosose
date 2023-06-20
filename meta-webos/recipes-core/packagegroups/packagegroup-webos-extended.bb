@@ -5,7 +5,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
 # You don't need to change this value when you're changing just RDEPENDS:${PN} variable.
-PR = "r44"
+PR = "r45"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -17,19 +17,7 @@ VIRTUAL-RUNTIME_ai:i686 = ""
 VIRTUAL-RUNTIME_ai:arm = ""
 VIRTUAL-RUNTIME_ai:rpi = "com.webos.service.ai"
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
-VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
-VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
-VIRTUAL-RUNTIME_surface-manager-conf ?= "luna-surfacemanager-conf"
-VIRTUAL-RUNTIME_surface-manager-extension ?= ""
-VIRTUAL-RUNTIME_webappmanager ?= ""
-VIRTUAL-RUNTIME_webos-ime ?= ""
-
-VIRTUAL-RUNTIME_nyx_modules_providers ??= "\
-    nyx-modules \
-    nyx-modules-qemux86 \
-"
-
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 
 # We're not using VIRTUAL-RUNTIME because VIRTUAL-RUNTIME is usually used for only
@@ -82,44 +70,35 @@ VIRTUAL-RUNTIME_unifiedsearch ?= "com.webos.service.unifiedsearch com.webos.serv
 
 VIRTUAL-RUNTIME_com.webos.service.intent ?= "com.webos.service.intent"
 
+VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
+
 RDEPENDS:${PN} = " \
     activitymanager \
-    bootd \
-    configd \
     configurator \
     event-monitor \
     filecache \
     fluentbit \
     luna-downloadmgr \
     luna-init \
-    luna-sysservice \
     nodejs-module-webos-service \
     notificationmgr \
     pacrunner \
     qml-app-components \
-    sam \
-    settingsservice \
     sleepd \
     webos-fluentbit-plugins \
     ${VIRTUAL-RUNTIME_appinstalld} \
     ${VIRTUAL-RUNTIME_com.webos.app.browser} \
     ${VIRTUAL-RUNTIME_com.webos.app.home} \
+    ${VIRTUAL-RUNTIME_com.webos.app.mediagallery} \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_com.webos.service.intent} \
-    ${VIRTUAL-RUNTIME_initscripts} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_mojoservicelauncher} \
     ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
-    ${VIRTUAL-RUNTIME_nyx_modules_providers} \
     ${VIRTUAL-RUNTIME_pdm} \
     ${VIRTUAL-RUNTIME_settingsapp} \
-    ${VIRTUAL-RUNTIME_surface-manager} \
-    ${VIRTUAL-RUNTIME_surface-manager-conf} \
-    ${VIRTUAL-RUNTIME_surface-manager-extension} \
     ${VIRTUAL-RUNTIME_unifiedsearch} \
-    ${VIRTUAL-RUNTIME_webappmanager} \
-    ${VIRTUAL-RUNTIME_webos-ime} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
 
@@ -151,7 +130,6 @@ WEBOS_FOSS_MISSING_FROM_RDEPENDS = " \
     hunspell \
     icu \
     iproute2 \
-    makedevs \
     ncurses \
     openssl \
     psmisc \

@@ -4,6 +4,7 @@
 #
 # Available IMAGE_FEATURES:
 #
+# webos-minimal:            webOS minimal packages
 # webos-systemapps:         webOS system app packages
 # webos-testapps:           webOS test app packages
 # webos-extended:           webOS extended packages
@@ -15,10 +16,11 @@
 # webos-production-image:   Specific features to productize
 #
 # and IMAGE_FEATURES from core-image
-IMAGE_FEATURES[validitems] = "webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-production-image"
+IMAGE_FEATURES[validitems] = "webos-minimal webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-production-image"
 
 inherit webos_image_${WEBOS_TARGET_DISTRO_VARIANT}
 
+FEATURE_PACKAGES_webos-minimal = "packagegroup-webos-minimal"
 FEATURE_PACKAGES_webos-systemapps = "packagegroup-webos-systemapps"
 FEATURE_PACKAGES_webos-testapps = "packagegroup-webos-testapps"
 FEATURE_PACKAGES_webos-extended = "packagegroup-webos-extended"
