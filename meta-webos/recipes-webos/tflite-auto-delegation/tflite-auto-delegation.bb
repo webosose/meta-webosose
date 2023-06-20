@@ -39,6 +39,14 @@ PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', 'edgetpu', 
 PACKAGECONFIG[edgetpu] = "-DWITH_EDGETPU:BOOL=TRUE,-DWITH_EDGETPU:BOOL=FALSE,libedgetpu"
 PACKAGECONFIG[gl-backend] = "-DTFLITE_ENABLE_GPU_GL_ONLY=ON, -DTFLITE_ENABLE_GPU_GL_ONLY=OFF, virtual/egl virtual/libgles2"
 
+# There is gl-backend PACKAGECONFIG which respects gpu-delegate in DISTRO_FEATURES, but still fails to build without gpu-delegate
+# http://gecko.lge.com:8000/Errors/Details/582724
+# FAILED: test/auto_delegation_test
+# TOPDIR/BUILD/work/mach-distro-linux-gnueabi/tflite-auto-delegation/1.0.0-27-r1/..../11.3.0/ld: auto_delegation/libauto-delegation.so.1.0.0: undefined reference to `TfLiteGpuDelegateOptionsV2Default'
+# TOPDIR/BUILD/work/mach-distro-linux-gnueabi/tflite-auto-delegation/1.0.0-27-r1/..../11.3.0/ld: auto_delegation/libauto-delegation.so.1.0.0: undefined reference to `TfLiteGpuDelegateV2Create'
+inherit features_check
+REQUIRED_DISTRO_FEATURES = "gpu-delegate"
+
 EXTRA_OECMAKE += "-DAIF_INSTALL_DIR=${AIF_INSTALL_DIR}"
 EXTRA_OECMAKE += "-DAIF_INSTALL_TEST_DIR=${AIF_INSTALL_TEST_DIR}"
 
