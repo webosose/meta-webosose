@@ -193,8 +193,8 @@ do_install() {
     # Support forcing CSS modules for apps designed for Enact <3.0
     export ENACT_FORCECSSMODULES="${WEBOS_ENACTJS_FORCE_CSS_MODULES}"
 
-    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 84
-    export BROWSERSLIST="Chrome 84"
+    # Target build polyfills, transpiling, and CSS autoprefixing to Chrome 108
+    export BROWSERSLIST="Chrome 108"
 
     # use local on-device ilib locale assets
     if [ ! -z "${WEBOS_ENACTJS_ILIB_ASSETS}" ] ; then
