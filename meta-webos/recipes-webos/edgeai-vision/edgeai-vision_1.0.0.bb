@@ -23,6 +23,9 @@ inherit webos_filesystem_paths
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_test_provider
+inherit features_check
+
+REQUIRED_DISTRO_FEATURES = "webos-aiframework"
 
 DEPENDS = " \
     msgpack-cpp \

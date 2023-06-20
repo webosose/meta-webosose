@@ -2,11 +2,10 @@
 
 # IMAGE_FEATURES controls the contents of webOS OSE images
 #
-# By default we install packagegroup-core-boot and packagegroup-webos-extended packages
-# this gives full working webOS OSE image.
-#
 # Available IMAGE_FEATURES:
 #
+# webos-systemapps:         webOS system app packages
+# webos-testapps:           webOS test app packages
 # webos-extended:           webOS extended packages
 #
 # webos-devel:              Additional packages useful for during development
@@ -15,10 +14,12 @@
 # webos-production-image:   Specific features to productize
 #
 # and IMAGE_FEATURES from core-image
-IMAGE_FEATURES[validitems] = "webos-extended webos-devel webos-test webos-production-image"
+IMAGE_FEATURES[validitems] = "webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-production-image"
 
 inherit webos_image_${WEBOS_TARGET_DISTRO_VARIANT}
 
+FEATURE_PACKAGES_webos-systemapps = "packagegroup-webos-systemapps"
+FEATURE_PACKAGES_webos-testapps = "packagegroup-webos-testapps"
 FEATURE_PACKAGES_webos-extended = "packagegroup-webos-extended"
 FEATURE_PACKAGES_webos-devel = "packagegroup-webos-devel"
 FEATURE_PACKAGES_webos-test = "packagegroup-webos-test"
@@ -36,8 +37,19 @@ WEBOS_IMAGE_BASE_INSTALL = " \
     ${WEBOS_IMAGE_EXTRA_INSTALL} \
 "
 
-WEBOS_IMAGE_EXTRA_INSTALL ?= ""
-WEBOS_IMAGE_EXTRA_INSTALL += "${@bb.utils.contains('DISTRO_FEATURES', 'aiframework', 'packagegroup-webos-ml', '', d)}"
+WEBOS_IMAGE_EXTRA_INSTALL = " \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', 'packagegroup-webos-ml', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-audio', 'packagegroup-webos-audio', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-bluetooth', 'packagegroup-webos-bluetooth', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-camera', 'packagegroup-webos-camera', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-connectivity', 'packagegroup-webos-connectivity', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-diagnostics', 'packagegroup-webos-diagnostics', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-graphics', 'packagegroup-webos-graphics', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-i18n', 'packagegroup-webos-i18n', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-media', 'packagegroup-webos-media', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-media-drm', 'packagegroup-webos-media-drm', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-screencast', 'packagegroup-webos-screencast', '', d)} \
+"
 
 IMAGE_INSTALL ?= "${WEBOS_IMAGE_BASE_INSTALL}"
 

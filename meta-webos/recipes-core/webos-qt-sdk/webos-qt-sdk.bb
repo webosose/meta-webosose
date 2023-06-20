@@ -19,7 +19,7 @@ TOOLCHAIN_HOST_TASK += "${@oe.utils.conditional('EXTERNAL_TOOLCHAIN', '', 'packa
 # package instead of in linux-libc-headers-dev (which is where the
 # linux-libc-headers recipe puts them).
 TOOLCHAIN_TARGET_TASK += "${@oe.utils.conditional('EXTERNAL_TOOLCHAIN', '', '', '${MLPREFIX}linux-libc-headers', d)}"
-TOOLCHAIN_TARGET_TASK += "${@bb.utils.contains('DISTRO_FEATURES', 'aiframework', 'packagegroup-webos-ml-sdk', '', d)}"
+TOOLCHAIN_TARGET_TASK += "${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', 'packagegroup-webos-ml-sdk', '', d)}"
 
 TOOLCHAIN_OUTPUTNAME = "${SDK_NAME}-${WEBOS_DISTRO_BUILD_ID}"
 

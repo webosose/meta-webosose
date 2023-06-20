@@ -6,4 +6,4 @@ inherit webos_image_minimal
 _pr_suffix = "normal1"
 
 # Addition/removal image features
-IMAGE_FEATURES += "webos-extended"
+IMAGE_FEATURES += "webos-systemapps webos-testapps webos-extended"

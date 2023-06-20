@@ -40,7 +40,7 @@ PREFERRED_PROVIDER_stat = "busybox"
 VIRTUAL-RUNTIME_stat = "busybox"
 VIRTUAL-RUNTIME_webos-ime = "imemanager"
 
-VIRTUAL-RUNTIME_bluetooth_service = "com.webos.service.bluetooth2"
+VIRTUAL-RUNTIME_bluetooth_service ?= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'com.webos.service.bluetooth2', '', d)}"
 
 # Options are: bluez4, bluez5. This will only be used if "bluetooth" appears in
 # DISTRO_FEATURES.

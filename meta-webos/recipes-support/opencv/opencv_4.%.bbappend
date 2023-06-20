@@ -10,7 +10,7 @@ PACKAGECONFIG:remove:armv4 = "eigen"
 PACKAGECONFIG:remove:armv5 = "eigen"
 
 # Adds deep learning library for AI Framework
-PACKAGECONFIG:append = "${@bb.utils.contains('DISTRO_FEATURES', 'aiframework', ' opencl dnn text', '', d)}"
+PACKAGECONFIG:append = "${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', ' opencl dnn text', '', d)}"
 
 # http://caprica.lgsvl.com:8080/Errors/Details/1447234
 VIRTUAL-RUNTIME_bash ?= "bash"
