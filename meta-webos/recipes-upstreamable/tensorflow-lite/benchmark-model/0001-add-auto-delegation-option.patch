@@ -137,23 +137,23 @@ index 1d517b77138..0afa7817879 100644
 +    aif::AccelerationPolicyManager apm;
 +    std::string acceleration_policy = params_.Get<std::string>("ad_policy");
 +    if (acceleration_policy == "CPUOnly") {
-+      apm.SetPolicy(aif::AccelerationPolicyManager::kCPUOnly);
++      apm.setPolicy(aif::AccelerationPolicyManager::kCPUOnly);
 +    } else if (acceleration_policy == "MaximumPrecision") {
-+      apm.SetPolicy(aif::AccelerationPolicyManager::kMaximumPrecision);
++      apm.setPolicy(aif::AccelerationPolicyManager::kMaximumPrecision);
 +    } else if (acceleration_policy == "MinimumLatency") {
-+      apm.SetPolicy(aif::AccelerationPolicyManager::kMinimumLatency);
++      apm.setPolicy(aif::AccelerationPolicyManager::kMinimumLatency);
 +    } else if (acceleration_policy == "EnableLoadBalancing") {
-+      apm.SetPolicy(aif::AccelerationPolicyManager::kEnableLoadBalancing);
-+      apm.SetCPUFallbackPercentage(
++      apm.setPolicy(aif::AccelerationPolicyManager::kEnableLoadBalancing);
++      apm.setCPUFallbackPercentage(
 +                      params_.Get<int32_t>("ad_cpu_fallback_percentage"));
 +    } else if (acceleration_policy == "PytorchModelGPU") {
-+      apm.SetPolicy(aif::AccelerationPolicyManager::kPytorchModelGPU);
-+      apm.SetCPUFallbackPercentage(
++      apm.setPolicy(aif::AccelerationPolicyManager::kPytorchModelGPU);
++      apm.setCPUFallbackPercentage(
 +                      params_.Get<int32_t>("ad_cpu_fallback_percentage"));
 +    } else {
 +      TFLITE_LOG(INFO) << "Please input valid auto delegation policy.";
 +    }
-+    ads.SelectDelegate(*interpreter_, &apm);
++    ads.selectDelegate(*interpreter_, apm);
 +  } else {
 +    TF_LITE_ENSURE_STATUS(ApplyProvidedDelegates());
 +  }

@@ -7,14 +7,14 @@ SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-    file://oss-pkg-info.yaml;md5=e9325f9b6b90063538bfeda1635999ed \
+    file://oss-pkg-info.yaml;md5=a926aa5bdc4e3096f07afb7c53432c1a \
 "
 
-WEBOS_VERSION = "1.0.0-26_645b8aad1044376dcd464d4a5b1e664ca4ec9e39"
+WEBOS_VERSION = "1.0.0-31_15826dade14fcf4523e06d90bb62680dd3e17ce5"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r7"
+PR = "r8"
 S = "${WORKDIR}/git"
 
 inherit cmake

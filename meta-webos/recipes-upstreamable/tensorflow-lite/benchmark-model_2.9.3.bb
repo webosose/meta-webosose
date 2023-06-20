@@ -4,7 +4,7 @@ require tensorflow-lite_2.9.3.inc
 
 inherit pkgconfig
 
-PR = "r2"
+PR = "r3"
 
 DEPENDS += " \
     tensorflow-lite \
