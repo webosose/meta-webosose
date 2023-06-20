@@ -23,7 +23,7 @@ inherit webos_public_repo
 WEBOS_REPO_NAME = "gst-plugins-webos"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-WEBOS_VERSION = "1.18.2-5_84ad839588752cbf240f2f9a4d707b0699cc1af5"
+WEBOS_VERSION = "1.18.2-6_7d108f95b8a6d7772b31fe9e07e05a2401c220e2"
 
 EXTRA_OEMESON = "\
     -Ddoc=disabled \
