@@ -11,6 +11,10 @@ require conf/distro/include/webos-icecc-components-exclusion.inc
 require conf/distro/include/webos-localization-locales.inc
 require conf/distro/include/webos-sota.inc
 
+# Set default component author and rp maintainer
+AUTHOR ?= "Unspecified"
+WEBOS_RP_MAINTAINER ?= "Unspecified"
+
 # Disable building of static libraries
 require conf/distro/include/no-static-libs.inc
 
@@ -435,7 +439,13 @@ FORTRAN:forcevariable:webos = ",fortran"
 # Qt major version to use
 QT_VERSION ?= "6"
 
+# Add author and rp maintainer to package metadata
+# PACKAGE_ADD_{AUTHOR,RPMAINTAINER}_METADATA is set by pkg_add_extra_metadata handler in webos_base.bbclass
+PACKAGE_ADD_AUTHOR_METADATA ?= "${AUTHOR}"
+PACKAGE_ADD_RPMAINTAINER_METADATA ?= "${WEBOS_RP_MAINTAINER}"
+PACKAGE_ADD_METADATA = "Author: ${PACKAGE_ADD_AUTHOR_METADATA}\nRP-Maintainer: ${PACKAGE_ADD_RPMAINTAINER_METADATA}"
+
 # Add recipes information to package metadata
 # PACKAGE_ADD_RECIPES_METADATA is set by pkg_add_extra_metadata handler in webos_base.bbclass
 PACKAGE_ADD_RECIPES_METADATA ?= ""
-PACKAGE_ADD_METADATA = "${PACKAGE_ADD_RECIPES_METADATA}"
+PACKAGE_ADD_METADATA .= "\n${PACKAGE_ADD_RECIPES_METADATA}"

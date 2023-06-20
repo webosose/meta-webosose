@@ -24,7 +24,7 @@ python create_pkg_dependency_data () {
     opkg_info_path = initOpkgInfoFromIpkConf()
 
     def getInfo(pkg, key):
-        key_match_val=dict({'recipe': 'Recipes', 'license': 'License', 'section': 'Section'})
+        key_match_val=dict({'recipe': 'Recipes', 'license': 'License', 'section': 'Section', 'author': 'Author', 'rp_maintainer': 'RP-Maintainer', 'description': 'Description'})
         pkg_control = os.path.join(opkg_info_path, f'{pkg}.control')
         if not os.path.exists(pkg_control):
             bb.warn(f"[WARN] There isn\'t {pkg}.control, couldn\'t get {key} of {pkg}")
@@ -66,6 +66,7 @@ python create_pkg_dependency_data () {
             output[pkg]["rprovides"].extend(val["provs"])
         else:
             output[pkg]={"requires":val["deps"],"requiredby":[],"rprovides":val["provs"]}
+        output[pkg].update({"description":getInfo(pkg,'description')})
         output[pkg].update({"version":val["ver"]})
         output[pkg].update({"arch":val["arch"]})
         output[pkg].update({"ipk":val["filename"]})
@@ -73,18 +74,20 @@ python create_pkg_dependency_data () {
         output[pkg]['recipe'] = getInfo(pkg,'recipe').split()
         output[pkg]['license'] = getInfo(pkg,'license')
         output[pkg]['section'] = getInfo(pkg,'section')
+        output[pkg]['author'] = getInfo(pkg,'author')
+        output[pkg]['rp_maintainer'] = getInfo(pkg,'rp_maintainer')
         output[pkg]['install_file'] = getInstall_files(pkg)
         for dep in val["deps"]:
             if '[REC]' in dep:
                 if output.get(dep.split()[0]):
                     output[dep.split()[0]]["requiredby"].append(pkg+' [REC]')
                 else:
-                    output[dep.split()[0]]={"requires":[],"requiredby":[pkg+' [REC]'],"rprovides":[],"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"install_file":''}
+                    output[dep.split()[0]]={"requires":[],"requiredby":[pkg+' [REC]'],"rprovides":[],"description":'',"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"author":'',"rp_maintainer":'',"install_file":''}
             else:
                 if output.get(dep):
                     output[dep]["requiredby"].append(pkg)
                 else:
-                    output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"install_file":''}
+                    output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"description":'',"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"author":'',"rp_maintainer":'',"install_file":''}
 
     file=open(os.path.join(d.getVar('IMGDEPLOYDIR'),'{}-dependency.json'.format(d.getVar('IMAGE_BASENAME'))),'w')
     file.write(json.dumps(dict(sorted(output.items())), indent='\t'))

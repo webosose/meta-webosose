@@ -35,6 +35,8 @@ python do_write_bom_data() {
     jsondata["recipe"] = d.getVar("PN")
     jsondata["file"] = d.getVar("FILE")[len(d.getVar("TOPDIR")):]
     jsondata["arch"] = d.getVar("PACKAGE_ARCH")
+    jsondata["author"] = d.getVar("AUTHOR")
+    jsondata["rp_maintainer"] = d.getVar("WEBOS_RP_MAINTAINER")
     license = d.getVar("LICENSE")
     license_flags = d.getVar("LICENSE_FLAGS")
     packages = d.getVar("PACKAGES")
@@ -235,4 +237,8 @@ python pkg_add_extra_metadata() {
             extra_meta += ' ' + os.path.relpath(file, d.getVar('TOPDIR'))
 
     d.setVar('PACKAGE_ADD_RECIPES_METADATA', extra_meta)
+
+    # Remove email address from author and rp maintainer
+    d.setVar('PACKAGE_ADD_AUTHOR_METADATA', re.sub(' <.+@.+>', '', d.getVar('AUTHOR')))
+    d.setVar('PACKAGE_ADD_RPMAINTAINER_METADATA', re.sub(' <.+@.+>', '', d.getVar('WEBOS_RP_MAINTAINER')))
 }
