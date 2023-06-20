@@ -4,10 +4,11 @@ DESCRIPTION = "Components for diagnostics added to webOS"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r0"
+PR = "r2"
 
 inherit packagegroup
 inherit features_check
+inherit webos_machine_impl_dep
 
 REQUIRED_DISTRO_FEATURES = "webos-diagnostics"
 
@@ -19,4 +20,9 @@ RDEPENDS:${PN} = " \
     pmlogctl \
     pmlogdaemon \
     ${VIRTUAL-RUNTIME_event-monitor-network} \
+"
+
+# Add to hardware only
+RDEPENDS:${PN}:append:hardware = " \
+    webos-fluentbit-plugins \
 "

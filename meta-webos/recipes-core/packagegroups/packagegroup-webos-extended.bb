@@ -79,14 +79,12 @@ RDEPENDS:${PN} = " \
     configurator \
     event-monitor \
     filecache \
-    fluentbit \
     luna-downloadmgr \
     luna-init \
     nodejs-module-webos-service \
     pacrunner \
     qml-app-components \
     sleepd \
-    webos-fluentbit-plugins \
     webos-fontconfig-files \
     webos-nettools \
     ${VIRTUAL-RUNTIME_appinstalld} \
