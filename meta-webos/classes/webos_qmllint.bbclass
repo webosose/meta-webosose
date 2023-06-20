@@ -19,7 +19,7 @@ get_qmllint_options() {
             options=""
         else
             version=$(${STAGING_DIR_NATIVE}${OE_QMAKE_PATH_QT_BINS}/qmllint -v | awk '{print $2}')
-            version_check=$(echo "${version}\n6.5.0" | sort -V | head -n 1)
+            version_check=$(printf "${version}\n6.5.0" | sort -V | head -n 1)
             if [ "${version_check}" != "6.5.0" ]; then
                 # older than 6.5.0
                 options=" \
