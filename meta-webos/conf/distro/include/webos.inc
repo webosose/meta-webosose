@@ -434,3 +434,8 @@ FORTRAN:forcevariable:webos = ",fortran"
 
 # Qt major version to use
 QT_VERSION ?= "6"
+
+# Add recipes information to package metadata
+# PACKAGE_ADD_RECIPES_METADATA is set by pkg_add_extra_metadata handler in webos_base.bbclass
+PACKAGE_ADD_RECIPES_METADATA ?= ""
+PACKAGE_ADD_METADATA = "${PACKAGE_ADD_RECIPES_METADATA}"

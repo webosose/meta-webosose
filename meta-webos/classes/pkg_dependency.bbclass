@@ -24,7 +24,7 @@ python create_pkg_dependency_data () {
     opkg_info_path = initOpkgInfoFromIpkConf()
 
     def getInfo(pkg, key):
-        key_match_val=dict({'recipe': 'Source', 'license': 'License', 'section': 'Section'})
+        key_match_val=dict({'recipe': 'Recipes', 'license': 'License', 'section': 'Section'})
         pkg_control = os.path.join(opkg_info_path, f'{pkg}.control')
         if not os.path.exists(pkg_control):
             bb.warn(f"[WARN] There isn\'t {pkg}.control, couldn\'t get {key} of {pkg}")
@@ -70,7 +70,7 @@ python create_pkg_dependency_data () {
         output[pkg].update({"arch":val["arch"]})
         output[pkg].update({"ipk":val["filename"]})
 
-        output[pkg]['recipe'] = getInfo(pkg,'recipe')
+        output[pkg]['recipe'] = getInfo(pkg,'recipe').split()
         output[pkg]['license'] = getInfo(pkg,'license')
         output[pkg]['section'] = getInfo(pkg,'section')
         output[pkg]['install_file'] = getInstall_files(pkg)
@@ -87,7 +87,7 @@ python create_pkg_dependency_data () {
                     output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"install_file":''}
 
     file=open(os.path.join(d.getVar('IMGDEPLOYDIR'),'{}-dependency.json'.format(d.getVar('IMAGE_BASENAME'))),'w')
-    file.write(json.dumps(dict(sorted(output.items()))))
+    file.write(json.dumps(dict(sorted(output.items())), indent='\t'))
     file.close()
 }
 

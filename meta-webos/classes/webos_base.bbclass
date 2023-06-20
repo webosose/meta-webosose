@@ -35,7 +35,6 @@ python do_write_bom_data() {
     jsondata["recipe"] = d.getVar("PN")
     jsondata["file"] = d.getVar("FILE")[len(d.getVar("TOPDIR")):]
     jsondata["arch"] = d.getVar("PACKAGE_ARCH")
-    jsondata["author"] = d.getVar("AUTHOR")
     license = d.getVar("LICENSE")
     license_flags = d.getVar("LICENSE_FLAGS")
     packages = d.getVar("PACKAGES")
@@ -217,3 +216,23 @@ def write_compile_option(d):
         with open(result_file,'w') as rfp:
             json.dump(common_options,rfp)
         fp.close()
+
+# BBINCLUDED is changed after RecipeParsed fired so we need to refer it with event handler.
+# See the bitbake/lib/bb/parse/ast.py
+addhandler pkg_add_extra_metadata
+pkg_add_extra_metadata[eventmask] = "bb.event.RecipeParsed"
+python pkg_add_extra_metadata() {
+    pn             = d.getVar('BPN')
+    extra_meta     = 'Recipes: {}'.format(os.path.relpath(d.getVar('FILE'), d.getVar('TOPDIR')))
+    bbappend_files = d.getVar('BBINCLUDED').split()
+    # If recipe name is aa, we need to match files like aa.bbappend and aa_1.1.bbappend
+    # Files like aa1.bbappend or aa1_1.1.bbappend must be excluded.
+    import re
+    bbappend_re = re.compile( r".*/%s_[^/]*\.bbappend$" % re.escape(pn))
+    bbappend_re1 = re.compile( r".*/%s\.bbappend$" % re.escape(pn))
+    for file in bbappend_files:
+        if bbappend_re.match(file) or bbappend_re1.match(file):
+            extra_meta += ' ' + os.path.relpath(file, d.getVar('TOPDIR'))
+
+    d.setVar('PACKAGE_ADD_RECIPES_METADATA', extra_meta)
+}
