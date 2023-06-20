@@ -1,0 +1,64 @@
+From 43c56883871eba1e31ea9d85d87ed77ca746f18b Mon Sep 17 00:00:00 2001
+From: "wonsang.ryu" <wonsang.ryu@lge.com>
+Date: Wed, 5 Apr 2023 09:32:51 +0900
+Subject: [PATCH] Apply inputs.socket_listener plugin for sdkagent
+
+---
+Upstream-Status: Pending
+
+ etc/telegraf.conf         | 8 ++++----
+ plugins/inputs/all/all.go | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/etc/telegraf.conf b/etc/telegraf.conf
+index 16814c46e..ff23604ad 100644
+--- a/etc/telegraf.conf
++++ b/etc/telegraf.conf
+@@ -112,11 +112,11 @@
+   ## urls will be written to each interval.
+   # urls = ["unix:///var/run/influxdb.sock"]
+   # urls = ["udp://127.0.0.1:8089"]
+-  # urls = ["http://127.0.0.1:8086"]
++  urls = ["http://127.0.0.1:8086"]
+ 
+   ## The target database for metrics; will be created as needed.
+   ## For UDP url endpoint database needs to be configured on server side.
+-  # database = "telegraf"
++  database = "telegraf"
+ 
+   ## The value of this tag will be used to determine the database.  If this
+   ## tag is not set the 'database' option is used as the default.
+@@ -8664,7 +8664,7 @@
+ 
+ 
+ # # Generic socket listener capable of handling multiple socket types.
+-# [[inputs.socket_listener]]
++[[inputs.socket_listener]]
+ #   ## URL to listen on
+ #   # service_address = "tcp://:8094"
+ #   # service_address = "tcp://127.0.0.1:http"
+@@ -8675,7 +8675,7 @@
+ #   # service_address = "udp4://:8094"
+ #   # service_address = "udp6://:8094"
+ #   # service_address = "unix:///tmp/telegraf.sock"
+-#   # service_address = "unixgram:///tmp/telegraf.sock"
++    service_address = "unixgram:///tmp/telegraf.sock"
+ #
+ #   ## Change the file mode bits on unix sockets.  These permissions may not be
+ #   ## respected by some platforms, to safely restrict write permissions it is best
+diff --git a/plugins/inputs/all/all.go b/plugins/inputs/all/all.go
+index 4f20df83b..e4bbaa7f9 100644
+--- a/plugins/inputs/all/all.go
++++ b/plugins/inputs/all/all.go
+@@ -172,7 +172,7 @@ import (
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/snmp"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/snmp_legacy"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/snmp_trap"
+-//	_ "github.com/influxdata/telegraf/plugins/inputs/socket_listener"
++	_ "github.com/influxdata/telegraf/plugins/inputs/socket_listener"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/solr"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/sql"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/sqlserver"
+-- 
+2.25.1
+

@@ -1,7 +1,7 @@
 From 69422d2c11190e7a6eb3b28794c7cf3508d0b58b Mon Sep 17 00:00:00 2001
 From: "wonsang.ryu" <wonsang.ryu@lge.com>
 Date: Mon, 26 Sep 2022 16:01:32 +0900
-Subject: [PATCH 2/2] Remove unused plugins for v1.21.4
+Subject: [PATCH] Remove unused plugins for v1.21.4
 
 ---
 Upstream-Status: Pending
