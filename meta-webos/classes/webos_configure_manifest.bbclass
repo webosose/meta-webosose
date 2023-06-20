@@ -205,7 +205,7 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
 
             role_file = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_rolesdir", app_info["id"], ".json")
             if role_file:
-                manifest["roleFile"] = [role_file]
+                manifest["roleFiles"] = [role_file]
 
                 provides = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_apipermissionsdir", app_info["id"], ".json")
                 if provides: manifest["apiPermissionFiles"]= [provides]
@@ -214,6 +214,23 @@ def webos_configure_manifest_application_from_appinfo(d, app_info_file):
                 if requires: manifest["clientPermissionFiles"] = [requires]
 
                 groups = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_groupsdir", app_info["id"], ".json")
+                if groups: manifest["groupsFiles"] = [groups]
+
+                return manifest
+
+            # Retry with .app.json as webos_app_generate_security_files.bbclass is supposed to
+            # generate roles and permissions file with .app.json suffix.
+            role_file = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_rolesdir", app_info["id"], ".app.json")
+            if role_file:
+                manifest["roleFiles"] = [role_file]
+
+                provides = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_apipermissionsdir", app_info["id"], ".app.json")
+                if provides: manifest["apiPermissionFiles"]= [provides]
+
+                requires = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_permissionsdir", app_info["id"], ".app.json")
+                if requires: manifest["clientPermissionFiles"] = [requires]
+
+                groups = webos_configure_manifest_find_file_by_name_or_pn(d, "webos_sysbus_groupsdir", app_info["id"], ".app.json")
                 if groups: manifest["groupsFiles"] = [groups]
 
                 return manifest
