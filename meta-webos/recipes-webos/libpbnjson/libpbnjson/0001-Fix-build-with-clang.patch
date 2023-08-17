@@ -1,0 +1,117 @@
+From 0f6bc77a8d7d5deb6d0d1f5a3e17d08d1eda8393 Mon Sep 17 00:00:00 2001
+From: Vlad Mukulov <vladislav.mukulov@lge.com>
+Date: Fri, 12 May 2023 11:59:16 +0300
+Subject: [PATCH] Fix build with clang
+
+:Release Notes:
+Fixed build with clang
+
+:Detailed Notes:
+Some of components should be built with clang.
+This changes adapts to clang build.
+
+:Testing Performed:
+Only build tested
+
+:QA Notes:
+
+:Issues Addressed:
+[WRP-8720] Adapt to chromium 108 and prepare updated patches
+
+Change-Id: I3d295b1f97774aca25ed9640ae1cf61512e5d72a
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webos/libpbnjson/+/354290 Fix build with clang]
+
+ src/pbnjson_c/CMakeLists.txt   | 19 +++++++++++++------
+ src/pbnjson_cxx/CMakeLists.txt | 16 ++++++++++++----
+ 2 files changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/src/pbnjson_c/CMakeLists.txt b/src/pbnjson_c/CMakeLists.txt
+index 557d75c..acd1205 100644
+--- a/src/pbnjson_c/CMakeLists.txt
++++ b/src/pbnjson_c/CMakeLists.txt
+@@ -62,8 +62,15 @@ add_library(
+ 	)
+ set_target_properties(jvalue PROPERTIES DEFINE_SYMBOL PJSON_SHARED)
+ 
++option(WEBOS_CLANG_BUILD "Build with clang" OFF)
++if(${WEBOS_CLANG_BUILD})
++  set(CLANG_EXT "_clang")
++else()
++  set(CLANG_EXT "")
++endif()
++
+ add_library(
+-	pbnjson_c
++	pbnjson_c${CLANG_EXT}
+ 	SHARED
+ 	jgen_stream.c
+ 	jvalue_tostring.c
+@@ -76,7 +83,7 @@ add_library(
+ 	$<TARGET_OBJECTS:json_selectors>
+ 	)
+ target_link_libraries(
+-	pbnjson_c
++	pbnjson_c${CLANG_EXT}
+ 	jvalue
+ 	schema_validation
+ 	${GLIB2_LDFLAGS}
+@@ -85,10 +92,10 @@ target_link_libraries(
+ 	)
+ 
+ if(UNIX)
+-	target_link_libraries(pbnjson_c m)
++	target_link_libraries(pbnjson_c${CLANG_EXT} m)
+ endif()
+ 
+-set_target_properties(pbnjson_c PROPERTIES DEFINE_SYMBOL PJSON_SHARED)
++set_target_properties(pbnjson_c${CLANG_EXT} PROPERTIES DEFINE_SYMBOL PJSON_SHARED)
+ 
+ include_directories(
+ 	${API_HEADERS}
+@@ -105,10 +112,10 @@ if(WITH_VERBOSE_TRACE)
+ 	add_definitions(-DPJSON_LOG_TRACE=1)
+ 	add_definitions(-DPJSON_SCHEMA_TRACE=3)
+ endif()
+-add_definitions(-DLIBRARY_NAME=pbnjson_c)
++add_definitions(-DLIBRARY_NAME=pbnjson_c${CLANG_EXT})
+ add_definitions(-DPJSON_EXPORT)
+ 
+-webos_build_library(NAME pbnjson_c)
++webos_build_library(NAME pbnjson_c${CLANG_EXT})
+ webos_build_pkgconfig(files/pkgconfig/pbnjson_c)
+ 
+ if(WEBOS_CONFIG_BUILD_TESTS)
+diff --git a/src/pbnjson_cxx/CMakeLists.txt b/src/pbnjson_cxx/CMakeLists.txt
+index 5b641f0..9d71245 100644
+--- a/src/pbnjson_cxx/CMakeLists.txt
++++ b/src/pbnjson_cxx/CMakeLists.txt
+@@ -26,10 +26,18 @@ endif()
+ add_definitions(-DPJSONCXX_SHARED)
+ add_definitions(-DPJSON_SHARED)
+ add_definitions(-DPJSONCXX_EXPORT)
+-add_definitions(-DLIBRARY_NAME=pbnjson_cpp)
++
++option(WEBOS_CLANG_BUILD "Build with clang" OFF)
++if(${WEBOS_CLANG_BUILD})
++  set(CLANG_EXT "_clang")
++else()
++  set(CLANG_EXT "")
++endif()
++
++add_definitions(-DLIBRARY_NAME=pbnjson_cpp${CLANG_EXT})
+     
+-add_library(pbnjson_cpp SHARED ${SHARED_SOURCE})
+-target_link_libraries(pbnjson_cpp pbnjson_c)
++add_library(pbnjson_cpp${CLANG_EXT} SHARED ${SHARED_SOURCE})
++target_link_libraries(pbnjson_cpp${CLANG_EXT} pbnjson_c${CLANG_EXT})
+ 
+ include_directories(${API_HEADERS}
+                     ${API_HEADERS}/pbnjson
+@@ -41,5 +49,5 @@ include_directories(${API_HEADERS}
+ 
+ 
+ # All of the headers are installed by pbnjson_c
+-webos_build_library(NAME pbnjson_cpp NOHEADERS)
++webos_build_library(NAME pbnjson_cpp${CLANG_EXT} NOHEADERS)
+ webos_build_pkgconfig(files/pkgconfig/pbnjson_cpp)
