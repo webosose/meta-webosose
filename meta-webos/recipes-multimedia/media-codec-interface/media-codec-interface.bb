@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2023 LG Electronics, Inc.
 
 SUMMARY = "Media codec interface for webOS"
-AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
+AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"
 SECTION = "webos/media"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \

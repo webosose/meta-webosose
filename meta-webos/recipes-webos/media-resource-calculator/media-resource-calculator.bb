@@ -1,7 +1,7 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
 DESCRIPTION = "Media Resource Calculator for webOS"
-AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
+AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \

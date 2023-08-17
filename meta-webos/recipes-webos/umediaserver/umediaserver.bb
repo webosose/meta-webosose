@@ -1,7 +1,7 @@
 # Copyright (c) 2013-2023 LG Electronics, Inc.
 
 SUMMARY = "webOS uMediaserver daemon and utilities"
-AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
+AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"
 SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"
