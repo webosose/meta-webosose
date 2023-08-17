@@ -1,21 +1,21 @@
-From a48dfeeb3e095adb8533314983cfa76ff2719170 Mon Sep 17 00:00:00 2001
+From 95ce39dbc93dcf47586295269e95074b0c3a3e4e Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Tue, 18 Aug 2020 03:28:32 -0700
-Subject: [PATCH 2/3] gator_main.c, gator_backtrace.c: fix build with linux-5.0
- and newer
+Subject: [PATCH] gator_main.c, gator_backtrace.c: fix build with linux-5.0 and
+ newer
 
 Signed-off-by: Martin Jansa <martin.jansa@lge.com>
 ---
 Upstream-Status: Pending
 
- gator_backtrace.c | 5 +++++
- gator_main.c      | 8 +++++++-
+ driver/gator_backtrace.c | 5 +++++
+ driver/gator_main.c      | 8 +++++++-
  2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/gator_backtrace.c b/gator_backtrace.c
+diff --git a/driver/gator_backtrace.c b/driver/gator_backtrace.c
 index 92b2860..37c1dc3 100644
---- a/gator_backtrace.c
-+++ b/gator_backtrace.c
+--- a/driver/gator_backtrace.c
++++ b/driver/gator_backtrace.c
 @@ -257,7 +257,12 @@ static void arm_backtrace_eabi(int cpu, struct pt_regs *const regs, unsigned int
          return;
  
@@ -29,10 +29,10 @@ index 92b2860..37c1dc3 100644
                  __copy_from_user_inatomic(&bufcurr, curr, sizeof(struct stack_frame_eabi))) {
              return;
          }
-diff --git a/gator_main.c b/gator_main.c
-index 44c3cb2..66ef75d 100644
---- a/gator_main.c
-+++ b/gator_main.c
+diff --git a/driver/gator_main.c b/driver/gator_main.c
+index abe52ab..67de98e 100644
+--- a/driver/gator_main.c
++++ b/driver/gator_main.c
 @@ -782,6 +782,9 @@ static void gator_summary(void)
  {
      u64 timestamp, uptime;
@@ -56,6 +56,3 @@ index 44c3cb2..66ef75d 100644
  #endif
      uptime = timespec_to_ns(&ts);
  
--- 
-2.17.1
-

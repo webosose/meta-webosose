@@ -1,0 +1,53 @@
+From 619b6597ff17adfe9a42c7609fc66d2f075a7a67 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 24 Jul 2023 05:40:05 +0000
+Subject: [PATCH] gator_pmu: fix -Waddress
+
+* fixes:
+In file included from   driver/gator_main.c:257:
+  driver/gator_pmu.c: In function 'gator_find_cpu_by_pmu_name':
+  driver/gator_pmu.c:74:34: warning: the comparison will always evaluate as 'true' for the address of 'pmnc_name' will never be NULL [-Waddress]
+   74 |         if (gator_cpu->pmnc_name != NULL &&
+      |                                  ^~
+In file included from   driver/gator_main.c:38:
+  driver/gator.h:35:10: note: 'pmnc_name' declared here
+   35 |     char pmnc_name[MAXSIZE_CORE_NAME];
+      |          ^~~~~~~~~
+  driver/gator_pmu.c: In function 'gator_find_uncore_pmu':
+  driver/gator_pmu.c:93:35: warning: the comparison will always evaluate as 'true' for the address of 'pmnc_name' will never be NULL [-Waddress]
+   93 |         if (uncore_pmu->pmnc_name != NULL && strcasecmp(uncore_pmu->pmnc_name, name) == 0)
+      |                                   ^~
+  driver/gator_pmu.c:28:10: note: 'pmnc_name' declared here
+   28 |     char pmnc_name[MAXSIZE_CORE_NAME];
+      |          ^~~~~~~~~
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_pmu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/driver/gator_pmu.c b/driver/gator_pmu.c
+index e449926..5e31699 100644
+--- a/driver/gator_pmu.c
++++ b/driver/gator_pmu.c
+@@ -71,8 +71,7 @@ static const struct gator_cpu *gator_find_cpu_by_pmu_name(const char *const name
+     const struct gator_cpu *gator_cpu;
+ 
+     list_for_each_entry(gator_cpu, &gator_cpus, list) {
+-        if (gator_cpu->pmnc_name != NULL &&
+-            /* Do the names match exactly? */
++        if (/* Do the names match exactly? */
+             (strcasecmp(gator_cpu->pmnc_name, name) == 0 ||
+              /* Do these names match but have the old vs new prefix? */
+              ((strncasecmp(name, OLD_PMU_PREFIX, sizeof(OLD_PMU_PREFIX) - 1) == 0 &&
+@@ -90,7 +89,7 @@ static const struct uncore_pmu *gator_find_uncore_pmu(const char *const name)
+     const struct uncore_pmu *uncore_pmu;
+ 
+     list_for_each_entry(uncore_pmu, &uncore_pmus, list) {
+-        if (uncore_pmu->pmnc_name != NULL && strcasecmp(uncore_pmu->pmnc_name, name) == 0)
++        if (strcasecmp(uncore_pmu->pmnc_name, name) == 0)
+             return uncore_pmu;
+     }
+ 

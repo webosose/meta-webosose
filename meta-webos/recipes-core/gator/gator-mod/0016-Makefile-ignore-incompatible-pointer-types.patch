@@ -1,0 +1,439 @@
+From f2e0eac757140a8f1f76c063818ca87f0981d255 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 24 Jul 2023 06:15:03 +0000
+Subject: [PATCH] Makefile: ignore incompatible-pointer-types
+
+* with kernel 6.4 with:
+  https://github.com/torvalds/linux/commit/f4bf3ca2e5cba655824b6e0893a98dfb33ed24e5
+  the build triggers:
+  TOPDIR/BUILD/work-shared/qemux86-64/kernel-source/include/trace/events/irq.h:193:17: error: passing argument 2 of '(({...}))' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+* fixes:
+  http://gecko.lge.com:8000/Errors/Details/640751
+
+NOTE: make -j 70 -l 140 KERNEL_SRC=kernel-source PYTHON=python3 CONFIG_GATOR=m KERNEL_PATH=kernel-source KERNEL_VERSION=6.4.3-yocto-standard CC=x86_64-webos-linux-gcc  -fuse-ld=bfd -fcanon-prefix-map  -fmacro-prefix-map=  driver=/usr/src/debug/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0  -fdebug-prefix-map=  driver=/usr/src/debug/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0  -fmacro-prefix-map=  driver=/usr/src/debug/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0  -fdebug-prefix-map=  driver=/usr/src/debug/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0  -fdebug-prefix-map=/OE/lge/build/webos/nanbield/BUILD/work/qemux86_64-webos-linux/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0/recipe-sysroot=  -fmacro-prefix-map=/OE/lge/build/webos/nanbield/BUILD/work/qemux86_64-webos-linux/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0/recipe-sysroot=  -fdebug-prefix-map=/OE/lge/build/webos/nanbield/BUILD/work/qemux86_64-webos-linux/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0/recipe-sysroot-native=  -fdebug-prefix-map=kernel-source=/usr/src/kernel -fdebug-prefix-map=kernel-build-artifacts=/usr/src/kernel LD=x86_64-webos-linux-ld.bfd  AR=x86_64-webos-linux-ar  OBJCOPY=x86_64-webos-linux-objcopy  STRIP=x86_64-webos-linux-strip  O=kernel-build-artifacts KBUILD_EXTRA_SYMBOLS=
+make -C kernel-source M=  driver
+make[1]: Entering directory 'kernel-source'
+  CC [M]    driver/gator_main.o
+  CC [M]    driver/gator_events_irq.o
+In file included from kernel-source/include/trace/events/irq.h:8,
+                 from   driver/gator_events_irq.c:11:
+kernel-source/include/trace/events/irq.h:191:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:252:39: note: in definition of macro '__DECLARE_TRACE'
+  252 |         extern int __traceiter_##name(data_proto);                      \
+      |                                       ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:191:9: note: in expansion of macro 'TP_PROTO'
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:191:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:255:41: note: in definition of macro '__DECLARE_TRACE'
+  255 |         static inline void trace_##name(proto)                          \
+      |                                         ^~~~~
+kernel-source/include/linux/tracepoint.h:427:31: note: in expansion of macro 'PARAMS'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |                               ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:191:9: note: in expansion of macro 'TP_PROTO'
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h: In function 'trace_tasklet_entry':
+kernel-source/include/trace/events/irq.h:193:17: error: passing argument 2 of '(({...}))' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  193 |         TP_ARGS(t, func)
+      |                 ^
+      |                 |
+      |                 struct tasklet_struct *
+kernel-source/include/linux/tracepoint.h:173:61: note: in definition of macro '__DO_TRACE_CALL'
+  173 |                         static_call(tp_func_##name)(__data, args);      \
+      |                                                             ^~~~
+kernel-source/include/linux/tracepoint.h:217:39: note: in expansion of macro 'TP_ARGS'
+  217 |                 __DO_TRACE_CALL(name, TP_ARGS(args));                   \
+      |                                       ^~~~~~~
+kernel-source/include/linux/tracepoint.h:258:25: note: in expansion of macro '__DO_TRACE'
+  258 |                         __DO_TRACE(name,                                \
+      |                         ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:259:33: note: in expansion of macro 'TP_ARGS'
+  259 |                                 TP_ARGS(args),                          \
+      |                                 ^~~~~~~
+kernel-source/include/linux/tracepoint.h:427:9: note: in expansion of macro '__DECLARE_TRACE'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |         ^~~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:427:46: note: in expansion of macro 'PARAMS'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |                                              ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:44: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                                            ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:193:9: note: in expansion of macro 'TP_ARGS'
+  193 |         TP_ARGS(t, func)
+      |         ^~~~~~~
+kernel-source/include/trace/events/irq.h:193:17: note: expected 'struct tasklet_struct *' but argument is of type 'struct tasklet_struct *'
+  193 |         TP_ARGS(t, func)
+      |                 ^
+kernel-source/include/linux/tracepoint.h:173:61: note: in definition of macro '__DO_TRACE_CALL'
+  173 |                         static_call(tp_func_##name)(__data, args);      \
+      |                                                             ^~~~
+kernel-source/include/linux/tracepoint.h:217:39: note: in expansion of macro 'TP_ARGS'
+  217 |                 __DO_TRACE_CALL(name, TP_ARGS(args));                   \
+      |                                       ^~~~~~~
+kernel-source/include/linux/tracepoint.h:258:25: note: in expansion of macro '__DO_TRACE'
+  258 |                         __DO_TRACE(name,                                \
+      |                         ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:259:33: note: in expansion of macro 'TP_ARGS'
+  259 |                                 TP_ARGS(args),                          \
+      |                                 ^~~~~~~
+kernel-source/include/linux/tracepoint.h:427:9: note: in expansion of macro '__DECLARE_TRACE'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |         ^~~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:427:46: note: in expansion of macro 'PARAMS'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |                                              ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:44: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                                            ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:193:9: note: in expansion of macro 'TP_ARGS'
+  193 |         TP_ARGS(t, func)
+      |         ^~~~~~~
+kernel-source/include/trace/events/irq.h: At top level:
+kernel-source/include/trace/events/irq.h:191:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:268:45: note: in definition of macro '__DECLARE_TRACE'
+  268 |         register_trace_##name(void (*probe)(data_proto), void *data)    \
+      |                                             ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:191:9: note: in expansion of macro 'TP_PROTO'
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:191:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:274:50: note: in definition of macro '__DECLARE_TRACE'
+  274 |         register_trace_prio_##name(void (*probe)(data_proto), void *data,\
+      |                                                  ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:191:9: note: in expansion of macro 'TP_PROTO'
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:191:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:281:47: note: in definition of macro '__DECLARE_TRACE'
+  281 |         unregister_trace_##name(void (*probe)(data_proto), void *data)  \
+      |                                               ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:191:9: note: in expansion of macro 'TP_PROTO'
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:191:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:287:53: note: in definition of macro '__DECLARE_TRACE'
+  287 |         check_trace_callback_type_##name(void (*cb)(data_proto))        \
+      |                                                     ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:189:1: note: in expansion of macro 'DEFINE_EVENT'
+  189 | DEFINE_EVENT(tasklet, tasklet_entry,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:191:9: note: in expansion of macro 'TP_PROTO'
+  191 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:205:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:252:39: note: in definition of macro '__DECLARE_TRACE'
+  252 |         extern int __traceiter_##name(data_proto);                      \
+      |                                       ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:205:9: note: in expansion of macro 'TP_PROTO'
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:205:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:255:41: note: in definition of macro '__DECLARE_TRACE'
+  255 |         static inline void trace_##name(proto)                          \
+      |                                         ^~~~~
+kernel-source/include/linux/tracepoint.h:427:31: note: in expansion of macro 'PARAMS'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |                               ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:205:9: note: in expansion of macro 'TP_PROTO'
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h: In function 'trace_tasklet_exit':
+kernel-source/include/trace/events/irq.h:207:17: error: passing argument 2 of '(({...}))' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  207 |         TP_ARGS(t, func)
+      |                 ^
+      |                 |
+      |                 struct tasklet_struct *
+kernel-source/include/linux/tracepoint.h:173:61: note: in definition of macro '__DO_TRACE_CALL'
+  173 |                         static_call(tp_func_##name)(__data, args);      \
+      |                                                             ^~~~
+kernel-source/include/linux/tracepoint.h:217:39: note: in expansion of macro 'TP_ARGS'
+  217 |                 __DO_TRACE_CALL(name, TP_ARGS(args));                   \
+      |                                       ^~~~~~~
+kernel-source/include/linux/tracepoint.h:258:25: note: in expansion of macro '__DO_TRACE'
+  258 |                         __DO_TRACE(name,                                \
+      |                         ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:259:33: note: in expansion of macro 'TP_ARGS'
+  259 |                                 TP_ARGS(args),                          \
+      |                                 ^~~~~~~
+kernel-source/include/linux/tracepoint.h:427:9: note: in expansion of macro '__DECLARE_TRACE'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |         ^~~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:427:46: note: in expansion of macro 'PARAMS'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |                                              ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:44: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                                            ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:207:9: note: in expansion of macro 'TP_ARGS'
+  207 |         TP_ARGS(t, func)
+      |         ^~~~~~~
+kernel-source/include/trace/events/irq.h:207:17: note: expected 'struct tasklet_struct *' but argument is of type 'struct tasklet_struct *'
+  207 |         TP_ARGS(t, func)
+      |                 ^
+kernel-source/include/linux/tracepoint.h:173:61: note: in definition of macro '__DO_TRACE_CALL'
+  173 |                         static_call(tp_func_##name)(__data, args);      \
+      |                                                             ^~~~
+kernel-source/include/linux/tracepoint.h:217:39: note: in expansion of macro 'TP_ARGS'
+  217 |                 __DO_TRACE_CALL(name, TP_ARGS(args));                   \
+      |                                       ^~~~~~~
+kernel-source/include/linux/tracepoint.h:258:25: note: in expansion of macro '__DO_TRACE'
+  258 |                         __DO_TRACE(name,                                \
+      |                         ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:259:33: note: in expansion of macro 'TP_ARGS'
+  259 |                                 TP_ARGS(args),                          \
+      |                                 ^~~~~~~
+kernel-source/include/linux/tracepoint.h:427:9: note: in expansion of macro '__DECLARE_TRACE'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |         ^~~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:427:46: note: in expansion of macro 'PARAMS'
+  427 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+      |                                              ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:44: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                                            ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:207:9: note: in expansion of macro 'TP_ARGS'
+  207 |         TP_ARGS(t, func)
+      |         ^~~~~~~
+kernel-source/include/trace/events/irq.h: At top level:
+kernel-source/include/trace/events/irq.h:205:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:268:45: note: in definition of macro '__DECLARE_TRACE'
+  268 |         register_trace_##name(void (*probe)(data_proto), void *data)    \
+      |                                             ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:205:9: note: in expansion of macro 'TP_PROTO'
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:205:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:274:50: note: in definition of macro '__DECLARE_TRACE'
+  274 |         register_trace_prio_##name(void (*probe)(data_proto), void *data,\
+      |                                                  ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:205:9: note: in expansion of macro 'TP_PROTO'
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:205:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:281:47: note: in definition of macro '__DECLARE_TRACE'
+  281 |         unregister_trace_##name(void (*probe)(data_proto), void *data)  \
+      |                                               ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:205:9: note: in expansion of macro 'TP_PROTO'
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+kernel-source/include/trace/events/irq.h:205:25: warning: 'struct tasklet_struct' declared inside parameter list will not be visible outside of this definition or declaration
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |                         ^~~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:287:53: note: in definition of macro '__DECLARE_TRACE'
+  287 |         check_trace_callback_type_##name(void (*cb)(data_proto))        \
+      |                                                     ^~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:429:25: note: in expansion of macro 'PARAMS'
+  429 |                         PARAMS(void *__data, proto))
+      |                         ^~~~~~
+kernel-source/include/linux/tracepoint.h:550:9: note: in expansion of macro 'DECLARE_TRACE'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |         ^~~~~~~~~~~~~
+kernel-source/include/linux/tracepoint.h:550:29: note: in expansion of macro 'PARAMS'
+  550 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+      |                             ^~~~~~
+kernel-source/include/trace/events/irq.h:203:1: note: in expansion of macro 'DEFINE_EVENT'
+  203 | DEFINE_EVENT(tasklet, tasklet_exit,
+      | ^~~~~~~~~~~~
+kernel-source/include/trace/events/irq.h:205:9: note: in expansion of macro 'TP_PROTO'
+  205 |         TP_PROTO(struct tasklet_struct *t, void *func),
+      |         ^~~~~~~~
+cc1: some warnings being treated as errors
+make[3]: *** [kernel-source/scripts/Makefile.build:252:   driver/gator_events_irq.o] Error 1
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/driver/Makefile b/driver/Makefile
+index 192707e..61b0034 100644
+--- a/driver/Makefile
++++ b/driver/Makefile
+@@ -89,6 +89,12 @@ clean-files := generated_gator_src_md5.h
+ OLD_BLOCK_RQ_COMPLETE := $(shell grep -A3 block_rq_complete $(KERNEL_SRC)/include/trace/events/block.h | grep nr_bytes -q; echo $$?)
+ EXTRA_CFLAGS += -DOLD_BLOCK_RQ_COMPLETE=$(OLD_BLOCK_RQ_COMPLETE)
+ 
++# https://github.com/torvalds/linux/commit/f4bf3ca2e5cba655824b6e0893a98dfb33ed24e5
++# from 6.4 kernel triggers:
++# TOPDIR/BUILD/work-shared/qemux86-64/kernel-source/include/trace/events/irq.h:193:17: error: passing argument 2 of '(({...}))' from incompatible pointer type [-Werror=incompatible-pointer-types]
++# http://gecko.lge.com:8000/Errors/Details/640751
++EXTRA_CFLAGS += -Wno-error=incompatible-pointer-types
++
+ gator-$(CONFIG_ARM) +=  gator_events_l2c-310.o
+ 
+ gator-$(CONFIG_ARM64) +=

@@ -1,0 +1,32 @@
+From e71da4ff78e944d47a31bd60aae70ac0fbd352bc Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 16:21:26 +0200
+Subject: [PATCH] gator_main.c: Use add_cpu() introduced in kernel 5.7
+
+Fixes:
+driver/gator_main.c:1469:17: error: implicit declaration of function 'cpu_up' [-Werror=implicit-function-declaration]
+
+cpu_up was replaced with add_cpu in 5.7 with:
+https://github.com/torvalds/linux/commit/33c3736ec88811b9b6f6ce2cc8967f6b97c3db5e
+---
+Upstream-Status: Pending
+
+ driver/gator_main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/driver/gator_main.c b/driver/gator_main.c
+index f3a67a9..028247e 100644
+--- a/driver/gator_main.c
++++ b/driver/gator_main.c
+@@ -1509,7 +1509,11 @@ static int __init gator_module_init(void)
+         for_each_present_cpu(cpu) {
+             if (!cpu_online(cpu)) {
+                 pr_notice("gator: Onlining cpu %i\n", cpu);
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0)
++                add_cpu(cpu);
++#else
+                 cpu_up(cpu);
++#endif
+             }
+         }
+     }

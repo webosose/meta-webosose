@@ -1,0 +1,49 @@
+From 86313cee25827629d1516ffb58b0b5c7047964ca Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 17:12:44 +0000
+Subject: [PATCH] gator_cookies.c: use mas_walk instead of vma->vm_next
+
+* vm_next was removed in kernel 6.1 with:
+  https://github.com/torvalds/linux/commit/763ecb035029f500d7e6dc99acd1ad299b7726a1
+
+* fixes:
+  driver/gator_cookies.c:442:50: error: 'struct vm_area_struct' has no member named 'vm_next'
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_cookies.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/driver/gator_cookies.c b/driver/gator_cookies.c
+index 257f816..275a353 100644
+--- a/driver/gator_cookies.c
++++ b/driver/gator_cookies.c
+@@ -439,7 +439,14 @@ static unsigned long get_address_cookie(int cpu, struct task_struct *task, unsig
+     if (!mm)
+         return cookie;
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
++    vma = find_vma(mm, addr);
++    struct maple_tree *mt = &vma->vm_mm->mm_mt;
++    MA_STATE(mas, mt, vma->vm_end, vma->vm_end);
++    do {
++#else
+     for (vma = find_vma(mm, addr); vma; vma = vma->vm_next) {
++#endif
+         if (addr < vma->vm_start || addr >= vma->vm_end)
+             continue;
+ 
+@@ -453,7 +460,11 @@ static unsigned long get_address_cookie(int cpu, struct task_struct *task, unsig
+         }
+ 
+         break;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
++    } while ((vma = mas_walk(&mas)) != NULL);
++#else
+     }
++#endif
+ 
+     if (!vma)
+         cookie = UNRESOLVED_COOKIE;

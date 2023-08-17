@@ -1,0 +1,46 @@
+From c74f30d025b7b000eb4b783400fb8de70e8615f0 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 17:27:50 +0000
+Subject: [PATCH] gator_cookies.c: update get_user_pages_remote macro for
+ >=5.9.0 and >=6.5.0 kernels
+
+* tsk argument was removed in 5.9.0 with:
+  https://github.com/torvalds/linux/commit/64019a2e467a288a16b65ab55ddcbf58c1b00187
+
+* vmas argument was removed in 6.5.0 with:
+  https://github.com/torvalds/linux/commit/ca5e863233e8f6acd1792fd85d6bc2729a1b2c10
+
+* fixes:
+  driver/gator_cookies.c:18:81: error: too many arguments to function 'get_user_pages_remote'
+  driver/gator_cookies.c:279:35: error: passing argument 1 of 'get_user_pages_remote' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  driver/gator_cookies.c:279:60: error: passing argument 6 of 'get_user_pages_remote' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  driver/gator_cookies.c:279:67: error: passing argument 7 of 'get_user_pages_remote' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_cookies.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/driver/gator_cookies.c b/driver/gator_cookies.c
+index dad217f..befa812 100644
+--- a/driver/gator_cookies.c
++++ b/driver/gator_cookies.c
+@@ -12,7 +12,15 @@
+ #   include <linux/sched/mm.h>
+ #endif
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 5, 0)
++/* Kernel version 6.5.0 removed vmas argument in
++   https://github.com/torvalds/linux/commit/ca5e863233e8f6acd1792fd85d6bc2729a1b2c10 */
++#   define get_user_pages_remote(tsk,mm,start,nr_pages,write,force,pages,vmas) get_user_pages_remote(mm,start,nr_pages,((write) ? FOLL_WRITE : 0) | ((force) ? FOLL_FORCE : 0),pages,NULL)
++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
++/* Kernel version 5.9.0 removed tsk argument in
++   https://github.com/torvalds/linux/commit/64019a2e467a288a16b65ab55ddcbf58c1b00187 */
++#   define get_user_pages_remote(tsk,mm,start,nr_pages,write,force,pages,vmas) get_user_pages_remote(mm,start,nr_pages,((write) ? FOLL_WRITE : 0) | ((force) ? FOLL_FORCE : 0),pages,vmas,NULL)
++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)
+ /* Kernel version 4.10.0 adds locked argument
+    (See https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/include/linux/mm.h?id=5b56d49fc31dbb0487e14ead790fc81ca9fb2c99) */
+ #   define get_user_pages_remote(tsk,mm,start,nr_pages,write,force,pages,vmas)  get_user_pages_remote(tsk,mm,start,nr_pages,((write) ? FOLL_WRITE : 0) | ((force) ? FOLL_FORCE : 0),pages,vmas,NULL)

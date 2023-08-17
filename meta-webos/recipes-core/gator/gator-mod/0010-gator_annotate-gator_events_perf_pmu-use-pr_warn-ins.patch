@@ -1,0 +1,65 @@
+From 73dbd9af9c0a27fd4eab87c7ea8b5ec505ea4252 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 16:32:42 +0000
+Subject: [PATCH] gator_annotate, gator_events_perf_pmu: use pr_warn instead of
+ pr_warning
+
+* pr_warning is a macro in perf:
+  tools/lib/perf/internal.h:#define pr_warning(fmt, ...)    __pr(LIBPERF_WARN, fmt, ##__VA_ARGS__)
+
+  while pr_warn is a generic macro available everywhere:
+  include/linux/printk.h:#define pr_warn(fmt, ...) \
+
+* fixes:
+  driver/gator_annotate.c:54:9: error: implicit declaration of function 'pr_warning'; did you mean 'pr_warn'? [-Werror=implicit-function-declaration]
+  driver/gator_annotate_kernel.c:26:13: error: implicit declaration of function 'pr_warning'; did you mean 'pr_warn'? [-Werror=implicit-function-declaration]
+  driver/gator_events_perf_pmu.c:226:13: error: implicit declaration of function 'pr_warning'; did you mean 'pr_warn'? [-Werror=implicit-function-declaration]
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_annotate.c        | 2 +-
+ driver/gator_annotate_kernel.c | 2 +-
+ driver/gator_events_perf_pmu.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/driver/gator_annotate.c b/driver/gator_annotate.c
+index 3805874..ce8bbab 100644
+--- a/driver/gator_annotate.c
++++ b/driver/gator_annotate.c
+@@ -51,7 +51,7 @@ static ssize_t annotate_write(struct file *file, char const __user *buf, size_t
+      * data.
+      */
+     if (interrupt_context) {
+-        pr_warning("gator: Annotations are not supported in interrupt context. Edit gator_annotate.c in the gator driver to enable annotations in interrupt context.\n");
++        pr_warn("gator: Annotations are not supported in interrupt context. Edit gator_annotate.c in the gator driver to enable annotations in interrupt context.\n");
+         return -EINVAL;
+     }
+ 
+diff --git a/driver/gator_annotate_kernel.c b/driver/gator_annotate_kernel.c
+index d4a8195..109d2b5 100644
+--- a/driver/gator_annotate_kernel.c
++++ b/driver/gator_annotate_kernel.c
+@@ -23,7 +23,7 @@ static void kannotate_write(const char *ptr, unsigned int size)
+     while (pos < size) {
+         retval = annotate_write(NULL, &ptr[pos], size - pos, &offset);
+         if (retval < 0) {
+-            pr_warning("gator: kannotate_write failed with return value %d\n", retval);
++            pr_warn("gator: kannotate_write failed with return value %d\n", retval);
+             return;
+         }
+         pos += retval;
+diff --git a/driver/gator_events_perf_pmu.c b/driver/gator_events_perf_pmu.c
+index 826d622..b4be91c 100644
+--- a/driver/gator_events_perf_pmu.c
++++ b/driver/gator_events_perf_pmu.c
+@@ -223,7 +223,7 @@ static int __check_ebs(struct gator_attr *const attr)
+         if (!event_based_sampling) {
+             event_based_sampling = true;
+         } else {
+-            pr_warning("gator: Only one ebs counter is allowed\n");
++            pr_warn("gator: Only one ebs counter is allowed\n");
+             return -1;
+         }
+     }

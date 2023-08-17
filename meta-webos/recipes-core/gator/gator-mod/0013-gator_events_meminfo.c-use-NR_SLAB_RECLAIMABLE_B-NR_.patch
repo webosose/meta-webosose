@@ -1,0 +1,51 @@
+From f503fa2261f507798bdd5f99e88d9044ddcdecc4 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 17:35:00 +0000
+Subject: [PATCH] gator_events_meminfo.c: use
+ NR_SLAB_RECLAIMABLE_B/NR_SLAB_UNRECLAIMABLE_B
+
+* since 5.9 there are only NR_SLAB_RECLAIMABLE_B/NR_SLAB_UNRECLAIMABLE_B
+  in bytes not PAGE_SIZEs
+  https://github.com/torvalds/linux/commit/d42f3245c7e299e017213fa028c319316bcdb7f4
+
+* fixes:
+  driver/gator_events_meminfo.c:252:49: error: 'NR_SLAB_RECLAIMABLE' undeclared (first use in this function); did you mean 'NR_SLAB_RECLAIMABLE_B'?
+  driver/gator_events_meminfo.c:252:95: error: 'NR_SLAB_UNRECLAIMABLE' undeclared (first use in this function); did you mean 'NR_SLAB_UNRECLAIMABLE_B'?
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_events_meminfo.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/driver/gator_events_meminfo.c b/driver/gator_events_meminfo.c
+index a66895c..3d8985c 100644
+--- a/driver/gator_events_meminfo.c
++++ b/driver/gator_events_meminfo.c
+@@ -35,8 +35,13 @@
+ #define READ_NR_SLAB_RECLAIMABLE        GLOBAL_ZONE_PAGE_STATE(NR_SLAB_RECLAIMABLE)
+ #define READ_NR_SLAB_UNRECLAIMABLE      GLOBAL_ZONE_PAGE_STATE(NR_SLAB_UNRECLAIMABLE)
+ #else
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
+ #define READ_NR_SLAB_RECLAIMABLE        GLOBAL_NODE_PAGE_STATE(NR_SLAB_RECLAIMABLE)
+ #define READ_NR_SLAB_UNRECLAIMABLE      GLOBAL_NODE_PAGE_STATE(NR_SLAB_UNRECLAIMABLE)
++#else
++#define READ_NR_SLAB_RECLAIMABLE        GLOBAL_NODE_PAGE_STATE(NR_SLAB_RECLAIMABLE_B)
++#define READ_NR_SLAB_UNRECLAIMABLE      GLOBAL_NODE_PAGE_STATE(NR_SLAB_UNRECLAIMABLE_B)
++#endif
+ #endif
+ 
+ /* NR_FILE_PAGES is in node_stat_item from 4.8 */
+@@ -267,7 +272,11 @@ static void do_read(void)
+                 value = (READ_NR_FILE_PAGES /*- total_swapcache_pages()*/ - info.bufferram) * PAGE_SIZE;
+                 break;
+             case MEMINFO_SLAB:
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
+                 value = (READ_NR_SLAB_RECLAIMABLE + READ_NR_SLAB_UNRECLAIMABLE) * PAGE_SIZE;
++#else
++                value = (READ_NR_SLAB_RECLAIMABLE + READ_NR_SLAB_UNRECLAIMABLE);
++#endif
+                 break;
+             default:
+                 value = 0;

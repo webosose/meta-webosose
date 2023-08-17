@@ -1,0 +1,79 @@
+From 6b8a69c4019e61627ddc461bd5134b62e1978e28 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 16:09:21 +0000
+Subject: [PATCH] gator_backtrace: check CONFIG_ARCH_STACKWALK
+
+* since 5.2 with:
+  https://github.com/torvalds/linux/commit/214d8ca6ee854f696f75e75511fe66b409e656db
+
+  stack_trace, save_stack_trace are defined only when CONFIG_ARCH_STACKWALK is not
+
+* gator_backtrace should be migrated to the new arch_stack_walk APIs
+  but for now at least fix the build to unblock the rest
+
+  driver/gator_backtrace.c:122:34: error: invalid use of undefined type 'struct stack_trace'
+  driver/gator_backtrace.c:123:35: error: invalid use of undefined type 'struct stack_trace'
+  driver/gator_backtrace.c:145:24: error: storage size of 'trace' isn't known
+  driver/gator_backtrace.c:161:5: error: implicit declaration of function 'save_stack_trace' [-Werror=implicit-function-declaration]
+
+* and of course old GATOR_KERNEL_UNWINDING_USE_WALK_STACKFRAME also doesn't build anymore:
+
+  driver/gator_backtrace.c:53:31: error: invalid use of undefined type 'struct stackframe'
+  driver/gator_backtrace.c:87:23: error: storage size of 'frame' isn't known
+  driver/gator_backtrace.c:103:5: error: implicit declaration of function 'walk_stackframe'; did you mean 'task_stack_page'? [-Werror=implicit-function-declaration]
+
+  so for now disable whole GATOR_KERNEL_UNWINDING when CONFIG_ARCH_STACKWALK is set
+
+* for 32bit arm it was also failing with:
+  ERROR: modpost: "__module_address" [/OE/lge/build/webos/kirkstone/BUILD/work/raspberrypi4-webos-linux-gnueabi/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0/git/driver/gator.ko] undefined!
+  because __module_address is no longer exported since 5.9 kernel:
+  https://github.com/torvalds/linux/commit/34e64705ad415ed7a816e60ef62b42fe6d1729d9
+  add TODO for that
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_backtrace.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/driver/gator_backtrace.c b/driver/gator_backtrace.c
+index 37c1dc3..c52693a 100644
+--- a/driver/gator_backtrace.c
++++ b/driver/gator_backtrace.c
+@@ -8,7 +8,9 @@
+  */
+ 
+ #if defined(__arm__) || defined(__aarch64__)
++#if !defined(CONFIG_ARCH_STACKWALK)
+ #define GATOR_KERNEL_UNWINDING                      1
++#endif
+ #define GATOR_USER_UNWINDING                        1
+ #else
+ #define GATOR_KERNEL_UNWINDING                      0
+@@ -16,7 +18,7 @@
+ #endif
+ 
+ /* on 4.10 walk_stackframe was unexported so use save_stack_trace instead */
+-#if defined(MODULE) && defined(__aarch64__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0))
++#if defined(MODULE) && defined(__aarch64__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)) && !defined(CONFIG_ARCH_STACKWALK)
+ #define GATOR_KERNEL_UNWINDING_USE_WALK_STACKFRAME  0
+ #else
+ #define GATOR_KERNEL_UNWINDING_USE_WALK_STACKFRAME  1
+@@ -55,7 +57,15 @@ static int report_trace(struct stackframe *frame, void *d)
+     if (*depth) {
+ #if defined(MODULE)
+         unsigned int cpu = get_physical_cpu();
+-        struct module *mod = __module_address(addr);
++        struct module *mod;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
++        mod = __module_address(addr);
++#else
++        // TODO: adapt to changes from:
++        // https://github.com/torvalds/linux/commit/34e64705ad415ed7a816e60ef62b42fe6d1729d9
++        // bool mod = is_module_address(addr);
++        return 0;
++#endif
+ 
+         if (mod) {
+             cookie = get_cookie(cpu, current, mod->name, false);

@@ -1,0 +1,37 @@
+From 8064bb549f2f105962a00f04a71b754611a4cd55 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 21 Jul 2023 16:21:50 +0000
+Subject: [PATCH] gator_trace_sched: use task_is_running where possible
+
+* state is no longer accessible from task_struct since:
+  https://github.com/torvalds/linux/commit/2f064a59a11ff9bc22e52e9678bc601404c7cb34
+
+* use convinient task_is_running added in:
+  https://github.com/torvalds/linux/commit/b03fbd4ff24c5f075e58eb19261d5f8b3e40d7c6
+
+* fixes:
+  driver/gator_trace_sched.c:217:15: error: 'struct task_struct' has no member named 'state'; did you mean 'stats'?
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_trace_sched.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/driver/gator_trace_sched.c b/driver/gator_trace_sched.c
+index 3c6b283..28fc4b5 100644
+--- a/driver/gator_trace_sched.c
++++ b/driver/gator_trace_sched.c
+@@ -214,7 +214,11 @@ GATOR_DEFINE_PROBE(sched_switch, TP_PROTO(bool preempt, struct task_struct *prev
+     per_cpu(in_scheduler_context, cpu) = true;
+ 
+     /* do as much work as possible before disabling interrupts */
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 14, 0)
++    if (task_is_running(prev))
++#else
+     if (prev->state == TASK_RUNNING)
++#endif
+         state = STATE_CONTENTION;
+     else if (prev->in_iowait)
+         state = STATE_WAIT_ON_IO;

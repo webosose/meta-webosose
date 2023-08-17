@@ -1,0 +1,52 @@
+From 9e97183a000fd7f8bf2b1b4b477f36b3d4dbf853 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sun, 23 Jul 2023 19:00:33 +0200
+Subject: [PATCH] gator_events_meminfo.c use DEFINE_SEMAPHORE with 2 arguments
+
+* needs 2 arguments since 6.4 kernel with:
+  https://github.com/torvalds/linux/commit/48380368dec14859723b9e3fbd43e042638d9a76
+
+* fixes:
+  driver/gator_main.c:171:46: error: macro "DEFINE_SEMAPHORE" requires 2 arguments, but only 1 given
+  driver/gator_main.c:171:8: error: type defaults to 'int' in declaration of 'DEFINE_SEMAPHORE' [-Werror=implicit-int]
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_events_meminfo.c | 4 ++++
+ driver/gator_main.c           | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/driver/gator_events_meminfo.c b/driver/gator_events_meminfo.c
+index 3d8985c..eda5c30 100644
+--- a/driver/gator_events_meminfo.c
++++ b/driver/gator_events_meminfo.c
+@@ -102,7 +102,11 @@ static void do_read(void);
+ static int gator_meminfo_func(void *data);
+ static bool gator_meminfo_run;
+ /* Initialize semaphore unlocked to initialize memory values */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+ static DEFINE_SEMAPHORE(gator_meminfo_sem);
++#else
++static DEFINE_SEMAPHORE(gator_meminfo_sem, 1);
++#endif
+ 
+ static void notify(void)
+ {
+diff --git a/driver/gator_main.c b/driver/gator_main.c
+index 028247e..c6a6639 100644
+--- a/driver/gator_main.c
++++ b/driver/gator_main.c
+@@ -168,7 +168,11 @@ static DECLARE_WAIT_QUEUE_HEAD(gator_annotate_wait);
+ static struct timer_list gator_buffer_wake_up_timer;
+ static bool gator_buffer_wake_run;
+ /* Initialize semaphore unlocked to initialize memory values */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
+ static DEFINE_SEMAPHORE(gator_buffer_wake_sem);
++#else
++static DEFINE_SEMAPHORE(gator_buffer_wake_sem, 1);
++#endif
+ static struct task_struct *gator_buffer_wake_thread;
+ static LIST_HEAD(gator_events);
+ 

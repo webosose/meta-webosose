@@ -1,0 +1,58 @@
+From 81dbca43a257410137ba3f20b388cc2fa26487c2 Mon Sep 17 00:00:00 2001
+From: Ben Gainey <ben.gainey@arm.com>
+Date: Fri, 30 Nov 2018 10:54:26 +0000
+Subject: [PATCH] gator_events_meminfo: backport fix from 6.8
+
+Partial backport of "6.8: Version 6.8" to partially fix:
+  driver/gator_events_meminfo.c:252:49: error: 'NR_SLAB_RECLAIMABLE' undeclared (first use in this function); did you mean 'NR_SLAB_RECLAIMABLE_B'?
+  driver/gator_events_meminfo.c:252:95: error: 'NR_SLAB_UNRECLAIMABLE' undeclared (first use in this function); did you mean 'NR_SLAB_UNRECLAIMABLE_B'?
+but there is another change needed to fix this for 5.9 and newer kernel.
+
+---
+Upstream-Status: Backport
+
+ driver/gator_events_meminfo.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/driver/gator_events_meminfo.c b/driver/gator_events_meminfo.c
+index a7231c7..a66895c 100644
+--- a/driver/gator_events_meminfo.c
++++ b/driver/gator_events_meminfo.c
+@@ -28,6 +28,24 @@
+ #define GLOBAL_ZONE_PAGE_STATE(item)    global_zone_page_state(item)
+ #endif
+ 
++#define GLOBAL_NODE_PAGE_STATE(item)    global_node_page_state(item)
++
++/* NR_SLAB_RECLAIMABLE / NR_SLAB_UNRECLAIMABLE are in node_stat_item from 4.13 */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 13, 0)
++#define READ_NR_SLAB_RECLAIMABLE        GLOBAL_ZONE_PAGE_STATE(NR_SLAB_RECLAIMABLE)
++#define READ_NR_SLAB_UNRECLAIMABLE      GLOBAL_ZONE_PAGE_STATE(NR_SLAB_UNRECLAIMABLE)
++#else
++#define READ_NR_SLAB_RECLAIMABLE        GLOBAL_NODE_PAGE_STATE(NR_SLAB_RECLAIMABLE)
++#define READ_NR_SLAB_UNRECLAIMABLE      GLOBAL_NODE_PAGE_STATE(NR_SLAB_UNRECLAIMABLE)
++#endif
++
++/* NR_FILE_PAGES is in node_stat_item from 4.8 */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 8, 0)
++#define READ_NR_FILE_PAGES              GLOBAL_ZONE_PAGE_STATE(NR_FILE_PAGES)
++#else
++#define READ_NR_FILE_PAGES              GLOBAL_NODE_PAGE_STATE(NR_FILE_PAGES)
++#endif
++
+ enum {
+     MEMINFO_MEMFREE,
+     MEMINFO_MEMUSED,
+@@ -246,10 +264,10 @@ static void do_read(void)
+                 break;
+             case MEMINFO_CACHED:
+                 // total_swapcache_pages is not exported so the result is slightly different, but hopefully not too much
+-                value = (GLOBAL_ZONE_PAGE_STATE(NR_FILE_PAGES) /*- total_swapcache_pages()*/ - info.bufferram) * PAGE_SIZE;
++                value = (READ_NR_FILE_PAGES /*- total_swapcache_pages()*/ - info.bufferram) * PAGE_SIZE;
+                 break;
+             case MEMINFO_SLAB:
+-                value = (GLOBAL_ZONE_PAGE_STATE(NR_SLAB_RECLAIMABLE) + GLOBAL_ZONE_PAGE_STATE(NR_SLAB_UNRECLAIMABLE)) * PAGE_SIZE;
++                value = (READ_NR_SLAB_RECLAIMABLE + READ_NR_SLAB_UNRECLAIMABLE) * PAGE_SIZE;
+                 break;
+             default:
+                 value = 0;

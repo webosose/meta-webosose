@@ -1,19 +1,19 @@
-From 215332793335f6db8fa47e99797adc7488175802 Mon Sep 17 00:00:00 2001
+From 6f3820fd7b6919ef248ec4595c01935c7f7be439 Mon Sep 17 00:00:00 2001
 From: "milan.shah" <milan.shah@lge.com>
 Date: Wed, 12 Jan 2022 11:59:16 +0000
-Subject: [PATCH 3/3] gator: modified driver Makefile to allow compilation
+Subject: [PATCH] gator: modified driver Makefile to allow compilation
 
 Signed-off-by: milan.shah <milan.shah@lge.com>
 ---
 Upstream-Status: Pending
 
- Makefile | 46 ++++++++++++++++++++++++++++++++--------------
+ driver/Makefile | 46 ++++++++++++++++++++++++++++++++--------------
  1 file changed, 32 insertions(+), 14 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index fff8603..088f67d 100644
---- a/Makefile
-+++ b/Makefile
+diff --git a/driver/Makefile b/driver/Makefile
+index fff8603..192707e 100644
+--- a/driver/Makefile
++++ b/driver/Makefile
 @@ -1,10 +1,22 @@
 -ifneq ($(KERNELRELEASE),)
 +#ifneq ($(KERNELRELEASE),)
@@ -92,6 +92,3 @@ index fff8603..088f67d 100644
  
 -endif
 +#endif
--- 
-2.17.1
-

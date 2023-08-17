@@ -1,0 +1,265 @@
+From a185e59efcf4aeeb2ea073e4a1be15c558fa0a75 Mon Sep 17 00:00:00 2001
+From: "milan.shah" <milan.shah@lge.com>
+Date: Fri, 21 Jul 2023 16:12:46 +0530
+Subject: [PATCH] Try to fix build with newer kernel 5.10
+
+Fixes below errors for raspberrypi4-64 build:
+  driver/gator_main.c: In function 'gator_summary':
+  driver/gator_main.c:803:21: error: storage size of 'ts' isn't known
+    803 |     struct timespec ts;
+        |                     ^~
+  driver/gator_main.c:833:10: error: implicit declaration of function 'timespec64_to_timespec'; did you mean 'timespec64_to_ktime'? [-Werror=implicit-function-declaration]
+    833 |     ts = timespec64_to_timespec(ts64);
+        |          ^~~~~~~~~~~~~~~~~~~~~~
+        |          timespec64_to_ktime
+  driver/gator_main.c:803:21: warning: unused variable 'ts' [-Wunused-variable]
+    803 |     struct timespec ts;
+        |
+  In file included from raspberrypi4_64-webos-linux/gator-mod/6.7+gitAUTOINC+3ff46fedd4-r5.0/2:
+  driver/gator_cookit mm_struct' has no member named 'mmap_sem'; did you mean 'mmap_base'?
+    295 |     up_read(&mm->mmap_sem);
+        |                  ^~~~~~~~
+        |                  mmap_base
+  driver/gator_cookite_app_process':
+  driver/gator_cookit mm_struct' has no member named 'mmap_sem'; did you mean 'mmap_base'?
+    265 |     down_read(&mm->mmap_sem);
+        |                    ^~~~~~~~
+        |                    mmap_base
+
+there were also some errors shown in qemux86 build:
+
+driver/gator_main.c:1399:41: error: initialization of 'struct tracepoint * const*' from incompatible pointer type 'const tracepoint_ptr_t *' {aka 'const int *'} [-Werror=incompatible-pointer-types]
+ 1399 |     struct tracepoint * const * begin = tp_mod->mod->tracepoints_ptrs;
+      |                                         ^~~~~~
+driver/gator_main.c:1400:39: error: initialization of 'struct tracepoint * const*' from incompatible pointer type 'const tracepoint_ptr_t *' {aka 'const int *'} [-Werror=incompatible-pointer-types]
+ 1400 |     struct tracepoint * const * end = tp_mod->mod->tracepoints_ptrs + tp_mod->mod->num_tracepoints;
+      |                                       ^~~~~~
+
+and many more for raspberrypi4/raspberrypi4-64:
+
+driver/gator_annotate.c:54:9: error: implicit declaration of function 'pr_warning'; did you mean 'pr_warn'? [-Werror=implicit-function-declaration]
+driver/gator_cookies.c:18:81: error: too many arguments to function 'get_user_pages_remote'
+driver/gator_cookies.c:265:20: error: 'struct mm_struct' has no member named 'mmap_sem'; did you mean 'mmap_base'?
+driver/gator_cookies.c:267:35: error: passing argument 1 of 'get_user_pages_remote' from incompatible pointer type [-Werror=incompatible-pointer-types]
+driver/gator_cookies.c:267:60: error: passing argument 6 of 'get_user_pages_remote' from incompatible pointer type [-Werror=incompatible-pointer-types]
+driver/gator_cookies.c:267:67: error: passing argument 7 of 'get_user_pages_remote' from incompatible pointer type [-Werror=incompatible-pointer-types]
+driver/gator_cookies.c:295:18: error: 'struct mm_struct' has no member named 'mmap_sem'; did you mean 'mmap_base'?
+driver/gator_events_meminfo.c:252:49: error: 'NR_SLAB_RECLAIMABLE' undeclared (first use in this function); did you mean 'NR_SLAB_RECLAIMABLE_B'?
+driver/gator_events_meminfo.c:252:95: error: 'NR_SLAB_UNRECLAIMABLE' undeclared (first use in this function); did you mean 'NR_SLAB_UNRECLAIMABLE_B'?
+driver/gator_events_mmapped.c:165:21: error: storage size of 'ts' isn't known
+driver/gator_events_mmapped.c:77:21: error: storage size of 'ts' isn't known
+driver/gator_events_mmapped.c:79:5: error: implicit declaration of function 'getnstimeofday' [-Werror=implicit-function-declaration]
+driver/gator_events_mmapped.c:80:17: error: implicit declaration of function 'timespec_to_ns'; did you mean 'timespec64_to_ns'? [-Werror=implicit-function-declaration]
+driver/gator_main.c:1469:17: error: implicit declaration of function 'cpu_up' [-Werror=implicit-function-declaration]
+driver/gator_main.c:593:21: error: storage size of 'ts' isn't known
+driver/gator_main.c:600:5: error: implicit declaration of function 'getrawmonotonic' [-Werror=implicit-function-declaration]
+driver/gator_main.c:601:17: error: implicit declaration of function 'timespec_to_ns'; did you mean 'timespec64_to_ns'? [-Werror=implicit-function-declaration]
+driver/gator_main.c:720:21: error: storage size of 'ts' isn't known
+driver/gator_main.c:733:9: error: implicit declaration of function 'getnstimeofday' [-Werror=implicit-function-declaration]
+driver/gator_main.c:781:21: error: storage size of 'ts' isn't known
+driver/gator_main.c:807:10: error: implicit declaration of function 'timespec64_to_timespec'; did you mean 'timespec64_to_ktime'? [-Werror=implicit-function-declaration]
+
+Signed-off-by: milan.shah <milan.shah@lge.com>
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending
+
+ driver/gator_cookies.c        | 16 +++++++++++++--
+ driver/gator_events_mmapped.c | 17 ++++++++++++++--
+ driver/gator_main.c           | 38 +++++++++++++++++++++++++++++++----
+ 3 files changed, 63 insertions(+), 8 deletions(-)
+
+diff --git a/driver/gator_cookies.c b/driver/gator_cookies.c
+index 1a5076c..257f816 100644
+--- a/driver/gator_cookies.c
++++ b/driver/gator_cookies.c
+@@ -26,6 +26,18 @@
+ #   define get_user_pages_remote(tsk,mm,start,nr_pages,write,force,pages,vmas)  get_user_pages(tsk,mm,start,nr_pages,write,force,pages,vmas)
+ #endif
+ 
++/* the mmap_sem member of struct mm_struct has been removed in newer kernel
++ * versions due to the y2038 problem.
++ * It has been replaced by mmap_lock and a new mmap locking API */
++#ifndef MMAP_LOCK_INITIALIZER
++/* Define mmap locking API for pre-5.8 kernels */
++#define MMAP_LOCK_INITIALIZER { .mmap_sem = __RWSEM_INITIALIZER((mm)->mmap_sem) }
++#define mmap_read_lock(mm) down_read(&(mm)->mmap_sem)
++#define mmap_read_unlock(mm) up_read(&(mm)->mmap_sem)
++#define mmap_write_lock(mm) down_write(&(mm)->mmap_sem)
++#define mmap_write_unlock(mm) up_write(&(mm)->mmap_sem)
++#endif
++
+ struct mount {
+     struct mount *mnt_parent;
+     struct dentry *mnt_mountpoint;
+@@ -262,7 +274,7 @@ static int translate_app_process(const char **text, int cpu, struct task_struct
+     if (len > TRANSLATE_TEXT_SIZE)
+         len = TRANSLATE_TEXT_SIZE;
+ 
+-    down_read(&mm->mmap_sem);
++    mmap_read_lock(mm);
+     while (len) {
+         if (get_user_pages_remote(task, mm, addr, 1, 0, 1, &page, &page_vma) <= 0)
+             goto outsem;
+@@ -292,7 +304,7 @@ static int translate_app_process(const char **text, int cpu, struct task_struct
+         retval = 0;
+ 
+ outsem:
+-    up_read(&mm->mmap_sem);
++    mmap_read_unlock(mm);
+ outmm:
+     mmput(mm);
+ out:
+diff --git a/driver/gator_events_mmapped.c b/driver/gator_events_mmapped.c
+index 82f06af..da354cd 100644
+--- a/driver/gator_events_mmapped.c
++++ b/driver/gator_events_mmapped.c
+@@ -74,10 +74,15 @@ static int gator_events_mmapped_create_files(struct super_block *sb,
+ static int gator_events_mmapped_start(void)
+ {
+     int i;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    struct timespec64 ts64;
++    ktime_get_ts64(&ts64);
++    prev_time = timespec64_to_ns(&ts64);
++#else
+     struct timespec ts;
+-
+     getnstimeofday(&ts);
+     prev_time = timespec_to_ns(&ts);
++#endif
+ 
+     mmapped_global_enabled = 0;
+     for (i = 0; i < MMAPPED_COUNTERS_NUM; i++) {
+@@ -162,15 +167,23 @@ static int gator_events_mmapped_read(int **buffer, bool sched_switch)
+     int i;
+     int len = 0;
+     int delta_in_us;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    struct timespec64 ts64;
++#else
+     struct timespec ts;
++#endif
+     s64 time;
+ 
+     /* System wide counters - read from one core only */
+     if (!on_primary_core() || !mmapped_global_enabled)
+         return 0;
+-
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    ktime_get_ts64(&ts64);
++    time = timespec64_to_ns(&ts64);
++#else
+     getnstimeofday(&ts);
+     time = timespec_to_ns(&ts);
++#endif
+     delta_in_us = (int)(time - prev_time) / 1000;
+     prev_time = time;
+ 
+diff --git a/driver/gator_main.c b/driver/gator_main.c
+index 456a7a9..f3a67a9 100644
+--- a/driver/gator_main.c
++++ b/driver/gator_main.c
+@@ -590,15 +590,24 @@ static int gator_timer_start(unsigned long sample_rate)
+ 
+ u64 gator_get_time(void)
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    struct timespec64 ts64;
++#else
+     struct timespec ts;
++#endif
+     u64 timestamp;
+     u64 prev_timestamp;
+     u64 delta;
+     int cpu = smp_processor_id();
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    ktime_get_ts64(&ts64);
++    timestamp = timespec64_to_ns(&ts64);
++#else
+     /* Match clock_gettime(CLOCK_MONOTONIC_RAW, &ts) from userspace */
+     getrawmonotonic(&ts);
+     timestamp = timespec_to_ns(&ts);
++#endif
+ 
+     /* getrawmonotonic is not monotonic on all systems. Detect and
+      * attempt to correct these cases. up to 0.5ms delta has been seen
+@@ -717,7 +726,11 @@ static void gator_unregister_hotcpu_notifier(void)
+ static int gator_pm_notify(struct notifier_block *nb, unsigned long event, void *dummy)
+ {
+     int cpu;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    struct timespec64 ts64;
++#else
+     struct timespec ts;
++#endif
+ 
+     switch (event) {
+     case PM_HIBERNATION_PREPARE:
+@@ -728,17 +741,26 @@ static int gator_pm_notify(struct notifier_block *nb, unsigned long event, void
+         for_each_online_cpu(cpu) {
+             gator_timer_offline_dispatch(lcpu_to_pcpu(cpu), false);
+         }
+-
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++        ktime_get_ts64(&ts64);
++        gator_hibernate_time = timespec64_to_ns(&ts64) - gator_get_time();
++#else
+         /* Record the wallclock hibernate time */
+         getnstimeofday(&ts);
+         gator_hibernate_time = timespec_to_ns(&ts) - gator_get_time();
++#endif
+         break;
+     case PM_POST_HIBERNATION:
+     case PM_POST_SUSPEND:
+         /* Adjust gator_monotonic_started for the time spent sleeping, as gator_get_time does not account for it */
+         if (gator_hibernate_time > 0) {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++            ktime_get_ts64(&ts64);
++            gator_monotonic_started += gator_hibernate_time + gator_get_time() - timespec64_to_ns(&ts64);
++#else
+             getnstimeofday(&ts);
+             gator_monotonic_started += gator_hibernate_time + gator_get_time() - timespec_to_ns(&ts);
++#endif
+             gator_hibernate_time = 0;
+         }
+ 
+@@ -778,16 +800,21 @@ static void gator_notifier_stop(void)
+ static void gator_summary(void)
+ {
+     u64 timestamp, uptime;
+-    struct timespec ts;
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+     struct timespec64 ts64;
++#else
++    struct timespec ts;
+ #endif
+     char uname_buf[100];
+ 
+     snprintf(uname_buf, sizeof(uname_buf), "%s %s %s %s %s GNU/Linux", utsname()->sysname, utsname()->nodename, utsname()->release, utsname()->version, utsname()->machine);
+-
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    ktime_get_ts64(&ts64);
++    timestamp = timespec64_to_ns(&ts64);
++#else
+     getnstimeofday(&ts);
+     timestamp = timespec_to_ns(&ts);
++#endif
+ 
+     /* Similar to reading /proc/uptime from fs/proc/uptime.c, calculate uptime */
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 11, 0)
+@@ -804,9 +831,12 @@ static void gator_summary(void)
+     get_monotonic_boottime(&ts);
+ #else
+     ktime_get_boottime_ts64(&ts64);
+-    ts = timespec64_to_timespec(ts64);
+ #endif
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
++    uptime = timespec64_to_ns(&ts64);
++#else
+     uptime = timespec_to_ns(&ts);
++#endif
+ 
+     /* Disable preemption as gator_get_time calls smp_processor_id to verify time is monotonic */
+     preempt_disable();
