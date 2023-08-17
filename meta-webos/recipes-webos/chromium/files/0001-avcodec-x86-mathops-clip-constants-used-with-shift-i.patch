@@ -1,0 +1,111 @@
+From 46dc5f09dd85a6ff24fa6bff1d3f3b23cfc1f59f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
+Date: Sun, 16 Jul 2023 18:18:02 +0300
+Subject: [PATCH] avcodec/x86/mathops: clip constants used with shift
+ instructions within inline assembly
+
+:Release Notes:
+Fixes assembling with binutil as >= 2.41
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/651713
+
+FAILED: obj/third_party/ffmpeg/ffmpeg_internal/opus_rc.o 
+x86_64-webos-linux-gcc  -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/webruntime/94.0.4606.128-39-r66.2/recipe-sysroot -MMD -MF obj/third_party/ffmpeg/ffmpeg_internal/opus_rc.o.d -DHAVE_AV_CONFIG_H -D_POSIX_C_SOURCE=200112 -D_XOPEN_SOURCE=600 -DPIC -DFFMPEG_CONFIGURATION=NULL -D_ISOC99_SOURCE -D_LARGEFILE_SOURCE -DENABLE_BROWSER_CONTROL_WEBAPI=1 -DENABLE_SAMPLE_WEBAPI=1 -DENABLE_MEMORYMANAGER_WEBAPI=1 -DENABLE_WEBOS_SERVICE_BRIDGE_WEBAPI=1 -DENABLE_WEBOS_SYSTEM_WEBAPI=1 -DNEVA_DCHECK_ALWAYS_ON=1 -DOZONE_PLATFORM_WAYLAND_EXTERNAL=1 -DNEVA_OZONE_PLATFORM_WAYLAND=1 -DOS_WEBOS=1 -DNEVA_VIDEO_HOLE=1 -DUSE_NEVA_APPRUNTIME=1 -DUSE_NEVA_MEDIA=1 -DUSE_GAV=1 -DUSE_NEVA_BROWSER_SERVICE=1 -DUSE_WEBRISK_SERVICE=1 -DUSE_NEVA_PUNCH_HOLE=1 -DUSE_GST_MEDIA=1 -DUSE_CBE=1 -DUSE_PMLOG=1 -DUSE_NEVA_SUSPEND_MEDIA_CAPTURE=1 -DUSE_FILESCHEME_CODECACHE=1 -DWEBOS_SUBMISSION_NUMBER=39 -DUSE_LOCAL_STORAGE_TRACKER=1 -DUSE_LTTNG=1 -DUSE_UDEV -DUSE_AURA=1 -DUSE_GLIB=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -I../../git/src/third_party/ffmpeg/chromium/config/Chrome/linux/x64 -I../../git/src/third_party/ffmpeg -I../../git/src/neva -Igen/neva -I../../git/src -Igen -I../../git/src/third_party/opus/src/include -fPIC -Wno-deprecated-declarations -fomit-frame-pointer -w -std=c99 -pthread -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Wno-unused-variable -fno-ident -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -pthread -m64 -march=x86-64 -msse3 -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -g0 -fvisibility=hidden -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-comments -Wno-packed-not-aligned -Wno-attributes -Wno-missing-field-initializers -Wno-unused-parameter -O2 -fdata-sections -ffunction-sections -std=gnu11 -c ../../git/src/third_party/ffmpeg/libavcodec/opus_rc.c -o obj/third_party/ffmpeg/ffmpeg_internal/opus_rc.o
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h: Assembler messages:
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+[4005/43247] CC obj/third_party/ffmpeg/ffmpeg_internal/vorbis_data.o
+
+FAILED: obj/third_party/ffmpeg/ffmpeg_internal/vorbis_parser.o 
+x86_64-webos-linux-gcc  -m64 -march=core2 -mtune=core2 -msse3 -mfpmath=sse -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security  --sysroot=TOPDIR/BUILD/work/qemux86_64-webos-linux/webruntime/94.0.4606.128-39-r66.2/recipe-sysroot -MMD -MF obj/third_party/ffmpeg/ffmpeg_internal/vorbis_parser.o.d -DHAVE_AV_CONFIG_H -D_POSIX_C_SOURCE=200112 -D_XOPEN_SOURCE=600 -DPIC -DFFMPEG_CONFIGURATION=NULL -D_ISOC99_SOURCE -D_LARGEFILE_SOURCE -DENABLE_BROWSER_CONTROL_WEBAPI=1 -DENABLE_SAMPLE_WEBAPI=1 -DENABLE_MEMORYMANAGER_WEBAPI=1 -DENABLE_WEBOS_SERVICE_BRIDGE_WEBAPI=1 -DENABLE_WEBOS_SYSTEM_WEBAPI=1 -DNEVA_DCHECK_ALWAYS_ON=1 -DOZONE_PLATFORM_WAYLAND_EXTERNAL=1 -DNEVA_OZONE_PLATFORM_WAYLAND=1 -DOS_WEBOS=1 -DNEVA_VIDEO_HOLE=1 -DUSE_NEVA_APPRUNTIME=1 -DUSE_NEVA_MEDIA=1 -DUSE_GAV=1 -DUSE_NEVA_BROWSER_SERVICE=1 -DUSE_WEBRISK_SERVICE=1 -DUSE_NEVA_PUNCH_HOLE=1 -DUSE_GST_MEDIA=1 -DUSE_CBE=1 -DUSE_PMLOG=1 -DUSE_NEVA_SUSPEND_MEDIA_CAPTURE=1 -DUSE_FILESCHEME_CODECACHE=1 -DWEBOS_SUBMISSION_NUMBER=39 -DUSE_LOCAL_STORAGE_TRACKER=1 -DUSE_LTTNG=1 -DUSE_UDEV -DUSE_AURA=1 -DUSE_GLIB=1 -DUSE_NSS_CERTS=1 -DUSE_OZONE=1 -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -DNDEBUG -DNVALGRIND -DDYNAMIC_ANNOTATIONS_ENABLED=0 -I../../git/src/third_party/ffmpeg/chromium/config/Chrome/linux/x64 -I../../git/src/third_party/ffmpeg -I../../git/src/neva -Igen/neva -I../../git/src -Igen -I../../git/src/third_party/opus/src/include -fPIC -Wno-deprecated-declarations -fomit-frame-pointer -w -std=c99 -pthread -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -Wno-unused-variable -fno-ident -fno-strict-aliasing --param=ssp-buffer-size=4 -fstack-protector -funwind-tables -fPIC -pipe -pthread -m64 -march=x86-64 -msse3 -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= -g0 -fvisibility=hidden -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-comments -Wno-packed-not-aligned -Wno-attributes -Wno-missing-field-initializers -Wno-unused-parameter -O2 -fdata-sections -ffunction-sections -std=gnu11 -c ../../git/src/third_party/ffmpeg/libavcodec/vorbis_parser.c -o obj/third_party/ffmpeg/ffmpeg_internal/vorbis_parser.o
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h: Assembler messages:
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+../../git/src/third_party/ffmpeg/libavcodec/x86/mathops.h:125: Error: operand type mismatch for `shr'
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-20118] Bitbake world issues 2023-07
+
+Signed-off-by: James Almer <jamrial@gmail.com>
+Change-Id: I0588affb733b114fa7629da5e2cfc6203328af39
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/chromium94/+/363094 avcodec/x86/mathops: clip constants used with shift instructions within inline assembly and Backport of https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/effadce6c756247ea8bae32dc13bb3e6f464f0eb]
+
+ .../ffmpeg/libavcodec/x86/mathops.h           | 26 ++++++++++++++++---
+ 1 file changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/src/third_party/ffmpeg/libavcodec/x86/mathops.h b/src/third_party/ffmpeg/libavcodec/x86/mathops.h
+index 6298f5ed19..ca7e2dffc1 100644
+--- a/src/third_party/ffmpeg/libavcodec/x86/mathops.h
++++ b/src/third_party/ffmpeg/libavcodec/x86/mathops.h
+@@ -35,12 +35,20 @@
+ static av_always_inline av_const int MULL(int a, int b, unsigned shift)
+ {
+     int rt, dummy;
++    if (__builtin_constant_p(shift))
+     __asm__ (
+         "imull %3               \n\t"
+         "shrdl %4, %%edx, %%eax \n\t"
+         :"=a"(rt), "=d"(dummy)
+-        :"a"(a), "rm"(b), "ci"((uint8_t)shift)
++        :"a"(a), "rm"(b), "i"(shift & 0x1F)
+     );
++    else
++        __asm__ (
++            "imull %3               \n\t"
++            "shrdl %4, %%edx, %%eax \n\t"
++            :"=a"(rt), "=d"(dummy)
++            :"a"(a), "rm"(b), "c"((uint8_t)shift)
++        );
+     return rt;
+ }
+ 
+@@ -113,19 +121,31 @@ __asm__ volatile(\
+ // avoid +32 for shift optimization (gcc should do that ...)
+ #define NEG_SSR32 NEG_SSR32
+ static inline  int32_t NEG_SSR32( int32_t a, int8_t s){
++    if (__builtin_constant_p(s))
+     __asm__ ("sarl %1, %0\n\t"
+          : "+r" (a)
+-         : "ic" ((uint8_t)(-s))
++         : "i" (-s & 0x1F)
+     );
++    else
++        __asm__ ("sarl %1, %0\n\t"
++               : "+r" (a)
++               : "c" ((uint8_t)(-s))
++        );
+     return a;
+ }
+ 
+ #define NEG_USR32 NEG_USR32
+ static inline uint32_t NEG_USR32(uint32_t a, int8_t s){
++    if (__builtin_constant_p(s))
+     __asm__ ("shrl %1, %0\n\t"
+          : "+r" (a)
+-         : "ic" ((uint8_t)(-s))
++         : "i" (-s & 0x1F)
+     );
++    else
++        __asm__ ("shrl %1, %0\n\t"
++               : "+r" (a)
++               : "c" ((uint8_t)(-s))
++        );
+     return a;
+ }
+ 
