@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib"
 
-WEBOS_VERSION = "1.0.0-6_bf116ace9f497f2be05ce52f9a0e377b56c62376"
-PR = "r2"
+WEBOS_VERSION = "1.0.0-7_17689b0cbff53466134e79cdbfbfd4aa64fdce36"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,11 +27,6 @@ inherit webos_public_repo
 inherit webos_distro_dep
 inherit webos_machine_impl_dep
 
-# [http://gpro.lge.com/c/webosose/com.webos.service.audiofocusmanager/+/348165 Fix luna-service2 usage]
-# [http://gpro.lge.com/c/webosose/com.webos.service.audiofocusmanager/+/348166 LICENSE: add Apache-2.0 License]
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-luna-service2-usage.patch \
-    file://0002-LICENSE-add-Apache-2.0-License.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 

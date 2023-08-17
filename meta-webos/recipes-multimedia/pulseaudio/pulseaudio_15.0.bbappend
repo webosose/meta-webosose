@@ -11,27 +11,17 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
-WEBOS_VERSION = "15.0-49_fd6f5c145e1415d73be3b16d1c99c911e047c8da"
-EXTENDPRAUTO:append = "webos8"
+WEBOS_VERSION = "15.0-50_7775869e41eaf140252e44c3de9cf23ed39dabd0"
+EXTENDPRAUTO:append = "webos9"
 
 inherit webos_enhanced_submissions
 
 inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
-# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349073 client-conf: Add allow-autospawn-for-root
-# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349074 do not display CLFAGS to improve reproducibility build
-# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349075 meson: Check for __get_cpuid
-# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349076 doxygen/meson.build: remove dependency on doxygen binary
-# http://gpro.lge.com/c/webosose/pulseaudio-webos/+/349077 meson.build: use cpp_std=c++14
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://pulseaudio.service \
-    file://0001-client-conf-Add-allow-autospawn-for-root.patch \
-    file://0002-do-not-display-CLFAGS-to-improve-reproducibility-bui.patch \
-    file://0001-meson-Check-for-__get_cpuid.patch \
-    file://0001-doxygen-meson.build-remove-dependency-on-doxygen-bin.patch \
-    file://0001-meson.build-use-cpp_std-c-14.patch \
 "
 
 S = "${WORKDIR}/git"
