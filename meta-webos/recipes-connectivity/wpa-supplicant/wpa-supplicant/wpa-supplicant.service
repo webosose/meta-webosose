@@ -17,7 +17,7 @@
 # A Client for Wi-Fi Protected Access (WPA)
 
 [Unit]
-Description=webos - "%n"
+Description=meta-webos - "%n"
 ConditionHost=!qemux86*
 Requires=ls-hubd.service
 After=ls-hubd.service
@@ -26,6 +26,6 @@ After=ls-hubd.service
 Type=simple
 OOMScoreAdjust=-500
 EnvironmentFile=-/var/systemd/system/env/wpa-supplicant.env
-ExecStartPre=/etc/systemd/system/scripts/wpa-supplicant.sh
+ExecStartPre=/lib/systemd/system/scripts/wpa-supplicant.sh
 ExecStart=/usr/sbin/wpa_supplicant -u $WPA_EXTRA_PARAM -s
 Restart=on-failure

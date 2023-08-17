@@ -16,7 +16,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-34_e59ad3680ba012ca008d51500275c0ada6c2116a"
-PR = "r31"
+PR = "r32"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
@@ -37,6 +37,9 @@ inherit webos_test_provider
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "ls-hubd.service"
 
 PACKAGECONFIG ?= ""
 PACKAGECONFIG[ppm] = "-DWEBOS_PPM_ENABLED:BOOL=True,-DWEBOS_PPM_ENABLED:BOOL=False,,com.webos.service.ppm"

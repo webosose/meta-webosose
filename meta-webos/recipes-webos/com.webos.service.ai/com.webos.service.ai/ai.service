@@ -1,0 +1,17 @@
+# @@@LICENSE
+#
+# Copyright (c) 2018-2023 LG Electronics, Inc.
+#
+# LICENSE@@@
+
+[Unit]
+Description=meta-webos - "%n"
+Requires=pulseaudio.service
+After=pulseaudio.service
+
+[Service]
+Type=simple
+OOMScoreAdjust=-1000
+EnvironmentFile=-/var/systemd/system/env/ai.env
+ExecStart=/usr/sbin/aiservice
+Restart=on-failure

@@ -14,7 +14,7 @@ DEPENDS = "glib-2.0 glibmm luna-service2 libpbnjson pmloglib openssl libbson boo
 RDEPENDS:${PN} = "settingsservice-conf db8"
 
 WEBOS_VERSION = "1.0.22-19_7684fcc6813104ee5c139701f8ed6627ef851b97"
-PR = "r25"
+PR = "r26"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -24,8 +24,11 @@ inherit webos_system_bus
 inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
-
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "settings-service.service settings-service-recovery.service"
+WEBOS_SYSTEMD_SCRIPT = "settings-service.sh"
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "SERVICE"
 

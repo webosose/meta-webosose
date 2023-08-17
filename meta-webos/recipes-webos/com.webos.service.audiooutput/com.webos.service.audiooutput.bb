@@ -21,7 +21,10 @@ inherit webos_system_bus
 inherit webos_public_repo
 
 WEBOS_VERSION = "1.0.0-5_7b3b85dcfc2ad9394cfad761e4c34354f3126180"
-PR = "r1"
+PR = "r2"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "audiooutputd.service"

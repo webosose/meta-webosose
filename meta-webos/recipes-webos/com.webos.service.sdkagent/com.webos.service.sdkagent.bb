@@ -13,7 +13,7 @@ DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libpbnjson"
 RDEPENDS:${PN} += "telegraf"
 
 WEBOS_VERSION = "1.0.0-8_7b57bed2916bf1a3f9842fdd82d612d37dde6add"
-PR = "r0"
+PR = "r1"
 
 inherit systemd
 inherit webos_public_repo
@@ -26,4 +26,13 @@ inherit webos_system_bus
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-SYSTEMD_SERVICE:${PN} = "com.webos.service.sdkagent.service"
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "com.webos.service.sdkagent.service"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm ${D}${sysconfdir}/systemd/system/com.webos.service.sdkagent.service
+}

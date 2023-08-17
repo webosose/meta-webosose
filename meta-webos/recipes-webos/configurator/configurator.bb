@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 db8 glib-2.0 pmloglib"
 
 WEBOS_VERSION = "3.0.0-11_ded3f968c2943ef77d81755e5bf7de088447651a"
-PR = "r9"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
@@ -24,18 +24,20 @@ inherit webos_daemon
 inherit webos_machine_impl_dep
 inherit webos_distro_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://configurator-activity.service \
-    file://configurator-db8.service \
-    file://configurator-db8.sh \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 FILES:${PN} += "${webos_sysbus_datadir}"
 
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "configurator-activity.service configurator-db8.service"
+WEBOS_SYSTEMD_SCRIPT ="configurator-db8.sh"
+
 do_install:append() {
-    install -d ${D}${sysconfdir}/systemd/system/
-    install -v -m 0644 ${WORKDIR}/configurator-activity.service ${D}${sysconfdir}/systemd/system/
-    install -v -m 0644 ${WORKDIR}/configurator-db8.service ${D}${sysconfdir}/systemd/system/
-    install -d ${D}${sysconfdir}/systemd/system/scripts
-    install -v -m 0755 ${WORKDIR}/configurator-db8.sh ${D}${sysconfdir}/systemd/system/scripts
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+    rm ${D}${sysconfdir}/systemd/system/configurator-activity.service
+    rm ${D}${sysconfdir}/systemd/system/configurator-db8.service
+    rm ${D}${sysconfdir}/systemd/system/scripts/configurator-db8.sh
 }

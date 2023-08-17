@@ -17,7 +17,7 @@
 # The Open webOS kernel logging daemon implementation.
 
 [Unit]
-Description=webos - "%n"
+Description=meta-webos - "%n"
 
 [Service]
 Type=simple

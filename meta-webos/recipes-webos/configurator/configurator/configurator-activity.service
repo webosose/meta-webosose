@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 [Unit]
-Description=webos - "%n"
+Description=meta-webos - "%n"
 Requires=ls-hubd.service configurator-db8.service
 After=ls-hubd.service configurator-db8.service activitymanager.service
 BindsTo=activitymanager.service

@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson"
 
 WEBOS_VERSION = "1.0.0-17_ea416580431307921b4846e9421af5d22a8d62d5"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_cmake
@@ -29,3 +29,14 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-Fix-luna-service2-usage.patch \
 "
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "com.webos.service.intent.service.in"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm ${D}${sysconfdir}/systemd/system/com.webos.service.intent.service
+}

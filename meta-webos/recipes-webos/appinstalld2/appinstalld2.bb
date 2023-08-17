@@ -14,7 +14,7 @@ DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib pmtrace boost icu"
 RDEPENDS:${PN} = "applicationinstallerutility ecryptfs-utils librolegen"
 
 WEBOS_VERSION = "1.0.0-40_398977eb4f3fd7e82561e683c959c895060b707a"
-PR = "r4"
+PR = "r5"
 
 inherit webos_component
 inherit webos_cmake
@@ -25,3 +25,7 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "appinstalld.service"
+

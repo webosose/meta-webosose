@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-12_c92d2b83edfdedae7eebc76cf73d4b9d65d56d58"
-PR = "r8"
+PR = "r9"
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
@@ -25,16 +25,32 @@ inherit webos_public_repo
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "devmode.service"
+WEBOS_SYSTEMD_SCRIPT = "devmode.sh.in"
+
 # touch /var/luna/preferences/devmode_enabled in emulator build
 do_install:append:emulator() {
     install -d ${D}${webos_sysmgr_localstatedir}/preferences
     touch ${D}${webos_sysmgr_localstatedir}/preferences/devmode_enabled
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+#    rm ${D}${sysconfdir}/systemd/system/devmode.service
+#    rm ${D}${sysconfdir}/systemd/system/scripts/devmode.sh
 }
 
 # touch /var/luna/preferences/devmode_enabled in webOS OSE build
 do_install:append:webos() {
     install -d ${D}${webos_sysmgr_localstatedir}/preferences
     touch ${D}${webos_sysmgr_localstatedir}/preferences/devmode_enabled
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+    rm ${D}${sysconfdir}/systemd/system/devmode.service
+    rm ${D}${sysconfdir}/systemd/system/scripts/devmode.sh
 }
 
 do_install:append() {

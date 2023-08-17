@@ -17,7 +17,7 @@
 # start the network connection manager service
 
 [Unit]
-Description=webos - "%n"
+Description=meta-webos - "%n"
 # When qemu mode, only connman service is enabled.
 Wants=wpa-supplicant.service
 After=wpa-supplicant.service

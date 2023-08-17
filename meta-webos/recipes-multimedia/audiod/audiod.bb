@@ -25,7 +25,7 @@ RDEPENDS:${PN} = "\
 "
 
 WEBOS_VERSION = "1.0.0-63_af68e93019216d84d94841e59959e208876a38ef"
-PR = "r35"
+PR = "r36"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -41,6 +41,9 @@ inherit webos_public_repo
 WEBOS_REPO_NAME = "audiod-pro"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "audiod.service"
 
 EXTRA_OECMAKE += "${@bb.utils.contains('WEBOS_LTTNG_ENABLED', '1', '-DWEBOS_LTTNG_ENABLED:BOOLEAN=True', '', d)}"
 

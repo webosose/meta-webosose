@@ -17,7 +17,7 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-67_5ee2734aa1dbad21bcd0e443471b05f269329fd3"
-PR = "r27"
+PR = "r28"
 
 inherit webos_component
 inherit webos_cmake
@@ -30,6 +30,10 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "sam.service"
+WEBOS_SYSTEMD_SCRIPT = "sam.sh"
 
 PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY:${PN}-tests = "1"

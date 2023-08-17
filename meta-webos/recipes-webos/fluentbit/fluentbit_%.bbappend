@@ -1,6 +1,6 @@
 # Copyright (c) 2021-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -13,6 +13,10 @@ SRC_URI += " \
 
 EXTRA_OECMAKE:append = "-DFLB_SHARED_LIB=ON "
 EXTRA_OECMAKE:append = "-DFLB_DEBUG=OFF "
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "fluent-bit.service"
+WEBOS_SYSTEMD_SCRIPT = "fluent-bit.sh.in"
 
 do_install:append() {
     # install mk_core*.h
@@ -44,5 +48,4 @@ do_install:append() {
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 
-SYSTEMD_SERVICE:${PN}:remove = "fluent-bit.service"
 INSANE_SKIP:${PN} = "installed-vs-shipped"

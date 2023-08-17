@@ -17,7 +17,7 @@
 # webOS event monitor service.
 
 [Unit]
-Description=webos - "%n"
+Description=meta-webos - "%n"
 Requires=ls-hubd.service settings-service.service
 After=ls-hubd.service settings-service.service
 

@@ -16,7 +16,7 @@ RDEPENDS:${PN} = "qtbase-plugins configd"
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
 WEBOS_VERSION = "0.99.0+20-101_9dff4aae8960bffa6f3add0c581dd77c6b8638ad"
-PR = "r34"
+PR = "r35"
 
 inherit webos_daemon
 inherit webos_enhanced_submissions
@@ -27,6 +27,10 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "maliit-server@.service maliit-server.service"
+WEBOS_SYSTEMD_SCRIPT = "maliit-server.sh"
 
 OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 

@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "nodejs-module-node-red"
 
 WEBOS_VERSION = "1.0.0-17_af7499b3964c37bdf489819c10650ff1a8efd5ae"
-PR = "r4"
+PR = "r5"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
@@ -31,10 +31,17 @@ inherit webos_machine_impl_dep
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "contextintentmgr.service"
+WEBOS_SYSTEMD_SCRIPT = "contextintentmgr.sh"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
 do_install:append() {
-    install -d ${D}${sysconfdir}/systemd/system/scripts
-    install -v -m 744 ${S}/files/systemd/scripts/contextintentmgr.sh ${D}${sysconfdir}/systemd/system/scripts/
+    rm -f ${D}${sysconfdir}/systemd/system/contextintentmgr.service
+    rm -f ${D}${sysconfdir}/systemd/system/scripts/contextintentmgr.sh
 }
 
 FILES:${PN} += "${webos_servicesdir} ${webos_sysconfdir}"
-SYSTEMD_SERVICE:${PN} = "contextintentmgr.service"

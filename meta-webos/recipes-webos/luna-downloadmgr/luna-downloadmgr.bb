@@ -14,7 +14,7 @@ DEPENDS = "libpbnjson luna-service2 sqlite3 curl uriparser pmloglib jemalloc lun
 RDEPENDS:${PN} = "applicationinstallerutility"
 
 WEBOS_VERSION = "4.0.0-12_abc1c307bbd50aa2a362c256098da1199220c277"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_library
@@ -29,3 +29,16 @@ EXTRA_OECMAKE += "-DMACHINE=${WEBOS_MACHINE}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "luna-download-mgr.service.in"
+WEBOS_SYSTEMD_SCRIPT = "luna-download-mgr.sh"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm -f ${D}${sysconfdir}/systemd/system/luna-download-mgr.service
+    rm -f ${D}${sysconfdir}/systemd/system/scripts/luna-download-mgr.sh
+}

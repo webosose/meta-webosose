@@ -11,7 +11,7 @@
 # LICENSE@@@
 
 [Unit]
-Description=webos - "%n"
+Description=meta-webos - "%n"
 Requires=bluetooth.service
 After=bluetooth.service
 

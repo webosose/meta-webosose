@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib"
 
 WEBOS_VERSION = "1.0.0-7_17689b0cbff53466134e79cdbfbfd4aa64fdce36"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -30,3 +30,5 @@ inherit webos_machine_impl_dep
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "audiofocusmanager.service"

@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-25_41eadb20de0db9950251567680e83f4d218d9110"
-PR = "r10"
+PR = "r11"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -30,7 +30,17 @@ RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-# uncomment next line to use mediaindexer in shell/interactive mode
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "com.webos.service.mediaindexer.service"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm ${D}${sysconfdir}/systemd/system/com.webos.service.mediaindexer.service
+}
+
 #EXTRA_OECMAKE += " -DSTANDALONE=1"
 
 # configure the maximum number of parallel meta data extractions

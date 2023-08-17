@@ -49,7 +49,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
 WEBOS_VERSION = "1.0.0-73_6255daed3e9da398abd49bc2bf82812607794627"
-PR = "r7"
+PR = "r8"
 
 inherit webos_component
 inherit webos_public_repo
@@ -78,3 +78,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0002-Fix-build-with-gcc-13.patch \
 "
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "webos-bluetooth-service.service"
+WEBOS_SYSTEMD_SCRIPT = "webos-bluetooth-service.sh"

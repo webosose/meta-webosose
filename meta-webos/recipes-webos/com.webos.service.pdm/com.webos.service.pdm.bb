@@ -19,7 +19,7 @@ RDEPENDS:${PN} = "fuse-utils hdparm gphoto2 gphotofs sdparm gptfdisk-sgdisk e2fs
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_pdm-plugin}"
 
 WEBOS_VERSION = "1.0.1-82_76bdc781196e4a5d0cf01ccf8d59ea04d5ef9fe8"
-PR = "r8"
+PR = "r9"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -39,6 +39,17 @@ USERADD_PACKAGES = "${PN}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "physical-device-manager.service"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm ${D}${sysconfdir}/systemd/system/physical-device-manager.service
+}
 
 FILES:${PN} += "${datadir}"
 

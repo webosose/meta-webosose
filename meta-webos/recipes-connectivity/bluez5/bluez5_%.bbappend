@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos28"
+EXTENDPRAUTO:append = "webos29"
 
 RRECOMMENDS:${PN} += " \
     glibc-gconv-utf-16 \
@@ -40,8 +40,10 @@ SRC_URI += " \
     file://0028-Enable-mesh-fixed-ell-undefined-symbol-error.patch \
     file://main.conf \
     file://brcm43438.service \
-    file://obex.service \
 "
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "obex.service"
 
 SRC_URI:append:raspberrypi4 = " \
     file://blacklistbtusb.conf \
@@ -57,7 +59,6 @@ EXTRA_OECONF:remove = "--enable-external-ell"
 do_install:append () {
     install -d ${D}${sysconfdir}/systemd/system
     install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
-    install -v -m 0644  ${WORKDIR}/obex.service ${D}${sysconfdir}/systemd/system/
 }
 
 do_install:append:raspberrypi4 () {

@@ -17,13 +17,13 @@ FILES:${PN}-sysvinit = "${sysconfdir}/init.d"
 # for update-rc.bbclass to know where to put postinst/prerm
 UPDATERCPN = "${PN}-sysvinit"
 
-SRC_URI += "file://dropbear.service"
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "dropbear.service"
 
 PACKAGECONFIG:append = " system-libtom"
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/system
-    install -m 0644 ${WORKDIR}/dropbear.service ${D}${sysconfdir}/systemd/system/
     ln -sf /dev/null ${D}/${sysconfdir}/systemd/system/dropbear.socket
 
     # If initscripts runtime package is not set, we need to enable the dropbear service unit.

@@ -12,7 +12,7 @@ DEPENDS:remove = "libatomic-ops"
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
 WEBOS_VERSION = "15.0-50_7775869e41eaf140252e44c3de9cf23ed39dabd0"
-EXTENDPRAUTO:append = "webos9"
+EXTENDPRAUTO:append = "webos10"
 
 inherit webos_enhanced_submissions
 
@@ -20,11 +20,12 @@ inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://pulseaudio.service \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "pulseaudio.service"
 
 EXTRA_OECONF += " \
     --with-access-group=root \
@@ -51,8 +52,6 @@ do_install:prepend() {
 }
 
 do_install:append() {
-    install -v -d ${D}${sysconfdir}/systemd/system
-    install -v -m 644 ${WORKDIR}/pulseaudio.service ${D}${sysconfdir}/systemd/system/
     install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
     install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
 

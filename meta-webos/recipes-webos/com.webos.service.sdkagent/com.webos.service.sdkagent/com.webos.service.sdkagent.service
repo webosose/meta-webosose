@@ -1,0 +1,21 @@
+# @@@LICENSE
+#
+# Copyright (c) 2022-2023 LG Electronics, Inc.
+#
+# LICENSE@@@
+
+[Unit]
+Description=meta-webos - "%n"
+Requires=ls-hubd.service
+After=ls-hubd.service
+
+[Service]
+Type=simple
+OOMScoreAdjust=-500
+EnvironmentFile=-/var/systemd/system/env/com.webos.service.sdkagent.env
+Environment=CHARSET=UTF-8
+ExecStart=/usr/sbin/com.webos.service.sdkagent
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

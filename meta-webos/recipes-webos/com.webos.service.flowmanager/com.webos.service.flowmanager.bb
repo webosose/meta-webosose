@@ -18,7 +18,7 @@ inherit webos_enhanced_submissions
 inherit webos_npm_env
 
 require flowmanager.inc
-PR = "r8"
+PR = "r9"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
@@ -28,6 +28,10 @@ COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 DEPENDS:append = " nodejs-native"
 
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "flowmgr.service"
+WEBOS_SYSTEMD_SCRIPT = "flowmgr.sh.in"
 
 # Remove --production, because that causes
 # http://gecko.lge.com/Errors/Details/119723
@@ -50,3 +54,12 @@ SRC_URI += "file://0001-webpack-use-sha256-instead-of-ancient-md4-to-fix-bui.pat
 
 # Workaround for network access issue during do_compile task
 do_compile[network] = "1"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm ${D}${sysconfdir}/systemd/system/flowmgr.service
+    rm ${D}${sysconfdir}/systemd/system/scripts/flowmgr.sh
+}

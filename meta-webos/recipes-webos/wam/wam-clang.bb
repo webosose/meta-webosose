@@ -1,6 +1,6 @@
 # Copyright (c) 2023 LG Electronics, Inc.
 
-require wam.bb
+require wam.inc
 
 inherit clang_cmake
 
@@ -10,9 +10,7 @@ PROVIDES = "virtual/webappmanager-webos"
 
 WEBOS_REPO_NAME = "wam"
 
-PR = "r3"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/wam:"
+PR = "${INC_PR}.4"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"

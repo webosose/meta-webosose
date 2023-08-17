@@ -14,7 +14,7 @@ DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
 RDEPENDS:${PN} += "configd-data"
 
 WEBOS_VERSION = "1.2.0-18_0d07514460a6c35e3a7aa0d360468f626210eaae"
-PR = "r18"
+PR = "r19"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -28,6 +28,9 @@ inherit webos_public_repo
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "configd.service"
 
 PACKAGES =+ "${PN}-tests"
 FILES:${PN}-tests = "${libexecdir}/tests/*"

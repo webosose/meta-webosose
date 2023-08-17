@@ -14,7 +14,7 @@ DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native 
 RDEPENDS:${PN} = "connman connman-client"
 
 WEBOS_VERSION = "1.1.0-42_83a6b8517c2f4ce630e4fe3d1498965cff5fbac3"
-PR = "r12"
+PR = "r13"
 
 inherit webos_component
 inherit webos_public_repo
@@ -38,6 +38,10 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
 "
 SRC_URI:append:raspberrypi4 = " file://blacklistcdc_ether.conf"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "webos-connman-adapter.service"
+WEBOS_SYSTEMD_SCRIPT = "webos-connman-adapter.sh"
 
 do_install:append:raspberrypi4 () {
     install -d  ${D}${sysconfdir}/modprobe.d

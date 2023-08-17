@@ -1,0 +1,245 @@
+#!/bin/sh
+# @@@LICENSE
+#
+# Copyright (c) 2017-2023 LG Electronics, Inc.
+#
+# Confidential computer software. Valid license from LG required for
+# possession, use or copying. Consistent with FAR 12.211 and 12.212,
+# Commercial Computer Software, Computer Software Documentation, and
+# Technical Data for Commercial Items are licensed to the U.S. Government
+# under vendor's standard commercial license.
+#
+# LICENSE@@@
+
+# Set wam executable file path
+export HOOK_SEGV=NO
+export WAM_EXE_PATH="/usr/bin/WebAppMgr"
+
+# Set wam name for user-agent
+export WAM_NAME="WebAppManager"
+
+# Only allow UTF8 encoding for luna-service messages.
+export LS_ENABLE_UTF8=1
+
+# Set effective userid and groupid
+export WAM_UID="wam"
+export WAM_GID="compositor"
+
+# Set location of error page (will follow localization rules based on this path)
+export WAM_ERROR_PAGE="file:///usr/share/localization/wam/loaderror.html"
+
+# suspending javascript execution delay for page visibility
+export WAM_SUSPEND_DELAY_IN_MS=250
+
+if [ -e "etc/wam/make_shm.sh" ] ; then
+    /etc/wam/make_shm.sh
+fi
+
+# Set user data directory for WebAppMgr
+export WAM_DATA_PATH=$(grep ${WAM_UID} /etc/passwd | cut -f6 -d":")
+
+# ensure that wam data directories exist
+mkdir -p ${WAM_DATA_PATH}
+
+# set directories permission
+chown -R ${WAM_UID}:${WAM_GID} ${WAM_DATA_PATH}
+
+# setup 50 Mb maximum for ApplicationCache
+export WAM_APPCACHE_MAXSIZE=52428800
+
+# setup 10 Mb maximum for ApplicationCache per domain
+export WAM_APPCACHE_DOMAINLIMIT=10485760
+
+# setup maximum for DiskCache
+total_memory=$(vmstat -s | grep "total memory" | sed -e 's/^[ \t]*//' | cut -f1 -d" ")
+if [ $total_memory -lt 1048576 ]; then
+# setup 32 Mb maximum for DiskCache
+    export WAM_DISKCACHE_MAXSIZE=33554432
+else
+# setup 50 Mb maximum for DiskCache
+    export WAM_DISKCACHE_MAXSIZE=52428800
+fi
+
+# setup 256 Kb maximum for resource buffer allocation
+export WAM_RESOURCE_BUFFER_MAX_ALLOC_SIZE=262144
+
+# setup 1 Mb for resource buffer
+export WAM_RESOURCE_BUFFER_SIZE=1048576
+
+# setup 200 seconds for watchdog timeout of render process
+export WATCHDOG_RENDERER_TIMEOUT=200
+
+# setup number of raster threads to 1
+export BLINK_NUM_RASTER_THREADS=2
+
+# use default tile width if not sed by recipe
+if [ "$BLINK_NUM_RASTER_THREADS" = "WEBOS${BLINK_NUM_RASTER_THREADS#WEBOS}" ]; then
+    export BLINK_NUM_RASTER_THREADS=1
+fi
+
+# setup 2 Mb maximum for the program GPU cache
+export GPU_PROGRAM_CACHE_SIZE=2048
+
+# disable using enyo system app specific optimization
+# currently used optimizations : inline caching off
+export USE_SYSTEM_APP_OPTIMIZATION="0"
+
+# Set location of NaCl modules
+export CHROMIUM_PATH="/usr/palm/applications/com.lge.app.chromium"
+export NACL_PLUGIN=${CHROMIUM_PATH}"/libppGoogleNaClPluginChrome.so"
+export NACL_IRT_LIBRARY=${CHROMIUM_PATH}"/nacl_irt_arm.nexe"
+export NACL_HELPER=${CHROMIUM_PATH}"/nacl_helper"
+export NACL_HELPER_BOOTSTRAP=${CHROMIUM_PATH}"/nacl_helper_bootstrap"
+
+# If set to 0, it will block by default third party cookies. Can be
+# overridden in application manifest.
+export WAM_DEFAULT_ALLOW_THIRD_PARTY_COOKIES=1
+
+# Set location of extra libraries
+export CDM_LIB_PATH="/usr/lib"
+
+if [ -e "etc/wam/make_shm.sh" ] ; then
+    /etc/wam/make_shm.sh
+fi
+
+# setup 8 Mb minimum codecache capacity
+export JSC_minGlobalCodeCacheCapacity=8388608
+
+# Enable more explicit logging of timing with regards to rendering
+# export WAM2_ENABLE_DEBUG_RENDER_TIMING=1
+
+# Tellurium path for developer mode
+export TELLURIUM_NUB_PATH=/usr/palm/tellurium/telluriumnub.js
+
+# Enable cursor by default
+export ENABLE_CURSOR_BY_DEFAULT=1
+
+# Enable launch optimization
+export ENABLE_LAUNCH_OPTIMIZATION=1
+
+# Set the duration(seconds) passed from last network activity (e.g. FMP Detector)
+# If set to a positive value, adjust a custom timeout for a network stable timer in FMPDetector
+export NETWORK_STABLE_TIMEOUT=3
+
+# Set maximum custom delay (in milliseconds) for suspending JS execution
+export MAX_CUSTOM_SUSPEND_DELAY_IN_MS=1000
+
+# setup limit on max gpu memory usage
+export MAX_GPU_MEM_LIMIT=60
+
+# setup 4 Mb limitation mse audio buffer size
+export MSE_AUDIO_BUFFER_SIZE_LIMIT=4194304
+
+# setup 50 Mb limitation mse video buffer size
+export MSE_VIDEO_BUFFER_SIZE_LIMIT=52428800
+
+# Enable blink features
+export ENABLE_BLINK_FEATURES=AudioFocusExtension,MediaSourceIsSupportedExtension,MediaTimelineOffset,UMSExtension
+
+
+# Disable blink features
+export DISABLE_BLINK_FEATURES=FontSrcLocalMatching,WebkitBoxLayoutUsesFlexLayout
+
+# Enable runtime features
+export ENABLE_FEATURES=MediaControllerService
+
+# please keep it in alphabetical order
+export WAM_EXTRA_FLAGS=""
+export WAM_JS_FLAGS=""
+export WAM_COMMON_SWITCHES=" \
+    --accelerated-plugin-rendering-blacklist=device;drmAgent;sound;service \
+    --application-cache-domain-limit=$WAM_APPCACHE_DOMAINLIMIT \
+    --application-cache-size=$WAM_APPCACHE_MAXSIZE \
+    --autoplay-policy=no-user-gesture-required \
+    --browser-subprocess-path=$WAM_EXE_PATH \
+    --deadline-to-synchronize-surfaces=40 \
+    --disable-direct-npapi-requests \
+    --disable-extensions \
+    --disable-gpu-rasterization \
+    --disable-low-res-tiling \
+    --disk-cache-size=$WAM_DISKCACHE_MAXSIZE \
+    --enable-accelerated-plugin-rendering \
+    --enable-aggressive-release-policy \
+    --enable-blink-features=$ENABLE_BLINK_FEATURES \
+    --disable-blink-features=$DISABLE_BLINK_FEATURES \
+    --enable-features=$ENABLE_FEATURES \
+    --local-storage-tracker \
+    --enable-devtools-experiments \
+    --enable-key-event-throttling \
+    --enable-neva-ime \
+    --enable-threaded-compositing \
+    --enable-watchdog \
+    --force-gpu-mem-available-mb=$MAX_GPU_MEM_LIMIT \
+    --fps-counter-layout=tl \
+    --hide-selection-handles \
+    --ignore-gpu-blacklist \
+    --ignore-netif=p2p \
+    --in-process-gpu \
+    --max-timeupdate-event-frequency=150 \
+    --max-unused-resource-memory-usage-percentage=0 \
+    --mse-audio-buffer-size-limit=$MSE_AUDIO_BUFFER_SIZE_LIMIT \
+    --mse-video-buffer-size-limit=$MSE_VIDEO_BUFFER_SIZE_LIMIT \
+    --network-stable-timeout=$NETWORK_STABLE_TIMEOUT \
+    --noerrdialogs \
+    --no-sandbox \
+    --num-raster-threads=$BLINK_NUM_RASTER_THREADS \
+    --ozone-platform=wayland \
+    --remote-debugging-port=9998 \
+    --resource-buffer-max-allocation-size=$WAM_RESOURCE_BUFFER_MAX_ALLOC_SIZE \
+    --resource-buffer-size=$WAM_RESOURCE_BUFFER_SIZE \
+    --touch-events=disabled \
+    --ui-disable-opaque-shader-program \
+    --user-data-dir=$WAM_DATA_PATH \
+    --webos-wam \ "
+
+export WAM_LITE_SWITCHES=" \
+    --in-process-zygote \ "
+
+export WAM_WEBOS_LITE=NO
+if [ "${WAM_WEBOS_LITE}" = "YES" ] ; then
+    export WAM_SWITCHES=${WAM_COMMON_SWITCHES}${WAM_LITE_SWITCHES}
+    export SKIA_FONT_CACHE_SIZE=1
+    export SKIA_IMAGE_CACHE_SIZE=40
+    export SKIA_BACKGROUND_FONT_CACHE_SIZE=0
+else
+    export WAM_SWITCHES=${WAM_COMMON_SWITCHES}
+    export SKIA_FONT_CACHE_SIZE=8
+    export SKIA_IMAGE_CACHE_SIZE=80
+    export SKIA_BACKGROUND_FONT_CACHE_SIZE=512
+fi
+
+export WAM_EXTRA_SKIA_CACHE_SWITCHES=" \
+    --skia-font-cache-limit-mb=$SKIA_FONT_CACHE_SIZE \
+    --skia-resource-cache-limit-mb=$SKIA_IMAGE_CACHE_SIZE \
+    --skia-background-font-cache-size-kb=$SKIA_BACKGROUND_FONT_CACHE_SIZE \
+    "
+
+export WAM_EXTRA_GPU_TUNING_SWITCHES=" \
+    --gpu-program-cache-size-kb=$GPU_PROGRAM_CACHE_SIZE \
+    "
+export WAM_WATCHDOG_RENDERER_TIMEOUT_SWITCHES=" \
+    --watchdog-renderer-timeout=$WATCHDOG_RENDERER_TIMEOUT \
+    "
+
+export WEBOS_LOAD_ACCESSIBILITY_PLUGIN=1
+
+export WAM_V8_CODE_CACHE_SWITCHES=" \
+    --enable-local-resource-code-cache \
+    --disallow-code-cache-from-file-uris-with-query-string \
+    "
+
+export WAM_MEM_FLAGS=" \
+    --decoded-image-working-set-budget-mb=96 \
+    --mem-pressure-gpu-cache-size-reduction-factor=4 \
+    --tile-manager-low-mem-policy-bytes-limit-reduction-factor=2 \
+    --shared-mem-minimal-limit-mb=8 \
+    --shared-mem-pressure-divider=4 \
+    --shared-mem-system-mem-reduction-factor=10 \
+    "
+
+# Load any special configuration from plugins
+if [ -e "/etc/wam/plugins/conf.sh" ] ; then
+    . /etc/wam/plugins/conf.sh || :
+fi
+
+exec $WAM_EXE_PATH $WAM_SWITCHES $WAM_EXTRA_SKIA_CACHE_SWITCHES $WAM_EXTRA_GPU_TUNING_SWITCHES $WAM_WATCHDOG_RENDERER_TIMEOUT_SWITCHES $WAM_MEM_FLAGS $WAM_EXTRA_FLAGS $WAM_V8_CODE_CACHE_SWITCHES --webos-js-flags="$WAM_JS_FLAGS"

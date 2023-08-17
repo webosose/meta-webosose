@@ -23,7 +23,7 @@ RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME
 RDEPENDS:${PN}-tests:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.2.0-28_3962b2d1690d908019787da521e38686700439a1"
-PR = "r39"
+PR = "r40"
 
 inherit webos_component
 inherit webos_public_repo
@@ -40,6 +40,23 @@ EXTRA_OECMAKE:append:class-native = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=FALSE -DUS
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+inherit webos_systemd
+WEBOS_SYSTEMD_SERVICE = "db8-maindb.service db8-mediadb.service db8-pre-config.service db8-tempdb.service db8.service"
+WEBOS_SYSTEMD_SCRIPT = "db8-maindb.sh"
+
+# All service files will be managed in meta-lg-webos.
+# The service file in the repository is not used, so please delete it.
+# See the page below for more details.
+# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
+do_install:append() {
+    rm -f ${D}${sysconfdir}/systemd/system/db8-maindb.service
+    rm -f ${D}${sysconfdir}/systemd/system/scripts/db8-maindb.sh
+    rm -f ${D}${sysconfdir}/systemd/system/db8-mediadb.service
+    rm -f ${D}${sysconfdir}/systemd/system/db8-pre-config.service
+    rm -f ${D}${sysconfdir}/systemd/system/db8-tempdb.service
+    rm -f ${D}${sysconfdir}/systemd/system/db8.service
+}
 
 PACKAGES =+ "${PN}-tests"
 
