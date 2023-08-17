@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos39"
+EXTENDPRAUTO:append = "webos40"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -19,7 +19,7 @@ SRC_URI:append = " \
 # Upstream-Status: Inappropriate
 # NOTE: Increase maxver when upgrading Qt version
 SRC_URI:append = " \
-    file://0005-Revert-Also-use-text-input-if-QT_IM_MODULE-is-empty-.patch;maxver=6.5.1 \
+    file://0005-Revert-Also-use-text-input-if-QT_IM_MODULE-is-empty-.patch;maxver=6.5.2 \
 "
 
 # More options for fine-tuned configuration
