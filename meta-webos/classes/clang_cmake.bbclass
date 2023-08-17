@@ -10,6 +10,8 @@ OECMAKE_CXX_COMPILER = "clang++"
 
 LIBCBE_DIR = "${libdir}/cbe"
 
+CLANG_DEPENDENCY_SUFFIX = "-clang"
+
 TOOLCHAIN_OPTIONS = "\
     --sysroot=${STAGING_DIR_TARGET} \
     --target=${TARGET_SYS} \
