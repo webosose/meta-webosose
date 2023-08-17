@@ -1,5 +1,5 @@
 # Backport from
-# https://git.openembedded.org/meta-openembedded/commit/meta-oe/recipes-support/c-ares/c-ares_1.19.0.bb?id=4e35ff869b27114059f49fa3e7adefa98bd0db6e
+# https://git.openembedded.org/meta-openembedded/commit/?id=85c7e7bda4a03bf8b13c023f8c74ab12a0f0f333
 
 # Copyright (c) 2012-2014 LG Electronics, Inc.
 SUMMARY = "c-ares is a C library that resolves names asynchronously."
@@ -9,7 +9,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=fb997454c8d62aa6a47f07a8cd48b006"
 
 SRC_URI = "git://github.com/c-ares/c-ares.git;branch=main;protocol=https"
-SRCREV = "fddf01938d3789e06cc1c3774e4cd0c7d2a89976"
+SRCREV = "6360e96b5cf8e5980c887ce58ef727e53d77243a"
 
 UPSTREAM_CHECK_GITTAGREGEX = "cares-(?P<pver>\d+_(\d_?)+)"
 
