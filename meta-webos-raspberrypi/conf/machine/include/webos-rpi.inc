@@ -6,7 +6,7 @@
 # All the MACHINE-s supported by this layer are real pieces of hardware.
 WEBOS_TARGET_MACHINE_IMPL = "hardware"
 
-MACHINE_FEATURES += "gpu-delegate armnn auto-acceleration edgetpu"
+MACHINE_FEATURES += "armnn auto-acceleration edgetpu gpu-delegate gl-backend"
 
 # Set gpu memory to "128M"
 # Wen use default setting (64M), we got the below error

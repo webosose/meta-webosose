@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos3"
+EXTENDPRAUTO:append = "webos4"
 
 # Adds dependency on GPLv2 tbb
 PACKAGECONFIG:remove = "tbb"
@@ -9,8 +9,12 @@ PACKAGECONFIG:remove = "tbb"
 PACKAGECONFIG:remove:armv4 = "eigen"
 PACKAGECONFIG:remove:armv5 = "eigen"
 
+# In case of wayland, wayland wayland-natve libxkbcommon are needed
+WAYLAND_DEPENDENCY = "wayland wayland-native libxkbcommon"
+PACKAGECONFIG[wayland] = "-DWITH_WAYLAND=ON,-DWITH_WAYLAND=OFF,${WAYLAND_DEPENDENCY},"
+
 # Adds deep learning library for AI Framework
-PACKAGECONFIG:append = "${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', ' opencl dnn text', '', d)}"
+PACKAGECONFIG:append = "${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', ' opencl dnn text libav wayland', '', d)}"
 
 # http://caprica.lgsvl.com:8080/Errors/Details/1447234
 VIRTUAL-RUNTIME_bash ?= "bash"

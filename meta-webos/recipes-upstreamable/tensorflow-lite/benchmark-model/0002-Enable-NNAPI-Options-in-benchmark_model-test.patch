@@ -1,0 +1,88 @@
+From 279cb8b271e9478614ab47975992987044cf0a0e Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Thu, 6 Jul 2023 15:47:56 +0900
+Subject: [PATCH] Enable NNAPI Options in benchmark_model test
+
+:Release Notes:
+Enable NNAPI Options in benchmark_model test
+
+:Detailed Notes:
+- enable nnapi options when not in Android system
+- disable check the nnapi support library
+
+:Testing Performed:
+Local Unit test
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRP-17873] Verification nnapi delegate with RTK BSP
+---
+Upstream-Status: Pending
+
+ tensorflow/lite/tools/benchmark/CMakeLists.txt       | 12 ++++++------
+ .../lite/tools/delegates/nnapi_delegate_provider.cc  |  7 ++++---
+ 2 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/tensorflow/lite/tools/benchmark/CMakeLists.txt b/tensorflow/lite/tools/benchmark/CMakeLists.txt
+index a7b25d362fd..90000d8491e 100644
+--- a/tensorflow/lite/tools/benchmark/CMakeLists.txt
++++ b/tensorflow/lite/tools/benchmark/CMakeLists.txt
+@@ -75,17 +75,17 @@ if(ENABLE_AUTO_DELEGATE)
+    )
+ endif(ENABLE_AUTO_DELEGATE)
+ 
+-if(CMAKE_SYSTEM_NAME MATCHES "Android")
++#if(CMAKE_SYSTEM_NAME MATCHES "Android")
+   if(_TFLITE_ENABLE_NNAPI)
+     list(APPEND TFLITE_BENCHMARK_SRCS
+       ${TFLITE_SOURCE_DIR}/tools/delegates/nnapi_delegate_provider.cc
+     )
+   endif()  # _TFLITE_ENABLE_NNAPI
+-  list(APPEND TFLITE_BENCHMARK_LIBS
+-    ${ANDROID_LOG_LIB}
+-    absl::strings
+-  )
+-endif()  # Android
++#  list(APPEND TFLITE_BENCHMARK_LIBS
++#    ${ANDROID_LOG_LIB}
++#    absl::strings
++#  )
++#endif()  # Android
+ 
+ if(TFLITE_ENABLE_GPU)
+   list(APPEND TFLITE_BENCHMARK_SRCS
+diff --git a/tensorflow/lite/tools/delegates/nnapi_delegate_provider.cc b/tensorflow/lite/tools/delegates/nnapi_delegate_provider.cc
+index c1d14c91f59..4d7ca15ef35 100644
+--- a/tensorflow/lite/tools/delegates/nnapi_delegate_provider.cc
++++ b/tensorflow/lite/tools/delegates/nnapi_delegate_provider.cc
+@@ -237,7 +237,8 @@ TfLiteDelegatePtr NnapiDelegateProvider::CreateTfLiteDelegate(
+       options.model_token = serialize_token.c_str();
+     }
+ 
+-    if (params.Get<std::string>("nnapi_support_library_path").empty()) {
++    /* In webOS, only support NnApiImplementation(), so just disable in else parts */
++    //if (params.Get<std::string>("nnapi_support_library_path").empty()) {
+       const auto* nnapi_impl = NnApiImplementation();
+       if (!nnapi_impl->nnapi_exists) {
+         TFLITE_LOG(WARN)
+@@ -249,7 +250,7 @@ TfLiteDelegatePtr NnapiDelegateProvider::CreateTfLiteDelegate(
+           [](TfLiteDelegate* delegate) {
+             delete reinterpret_cast<StatefulNnApiDelegate*>(delegate);
+           });
+-    } else {
++    /*} else {
+       std::string sl_path =
+           params.Get<std::string>("nnapi_support_library_path");
+       auto nnapi_impl = nnapi::loadNnApiSupportLibrary(sl_path);
+@@ -267,7 +268,7 @@ TfLiteDelegatePtr NnapiDelegateProvider::CreateTfLiteDelegate(
+             delete sl_delegate;
+             delete sl;
+           });
+-    }
++    }*/
+   } else if (!params.Get<std::string>("nnapi_accelerator_name").empty()) {
+     TFLITE_LOG(WARN)
+         << "`--use_nnapi=true` must be set for the provided NNAPI accelerator ("
+

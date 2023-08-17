@@ -7,8 +7,8 @@ SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
-WEBOS_VERSION = "1.0.0-28_8b90aa1853f3fda4f24bfe3909a01f5da1c3599f"
-PR = "r1"
+WEBOS_VERSION = "1.0.0-30_fc288ece6e918c1b531dc1c7fd3470283c3ce76e"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -33,11 +33,13 @@ DEPENDS = " \
 AIF_INSTALL_DIR = "${datadir}/aif"
 AIF_INSTALL_TEST_DIR = "${AIF_INSTALL_DIR}/test"
 
-PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'gpu-delegate', 'gl-backend', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'edgetpu', 'edgetpu', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', 'gl-backend', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', 'edgetpu', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'npu-delegate', 'npu', '', d)}"
 
 PACKAGECONFIG[edgetpu] = "-DWITH_EDGETPU:BOOL=TRUE,-DWITH_EDGETPU:BOOL=FALSE,libedgetpu"
 PACKAGECONFIG[gl-backend] = "-DTFLITE_ENABLE_GPU_GL_ONLY=ON, -DTFLITE_ENABLE_GPU_GL_ONLY=OFF, virtual/egl virtual/libgles2"
+PACKAGECONFIG[npu] = "-DWITH_NPU=ON,-DWITH_NPU=OFF,tflite-npu-delegate"
 
 # There is gl-backend PACKAGECONFIG which respects gpu-delegate in DISTRO_FEATURES, but still fails to build without gpu-delegate
 # http://gecko.lge.com:8000/Errors/Details/582724
@@ -52,10 +54,3 @@ EXTRA_OECMAKE += "-DAIF_INSTALL_TEST_DIR=${AIF_INSTALL_TEST_DIR}"
 
 PACKAGES =+ "${PN}-tests"
 FILES:${PN}-tests += "${AIF_INSTALL_TEST_DIR}"
-
-INSANE_SKIP:${PN} = "dev-so"
-
-FILES_SOLIBSDEV = ""
-FILES:${PN} += " \
-    ${libdir}/*.so \
-"

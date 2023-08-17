@@ -1,0 +1,29 @@
+From 6be15f08358da4108390ab6142dd692b354a72f3 Mon Sep 17 00:00:00 2001
+From: "kijoong.lee" <kijoong.lee@lge.com>
+Date: Mon, 22 May 2023 15:39:47 +0900
+Subject: [PATCH] enable nnapi delegate
+
+---
+Upstream-Status: Pending
+
+ tensorflow/lite/CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tensorflow/lite/CMakeLists.txt b/tensorflow/lite/CMakeLists.txt
+index 4a6b136bc34..af1d23b05ad 100644
+--- a/tensorflow/lite/CMakeLists.txt
++++ b/tensorflow/lite/CMakeLists.txt
+@@ -87,9 +87,9 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
+   set(_TFLITE_ENABLE_RUY ON)
+ endif()
+ set(_TFLITE_ENABLE_NNAPI "${TFLITE_ENABLE_NNAPI}")
+-if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
+-  set(_TFLITE_ENABLE_NNAPI OFF)
+-endif()
++#if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
++#  set(_TFLITE_ENABLE_NNAPI OFF)
++#endif()
+ set(_TFLITE_ENABLE_MMAP "${TFLITE_ENABLE_MMAP}")
+ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+   # See https://github.com/tensorflow/tensorflow/blob/\
+

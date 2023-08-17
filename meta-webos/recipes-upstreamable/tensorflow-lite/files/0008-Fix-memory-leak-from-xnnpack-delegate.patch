@@ -1,0 +1,24 @@
+From 7a94a0d096892921aef877c4e7d896d85cdcacdb Mon Sep 17 00:00:00 2001
+From: "seungchul.han" <seungchul.han@lge.com>
+Date: Fri, 7 Jul 2023 11:56:31 +0900
+Subject: [PATCH] Fix memory leak from xnnpack delegate
+
+---
+Upstream-Status: Pending
+
+ tensorflow/lite/delegates/xnnpack/xnnpack_delegate.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tensorflow/lite/delegates/xnnpack/xnnpack_delegate.cc b/tensorflow/lite/delegates/xnnpack/xnnpack_delegate.cc
+index 1b3c805dda2..9d0e225ab89 100644
+--- a/tensorflow/lite/delegates/xnnpack/xnnpack_delegate.cc
++++ b/tensorflow/lite/delegates/xnnpack/xnnpack_delegate.cc
+@@ -4786,5 +4786,8 @@ void* TfLiteXNNPackDelegateGetThreadPool(TfLiteDelegate* delegate) {
+ void TfLiteXNNPackDelegateDelete(TfLiteDelegate* delegate) {
+   if (delegate != nullptr) {
+     delete static_cast<::tflite::xnnpack::Delegate*>(delegate->data_);
++    // Note: LGE modified
++    // fix memory leak using xnnpack delegate
++    xnn_deinitialize();
+   }
+ }

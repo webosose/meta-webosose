@@ -41,12 +41,15 @@ SRC_URI += " \
     file://0004-add-gpu-delegate-option-for-pytorch-converted-models.patch \
     file://0005-enable-build-with-only-opengl-in-rp4.patch \
     file://0006-Fix-return-type-issues.patch \
+    file://0007-enable-nnapi-delegate.patch \
+    file://0008-Fix-memory-leak-from-xnnpack-delegate.patch \
+    file://0009-Pass-the-RNN-nodes-not-checking-if-it-iss-half_pixel.patch \
     file://0014-Fix-build-with-gcc-13.patch \
 "
 
 inherit cmake
 
-PR = "r0"
+PR = "r1"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -55,6 +58,10 @@ DEPENDS += " \
     python3-numpy-native \
     abseil-cpp \
     xnnpack \
+"
+
+RDEPENDS:${PN} = " \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', '${MLPREFIX}webos-nnruntime', '', d)} \
 "
 
 ARM_INSTRUCTION_SET = "arm"
@@ -81,11 +88,14 @@ TUNE_CCARGS:remove = "${MCPU_OPTS_TO_REMOVE}"
 OECMAKE_SOURCEPATH = "${S}/tensorflow/lite"
 
 PACKAGECONFIG ?= "xnnpack"
-PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'gpu-delegate', 'gpu gl-backend', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'gpu-delegate', 'gpu', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', 'gl-backend', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DTFLITE_ENABLE_XNNPACK=ON,-DTFLITE_ENABLE_XNNPACK=OFF"
 PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF"
 PACKAGECONFIG[gl-backend] = "-DTFLITE_ENABLE_GPU_GL_ONLY=ON, -DTFLITE_ENABLE_GPU_GL_ONLY=OFF, virtual/egl virtual/libgles2"
+PACKAGECONFIG[nnapi] = "-DTFLITE_ENABLE_NNAPI=ON,-DTFLITE_ENABLE_NNAPI=OFF"
 
 # There are many external dependencies fetched in do_configure if not found:
 # tensorflow/lite/tools/cmake/modules/Findgoogletest.cmake:OverridableFetchContent_GetProperties(googletest)

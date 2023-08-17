@@ -4,6 +4,17 @@ require conf/distro/include/webos-features-minimal.inc
 
 # Addition/removal distro features
 
+# Includes AI Framework. You can specify the packages to be installed using the following options:
+# webos-aiframework: If this feature is specified, tensorflow-lite, opencv, opencl, edgeai-vision will be installed.
+# armnn: Arm's ML SDKs arm-compute-library and armnn are installed. Along with this, the TFLite armnn-delegate for TFLite is installed.
+# gpu-delegate: If the installation machine supports gpu acceleration, TFLite will build with the gpu delegate function.
+# auto-acceleration: When this feature is added, the tflite-auto-delegation feature is enabled.
+# edgetpu: Install libraries for Google Coral Edge TPU.
+# ml-library-size-reduction: If the image does not have enough space to install all of the above ML libraries,
+# you can reduce the size of the installed library by adding this option. If this option is specified,
+# the examples and test codes are excluded from the installation.
+WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework auto-acceleration edgetpu gpu-delegate"
+
 # You can specify the packagegroups to be installed using the following options:
 # webos-<feature>: If this feature is specified, packagegroup-webos-<feature> will be installed.
 WEBOS_DISTRO_FEATURES_EXTENDED += "\
@@ -15,6 +26,7 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
     webos-i18n \
     webos-media \
     webos-media-drm \
+    ${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK} \
 "
 
 NO_RECOMMENDATIONS = "0"

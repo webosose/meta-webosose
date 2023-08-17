@@ -7,14 +7,14 @@ SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
     file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-    file://oss-pkg-info.yaml;md5=a926aa5bdc4e3096f07afb7c53432c1a \
+    file://oss-pkg-info.yaml;md5=6e87e90c168c712da8accb5afc402bf4\
 "
 
-WEBOS_VERSION = "1.0.0-31_15826dade14fcf4523e06d90bb62680dd3e17ce5"
+WEBOS_VERSION = "1.0.0-45_728b5170cff02a99ae8459a0031f662f9e18a26e"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r8"
+PR = "r9"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -52,6 +52,8 @@ PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', 'edgetpu'
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'armnn', 'armnn', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'ml-library-size-reduction', '', 'examples', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'auto-acceleration', 'ads', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'npu-delegate', 'npu xtensor fittv', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DWITH_XNNPACK:BOOL=TRUE,-DWITH_XNNPACK:BOOL=FALSE"
 PACKAGECONFIG[gpu] = "-DWITH_GPU=ON, -DWITH_GPU=OFF"
@@ -59,17 +61,13 @@ PACKAGECONFIG[edgetpu] = "-DWITH_EDGETPU:BOOL=TRUE,-DWITH_EDGETPU:BOOL=FALSE,lib
 PACKAGECONFIG[armnn] = "-DWITH_ARMNN:BOOL=TRUE,-DWITH_ARMNN:BOOL=FALSE,armnn"
 PACKAGECONFIG[examples] = "-DWITH_EXAMPLES=ON -DWITH_EXTRA_MODELS=ON,-DWITH_EXAMPLES=OFF -DWITH_EXTRA_MODELS=OFF,,"
 PACKAGECONFIG[ads] = "-DWITH_AUTO_DELEGATE=ON,-DWITH_AUTO_DELEGATE=OFF,tflite-auto-delegation"
-
-FILES:${PN}-dev = ""
-
-INSANE_SKIP:${PN} = "dev-so"
-
-FILES:${PN}-dev += " \
-    ${includedir}/* \
-    ${libdir}/pkgconfig \
-"
+PACKAGECONFIG[npu] = "-DWITH_NPU=ON,-DWITH_NPU=OFF,tflite-npu-delegate"
+PACKAGECONFIG[xtensor] = "-DWITH_XTENSOR:BOOL=TRUE,-DWITH_XTENSOR:BOOL=FALSE,xtensor xtl xsimd"
+PACKAGECONFIG[fittv] = "-DWITH_FITTV:BOOL=TRUE,-DWITH_FITTV:BOOL=FALSE"
+PACKAGECONFIG[nnapi] = "-DWITH_NNAPI=ON,-DWITH_NNAPI=OFF"
 
 PACKAGES =+ "${PN}-tests"
+
 FILES:${PN}-tests = " \
     ${AIF_INSTALL_TEST_DIR} \
     ${AIF_INSTALL_TEST_DIR}/test-dl \
@@ -78,5 +76,4 @@ FILES:${PN}-tests = " \
 
 FILES:${PN} += " \
     ${AIF_INSTALL_DIR} \
-    ${libdir}/*.so* \
 "
