@@ -1,0 +1,50 @@
+From 46a8ccec3073b3df0294ca1079e77eb620b16f23 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 15 May 2023 08:30:31 +0200
+Subject: [PATCH] Fix build with gcc-13
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/597612
+
+FAILED: CMakeFiles/avoutputd.dir/src/video/videoservice.cpp.o
+TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/recipe-sysroot-native/usr/bin/arm-distromllib32-linux-gnueabi/arm-distromllib32-linux-gnueabi-g++ --sysroot=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot  -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/aval -mthumb -mfpu=neon -mfloat-abi=softfp -mcpu=cortex-a9 -mtune=cortex-a9 -funwind-tables -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -D_TIME_BITS=64 -D_FILE_OFFSET_BITS=64 -Werror=return-type  --sysroot=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fmacro-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/git=/usr/src/debug/lib32-avoutputd/1.0.0-23-r1  -fdebug-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/git=/usr/src/debug/lib32-avoutputd/1.0.0-23-r1  -fmacro-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/build=/usr/src/debug/lib32-avoutputd/1.0.0-23-r1  -fdebug-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/build=/usr/src/debug/lib32-avoutputd/1.0.0-23-r1  -fdebug-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/recipe-sysroot-native=  -fvisibility-inlines-hidden  -std=c++11 -Wall -Wextra -fno-permissive -Wno-unused-parameter -Wno-deprecated-declarations -Wno-type-limits -Wno-comment -Werror=return-type -Werror=reorder -Werror=uninitialized -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/lib/glib-2.0/include -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/lib/glib-2.0/include -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/lib/glib-2.0/include -Wl,--no-undefined -iquote TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/build/Configured/files/conf -iquote TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/git/src -DNDEBUG -MD -MT CMakeFiles/avoutputd.dir/src/video/videoservice.cpp.o -MF CMakeFiles/avoutputd.dir/src/video/videoservice.cpp.o.d -o CMakeFiles/avoutputd.dir/src/video/videoservice.cpp.o -c TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/git/src/video/videoservice.cpp
+In file included from TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/git/src/video/videoservice.cpp:17:
+TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/aval/aval_video.h:139:72: error: 'uint8_t' has not been declared
+  139 |         virtual std::vector<AVAL_VIDEO_SIZE_T> getSupportedResolutions(uint8_t dispIndex = 0) = 0;
+      |                                                                        ^~~~~~~
+TOPDIR/BUILD/work/mach-distromllib32-linux-gnueabi/lib32-avoutputd/1.0.0-23-r1/lib32-recipe-sysroot/usr/include/aval/aval_video.h:141:62: error: 'uint8_t' has not been declared
+  141 |         virtual bool setDisplayResolution(AVAL_VIDEO_SIZE_T, uint8_t) = 0;
+      |                                                              ^~~~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-412] Create GPVB with Yocto 4.2 Mickledore
+[WRP-11864] CCC: Various build fixes and .patch files cleanup
+
+Change-Id: I66f9f9109eb4bd54e57cafac910b7d0f9a6d289a
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/avoutput-adaptation-layer-api/+/354361 Fix build with gcc-13]
+
+ include/public/aval_video.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/public/aval_video.h b/include/public/aval_video.h
+index c2bc672..ee6039b 100644
+--- a/include/public/aval_video.h
++++ b/include/public/aval_video.h
+@@ -18,6 +18,7 @@
+ #define AVAL_VIDEO_API_H
+ 
+ #include "aval_common.h"
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
