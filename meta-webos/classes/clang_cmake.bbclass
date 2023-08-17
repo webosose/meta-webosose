@@ -19,6 +19,7 @@ TOOLCHAIN_OPTIONS = "\
     -isystem ${STAGING_INCDIR}/c++/v1/ \
     -Wl,-L${STAGING_DIR_TARGET}/${LIBCBE_DIR} \
     -Wl,-rpath,${LIBCBE_DIR} \
+    -Wno-unused-command-line-argument \
     -D_LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS \
 "
 
