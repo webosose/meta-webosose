@@ -4,7 +4,7 @@ SUMMARY = "GStreamer plugin for webOS"
 
 require recipes-multimedia/gstreamer/gstreamer1.0-plugins-common.inc
 
-AUTHOR = "DongJoo Kim <dongjoo.kim@lge.com>"
+AUTHOR = "Yongjin Ohn <yongjin.ohn@lge.com>"
 
 LICENSE = "LGPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6762ed442b3822387a51c92d928ead0d"
