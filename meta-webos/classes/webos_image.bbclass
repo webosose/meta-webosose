@@ -58,6 +58,9 @@ WEBOS_IMAGE_EXTRA_INSTALL = " \
 
 IMAGE_INSTALL ?= "${WEBOS_IMAGE_BASE_INSTALL}"
 
+# Perform validation for all ls2 security configuration jsons
+IMAGE_CLASSES += "webos_ls2_conf_validate"
+
 # webOS supports the generation of oss package information file.
 # $ bitbake -c write_oss_pkg_info <image>
 IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info ${@bb.utils.contains('IMAGE_FEATURES', 'webos-extract-ls2-api', 'webos_ls2_api_list', '', d)}"
