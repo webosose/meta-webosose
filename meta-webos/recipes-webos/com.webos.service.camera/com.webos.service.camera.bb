@@ -11,10 +11,9 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
-DEPENDS += "edgeai-vision jpeg opencv"
 
 WEBOS_VERSION = "1.0.0-35_8ec5e64470df87173c8013e7661d96541c6d544c"
-PR = "r7"
+PR = "r8"
 
 inherit webos_component
 inherit webos_cmake
@@ -24,16 +23,21 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_system_bus
 inherit webos_daemon
-inherit features_check
 
 # depends on edgeai-vision
-REQUIRED_DISTRO_FEATURES = "webos-aiframework"
+PACKAGECONFIG ??= " \
+    ${@bb.utils.filter('DISTRO_FEATURES', 'webos-aiframework', d)}\
+"
+
+PACKAGECONFIG[webos-aiframework] = "-DWITH_AIFRAMEWORK=ON,-DWITH_AIFRAMEWORK=OFF,edgeai-vision"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
-COMPATIBLE_MACHINE = "(.*)"
-
 FILES:${PN} += "${libdir}/*.so"
+# The libv4l2-camera-plugin.so symlink is actually used in runtime now and widthout it com.webos.service.camera2 fails to find it with:
+# raspberrypi4-64 com.webos.service.camera2[1253]: [] [pmlog] HAL HAL {} camera_hal_if_init():42 dlopen failed for : libv4l2-camera-plugin.so
+# The code should be changed to open libv4l2-camera-plugin.so.1 instead to resolve ABI incompatibility.
+# Building versioned libraries and then using them through unversioned symlink is common mistake.
 FILES_SOLIBSDEV = ""
 INSANE_SKIP:${PN} += "dev-so"
