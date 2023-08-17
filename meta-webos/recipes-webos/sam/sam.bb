@@ -16,7 +16,7 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
-WEBOS_VERSION = "2.0.0-66_409a292d489d853db96dfd7a89179f4c1c25a736"
+WEBOS_VERSION = "2.0.0-67_5ee2734aa1dbad21bcd0e443471b05f269329fd3"
 PR = "r27"
 
 inherit webos_component
@@ -28,9 +28,7 @@ inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-remove-dependency-on-libprocps.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 PACKAGES =+ "${PN}-tests"
