@@ -2,7 +2,7 @@
 
 EXTENDPRAUTO:append = "webos6"
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append = " \
     file://0001-Load-installed-files-before-update-file-ownership.patch \

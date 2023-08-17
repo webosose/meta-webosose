@@ -5,7 +5,7 @@ EXTENDPRAUTO:append = "webos14"
 # Assign to PE, because empty PKGE in KERNEL_IMAGE_NAME causes two hyphens.
 PE = "1"
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI_EMULATOR = " \
     file://crypto.cfg \

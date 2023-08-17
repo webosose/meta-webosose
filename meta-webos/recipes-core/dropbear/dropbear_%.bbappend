@@ -2,7 +2,7 @@
 
 inherit webos_machine_impl_dep
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 EXTENDPRAUTO:append = "webos8"
 

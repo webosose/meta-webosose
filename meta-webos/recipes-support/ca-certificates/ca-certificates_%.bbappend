@@ -1,6 +1,5 @@
 # Copyright (c) 2013-2023 LG Electronics, Inc.
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 EXTENDPRAUTO:append = "webos3"
 
 CERT_SOURCE_DIR = "${datadir}/ca-certificates"
