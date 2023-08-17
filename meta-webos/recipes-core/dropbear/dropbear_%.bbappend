@@ -4,7 +4,7 @@ inherit webos_machine_impl_dep
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos8"
+EXTENDPRAUTO:append = "webos9"
 
 # (In the emulator) our openssh is installed in /opt prefix, set the sftp path
 # this overrides default value set in oe-core's dropbear.inc
@@ -18,6 +18,8 @@ FILES:${PN}-sysvinit = "${sysconfdir}/init.d"
 UPDATERCPN = "${PN}-sysvinit"
 
 SRC_URI += "file://dropbear.service"
+
+PACKAGECONFIG:append = " system-libtom"
 
 do_install:append() {
     install -d ${D}${sysconfdir}/systemd/system
