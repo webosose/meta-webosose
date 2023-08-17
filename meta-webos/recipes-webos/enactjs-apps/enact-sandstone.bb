@@ -23,10 +23,10 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.7.0"
+PV = "2.7.3"
 
-SRCREV = "e1d8f612ea8abe95fa233a541f1974fefaee205d"
-SRCREV_enact = "8c0c3e0c3d93eaaab4cae736ea1765a94985453e"
+SRCREV = "ef92fc6465407d1539b8f1d989bd2eb55e96bcc7"
+SRCREV_enact = "020e8fd4ad58352274ec85a1842eeab01f12dbca"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
