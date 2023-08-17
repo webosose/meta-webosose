@@ -24,7 +24,7 @@ PR = "r13"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.38_322be182813a25921feb279d4ddbce75ea44d266"
+WEBOS_VERSION = "1.0.0-gav.39_47f2936116d6c2fcc30034cc03b406aca93eb592"
 
 # See the restrictions in CMakeLists.txt
 COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$|^qemux86-64$"

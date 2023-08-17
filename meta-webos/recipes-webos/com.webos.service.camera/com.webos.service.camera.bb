@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
 
-WEBOS_VERSION = "1.0.0-35_8ec5e64470df87173c8013e7661d96541c6d544c"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-36_9ffdd45eb7385bd8447117cc061ac9e73a819d57"
+PR = "r9"
 
 inherit webos_component
 inherit webos_cmake
@@ -33,11 +33,3 @@ PACKAGECONFIG[webos-aiframework] = "-DWITH_AIFRAMEWORK=ON,-DWITH_AIFRAMEWORK=OFF
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-FILES:${PN} += "${libdir}/*.so"
-# The libv4l2-camera-plugin.so symlink is actually used in runtime now and widthout it com.webos.service.camera2 fails to find it with:
-# raspberrypi4-64 com.webos.service.camera2[1253]: [] [pmlog] HAL HAL {} camera_hal_if_init():42 dlopen failed for : libv4l2-camera-plugin.so
-# The code should be changed to open libv4l2-camera-plugin.so.1 instead to resolve ABI incompatibility.
-# Building versioned libraries and then using them through unversioned symlink is common mistake.
-FILES_SOLIBSDEV = ""
-INSANE_SKIP:${PN} += "dev-so"
