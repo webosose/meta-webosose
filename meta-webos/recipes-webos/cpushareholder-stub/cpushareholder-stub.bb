@@ -5,14 +5,14 @@ AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 SECTION = "webos/base"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 RPROVIDES:${PN} = "cpushareholder"
 
-WEBOS_VERSION = "2.0.1-2_d740e5161484db8079fc1641737576e087965b85"
-PR = "r4"
+WEBOS_VERSION = "2.0.1-3_215a50182594720b99a53880393833a4f28c5c25"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo

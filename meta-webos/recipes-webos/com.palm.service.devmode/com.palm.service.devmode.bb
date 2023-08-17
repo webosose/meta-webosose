@@ -6,12 +6,12 @@ SECTION = "webos/apps"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-11_aaf580cc77fb3ae14f72408601040e0932699a8b"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-12_c92d2b83edfdedae7eebc76cf73d4b9d65d56d58"
+PR = "r8"
 
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 

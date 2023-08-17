@@ -6,7 +6,7 @@ SECTION = "webos/frameworks"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
     file://oss-pkg-info.yaml;md5=bc052cc0f232b815569ebc81a4ef6490 \
 "
 
@@ -20,8 +20,8 @@ COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
 COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
-WEBOS_VERSION = "3.0.2-6_93522aafb7807afe2109cc5fd33e1d5258d4fbb6"
-PR = "r9"
+WEBOS_VERSION = "3.0.2-7_b759589be50ce52c4ae4e6af40ecbc78c7232a96"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo

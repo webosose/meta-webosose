@@ -6,14 +6,14 @@ AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
 DEPENDS = "glib-2.0"
 
-WEBOS_VERSION = "2.1.0-4_13e80012a96329af4581062a1984921bd6ed7e8e"
-PR = "r6"
+WEBOS_VERSION = "2.1.0-5_0e70f221299476786627f169a0915556f315b72b"
+PR = "r7"
 
 inherit webos_component
 inherit webos_public_repo
