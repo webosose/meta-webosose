@@ -2,7 +2,7 @@
 
 SUMMARY = "GStreamer plugin for webOS"
 
-require gstreamer1.0-plugins-common.inc
+require recipes-multimedia/gstreamer/gstreamer1.0-plugins-common.inc
 
 AUTHOR = "DongJoo Kim <dongjoo.kim@lge.com>"
 
