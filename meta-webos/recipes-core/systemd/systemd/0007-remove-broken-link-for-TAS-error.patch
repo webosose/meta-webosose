@@ -3,7 +3,27 @@ From: "jaekyu.lee" <jaekyu.lee@lge.com>
 Date: Wed, 14 Jun 2023 01:13:39 +0900
 Subject: [PATCH] remove broken link for TAS error
 
+:Release Notes:
+TAS is trying to scp whole /var/log directory and fails because
+/var/log/README is a broken symlink to
+../../usr/share/doc/systemd/README.logs which isn't installed in our images
+
+:Detailed Notes:
+During executing command "load_file(from_filename=/var/log, to_folder=/tmp/tmpp5d0b0qe/var, recursive=True)" the following error occurred:
+Traceback (most recent call last):
+File "/var/lib/tas/cw/tests_b79ffc47e4a28aede6b21bff796f1039964cb284/webos/device_shell/base_commandline.py", line 573, in _ssh_retry_policy
+result = method_for_execution()
+File "/var/lib/tas/cw/tests_b79ffc47e4a28aede6b21bff796f1039964cb284/webos/device_shell/base_commandline.py", line 526, in _load_file
+scp_client.get(from_filename, to_folder, recursive=recursive)
+File "/usr/local/lib/python3.6/dist-packages/scp.py", line 238, in get
+self._recv_all()
+File "/usr/local/lib/python3.6/dist-packages/scp.py", line 388, in _recv_all
+raise SCPException(asunicode(msg[1:]))
+scp.SCPException: scp: /var/log/README: No such file or directory
+
 ---
+Upstream-Status: Pending
+
  tmpfiles.d/legacy.conf.in | 8 +++++---
  1 file changed, 5 insertions(+), 3 deletions(-)
 
