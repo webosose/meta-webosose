@@ -1,6 +1,5 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
-# You don't need to change this value when you're changing just a RDEPENDS:${PN} variable.
 EXTENDPRAUTO:append:rpi = "webosrpi12"
 
 VIRTUAL-RUNTIME_com.webos.service.cec ?= ""

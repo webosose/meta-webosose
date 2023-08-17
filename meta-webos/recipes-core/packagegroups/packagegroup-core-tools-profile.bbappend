@@ -1,6 +1,5 @@
 # Copyright (c) 2014-2023 LG Electronics, Inc.
 
-# You don't need to change this value when you're changing just the RDEPENDS:${PN} variable.
 EXTENDPRAUTO:append = "webos3"
 
 # Don't add the packages related to LTTng if it's not enabled
