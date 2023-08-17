@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-16_e386f995a5dbf73a5a10f9f66bf4d62e1f8c2bc7"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-19_a6aa641870b7e912275517bdb41591d7dbbbd9b2"
+PR = "r8"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
@@ -30,10 +30,6 @@ PACKAGECONFIG ??= ""
 # Emulator
 PACKAGECONFIG[emulator] = "CONFIG+=emulator,,nyx-lib"
 PACKAGECONFIG:append:emulator = " emulator"
-SRC_URI:append:emulator = " \
-    file://0001-virtual-touch-for-emulator.patch \
-    file://0002-Disable-mouse-wheel-on-touch-mode-for-emulator.patch \
-"
 
 # Multi-plane composition
 PACKAGECONFIG[plane-composition] = "CONFIG+=plane_composition,,"
