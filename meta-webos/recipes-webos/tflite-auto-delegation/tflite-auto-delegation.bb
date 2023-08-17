@@ -8,7 +8,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 WEBOS_VERSION = "1.0.0-30_fc288ece6e918c1b531dc1c7fd3470283c3ce76e"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -35,7 +35,7 @@ AIF_INSTALL_TEST_DIR = "${AIF_INSTALL_DIR}/test"
 
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', 'gl-backend', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', 'edgetpu', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'npu-delegate', 'npu', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu', '', d)}"
 
 PACKAGECONFIG[edgetpu] = "-DWITH_EDGETPU:BOOL=TRUE,-DWITH_EDGETPU:BOOL=FALSE,libedgetpu"
 PACKAGECONFIG[gl-backend] = "-DTFLITE_ENABLE_GPU_GL_ONLY=ON, -DTFLITE_ENABLE_GPU_GL_ONLY=OFF, virtual/egl virtual/libgles2"
