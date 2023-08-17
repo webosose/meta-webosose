@@ -12,6 +12,7 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
     webos-connectivity \
     webos-diagnostics \
     webos-graphics \
+    webos-i18n \
     webos-media \
     webos-media-drm \
 "
