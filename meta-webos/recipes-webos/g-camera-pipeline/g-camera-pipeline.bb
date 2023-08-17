@@ -19,15 +19,15 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-PR = "r13"
+PR = "r14"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.39_47f2936116d6c2fcc30034cc03b406aca93eb592"
+WEBOS_VERSION = "1.0.0-gav.40_48def9addb5dcb0f408137c5f8c34c33d799ab90"
 
-# See the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^raspberrypi4$|^qemux86$|^qemux86-64$"
+# TODO: Fix the restrictions in CMakeLists.txt
+COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
