@@ -28,7 +28,7 @@ PROVIDES:pn-clang-native = "llvm-native"
 PROVIDES:pn-nativesdk-clang = "nativesdk-llvm"
 
 PREFERRED_PROVIDER_virtual/webruntime = "webruntime${WEBRUNTIME_TOOLCHAIN}"
-VIRTUAL-RUNTIME_webruntime = "webruntime"
+VIRTUAL-RUNTIME_webruntime = "webruntime${WEBRUNTIME_TOOLCHAIN}"
 
 WEBOS_PREFERRED_PROVIDER_FOR_BASH = "busybox"
 PREFERRED_PROVIDER_bash = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', '${MLPREFIX}busybox', '${MLPREFIX}bash', d)}"
