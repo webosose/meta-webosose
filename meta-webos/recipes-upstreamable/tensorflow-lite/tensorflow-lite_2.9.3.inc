@@ -45,11 +45,29 @@ SRC_URI += " \
     file://0008-Fix-memory-leak-from-xnnpack-delegate.patch \
     file://0009-Pass-the-RNN-nodes-not-checking-if-it-iss-half_pixel.patch \
     file://0014-Fix-build-with-gcc-13.patch \
+    file://CVE2023/0001-CVE-2023-25659-Add-out-of-bounds-array-check-to-dynamic_stitch_op.patch \
+    file://CVE2023/0002-CVE-2023-25660-Quick-fix-for-a-vuln-in-printing-empty-tensors.patch \
+    file://CVE2023/0003-CVE-2023-25662-Fix-security-vulnerability-in-EditDistance-op-shape-.patch \
+    file://CVE2023/0004-CVE-2023-25663-Fixing-null-pointer-read-in-TensorArrayConcat-when-t.patch \
+    file://CVE2023/0005-CVE-2023-25664-Add-inputs-check-for-AvgPoolGrad.patch \
+    file://CVE2023/0006-CVE-2023-25665-Add-validation-checks-in-sparse-binary-ops.patch \
+    file://CVE2023/0007-CVE-2023-25666-Fix-audio-spectrogram-FPE.patch \
+    file://CVE2023/0008-CVE-2023-25667-Fix-integer-overflow-for-multiframe-gifs.patch \
+    file://CVE2023/0009-CVE-2023-25669-tf2xla-Validate-that-stride-and-window-size-are-posi.patch \
+    file://CVE2023/0010-CVE-2023-25670-Check-min-max-values-to-be-scalars.patch \
+    file://CVE2023/0011-CVE-2023-25671-1-tfg-Fix-out-of-bounds-access-due-to-mismatched-integ.patch \
+    file://CVE2023/0012-CVE-2023-25671-2-tfg-translate-needs-to-call-InitMlir.patch \
+    file://CVE2023/0013-CVE-2023-25672-Fixes-shape-inference-of-LookupTableImportV2-to-hand.patch \
+    file://CVE2023/0014-CVE-2023-25673-Tensorflow-Fix-security-vulnerability-with-TensorLis.patch \
+    file://CVE2023/0015-CVE-2023-25675-Tensorflow-Fix-security-vulnerability-with-DenseBinc.patch \
+    file://CVE2023/0016-CVE-2023-25676-Check-for-unexpected-scalars-in-the-shape-argument-t.patch \
+    file://CVE2023/0017-CVE-2023-25801-Fix-security-vulnerability-with-FractionalMax-AVG-Po.patch \
+    file://CVE2023/0018-CVE-2023-27579-Check-filter_input_channel-0-in-conv-kernel.patch \
 "
 
 inherit cmake
 
-PR = "r1"
+PR = "r2"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \

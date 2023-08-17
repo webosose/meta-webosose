@@ -8,7 +8,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 WEBOS_VERSION = "1.0.0-30_fc288ece6e918c1b531dc1c7fd3470283c3ce76e"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -47,7 +47,7 @@ PACKAGECONFIG[npu] = "-DWITH_NPU=ON,-DWITH_NPU=OFF,tflite-npu-delegate"
 # TOPDIR/BUILD/work/mach-distro-linux-gnueabi/tflite-auto-delegation/1.0.0-27-r1/..../11.3.0/ld: auto_delegation/libauto-delegation.so.1.0.0: undefined reference to `TfLiteGpuDelegateOptionsV2Default'
 # TOPDIR/BUILD/work/mach-distro-linux-gnueabi/tflite-auto-delegation/1.0.0-27-r1/..../11.3.0/ld: auto_delegation/libauto-delegation.so.1.0.0: undefined reference to `TfLiteGpuDelegateV2Create'
 inherit features_check
-REQUIRED_DISTRO_FEATURES = "gpu-delegate"
+REQUIRED_COMBINED_FEATURES = "gpu-delegate"
 
 EXTRA_OECMAKE += "-DAIF_INSTALL_DIR=${AIF_INSTALL_DIR}"
 EXTRA_OECMAKE += "-DAIF_INSTALL_TEST_DIR=${AIF_INSTALL_TEST_DIR}"
