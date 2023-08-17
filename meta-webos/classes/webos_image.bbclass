@@ -6,6 +6,7 @@
 #
 # webos-minimal:            webOS minimal packages
 # webos-systemapps:         webOS system app packages
+# webos-systemservices:     webOS system service packages
 # webos-testapps:           webOS test app packages
 # webos-extended:           webOS extended packages
 #
@@ -22,6 +23,7 @@ inherit webos_image_${WEBOS_TARGET_DISTRO_VARIANT}
 
 FEATURE_PACKAGES_webos-minimal = "packagegroup-webos-minimal"
 FEATURE_PACKAGES_webos-systemapps = "packagegroup-webos-systemapps"
+FEATURE_PACKAGES_webos-systemservices = "packagegroup-webos-systemservices"
 FEATURE_PACKAGES_webos-testapps = "packagegroup-webos-testapps"
 FEATURE_PACKAGES_webos-extended = "packagegroup-webos-extended"
 FEATURE_PACKAGES_webos-devel = "packagegroup-webos-devel"

@@ -3,7 +3,7 @@
 inherit webos_image_minimal
 
 # Increse when features are changed
-_pr_suffix = "main1"
+_pr_suffix = "main2"
 
 # Addition/removal image features
-IMAGE_FEATURES += "webos-systemapps"
+IMAGE_FEATURES += "webos-systemapps webos-systemservices"
