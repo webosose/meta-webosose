@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-79_838283243042c1f1df2a1a0a598eda7341e0d038"
-PR = "r61"
+PR = "r62"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -156,5 +156,4 @@ FILES:${PN} += " \
     ${sysconfdir}/wam \
     ${libdir}/webappmanager/plugins/*.so \
     ${datadir}/localization/${BPN} \
-    ${WEBOS_SYSTEM_BUS_DIRS} \
 "
