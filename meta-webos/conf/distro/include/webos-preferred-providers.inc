@@ -20,6 +20,13 @@ SKIP_RECIPE[googletest-clang] ?= "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN'
 SKIP_RECIPE[media-codec-interface-clang] ?= "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', '', 'WEBRUNTIME_TOOLCHAIN is not set to -clang', d)}"
 SKIP_RECIPE[g-media-pipeline-clang] ?= "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', '', 'WEBRUNTIME_TOOLCHAIN is not set to -clang', d)}"
 
+PREFERRED_PROVIDER_llvm = "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', 'clang', 'llvm', d)}"
+PREFERRED_PROVIDER_llvm-native = "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', 'clang-native', 'llvm-native', d)}"
+PREFERRED_PROVIDER_nativesdk-llvm = "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', 'nativesdk-clang', 'nativesdk-llvm', d)}"
+PROVIDES:pn-clang = "llvm"
+PROVIDES:pn-clang-native = "llvm-native"
+PROVIDES:pn-nativesdk-clang = "nativesdk-llvm"
+
 PREFERRED_PROVIDER_virtual/webruntime = "webruntime${WEBRUNTIME_TOOLCHAIN}"
 VIRTUAL-RUNTIME_webruntime = "webruntime"
 

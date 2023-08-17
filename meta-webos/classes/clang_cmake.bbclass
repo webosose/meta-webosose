@@ -3,6 +3,8 @@
 inherit webos_cmake
 inherit clang_libc
 
+DEPENDS += "clang-native"
+
 OECMAKE_C_COMPILER = "clang"
 OECMAKE_CXX_COMPILER = "clang++"
 
