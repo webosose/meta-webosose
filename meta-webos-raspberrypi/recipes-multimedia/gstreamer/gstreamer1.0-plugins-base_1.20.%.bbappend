@@ -1,7 +1,5 @@
 # Copyright (c) 2018-2023 LG Electronics, Inc.
 
-require gstreamer1.0-webos-common.inc
-
 EXTENDPRAUTO:append:rpi = "webosrpi2"
 
 # gles2 make build error , so override below and remove gles2.

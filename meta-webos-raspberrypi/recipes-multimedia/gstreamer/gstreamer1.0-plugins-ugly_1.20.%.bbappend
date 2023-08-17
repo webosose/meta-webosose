@@ -1,7 +1,5 @@
 # Copyright (c) 2018-2023 LG Electronics, Inc.
 
-require gstreamer1.0-webos-common.inc
-
 EXTENDPRAUTO:append:rpi = "webosrpi1"
 
 WEBOS_REPO_NAME:rpi = "gst-plugins-ugly"
