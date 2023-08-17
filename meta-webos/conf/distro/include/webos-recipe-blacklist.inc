@@ -12,7 +12,6 @@
 # meta-qt6
 SKIP_RECIPE[packagegroup-qt6-addons] ?= "rdepends on blacklisted qtcharts, qtdeviceutilities, qtapplicationmanager, qtinterfaceframework, qtconnectivity-tools, qtmultimedia"
 SKIP_RECIPE[packagegroup-qt6-modules] ?= "rdepends on blacklisted packagegroup-qt6-addons"
-SKIP_RECIPE[packagegroup-qt6-commercial-modules] ?= "depends on Commercial Qt, can be dropped once https://codereview.qt-project.org/c/yocto/meta-qt6/+/470280 is merged"
 SKIP_RECIPE[qtapplicationmanager] ?= "fails to build: Qt6::QWaylandEglPlatformIntegrationPlugi references non-existent qtapplicationmanager/6.4.1-r0/recipe-sysroot/usr/lib/plugins/platforms/libqwayland-egl.so http://gecko.lge.com:8000/Errors/Details/565731"
 SKIP_RECIPE[qtdeviceutilities] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com:8000/Errors/Details/565732"
 SKIP_RECIPE[qtcharts] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com:8000/Errors/Details/565734"
