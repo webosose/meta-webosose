@@ -11,7 +11,7 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
-WEBOS_VERSION = "15.0-50_7775869e41eaf140252e44c3de9cf23ed39dabd0"
+WEBOS_VERSION = "15.0-51_ac3162efbe4658da682131855490db386278cd90"
 EXTENDPRAUTO:append = "webos10"
 
 inherit webos_enhanced_submissions
