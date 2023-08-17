@@ -111,20 +111,6 @@ do_generate_toolchain_file:append() {
     sed '/CMAKE_SYSTEM_PROCESSOR/ s/i586/i686/' -i ${WORKDIR}/toolchain.cmake
 }
 
-# Record how cmake was invoked
-do_configure:append() {
-    # Keep in sync with how cmake_do_configure() invokes cmake
-    echo $(which cmake) \
-      ${OECMAKE_SITEFILE} \
-      ${S} \
-      -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
-      -DCMAKE_INSTALL_SO_NO_EXE=0 \
-      -DCMAKE_TOOLCHAIN_FILE=${WORKDIR}/toolchain.cmake \
-      -DCMAKE_VERBOSE_MAKEFILE=1 \
-      ${EXTRA_OECMAKE} \
-      -Wno-dev > ${WORKDIR}/cmake.status
-}
-
 # Used in webOS.cmake _webos_set_from_env
 export webos_accttemplatesdir
 export webos_applicationsdir
