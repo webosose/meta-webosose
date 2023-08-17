@@ -20,8 +20,8 @@ RDEPENDS:${PN} += " \
     lttng-modules \
 "
 
-WEBOS_VERSION = "1.0.0-12_dfd20bf040d8cf1a9788c1123663da759fdd1747"
-PR = "r12"
+WEBOS_VERSION = "1.0.0-15_407d07f257498472a53bf39c9d176953885cadeb"
+PR = "r13"
 
 inherit webos_component
 inherit webos_cmake
@@ -38,6 +38,3 @@ S = "${WORKDIR}/git"
 # Only libpmtrace header files need to install in all builds for other modules that are referring to the header files.
 EXTRA_OECMAKE += "-DENABLE_LIBPMTRACE:BOOLEAN=${@'False' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'True'}"
 EXTRA_OECMAKE += "-DDEFAULT_LOGGING:STRING=${@'' if ('${WEBOS_DISTRO_PRERELEASE}' == '') else 'pmlog'}"
-
-# [http://gpro.lge.com/c/webosose/pmtrace/+/348041 use python3]
-SRC_URI += "file://0001-use-python3.patch"

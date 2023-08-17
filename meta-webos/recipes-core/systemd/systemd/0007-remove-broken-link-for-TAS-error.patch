@@ -1,0 +1,31 @@
+From d721339fd089ff3152cb329133ab50acbfe329f3 Mon Sep 17 00:00:00 2001
+From: "jaekyu.lee" <jaekyu.lee@lge.com>
+Date: Wed, 14 Jun 2023 01:13:39 +0900
+Subject: [PATCH] remove broken link for TAS error
+
+---
+ tmpfiles.d/legacy.conf.in | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/tmpfiles.d/legacy.conf.in b/tmpfiles.d/legacy.conf.in
+index 4f2c0d7c43..5f688fb1ad 100644
+--- a/tmpfiles.d/legacy.conf.in
++++ b/tmpfiles.d/legacy.conf.in
+@@ -12,9 +12,11 @@
+ 
+ d /run/lock 0755 root root -
+ L /var/lock - - - - ../run/lock
+-{% if CREATE_LOG_DIRS %}
+-L /var/log/README - - - - ../..{{DOC_DIR}}/README.logs
+-{% endif %}
++
++# temp fix for TAS error
++#{% if CREATE_LOG_DIRS %}
++#L /var/log/README - - - - ../..{{DOC_DIR}}/README.logs
++#{% endif %}
+ 
+ # /run/lock/subsys is used for serializing SysV service execution, and
+ # hence without use on SysV-less systems.
+-- 
+2.40.1
+
