@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos3"
+EXTENDPRAUTO:append = "webos4"
 
 # modify tests PACKAGECONFIG to add optional gsl and gmp dependencies
 # this cannot be merged to oe-core, recipe, because gsl recipe is in
@@ -13,4 +13,5 @@ EXTENDPRAUTO:append = "webos3"
 PACKAGECONFIG[tests] = "-Dtests=enabled -Dinstalled_tests=true,-Dtests=disabled -Dinstalled_tests=false,gsl gmp"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+SRC_URI:append:qemux86 = " file://0001-Add-support-for-seamless-seek-trickplay.patch"
 SRC_URI:append:qemux86-64 = " file://0001-Add-support-for-seamless-seek-trickplay.patch"

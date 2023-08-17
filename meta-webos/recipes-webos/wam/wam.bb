@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-79_838283243042c1f1df2a1a0a598eda7341e0d038"
-PR = "r60"
+PR = "r61"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -71,7 +71,7 @@ TOUCH_ENABLED ?= "${@bb.utils.contains('DISTRO_FEATURES', 'webos-touch', 'true',
 DISABLE_NEVA_MEDIA_PLAYER ?= "false"
 
 # Flag to control runtime flag for platform decoder
-PLATFORM_DECODER_ENABLED ?= "false"
+PLATFORM_DECODER_ENABLED ?= "true"
 
 do_configure:append() {
     if [ -f "${S}/files/launch/systemd/webapp-mgr.sh.in" ]; then
