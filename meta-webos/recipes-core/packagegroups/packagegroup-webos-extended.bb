@@ -17,7 +17,6 @@ VIRTUAL-RUNTIME_ai:arm = ""
 VIRTUAL-RUNTIME_ai:rpi = "com.webos.service.ai"
 VIRTUAL-RUNTIME_appinstalld ?= "appinstalld2"
 VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
-VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 
 # We're not using VIRTUAL-RUNTIME because VIRTUAL-RUNTIME is usually used for only
 # one item and changing that in <distro>-preferred-providers.inc would require
@@ -95,7 +94,6 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_mojoservicelauncher} \
     ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
-    ${VIRTUAL-RUNTIME_pdm} \
     ${VIRTUAL-RUNTIME_unifiedsearch} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
 "
