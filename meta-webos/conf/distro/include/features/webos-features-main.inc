@@ -1,6 +1,6 @@
 # Copyright (c) 2023 LG Electronics, Inc.
 
-require conf/distro/include/webos-features-minimal.inc
+require conf/distro/include/features/webos-features-minimal.inc
 
 # Addition/removal distro features
 
@@ -28,5 +28,8 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
     webos-media-drm \
     ${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK} \
 "
+
+# Addition/removal image features
+IMAGE_FEATURES += "webos-systemapps webos-systemservices"
 
 NO_RECOMMENDATIONS = "0"

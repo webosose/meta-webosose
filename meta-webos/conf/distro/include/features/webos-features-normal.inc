@@ -1,6 +1,6 @@
 # Copyright (c) 2023 LG Electronics, Inc.
 
-require conf/distro/include/webos-features-minimal.inc
+require conf/distro/include/features/webos-features-minimal.inc
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_EXTENDED += "virtualization"
@@ -31,5 +31,8 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
 # the examples and test codes are excluded from the installation.
 WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework auto-acceleration edgetpu gpu-delegate"
 WEBOS_DISTRO_FEATURES_EXTENDED += "${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK}"
+
+# Addition/removal image features
+IMAGE_FEATURES += "webos-systemapps webos-testapps webos-extended"
 
 NO_RECOMMENDATIONS = "0"

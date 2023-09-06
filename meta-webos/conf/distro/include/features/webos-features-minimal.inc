@@ -1,6 +1,6 @@
 # Copyright (c) 2012-2023 LG Electronics, Inc.
 
-require conf/distro/include/webos-features-core-boot.inc
+require conf/distro/include/features/webos-features-core-boot.inc
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_DEFAULT += "alsa ext2 irda largefile xattr"
@@ -16,3 +16,6 @@ DISTRO_FEATURES:append = " ${WEBOS_DISTRO_FEATURES_EXTENDED}"
 # Addition/removal preferred provider or version
 VIRTUAL-RUNTIME_initscripts = "webos-initscripts"
 PREFERRED_RPROVIDER_initd-functions = "webos-initscripts"
+
+# Addition/removal image features
+IMAGE_FEATURES += "webos-minimal webos-extract-ls2-api"

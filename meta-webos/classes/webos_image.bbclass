@@ -19,8 +19,6 @@
 # and IMAGE_FEATURES from core-image
 IMAGE_FEATURES[validitems] = "webos-minimal webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-production-image"
 
-inherit webos_image_${WEBOS_TARGET_DISTRO_VARIANT}
-
 FEATURE_PACKAGES_webos-minimal = "packagegroup-webos-minimal"
 FEATURE_PACKAGES_webos-systemapps = "packagegroup-webos-systemapps"
 FEATURE_PACKAGES_webos-systemservices = "packagegroup-webos-systemservices"

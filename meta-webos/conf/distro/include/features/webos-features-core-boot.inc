@@ -1,5 +1,7 @@
 # Copyright (c) 2012-2023 LG Electronics, Inc.
 
+require conf/distro/include/webos.inc
+
 # Keep in sync with setting in oe-core/meta/conf/distro/include/default-distrovars.inc
 # TODO: Maybe change this to use "_remove" when it's introduced in bitbake
 
@@ -46,6 +48,9 @@ DISTRO_FEATURES = " \
 # We won't use webos's initscripts for core-boot profile
 VIRTUAL-RUNTIME_initscripts = ""
 PREFERRED_RPROVIDER_initd-functions = ""
+
+# Additional image features
+IMAGE_FEATURES += ""
 
 # Do not install recommended packages as default
 NO_RECOMMENDATIONS ?= "1"
