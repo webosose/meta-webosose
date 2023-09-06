@@ -29,7 +29,10 @@ inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/webos-initscripts/+/364495 CMakeLists.txt: don't install initctl twice and respect WEBOS_INSTALL_SBINDIR
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-don-t-install-initctl-twice-and-respe.patch \
+"
 S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE += "-DWEBOS_QTTESTABILITY_ENABLED:BOOL=${@ '1' if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else '0'}"

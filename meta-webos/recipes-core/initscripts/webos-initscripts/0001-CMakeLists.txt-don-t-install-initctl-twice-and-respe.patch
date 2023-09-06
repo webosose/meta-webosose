@@ -1,0 +1,87 @@
+From b8654ac67be1c24cc04b4637dfc08d142333967d Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 12 Aug 2023 23:13:14 +0200
+Subject: [PATCH] CMakeLists.txt: don't install initctl twice and respect
+ WEBOS_INSTALL_BASE_SBINDIR
+
+:Release Notes:
+Fix QA issue with usrmerge in DISTRO_FEATURES.
+
+:Release Notes:
+* initctl was once installed in /usr/bin/initctl by webos_build_program
+  and then again to /sbin/initctl by:
+  install(TARGETS  DESTINATION /sbin)
+
+* all utils were installed to /sbin even when sbindir is set to /usr/sbin
+  with usrmerge in DISTRO_FEATURES, causing installed-vs-shipped QA:
+
+ERROR: webos-initscripts-1.0-r0 do_package: QA Issue: webos-initscripts: Files/directories were installed but not shipped in any package:
+  /sbin/restart
+  /sbin/start
+  /sbin/status
+  /sbin/initctl
+  /sbin/stop
+Please set FILES such that these items are packaged. Alternatively if they are unneeded, avoid installing them or delete them within do_install.
+webos-initscripts: 5 installed and not shipped files. [installed-vs-shipped]
+
+initctl needs to stay in sbin, because /sbin/initctl is hardcoded
+in many places (and I haven't found anything hardcoding the 2nd copy in /usr/bin/initctl):
+
+bootd/2.0.0-18-r15/git/src/bootd/core/SignalManager.cpp
+luna-surfacemanager/2.0.0-388-r59/git/modules/weboscompositor/input/waylandinputmethodmanager.cpp
+activitymanager/3.0.0-40-r13/git/src/activitymanager/ActivityManagerApp.cpp
+filecache/2.0.1-10-r6/git/src/CacheBase.h.in
+mojoservicelauncher/3.0.2-7-r10/git/fork_server.js
+...
+
+and e.g. bootd fails in runtime like this:
+Apr 28 17:45:28 rpi4 bootd[1172]: sh: /sbin/initctl: not found
+Apr 28 17:45:28 rpi4 bootd[1071]: [] [pmlog] bootManager Boot {} SIGNAL_rest-boot-done
+Apr 28 17:45:28 rpi4 bootd[1173]: sh: /sbin/initctl: not found
+Apr 28 17:45:28 rpi4 bootd[1071]: [] [pmlog] bootManager Boot {} SIGNAL_boot-done
+Apr 28 17:45:28 rpi4 bootd[1174]: sh: /sbin/initctl: not found
+Apr 28 17:45:28 rpi4 bootd[1071]: [] [pmlog] bootManager BootSequencer {} Bootd's job is done
+Apr 28 17:45:55 rpi4 bootd[1071]: [] [pmlog] <default-lib> LS_NOT_AN {} Enhanced ACG
+Apr 28 17:45:55 rpi4 bootd[1071]: [] [pmlog] <default-lib> LS_NOT_AN {} [_LSCheckProvidedTrustedGroups] found group bit mask : 1
+Apr 28 17:47:25 rpi4 bootd[1071]: [] [pmlog] <default-lib> LS_NOT_AN {} Enhanced ACG
+Apr 28 17:47:25 rpi4 bootd[1071]: [] [pmlog] <default-lib> LS_NOT_AN {} [_LSCheckProvidedTrustedGroups] found group bit mask : 1
+
+and then there is no UI and many services aren't started at all.
+
+:Testing Performed:
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRP-24156] CCC: Various build fixes
+
+Change-Id: Iaf850b834a19ea9529d2b4e0ef54ccd875f72f04
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/webos-initscripts/+/364495 CMakeLists.txt: don't install initctl twice and respect WEBOS_INSTALL_SBINDIR]
+
+ src/upstart-utils/initctl/CMakeLists.txt | 3 +--
+ src/upstart-utils/utils/CMakeLists.txt   | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/upstart-utils/initctl/CMakeLists.txt b/src/upstart-utils/initctl/CMakeLists.txt
+index e0c20f4..4f82e7c 100644
+--- a/src/upstart-utils/initctl/CMakeLists.txt
++++ b/src/upstart-utils/initctl/CMakeLists.txt
+@@ -35,5 +35,4 @@ set(LIBS
+ target_link_libraries(${BIN_NAME} ${LIBS})
+ 
+ # Install
+-webos_build_program(NAME ${BIN_NAME})
+-install(TARGETS ${BIN_NAME} DESTINATION ${WEBOS_INSTALL_ROOT}/sbin)
++install(TARGETS ${BIN_NAME} RUNTIME DESTINATION ${WEBOS_INSTALL_BASE_SBINDIR})
+diff --git a/src/upstart-utils/utils/CMakeLists.txt b/src/upstart-utils/utils/CMakeLists.txt
+index 3c83d0b..b2362b5 100644
+--- a/src/upstart-utils/utils/CMakeLists.txt
++++ b/src/upstart-utils/utils/CMakeLists.txt
+@@ -27,4 +27,4 @@ add_executable(status Status.cpp)
+ add_executable(restart Restart.cpp)
+ 
+ # Install
+-install(TARGETS start stop status restart RUNTIME DESTINATION ${WEBOS_INSTALL_ROOT}/sbin)
++install(TARGETS start stop status restart RUNTIME DESTINATION ${WEBOS_INSTALL_BASE_SBINDIR})
