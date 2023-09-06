@@ -5,8 +5,8 @@ WEBOS_REPO_NAME = "chromium108"
 # 10.8.168.25-chromium108.2
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium108"
-WEBOS_VERSION_V8 = "10.8.168.25-chromium108.2_f2b037b94a9d9acf1ed32b630e30577b4a42a40e"
-SRCREV_v8 = "1e372b5f16e53f280316f4f1a6db18e2dbec7896"
+WEBOS_VERSION_V8 = "10.8.168.25-chromium108.3_df187f4df764f33a5674eae21c1cb42c1f48b8a6"
+SRCREV_v8 = "fd143650b4f9a6c37695cafbd39baed42ac64038"
 
 # http://gpro.lge.com/c/webosose/chromium94/+/363094 avcodec/x86/mathops: clip constants used with shift instructions within inline assembly
 # http://gpro.lge.com/c/webosose/chromium108/+/363100 avcodec/x86/mathops: clip constants used with shift instructions within inline assembly
