@@ -42,7 +42,7 @@ PACKAGECONFIG ??= "nss \
 "
 PACKAGECONFIG[nss] = "--enable-nss,--disable-nss,nss,"
 PACKAGECONFIG[openssl] = "--enable-openssl,--disable-openssl,openssl,"
-PACKAGECONFIG[pam] = "--enable-pam,--disable-pam,libpam,"
+PACKAGECONFIG[pam] = "--enable-pam --with-pamdir=${base_libdir}/security,--disable-pam,libpam,"
 
 do_configure:prepend() {
     export NSS_CFLAGS="-I${STAGING_INCDIR}/nspr -I${STAGING_INCDIR}/nss3"
