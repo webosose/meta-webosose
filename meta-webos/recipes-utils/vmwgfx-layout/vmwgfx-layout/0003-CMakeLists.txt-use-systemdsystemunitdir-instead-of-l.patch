@@ -1,0 +1,44 @@
+From fc714b6f0219cdcb40b9cbd0e8bb0ded9901c7ef Mon Sep 17 00:00:00 2001
+From: Martin Jansa <Martin.Jansa@gmail.com>
+Date: Sat, 12 Aug 2023 23:27:28 +0200
+Subject: [PATCH] CMakeLists.txt: use systemdsystemunitdir instead of
+ /lib/systemd/system
+
+* there isn't a better WEBOS_INSTALL_* variable for /lib/systemd/system
+  but with usrmerge systemd_system_unitdir is /usr/lib/systemd/system
+  not /lib/systemd/system:
+
+  # $systemd_system_unitdir [2 operations]
+  #   exported /OE/build/luneos-nanbield/openembedded-core/meta/conf/bitbake.conf:39
+  #     [export] "1"
+  #   set /OE/build/luneos-nanbield/openembedded-core/meta/conf/bitbake.conf:39
+  #     "${nonarch_base_libdir}/systemd/system"
+  # pre-expansion value:
+  #   "${nonarch_base_libdir}/systemd/system"
+  export systemd_system_unitdir="/usr/lib/systemd/system"
+
+* the recipe was inheriting webos_cmake, but that doesn't do much without
+  webos macros being included in CMakeLists.txt, so couldn't use e.g.
+  ${WEBOS_INSTALL_BASE_LIBDIR}/systemd/system
+  because WEBOS_INSTALL_BASE_LIBDIR wouldn't be defined.
+
+* Installing this to /lib/systemd/system causes do_package failure:
+  ERROR: vmwgfx-layout-0.1+gitAUTOINC+8e43168d50-r0 do_package: Didn't find service unit 'vmwgfx-setlayout.service', specified in SYSTEMD_SERVICE:vmwgfx-layout.
+
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+---
+Upstream-Status: Pending
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ba99bb6..a62e272 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -13,4 +13,4 @@ install(TARGETS ${targets}
+         RUNTIME DESTINATION bin)
+ 
+ configure_file(unit/vmwgfx-setlayout.cmake vmwgfx-setlayout.service)
+-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/vmwgfx-setlayout.service DESTINATION /lib/systemd/system)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/vmwgfx-setlayout.service DESTINATION ${systemdsystemunitdir})
