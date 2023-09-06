@@ -27,7 +27,10 @@ DEPENDS += "luna-service2 pmloglib libpbnjson"
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/com.webos.service.mediaindexer/+/365247 CMakeLists.txt: respect libdir setting
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-respect-libdir-setting.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
