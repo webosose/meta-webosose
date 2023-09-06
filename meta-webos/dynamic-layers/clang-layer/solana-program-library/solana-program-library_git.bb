@@ -10,8 +10,8 @@ inherit cargo
 inherit pkgconfig
 
 SRC_URI += "git://github.com/solana-labs/solana-program-library.git;protocol=https;branch=master"
-# matches tag token-cli-v2.1.1
-SRCREV = "88b147506d5b9515f3a4762421a0b8c309188dc9"
+# one commit after tag token-cli-v2.1.1
+SRCREV = "8177a4d9e29c8df408ac9499edea5290bddf2311"
 PV = "2.1.1"
 require ${BPN}-crates.inc
 
