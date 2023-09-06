@@ -64,5 +64,6 @@ MACHINEOVERRIDES .= "${@ \
 COMPATIBLE_MACHINE ??= "${@ \
     dict(all='^.*$', \
          none='^$', \
-         arm='^armv.*$').get('${WEBOS_PREBUILT_BINARIES_FOR}', \
+         arm='^armv.*$', \
+         aarch64='^aarch64$').get('${WEBOS_PREBUILT_BINARIES_FOR}', \
                              '^(' + '|'.join('${WEBOS_PREBUILT_BINARIES_FOR}'.split()) + ')$') }"
