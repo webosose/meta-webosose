@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "nodejs-module-node-red"
 
-WEBOS_VERSION = "1.0.0-17_af7499b3964c37bdf489819c10650ff1a8efd5ae"
-PR = "r5"
+WEBOS_VERSION = "1.0.0-19_15340c48143f287d667ce0c48a3ecbbad94691d1"
+PR = "r6"
 
 # The same restrition as nodejs (and nodejs-module-node-red)
 COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
@@ -28,24 +28,11 @@ inherit webos_cmake
 inherit webos_system_bus
 inherit webos_machine_impl_dep
 
-EXTRA_OECMAKE = "-Dsystemdsystemunitdir=${systemd_system_unitdir}"
-# http://gpro.lge.com/c/webosose/com.webos.service.contextintentmgr/+/364504 CMakeLists.txt: use systemdsystemunitdir instead of /lib/systemd/system
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-use-systemdsystemunitdir-instead-of-l.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
 WEBOS_SYSTEMD_SERVICE = "contextintentmgr.service"
 WEBOS_SYSTEMD_SCRIPT = "contextintentmgr.sh"
-
-# All service files will be managed in meta-lg-webos.
-# The service file in the repository is not used, so please delete it.
-# See the page below for more details.
-# http://collab.lge.com/main/pages/viewpage.action?pageId=2031668745
-do_install:append() {
-    rm -f ${D}${sysconfdir}/systemd/system/contextintentmgr.service
-    rm -f ${D}${sysconfdir}/systemd/system/scripts/contextintentmgr.sh
-}
 
 FILES:${PN} += "${webos_servicesdir} ${webos_sysconfdir}"

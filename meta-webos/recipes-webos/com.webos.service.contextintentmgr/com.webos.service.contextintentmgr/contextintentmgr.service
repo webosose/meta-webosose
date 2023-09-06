@@ -18,15 +18,11 @@
 
 [Unit]
 Description=meta-webos - "%n"
-Requires=default-webos.target
-After=default-webos.target
 
 [Service]
 Type=simple
 OOMScoreAdjust=1000
+EnvironmentFile=-/var/systemd/system/env/contextintentmgr.env
 ExecStartPre=/lib/systemd/system/scripts/contextintentmgr.sh
 ExecStart=/usr/bin/run-js-service -k -g -l nobody -n /usr/palm/services/com.webos.service.contextintentmgr
 Restart=on-failure
-
-[Install]
-WantedBy=default-webos.target
