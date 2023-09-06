@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit msgpack-c"
 RDEPENDS:${PN} = "fluentbit nyx-utils python3-core python3-requests python3-atlassian-python-api"
 
-WEBOS_VERSION = "1.0.0-46_64c1891d39fb4e8ecec9586658fbf133c997be37"
+WEBOS_VERSION = "1.0.0-47_4751c11ae8f8e62cb7f9a302c0f2fd7edb4d16ec"
 PR = "r15"
 
 inherit webos_component
