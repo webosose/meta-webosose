@@ -1,10 +1,8 @@
 # Copyright (c) 2017-2023 LG Electronics, Inc.
 
 EXTENDPRAUTO:append = "webosrpi34"
-EXTENDPRAUTO:append:sota = ".sota"
 
 CMDLINE:append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
-CMDLINE:remove:sota = "root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rw"
 
 SHRT_VER = "${@oe.utils.trim_version('${PV}', 2)}"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}-${SHRT_VER}:${THISDIR}/${BPN}:"
@@ -28,8 +26,6 @@ SRC_URI += "\
     file://zram.cfg \
     file://security.cfg \
 "
-
-SRC_URI:append:sota = " file://ostree.cfg"
 
 KERNEL_MODULE_AUTOLOAD:append = " \
     i2c-dev \

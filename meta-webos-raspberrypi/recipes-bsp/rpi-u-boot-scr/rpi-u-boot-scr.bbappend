@@ -1,11 +1,10 @@
 # Copyright (c) 2019-2023 LG Electronics, Inc.
 
 EXTENDPRAUTO:append = "webosrpi6"
-EXTENDPRAUTO:append:sota = ".sota"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-UENV_FILE = "${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'uEnv.sota.txt.in', 'uEnv.txt.in', d)}"
+UENV_FILE = "uEnv.txt.in"
 
 # boot.cmd.in is in SRC_URI already and copied under 'files' of this dir
 SRC_URI:append = " \

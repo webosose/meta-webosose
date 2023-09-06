@@ -44,7 +44,7 @@ vars = vars + ["virtclass-multilib", "virtclass-mcextend"]
 
 # meta-webos
 vars = vars + ["rpi", "raspberrypi", "raspberrypi2", "raspberrypi3", "raspberrypi3-64", "raspberrypi4", "raspberrypi4-64"]
-vars = vars + ["emulator", "hardware", "no-lttng", "sota"]
+vars = vars + ["emulator", "hardware", "no-lttng"]
 vars = vars + ["armv4", "armv5", "armv6", "armv7a", "armv7ve", "x86-64", "i686"]
 
 # List of strings to treat as overrides but only with whitespace following or another override (more restricted matching).

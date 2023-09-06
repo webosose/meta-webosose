@@ -104,6 +104,3 @@ IMAGE_FSTYPES:remove = "ext3"
 
 # Use Fake KMS until surface-manager is fixed to support Full KMS, see WRP-5
 VC4DTBO = "vc4-fkms-v3d"
-
-# OSTree target
-SOTA_MACHINE:rpi = "webos-rpi"

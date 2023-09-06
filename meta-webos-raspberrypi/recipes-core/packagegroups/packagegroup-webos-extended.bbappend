@@ -9,7 +9,7 @@ VIRTUAL-RUNTIME_com.webos.service.cec:raspberrypi4-64 = " \
 "
 
 VIRTUAL-RUNTIME_part-initializer ?= ""
-VIRTUAL-RUNTIME_part-initializer:rpi = "${@bb.utils.contains('DISTRO_FEATURES', 'sota', 'resize-rootfs', 'setup-partitions', d)}"
+VIRTUAL-RUNTIME_part-initializer:rpi = "setup-partitions"
 
 RDEPENDS:${PN}:append:rpi = " \
     alsa-utils \

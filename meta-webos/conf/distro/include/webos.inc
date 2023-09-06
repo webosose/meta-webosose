@@ -8,7 +8,6 @@ require conf/distro/include/webos-toolchain.inc
 require conf/distro/include/webos-sdk.inc
 require conf/distro/include/webos-icecc-components-exclusion.inc
 require conf/distro/include/webos-localization-locales.inc
-require conf/distro/include/webos-sota.inc
 
 # Set default component author and rp maintainer
 AUTHOR ?= "Unspecified"

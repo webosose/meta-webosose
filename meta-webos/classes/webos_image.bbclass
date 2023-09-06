@@ -119,34 +119,3 @@ do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
 IMAGE_FSTYPES:qemux86 = "wic.vmdk"
 IMAGE_FSTYPES:qemux86-64 = "wic.vmdk"
-
-# A workaround for controlling '/media' and '/opt' policy of meta-updater
-IMAGE_CMD:ostree:prepend:sota() {
-    echo "Moving ${IMAGE_ROOTFS} /media and /opt to /.media and /.opt to prevent IMAGE_CMD:ostree replacing them with symlinks to /var/rootdirs/"
-    mv -v ${IMAGE_ROOTFS}/media ${IMAGE_ROOTFS}/.media || true
-    mv -v ${IMAGE_ROOTFS}/opt ${IMAGE_ROOTFS}/.opt || true
-}
-IMAGE_CMD:ostree:append:sota() {
-    echo "Moving ${IMAGE_ROOTFS} /.media and /.opt back to /media and /opt"
-    mv -v ${IMAGE_ROOTFS}/.media ${IMAGE_ROOTFS}/media
-    mv -v ${IMAGE_ROOTFS}/.opt ${IMAGE_ROOTFS}/opt
-
-    # Remove the symlinks to var/rootdirs/media, var/rootdirs/opt created in IMAGE_CMD:ostree and replace them with backup versions of the real directories saved above in IMAGE_CMD:ostree
-    rm -fv ${OSTREE_ROOTFS}/media ${OSTREE_ROOTFS}/opt
-    cp -av ${IMAGE_ROOTFS}/media ${OSTREE_ROOTFS} || true
-    cp -av ${IMAGE_ROOTFS}/opt ${OSTREE_ROOTFS} || true
-}
-IMAGE_CMD:ota:append:sota() {
-    # Copy /var that was ignored by ostree
-    cp -av ${IMAGE_ROOTFS}/var/luna ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
-    cp -av ${IMAGE_ROOTFS}/var/systemd ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
-    cp -av ${IMAGE_ROOTFS}/var/PMS ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/var || true
-    # Copy /media /opt that were ignored by ostree
-    cp -av ${IMAGE_ROOTFS}/media ${OTA_SYSROOT} || true
-    cp -av ${IMAGE_ROOTFS}/opt ${OTA_SYSROOT} || true
-
-    # make ostree hotfix mode as default (set /usr to R/W mode)
-    echo "unlocked=hotfix" >> ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0.origin
-    mkdir -v -m 0755 -p ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0/.usr-ovl-upper
-    mkdir -v -m 0755 -p ${OTA_SYSROOT}/ostree/deploy/${OSTREE_OSNAME}/deploy/${ostree_target_hash}.0/.usr-ovl-work
-}
