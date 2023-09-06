@@ -28,7 +28,11 @@ inherit webos_cmake
 inherit webos_system_bus
 inherit webos_machine_impl_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+EXTRA_OECMAKE = "-Dsystemdsystemunitdir=${systemd_system_unitdir}"
+# http://gpro.lge.com/c/webosose/com.webos.service.contextintentmgr/+/364504 CMakeLists.txt: use systemdsystemunitdir instead of /lib/systemd/system
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-use-systemdsystemunitdir-instead-of-l.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
