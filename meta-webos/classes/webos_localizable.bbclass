@@ -3,9 +3,7 @@
 # Localization-related settings and tasks
 #
 
-LIB32_PREFIX ?= ""
-
-WEBOS_LOCALIZATION_DEPENDS = "${@ '' if bb.data.inherits_class('webos_qt_localization', d) or bb.data.inherits_class('webos_arch_indep', d) else '${LIB32_PREFIX}libwebosi18n' }"
+WEBOS_LOCALIZATION_DEPENDS = "${@ '' if bb.data.inherits_class('webos_qt_localization', d) or bb.data.inherits_class('webos_arch_indep', d) else '${MLPREFIX}libwebosi18n' }"
 DEPENDS:append = " ${WEBOS_LOCALIZATION_DEPENDS}"
 
 inherit webos_filesystem_paths
