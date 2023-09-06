@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-79_838283243042c1f1df2a1a0a598eda7341e0d038"
-INC_PR = "r63"
+INC_PR = "r64"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -83,7 +83,7 @@ do_install:append() {
 }
 
 WEBOS_SYSTEMD_SERVICE = "webapp-mgr.service"
-WEBOS_SYSTEMD_SCRIPT = "webapp-mgr.sh"
+WEBOS_SYSTEMD_SCRIPT = "webapp-mgr.sh.in"
 
 install_units:append() {
     script=${D}${systemd_system_unitdir}/scripts/webapp-mgr.sh

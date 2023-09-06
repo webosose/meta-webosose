@@ -96,7 +96,7 @@ export NACL_HELPER_BOOTSTRAP=${CHROMIUM_PATH}"/nacl_helper_bootstrap"
 export WAM_DEFAULT_ALLOW_THIRD_PARTY_COOKIES=1
 
 # Set location of extra libraries
-export CDM_LIB_PATH="/usr/lib"
+export CDM_LIB_PATH="@WEBOS_INSTALL_LIBDIR@"
 
 if [ -e "etc/wam/make_shm.sh" ] ; then
     /etc/wam/make_shm.sh
@@ -190,10 +190,12 @@ export WAM_COMMON_SWITCHES=" \
     --touch-events=disabled \
     --ui-disable-opaque-shader-program \
     --user-data-dir=$WAM_DATA_PATH \
-    --webos-wam \ "
+    --webos-wam \
+    "
 
 export WAM_LITE_SWITCHES=" \
-    --in-process-zygote \ "
+    --in-process-zygote \
+    "
 
 export WAM_WEBOS_LITE=NO
 if [ "${WAM_WEBOS_LITE}" = "YES" ] ; then
