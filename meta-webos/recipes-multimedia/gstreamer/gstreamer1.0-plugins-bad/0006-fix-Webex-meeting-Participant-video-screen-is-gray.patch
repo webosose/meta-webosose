@@ -1,0 +1,69 @@
+From 5c249cc35625e5b0cbb088be5cb1a67a2c264914 Mon Sep 17 00:00:00 2001
+From: Veeresh Kadasani <veeresh.kadasani@lge.com>
+Date: Wed, 23 Aug 2023 15:14:05 +0530
+Subject: [PATCH] fix Webex meeting Participant video screen is gray
+
+:Release Notes:
+fix Webex meeting Opposite Participant video screen gray-boxed artifacts
+
+:Detailed Notes:
+when Webex meeting is started from windows webx app with
+HW accelerator enabled the video at the receiver show
+gray-boxed artifacts because of strange start code pattern
+[00 00 00 01 00 00 00 00 01] seen in the encoded stream.
+fixed this in hs264parse to treat the strange patter to
+correct start code [00 00 00 01].
+
+:Testing Performed:
+webx meeting from windows app with HW accelerator enabled
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[WRP-22692] [OSE RPi4 - VCS] Webex meeting Opposite Participant
+video screen is gray-boxed or appears broken
+
+Signed-off-by: Veeresh Kadasani <veeresh.kadasani@lge.com>
+---
+Upstream-Status: Pending
+
+ gst-libs/gst/codecparsers/gsth264parser.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/gst-libs/gst/codecparsers/gsth264parser.c b/gst-libs/gst/codecparsers/gsth264parser.c
+index ec5cd3a..334aa36 100644
+--- a/gst-libs/gst/codecparsers/gsth264parser.c
++++ b/gst-libs/gst/codecparsers/gsth264parser.c
+@@ -1433,7 +1433,7 @@ GstH264ParserResult
+ gst_h264_parser_identify_nalu_unchecked (GstH264NalParser * nalparser,
+     const guint8 * data, guint offset, gsize size, GstH264NalUnit * nalu)
+ {
+-  gint off1;
++  gint off1, off2;
+ 
+   memset (nalu, 0, sizeof (*nalu));
+ 
+@@ -1460,6 +1460,22 @@ gst_h264_parser_identify_nalu_unchecked (GstH264NalParser * nalparser,
+   nalu->data = (guint8 *) data;
+   nalu->size = size - nalu->offset;
+ 
++  /*
++   * work around for webx strange start code [0x000000010000000001]
++   * when HW encoding enabled using webx app from windows.
++   */
++  off2 = scan_for_start_codes (data + nalu->offset, size - nalu->offset);
++  if (off2 >= 0 && off2 <= 2) {
++      guint tmp_sc_offset = 0;
++      tmp_sc_offset = nalu->sc_offset + off2;
++      if (tmp_sc_offset > 0 && (data[tmp_sc_offset - 1] == 00) && (data[tmp_sc_offset - 2] == 00)) {
++          nalu->sc_offset = tmp_sc_offset - 1;
++          nalu->offset = nalu->offset + off2 + 3;
++          nalu->data = (guint8 *) data;
++          nalu->size = size - nalu->offset;
++      }
++  }
++
+   if (!gst_h264_parse_nalu_header (nalu)) {
+     GST_WARNING ("error parsing \"NAL unit header\"");
+     nalu->size = 0;
