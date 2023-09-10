@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2023 LG Electronics, Inc.
 
 SUMMARY = "General System Launcher application"
-AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"
+AUTHOR = "KIEN TRUNG PHAM <kien2.pham@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 WEBOS_VERSION = "0.1.0-37_394b55ebb51bb4251c288257e26b4a2dbe853c1e"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r4"
+PR = "r5"
 
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app

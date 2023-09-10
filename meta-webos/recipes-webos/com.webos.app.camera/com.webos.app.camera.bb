@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2023 LG Electronics, Inc.
 
 SUMMARY = "Camera application"
-AUTHOR = "Revanth Kumar <revanth.kumar@lge.com>"
+AUTHOR = "KIEN TRUNG PHAM <kien2.pham@lge.com>"
 SECTION = "webos/apps"
 
 LICENSE = "Apache-2.0"
@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.0.1-14_ecbead987b164f57f8da2481532d2c9c662b2e02"
-PR = "r1"
+PR = "r2"
 
 inherit webos_component
 inherit webos_enhanced_submissions
