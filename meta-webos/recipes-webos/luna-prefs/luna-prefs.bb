@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 json-c sqlite3 glib-2.0 nyx-lib"
 RDEPENDS:${PN} = "luna-prefs-data"
 
-WEBOS_VERSION = "3.0.0-14_5470fb26fccbd246a23bb519c3b1050d6d305562"
+WEBOS_VERSION = "3.0.0-15_ed6e81156a1e2cebff7b9b5c3ee7f920a6448b28"
 PR = "r16"
 
 inherit webos_public_repo
