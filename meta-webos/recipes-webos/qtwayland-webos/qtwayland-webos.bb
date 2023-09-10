@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtwayland webos-wayland-extensions libxkbcommon qt-features-webos wayland-native qtwayland-native wayland-protocols"
 
-WEBOS_VERSION = "6.0.0-87_7bdbb39086df6ab54bb7c472d43d54a8167628d5"
+WEBOS_VERSION = "6.0.0-88_c29ab36361d76ec0865249a3bd5c1cce236180c0"
 PR = "r20"
 
 QT_BUILD_SYSTEM ?= "${@ 'cmake' if d.getVar('QT_VERSION')[0] == '6' else 'qmake' }"

@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos113"
+EXTENDPRAUTO:append = "webos114"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -111,6 +111,8 @@ SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functiona
 SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.5.1 "
 # https://bugreports.qt.io/browse/WEBOSCI-76
 SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli.patch;minver=6.6.0"
+# https://bugreports.qt.io/browse/WEBOSCI-64
+SRC_URI:append:class-native = " file://9905-Revert-Remove-syncqt.pl.patch;minver=6.7.0"
 
 # Flags needed for webOS
 TARGET_CXXFLAGS:append = " \
