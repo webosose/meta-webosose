@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 db8 boost libpbnjson glib-2.0 pmloglib ${VIRTUAL-RUNTIME_init_manager}"
 
 WEBOS_VERSION = "3.0.0-40_8da546299f22de459467d24e2d52f1d611ce2daa"
-PR = "r13"
+PR = "r14"
 
 inherit webos_component
 inherit webos_public_repo
@@ -33,6 +33,9 @@ FILES:${PN} += "${webos_sysbus_datadir}"
 FILES:${PN} += "${@oe.utils.conditional('DISTRO_NAME', 'webOS OSE', '${localstatedir}/lib/activitymanager', '', d)}"
 
 EXTRA_OECMAKE += "-DINIT_MANAGER:STRING=${VIRTUAL-RUNTIME_init_manager}"
+
+PACKAGECONFIG ??= "${@bb.utils.contains("DISTRO_FEATURES", "webos-dac", "dac", "", d)}"
+PACKAGECONFIG[dac] = "-DDAC_IMPLEMENTATION:BOOL=TRUE,,"
 
 # All service files will be managed in meta-lg-webos.
 # The service file in the repository is not used, so please delete it.
