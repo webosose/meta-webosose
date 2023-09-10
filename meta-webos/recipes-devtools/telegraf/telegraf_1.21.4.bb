@@ -10,9 +10,10 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0001-Modify-the-Makefile-for-v1.21.4.patch;patchdir=src/${GO_IMPORT} \
     file://0002-Remove-unused-plugins-for-v1.21.4.patch;patchdir=src/${GO_IMPORT} \
     file://0003-Apply-inputs.socket_listener-plugin-for-sdkagent.patch;patchdir=src/${GO_IMPORT} \
+    file://0004-Add-plugins-for-dashboard.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r1"
+PR = "r2"
 
 GO_IMPORT = "import"
 

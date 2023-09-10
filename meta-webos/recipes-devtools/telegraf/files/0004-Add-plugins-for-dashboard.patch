@@ -1,0 +1,84 @@
+From 6ffda60021fc5cea661914ac8b2a2988076bd9fa Mon Sep 17 00:00:00 2001
+From: "wonsang.ryu" <wonsang.ryu@lge.com>
+Date: Wed, 23 Aug 2023 14:23:27 +0900
+Subject: [PATCH] Add plugins for dashboard
+
+---
+Upstream-Status: Pending
+
+ etc/telegraf.conf         | 8 ++++----
+ plugins/inputs/all/all.go | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/etc/telegraf.conf b/etc/telegraf.conf
+index ff23604ad..db64c9342 100644
+--- a/etc/telegraf.conf
++++ b/etc/telegraf.conf
+@@ -4580,7 +4580,7 @@
+ 
+ 
+ # # This plugin gathers interrupts data from /proc/interrupts and /proc/softirqs.
+-# [[inputs.interrupts]]
++[[inputs.interrupts]]
+ #   ## When set to true, cpu metrics are tagged with the cpu.  Otherwise cpu is
+ #   ## stored as a field.
+ #   ##
+@@ -4974,7 +4974,7 @@
+ 
+ 
+ # # Provides Linux sysctl fs metrics
+-# [[inputs.linux_sysctl_fs]]
++[[inputs.linux_sysctl_fs]]
+ #   # no configuration
+ 
+ 
+@@ -5455,7 +5455,7 @@
+ 
+ 
+ # # Read metrics about network interface usage
+-# [[inputs.net]]
++[[inputs.net]]
+ #   ## By default, telegraf gathers stats from any up interface (excluding loopback)
+ #   ## Setting interfaces will tell it to gather these explicit interfaces,
+ #   ## regardless of status.
+@@ -5497,7 +5497,7 @@
+ 
+ 
+ # # Read TCP metrics such as established, time wait and sockets counts.
+-# [[inputs.netstat]]
++[[inputs.netstat]]
+ #   # no configuration
+ 
+ 
+diff --git a/plugins/inputs/all/all.go b/plugins/inputs/all/all.go
+index e4bbaa7f9..d7e535e56 100644
+--- a/plugins/inputs/all/all.go
++++ b/plugins/inputs/all/all.go
+@@ -76,7 +76,7 @@ import (
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/intel_rdt"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/internal"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/internet_speed"
+-//	_ "github.com/influxdata/telegraf/plugins/inputs/interrupts"
++	_ "github.com/influxdata/telegraf/plugins/inputs/interrupts"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/ipmi_sensor"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/ipset"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/iptables"
+@@ -97,7 +97,7 @@ import (
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/kubernetes"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/lanz"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/leofs"
+-//	_ "github.com/influxdata/telegraf/plugins/inputs/linux_sysctl_fs"
++	_ "github.com/influxdata/telegraf/plugins/inputs/linux_sysctl_fs"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/logparser"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/logstash"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/lustre2"
+@@ -119,7 +119,7 @@ import (
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/nats"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/nats_consumer"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/neptune_apex"
+-//	_ "github.com/influxdata/telegraf/plugins/inputs/net"
++	_ "github.com/influxdata/telegraf/plugins/inputs/net"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/net_response"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/nfsclient"
+ //	_ "github.com/influxdata/telegraf/plugins/inputs/nginx"
+
