@@ -2,6 +2,9 @@
 
 require conf/distro/include/features/webos-features-minimal.inc
 
+# Increament when features are changed
+_pr_suffix .= ".0"
+
 # Addition/removal distro features
 
 # Includes AI Framework. You can specify the packages to be installed using the following options:

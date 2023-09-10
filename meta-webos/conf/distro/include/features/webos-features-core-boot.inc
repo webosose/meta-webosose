@@ -2,6 +2,9 @@
 
 require conf/distro/include/webos.inc
 
+# Increament when features are changed
+_pr_suffix .= ".0"
+
 # Keep in sync with setting in oe-core/meta/conf/distro/include/default-distrovars.inc
 # TODO: Maybe change this to use "_remove" when it's introduced in bitbake
 

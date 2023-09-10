@@ -5,5 +5,5 @@ require conf/distro/include/features/webos-features-normal.inc
 
 WEBOS_DISTRO_NAME_SUFFIX = ""
 
-# Increase when features are changed
-IMAGE_PR_SUFFIX = "normal1"
+# Increament when features are changed
+IMAGE_PR_SUFFIX = "normal1${_pr_suffix}"

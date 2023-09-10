@@ -5,5 +5,5 @@ require conf/distro/include/features/webos-features-main.inc
 
 WEBOS_DISTRO_NAME_SUFFIX = " Main"
 
-# Increase when features are changed
-IMAGE_PR_SUFFIX = "main2"
+# Increament when features are changed
+IMAGE_PR_SUFFIX = "main2${_pr_suffix}"

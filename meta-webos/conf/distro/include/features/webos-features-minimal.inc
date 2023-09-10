@@ -2,6 +2,9 @@
 
 require conf/distro/include/features/webos-features-core-boot.inc
 
+# Increament when features are changed
+_pr_suffix .= ".0"
+
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_DEFAULT += "alsa ext2 irda largefile xattr"
 WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM += "wayland"
