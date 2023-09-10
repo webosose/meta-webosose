@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-INC_PR = "r25"
+INC_PR = "r26"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -28,10 +28,6 @@ inherit python3-dir
 inherit python3native
 inherit webos_public_repo
 inherit webos_prerelease_dep
-
-do_configure:prepend() {
-    sed -i 's@add_subdirectory(test/python)@#disabled until updated to work with python3 add_subdirectory(test/python)@g' ${S}/CMakeLists.txt
-}
 
 # umediaserver doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
