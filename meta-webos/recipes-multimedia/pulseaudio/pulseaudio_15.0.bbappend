@@ -11,8 +11,8 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
 
-WEBOS_VERSION = "15.0-51_ac3162efbe4658da682131855490db386278cd90"
-EXTENDPRAUTO:append = "webos10"
+WEBOS_VERSION = "15.0-52_e39ea6713f264eef05ecd97ae41ca72e0f94b0bd"
+EXTENDPRAUTO:append = "webos11"
 
 inherit webos_enhanced_submissions
 
@@ -54,7 +54,6 @@ do_install:prepend() {
 do_install:append() {
     install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
     install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
-
     install -v -d ${D}${libdir}/pulse-15.0/modules/ecnr
 }
 do_install:append:webos() {
@@ -70,9 +69,10 @@ FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr"
 FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr/*"
 
 RDEPENDS:pulseaudio-server:append:webos = "\
-    pulseaudio-module-ecnr \
     pulseaudio-module-agc \
+    pulseaudio-module-app-sink \
     pulseaudio-module-drc \
+    pulseaudio-module-ecnr \
 "
 
 RDEPENDS:pulseaudio-server:append = "\
