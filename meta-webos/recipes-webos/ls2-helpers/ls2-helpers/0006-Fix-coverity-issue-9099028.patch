@@ -1,0 +1,40 @@
+From a7ee8b69d0c73038071a5f7df5f3d87ef01f125c Mon Sep 17 00:00:00 2001
+From: nguyenhai.duong <nguyenhai.duong@lgepartner.com>
+Date: Tue, 05 Sep 2023 20:03:48 +0900
+Subject: [PATCH] Fix coverity issue 9099028
+
+:Release Notes:
+Fix coverity issue 9099028
+
+:Detailed Notes:
+Fix coverity issue 9099028
+
+:Testing Performed:
+N/A
+
+Results:
+N/A
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+http://webos-coverity.lge.com:5050/#/project-view/31417/10161?selectedIssue=9099028
+
+Change-Id: I98fd467e4a78872a5be9670bd5b0f71c09b82182
+
+---
+Upstream-Status: Pending
+
+diff --git a/include/public/ls2-helpers/jsonparser.hpp b/include/public/ls2-helpers/jsonparser.hpp
+index b4bc034..debbaa0 100644
+--- a/include/public/ls2-helpers/jsonparser.hpp
++++ b/include/public/ls2-helpers/jsonparser.hpp
+@@ -448,6 +448,7 @@
+ 			_fieldName(context._fieldName),
+ 			_destination(context._destination),
+ 			_valueRead(context._valueRead),
++			_valueNull(context._valueNull),
+ 			_optional(context._optional),
+ 			_allowNull(context._allowNull)
+ 	{

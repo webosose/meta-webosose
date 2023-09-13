@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
 DEPENDS = "glib-2.0 luna-service2 pmloglib libpbnjson"
 
 WEBOS_VERSION = "1.0.0-1_d44eeede2de5b06d08fd86ace6e93f5aed9f7f27"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -31,5 +31,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0003-Add-oss-pkg-info-yaml.patch \
     file://0004-LICENSE-add-Apache-2.0-License.patch \
     file://0005-CMakeLists.txt-replace-std-c-11-with-std-c-14.patch \
+    file://0006-Fix-coverity-issue-9099028.patch \
 "
 S = "${WORKDIR}/git"
