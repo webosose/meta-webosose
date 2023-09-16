@@ -42,6 +42,7 @@ python do_write_bom_data() {
     packages = d.getVar("PACKAGES")
     jsondata["license"] = license
     jsondata["license_flags"] = license_flags
+    jsondata["packageconfig"] = d.getVar("PACKAGECONFIG")
     jsondata["packages"] = packages
     pkg_lic = {}
     if packages:
