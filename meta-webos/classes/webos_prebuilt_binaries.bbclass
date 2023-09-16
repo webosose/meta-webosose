@@ -12,7 +12,7 @@
 # It is processed into a value for COMPATIBLE_MACHINE.
 #
 # For ARM binaries, the value typically used is the list of ARMPKGARCH values
-# (armv<N>) corresponding to the architectures compatible with the -march
+# (armv<N>|aarch64) corresponding to the architectures compatible with the -march
 # argument used when the prebuilt binaries fetched by SRC_URI were compiled.
 #
 # If a different SRC_URI is fetched for every MACHINE, set
@@ -49,6 +49,22 @@
 
 WEBOS_PREBUILT_BINARIES_FOR ??= "none"
 
+# WEBOS_PREBUILT_BINARIES_FOR_ARCH can be set for additional restrictions, because
+# the MACHINE specific WEBOS_PREBUILT_BINARIES_FOR values still do exist in 2 variants
+# e.g. for arm in lib32- multilib builds and aarch64 for regular 64bit builds, which
+# need to point to diferent tarball (hence the prepend to WEBOS_TCMONIKER) and needs
+# COMPATIBLE_HOST restrictions to make sure right recipe is pulled into right build.
+#
+# Typical values match COMPATIBLE_HOST prefix (except the x86 case),
+# e.g. "all", "x86_64", "x86", "aarch64", "arm".
+WEBOS_PREBUILT_BINARIES_FOR_ARCH ??= ""
+
+# WEBOS_TCMONIKER is distinguished by WEBOS_PREBUILT_BINARIES_FOR_ARCH
+# In all or empty(32-bit) case, we don't prepend WEBOS_TCMONIKER according to
+# binary naming rule.
+WEBOS_TCMONIKER_ARCH_PREPEND = "${@bb.utils.contains_any('WEBOS_PREBUILT_BINARIES_FOR_ARCH', 'all arm x86', '', '${WEBOS_PREBUILT_BINARIES_FOR_ARCH}', d)}"
+WEBOS_TCMONIKER:prepend = "${WEBOS_TCMONIKER_ARCH_PREPEND}"
+
 # If not MACHINE-dependent, the binaries can be TUNE_PKGARCH-dependent. It's OK
 # to have TUNE_PKGARCH be the choice before MACHINE in MACHINEOVERRIDES: the test
 # for inheriting webos_machine_dep or 'webos_soc_family_dep is false, so we know
@@ -59,11 +75,20 @@ MACHINEOVERRIDES .= "${@ \
     ':${TUNE_PKGARCH}' \
 }"
 
+# Allow other assignments to COMPATIBLE_HOST done by the recipe to have
+# precedence.
+COMPATIBLE_HOST ??= "${@ \
+    dict(all='^.*$', \
+         x86_64='x86_64.*-linux', \
+         x86='i.86.*-linux', \
+         aarch64='aarch64.*-linux', \
+         arm='arm.*-linux').get('${WEBOS_PREBUILT_BINARIES_FOR_ARCH}', '^$')}"
+
 # Allow other assignments to COMPATIBLE_MACHINE done by the recipe to have
 # precedence.
 COMPATIBLE_MACHINE ??= "${@ \
     dict(all='^.*$', \
          none='^$', \
-         arm='^armv.*$', \
-         aarch64='^aarch64$').get('${WEBOS_PREBUILT_BINARIES_FOR}', \
-                             '^(' + '|'.join('${WEBOS_PREBUILT_BINARIES_FOR}'.split()) + ')$') }"
+         x86='^(i.86|x86_64)$', \
+         arm='^(armv.*|aarch64)$').get('${WEBOS_PREBUILT_BINARIES_FOR}', \
+                                       '^(' + '|'.join('${WEBOS_PREBUILT_BINARIES_FOR}'.split()) + ')$') }"
