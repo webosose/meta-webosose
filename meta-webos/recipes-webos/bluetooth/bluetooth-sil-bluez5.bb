@@ -17,8 +17,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 # Add runtime dependency on bluez5 OBEX service when we have to support FTP
 RDEPENDS:${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
-WEBOS_VERSION = "0.1.0-81_efcb8e250dacebd13900c5625b6366f75f7ca189"
-PR = "r9"
+WEBOS_VERSION = "0.1.0-82_60a854aeb7ae1aa79492a68a37fad3ffeafa1cf8"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
@@ -30,9 +30,7 @@ inherit webos_machine_dep
 inherit webos_distro_dep
 inherit webos_bluetooth_sil
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 # http://caprica.lgsvl.com:8080/Errors/Details/1092093

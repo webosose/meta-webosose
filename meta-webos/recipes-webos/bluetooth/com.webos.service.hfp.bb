@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
 
-WEBOS_VERSION = "1.0.0-32_f3f53f2567b90babcc19608776addc450fdcb9ac"
-PR = "r7"
+WEBOS_VERSION = "1.0.0-33_536d71dbd9969c56038da29ce451dca8a7767e09"
+PR = "r8"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -34,9 +34,7 @@ WEBOS_HFP_ENABLED_ROLE = "HF"
 
 EXTRA_OECMAKE += "-DWEBOS_HFP_ENABLED_ROLE:STRING='${WEBOS_HFP_ENABLED_ROLE}'"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd

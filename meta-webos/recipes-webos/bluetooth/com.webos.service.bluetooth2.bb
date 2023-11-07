@@ -48,8 +48,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 # emulator), which means that the pairing should happen without user intervention.
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
-WEBOS_VERSION = "1.0.0-73_6255daed3e9da398abd49bc2bf82812607794627"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-74_f111204a72e809856c6620ced3d13641d4fe8428"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
@@ -73,10 +73,7 @@ EXTRA_OECMAKE += "-DWEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY:STRING='${WEBOS_BLUETO
 
 PACKAGECONFIG[support-response-bt-prepare-suspend-done] = "-DSUPPORT_RESPONSE_BT_PREPARE_SUSPEND_DONE:BOOL=true,-DSUPPORT_RESPONSE_BT_PREPARE_SUSPEND_DONE:BOOL=false,"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-12.patch \
-    file://0002-Fix-build-with-gcc-13.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
