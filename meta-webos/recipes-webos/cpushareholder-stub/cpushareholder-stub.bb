@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 RPROVIDES:${PN} = "cpushareholder"
 
-WEBOS_VERSION = "2.0.1-3_215a50182594720b99a53880393833a4f28c5c25"
+WEBOS_VERSION = "2.0.1-4_bef23b732f076008ad1eec5a7b77e62d0e354427"
 PR = "r5"
 
 inherit webos_component
