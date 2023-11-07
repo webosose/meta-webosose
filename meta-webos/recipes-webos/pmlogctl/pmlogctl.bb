@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "pmloglib"
 
-WEBOS_VERSION = "3.0.0-2_a6ac2b162550e69d2a2bfe5b77eaff24e1a92184"
+WEBOS_VERSION = "3.0.0-3_40928a1105070886b7c823c1f7fda3146aa475cd"
 PR = "r4"
 
 inherit webos_component

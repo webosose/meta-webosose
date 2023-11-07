@@ -20,7 +20,7 @@ RDEPENDS:${PN} += " \
     lttng-modules \
 "
 
-WEBOS_VERSION = "1.0.0-15_407d07f257498472a53bf39c9d176953885cadeb"
+WEBOS_VERSION = "1.0.0-16_78c4ba75091dbc9a7e3a3169f7ac892ff2427f89"
 PR = "r13"
 
 inherit webos_component
