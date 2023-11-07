@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-23_2243091eafdfa47fed77bfd4bab387f8d62f3718"
+WEBOS_VERSION = "1.0.0-24_ef79dc2f265877a0bdf57846a35776362fc77707"
 PR = "r8"
 
 inherit webos_qmake6
