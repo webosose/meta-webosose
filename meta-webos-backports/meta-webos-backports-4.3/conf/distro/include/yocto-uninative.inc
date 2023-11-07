@@ -2,6 +2,8 @@
 # https://git.openembedded.org/openembedded-core/commit/?id=1c5c8ff97ba0a7f9adc592d702b865b3d166a24b
 # and 4.2 version in:
 # https://git.openembedded.org/openembedded-core/commit/?id=c6654fab00a1b4e4bb05eec8b77c8c60e1f8a709
+# and 4.3 version in:
+# https://git.openembedded.org/openembedded-core/commit/?id=39f987fcb20ad7c0e45425b9f508d463c50ce0c1
 #
 # This include points at uninative tarballs generated and maintained
 # by the Yocto Project. These file can be included by distros if they
@@ -11,9 +13,9 @@
 #
 
 UNINATIVE_MAXGLIBCVERSION = "2.38"
-UNINATIVE_VERSION = "4.2"
+UNINATIVE_VERSION = "4.3"
 
 UNINATIVE_URL ?= "http://downloads.yoctoproject.org/releases/uninative/${UNINATIVE_VERSION}/"
-UNINATIVE_CHECKSUM[aarch64] ?= "cff40e7bdde50aeda06707af8c001796a71b4cf33c5ae1616e5c47943ff6b94e"
-UNINATIVE_CHECKSUM[i686] ?= "a70516447e9a9f1465ffaf1c7f89e79d1692d2356d86fd2a5a63acd908db1ff2"
-UNINATIVE_CHECKSUM[x86_64] ?= "6a86d71eeafba4fefec600c9bf8cf4a01324d1eb52788b6e398d3f23c10d19fb"
+UNINATIVE_CHECKSUM[aarch64] ?= "8df05f4a41455018b4303b2e0ea4eac5c960b5a13713f6dbb33dfdb3e32753ec"
+UNINATIVE_CHECKSUM[i686] ?= "bea76b4a97c9ba0077c0dd1295f519cd599dbf71f0ca1c964471c4cdb043addd"
+UNINATIVE_CHECKSUM[x86_64] ?= "1c35f09a75c4096749bbe1e009df4e3968cde151424062cf4aa3ed89db22b030"
