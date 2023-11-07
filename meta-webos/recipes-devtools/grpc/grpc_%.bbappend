@@ -1,6 +1,10 @@
 # Copyright (c) 2018-2023 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
+SRC_URI += "file://0001-Fixed-crash-issue-of-TTS-Service.patch"
 
 do_install:append() {
     install -d ${D}${datadir}/grpc/
