@@ -27,6 +27,10 @@ SYSTEMD_SERVICE:${PN} = "${@' '.join([removesuffix(f, '.in') for f in '${WEBOS_S
 
 SYSTEMD_AUTO_ENABLE = "disable"
 
+# User and group will be set as root if webos-dac is not in distro features.
+WEBOS_SYSTEMD_USER ?= "root"
+WEBOS_SYSTEMD_GROUP ?= "root"
+
 install_units() {
     install -d ${WORKDIR}/staging-units
 
@@ -36,7 +40,13 @@ install_units() {
 
     if [ $(ls ${WORKDIR}/staging-units | wc -l) -gt 0 ]; then
         ls ${WORKDIR}/replace.cmake >/dev/null 2>/dev/null && cp ${WORKDIR}/replace.cmake ${WORKDIR}/staging-units/CMakeLists.txt
-        (cd ${WORKDIR} && cmake staging-units -DIN_FILES="${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}" -DCMAKE_INSTALL_UNITDIR="${D}${systemd_system_unitdir}" && make install)
+        (cd ${WORKDIR} && \
+         cmake staging-units \
+                 -DIN_FILES="${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}" \
+                 -DCMAKE_INSTALL_UNITDIR="${D}${systemd_system_unitdir}" \
+                 -DWEBOS_SYSTEMD_USER="${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', '${WEBOS_SYSTEMD_USER}', 'root', d)}" \
+                 -DWEBOS_SYSTEMD_GROUP="${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', '${WEBOS_SYSTEMD_GROUP}', 'root', d)}" && \
+         make install)
     fi
 
     rm -rf ${WORKDIR}/staging-units
