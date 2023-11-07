@@ -45,8 +45,10 @@ install_units() {
                  -DIN_FILES="${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}" \
                  -DCMAKE_INSTALL_UNITDIR="${D}${systemd_system_unitdir}" \
                  -DWEBOS_SYSTEMD_USER="${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', '${WEBOS_SYSTEMD_USER}', 'root', d)}" \
-                 -DWEBOS_SYSTEMD_GROUP="${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', '${WEBOS_SYSTEMD_GROUP}', 'root', d)}" && \
-         make install)
+                 -DWEBOS_SYSTEMD_GROUP="${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', '${WEBOS_SYSTEMD_GROUP}', 'root', d)}" \
+                 ${WEBOS_SYSTEMD_REPLACE_OTHERS} && \
+         make install && \
+         rm -rf Makefile)
     fi
 
     rm -rf ${WORKDIR}/staging-units
