@@ -11,6 +11,10 @@ LIC_FILES_CHKSUM = " \
 
 inherit webos_arch_indep
 
+INC_PR = "r1"
+
+RDEPENDS:${PN} = "webos-fontconfig-files"
+
 # Skip the unwanted tasks
 do_configure[noexec] = "1"
 do_compile[noexec] = "1"

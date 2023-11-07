@@ -3,7 +3,7 @@
 require ${BPN}.inc
 
 WEBOS_VERSION = "1.0.0-14_d515a96cc786e1d233dd70b9b462044861a5042d"
-PR = "r0"
+PR = "${INC_PR}.1"
 
 inherit webos_arch_indep
 inherit webos_enhanced_submissions
