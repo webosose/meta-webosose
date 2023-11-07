@@ -24,3 +24,13 @@ SRC_URI += " \
     file://0003-Ensure-CheckedContiguousIterator-satisfies-C-20-Conc.patch \
     file://0004-traffic_annotation-fix-build-with-clang-17.patch \
 "
+
+# These 2 are already applied in @pro but missing in master
+# http://gpro.lge.com/c/webosose/chromium108/+/373249 [op][upsable][build] Fix build with gcc-13 (master branch)
+# http://gpro.lge.com/c/webosose/chromium108/+/351386 [op][upsable][build] Fix build with gcc-13 (@pro branch)
+# http://gpro.lge.com/c/webosose/chromium108/+/373250 [op][upsable][build] llvm: Fix build with gcc-13 (master branch)
+# http://gpro.lge.com/c/webosose/chromium108/+/352226 [op][upsable][build] llvm: Fix build with gcc-13 (@pro branch)
+SRC_URI += " \
+    file://0002-Fix-build-with-gcc-13.patch \
+    file://0003-llvm-Fix-build-with-gcc-13.patch \
+"
