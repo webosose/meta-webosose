@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 libpbnjson"
 
-WEBOS_VERSION = "3.3.0-7_70ff1081b4ff6d910b89b96c86c6e42a5fa29c6a"
+WEBOS_VERSION = "3.3.0-8_cc70d72fefd37a3740a3b4625bfddc1b7d6016e5"
 PR = "r10"
 
 LEAD_SONAME = "libPmLogLib.so"

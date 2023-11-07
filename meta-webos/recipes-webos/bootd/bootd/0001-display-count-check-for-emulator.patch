@@ -1,41 +1,90 @@
-From 82df7303fc7421fb4c5372c1b6f82cf1ddbfb555 Mon Sep 17 00:00:00 2001
-From: Heegoo Han <heegoo.han@lge.com>
-Date: Wed, 16 Sep 2020 13:13:23 +0900
+From e1860c8126e5877dc0262697f09b9f9250d418ab Mon Sep 17 00:00:00 2001
+From: Hotaek Jung <hotaek.jung@lge.com>
+Date: Tue, 10 Oct 2023 17:01:17 +0900
 Subject: [PATCH] display count check for emulator
 
 ---
 Upstream-Status: Pending
 
- src/bootd/event/StaticEventDB.cpp | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ src/bootd/event/StaticEventDB.cpp | 65 +++++--------------------------
+ 1 file changed, 9 insertions(+), 56 deletions(-)
 
 diff --git a/src/bootd/event/StaticEventDB.cpp b/src/bootd/event/StaticEventDB.cpp
-index 80aca92..2210669 100644
+index 91a50f6..2210669 100644
 --- a/src/bootd/event/StaticEventDB.cpp
 +++ b/src/bootd/event/StaticEventDB.cpp
-@@ -61,10 +61,18 @@ void StaticEventDB::printInformation()
+@@ -61,65 +61,18 @@ void StaticEventDB::printInformation()
  
  int StaticEventDB::getDisplayCnt()
  {
--    if (isFileExist("/sys/class/drm/card0-HDMI-A-2"))
--        return 2;
--    else
--        return 1;
+-    // check files and folders for debug
+-    bool Hdmi_A1_ready=false;
+-    bool Hdmi_A2_ready=false;
+-    string Hdmi_A1_enabledFile="/sys/class/drm/card0-HDMI-A-1/enabled";
+-    string Hdmi_A1_statusFile="/sys/class/drm/card0-HDMI-A-1/status";
+-    string Hdmi_A2_enabledFile="/sys/class/drm/card0-HDMI-A-2/enabled";
+-    string Hdmi_A2_statusFile="/sys/class/drm/card0-HDMI-A-2/status";
 +    // Emulator should check the card0-Virtual-*
-+    ifstream file;
+     ifstream file;
+-    string Hdmi_A1_enabled = "", Hdmi_A1_status = "", Hdmi_A2_enabled = "", Hdmi_A2_status = "";
+-
+-    file.open(Hdmi_A1_enabledFile);
+-    if (file.fail()) {
+-        g_Logger.debugLog(Logger::MSGID_SETTINGS, "%s=File Open Failed(%s)", __FUNCTION__, Hdmi_A1_enabledFile.c_str());
+-    } else {
+-        std::getline(file, Hdmi_A1_enabled);
+-        file.close();
+-    }
+-
+-    file.open(Hdmi_A1_statusFile);
+-    if (file.fail()) {
+-        g_Logger.debugLog(Logger::MSGID_SETTINGS, "%s=File Open Failed(%s)", __FUNCTION__, Hdmi_A1_statusFile.c_str());
+-    } else {
+-        std::getline(file, Hdmi_A1_status);
 +    string status;
 +    file.open("/sys/class/drm/card0-Virtual-2/status");
 +    if (!file.fail()) {
 +        status.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-+        file.close();
+         file.close();
 +        if (std::string::npos != status.find("disconnected")) {
 +            return 1;
 +        }
-+    }
+     }
+-
+-    if (Hdmi_A1_enabled == "enabled" && Hdmi_A1_status == "connected") {
+-        Hdmi_A1_ready = true;
+-    }
+-
+-    file.open(Hdmi_A2_enabledFile);
+-    if (file.fail()) {
+-        g_Logger.debugLog(Logger::MSGID_SETTINGS, "%s=File Open Failed(%s)", __FUNCTION__, Hdmi_A2_enabledFile.c_str());
+-    } else {
+-        std::getline(file, Hdmi_A2_enabled);
+-        file.close();
+-    }
+-
+-    file.open(Hdmi_A2_statusFile);
+-    if (file.fail()) {
+-        g_Logger.debugLog(Logger::MSGID_SETTINGS, "%s=File Open Failed(%s)", __FUNCTION__, Hdmi_A2_statusFile.c_str());
+-    } else {
+-        std::getline(file, Hdmi_A2_status);
+-        file.close();
+-    }
+-
+-    if (Hdmi_A2_enabled == "enabled" && Hdmi_A2_status == "connected") {
+-        Hdmi_A2_ready = true;
+-    }
+-
+-    g_Logger.debugLog(Logger::MSGID_SETTINGS, "card0-HDMI-A-1(%s) enabled(%s), status(%s)/ card0-HDMI-A-2(%s) enabled(%s), status(%s)",
+-                                               Hdmi_A1_ready ? "ready" : "not ready", Hdmi_A1_enabled.c_str(), Hdmi_A1_status.c_str(),
+-                                               Hdmi_A2_ready ? "ready" : "not ready", Hdmi_A2_enabled.c_str(), Hdmi_A2_status.c_str());
+-
+-    if (Hdmi_A1_ready && Hdmi_A2_ready) {
+-        return 2;
+-    } else {
+-        return 1;
+-    }
 +    return 2;
  }
  
  void StaticEventDB::updateConf(pbnjson::JValue jsonConf)
--- 
-2.25.1
-

@@ -19,8 +19,8 @@ RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_bash} python
 PROVIDES = "initscripts"
 RPROVIDES:${PN} = "initscripts initd-functions"
 
-WEBOS_VERSION = "3.0.0-96_c2e1ad53b8ffd9bed3b140007ba0261daa0fa530"
-PR = "r17"
+WEBOS_VERSION = "3.0.0-97_dc844b285f1079e58b8e644f896988fb4fe60339"
+PR = "r18"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -29,10 +29,7 @@ inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-# http://gpro.lge.com/c/webosose/webos-initscripts/+/364495 CMakeLists.txt: don't install initctl twice and respect WEBOS_INSTALL_SBINDIR
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-don-t-install-initctl-twice-and-respe.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE += "-DWEBOS_QTTESTABILITY_ENABLED:BOOL=${@ '1' if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else '0'}"
