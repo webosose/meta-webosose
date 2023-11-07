@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 curl pmloglib"
 
-WEBOS_VERSION = "1.0.0-21_d0236729512fee0f89ff9bb13b187f09a110481a"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-22_37463ccfd326bd2cff2a8bcab61bb08645358507"
+PR = "r5"
 
 inherit webos_component
 inherit webos_public_repo
@@ -22,6 +22,5 @@ inherit webos_pkgconfig
 
 # http://gpro.lge.com/c/webosose/loc-utils/+/350798 CMakeLists.txt: Fix hardcoded 'lib' installation path
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-Fix-hardcoded-lib-installation-path.patch \
 "
 S = "${WORKDIR}/git"
