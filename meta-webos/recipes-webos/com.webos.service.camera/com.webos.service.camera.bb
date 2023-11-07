@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json"
 
 WEBOS_VERSION = "1.0.0-37_f58dccf899a5839e920a48c621c8862fd532d316"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_cmake
@@ -31,7 +31,10 @@ PACKAGECONFIG ??= " \
 
 PACKAGECONFIG[webos-aiframework] = "-DWITH_AIFRAMEWORK=ON,-DWITH_AIFRAMEWORK=OFF,edgeai-vision"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/com.webos.service.camera/+/373506 Fix build with gcc-13
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-build-with-gcc-13.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
