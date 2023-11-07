@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=afa8f8a91390ab659c837da57124977c"
 
 # Matches v${PV} tag
 PV = "475884903"
-SRCREV = "e8f74a9763aa36559980a0c2f37f587794995622"
+SRCREV_main = "e8f74a9763aa36559980a0c2f37f587794995622"
 
 #xnnpack/475884903-r0/git/cmake$ grep -rn "URL https"
 #DownloadCpuinfo.cmake:15:  URL https://github.com/pytorch/cpuinfo/archive/49610f89b8b1eb52d75d1eda7a2c40c1e86a78e7.zip
@@ -35,8 +35,10 @@ SRCREV_pthreadpool = "545ebe9f225aec6dca49109516fac02e973a3de2"
 # FP16-source/cmake/DownloadPSimd.cmake:  GIT_TAG master
 SRCREV_psimd = "072586a71b55b7f8c584153d223e95687148a900"
 
+SRCREV_FORMAT = "main_cpuinfo_clog_fp16_fxdif_pthreadpool_psimd"
+
 SRC_URI += " \
-    git://github.com/google/XNNPACK;branch=master;protocol=https \
+    git://github.com/google/XNNPACK;branch=master;name=main;protocol=https \
     git://github.com/pytorch/cpuinfo;branch=main;protocol=https;destsuffix=git/cpuinfo-source;name=cpuinfo \
     git://github.com/pytorch/cpuinfo;branch=main;protocol=https;destsuffix=git/clog-source;name=clog \
     git://github.com/Maratyszcza/FP16;branch=master;protocol=https;destsuffix=git/FP16-source;name=fp16 \
@@ -54,7 +56,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r1"
+PR = "r2"
 S = "${WORKDIR}/git"
 
 ARM_INSTRUCTION_SET = "arm"
