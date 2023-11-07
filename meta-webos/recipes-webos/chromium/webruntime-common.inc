@@ -4,11 +4,13 @@
 
 LICENSE = "Apache-2.0 & BSD-3-Clause & LGPL-2.0-only & LGPL-2.1-only"
 LIC_FILES_CHKSUM = "\
-    file://src/LICENSE;md5=0fca02217a5d49a14dfe2d11837bb34d \
+    ${CHROMIUM_LICENSE_CHKSUM} \
     file://src/third_party/blink/renderer/core/LICENSE-LGPL-2;md5=36357ffde2b64ae177b2494445b79d21 \
     file://src/third_party/blink/renderer/core/LICENSE-LGPL-2.1;md5=a778a33ef338abbaf8b8a7c36b6eec80 \
-    file://oss-pkg-info.yaml;md5=dac1866e82f07906c382718584e415e5 \
+    ${CHROMIUM_OSS_PKG_INFO_CHKSUM} \
 "
+CHROMIUM_LICENSE_CHKSUM ?= ""
+CHROMIUM_OSS_PKG_INFO_CHKSUM ?= ""
 
 require gn-utils.inc
 
@@ -20,20 +22,8 @@ WEBRUNTIME_REPO_VERSION ?= "94"
 REPO_VERSION := "${@['','_${WEBRUNTIME_REPO_VERSION}'][d.getVar('WEBRUNTIME_REPO_VERSION').strip() != '']}"
 
 WEBOS_REPO_NAME ?= "chromium${WEBRUNTIME_REPO_VERSION}"
-WEBOS_GIT_PARAM_BRANCH_V8 ?= "@chromium${WEBRUNTIME_REPO_VERSION}"
-WEBOS_GIT_BRANCH_V8 ?= ";branch=${WEBOS_GIT_PARAM_BRANCH_V8}"
-WEBOS_REPO_NAME_V8 ?= "chromium-v8"
-WEBOSOSE_GIT_REPO_COMPLETE_V8 ?= "${WEBOSOSE_GIT_REPO}/${WEBOS_REPO_NAME_V8}${WEBOS_GIT_BRANCH_V8}${WEBOSOSE_GIT_PROTOCOL}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE};name=main"
-
-SRC_URI:append = "\
-    ${WEBOSOSE_GIT_REPO_COMPLETE_V8};destsuffix=git/src/v8;name=v8 \
-"
-
-## we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-do_fetch[vardeps] += "SRCREV_v8"
-SRCREV_FORMAT = "main_v8"
 
 S = "${WORKDIR}/git"
 B = "${WORKDIR}/build"
