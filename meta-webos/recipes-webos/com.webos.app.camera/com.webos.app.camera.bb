@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
-WEBOS_VERSION = "0.0.1-15_ec1f0a166dc9b03ff407f6d45802cdbc31d474cc"
+WEBOS_VERSION = "0.0.1-14_ecbead987b164f57f8da2481532d2c9c662b2e02"
 PR = "r2"
 
 inherit webos_component
