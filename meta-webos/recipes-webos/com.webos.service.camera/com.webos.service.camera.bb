@@ -10,10 +10,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev"
+DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json"
 
-WEBOS_VERSION = "1.0.0-36_9ffdd45eb7385bd8447117cc061ac9e73a819d57"
-PR = "r10"
+WEBOS_VERSION = "1.0.0-37_f58dccf899a5839e920a48c621c8862fd532d316"
+PR = "r11"
 
 inherit webos_component
 inherit webos_cmake
