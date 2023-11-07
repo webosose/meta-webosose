@@ -9,11 +9,13 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
+VIRTUAL-RUNTIME_nyx-utils ?= "nyx-utils"
+
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit msgpack-c"
-RDEPENDS:${PN} = "fluentbit nyx-utils python3-core python3-requests python3-atlassian-python-api"
+RDEPENDS:${PN} = "fluentbit python3-core python3-requests python3-atlassian-python-api ${VIRTUAL-RUNTIME_nyx-utils}"
 
 WEBOS_VERSION = "1.0.0-50_eca8bb9973286d633aac3fbfd71359bd14db99ff"
-PR = "r15"
+PR = "r16"
 
 inherit webos_component
 inherit webos_enhanced_submissions
