@@ -1,0 +1,74 @@
+From 5e305a65cda729628cf40f4f3a802e97b3a79602 Mon Sep 17 00:00:00 2001
+From: Piotr Tworek <piotr.tworek@xperi.com>
+Date: Fri, 26 May 2023 08:43:14 +0000
+Subject: [PATCH] Make CheckedContiguousIterator work correctly for libstdc++.
+
+The implementation of this iterator relies of specific operation
+of to_address. To accomplish this the code provides a specialization
+of std::pointer_traits. Unfortunately this specialization is gated
+behind _LIBCPP_VERSION ifdefs. As result its not enabled for libstdc++
+based builds. This results in SpanTest.Empty gtest failure when using
+libstdc++. The test explicitly tests for this custom to_address
+behavior, see [1]. The fun part is most of the ifdeffed code is not
+libc++ specific. It does work for libstdc++, with the tiny exception
+of __is_cpp17_contiguous_iterator which seems to be libc++
+implementation detail.
+
+Ref:
+[1] https://chromium-review.googlesource.com/c/chromium/src/+/3921496
+
+Bug: 957519
+Change-Id: I440bf2c3964ce9d99880dd3fda9faf832a1ba178
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/4561265
+Commit-Queue: Piotr Tworek <piotr.tworek@xperi.com>
+Reviewed-by: Arthur Sonzogni <arthursonzogni@chromium.org>
+Reviewed-by: Daniel Cheng <dcheng@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#1149606}
+---
+Upstream-Status: Backport [116.0.5794.0 AND Submitted http://gpro.lge.com/c/webosose/chromium108/+/373312 Make CheckedContiguousIterator work correctly for libstdc++.]
+
+ src/base/containers/checked_iterators.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/src/base/containers/checked_iterators.h b/src/base/containers/checked_iterators.h
+index eeef4b3080..82ba2a0410 100644
+--- a/src/base/containers/checked_iterators.h
++++ b/src/base/containers/checked_iterators.h
+@@ -30,10 +30,8 @@ class CheckedContiguousIterator {
+ 
+   // Required for certain libc++ algorithm optimizations that are not available
+   // for NaCl.
+-#if defined(_LIBCPP_VERSION) && !BUILDFLAG(IS_NACL)
+   template <typename Ptr>
+   friend struct std::pointer_traits;
+-#endif
+ 
+   constexpr CheckedContiguousIterator() = default;
+ 
+@@ -217,7 +215,6 @@ using CheckedContiguousConstIterator = CheckedContiguousIterator<const T>;
+ 
+ }  // namespace base
+ 
+-#if defined(_LIBCPP_VERSION) && !BUILDFLAG(IS_NACL)
+ // Specialize both std::__is_cpp17_contiguous_iterator and std::pointer_traits
+ // for CCI in case we compile with libc++ outside of NaCl. The former is
+ // required to enable certain algorithm optimizations (e.g. std::copy can be a
+@@ -237,9 +234,11 @@ using CheckedContiguousConstIterator = CheckedContiguousIterator<const T>;
+ // [3] https://wg21.link/pointer.traits.optmem
+ namespace std {
+ 
++#if defined(_LIBCPP_VERSION)
+ template <typename T>
+ struct __is_cpp17_contiguous_iterator<::base::CheckedContiguousIterator<T>>
+     : true_type {};
++#endif
+ 
+ template <typename T>
+ struct pointer_traits<::base::CheckedContiguousIterator<T>> {
+@@ -260,6 +259,5 @@ struct pointer_traits<::base::CheckedContiguousIterator<T>> {
+ };
+ 
+ }  // namespace std
+-#endif
+ 
+ #endif  // BASE_CONTAINERS_CHECKED_ITERATORS_H_
