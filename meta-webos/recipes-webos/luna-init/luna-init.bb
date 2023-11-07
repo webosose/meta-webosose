@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "tzdata python3-pytz-native"
 
-WEBOS_VERSION = "2.0.1-8_97d9c92925ca1a88106727cbdbd7d225a327bb15"
+WEBOS_VERSION = "2.0.1-10_3a951d1299acf713d1d406ed5e0608d6e9ca9108"
 PR = "r19"
 
 inherit webos_arch_indep
