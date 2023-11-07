@@ -1,9 +1,9 @@
 # Copyright (c) 2012-2023 LG Electronics, Inc.
 
-# Make chromium94 the default webruntime
-PREFERRED_VERSION_webruntime = "94.%"
-PREFERRED_VERSION_webruntime-clang = "94.%"
-PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "94.%"
+# Make chromium108 the default webruntime
+PREFERRED_VERSION_webruntime = "108.%"
+PREFERRED_VERSION_webruntime-clang = "108.%"
+PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "108.%"
 
 # Prefer gstreamer version 1.20.% from oe-core for webos
 GSTREAMER_VERSION = "1.20.%"
