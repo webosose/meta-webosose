@@ -2,6 +2,11 @@
 
 WEBOS_REPO_NAME = "chromium108"
 
+# The submission doesn't exist yet and the repo wasn't publish, but we need
+# some WEBOS_VERSION to set SRCREV to allow parsing the recipes which include
+# this .inc file.
+WEBOS_VERSION = "108.0.5359.217-1_deadbeefdecafcafebaddeadbeefdecafcafebad"
+
 # 10.8.168.25-chromium108.2
 WEBOS_REPO_NAME_V8 = "chromium-v8"
 WEBOS_GIT_PARAM_BRANCH_V8 = "@chromium108"

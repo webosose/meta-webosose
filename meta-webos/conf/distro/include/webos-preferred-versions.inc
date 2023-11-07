@@ -2,6 +2,7 @@
 
 # Make chromium94 the default webruntime
 PREFERRED_VERSION_webruntime = "94.%"
+PREFERRED_VERSION_webruntime-clang = "94.%"
 PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "94.%"
 
 # Prefer gstreamer version 1.20.% from oe-core for webos
