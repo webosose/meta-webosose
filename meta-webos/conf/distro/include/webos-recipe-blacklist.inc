@@ -63,3 +63,44 @@ SKIP_RECIPE[xen] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fail
 SKIP_RECIPE[xtf] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Rdepends on blacklisted xen-tools-xl from xen-tools"
 SKIP_RECIPE[xvisor] ?= "fails to fetch: WARNING: Failed to fetch URL git://github.com/avpatel/xvisor-next.git;branch=master;protocol=https, attempting MIRRORS if available DEBUG: Fetcher failure: Unable to find revision 6b23764a1439f9d08b2ed2f363da522460d8a22b in branch master even from upstream http://gecko.lge.com:8000/Errors/Details/565714"
 SKIP_RECIPE[uxen-guest-tools] ?= "fails to build for x86 qemux86 qemux86_64-webos-linux/uxen-guest-tools/4.1.8-r0/uxen-4.1.8-72a4af9/vm-support/linux/uxenplatform/platform.c:110:13: error: conflicting types for 'add_hwgenerator_randomness'; have 'void(const char *, size_t,  size_t)' {aka 'void(const char *, long unsigned int,  long unsigned int)'} http://gecko.lge.com:8000/Errors/Details/576618"
+
+# Not really broken, just sstate is big (~800MB) and we don't need to test it with world builds
+EXCLUDE_FROM_WORLD:pn-webkitgtk = "1"
+EXCLUDE_FROM_WORLD:pn-opengl-es-cts = "1"
+EXCLUDE_FROM_WORLD:pn-tearsofsteel-1080p = "1"
+EXCLUDE_FROM_WORLD:pn-bigbuckbunny-1080p = "1"
+EXCLUDE_FROM_WORLD:pn-bigbuckbunny-720p = "1"
+EXCLUDE_FROM_WORLD:pn-bigbuckbunny-480p = "1"
+
+# based on looking at 10000 biggest sstate archives from just one DISTRO with 3 MACHINEs (and multilib enabled)
+# all accessed in last 10 days, the other huge archives are:
+# webkitgtk (1.5GB) - epiphany would normally pull it into world, but we don't have x11 in DISTRO_FEATURES which is required by epiphany
+# opengl-es-cts (546MB)
+# tearsofsteel-1080p (707MB)
+# bigbuckbunny-1080p (882MB)
+# bigbuckbunny-720p (317MB)
+# bigbuckbunny-480p (211MB)
+# nodejs-16 (735MB 119 times), nodejs-18 (829MB 111 times)
+# tesseract-lang (454MB 223 times)
+# rust-llvm-native (420MB but only 23 times)
+# openssl (394MB package.tar.zst 102 times, 254MB package_write_ipk.tar.zst 112 times)
+# linux-firmware (380MB 62 times)
+# cmake (306MB 72 times)
+# qtbase (294MB 475 times)
+# mimic (293MB 91 times)
+# mozjs-102 (257MB 56 times)
+# opencv (256MB 358 times)
+# clang-native (255MB 10 times)
+# rocksdb (255MB 103 times)
+# webruntime (207MB 730 times)
+# minifi-cpp (240MB 70 times)
+# clang (207MB 99 times)
+# qtdeclarative (183MB 259 times)
+# ltp (195MB 175 times)
+# com.demo.simplevideoplayer (181MB 10 times)
+# etcd (172MB 36 times)
+# ceres-solver (165MB 106 times)
+# qt3d (164MB 60 times)
+# edgeai-vision (162MB 368 times)
+# than round 150MB-100MB virtual/kernel providers, vsomeip, hdf5, rust, spirv-tools, boost, poco, grpc, go-cross-*,
+# armnn, luna-service2, localization-data, libyang, influxdb, ...
