@@ -51,10 +51,22 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r8"
+PR = "r9"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_filesystem_paths
+
+# without WITH_ENV build_common/SConscript does:
+#         CC = os.environ['CC']
+#         target_prefix = CC.split()[0]
+#         target_prefix = target_prefix[:-3]
+#         tools = {
+#             "CC": target_prefix + "gcc",
+#             "CXX": target_prefix + "g++"
+# so with ccache enabled it doesn't find right target_prefix from:
+# env.iotivity.ccache:export CC="ccache aarch64-webos-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc -mbranch-protection=standard -fstack-protector-strong    -Werror=return-type --sysroot=/OE/lge/build/webos/nanbield/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+git/recipe-sysroot"
+# env.iotivity.noccache:export CC="aarch64-webos-linux-gcc  -mcpu=cortex-a72 -march=armv8-a+crc -mbranch-protection=standard -fstack-protector-strong    -Werror=return-type --sysroot=/OE/lge/build/webos/nanbield/BUILD/work/raspberrypi4_64-webos-linux/iotivity/1.3.99+git/recipe-sysroot"
+EXTRA_OESCONS += "WITH_ENV=1"
 
 IOTIVITY_BIN_DIR = "${webos_servicesdir}/${PN}"
 IOTIVITY_BIN_DIR_D = "${D}${IOTIVITY_BIN_DIR}"
