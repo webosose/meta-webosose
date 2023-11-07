@@ -3,6 +3,8 @@
 EXTENDPRAUTO:append = "webos1"
 
 # Backport
+# https://git.openembedded.org/openembedded-core/commit/?id=3ace9fbfeb42ebf920812e3dd6d665b8b20a1ca0
+# https://git.openembedded.org/openembedded-core/commit/?h=mickledore&id=d5a038b764720bd3267f258994371909f3f34ad6
 # https://lists.openembedded.org/g/openembedded-core/message/186317
 
 # Prevent installing copy of tzdata based on tzdata installation on the build host
