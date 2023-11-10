@@ -1,0 +1,56 @@
+From 028a51a919ed5e86d08e8185768326441b27b0c9 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 11 Oct 2023 14:40:52 +0000
+Subject: [PATCH] configure.js: fix compatibility with nodejs-v19
+
+Since nodejs-v19 with:
+https://github.com/nodejs/node/commit/e0ab8dd63731d8eb92053776c5160fb190d5aea5
+the process.config is read-only and old node-gyp fails in do_configure as shown
+in:
+
+http://gecko.lge.com:8000/Errors/Details/713403
+
+DEBUG: Executing shell function do_configure
+gyp info it worked if it ends with ok
+gyp info using node-gyp@6.1.0
+gyp info using node@20.5.1 | linux | x64
+gyp info find Python using Python version 3.11.5 found at "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/recipe-sysroot-native/usr/bin/python3-native/python3"
+gyp ERR! UNCAUGHT EXCEPTION
+gyp ERR! stack TypeError: Cannot assign to read only property 'cflags' of object '#<Object>'
+gyp ERR! stack     at createConfigFile (TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/recipe-sysroot-native/usr/lib/node_modules/node-gyp/lib/configure.js:118:21)
+gyp ERR! stack     at TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/recipe-sysroot-native/usr/lib/node_modules/node-gyp/lib/configure.js:85:9
+gyp ERR! stack     at TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/recipe-sysroot-native/usr/lib/node_modules/node-gyp/node_modules/mkdirp/index.js:51:26
+gyp ERR! stack     at FSReqCallback.oncomplete (node:fs:201:5)
+gyp ERR! System Linux 6.5.6-gentoo
+gyp ERR! command "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/recipe-sysroot-native/usr/bin/node" "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/recipe-sysroot-native/usr/bin/node-gyp" "--arch" "x86_64" "--nodedir" "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/node-v20.5.1" "configure"
+gyp ERR! cwd TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-dynaload/3.0.2-4/git
+gyp ERR! node -v v20.5.1
+gyp ERR! node-gyp -v v6.1.0
+gyp ERR! This is a bug in `node-gyp`.
+gyp ERR! Try to update node-gyp and file an Issue if it does not help:
+gyp ERR!     <https://github.com/nodejs/node-gyp/issues>
+WARNING: exit code 7 from a shell command.
+
+To fix that backport 2 changes from node-gyp v8.0.0:
+https://github.com/nodejs/node-gyp/commit/392b7760b45af45fa958c16a4a34b873a03f2b3a
+and v8.2.0:
+https://github.com/nodejs/node-gyp/commit/5f1a06c50f3b0c3d292f64948f85a004cfcc5c87
+---
+Upstream-Status: Backport [v8.2.0 https://github.com/nodejs/node-gyp/commit/5f1a06c50f3b0c3d292f64948f85a004cfcc5c87]
+
+ lib/configure.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/configure.js b/lib/configure.js
+index 564564e..db67f9f 100644
+--- a/lib/configure.js
++++ b/lib/configure.js
+@@ -97,7 +97,7 @@ function configure (gyp, argv, callback) {
+ 
+     log.verbose('build/' + configFilename, 'creating config file')
+ 
+-    var config = process.config || {}
++    var config = process.config ? JSON.parse(JSON.stringify(process.config)) : {}
+     var defaults = config.target_defaults
+     var variables = config.variables
+ 
