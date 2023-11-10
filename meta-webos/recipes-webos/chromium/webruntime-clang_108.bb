@@ -4,7 +4,7 @@ require webruntime_108.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r0"
+PR = "r1"
 
 inherit clang_libc
 
@@ -49,6 +49,8 @@ ARM_INSTRUCTION_SET = "arm"
 GN_ARGS += "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', 'clang_use_stdlib=true clang_extra_cxxflags=\\\"${INCLUDE_PATH_STDLIB} ${TARGET_CC_ARCH}\\\"', 'clang_use_stdlib=false clang_extra_cxxflags=\\\"${INCLUDE_PATH_LIBCXX} ${TARGET_CC_ARCH}\\\"', d)}"
 
 GN_ARGS += "webos_rpath=\"${libdir}/cbe\""
+
+GN_ARGS += "${@'cc_wrapper=\\\"ccache \\\"' if bb.data.inherits_class('ccache', d) else ''}"
 
 PACKAGECONFIG[umediaserver] = ",,umediaserver${DEPEXT}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline${DEPEXT}"
