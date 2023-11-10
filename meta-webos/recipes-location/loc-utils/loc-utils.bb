@@ -20,7 +20,5 @@ inherit webos_enhanced_submissions
 inherit webos_cmake
 inherit webos_pkgconfig
 
-# http://gpro.lge.com/c/webosose/loc-utils/+/350798 CMakeLists.txt: Fix hardcoded 'lib' installation path
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

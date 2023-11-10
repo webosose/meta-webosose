@@ -23,10 +23,7 @@ inherit webos_program
 inherit webos_system_bus
 inherit webos_machine_impl_dep
 
-# http://gpro.lge.com/c/webosose/com.webos.service.location/+/348157 Fix luna-service2 usage
-# http://gpro.lge.com/c/webosose/com.webos.service.location/+/350819 CMakeLists.txt: Fix hardcoded 'lib' installation path
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES:${PN} += "${libdir}/location/plugins/lib*.so"
