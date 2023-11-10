@@ -292,7 +292,7 @@ PTEST_ENABLED:pn-valgrind = "0"
 PTEST_ENABLED:pn-parted = "0"
 PTEST_ENABLED:pn-apr = "0"
 
-INHERIT_DISTRO ?= "debian devshell sstate license buildstats-summary webos_base remove-libtool image-buildinfo"
+INHERIT_DISTRO ?= "debian devshell ccache sstate license buildstats-summary webos_base remove-libtool image-buildinfo"
 
 # Inherit icecc here, so that all builders have the same sstate signatures
 INHERIT_DISTRO += "icecc"
@@ -451,6 +451,7 @@ PACKAGE_ADD_METADATA .= "\n${PACKAGE_ADD_RECIPES_METADATA}"
 # Set ccache configuration from <top layer>/conf/ccache.conf
 export CCACHE_CONFIGPATH = "${@bb.utils.which('${BBPATH}', 'conf/ccache.conf')}"
 export CCACHE_COMPILERCHECK = "content"
+export CCACHE_READONLY ?= "1"
 
-# Enable ccache read-only, Add the following variable to prevent sstate cache miss.
-BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_READONLY_DIRECT"
+# Enable ccache read-only or read-write, Add the following variable to prevent sstate cache miss.
+BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY"
