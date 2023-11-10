@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-77_4e093d3de628495b43b7a03497c7660469a2d847"
-PR = "r18"
+PR = "r19"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -30,18 +30,13 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 WEBOS_ENACTJS_PROJECT_PATH = "./samples/enact-based"
 WEBOS_ENACTJS_PACK_OVERRIDE = "\
-    ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} && \
-    ${WEBOS_NODE_BIN} resbundler.js dist && \
-    rm -fr ./dist/resources && \
-    rm -fr ./dist/node_modules/@enact/moonstone/resources && \
-    cp -f webos-locale.js dist/webos-locale.js && \
-    ln -sfn /usr/share/javascript/ilib/localedata/ ./dist/ilibdata && \
-    cp -f label.js dist/ && \
-    cp -f background.js dist/ && \
-    cp -f defaults.js dist/ && \
-    cp -f manifest.json dist/ && \
-    cp -fr pdf.js dist/ && \
-    ${WEBOS_NODE_BIN} extract-inline.js ./dist \
+    ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} --verbose && \
+    ${WEBOS_NODE_BIN} resbundler.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} && \
+    rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources && \
+    rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/node_modules/@enact/moonstone/resources && \
+    ln -sfn /usr/share/javascript/ilib/localedata/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ilibdata && \
+    cp -R --no-dereference --preserve=mode,links -v webos-locale.js label.js background.js defaults.js manifest.json pdf.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ && \
+    ${WEBOS_NODE_BIN} extract-inline.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} \
 "
 
 # Remove --production, because that causes
@@ -66,10 +61,6 @@ install_acg_configuration() {
 
 do_install:append() {
     install_acg_configuration
-
-    # Enact does something wrong in this case, chown to prevent host-user-contaminated QA issue
-    # but should be fixed in enactjs
-    chown root:root -R ${D}
 }
 
 FILES:${PN} += "${webos_applicationsdir}"
