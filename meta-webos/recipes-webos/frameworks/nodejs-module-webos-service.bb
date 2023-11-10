@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.1-7_a514543927ec3998a054ead7654cea6dfa5dee90"
-PR = "r5"
+PR = "r6"
 
 inherit webos_enhanced_submissions
 inherit webos_system_bus
@@ -21,21 +21,21 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 do_install() {
-    install -d ${D}${libdir}/node_modules
-    install -d ${D}${libdir}/node_modules/webos-service
+    install -d ${D}${nonarch_libdir}/node_modules
+    install -d ${D}${nonarch_libdir}/node_modules/webos-service
     install -d ${D}${webos_sysbus_prvservicesdir}
     install -d ${D}${webos_sysbus_pubservicesdir}
     install -d ${D}${webos_sysbus_prvrolesdir}
     install -d ${D}${webos_sysbus_pubrolesdir}
     install -d ${D}${webos_servicesdir}
     for SUB in package.json lib ; do
-        cp -R --no-dereference --preserve=mode,links -v $SUB ${D}${libdir}/node_modules/webos-service
+        cp -R --no-dereference --preserve=mode,links -v $SUB ${D}${nonarch_libdir}/node_modules/webos-service
     done
     for SUB in sample/* ; do
         cp -R --no-dereference --preserve=mode,links -v $SUB ${D}${webos_servicesdir}
     done
     # remove test and jasminetest dirs
-    rm -vrf ${D}${libdir}/node_modules/webos-service/*test
+    rm -vrf ${D}${nonarch_libdir}/node_modules/webos-service/*test
 }
 
 PACKAGES =+ "${PN}-samples"
@@ -45,5 +45,5 @@ FILES:${PN}-samples += "${webos_sysbus_pubservicesdir}"
 FILES:${PN}-samples += "${webos_sysbus_prvrolesdir}"
 FILES:${PN}-samples += "${webos_sysbus_pubrolesdir}"
 FILES:${PN}-samples += "${webos_sysbus_manifestsdir}"
-FILES:${PN} += "${libdir}/node_modules/webos-service/package.json"
-FILES:${PN} += "${libdir}/node_modules/webos-service/lib"
+FILES:${PN} += "${nonarch_libdir}/node_modules/webos-service/package.json"
+FILES:${PN} += "${nonarch_libdir}/node_modules/webos-service/lib"

@@ -8,6 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 DEPENDS = "node-gyp-native"
 
+INC_PR = "r19"
+
 inherit webos_component
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -35,8 +37,8 @@ do_compile:prepend() {
 }
 
 do_install() {
-    install -d ${D}${libdir}/nodejs
-    install ${S}/build/Release/${WEBOS_NODE} ${D}${libdir}/nodejs/${WEBOS_NODE}
+    install -d ${D}${nonarch_libdir}/nodejs
+    install ${S}/build/Release/${WEBOS_NODE} ${D}${nonarch_libdir}/nodejs/${WEBOS_NODE}
 }
 
-FILES:${PN} += "${libdir}/nodejs"
+FILES:${PN} += "${nonarch_libdir}/nodejs"

@@ -9,8 +9,7 @@ LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=d980a35955bef62f4f06ee11e344c4
 DEPENDS += "boost"
 
 WEBOS_VERSION = "3.0.2-4_ef029ca96241caf25700b51a47502e6752cc8638"
-PR = "r13"
-
+PR = "${INC_PR}.0"
 
 do_configure() {
     export GYP_DEFINES="sysroot=${STAGING_DIR_HOST}"

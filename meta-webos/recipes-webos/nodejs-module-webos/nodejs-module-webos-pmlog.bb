@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM += "file://oss-pkg-info.yaml;md5=d486dd326df35bb9d577c353691f04
 DEPENDS += "pmloglib vim-native"
 
 WEBOS_VERSION = "3.0.1-8_bf9622036e9fcfd0de2fe135ab3039742c73ad05"
-PR = "r16"
+PR = "${INC_PR}.0"
 
 do_configure() {
     cd src
