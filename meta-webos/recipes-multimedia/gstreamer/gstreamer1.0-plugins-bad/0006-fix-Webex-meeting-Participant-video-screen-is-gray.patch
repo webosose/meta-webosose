@@ -26,7 +26,7 @@ video screen is gray-boxed or appears broken
 
 Signed-off-by: Veeresh Kadasani <veeresh.kadasani@lge.com>
 ---
-Upstream-Status: Pending
+Upstream-Status: Submitted [http://gpro.lge.com/c/webos-pro/gst-plugins-bad/+/378479 fix Webex meeting Participant video screen is gray]
 
  gst-libs/gst/codecparsers/gsth264parser.c | 18 +++++++++++++++++-
  1 file changed, 17 insertions(+), 1 deletion(-)
