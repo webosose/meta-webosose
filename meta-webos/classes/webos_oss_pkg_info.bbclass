@@ -6,6 +6,8 @@
 # write_oss_pkg_info can be run by bitbake -c write_oss_pkg_info <image>
 # collected oss-pkg-info.yaml files of image
 
+# This is
+# meta/classes-global/license.bbclass:LICENSE_DIRECTORY ??= "${DEPLOY_DIR}/licenses"
 OSS_DEPLOY_DIR ?= "${DEPLOY_DIR}/licenses"
 OSS_FILENAME   ?= "oss-pkg-info.yaml"
 
@@ -17,9 +19,9 @@ do_write_oss_pkg_info[nostamp] = "1"
 python do_write_oss_pkg_info() {
     imagename    = d.getVar("IMAGE_NAME")
     oss_filename = d.getVar("OSS_FILENAME")
-    manifest     = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), "%s" % imagename), "license.manifest")
-    default_oss  = os.path.join(d.getVar("TOPDIR")+'/build-templates', "%s-%s" % (imagename, oss_filename))
-    target_oss   = os.path.join(d.getVar("DEPLOY_DIR_IMAGE"), "%s-%s" % (d.getVar("IMAGE_BASENAME"), oss_filename))
+    manifest     = oe.path.join(d.getVar("OSS_DEPLOY_DIR"), imagename, "license.manifest")
+    default_oss  = oe.path.join(d.getVar("TOPDIR"), 'build-templates', "%s-%s" % (imagename, oss_filename))
+    target_oss   = oe.path.join(d.getVar("DEPLOY_DIR_IMAGE"), "%s-%s" % (d.getVar("IMAGE_BASENAME"), oss_filename))
 
     if os.path.isfile(manifest):
         with open(target_oss, "w") as output:
@@ -41,7 +43,7 @@ python do_write_oss_pkg_info() {
             pkgs = list(dict.fromkeys(tmp))
 
             for pkg in pkgs:
-                oss = os.path.join(os.path.join(d.getVar("OSS_DEPLOY_DIR"), pkg), oss_filename)
+                oss = oe.path.join(d.getVar("OSS_DEPLOY_DIR"), pkg, oss_filename)
                 if os.path.isfile(oss):
                     with open(oss) as input:
                         output.write('%s:\n' % pkg)
