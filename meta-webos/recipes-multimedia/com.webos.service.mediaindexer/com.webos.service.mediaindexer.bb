@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-26_4e33e33ea4c17f9fbd6b0ea6a33635b65c91fdc2"
-PR = "r11"
+WEBOS_VERSION = "1.0.0-27_738ee3358ba28e5b9fb834da59949cc95a31780f"
+PR = "r12"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -27,10 +27,7 @@ DEPENDS += "luna-service2 pmloglib libpbnjson"
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
 RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_pdm} db8"
 
-# http://gpro.lge.com/c/webosose/com.webos.service.mediaindexer/+/365247 CMakeLists.txt: respect libdir setting
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-respect-libdir-setting.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
