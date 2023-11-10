@@ -450,6 +450,7 @@ PACKAGE_ADD_METADATA .= "\n${PACKAGE_ADD_RECIPES_METADATA}"
 
 # Set ccache configuration from <top layer>/conf/ccache.conf
 export CCACHE_CONFIGPATH = "${@bb.utils.which('${BBPATH}', 'conf/ccache.conf')}"
+export CCACHE_COMPILERCHECK = "content"
 
 # Enable ccache read-only, Add the following variable to prevent sstate cache miss.
 BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_READONLY_DIRECT"
