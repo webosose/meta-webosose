@@ -51,13 +51,31 @@ def webos_version_get_srcrev(wv):
 # <name>.NN format (contains at least one dot) and "master" in all other cases.
 def webos_version_get_branch(wv):
     split_wv = wv.split(';branch=')
-    if len(split_wv) == 1:
-        submission = webos_version_get_submission(wv)
-        # Assume <name>.NN format (NN is submission number, @<name> is branch name)
-        split_submission = submission.rsplit('.', 1)
-        if len(split_submission) > 1:
-            return "@%s" % (split_submission[0])
+    branch_param = None
+    branch_from_wv = None
+    if len(split_wv) == 2:
+        branch_from_wv = split_wv[1]
+
+    submission = webos_version_get_submission(wv)
+    # Assume <name>.NN format (NN is submission number, @<name> is branch name)
+    split_submission = submission.rsplit('.', 1)
+    if len(split_submission) > 1:
+        branch_from_submission_tag = "@%s" % (split_submission[0])
+        if branch_from_submission_tag == branch_from_wv:
+            bb.warn("Unnecessary branch= parameter in WEBOS_VERSION %s" % wv)
+            branch_param = branch_from_submission_tag
+        elif branch_from_wv:
+            bb.note("Branch name in WEBOS_VERSION %s doesn't follow conventions, the tag name indicates it should be %s not %s" % (wv, branch_from_submission_tag, branch_from_wv))
+            branch_param = branch_from_wv
+        else:
+            branch_param = branch_from_submission_tag
+    else:
+        if branch_from_wv:
+            branch_param = branch_from_wv
+            if "master" == branch_from_wv:
+                bb.warn("Unnecessary branch= parameter in WEBOS_VERSION %s" % wv)
         else:
             # otherwise it's simply a submission along the master branch
-            return "master"
-    return split_wv[1]
+            branch_param = "master"
+
+    return branch_param
