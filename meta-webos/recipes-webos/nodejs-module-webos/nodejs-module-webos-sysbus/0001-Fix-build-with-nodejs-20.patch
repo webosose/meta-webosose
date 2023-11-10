@@ -1,0 +1,108 @@
+From 71370480de9230a2249181addaed0195497f0ce6 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 11 Oct 2023 16:52:13 +0200
+Subject: [PATCH] Fix build with nodejs-20
+
+:Release Notes:
+Since nodejs-v19 with V8 10.7.193.13 update in:
+https://github.com/nodejs/node/commit/6bd756d7c6dfb7dc25daee329ad70df68c14223e#diff-cd657bc27f0b2d10cdad8e5ab9a494141566941d3ce08e4755d90a95478f1ff9
+we need C++17 for is_lvalue_reference_v
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/713433
+
+gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+make: Entering directory 'TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/git/build'
+  ACTION Generating trusted scripts list src/trusted_scripts.inc
+  CXX(target) Release/obj.target/webos-sysbus/src/node_ls2.o
+In file included from ../../node-v20.5.1/deps/v8/include/v8-object.h:9,
+                 from ../../node-v20.5.1/deps/v8/include/v8-array-buffer.h:13,
+                 from ../../node-v20.5.1/deps/v8/include/v8.h:24,
+                 from ../../node-v20.5.1/src/node.h:73,
+                 from ../src/node_ls2.cpp:19:
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:106:45: error: 'is_lvalue_reference_v' is not a member of 'std'; did you mean 'is_lvalue_reference'?
+  106 |   template <class U, std::enable_if_t<!std::is_lvalue_reference_v<U>>*>
+      |                                             ^~~~~~~~~~~~~~~~~~~~~
+      |                                             is_lvalue_reference
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:106:66: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
+  106 |   template <class U, std::enable_if_t<!std::is_lvalue_reference_v<U>>*>
+      |                                                                  ^
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:106:67: error: template argument 1 is invalid
+  106 |   template <class U, std::enable_if_t<!std::is_lvalue_reference_v<U>>*>
+      |                                                                   ^
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:106:71: error: expected unqualified-id before '>' token
+  106 |   template <class U, std::enable_if_t<!std::is_lvalue_reference_v<U>>*>
+      |                                                                       ^
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:123:43: error: 'is_lvalue_reference_v' is not a member of 'std'; did you mean 'is_lvalue_reference'?
+  123 | template <class T, std::enable_if_t<!std::is_lvalue_reference_v<T>>* = nullptr>
+      |                                           ^~~~~~~~~~~~~~~~~~~~~
+      |                                           is_lvalue_reference
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:123:64: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
+  123 | template <class T, std::enable_if_t<!std::is_lvalue_reference_v<T>>* = nullptr>
+      |                                                                ^
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:123:65: error: template argument 1 is invalid
+  123 | template <class T, std::enable_if_t<!std::is_lvalue_reference_v<T>>* = nullptr>
+      |                                                                 ^
+../../node-v20.5.1/deps/v8/include/v8-maybe.h:123:70: error: expected unqualified-id before '=' token
+  123 | template <class T, std::enable_if_t<!std::is_lvalue_reference_v<T>>* = nullptr>
+      |                                                                      ^
+../../node-v20.5.1/src/node.h:705:28: error: 'std::string_view' has not been declared
+  705 |     Environment* env, std::string_view main_script_source_utf8);
+      |                            ^~~~~~~~~~~
+make: *** [webos-sysbus.target.mk:136: Release/obj.target/webos-sysbus/src/node_ls2.o] Error 1
+make: Leaving directory 'TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/git/build'
+gyp ERR! build error
+gyp ERR! stack Error: `make` failed with exit code: 2
+gyp ERR! stack     at ChildProcess.onExit (TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/recipe-sysroot-native/usr/lib/node_modules/node-gyp/lib/build.js:194:23)
+gyp ERR! stack     at ChildProcess.emit (node:events:514:28)
+gyp ERR! stack     at ChildProcess._handle.onexit (node:internal/child_process:294:12)
+gyp ERR! System Linux 6.5.6-gentoo
+gyp ERR! command "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/recipe-sysroot-native/usr/bin/node" "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/recipe-sysroot-native/usr/bin/node-gyp" "--arch" "x86_64" "--nodedir" "TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/node-v20.5.1" "build"
+gyp ERR! cwd TOPDIR/BUILD/work/qemux86_64-webos-linux/nodejs-module-webos-sysbus/3.0.1-15/git
+gyp ERR! node -v v20.5.1
+gyp ERR! node-gyp -v v6.1.0
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+
+Change-Id: Iff3b00819db2c32e98d365c3c28472f705674789
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/nodejs-module-webos-sysbus/+/376233 Fix build with nodejs-20]
+
+ CMakeLists.txt | 2 +-
+ binding.gyp    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b09f865..de488be 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -36,7 +36,7 @@ pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+ include_directories(${GLIB2_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${LSGLIB2_CFLAGS_OTHER})
+ 
+-webos_add_compiler_flags(ALL -g -Wall -Wno-error=strict-aliasing -DEV_MULTIPLICITY=0 CXX -std=c++14)
++webos_add_compiler_flags(ALL -g -Wall -Wno-error=strict-aliasing -DEV_MULTIPLICITY=0 CXX -std=c++17)
+ 
+ # Can't specify --no-undefined because the plugin is allowed to link with all of
+ # the routines from the embedded v8 when it is loaded at runtime, but there's no
+diff --git a/binding.gyp b/binding.gyp
+index 2d31089..767cd02 100644
+--- a/binding.gyp
++++ b/binding.gyp
+@@ -40,7 +40,7 @@
+       },
+       'cflags!': [ '-fno-exceptions' ],
+       'cflags': [ '-g' ],
+-      'cflags_cc': [ '-g', '--std=c++14' ],
++      'cflags_cc': [ '-g', '--std=c++17' ],
+       'cflags_cc!': [ '-fno-exceptions' ],
+       'ldflags': [ '-pthread' ],
+       'actions': [
