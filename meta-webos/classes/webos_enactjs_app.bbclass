@@ -206,25 +206,27 @@ do_install() {
 
     # Stage app
     appdir="${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}"
-    mkdir -p "${appdir}"
 
     if [ ! -z "${WEBOS_ENACTJS_PACK_OVERRIDE}" ] ; then
         bbnote "Custom App Build for ${WEBOS_ENACTJS_APP_ID}"
         ${WEBOS_ENACTJS_PACK_OVERRIDE}
-        mv -f -v ./dist/* "${appdir}"
+        if [ ! -d "$appdir" ] ; then
+            install -d "$appdir"
+            mv -f -v ./dist/* "$appdir"
+        fi
     else
         # Normal App Build
-        bbnote "Bundling Enact app to ${appdir}"
-        ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "${appdir}" --verbose
+        bbnote "Bundling Enact app to $appdir"
+        ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "$appdir" --verbose
     fi
 
-    if [ ! -f ${appdir}/index.html ] ; then
-        bberror "No bundling results in ${appdir}; exiting!"
+    if [ ! -f $appdir/index.html ] ; then
+        bberror "No bundling results in $appdir; exiting!"
         exit 1
     fi
 
-    if [ -f ${appdir}/snapshot_blob.bin ] ; then
-        chown root:root "${appdir}/snapshot_blob.bin"
+    if [ -f $appdir/snapshot_blob.bin ] ; then
+        chown root:root "$appdir/snapshot_blob.bin"
     fi
 
     cd ${working}
