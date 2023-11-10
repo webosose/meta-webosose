@@ -6,13 +6,10 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=694e396551033371686c80d3a1a69e88"
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
-PV = "6.1.0+git${SRCPV}"
+PV = "8.3.0+git${SRCPV}"
 PR = "r2"
-SRCREV = "d1dea13fe44bc65ee3ea8441c08c9a3d03d6d63d"
-SRC_URI = "git://github.com/nodejs/node-gyp.git;branch=main;protocol=https \
-    file://0001-input.py-Remove-usage-of-U-mode-bit-for-opening-file.patch \
-    file://0002-configure.js-fix-compatibility-with-nodejs-v19.patch \
-"
+SRCREV = "fb85fb21c4bcba806cca852f6f076108aaf7ef4d"
+SRC_URI = "git://github.com/nodejs/node-gyp.git;branch=main;protocol=https"
 
 S = "${WORKDIR}/git"
 
