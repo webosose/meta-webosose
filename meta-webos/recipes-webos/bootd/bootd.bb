@@ -13,8 +13,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost"
 
-WEBOS_VERSION = "2.0.0-19_478337b1439ed65274aeb92a609f19fc89e21d7a"
-PR = "r16"
+WEBOS_VERSION = "2.0.0-20_553e4db9d08eebde7583e303db19d0cbb9f41342"
+PR = "r17"
 
 inherit webos_component
 inherit webos_enhanced_submissions
