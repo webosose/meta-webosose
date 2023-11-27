@@ -4,22 +4,22 @@ export CCACHE_STATSLOG = "${WORKDIR}/ccache_stats.log"
 
 CCACHE_STATS = "${TOPDIR}/ccache_stats.json"
 
-def getHit(stdout: str):
-    """
-    stdout is passed under the form.
-    Returns only the hit rate for lines starting with Hits:
-    Summary:
-        Hits:           3819 / 4455 (85.72 %)
-        ....
-    """
-    import re
-    for line in stdout.split('\n'):
-        l = line.strip()
-        if l.startswith('Hits:'):
-            return l.split('Hits:')[-1].strip()
-    return "-"
-
 python do_ccache_stats() {
+    def getHit(stdout: str):
+        """
+        stdout is passed under the form.
+        Returns only the hit rate for lines starting with Hits:
+        Summary:
+            Hits:           3819 / 4455 (85.72 %)
+            ....
+        """
+        import re
+        for line in stdout.split('\n'):
+            l = line.strip()
+            if l.startswith('Hits:'):
+                return l.split('Hits:')[-1].strip()
+        return "-"
+
     if not bb.data.inherits_class('ccache',d):
         bb.note("%s doesn't inherit ccache" % d.getVar('PN'))
         bb.note("Skip ccache hit_check")
@@ -55,4 +55,4 @@ python do_ccache_stats() {
     # clean statfile
     bb.utils.remove(stat_file)
 }
-addtask do_ccache_stats after do_compile before do_build
+do_compile[postfuncs] += "do_ccache_stats"
