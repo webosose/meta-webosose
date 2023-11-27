@@ -1,0 +1,60 @@
+From a1c33ed42b8234cdc48366b4aa58f5fd55912df6 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Tue, 14 Nov 2023 13:46:26 +0100
+Subject: [PATCH] CMakeLists.txt: use pkg-config for libcurl and respect
+ LDFLAGS for it and gupnp
+
+:Release Notes:
+${GLIB2_LDFLAGS} and ${GUPNP_LDFLAGS} are already in LIBS, but then
+-lglib-2.0 -lgupnp-1.2 are also hardcoded in LIBS later.
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+
+Change-Id: I5fcc5324a548d401add85293a5254e9542c53877
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.storageaccess/+/380001 CMakeLists.txt: use pkg-config for libcurl and respect LDFLAGS for it and gupnp]
+
+ CMakeLists.txt | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d1eb8bb..1ef1832 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,6 +28,10 @@ option (USE_PMLOG "Enable PmLogLib logging" ON)
+ 
+ include(FindPkgConfig)
+ 
++pkg_check_modules(LIBCURL REQUIRED libcurl)
++include_directories(${LIBCURL_INCLUDE_DIRS})
++webos_add_compiler_flags(ALL ${LIBCURL_CFLAGS_OTHER})
++
+ pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+ include_directories(${GLIB2_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${GLIB2_CFLAGS_OTHER})
+@@ -83,15 +87,13 @@ set(LIBS
+     libjconer.a
+     libgdrive.a
+     ${LS2_LDFLAGS}
++    ${LIBCURL_LDFLAGS}
+     ${GLIB2_LDFLAGS}
+     ${LIBXML2_LDFLAGS}
+     ${PMLOGLIB_LDFLAGS}
+     ${PBNJSON_CPP_LDFLAGS}
+     ${GUPNP_LDFLAGS}
+     -lpthread
+-    -lcurl
+-    -lglib-2.0
+-    -lgupnp-1.2
+     -lstdc++fs
+     -Wl,--no-undefined
+     )
