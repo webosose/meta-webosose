@@ -15,7 +15,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-36_13106c9adb7cfa8f86811cf871c4592297ce5082"
+WEBOS_VERSION = "3.21.2-37_1c03d61dd0e1eab4b514e4e437fdca0ae81005ee"
 PR = "r32"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
@@ -61,4 +61,3 @@ FILES:${PN}-perf += "${webos_testsdir}/${BPN}-perf"
 INSANE_SKIP:${PN}-ptest += "libdir"
 # luna-service2-dbg: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/.debug/libls-hublib-test.so
 INSANE_SKIP:${PN}-dbg += "libdir"
-
