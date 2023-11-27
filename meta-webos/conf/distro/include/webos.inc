@@ -422,7 +422,6 @@ require conf/distro/include/yocto-uninative.inc
 INHERIT += "uninative"
 
 SANITY_TESTED_DISTROS ?= " \
-    ubuntu-18.04 \n \
     ubuntu-20.04 \n \
     ubuntu-22.04 \n \
 "
