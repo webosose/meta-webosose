@@ -134,16 +134,27 @@ fakeroot python do_validate_ls2_acg() {
     import os
     import json
 
+    rootfs_groups_d = d.getVar("IMAGE_ROOTFS") + d.getVar("webos_sysbus_groupsdir")
+    rootfs_api_perms_d = d.getVar("IMAGE_ROOTFS") + d.getVar("webos_sysbus_apipermissionsdir")
+    rootfs_clientperms_dir = d.getVar("IMAGE_ROOTFS") + d.getVar("webos_sysbus_permissionsdir")
+
+    # There can be no sysbus directories in a tiny image
+    if not os.path.isdir(rootfs_groups_d):
+        bb.note("Directory '%s' is missing, skipping validation." % rootfs_groups_d)
+        return
+    if not os.path.isdir(rootfs_api_perms_d):
+        bb.note("Directory '%s' is missing, skipping validation." % rootfs_api_perms_d)
+        return
+    if not os.path.isdir(rootfs_clientperms_dir):
+        bb.note("Directory '%s' is missing, skipping validation." % rootfs_clientperms_dir)
+        return
+
     # List of group names to skip checking
     skip_group = d.getVar("WEBOS_LS2_CONF_VALIDATE_SKIP_GROUP").split()
     if len(skip_group) > 0:
         bb.debug(1, "WEBOS_LS2_CONF_VALIDATE_SKIP_GROUP:")
         for group in skip_group:
             bb.debug(1, "  %s" % group)
-
-    rootfs_groups_d = d.getVar("IMAGE_ROOTFS") + d.getVar("webos_sysbus_groupsdir")
-    rootfs_api_perms_d = d.getVar("IMAGE_ROOTFS") + d.getVar("webos_sysbus_apipermissionsdir")
-    rootfs_clientperms_dir = d.getVar("IMAGE_ROOTFS") + d.getVar("webos_sysbus_permissionsdir")
 
     # Returns a set of group names defined in 'dir'.
     # Json files in 'dir' are expected to have groups as keys.
