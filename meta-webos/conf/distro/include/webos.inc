@@ -216,6 +216,13 @@ BUILDCFG_VARS += "WEBOS_DISTRO_TOPDIR_REVISION WEBOS_DISTRO_TOPDIR_DESCRIBE"
 # Add build timestamp to what's displayed in build-id.txt for use in pruning script
 BUILDCFG_VARS += "DATETIME"
 
+# Add the same variables from BUILDCFG_VARS to /etc/buildinfo as well
+IMAGE_BUILDINFO_VARS = "${BUILDCFG_VARS}"
+
+# Backport the filename change from langdale
+# https://git.openembedded.org/openembedded-core/commit/meta/classes/image-buildinfo.bbclass?id=38b9525f1d5377288922e7cbac3f30afe6046242
+IMAGE_BUILDINFO_FILE = "${sysconfdir}/buildinfo"
+
 # Build time dependency on TUNE_PKGARCH recipes base-passwd, shadow, shadow-sysroot
 # Drop this when upgrading oe-core to some release with this change:
 # http://lists.openembedded.org/pipermail/openembedded-core/2013-November/085849.html
