@@ -46,6 +46,7 @@ WEBOS_IMAGE_EXTRA_INSTALL = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-bluetooth', 'packagegroup-webos-bluetooth', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-camera', 'packagegroup-webos-camera', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-connectivity', 'packagegroup-webos-connectivity', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', 'libcap-bin', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-diagnostics', 'packagegroup-webos-diagnostics', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-graphics', 'packagegroup-webos-graphics', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-i18n', 'packagegroup-webos-i18n', '', d)} \
