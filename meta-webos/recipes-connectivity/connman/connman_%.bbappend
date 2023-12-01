@@ -2,8 +2,10 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos22"
+EXTENDPRAUTO:append = "webos23"
 SYSTEMD_SERVICE:${PN}:remove = "connman.service"
+# connman.service is provided by connman-conf
+RDEPENDS:${PN} += "connman-conf"
 
 WEBOS_VERSION = "1.41-11_829ccdc4b0ced34982c1cdc7dec06d8b4c26cac3"
 WEBOS_REPO_NAME = "connman-webos"
