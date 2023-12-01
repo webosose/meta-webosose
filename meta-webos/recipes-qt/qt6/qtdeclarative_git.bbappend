@@ -43,3 +43,6 @@ SYSROOT_DIRS:append = " \
     ${bindir} \
     ${libexecdir} \
 "
+
+export CCACHE_MAXSIZE = "1G"
+

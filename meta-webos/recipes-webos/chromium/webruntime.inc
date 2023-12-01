@@ -304,3 +304,6 @@ FILES:${PN}-dev = " \
     ${webos_pkgconfigdir}/libcbe.pc \
     ${includedir} \
 "
+
+export CCACHE_MAXSIZE = "3800M"
+
