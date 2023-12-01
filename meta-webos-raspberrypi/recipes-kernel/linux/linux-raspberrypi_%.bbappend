@@ -49,3 +49,5 @@ do_deploy:append() {
     # However the image link is required in raspberrypi
     ln -sf ${type}-${KERNEL_IMAGE_NAME}.bin ${DEPLOYDIR}/${type}-${KERNEL_IMAGE_LINK_NAME}.bin
 }
+
+export CCACHE_MAXSIZE = "1G"
