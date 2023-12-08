@@ -1,5 +1,12 @@
 # Copyright (c) 2012-2023 LG Electronics, Inc.
 
+MAINTAINER = "Joseph Park <dongseon.park@lge.com>"
+
+WEBOS_DISTRO_VERSION_CODENAME = "master"
+WEBOS_DISTRO_BUILD_CODENAME = "master"
+
+TARGET_VENDOR = "-${DISTRO}"
+
 require conf/distro/include/webos-component-head.inc
 require conf/distro/include/webos-preferred-providers.inc
 require conf/distro/include/webos-recipe-blacklist.inc
