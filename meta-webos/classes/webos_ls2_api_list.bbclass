@@ -108,5 +108,5 @@ python do_write_ls2_api_list() {
     json_info_as_string = json.dumps(ls_api_info).replace("'", '"')
     with open(output, 'w') as f:
         f.write(json_info_as_string)
-    bb.warn("BUILD Path of ls2_api_list.json file : " + output)
+    bb.note("BUILD Path of ls2_api_list.json file : " + output)
 }
