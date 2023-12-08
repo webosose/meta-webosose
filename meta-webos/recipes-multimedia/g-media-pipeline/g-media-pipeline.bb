@@ -28,15 +28,12 @@ inherit webos_pkgconfig
 # qemux86-64
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
-PR = "r18"
+PR = "r19"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator webos-wayland-extensions"
 RDEPENDS:${PN} = "gstreamer1.0-plugins-webosrs"
 DEPENDS:append:rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-gav.48_3ba1c574047904a87182f34482eea6197bf5a48f"
+WEBOS_VERSION = "1.0.0-gav.51_7605f2179d523b86fa13ad021290dab6cf634fa1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-FILES_SOLIBSDEV = ""
-FILES:${PN} += "${libdir}/*.so"

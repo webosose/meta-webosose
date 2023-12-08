@@ -7,7 +7,7 @@ require g-media-pipeline.bb
 FILESEXTRAPATHS:prepend := "${THISDIR}/g-media-pipeline:"
 WEBOS_REPO_NAME = "g-media-pipeline"
 
-PR = "r2"
+PR = "r3"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -31,8 +31,9 @@ do_configure:prepend() {
 
 do_install() {
     install -d ${D}/${LIBCBE_DIR}
-    install -v -m 644 ${B}/src/mediaplayerclient/libgmp-player-client.so ${D}/${LIBCBE_DIR}
-    install -v -m 644 ${B}/src/player/libgmp-player.so ${D}/${LIBCBE_DIR}
+    cp -R --no-dereference --preserve=mode,links -v ${B}/src/mediaplayerclient/libgmp-player-client.so* ${D}/${LIBCBE_DIR}
+    cp -R --no-dereference --preserve=mode,links -v ${B}/src/player/libgmp-player.so* ${D}/${LIBCBE_DIR}
+    chown root:root ${D}/${LIBCBE_DIR}/*
 
     install -d ${D}/${PKGCONFIG_DIR}
     install -v -m 644 ${S}/src/mediaplayerclient/gmp-player-client.pc ${D}/${PKGCONFIG_DIR}/gmp-player-client-clang.pc
@@ -55,6 +56,7 @@ do_install() {
         ${D}/${includedir}/cbe/gmp
 }
 
-FILES:${PN} += "${LIBCBE_DIR}/lib*${SOLIBSDEV}"
+FILES:${PN} += "${LIBCBE_DIR}/lib*${SOLIBS}"
+FILES:${PN}-dev += "${LIBCBE_DIR}/lib*${SOLIBSDEV}"
 
 RDEPENDS:${PN} += "g-media-pipeline"
