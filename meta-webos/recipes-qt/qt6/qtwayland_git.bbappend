@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos41"
+EXTENDPRAUTO:append = "webos42"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -14,12 +14,6 @@ SRC_URI:append = " \
     file://0002-Use-scope-resolution-operator-for-request.patch;maxver=6.2.* \
     file://0003-Fix-to-have-presentation-feedback-sequence-timely.patch;maxver=6.3.0 \
     file://0004-Fix-Access-nullptr-returned-by-QWaylandSurface-clien.patch;maxver=6.3.0 \
-"
-
-# Upstream-Status: Inappropriate
-# NOTE: Increase maxver when upgrading Qt version
-SRC_URI:append = " \
-    file://0005-Revert-Also-use-text-input-if-QT_IM_MODULE-is-empty-.patch;maxver=6.6.0 \
 "
 
 # More options for fine-tuned configuration
