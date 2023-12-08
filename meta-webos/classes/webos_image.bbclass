@@ -14,10 +14,11 @@
 # webos-test:               Additional packages for running unit and integration tests
 #
 # webos-extract-ls2-api:    Add task to extract luna-service2 api list
+# webos-validate-ls2-conf:  Add task to validate LS2 sysbus files
 # webos-production-image:   Specific features to productize
 #
 # and IMAGE_FEATURES from core-image
-IMAGE_FEATURES[validitems] = "webos-minimal webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-production-image"
+IMAGE_FEATURES[validitems] = "webos-minimal webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-validate-ls2-conf webos-production-image "
 
 FEATURE_PACKAGES_webos-minimal = "packagegroup-webos-minimal"
 FEATURE_PACKAGES_webos-systemapps = "packagegroup-webos-systemapps"
@@ -58,7 +59,7 @@ WEBOS_IMAGE_EXTRA_INSTALL = " \
 IMAGE_INSTALL ?= "${WEBOS_IMAGE_BASE_INSTALL}"
 
 # Perform validation for all ls2 security configuration jsons
-IMAGE_CLASSES += "webos_ls2_conf_validate"
+IMAGE_CLASSES += "${@bb.utils.contains('IMAGE_FEATURES', 'webos-validate-ls2-conf', 'webos_ls2_conf_validate', '', d)}"
 
 # webOS supports the generation of oss package information file.
 # $ bitbake -c write_oss_pkg_info <image>

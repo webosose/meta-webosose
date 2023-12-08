@@ -6,9 +6,7 @@
 inherit webos_filesystem_paths
 
 WEBOS_LS2_CONF_VALIDATE_ERROR_ON_WARNING ?= "0"
-WEBOS_LS2_CONF_VALIDATE_SKIP_GROUP ?= " \
-    allowedNames \
-"
+WEBOS_LS2_CONF_VALIDATE_SKIP_GROUP ?= ""
 
 # For some reason, using expr directly doesn't work
 accumulate() {
@@ -152,9 +150,12 @@ fakeroot python do_validate_ls2_acg() {
     # List of group names to skip checking
     skip_group = d.getVar("WEBOS_LS2_CONF_VALIDATE_SKIP_GROUP").split()
     if len(skip_group) > 0:
-        bb.debug(1, "WEBOS_LS2_CONF_VALIDATE_SKIP_GROUP:")
-        for group in skip_group:
-            bb.debug(1, "  %s" % group)
+        bb.warn("=== LIST BEGIN: Groups considered as exception ===")
+        for group in sorted(skip_group):
+            bb.warn("  %s" % group)
+        bb.warn("=== LIST END ===")
+    # Always skip 'allowedNames' which is being used a key in old-style groups.json
+    skip_group.append("allowedNames")
 
     # Returns a set of group names defined in 'dir'.
     # Json files in 'dir' are expected to have groups as keys.
