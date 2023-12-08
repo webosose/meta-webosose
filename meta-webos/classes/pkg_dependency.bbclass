@@ -82,12 +82,12 @@ python create_pkg_dependency_data () {
                 if output.get(dep.split()[0]):
                     output[dep.split()[0]]["requiredby"].append(pkg+' [REC]')
                 else:
-                    output[dep.split()[0]]={"requires":[],"requiredby":[pkg+' [REC]'],"rprovides":[],"description":'',"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"author":'',"rp_maintainer":'',"install_file":''}
+                    output[dep.split()[0]]={"requires":[],"requiredby":[pkg+' [REC]'],"rprovides":[],"description":'',"version":'',"arch":'',"ipk":'',"recipe":[],"license":'',"section":'',"author":'',"rp_maintainer":'',"install_file":[]}
             else:
                 if output.get(dep):
                     output[dep]["requiredby"].append(pkg)
                 else:
-                    output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"description":'',"version":'',"arch":'',"ipk":'',"recipe":'',"license":'',"section":'',"author":'',"rp_maintainer":'',"install_file":''}
+                    output[dep]={"requires":[],"requiredby":[pkg],"rprovides":[],"description":'',"version":'',"arch":'',"ipk":'',"recipe":[],"license":'',"section":'',"author":'',"rp_maintainer":'',"install_file":[]}
 
     file=open(os.path.join(d.getVar('IMGDEPLOYDIR'),'{}-dependency.json'.format(d.getVar('IMAGE_BASENAME'))),'w')
     file.write(json.dumps(dict(sorted(output.items())), indent='\t'))
