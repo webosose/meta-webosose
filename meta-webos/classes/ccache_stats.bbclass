@@ -4,6 +4,8 @@ export CCACHE_STATSLOG = "${WORKDIR}/ccache_stats.log"
 
 CCACHE_STATS = "${TOPDIR}/ccache_stats.json"
 
+CCACHE_STATS[vardepsexclude] = "TOPDIR"
+
 python do_ccache_stats() {
     def getHit(stdout: str):
         """
