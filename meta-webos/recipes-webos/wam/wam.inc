@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-83_9e666f281d73ba1ff7b24d996f199b2343950369"
-INC_PR = "r64"
+INC_PR = "r65"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -69,9 +69,6 @@ TOUCH_ENABLED ?= "${@bb.utils.contains('DISTRO_FEATURES', 'webos-touch', 'true',
 # Flag to control runtime flag for Media Player Neva
 DISABLE_NEVA_MEDIA_PLAYER ?= "false"
 
-# Flag to control runtime flag for platform decoder
-PLATFORM_DECODER_ENABLED ?= "true"
-
 do_install:append() {
     install -d ${D}${sysconfdir}/pmlog.d
     install -d ${D}${sysconfdir}/wam
@@ -113,12 +110,6 @@ install_units:append() {
         if ${DISABLE_NEVA_MEDIA_PLAYER}; then
            # enable h/w decoding for webrtc
            sed -i '/--enable-aggressive-release-policy \\/a\    --disable-web-media-player-neva \\' $script
-        else
-          # enable platform decoding if PLATFORM_DECODER_ENABLED is true
-          if ${PLATFORM_DECODER_ENABLED}; then
-             # enable h/w decoding for webrtc
-             sed -i '/--enable-aggressive-release-policy \\/a\    --enable-webrtc-platform-video-decoder \\' $script
-          fi
         fi
 
         sed -i '/export WAM_MEM_FLAGS=\" \\/a\    --local-storage-limit-per-second-level-domain=10 \\' $script

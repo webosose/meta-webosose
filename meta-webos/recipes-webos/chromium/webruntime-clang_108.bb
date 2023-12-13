@@ -4,7 +4,7 @@ require webruntime_108.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r1"
+PR = "r2"
 
 inherit clang_libc
 
@@ -54,7 +54,6 @@ GN_ARGS += "${@'cc_wrapper=\\\"ccache \\\"' if bb.data.inherits_class('ccache', 
 
 PACKAGECONFIG[umediaserver] = ",,umediaserver${DEPEXT}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline${DEPEXT}"
-PACKAGECONFIG[neva-webrtc] = "use_neva_webrtc=true,use_neva_webrtc=false,media-codec-interface${DEPEXT}"
 PACKAGECONFIG[webos-codec] = "use_webos_codec=true,use_webos_codec=false,media-codec-interface${DEPEXT}"
 
 do_configure:prepend() {
