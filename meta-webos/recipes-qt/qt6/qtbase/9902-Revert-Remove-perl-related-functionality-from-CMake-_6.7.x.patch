@@ -1,4 +1,4 @@
-From f886fc6d9399399296036029e6dde7f439aa0946 Mon Sep 17 00:00:00 2001
+From 7ca4f147285c01d6adc03ceefb2139364da42e14 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Wed, 20 Sep 2023 13:08:17 +0900
 Subject: [PATCH] Revert "Remove perl related functionality from CMake files"
@@ -23,20 +23,17 @@ Upstream-Status: Inappropriate [webOS specific]
  11 files changed, 383 insertions(+), 45 deletions(-)
 
 diff --git a/cmake/QtBuild.cmake b/cmake/QtBuild.cmake
-index 0b8b00015e..4c518e27f3 100644
+index ee24ba188e..d2eab9f3fe 100644
 --- a/cmake/QtBuild.cmake
 +++ b/cmake/QtBuild.cmake
-@@ -235,6 +235,10 @@ if(CMAKE_HOST_APPLE AND CMAKE_HOST_SYSTEM_VERSION VERSION_LESS "19.0.0")
-     message(FATAL_ERROR "macOS versions less than 10.15 are not supported for building Qt.")
- endif()
+@@ -2,3 +2,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
  
+ qt_internal_setup_build_and_global_variables()
++
 +if(NOT DEFINED QT_USE_SYNCQT_CPP)
 +    set(QT_USE_SYNCQT_CPP TRUE)
 +endif()
-+
- # the default RPATH to be used when installing, but only if it's not a system directory
- list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIBDIR}" isSystemDir)
- if("${isSystemDir}" STREQUAL "-1")
 diff --git a/cmake/QtCMakeVersionHelpers.cmake b/cmake/QtCMakeVersionHelpers.cmake
 index 322e58eed1..0bd68744a1 100644
 --- a/cmake/QtCMakeVersionHelpers.cmake
@@ -62,10 +59,10 @@ index 322e58eed1..0bd68744a1 100644
          if(CMAKE_VERSION VERSION_EQUAL unsuitable_version)
              message(WARNING
 diff --git a/cmake/QtDocsHelpers.cmake b/cmake/QtDocsHelpers.cmake
-index 48ed5a324b..eaf0b11fc5 100644
+index 3a02e6f34d..823212682e 100644
 --- a/cmake/QtDocsHelpers.cmake
 +++ b/cmake/QtDocsHelpers.cmake
-@@ -140,10 +140,12 @@ function(qt_internal_add_docs)
+@@ -138,10 +138,12 @@ function(qt_internal_add_docs)
      )
  
      add_dependencies(prepare_docs_${target} qattributionsscanner_${target})
@@ -82,10 +79,10 @@ index 48ed5a324b..eaf0b11fc5 100644
      # generate docs target
      set(generate_qdoc_args
 diff --git a/cmake/QtFeature.cmake b/cmake/QtFeature.cmake
-index 9620c1df58..1e5beacd8f 100644
+index 46f39da887..a6843ceaa0 100644
 --- a/cmake/QtFeature.cmake
 +++ b/cmake/QtFeature.cmake
-@@ -760,6 +760,22 @@ function(qt_feature_module_end)
+@@ -764,6 +764,22 @@ function(qt_feature_module_end)
          )
      endif()
  
@@ -109,10 +106,10 @@ index 9620c1df58..1e5beacd8f 100644
          get_target_property(targetType "${target}" TYPE)
          if("${targetType}" STREQUAL "INTERFACE_LIBRARY")
 diff --git a/cmake/QtFlagHandlingHelpers.cmake b/cmake/QtFlagHandlingHelpers.cmake
-index bc393655bb..91650659a9 100644
+index 28231cb564..459049411b 100644
 --- a/cmake/QtFlagHandlingHelpers.cmake
 +++ b/cmake/QtFlagHandlingHelpers.cmake
-@@ -4,6 +4,8 @@
+@@ -21,6 +21,8 @@ endmacro()
  # This function generates LD version script for the target and uses it in the target linker line.
  # Function has two modes dependending on the specified arguments.
  # Arguments:
@@ -121,7 +118,7 @@ index bc393655bb..91650659a9 100644
  #    PRIVATE_CONTENT_FILE specifies the pre-cooked content of Qt_<version>_PRIVATE_API section.
  #       Requires the content file available at build time.
  function(qt_internal_add_linker_version_script target)
-@@ -51,19 +53,31 @@ function(qt_internal_add_linker_version_script target)
+@@ -106,19 +108,31 @@ function(qt_internal_add_linker_version_script target)
  
          file(GENERATE OUTPUT "${infile}" CONTENT "${contents}")
  
@@ -195,7 +192,7 @@ index 5f1cc9fd0c..de96c04686 100644
      foreach(header ${hclean_headers})
          # We need realpath here to make sure path starts with drive letter
 diff --git a/cmake/QtModuleHelpers.cmake b/cmake/QtModuleHelpers.cmake
-index ce4386986d..2a9eb4feaf 100644
+index 6669ba97e0..b91f584f82 100644
 --- a/cmake/QtModuleHelpers.cmake
 +++ b/cmake/QtModuleHelpers.cmake
 @@ -414,12 +414,39 @@ function(qt_internal_add_module target)
@@ -357,7 +354,7 @@ index ce4386986d..2a9eb4feaf 100644
      if(arg_GENERATE_PRIVATE_CPP_EXPORTS)
          set(generated_private_header_path
 diff --git a/cmake/QtSyncQtHelpers.cmake b/cmake/QtSyncQtHelpers.cmake
-index ee9a23610e..61c4ef9909 100644
+index 0188b87c6a..922634a2b6 100644
 --- a/cmake/QtSyncQtHelpers.cmake
 +++ b/cmake/QtSyncQtHelpers.cmake
 @@ -1,6 +1,212 @@
@@ -573,7 +570,7 @@ index ee9a23610e..61c4ef9909 100644
  # The function generates the Qt module header structure in build directory and creates install
  # rules. Apart the lists of header files the function takes into account
  # QT_REPO_PUBLIC_NAMESPACE_REGEX cache variable, that can be set by repository in .cmake.conf file.
-@@ -298,6 +504,11 @@ function(qt_internal_target_sync_headers target module_headers module_headers_ge
+@@ -290,6 +496,11 @@ function(qt_internal_target_sync_headers target module_headers module_headers_ge
  endfunction()
  
  function(qt_internal_collect_sync_header_dependencies out_var skip_non_existing)
