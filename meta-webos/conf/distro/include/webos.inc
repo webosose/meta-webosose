@@ -468,3 +468,6 @@ export CCACHE_READONLY ?= "1"
 
 # Enable ccache read-only or read-write, Add the following variable to prevent sstate cache miss.
 BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY"
+
+# Disable showing warning logs when unpatched CVEs are found using INHERIT += "cve_check"
+CVE_CHECK_SHOW_WARNINGS = "0"
