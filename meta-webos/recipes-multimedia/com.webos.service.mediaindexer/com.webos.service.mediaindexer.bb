@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-27_738ee3358ba28e5b9fb834da59949cc95a31780f"
-PR = "r12"
+WEBOS_VERSION = "1.0.0-28_fa2854730d1da15d7205b650c40e6a69647767be"
+PR = "r13"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -49,8 +49,4 @@ do_install:append() {
 # configure the folders on local storage which shall be scanned from
 # storage plugin, the format is <path>,<name>,<description>;...
 #EXTRA_OECMAKE += " -DSTORAGE_DEVS:string='/media/local,Media,Local Media Storage'"
-
-# media indexer client library
-FILES_SOLIBSDEV = ""
-FILES:${PN} += "${libdir}/*.so"
 
