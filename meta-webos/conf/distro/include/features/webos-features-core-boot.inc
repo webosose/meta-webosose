@@ -10,7 +10,7 @@ _pr_suffix .= ".0"
 
 # Split some features to separate variables
 # Remove argp (not used in OE anymore) and x11 (not needed for webOS OSE)
-WEBOS_DISTRO_FEATURES_DEFAULT = ""
+WEBOS_DISTRO_FEATURES_DEFAULT = "debuginfod"
 WEBOS_DISTRO_FEATURES_OPENGL = "opengl"
 WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM = ""
 # Remove pci pcmcia
