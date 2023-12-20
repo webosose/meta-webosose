@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-393_da3003e1a8b6471d3859a182038eea5fbe2903a6"
-PR = "r59"
+PR = "r60"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -76,12 +76,11 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 # Perform extra QML validation
 WEBOS_QMLLINT_EXTRA_VALIDATION = "1"
 
-PACKAGECONFIG ??= "multi-input"
 PACKAGECONFIG[compositor] = "CONFIG+=compositor_base,,qt-features-webos-native"
 PACKAGECONFIG[multi-input] = ",CONFIG+=no_multi_input,"
 PACKAGECONFIG[cursor-theme] = "CONFIG+=cursor_theme,,"
 
-PACKAGECONFIG:webos = "compositor cursor-theme"
+PACKAGECONFIG = "compositor cursor-theme"
 
 PACKAGE_BEFORE_PN = "${PN}-gcov"
 
