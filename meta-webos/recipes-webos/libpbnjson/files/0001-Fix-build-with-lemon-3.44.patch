@@ -1,0 +1,60 @@
+From 1338f6c5a76a0ab0f88ace2fd152cfff3308d9b2 Mon Sep 17 00:00:00 2001
+From: Hieu Van Nguyen <hieu2.nguyen@lge.com>
+Date: Fri, 22 Dec 2023 03:26:10 +0000
+Subject: [PATCH] Fix build with lemon-3.44
+
+:Release Notes:
+Fixed build error after lemon tool upgraded to 3.44
+
+:Detailed Notes:
+Update the syntax in %syntax_error function to work with newer lemon
+
+The yy_syntax_error() function is updated from this commit:
+https://github.com/sqlite/sqlite/commit/45f31be85dc90a3f76dd930ad4ec2a0174105156#diff-4ac00843d55028f60091f7ed92753bd216a0eaddd37723d8164ae7f85588e8a8L704
+
+This caused an error:
+selectors_grammar_y.y: In function 'yy_syntax_error':
+selectors_grammar_y.y:47:17: error: 'raw_buffer' has no member named
+'yy0'
+selectors_grammar_y.y:56:37: error: 'raw_buffer' has no member named
+'yy0'
+
+Use TOKEN macro to support both version.
+
+:Testing Performed:
+Only build tested
+
+:QA Notes:
+
+:Issues Addressed:
+[WRQ-6118] check webosose github issue "pbnjson fails to build #27"
+
+Change-Id: I0d9599a6bbc041f6d778a663c7ac569f111c9542
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/libpbnjson/+/385176 Fix build with lemon-3.44]
+
+ src/pbnjson_c/selectors/selectors_grammar_y.y | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/pbnjson_c/selectors/selectors_grammar_y.y b/src/pbnjson_c/selectors/selectors_grammar_y.y
+index 006c16f..6b3c642 100644
+--- a/src/pbnjson_c/selectors/selectors_grammar_y.y
++++ b/src/pbnjson_c/selectors/selectors_grammar_y.y
+@@ -44,7 +44,7 @@
+ }
+ 
+ %syntax_error {
+-    if (!yyminor.yy0.m_str)
++    if (!TOKEN.m_str)
+     {
+         jerror_set(context->error, JERROR_TYPE_SYNTAX,
+                    "Unexpected end of the query string");
+@@ -53,7 +53,7 @@
+     {
+         jerror_set_formatted(context->error, JERROR_TYPE_SYNTAX,
+                              "Unexpected token '%s' in the query string",
+-                             yyminor.yy0.m_str);
++                             TOKEN.m_str);
+     }
+ }
+ 
