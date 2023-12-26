@@ -471,3 +471,6 @@ BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY"
 
 # Disable showing warning logs when unpatched CVEs are found using INHERIT += "cve_check"
 CVE_CHECK_SHOW_WARNINGS = "0"
+
+# Specify the name of the recipe you want to exclude from the cve check.
+CVE_CHECK_SKIP_RECIPE += "${MLPREFIX}configurator"
