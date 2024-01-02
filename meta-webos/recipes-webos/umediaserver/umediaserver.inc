@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2023 LG Electronics, Inc.
+# Copyright (c) 2013-2024 LG Electronics, Inc.
 
 SUMMARY = "webOS uMediaserver daemon and utilities"
 AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"

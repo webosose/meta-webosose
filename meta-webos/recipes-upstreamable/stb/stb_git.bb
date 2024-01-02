@@ -1,5 +1,5 @@
 # imported from git://arago-project.org/git/meta-arago.git 8f4a114a3d55e3c934917453935bae438338c7f5
-# Copyright (c) 2019-2023 LG Electronics, Inc.
+# Copyright (c) 2019-2024 LG Electronics, Inc.
 
 SUMMARY = "single-file public domain (or MIT licensed) libraries for C/C++"
 LICENSE = "MIT"

@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 LG Electronics, Inc.
+# Copyright (c) 2022-2024 LG Electronics, Inc.
 
 SUMMARY = "SDK Agent service for telegraf"
 AUTHOR = "Wonsang Ryu <wonsang.ryu@lge.com>"

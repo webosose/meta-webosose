@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY = "A module for nodejs that allows dynamic loading and execution of Javascript files"
 AUTHOR = "Anatolii Sakhnik <anatolii.sakhnik@lge.com>"

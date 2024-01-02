@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 LG Electronics, Inc.
+# Copyright (c) 2020-2024 LG Electronics, Inc.
 
 SUMMARY = "NMEA Parser Class Library"
 DESCRIPTION = "Parser to support NMEA 0813 standard"

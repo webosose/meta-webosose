@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 # Define webos normal profile features
 require conf/distro/include/features/webos-features-normal.inc

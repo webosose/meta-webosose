@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2023 LG Electronics, Inc.
+# Copyright (c) 2017-2024 LG Electronics, Inc.
 
 SUMMARY = "VAL API implementation library mock"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"

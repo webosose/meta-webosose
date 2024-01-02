@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 LG Electronics, Inc.
+# Copyright (c) 2020-2024 LG Electronics, Inc.
 
 # Maintained by Seungho Park <seunghoh.park@lge.com>
 SUMMARY = "Enact Sandstone standard override used for Enact apps"

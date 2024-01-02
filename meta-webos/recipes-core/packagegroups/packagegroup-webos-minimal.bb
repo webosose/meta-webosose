@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 DESCRIPTION = "Packages used by all distro variants of webOS OSE"
 LICENSE = "Apache-2.0"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY = "webOS OSE developer/test image"
 DESCRIPTION = "This image contains additional packages useful during \

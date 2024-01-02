@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 LG Electronics, Inc.
+# Copyright (c) 2020-2024 LG Electronics, Inc.
 
 SUMMARY = "Mediacontroller service"
 AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"

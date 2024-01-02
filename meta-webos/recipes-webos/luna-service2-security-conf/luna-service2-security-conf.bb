@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023 LG Electronics, Inc.
+# Copyright (c) 2015-2024 LG Electronics, Inc.
 
 SUMMARY = "webOS LS2 security configuration"
 AUTHOR = "Yogish S <yogish.s@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023 LG Electronics, Inc.
+# Copyright (c) 2021-2024 LG Electronics, Inc.
 
 SUMMARY = "webOS fluentbit plugins"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 DESCRIPTION = "CMake modules used by webOS"
 LICENSE = "Apache-2.0"

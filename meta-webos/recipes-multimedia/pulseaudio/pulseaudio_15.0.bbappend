@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 LG Electronics, Inc.
+# Copyright (c) 2022-2024 LG Electronics, Inc.
 
 AUTHOR = "Sushovan G <sushovan.g@lge.com>"
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 SUMMARY = "Boot verifier service for updated u-boot env"
 AUTHOR = "JeongBong Seo <jb.seo@lge.com>"

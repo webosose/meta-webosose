@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 LG Electronics, Inc.
+# Copyright (c) 2020-2024 LG Electronics, Inc.
 
 DESCRIPTION = "Utility library used in Location Framework"
 AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"

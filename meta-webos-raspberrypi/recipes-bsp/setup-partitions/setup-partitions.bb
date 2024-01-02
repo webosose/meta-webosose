@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 SUMMARY = "A service to set-up partitions on SD"
 AUTHOR = "JeongBong Seo <jb.seo@lge.com>"

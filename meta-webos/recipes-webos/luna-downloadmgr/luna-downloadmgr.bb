@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY="The Download Manager service supports the downloading and uploading of files to and from a HP webOS device."
 AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"

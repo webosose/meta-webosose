@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2023 LG Electronics, Inc.
+# Copyright (c) 2018-2024 LG Electronics, Inc.
 
 SUMMARY = "VAL API implementation library Raspberry Pi"
 AUTHOR = "Kwanghee Lee <ekwang.lee@lge.com>"

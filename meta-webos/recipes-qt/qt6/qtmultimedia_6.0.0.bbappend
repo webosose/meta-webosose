@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2023 LG Electronics, Inc.
+# Copyright (c) 2016-2024 LG Electronics, Inc.
 
 EXTENDPRAUTO:append = "webos8"
 

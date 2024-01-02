@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2023 LG Electronics, Inc.
+# Copyright (c) 2017-2024 LG Electronics, Inc.
 
 SUMMARY = "AVOutputd adaptation layer (AVAL) API definition and test harness"
 SECTION = "webos/libs"

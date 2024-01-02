@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023 LG Electronics, Inc.
+# Copyright (c) 2019-2024 LG Electronics, Inc.
 
 SUMMARY = "webOS OSE sample app for flow"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"

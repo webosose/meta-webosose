@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2023 LG Electronics, Inc.
+# Copyright (c) 2017-2024 LG Electronics, Inc.
 
 # The MACHINE.conf for every MACHINE that has an Raspberry Pi BSP must require this
 # file.

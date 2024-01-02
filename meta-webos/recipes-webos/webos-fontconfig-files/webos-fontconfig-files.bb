@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2023 LG Electronics, Inc.
+# Copyright (c) 2017-2024 LG Electronics, Inc.
 
 SUMMARY = "Private configuration files for fontconfig"
 AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"

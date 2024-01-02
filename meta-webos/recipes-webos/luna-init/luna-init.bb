@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY = "Initialization, setup, and font files used by luna-sysmgr and luna-sysservice"
 AUTHOR = "Yogish S <yogish.s@lge.com>"

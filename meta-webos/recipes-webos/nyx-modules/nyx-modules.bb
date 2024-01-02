@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - ${MACHINE}-specific modules"
 AUTHOR = "Yogish S <yogish.s@lge.com>"

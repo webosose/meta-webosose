@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2023 LG Electronics, Inc.
+# Copyright (c) 2014-2024 LG Electronics, Inc.
 #
 # Things that must be added when using the internal OE toolchain, i.e., when
 # TCMODE is "default".
