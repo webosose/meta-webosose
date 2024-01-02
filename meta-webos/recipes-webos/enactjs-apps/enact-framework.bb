@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2023 LG Electronics, Inc.
+# Copyright (c) 2017-2024 LG Electronics, Inc.
 
 # Maintained by Seungho Park <seunghoh.park@lge.com>
 SUMMARY = "Enact moonstone standard override used for Enact apps"

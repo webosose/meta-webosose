@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 SUMMARY = "Media Recorder Service"
 AUTHOR = "Sungho Lee <shl.lee@lge.com>"
 SECTION = "webos/services"

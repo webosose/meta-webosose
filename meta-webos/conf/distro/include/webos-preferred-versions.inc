@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 # Make chromium108 the default webruntime
 PREFERRED_VERSION_webruntime = "108.%"

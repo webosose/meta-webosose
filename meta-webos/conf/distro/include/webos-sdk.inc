@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 # bitbake.conf weak assigns this to be "oecore" before this file is included.
 SDK_NAME_PREFIX = "${DISTRO}-sdk"

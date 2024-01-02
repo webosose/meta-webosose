@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 LG Electronics, Inc.
+# Copyright (c) 2022-2024 LG Electronics, Inc.
 
 SUMMARY = "Status Bar Application"
 AUTHOR = "Muniraju A<muniraju.a@lge.com>"

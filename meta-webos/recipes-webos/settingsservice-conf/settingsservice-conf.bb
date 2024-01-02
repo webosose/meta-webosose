@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023 LG Electronics, Inc.
+# Copyright (c) 2015-2024 LG Electronics, Inc.
 
 SUMMARY = "Settings Service Configs"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"

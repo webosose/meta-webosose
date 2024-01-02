@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2023 LG Electronics, Inc.
+# Copyright (c) 2014-2024 LG Electronics, Inc.
 
 SUMMARY = "umediaserver configs installation"
 AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"

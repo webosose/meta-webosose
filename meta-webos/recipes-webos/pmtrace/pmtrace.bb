@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2023 LG Electronics, Inc.
+# Copyright (c) 2013-2024 LG Electronics, Inc.
 
 SUMMARY = "lttng-ust tracepoints wrapper library and performance tools"
 AUTHOR = "Sukil Hong <sukil.hong@lge.com>"

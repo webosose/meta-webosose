@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 DESCRIPTION = "webOS component for managing network connections using connman"
 AUTHOR = "Muralidhar N <muralidhar.n@lge.com>"

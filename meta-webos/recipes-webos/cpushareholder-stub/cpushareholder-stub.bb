@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY = "Stubbed implementation of the webOS CPU shares scripts"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"

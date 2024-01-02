@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2023 LG Electronics, Inc.
+# Copyright (c) 2019-2024 LG Electronics, Inc.
 
 SUMMARY = " Pdm-plugin to support Physical device manager for webOS OSE"
 DESCRIPTION = "Pdm-plugin to initialize hardware required by Physical device manager in for webOS OSE"

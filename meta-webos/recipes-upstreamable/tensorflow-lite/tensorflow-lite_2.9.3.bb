@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 LG Electronics, Inc.
+# Copyright (c) 2022-2024 LG Electronics, Inc.
 
 require tensorflow-lite_2.9.3.inc
 

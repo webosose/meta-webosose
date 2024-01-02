@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2023 LG Electronics, Inc.
+# Copyright (c) 2013-2024 LG Electronics, Inc.
 
 SUMMARY = "libwebosi18n library can be used by non-QT C++ components for localization"
 AUTHOR = "Seonmi Jin <seonmi1.jin@lge.com>"

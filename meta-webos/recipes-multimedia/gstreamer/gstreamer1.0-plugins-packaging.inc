@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 # This .inc file contains functionality for automatically splitting
 # built plugins into individual packages for each plugin. A -meta

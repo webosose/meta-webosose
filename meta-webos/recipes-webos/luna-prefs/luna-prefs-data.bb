@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023 LG Electronics, Inc.
+# Copyright (c) 2015-2024 LG Electronics, Inc.
 
 # WARNING: This recipe appears in the SIGGEN_EXCLUDERECIPES_ABISAFE list in
 # conf/layer.conf which means that changes to it will not be used in the generation

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2023 LG Electronics, Inc.
+# Copyright (c) 2013-2024 LG Electronics, Inc.
 
 DESCRIPTION = "System Application Manager"
 AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"

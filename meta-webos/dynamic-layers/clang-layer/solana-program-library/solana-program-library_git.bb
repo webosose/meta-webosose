@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 LG Electronics, Inc.
+# Copyright (c) 2022-2024 LG Electronics, Inc.
 
 SUMMARY = "Solana program library"
 HOMEPAGE = "https://github.com/solana-labs/solana-program-library"

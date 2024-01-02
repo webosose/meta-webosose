@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2023 LG Electronics, Inc.
+# Copyright (c) 2015-2024 LG Electronics, Inc.
 AUTHOR = "Valery Volgutov <valery.volgutov@lge.com>"
 EXTENDPRAUTO:append = "webos1"
 

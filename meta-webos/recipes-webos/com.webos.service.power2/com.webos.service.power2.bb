@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 LG Electronics, Inc.
+# Copyright (c) 2020-2024 LG Electronics, Inc.
 
 SUMMARY = "Power manager service handles device suspend/resume/display states"
 AUTHOR = "Yogish S <yogish.s@lge.com>"

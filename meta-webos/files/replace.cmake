@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 # This script helps to replace the webos path variable in *.service.in or *.sh.in
 

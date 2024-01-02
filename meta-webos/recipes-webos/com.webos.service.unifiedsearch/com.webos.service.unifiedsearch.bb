@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2023 LG Electronics, Inc.
+# Copyright (c) 2020-2024 LG Electronics, Inc.
 
 SUMMARY = "Unified search service"
 AUTHOR = "Sangwoo Kang <sangwoo82.kang@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2023 LG Electronics, Inc.
+# Copyright (c) 2012-2024 LG Electronics, Inc.
 
 SUMMARY = "libsandbox is a collection of APIs for separating running programs"
 AUTHOR = "Vibhanshu Dhote <vibhanshu.dhote@lge.com>"

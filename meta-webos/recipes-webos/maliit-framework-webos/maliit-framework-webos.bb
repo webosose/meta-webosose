@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2023 LG Electronics, Inc.
+# Copyright (c) 2013-2024 LG Electronics, Inc.
 
 SUMMARY = "Maliit Input Method Framework"
 DESCRIPTION = "This is the webOS edition of the Maliit input method framework. It differs from upstream in that it supports a hardware keyboard using the wayland protocol."

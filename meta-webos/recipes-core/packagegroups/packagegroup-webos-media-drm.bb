@@ -1,4 +1,4 @@
-# Copyright (c) 2023 LG Electronics, Inc.
+# Copyright (c) 2023-2024 LG Electronics, Inc.
 
 DESCRIPTION = "Components for media drm added to webOS"
 LICENSE = "Apache-2.0"
