@@ -445,7 +445,7 @@ FONTCONFIG_CACHE_DIR = "${datadir}/fontconfig/cache"
 FONTCONFIG_CACHE_ENV = "FC_DEBUG=16"
 
 # To build lapack(blas) for snowboy
-FORTRAN:forcevariable:webos = ",fortran"
+FORTRAN:forcevariable = ",fortran"
 
 # Qt major version to use
 QT_VERSION ?= "6"
