@@ -1,0 +1,82 @@
+From 714eff51361528b7a0903eb45842f006f4a134b4 Mon Sep 17 00:00:00 2001
+From: Roman Genhel <roman.genhel@lge.com>
+Date: Fri, 15 Dec 2023 01:22:59 +0300
+Subject: [PATCH] Hotfix: default seat grabs keyboardFocus from non default
+ seat
+
+:Release Notes:
+Try to fix: one of two instances of VKB opened simultaneously on two screens
+(dual screen configuration), stop working properly,
+for example: backspace works only on one VKB
+
+:Detailed Notes:
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[WRQ-3149] [RPI4/OSE Emulator]: Unable to load URL in second
+
+----
+Upstream-Status: Inappropriate [Temporal workaround. See
+https://bugreports.qt.io/browse/QTBUG-120151]
+
+ src/compositor/compositor_api/qwaylandcompositor.cpp | 9 +++++++++
+ src/compositor/compositor_api/qwaylandcompositor.h   | 2 ++
+ src/compositor/compositor_api/qwaylandquickitem.cpp  | 8 +++++++-
+ 3 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/src/compositor/compositor_api/qwaylandcompositor.cpp b/src/compositor/compositor_api/qwaylandcompositor.cpp
+index c8d4d80e..8438c824 100644
+--- a/src/compositor/compositor_api/qwaylandcompositor.cpp
++++ b/src/compositor/compositor_api/qwaylandcompositor.cpp
+@@ -949,6 +949,15 @@ QWaylandSeat *QWaylandCompositor::seatFor(QInputEvent *inputEvent)
+     return d->seatFor(inputEvent);
+ }
+ 
++QWaylandSeat *QWaylandCompositor::seatForKeyboardFocus(QWaylandSurface *surface) const
++{
++    Q_D(const QWaylandCompositor);
++    for(auto seat: d->seats)
++        if (seat->keyboardFocus() == surface)
++            return seat;
++    return nullptr;
++}
++
+ /*!
+  * \qmlproperty bool QtWayland.Compositor::WaylandCompositor::useHardwareIntegrationExtension
+  *
+diff --git a/src/compositor/compositor_api/qwaylandcompositor.h b/src/compositor/compositor_api/qwaylandcompositor.h
+index 1dee5cad..ca3c8216 100644
+--- a/src/compositor/compositor_api/qwaylandcompositor.h
++++ b/src/compositor/compositor_api/qwaylandcompositor.h
+@@ -110,6 +110,8 @@ public:
+ 
+     QWaylandSeat *defaultSeat() const;
+ 
++    QWaylandSeat *seatForKeyboardFocus(QWaylandSurface *surface) const;
++
+     QWaylandSeat *seatFor(QInputEvent *inputEvent);
+ 
+     bool useHardwareIntegrationExtension() const;
+diff --git a/src/compositor/compositor_api/qwaylandquickitem.cpp b/src/compositor/compositor_api/qwaylandquickitem.cpp
+index 6d62b781..10024acf 100644
+--- a/src/compositor/compositor_api/qwaylandquickitem.cpp
++++ b/src/compositor/compositor_api/qwaylandquickitem.cpp
+@@ -902,8 +902,14 @@ void QWaylandQuickItem::handlePlaceBelow(QWaylandSurface *referenceSurface)
+ void QWaylandQuickItem::updateFocus()
+ {
+     Q_D(const QWaylandQuickItem);
+-    if (hasActiveFocus() && compositor())
++    if (hasActiveFocus() && compositor()) {
++        // if any of 'seat's already has 'surface' as a keyboard focus, then don`t call
++        // setKeyboardFocus for 'defaultSeat', which does nothing or cause error,
++        // if 'seat' with focus not a 'defaultSeat'
++        if (compositor()->seatForKeyboardFocus(d->view->surface()))
++            return;
+         compositor()->defaultSeat()->setKeyboardFocus(d->view->surface());
++    }
+ }
+ 
+ /*!
