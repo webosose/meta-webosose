@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-83_9e666f281d73ba1ff7b24d996f199b2343950369"
-INC_PR = "r65"
+INC_PR = "r66"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -51,6 +51,9 @@ EXTRA_OECMAKE += "-DPLATFORM=${@'PLATFORM_' + '${DISTRO}'.upper().replace('-', '
 
 EXTRA_OECMAKE += "-DWEBOS_TESTS_DIR=${webos_testsdir}"
 EXTRA_OECMAKE += "-DWAM_BUILD_DEFAULT_PLUGIN=${WAM_BUILD_DEFAULT_PLUGIN}"
+
+PACKAGECONFIG:append = " ${@bb.utils.filter('DISTRO_FEATURES', 'smack', d)}"
+PACKAGECONFIG[smack] = "-DWEBOS_SMACK_ENABLED:BOOLEAN=True,-DWEBOS_SMACK_ENABLED:BOOLEAN=False"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"

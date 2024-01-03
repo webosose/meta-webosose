@@ -21,7 +21,7 @@ inherit webos_system_bus
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
 
-INC_PR = "r69"
+INC_PR = "r70"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -43,6 +43,7 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 PACKAGECONFIG_WEBOS_CODEC ?= "webos-codec pulseaudio webos-camera webos-audio"
 PACKAGECONFIG_MEDIA ?= "neva-media gstreamer umediaserver gav"
 PACKAGECONFIG ?= ""
+PACKAGECONFIG:append = " ${@bb.utils.filter('DISTRO_FEATURES', 'smack', d)}"
 PACKAGECONFIG:append:hardware = " ${PACKAGECONFIG_MEDIA} ${PACKAGECONFIG_WEBOS_CODEC}"
 PACKAGECONFIG:append:qemux86 = " ${PACKAGECONFIG_MEDIA}"
 PACKAGECONFIG:append:qemux86-64 = " ${PACKAGECONFIG_MEDIA}"
@@ -63,6 +64,7 @@ PACKAGECONFIG[lttng] = "use_lttng=true,use_lttng=false,lttng-ust,lttng-tools ltt
 PACKAGECONFIG[webos-camera] = "use_webos_camera=true,use_webos_camera=false, cambufferlib"
 PACKAGECONFIG[webos-audio] = "use_webos_audio=true,use_webos_audio=false, pulseaudio"
 PACKAGECONFIG[test-coverage] = "enable_neva_test_coverage_build=true,enable_neva_test_coverage_build=false"
+PACKAGECONFIG[smack] = "enable_webos_smack=true, enable_webos_smack=false"
 
 GN_ARGS:append = " \
     enable_memorymanager_webapi=true\
