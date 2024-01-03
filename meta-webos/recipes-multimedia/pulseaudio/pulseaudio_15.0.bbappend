@@ -9,10 +9,10 @@ LIC_FILES_CHKSUM_OSS_PKG_INFO = "file://oss-pkg-info.yaml;md5=aad9c121c4d20efb97
 # This is blacklisted because of the license
 DEPENDS:remove = "libatomic-ops"
 
-DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing"
+DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing libpbnjson"
 
-WEBOS_VERSION = "15.0-52_e39ea6713f264eef05ecd97ae41ca72e0f94b0bd"
-EXTENDPRAUTO:append = "webos11"
+WEBOS_VERSION = "15.0-54_21aa7140e9235abca0f42590283e3ab80e46b450"
+EXTENDPRAUTO:append = "webos12"
 
 inherit webos_enhanced_submissions
 
@@ -54,25 +54,26 @@ do_install:prepend() {
 do_install:append() {
     install -v -m 644 ${S}/src/modules/module-palm-policy-default.h ${D}${includedir}/pulse/module-palm-policy.h
     install -v -m 644 ${S}/src/modules/module-palm-policy-tables-default.h ${D}${includedir}/pulse/module-palm-policy-tables.h
-    install -v -d ${D}${libdir}/pulse-15.0/modules/ecnr
 }
 do_install:append:webos() {
     install -v -m 644 ${S}/palm/open_system.pa ${D}${sysconfdir}/pulse/system.pa
-    install -v -m 644 ${S}/src/modules/ecnr/hann.txt ${D}${libdir}/pulse-15.0/modules/ecnr/hann.txt
-    install -v -m 644 ${S}/src/modules/ecnr/model_ecnr.tflite ${D}${libdir}/pulse-15.0/modules/ecnr/model_ecnr.tflite
+    install -v -d ${D}${libdir}/pulse-15.0/modules/audioeffects/preprocess
+    install -v -m 644 ${S}/src/modules/preprocess-source/hann.txt ${D}${libdir}/pulse-15.0/modules/audioeffects/preprocess/hann.txt
+    install -v -m 644 ${S}/src/modules/preprocess-source/model_ecnr.tflite ${D}${libdir}/pulse-15.0/modules/audioeffects/preprocess/model_ecnr.tflite
     install -v -m 644 ${S}/src/modules/drc/sndfilter.txt ${D}${sysconfdir}/pulse/sndfilter.txt
+    install -v -m 644 ${S}/src/modules/preprocess-source/config.txt ${D}${sysconfdir}/pulse/preprocessingAudioEffect.json
 }
 do_install:append:qemuall() {
     install -v -m 644 ${S}/palm/qemux86_system.pa ${D}${sysconfdir}/pulse/system.pa
 }
-FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr"
-FILES:${PN} += "${libdir}/pulse-15.0/modules/ecnr/*"
+
+FILES:${PN} += "${libdir}/pulse-15.0/modules/audioeffects/preprocess/*"
+
 
 RDEPENDS:pulseaudio-server:append:webos = "\
-    pulseaudio-module-agc \
     pulseaudio-module-app-sink \
     pulseaudio-module-drc \
-    pulseaudio-module-ecnr \
+    pulseaudio-module-preprocess-source \
 "
 
 RDEPENDS:pulseaudio-server:append = "\
