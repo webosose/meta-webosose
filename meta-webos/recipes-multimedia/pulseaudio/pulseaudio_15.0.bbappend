@@ -11,8 +11,8 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing libpbnjson"
 
-WEBOS_VERSION = "15.0-54_21aa7140e9235abca0f42590283e3ab80e46b450"
-EXTENDPRAUTO:append = "webos12"
+WEBOS_VERSION = "15.0-55_989a203096a7e200bb53cf6d22253d7467eef4fe"
+EXTENDPRAUTO:append = "webos13"
 
 inherit webos_enhanced_submissions
 
@@ -71,8 +71,7 @@ FILES:${PN} += "${libdir}/pulse-15.0/modules/audioeffects/preprocess/*"
 
 
 RDEPENDS:pulseaudio-server:append:webos = "\
-    pulseaudio-module-app-sink \
-    pulseaudio-module-drc \
+    pulseaudio-module-postprocess-sink \
     pulseaudio-module-preprocess-source \
 "
 
