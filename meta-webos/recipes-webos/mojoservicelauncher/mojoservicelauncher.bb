@@ -21,7 +21,7 @@ COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
 WEBOS_VERSION = "3.0.2-7_b759589be50ce52c4ae4e6af40ecbc78c7232a96"
-PR = "r10"
+PR = "r11"
 
 inherit webos_component
 inherit webos_public_repo
@@ -32,5 +32,8 @@ inherit webos_distro_variant_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+PACKAGECONFIG:append = " ${@bb.utils.filter('DISTRO_FEATURES', 'smack', d)}"
+PACKAGECONFIG[smack] = "-Denable_webos_smack=true:BOOL=TRUE"
 
 FILES:${PN} += "${webos_prefix}/nodejs ${webos_servicesdir} ${webos_frameworksdir}"
