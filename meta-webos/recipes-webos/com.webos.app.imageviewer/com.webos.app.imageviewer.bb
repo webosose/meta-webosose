@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2024 LG Electronics, Inc.
 
 SUMMARY = "Image Viewer application"
-AUTHOR = "KIEN TRUNG PHAM <kien2.pham@lge.com>"
+AUTHOR = "VINH VAN LE <vinh5.le@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.0.1-15_ca49d724d66ff827acee8eb5e95c380fd3fc1de2"
-PR = "r2"
+PR = "r3"
 
 inherit webos_component
 inherit webos_enhanced_submissions
