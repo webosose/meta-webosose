@@ -1,13 +1,16 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos1"
+EXTENDPRAUTO:append = "webos2"
 
 inherit cmake
 
-DEPENDS += "lapack"
+# we need to override the do_install set in .bb file to actually call cmake_do_install after
+# https://git.openembedded.org/bitbake/commit/?id=66306d5151acb0a26a171c338d8f60eb9eb16c6b
+do_install() {
+    cmake_do_install
+}
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-SRC_URI += "file://snowboy.pc.in;subdir=git"
+DEPENDS += "lapack"
 
 # snowboy offers arm/aarch64/x86-64 only for C++ implementation
 COMPATIBLE_MACHINE = "rpi|aarch64|x86-64|qemux86-64"
@@ -20,7 +23,9 @@ SNOWBOY_ARCH:aarch64 = "aarch64-ubuntu1604"
 SNOWBOY_ARCH:x86-64 = "ubuntu64"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-SRC_URI:append = " file://CMakeLists.txt;subdir=git"
+SRC_URI += "file://snowboy.pc.in;subdir=git \
+   file://CMakeLists.txt;subdir=git \
+"
 
 INSANE_SKIP:${PN} += "textrel"
 
