@@ -1,4 +1,4 @@
-From 6b8a69c4019e61627ddc461bd5134b62e1978e28 Mon Sep 17 00:00:00 2001
+From ec18de94545a721fe273db1e88fcf3dcc9b7f336 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin2.jansa@lgepartner.com>
 Date: Fri, 21 Jul 2023 16:09:21 +0000
 Subject: [PATCH] gator_backtrace: check CONFIG_ARCH_STACKWALK
@@ -34,24 +34,26 @@ Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
 ---
 Upstream-Status: Pending
 
- driver/gator_backtrace.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ driver/gator_backtrace.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/driver/gator_backtrace.c b/driver/gator_backtrace.c
-index 37c1dc3..c52693a 100644
+index 37c1dc3..3cf4610 100644
 --- a/driver/gator_backtrace.c
 +++ b/driver/gator_backtrace.c
-@@ -8,7 +8,9 @@
+@@ -8,7 +8,11 @@
   */
  
  #if defined(__arm__) || defined(__aarch64__)
 +#if !defined(CONFIG_ARCH_STACKWALK)
  #define GATOR_KERNEL_UNWINDING                      1
++#else
++#define GATOR_KERNEL_UNWINDING                      0
 +#endif
  #define GATOR_USER_UNWINDING                        1
  #else
  #define GATOR_KERNEL_UNWINDING                      0
-@@ -16,7 +18,7 @@
+@@ -16,7 +20,7 @@
  #endif
  
  /* on 4.10 walk_stackframe was unexported so use save_stack_trace instead */
@@ -60,7 +62,7 @@ index 37c1dc3..c52693a 100644
  #define GATOR_KERNEL_UNWINDING_USE_WALK_STACKFRAME  0
  #else
  #define GATOR_KERNEL_UNWINDING_USE_WALK_STACKFRAME  1
-@@ -55,7 +57,15 @@ static int report_trace(struct stackframe *frame, void *d)
+@@ -55,7 +59,15 @@ static int report_trace(struct stackframe *frame, void *d)
      if (*depth) {
  #if defined(MODULE)
          unsigned int cpu = get_physical_cpu();

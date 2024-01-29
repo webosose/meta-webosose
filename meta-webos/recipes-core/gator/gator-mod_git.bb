@@ -6,7 +6,7 @@ require gator.inc
 SUMMARY = "DS-5 Gator Kernel Module"
 DESCRIPTION = "Target-side kernel module gathering data for ARM Streamline Performance Analyzer."
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
 SRC_URI += " \
     file://0001-gator-modified-driver-Makefile-to-allow-compilation.patch;patchdir=.. \
