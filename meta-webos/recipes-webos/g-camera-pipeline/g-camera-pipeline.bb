@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
 SUMMARY = "g-camera-pipeline is a player which uses GStreamer"
-AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
+AUTHOR = "Sungho Lee <shl.lee@lge.com>"
 SECTION = "webos/media"
 
 LICENSE = "Apache-2.0"
@@ -19,7 +19,7 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-PR = "r14"
+PR = "r15"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"

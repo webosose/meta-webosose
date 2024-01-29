@@ -1,7 +1,7 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
 SUMMARY = "Camera service framework to control camera devices"
-AUTHOR = "Kalaimani K <kalaimani.k@lge.com>"
+AUTHOR = "Sungho Lee <shl.lee@lge.com>"
 SECTION = "webos/services"
 
 LICENSE = "Apache-2.0"
@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json"
 
-WEBOS_VERSION = "1.0.0-43_398bfbf57e92f159eadc7187fe6b5acc3b3479ca"
-PR = "r12"
+WEBOS_VERSION = "1.0.0-44_39dd7be20e4f506a5d5e7d5db00e906a73495c39"
+PR = "r13"
 
 inherit webos_component
 inherit webos_cmake
