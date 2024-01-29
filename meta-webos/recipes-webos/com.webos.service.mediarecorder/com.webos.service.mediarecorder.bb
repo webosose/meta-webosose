@@ -11,8 +11,11 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 
-WEBOS_VERSION = "1.0.0-2_6e79a8bbf649cfd9e04e9aeb1555a416d57487cb"
-PR = "r0"
+# Record pipeline
+DEPENDS += "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator"
+
+WEBOS_VERSION = "1.0.0-4_b335bcf836ca9ee7906632b147ccdd21b1c8ce46"
+PR = "r1"
 
 inherit webos_component
 inherit webos_cmake
@@ -20,6 +23,7 @@ inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_system_bus
 inherit webos_daemon
+inherit webos_machine_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
