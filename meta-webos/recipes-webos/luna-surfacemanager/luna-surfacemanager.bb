@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-395_4e88486015c69db462654a7ef797f5c6a56e616f"
-PR = "r60"
+PR = "r61"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -116,4 +116,4 @@ FILES:${PN}-base-tests += " \
     ${webos_testsdir}/${BPN}/ \
 "
 
-RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components"
+RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components qtdeclarative-qmlplugins"
