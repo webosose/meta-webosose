@@ -18,7 +18,7 @@ inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
 
-WEBOS_VERSION = "1.0.0-10_0630bc4a1eefe7cf1e3f1baf0dac50cb1a04bad1"
+WEBOS_VERSION = "1.0.0-11_29a597a5c6ea8715fbf45f9d2df660008cf18e13"
 PR = "r1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
