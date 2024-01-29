@@ -6,7 +6,7 @@ require gator.inc
 SUMMARY = "DS-5 Gator Kernel Module"
 DESCRIPTION = "Target-side kernel module gathering data for ARM Streamline Performance Analyzer."
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
 
 SRC_URI += " \
     file://0001-gator-modified-driver-Makefile-to-allow-compilation.patch;patchdir=.. \
@@ -25,6 +25,7 @@ SRC_URI += " \
     file://0014-gator_events_meminfo.c-use-DEFINE_SEMAPHORE-with-2-a.patch;patchdir=.. \
     file://0015-gator_pmu-fix-Waddress.patch;patchdir=.. \
     file://0016-Makefile-ignore-incompatible-pointer-types.patch;patchdir=.. \
+    file://0017-gator_fs-Fix-build-with-linux-6.6-and-newer.patch;patchdir=.. \
 "
 
 S = "${WORKDIR}/git/driver"

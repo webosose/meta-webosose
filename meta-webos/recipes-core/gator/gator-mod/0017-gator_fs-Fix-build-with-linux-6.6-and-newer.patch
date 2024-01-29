@@ -1,0 +1,35 @@
+From 64cc36df034bd38294db3ac87b507a6beedf0e77 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 10 Jan 2024 19:24:23 +0100
+Subject: [PATCH] gator_fs: Fix build with linux-6.6 and newer
+
+In Linux commit 13bc24457850583a2e7203ded05b7209ab4bc5ef, direct access
+to the i_ctime member of struct inode was removed. The new approach is
+to use accessor methods that exclusively handle passing the timestamp
+around by value.
+
+More details in e.g.:
+https://github.com/darkbasic/zfs/commit/0769c0050e073ffdf58f37d4bdc0771db4aa9c4a
+---
+Upstream-Status: Pending
+
+ driver/gator_fs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/driver/gator_fs.c b/driver/gator_fs.c
+index df37bba..3835b37 100644
+--- a/driver/gator_fs.c
++++ b/driver/gator_fs.c
+@@ -42,8 +42,11 @@ static struct inode *gatorfs_get_inode(struct super_block *sb, int mode)
+         inode->i_mode = mode;
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
+         inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+-#else
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(6, 6, 0)
+         inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
++#else
++        inode->i_atime = inode->i_mtime = current_time(inode);
++        inode_set_ctime_to_ts(inode, inode->i_mtime);
+ #endif
+     }
+     return inode;
