@@ -10,7 +10,7 @@ PROVIDES = "virtual/webappmanager-webos"
 
 WEBOS_REPO_NAME = "wam"
 
-PR = "${INC_PR}.4"
+PR = "${INC_PR}.5"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -29,8 +29,7 @@ OECMAKE_CXX_FLAGS += "\
 "
 
 do_configure:prepend() {
-    [ -f ${STAGING_LIBDIR}/pkgconfig/jsoncpp-clang.pc ] && \
-    mv -n ${STAGING_LIBDIR}/pkgconfig/jsoncpp-clang.pc ${STAGING_LIBDIR}/pkgconfig/jsoncpp.pc
+    ln -snf jsoncpp-clang.pc ${STAGING_LIBDIR}/pkgconfig/jsoncpp.pc
 }
 
 do_compile:prepend() {

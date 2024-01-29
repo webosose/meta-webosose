@@ -7,7 +7,7 @@ require g-media-pipeline.bb
 FILESEXTRAPATHS:prepend := "${THISDIR}/g-media-pipeline:"
 WEBOS_REPO_NAME = "g-media-pipeline"
 
-PR = "r3"
+PR = "r4"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -25,8 +25,7 @@ CXXFLAGS +=" \
 "
 
 do_configure:prepend() {
-    [ -f ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator-clang.pc ] && \
-    mv -n ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator-clang.pc ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator.pc
+    ln -snf media-resource-calculator-clang.pc ${STAGING_LIBDIR}/pkgconfig/media-resource-calculator.pc
 }
 
 do_install() {

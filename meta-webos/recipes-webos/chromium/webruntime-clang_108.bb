@@ -4,7 +4,7 @@ require webruntime_108.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r3"
+PR = "r4"
 
 inherit clang_libc
 
@@ -59,9 +59,12 @@ PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,us
 PACKAGECONFIG[webos-codec] = "use_webos_codec=true,use_webos_codec=false,media-codec-interface${DEPEXT}"
 
 do_configure:prepend() {
-    [ -f ${STAGING_DATADIR}/pkgconfig/umedia_api_clang.pc ] && \
-    mv -n ${STAGING_DATADIR}/pkgconfig/umedia_api_clang.pc ${STAGING_DATADIR}/pkgconfig/umedia_api.pc
+    ln -snf umedia_api_clang.pc ${STAGING_DATADIR}/pkgconfig/umedia_api.pc
+
+    # g-media-pipeline is optional for various webruntime configurations,
+    # condition is needed to check if gmp-player-client-clang.pc is
+    # available during configuration of webruntime.
     [ -f ${STAGING_DATADIR}/pkgconfig/gmp-player-client-clang.pc ] && \
-    mv -n ${STAGING_DATADIR}/pkgconfig/gmp-player-client-clang.pc ${STAGING_DATADIR}/pkgconfig/gmp-player-client.pc
+        ln -snf gmp-player-client-clang.pc ${STAGING_DATADIR}/pkgconfig/gmp-player-client.pc
 }
 
