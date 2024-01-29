@@ -2,7 +2,7 @@
 
 inherit clang_cmake
 
-PR = "r2"
+PR = "r3"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -20,6 +20,7 @@ do_install:append() {
     mv -n ${D}${includedir}/json ${D}${includedir}/cbe
 
     sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${D}/${PKGCONFIG_DIR}/jsoncpp.pc
+    sed -i '/^includedir=.*\/include$/ s/$/\/cbe/' ${D}/${PKGCONFIG_DIR}/jsoncpp.pc
     mv -n ${D}/${PKGCONFIG_DIR}/jsoncpp.pc ${D}/${PKGCONFIG_DIR}/${BPN}.pc
 
     rm -rf ${D}${libdir}/cmake

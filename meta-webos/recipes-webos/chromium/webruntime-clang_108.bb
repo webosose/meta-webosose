@@ -4,7 +4,7 @@ require webruntime_108.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r2"
+PR = "r3"
 
 inherit clang_libc
 
@@ -46,7 +46,9 @@ INCLUDE_PATH_LIBCXX += " \
 # http://gecko.lge.com:8000/Errors/Details/527999
 ARM_INSTRUCTION_SET = "arm"
 
-GN_ARGS += "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', 'clang_use_stdlib=true clang_extra_cxxflags=\\\"${INCLUDE_PATH_STDLIB} ${TARGET_CC_ARCH}\\\"', 'clang_use_stdlib=false clang_extra_cxxflags=\\\"${INCLUDE_PATH_LIBCXX} ${TARGET_CC_ARCH}\\\"', d)}"
+CLANG_CXXFLAGS = ""
+
+GN_ARGS += "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', 'clang_use_stdlib=true clang_extra_cxxflags=\\\"${INCLUDE_PATH_STDLIB} ${TARGET_CC_ARCH} ${CLANG_CXXFLAGS}\\\"', 'clang_use_stdlib=false clang_extra_cxxflags=\\\"${INCLUDE_PATH_LIBCXX} ${TARGET_CC_ARCH} ${CLANG_CXXFLAGS}\\\"', d)}"
 
 GN_ARGS += "webos_rpath=\"${libdir}/cbe\""
 
