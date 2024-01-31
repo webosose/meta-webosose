@@ -15,6 +15,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# First, if the cdc_ether isn't built as a module, there's nothing to do
+if ! zgrep -qs CONFIG_USB_NET_CDCETHER=m /proc/config.gz; then
+    exit 0
+fi
+
 # To provide enough time for inbuilt adapter to be configured
 
 if ! grep -qs qemu /etc/hostname ; then
