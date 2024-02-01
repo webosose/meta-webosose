@@ -102,8 +102,10 @@ python do_write_ls2_api_list() {
     bb.note("webOS Distro Name ::: " + d.getVar('DISTRO'))
     ls_api_info= {'ls2_api_list': ls_api_info_data, 'release_code_name': d.getVar('WEBOS_DISTRO_RELEASE_CODENAME'), 'distro': d.getVar('DISTRO')}
 
-    #write ls_api_info to file
     ls2_output_file = d.getVar("LS2_API_LIST_FILENAME")
+    if not (d.getVar('BUILDHISTORY_DIR_IMAGE') and os.path.isdir(d.getVar('BUILDHISTORY_DIR_IMAGE'))):
+        bb.warn("BUILDHISTORY_DIR_IMAGE '%s' is empty or isn't a directory (probably buildhistory isn't enabled), will not create %s file there" % (d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file))
+        return
     output = os.path.join(d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file)
     json_info_as_string = json.dumps(ls_api_info).replace("'", '"')
     with open(output, 'w') as f:
