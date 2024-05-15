@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r48"
+PR = "r49"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -79,6 +79,8 @@ RDEPENDS:${PN} = " \
     filecache \
     luna-downloadmgr \
     luna-init \
+    nnstreamer \
+    tensorflow-lite \
     nodejs-module-webos-service \
     pacrunner \
     qml-app-components \
