@@ -3,7 +3,7 @@
 require conf/distro/include/features/webos-features-minimal.inc
 
 # Increament when features are changed
-_pr_suffix .= ".0"
+_pr_suffix .= ".1"
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_EXTENDED += "virtualization"
@@ -34,6 +34,10 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
 # the examples and test codes are excluded from the installation.
 WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework auto-acceleration edgetpu gpu-delegate"
 WEBOS_DISTRO_FEATURES_EXTENDED += "${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK}"
+
+# Includes nnstreamer.
+WEBOS_DISTRO_FEATURES_NEURAL_NETWORK = "webos-neural-network"
+WEBOS_DISTRO_FEATURES_EXTENDED += "${WEBOS_DISTRO_FEATURES_NEURAL_NETWORK}"
 
 # Addition/removal image features
 IMAGE_FEATURES += "webos-systemapps webos-testapps webos-extended"
