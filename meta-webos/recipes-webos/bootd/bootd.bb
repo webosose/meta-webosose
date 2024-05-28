@@ -13,8 +13,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 libpbnjson pmloglib glib-2.0 boost"
 
-WEBOS_VERSION = "2.0.0-21_7e47e2b3527b3ec9680f5ee61c985885f8688dc3"
-PR = "r17"
+WEBOS_VERSION = "2.0.0-22_f03736d2cb1bfb131b31706f64d1c2fdf06178a0"
+PR = "r18"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -22,15 +22,11 @@ inherit webos_cmake
 inherit webos_daemon
 inherit webos_system_bus
 inherit webos_lttng
-inherit webos_machine_dep
-inherit webos_distro_dep
-inherit webos_distro_variant_dep
 inherit webos_public_repo
 inherit webos_prerelease_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
 
 inherit webos_systemd
 WEBOS_SYSTEMD_SERVICE = "bootd.service"
