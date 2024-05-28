@@ -16,18 +16,14 @@ inherit webos_system_bus
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_machine_impl_dep
-inherit webos_machine_dep
 inherit webos_pkgconfig
 
-PR = "r15"
+PR = "r16"
 
-DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad pkgconfig umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
+DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.47_66992348a46fde069ee2e3b8f5fef1a10592651c"
-
-# TODO: Fix the restrictions in CMakeLists.txt
-COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
+WEBOS_VERSION = "1.0.0-gav.48_cf49c62a39f789d37cc145aae6df703265bbeda5"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
@@ -36,3 +32,8 @@ S = "${WORKDIR}/git"
 FILES_SOLIBSDEV = ""
 FILES:${PN} += "${libdir}/*.so"
 FILES:${PN} += "${libdir}/gstreamer-1.0/*.so"
+
+# Define machine
+PACKAGECONFIG[use-rpi] = "-DUSE_RPI:BOOL=True,-DUSE_RPI:BOOL=False,"
+PACKAGECONFIG[use-emulator] = "-DUSE_EMULATOR:BOOL=True,-DUSE_EMULATOR:BOOL=False,"
+PACKAGECONFIG:append:emulator = " use-emulator"
