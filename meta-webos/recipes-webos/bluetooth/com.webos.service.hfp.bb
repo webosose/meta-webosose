@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
 
-WEBOS_VERSION = "1.0.0-33_536d71dbd9969c56038da29ce451dca8a7767e09"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-34_4e1ab4e3a5d2c7168dcc7d6c41ee607fb1616d49"
+PR = "r9"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -22,7 +22,6 @@ inherit webos_daemon
 inherit webos_system_bus
 inherit webos_public_repo
 inherit webos_machine_dep
-inherit webos_distro_dep
 inherit webos_machine_impl_dep
 
 # Set WEBOS_HFP_ENABLED_ROLE to a space-separted list of
