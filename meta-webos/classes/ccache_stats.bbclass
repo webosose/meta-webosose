@@ -1,6 +1,6 @@
 # Copyright (c) 2023-2024 LG Electronics, Inc.
 
-export CCACHE_STATSLOG = "${WORKDIR}/ccache_stats.log"
+export CCACHE_STATSLOG = "${T}/ccache_stats.log"
 
 CCACHE_STATS = "${TOPDIR}/ccache_stats.json"
 
