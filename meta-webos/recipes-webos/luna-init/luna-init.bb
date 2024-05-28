@@ -12,15 +12,14 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "tzdata python3-pytz-native"
 
-WEBOS_VERSION = "2.0.1-10_3a951d1299acf713d1d406ed5e0608d6e9ca9108"
-PR = "r19"
+WEBOS_VERSION = "2.0.1-11_b186c185d8304480e78aade0617ef795c3db3e6e"
+PR = "r20"
 
 inherit webos_arch_indep
 inherit webos_public_repo
 inherit webos_enhanced_submissions
 inherit webos_cmake
 inherit python3native
-inherit webos_distro_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
