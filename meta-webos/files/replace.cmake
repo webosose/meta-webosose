@@ -18,11 +18,7 @@ foreach(in_file ${IN_FILES})
         configure_file(${CMAKE_SOURCE_DIR}/${in_file} ${file} @ONLY)
     endif()
 
-    if (file MATCHES "^.+\\.service$")
-        install(FILES ${CMAKE_BINARY_DIR}/${file} DESTINATION ${CMAKE_INSTALL_UNITDIR}/ )
-    elseif (file MATCHES "^.+\\.path$")
-        install(FILES ${CMAKE_BINARY_DIR}/${file} DESTINATION ${CMAKE_INSTALL_UNITDIR}/ )
-    elseif (file MATCHES "^.+\\.target$")
+    if (file MATCHES "^.+\\.service$|^.+\\.path$|^.+\\.target$|^.+\\.socket$|^.+\\.device$|^.+\\.mount$|^.+\\.automount$|^.+\\.swap$|^.+\\.timer$|^.+\\.slice$|^.+\\.scope$")
         install(FILES ${CMAKE_BINARY_DIR}/${file} DESTINATION ${CMAKE_INSTALL_UNITDIR}/ )
     elseif (file MATCHES "^.+\\.sh$")
         install(FILES ${CMAKE_BINARY_DIR}/${file}
