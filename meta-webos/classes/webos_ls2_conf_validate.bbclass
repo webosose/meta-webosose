@@ -154,7 +154,7 @@ fakeroot python do_validate_ls2_acg() {
         for group in sorted(skip_group):
             msg += "  %s\n" % group
         msg += "=== LIST END ===\n"
-        bb.warn(msg)
+        bb.note(msg)
     # Always skip 'allowedNames' which is being used a key in old-style groups.json
     skip_group.append("allowedNames")
 
@@ -218,7 +218,7 @@ fakeroot python do_validate_ls2_acg() {
         for group in sorted(groups_defined2):
             msg += "  %s\n" % group
         msg += "=== LIST END ===\n"
-        bb.warn(msg)
+        bb.note(msg)
     groups_valid = groups_defined.union(groups_defined2)
     msg = "=== LIST BEGIN: Groups considered as valid ===\n"
     for group in sorted(groups_valid):
@@ -249,7 +249,7 @@ fakeroot python do_validate_ls2_acg() {
             for entry in sorted(groups_missing[group]):
                 msg += "  %s\n" % entry
         msg += "=== LIST END =====\n"
-        bb.warn(msg)
+        bb.note(msg)
         if d.getVar("WEBOS_LS2_CONF_VALIDATE_ERROR_ON_WARNING") != "0":
             bb.fatal("Fatal error while checking groups, aborting!")
 }
