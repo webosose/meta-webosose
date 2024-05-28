@@ -14,7 +14,7 @@ VIRTUAL-RUNTIME_nyx-utils ?= "nyx-utils"
 DEPENDS = "glib-2.0 luna-service2 libpbnjson fluentbit msgpack-c"
 RDEPENDS:${PN} = "fluentbit python3-core python3-requests python3-atlassian-python-api ${VIRTUAL-RUNTIME_nyx-utils}"
 
-WEBOS_VERSION = "1.0.0-56_f4d997cd24194a90b1bf0e23b903ca4eae46c1a1"
+WEBOS_VERSION = "1.0.0-57_d96f3912b0fb6d5f79a71f52c346a48a2b36551c"
 PR = "r17"
 
 inherit webos_component
