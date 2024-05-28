@@ -1,0 +1,45 @@
+From f1139989b39b32476be655a451b950cab416c09a Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 4 Jan 2024 14:02:03 +0100
+Subject: [PATCH] account_info.rs: Fix build with rust-1.72 and newer
+
+:Release Notes:
+After rust upgrade in oe-core from 1.71.1 to 1.74.1 in:
+https://git.openembedded.org/openembedded-core/commit/?id=30637cdeb31fae02544fdc643a455d0ebb126ee6
+and following commits, solana was failing to build.
+
+:Detailed Notes:
+Backport a fix from v1.17.0:
+https://github.com/solana-labs/solana/pull/32961
+
+we need only this part:
+https://github.com/solana-labs/solana/commit/9e703f85de4184f577f22a1c72a0d33612f2feb1#diff-2830a98fa15197faaaf1226883e9011c9302fedb10c7926077b17c07fa320c57
+
+for other fixes we should just upgrade solana in OSE to latest.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+---
+Upstream-Status: Backport [v1.17.0: https://github.com/solana-labs/solana/pull/32961]
+
+ sdk/program/src/account_info.rs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sdk/program/src/account_info.rs b/sdk/program/src/account_info.rs
+index 3652e2251e..006390473b 100644
+--- a/sdk/program/src/account_info.rs
++++ b/sdk/program/src/account_info.rs
+@@ -181,6 +181,7 @@ impl<'a> AccountInfo<'a> {
+         Ok(())
+     }
+ 
++    #[rustversion::attr(since(1.72), allow(invalid_reference_casting))]
+     pub fn assign(&self, new_owner: &Pubkey) {
+         // Set the non-mut owner field
+         unsafe {
