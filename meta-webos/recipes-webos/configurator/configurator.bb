@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 db8 glib-2.0 pmloglib"
 
-WEBOS_VERSION = "3.0.0-11_ded3f968c2943ef77d81755e5bf7de088447651a"
-PR = "r10"
+WEBOS_VERSION = "3.0.0-14_eca86df876b95cf52872290fa522739e1e57e0b4"
+PR = "r11"
 
 inherit webos_component
 inherit webos_public_repo
@@ -22,7 +22,6 @@ inherit webos_cmake
 inherit webos_system_bus
 inherit webos_daemon
 inherit webos_machine_impl_dep
-inherit webos_distro_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -41,3 +40,8 @@ do_install:append() {
     rm ${D}${sysconfdir}/systemd/system/configurator-db8.service
     rm ${D}${sysconfdir}/systemd/system/scripts/configurator-db8.sh
 }
+
+PACKAGECONFIG ??= ""
+PACKAGECONFIG[extension-starfish] = "-DEXTENSION_STARFISH:BOOL=True,-DEXTENSION_STARFISH:BOOL=False,"
+PACKAGECONFIG[no-first-use] = "-DNO_FIRST_USE:BOOL=True,-DNO_FIRST_USE:BOOL=False,"
+PACKAGECONFIG:append:webos = " no-first-use"
