@@ -48,8 +48,8 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES = "GATT FTP OPP A2DP SPP HFP AVRCP PAN A
 # emulator), which means that the pairing should happen without user intervention.
 WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY ??= "NoInputNoOutput"
 
-WEBOS_VERSION = "1.0.0-74_f111204a72e809856c6620ced3d13641d4fe8428"
-PR = "r9"
+WEBOS_VERSION = "1.0.0-75_17af6e97d1fc101eb41ea0de5504e0c02d105b02"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
@@ -60,7 +60,6 @@ inherit webos_system_bus
 # VIRTUAL-RUNTIME_bluetooth_stack, WEBOS_BLUETOOTH_PAIRING_IO_CAPABILITY, and
 # possibly WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES are MACHINE-dependent.
 inherit webos_machine_dep
-inherit webos_distro_dep
 inherit webos_machine_impl_dep
 
 # The convention is for the component "bluetooth-sil-<name>" to build a <name>.so,
