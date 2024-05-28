@@ -13,7 +13,7 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0004-Add-plugins-for-dashboard.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r2"
+PR = "r3"
 
 GO_IMPORT = "import"
 
@@ -28,6 +28,12 @@ TELEGRAF_OUT = "${WORKDIR}/build/out"
 
 CGO_ENABLED ?= "1"
 CGO_ENABLED:x86-64 = "0"
+
+# Needed since go 1.21.0:
+# https://git.openembedded.org/openembedded-core/commit/?h=scarthgap&id=51a3cb046de4cfd66ecef36031fa96be29ef0a2a
+# https://git.openembedded.org/openembedded-core/commit/?h=scarthgap&id=c491d967858c01fead21495f44f1a9f8cdf8e833
+# https://git.openembedded.org/meta-openembedded/commit/?id=65b8bf69e8f2f6d876c2b1905ab869550274e7dd
+export GOPROXY = "https://proxy.golang.org,direct"
 
 #   cannot find package runtime/cgo (using -importcfg)
 #   ...go/pkg/tool/linux_amd64/link: cannot open file : open : no such file or directory
