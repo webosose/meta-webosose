@@ -10,15 +10,17 @@ PYPI_PACKAGE = "atlassian-python-api"
 
 inherit pypi setuptools3
 
+PR = "r1"
+
 SRC_URI[sha256sum] = "7ef384a91a790c807336e2bd6b7554284691aadd6d7413d199baf752dd84c53e"
 
-RDEPENDS:${PN} = "${PYTHON_PN}-requests \
-                  ${PYTHON_PN}-oauthlib \
-                  ${PYTHON_PN}-urllib3 \
-                  ${PYTHON_PN}-certifi \
-                  ${PYTHON_PN}-requests-oauthlib \
-                  ${PYTHON_PN}-six \
-                  ${PYTHON_PN}-deprecated \
+RDEPENDS:${PN} = "python3-requests \
+                  python3-oauthlib \
+                  python3-urllib3 \
+                  python3-certifi \
+                  python3-requests-oauthlib \
+                  python3-six \
+                  python3-deprecated \
 "
 
 BBCLASSEXTEND = "native nativesdk"
