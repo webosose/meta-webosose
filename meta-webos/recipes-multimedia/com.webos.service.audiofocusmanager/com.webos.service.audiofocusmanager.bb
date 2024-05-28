@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib"
 
-WEBOS_VERSION = "1.0.0-8_a1d3b3b0e029aa69d6718dce6c68e03591ee3acf"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-9_c29e88c9ffc9bdaec2ca264381ae4e4019102d27"
+PR = "r5"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -24,7 +24,6 @@ inherit webos_machine_dep
 inherit gettext
 inherit webos_lttng
 inherit webos_public_repo
-inherit webos_distro_dep
 inherit webos_machine_impl_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
