@@ -19,7 +19,7 @@ inherit webos_cmake
 inherit webos_library
 inherit webos_nyx_module_provider
 
-WEBOS_VERSION = "1.0.0-5_17e2acc9347024e2cd5e8a2cb635398452fccccd"
+WEBOS_VERSION = "1.0.0-7_474313515ac8350c658908f88e69e3785aee6502"
 PR = "r1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
