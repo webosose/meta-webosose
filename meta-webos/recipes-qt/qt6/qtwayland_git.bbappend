@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos43"
+EXTENDPRAUTO:append = "webos44"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -48,6 +48,10 @@ RRECOMMENDS:${PN}:remove = "${PN}-qmlplugins"
 # deliberately in do_install:append below.
 # See https://codereview.qt-project.org/c/qt/qtbase/+/420212.
 EXTRA_OECMAKE:append = " -DQT_SKIP_AUTO_PLUGIN_INCLUSION=ON"
+
+# Set USE_X11/EGL_NO_X11 explicitly for using some eglplatform header.
+# http://gecko.lge.com:8000/Errors/Details/750672
+TARGET_CFLAGS:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '-DUSE_X11', '-DEGL_NO_X11', d)}"
 
 do_install:append() {
     # Remove files unnecessary or conflict with qtwayland-webos

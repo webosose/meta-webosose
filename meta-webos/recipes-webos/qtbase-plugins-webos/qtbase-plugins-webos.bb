@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtbase"
 
 WEBOS_VERSION = "1.0.0-26_bc09742b6362ac1c65b4884ad0eaad4ee2e3dc0a"
-PR = "r8"
+PR = "r9"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
@@ -40,3 +40,7 @@ PACKAGECONFIG[egl-protected-content] = "CONFIG+=egl_protected_content,,"
 FILES:${PN} += " \
     ${OE_QMAKE_PATH_PLUGINS}/ \
 "
+
+# Set USE_X11/EGL_NO_X11 explicitly for using some eglplatform header.
+# http://gecko.lge.com:8000/Errors/Details/750671
+TARGET_CFLAGS:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '-DUSE_X11', '-DEGL_NO_X11', d)}"

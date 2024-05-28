@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos118"
+EXTENDPRAUTO:append = "webos119"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -121,6 +121,10 @@ SRC_URI:append:class-native = " file://9905-Revert-Remove-syncqt.pl.patch;minver
 TARGET_CXXFLAGS:append = " \
     -DQFONTCACHE_MIN_COST=512 \
 "
+
+# Set USE_X11/EGL_NO_X11 explicitly for using some eglplatform header.
+# http://gecko.lge.com:8000/Errors/Details/750546
+TARGET_CFLAGS:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '-DUSE_X11', '-DEGL_NO_X11', d)}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
