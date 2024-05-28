@@ -33,6 +33,7 @@ RPI_KERNEL_MODULES = " \
     kernel-module-hci-uart \
     kernel-module-hid-multitouch \
     kernel-module-hid-sony \
+    kernel-module-hmac \
     kernel-module-i2c-bcm2708 \
     kernel-module-media \
     kernel-module-rfcomm \
@@ -73,7 +74,7 @@ RPI_KERNEL_DEVICETREE_OVERLAYS += " \
     overlays/seeed-8mic-voicecard.dtbo \
 "
 
-KERNEL_MODULE_AUTOLOAD:append = " uinput bridge vc4"
+KERNEL_MODULE_AUTOLOAD:append = " uinput bridge hmac vc4"
 
 # Always enable u-boot
 RPI_USE_U_BOOT = "1"
