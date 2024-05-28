@@ -14,7 +14,8 @@ DEPENDS = "nyx-lib glib-2.0 luna-service2 openssl udev nmeaparser"
 
 RDEPENDS:${PN} = "lsb-release gzip"
 
-WEBOS_VERSION = "7.1.0-22_677ed3eca696f1d5b00d8b7579f981e37e319ce3"
+WEBOS_VERSION = "7.1.0-24_f5e0d88ac5dc6d6d027be9e4e876ebbb6682c77c"
+
 PR = "r19"
 
 EXTRA_OECMAKE += "\
