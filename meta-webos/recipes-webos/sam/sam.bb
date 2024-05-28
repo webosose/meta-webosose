@@ -16,15 +16,14 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
-WEBOS_VERSION = "2.0.0-68_efe1735e8c136b7795856e24103778877701fe60"
-PR = "r28"
+WEBOS_VERSION = "2.0.0-69_ca13d4dbff667d7890a29c2bf0a32ee433363516"
+PR = "r29"
 
 inherit webos_component
 inherit webos_cmake
 inherit webos_enhanced_submissions
 inherit webos_daemon
 inherit webos_system_bus
-inherit webos_distro_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
