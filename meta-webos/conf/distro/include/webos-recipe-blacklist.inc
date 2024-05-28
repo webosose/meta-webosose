@@ -24,6 +24,7 @@ SKIP_RECIPE[qtwebengine] ?= "fails to build with printing-and-pdf PACKAGECONFIG 
 SKIP_RECIPE[qtwebview] ?= "depends on blacklisted qtwebengine"
 SKIP_RECIPE[qtinterfaceframework] ?= "depends on blacklisted qtmultimedia"
 SKIP_RECIPE[qtspeech] ?= "depends on blacklisted qtmultimedia"
+SKIP_RECIPE[python3-pyside6] ?= "depends on blacklisted qtmultimedia, qtcharts, qtdatavis3d, qtconnectivity, qtspeech, qtgraphs"
 
 # oe-core
 SKIP_RECIPE[efivar] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, makeguids Your linker is not supported guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds http://gecko.lge.com:8000/Errors/Details/565720', '', d)}"
