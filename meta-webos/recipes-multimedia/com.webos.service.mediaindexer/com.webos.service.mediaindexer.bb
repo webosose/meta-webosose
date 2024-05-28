@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-WEBOS_VERSION = "1.0.0-29_41600707067270437cda2a87c11c06c435af4721"
-PR = "r13"
+WEBOS_VERSION = "1.0.0-31_2ce00f8e0e324c6430a12e83a871d38169638eca"
+PR = "r14"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -40,13 +40,3 @@ WEBOS_SYSTEMD_SERVICE = "com.webos.service.mediaindexer.service"
 do_install:append() {
     rm ${D}${sysconfdir}/systemd/system/com.webos.service.mediaindexer.service
 }
-
-#EXTRA_OECMAKE += " -DSTANDALONE=1"
-
-# configure the maximum number of parallel meta data extractions
-#EXTRA_OECMAKE += " -DPARALLEL_META_EXTRACTION=10"
-
-# configure the folders on local storage which shall be scanned from
-# storage plugin, the format is <path>,<name>,<description>;...
-#EXTRA_OECMAKE += " -DSTORAGE_DEVS:string='/media/local,Media,Local Media Storage'"
-
