@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos29"
+EXTENDPRAUTO:append = "webos30"
 
 RRECOMMENDS:${PN} += " \
     glibc-gconv-utf-16 \
@@ -57,7 +57,7 @@ PACKAGECONFIG:append = " mesh \
 EXTRA_OECONF:remove = "--enable-external-ell"
 
 do_install:append () {
-    install -d ${D}${sysconfdir}/systemd/system
+    install -d ${D}${sysconfdir}/bluetooth
     install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
 }
 
