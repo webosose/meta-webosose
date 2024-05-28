@@ -13,11 +13,6 @@ MACHINE_FEATURES += "armnn auto-acceleration edgetpu gpu-delegate gl-backend"
 # [EXIT]: EGL Error : Could not create the egl surface: error = 0x3003
 GPU_MEM = "128"
 
-PREFERRED_PROVIDER_aval-impl = "avoutput-adaptation-layer-rpi"
-VIRTUAL-RUNTIME_aval-impl = "avoutput-adaptation-layer-rpi"
-VIRTUAL-RUNTIME_alsa-state = "avoutput-adaptation-layer-rpi"
-SKIP_RECIPE[avoutput-adaptation-layer-mock] ?= "avoutput-adaptation-layer-rpi is preferred"
-
 PREFERRED_PROVIDER_val-impl = "videooutput-adaptation-layer-rpi"
 VIRTUAL-RUNTIME_val-impl = "videooutput-adaptation-layer-rpi"
 SKIP_RECIPE[videooutput-adaptation-layer-mock] ?= "videooutput-adaptation-layer-rpi is preferred"
