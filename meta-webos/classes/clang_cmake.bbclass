@@ -26,3 +26,7 @@ TOOLCHAIN_OPTIONS = "\
 "
 
 TOOLCHAIN_OPTIONS:append = " ${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '-D_LIBCPP_ABI_UNSTABLE', '', d)}"
+
+# pass dyld-prefix with usrmerge otherwise the default loader from clang++ will be non-existent (on target)
+# /lib64/ld-linux-x86-64.so.2 instead of expected /usr/lib/ld-linux-x86-64.so.2 for qemux86-64
+TUNE_CCARGS:append = "${@bb.utils.contains("DISTRO_FEATURES", "usrmerge", " --dyld-prefix=/usr", "", d)}"
