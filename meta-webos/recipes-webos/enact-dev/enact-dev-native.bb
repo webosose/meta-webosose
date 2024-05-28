@@ -13,7 +13,7 @@ inherit native
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r13"
+PR = "r14"
 
 S = "${WORKDIR}/git"
 
