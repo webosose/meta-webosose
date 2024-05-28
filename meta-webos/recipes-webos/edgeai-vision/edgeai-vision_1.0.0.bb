@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=6e87e90c168c712da8accb5afc402bf4\
 "
 
-WEBOS_VERSION = "1.0.0-54_26ba7f0859f0e95908ab0b4c3042fd34c1232728"
+WEBOS_VERSION = "1.0.0-58_09853053809ce4aa913ed1f6d254068d60d89e6d"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r10"
+PR = "r11"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -35,6 +35,9 @@ DEPENDS = " \
     tensorflow-lite \
     googletest \
     pmloglib \
+    xsimd \
+    xtensor \
+    xtl \
 "
 
 AIF_INSTALL_DIR = "${datadir}/aif"
@@ -52,7 +55,7 @@ PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', 'edgetpu'
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'armnn', 'armnn', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'ml-library-size-reduction', '', 'examples', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'auto-acceleration', 'ads', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu xtensor fittv', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu fittv', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DWITH_XNNPACK:BOOL=TRUE,-DWITH_XNNPACK:BOOL=FALSE"
@@ -62,7 +65,6 @@ PACKAGECONFIG[armnn] = "-DWITH_ARMNN:BOOL=TRUE,-DWITH_ARMNN:BOOL=FALSE,armnn"
 PACKAGECONFIG[examples] = "-DWITH_EXAMPLES=ON -DWITH_EXTRA_MODELS=ON,-DWITH_EXAMPLES=OFF -DWITH_EXTRA_MODELS=OFF,,"
 PACKAGECONFIG[ads] = "-DWITH_AUTO_DELEGATE=ON,-DWITH_AUTO_DELEGATE=OFF,tflite-auto-delegation"
 PACKAGECONFIG[npu] = "-DWITH_NPU=ON,-DWITH_NPU=OFF,tflite-npu-delegate"
-PACKAGECONFIG[xtensor] = "-DWITH_XTENSOR:BOOL=TRUE,-DWITH_XTENSOR:BOOL=FALSE,xtensor xtl xsimd"
 PACKAGECONFIG[fittv] = "-DWITH_FITTV:BOOL=TRUE,-DWITH_FITTV:BOOL=FALSE"
 PACKAGECONFIG[nnapi] = "-DWITH_NNAPI=ON,-DWITH_NNAPI=OFF"
 
