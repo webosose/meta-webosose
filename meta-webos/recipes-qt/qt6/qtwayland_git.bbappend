@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos44"
+EXTENDPRAUTO:append = "webos45"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -56,6 +56,7 @@ TARGET_CFLAGS:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'x11', '-DUSE_X
 do_install:append() {
     # Remove files unnecessary or conflict with qtwayland-webos
     rm -rf ${D}${QT6_INSTALL_PLUGINSDIR}/platforms \
-        ${D}${QT6_INSTALL_PLUGINSDIR}/{wayland-decoration-client,wayland-graphics-integration-client} \
+        ${D}${QT6_INSTALL_PLUGINSDIR}/wayland-decoration-client \
+        ${D}${QT6_INSTALL_PLUGINSDIR}/wayland-graphics-integration-client \
         ${D}${QT6_INSTALL_PLUGINSDIR}/wayland-graphics-integration-server/libqt-wayland-compositor-wayland-eglstream-controller.so
 }
