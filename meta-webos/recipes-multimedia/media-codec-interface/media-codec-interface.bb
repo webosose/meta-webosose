@@ -23,9 +23,12 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-28_b5faa9d53c3bc37f4617e93e456a264edc49d754"
-PR = "r12"
+PR = "r13"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+# http://gpro.lge.com/c/webosose/media-codec-interface/+/396335 CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-respect-CMAKE_INSTALL_LIBDIR.patch \
+"
 
 S = "${WORKDIR}/git"
 

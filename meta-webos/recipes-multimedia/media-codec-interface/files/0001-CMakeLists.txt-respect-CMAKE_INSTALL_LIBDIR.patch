@@ -1,0 +1,61 @@
+From 13478e8396b80cdcfacd02996275af0f6ab4bf30 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Tue, 25 Jul 2023 07:26:02 +0200
+Subject: [PATCH] CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}
+
+:Release Notes:
+With multilib enabled the libdir is usr/lib64 or usr/lib32 instead of usr/lib.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/793296
+
+ERROR: QA Issue: lib32-media-codec-interface: Files/directories were installed but not shipped in any package:
+  /usr/lib/libmedia-codec-impl.so.1
+  /usr/lib/libmedia-codec-interface.so
+  /usr/lib/libmedia-codec-interface.so.1
+  /usr/lib/libmedia-codec-impl.so
+  /usr/lib/libmedia-codec-interface.so.1.0
+  /usr/lib/libmedia-codec-impl.so.1.0
+Please set FILES such that these items are packaged. Alternatively if they are unneeded, avoid installing them or delete them within do_install.
+lib32-media-codec-interface: 6 installed and not shipped files. [installed-vs-shipped]
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-10922] Fix compilation errors in MCIL
+
+Change-Id: I83b65b01b0b04c7e2b29f8977a4e2805165cb7bf
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/media-codec-interface/+/396335 CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}]
+
+ src/api/CMakeLists.txt  | 2 +-
+ src/impl/CMakeLists.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/api/CMakeLists.txt b/src/api/CMakeLists.txt
+index 20ad2ed..8cea077 100644
+--- a/src/api/CMakeLists.txt
++++ b/src/api/CMakeLists.txt
+@@ -56,6 +56,6 @@ else()
+   target_link_libraries(${MEDIA_CODEC_INTERFACE_LIB} ${MEDIA_CODEC_INTERFACE_LIBRARIES} media-codec-impl)
+ endif()
+ 
+-install(TARGETS ${MEDIA_CODEC_INTERFACE_LIB} DESTINATION lib)
++install(TARGETS ${MEDIA_CODEC_INTERFACE_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install(FILES ${MEDIA_CODEC_INTERFACE_HEADERS} DESTINATION include/mcil)
+ 
+diff --git a/src/impl/CMakeLists.txt b/src/impl/CMakeLists.txt
+index a641622..e6fea67 100644
+--- a/src/impl/CMakeLists.txt
++++ b/src/impl/CMakeLists.txt
+@@ -62,4 +62,4 @@ add_library(${MEDIA_IMPL_LIB} SHARED ${MEDIA_IMPL_SRC})
+ set_target_properties (${MEDIA_IMPL_LIB} PROPERTIES VERSION 1.0 SOVERSION 1)
+ target_link_libraries(${MEDIA_IMPL_LIB} ${MEDIA_IMPL_LIBRARIES})
+ 
+-install(TARGETS ${MEDIA_IMPL_LIB} DESTINATION lib)
++install(TARGETS ${MEDIA_IMPL_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR})
