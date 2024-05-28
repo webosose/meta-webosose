@@ -20,7 +20,8 @@ COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
 COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
-WEBOS_VERSION = "3.0.2-7_b759589be50ce52c4ae4e6af40ecbc78c7232a96"
+WEBOS_VERSION = "3.0.2-8_16771a22ae39002f867e60bb0726c66c0f5a532c"
+
 PR = "r11"
 
 inherit webos_component
