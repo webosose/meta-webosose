@@ -24,8 +24,8 @@ RDEPENDS:${PN} = "\
     pulseaudio-server \
 "
 
-WEBOS_VERSION = "1.0.0-72_aae2e3def31989cf950614276ded8622056d3e1c"
-PR = "r36"
+WEBOS_VERSION = "1.0.0-73_d9a2d90395a1b89101a9fa689f6533833764cbe2"
+PR = "r37"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -33,7 +33,7 @@ inherit webos_cmake
 inherit webos_library
 inherit webos_daemon
 inherit webos_system_bus
-inherit webos_machine_dep
+inherit webos_machine_impl_dep
 inherit gettext
 inherit webos_lttng
 inherit webos_public_repo
