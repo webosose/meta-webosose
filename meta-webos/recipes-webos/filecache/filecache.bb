@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "jemalloc luna-service2 db8 glibmm boost libsandbox glib-2.0 libsigc++-2.0"
 
-WEBOS_VERSION = "2.0.1-12_31660e50ab350dab3304bc57a87ee68d65a8edf7"
+WEBOS_VERSION = "2.0.1-13_62466fb6f04d9420e4dc65caf06fd2ae98251d29"
 PR = "r6"
 
 inherit webos_component
