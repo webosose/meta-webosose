@@ -13,10 +13,6 @@ MACHINE_FEATURES += "armnn auto-acceleration edgetpu gpu-delegate gl-backend"
 # [EXIT]: EGL Error : Could not create the egl surface: error = 0x3003
 GPU_MEM = "128"
 
-PREFERRED_PROVIDER_val-impl = "videooutput-adaptation-layer-rpi"
-VIRTUAL-RUNTIME_val-impl = "videooutput-adaptation-layer-rpi"
-SKIP_RECIPE[videooutput-adaptation-layer-mock] ?= "videooutput-adaptation-layer-rpi is preferred"
-
 SKIP_RECIPE[omxplayer] ?= "not compatible with webOS Open components"
 SKIP_RECIPE[packagegroup-rpi-test] ?= "rdepends on omxplayer"
 SKIP_RECIPE[rpi-test-image] ?= "rdepends on packagegroup-rpi-test"
