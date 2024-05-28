@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r48"
+PR = "r49"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -30,11 +30,11 @@ VIRTUAL-RUNTIME_g-media-pipeline:qemux86 = "g-media-pipeline"
 VIRTUAL-RUNTIME_g-media-pipeline:qemux86-64 = "g-media-pipeline"
 
 
-VIRTUAL-RUNTIME_nodejs-module-node-red ?= "nodejs-module-node-red"
+VIRTUAL-RUNTIME_nodejs-module-node-red ?= "node-red"
 VIRTUAL-RUNTIME_nodejs-module-node-red:armv4 = ""
 VIRTUAL-RUNTIME_nodejs-module-node-red:armv5 = ""
 
-# The same restrition as nodejs (and nodejs-module-node-red and com.webos.service.contextintentmgr)
+# The same restrition as nodejs (and node-red and com.webos.service.contextintentmgr)
 VIRTUAL-RUNTIME_contextintentmgr ?= "com.webos.service.contextintentmgr"
 VIRTUAL-RUNTIME_contextintentmgr:armv4 = ""
 VIRTUAL-RUNTIME_contextintentmgr:armv5 = ""

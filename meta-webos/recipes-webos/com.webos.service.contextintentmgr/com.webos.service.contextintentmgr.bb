@@ -10,12 +10,12 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=fe9bd85c6f789c8ada9c8b72c7454254 \
 "
 
-DEPENDS = "nodejs-module-node-red"
+DEPENDS = "node-red"
 
 WEBOS_VERSION = "1.0.0-19_15340c48143f287d667ce0c48a3ecbbad94691d1"
-PR = "r6"
+PR = "r7"
 
-# The same restrition as nodejs (and nodejs-module-node-red)
+# The same restrition as nodejs (and node-red)
 COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
 COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"

@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=66c8021042d90a78e662c2cf62e2ee13 \
 "
 
-RDEPENDS:${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service nodejs-module-node-red"
+RDEPENDS:${PN} += "luna-service2 pmloglib nodejs nodejs-module-webos-service node-red"
 
 inherit systemd
 inherit webos_cmake
@@ -18,9 +18,9 @@ inherit webos_enhanced_submissions
 inherit webos_npm_env
 
 require flowmanager.inc
-PR = "r9"
+PR = "r10"
 
-# The same restrition as nodejs (and nodejs-module-node-red)
+# The same restrition as nodejs (and node-red)
 COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
 COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
