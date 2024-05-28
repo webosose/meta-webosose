@@ -8,10 +8,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "luna-service2 libpbnjson glib-2.0 procps sqlite3"
+DEPENDS = "luna-service2 libpbnjson glib-2.0 sqlite3"
 
-WEBOS_VERSION = "1.0.0-10_d48cc0481448810de233b91aa8a83989b652881c"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-14_2b434a6c598a885d262d30a978826f5cf6c59a89"
+PR = "r5"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -20,11 +20,8 @@ inherit webos_pkgconfig
 inherit webos_public_repo
 inherit webos_system_bus
 
-# http://gpro.lge.com/c/webosose/com.webos.service.unifiedsearch/+/347405 Fix build with gcc-12
-# http://gpro.lge.com/c/webosose/com.webos.service.unifiedsearch/+/347406 CMakeLists.txt: update from libprocps to libproc2
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Fix-build-with-gcc-12.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
