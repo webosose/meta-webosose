@@ -461,6 +461,20 @@ PACKAGE_ADD_METADATA = "Author: ${PACKAGE_ADD_AUTHOR_METADATA}\nRP-Maintainer: $
 PACKAGE_ADD_RECIPES_METADATA ?= ""
 PACKAGE_ADD_METADATA .= "\n${PACKAGE_ADD_RECIPES_METADATA}"
 
+# Avoid adding these fields to RPM and DEP
+# breaking RPM builds as shown in http://errors.yoctoproject.org/Errors/Details/751706/
+PACKAGE_ADD_METADATA_RPM = ""
+PACKAGE_ADD_METADATA_DEP = ""
+
+# To support these fields with opkg package-index where it causes a lot of "Lost field" messages
+# we need to pass -f to opkg-make-index as it was added in:
+# https://git.yoctoproject.org/opkg-utils/commit/opkg-make-index?id=13f6281d24e17199e0fef6c2984419372ea0f86f
+# but there is no simple way to add -f in kirkstone, for scarthgap and newer it will implemented soon with:
+# https://lists.openembedded.org/g/openembedded-core/message/194813
+# https://lists.openembedded.org/g/openembedded-core/message/194814
+OPKG_MAKE_INDEX_EXTRA_PARAMS = "-f"
+RPMBUILD_EXTRA_PARAMS = " --define '_Author Author' --define '_RP-Maintainer RP-Maintainer' --define '_Recipes Recipes'"
+
 # Set ccache configuration from <top layer>/conf/ccache.conf
 export CCACHE_CONFIGPATH = "${@bb.utils.which('${BBPATH}', 'conf/ccache.conf')}"
 export CCACHE_COMPILERCHECK = "content"
