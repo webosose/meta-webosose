@@ -1,0 +1,23 @@
+From 5c04cc6158ec145d14f07785ee880ab6f32a1578 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 20 Jan 2024 12:48:30 +0100
+Subject: [PATCH] package.json: use node-gyp 10
+
+---
+Upstream-Status: Pending
+
+ package.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package.json b/package.json
+index fadf149..24402c9 100644
+--- a/package.json
++++ b/package.json
+@@ -33,6 +33,6 @@
+     "bindings": "^1.5.0",
+     "debug": "^4.3.4",
+     "nan": "^2.15.0",
+-    "node-gyp": "^9.0.0"
++    "node-gyp": "^10.0.0"
+   }
+ }
