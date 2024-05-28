@@ -1,0 +1,70 @@
+From 8d137b6cb1c299a2e896e7fb1705f0149d86879a Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 29 Feb 2024 12:17:12 +0100
+Subject: [PATCH] opkg-make-index: set -f by default
+
+:Release Notes:
+This is temporary work around to pass extra parameter to opkg-make-index
+calls during do_rootfs.
+
+:Detailed Notes:
+This should be dropped once we upgrade to Yocto 5.0 Scarthgap which
+allows to pass this with OPKG_MAKE_INDEX_EXTRA_PARAMS:
+https://git.openembedded.org/openembedded-core/commit/?id=6dc772fd9d5c2d90a6e32cfa4bc46ca0221f1b7f
+
+Fixes thousands NOTE messages in do_rootfs tasks like:
+http://gecko.lge.com:8000/Errors/Details/785473
+
+NOTE: Lost field Author, Unspecified
+Lost field RP-Maintainer, Unspecified
+Lost field Recipes, oe-core/meta/recipes-core/meta/target-sdk-provides-dummy.bb
+Lost field Author, Unspecified
+Lost field RP-Maintainer, Unspecified
+Lost field Recipes, oe-core/meta/recipes-core/meta/target-sdk-provides-dummy.bb
+Lost field Author, Unspecified
+Lost field RP-Maintainer, Unspecified
+Lost field Recipes, oe-core/meta/recipes-core/meta/target-sdk-provides-dummy.bb
+
+NOTE: Lost field Author, Unspecified
+Lost field RP-Maintainer, Unspecified
+Lost field Recipes, oe-core/meta/recipes-core/meta/nativesdk-sdk-provides-dummy.bb
+Lost field Author, Unspecified
+Lost field RP-Maintainer, Unspecified
+Lost field Recipes, oe-core/meta/recipes-core/meta/nativesdk-sdk-provides-dummy.bb
+Lost field Author, Unspecified
+Lost field RP-Maintainer, Unspecified
+Lost field Recipes, oe-core/meta/recipes-core/meta/nativesdk-sdk-provides-dummy.bb
+
+because webos.inc uses PACKAGE_ADD_METADATA to add extra fields to
+packagedata, but they aren't known to opkg-make-index, see:
+
+http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/391098
+"webos: Avoid adding user-defined fields to packages"
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-10346] CCC: Avoid adding user-defined fields to packages
+---
+Upstream-Status: Inappropriate [webOS specific]
+
+ opkg-make-index | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/opkg-make-index b/opkg-make-index
+index ea104fb..a4ca808 100755
+--- a/opkg-make-index
++++ b/opkg-make-index
+@@ -47,7 +47,7 @@ def main():
+                         help='Old simulation mode')
+     parser.add_argument('-m', dest='opt_m', action="store_true", help='Archive old packages')
+     parser.add_argument('-a', dest='opt_a', action='store_true', help='Add version information')
+-    parser.add_argument('-f', dest='opt_f', action='store_true', help='Include user-defined fields')
++    parser.add_argument('-f', dest='opt_f', default=True, action='store_true', help='Include user-defined fields')
+     parser.add_argument('-l', dest='filelist_filename', default=None, help='Packages filelist name')
+     parser.add_argument('-p', dest='packages_filename', default=None, help='Package index filename')
+     parser.add_argument('-r', dest='old_filename', help='Old Package index filename')
