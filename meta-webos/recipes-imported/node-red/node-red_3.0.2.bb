@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=014f1a23c3da49aa929b21a96808ab22"
 
 inherit npm
 
-PR = "r0"
+PR = "r1"
 
 SRC_URI = "\
     https://github.com/${BPN}/${BPN}/releases/download/${PV}/${BPN}-${PV}.zip \
@@ -23,12 +23,12 @@ do_install:append() {
     install -m 0644 ${WORKDIR}/${BPN}.service ${D}${systemd_unitdir}/system/
 
     # Remove hardware specific files
-    rm ${D}/${bindir}/${BPN}-pi
-    rm -rf ${D}/${libdir}/node_modules/${BPN}/bin
+    rm -v ${D}/${bindir}/${BPN}-pi
+    rm -rvf ${D}${nonarch_libdir}/node_modules/${BPN}/bin
 
     # Remove tmp files
-    rm -rf ${D}/${libdir}/node_modules/${BPN}/node_modules/bcrypt/build-tmp-napi-v3
-    rm -rf ${D}/${libdir}/node_modules/${BPN}/node_modules/bcrypt/node-addon-api
+    rm -rvf ${D}${nonarch_libdir}/node_modules/${BPN}/node_modules/bcrypt/build-tmp-napi-v3
+    rm -rvf ${D}${nonarch_libdir}/node_modules/${BPN}/node_modules/bcrypt/node-addon-api
 }
 
 inherit systemd
