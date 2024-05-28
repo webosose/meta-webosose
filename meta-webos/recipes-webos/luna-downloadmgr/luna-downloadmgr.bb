@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "libpbnjson luna-service2 sqlite3 curl uriparser pmloglib jemalloc luna-prefs boost glib-2.0"
 RDEPENDS:${PN} = "applicationinstallerutility"
 
-WEBOS_VERSION = "4.0.0-13_022c247b8703c5cbb3ab0c31b349494d4d2e3308"
+WEBOS_VERSION = "4.0.0-14_64d8126e478253529fee8692dff914245fc35005"
 PR = "r12"
 
 inherit webos_component
