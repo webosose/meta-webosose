@@ -176,8 +176,9 @@ def errorreport_get_sstatemirror(e):
     return sstatemirror
 
 def errorreport_get_premirror(e):
-    premirror = e.data.getVar("PREMIRRORS").replace("\\n", "\\n\n")
+    premirror = e.data.getVar("PREMIRRORS")
     if premirror:
+        premirror = premirror.replace("\\n", "\\n\n")
         url = e.data.getVar("SOURCE_MIRROR_URL")
         if url:
             premirror += errorreport_checkmirror("premirror", url)
