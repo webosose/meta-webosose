@@ -461,6 +461,9 @@ PACKAGE_ADD_METADATA = "Author: ${PACKAGE_ADD_AUTHOR_METADATA}\nRP-Maintainer: $
 PACKAGE_ADD_RECIPES_METADATA ?= ""
 PACKAGE_ADD_METADATA .= "\n${PACKAGE_ADD_RECIPES_METADATA}"
 
+# Force PACKAGE_CLASSES to IPK, currently webOS support IPK only
+PACKAGE_CLASSES = "package_ipk"
+
 # Avoid adding these fields to RPM and DEP
 # breaking RPM builds as shown in http://errors.yoctoproject.org/Errors/Details/751706/
 PACKAGE_ADD_METADATA_RPM = ""
