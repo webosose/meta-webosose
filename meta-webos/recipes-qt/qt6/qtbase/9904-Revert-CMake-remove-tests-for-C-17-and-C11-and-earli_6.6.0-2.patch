@@ -1,4 +1,4 @@
-From 29a3a5337268ceba915cc7ee6dc2e56de98fbc36 Mon Sep 17 00:00:00 2001
+From 3b15660cdaee1a08c3ed044b3360c26679f76065 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Fri, 14 Apr 2023 06:16:46 +0900
 Subject: [PATCH] Revert "CMake: remove tests for C++17 and C11 and earlier"
@@ -13,10 +13,10 @@ Upstream-Status: Inappropriate [webOS specific]
  3 files changed, 109 insertions(+), 4 deletions(-)
 
 diff --git a/configure.cmake b/configure.cmake
-index 037aab9b2d2..be6eed299a1 100644
+index 856b4a94ed..066ab8aa26 100644
 --- a/configure.cmake
 +++ b/configure.cmake
-@@ -211,6 +211,51 @@ endif()
+@@ -203,6 +203,51 @@ endif()
  # machineTuple
  qt_config_compile_test_machine_tuple("machine tuple")
  
@@ -68,7 +68,7 @@ index 037aab9b2d2..be6eed299a1 100644
  # cxx20
  qt_config_compile_test(cxx20
      LABEL "C++20 support"
-@@ -618,10 +663,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
+@@ -613,10 +658,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
      NEGATE
      NAME "no_plugin_manifest"
  )
@@ -99,10 +99,10 @@ index 037aab9b2d2..be6eed299a1 100644
  )
  qt_feature_config("c++20" QMAKE_PUBLIC_QT_CONFIG)
  qt_feature("c++2a" PUBLIC
-@@ -635,6 +699,17 @@ qt_feature("c++2b" PUBLIC
+@@ -634,6 +698,17 @@ qt_feature("c++2b" PUBLIC
+     AUTODETECT FALSE
      CONDITION QT_FEATURE_cxx20 AND (CMAKE_VERSION VERSION_GREATER_EQUAL "3.20") AND TEST_cxx2b
  )
- qt_feature_config("c++2b" QMAKE_PUBLIC_QT_CONFIG)
 +qt_feature("c89"
 +    LABEL "C89"
 +)
@@ -117,7 +117,7 @@ index 037aab9b2d2..be6eed299a1 100644
  qt_feature("precompile_header"
      LABEL "Using precompiled headers"
      CONDITION BUILD_WITH_PCH AND TEST_precompile_header
-@@ -1101,6 +1176,16 @@ qt_configure_add_summary_entry(
+@@ -1063,6 +1138,16 @@ qt_configure_add_summary_entry(
      ARGS "optimize_full"
  )
  qt_configure_add_summary_entry(ARGS "shared")
@@ -135,10 +135,10 @@ index 037aab9b2d2..be6eed299a1 100644
      ARGS "ccache"
      CONDITION UNIX
 diff --git a/mkspecs/features/mac/default_post.prf b/mkspecs/features/mac/default_post.prf
-index 0b64a586b93..4a0e3d87b40 100644
+index f364716717..4acf3b19d5 100644
 --- a/mkspecs/features/mac/default_post.prf
 +++ b/mkspecs/features/mac/default_post.prf
-@@ -51,6 +51,29 @@ contains(TEMPLATE, .*app) {
+@@ -50,6 +50,29 @@ contains(TEMPLATE, .*app) {
  
  !no_objective_c:CONFIG += objective_c
  
@@ -169,7 +169,7 @@ index 0b64a586b93..4a0e3d87b40 100644
  # This is especially important for iOS/tvOS/watchOS where no other option is possible.
  !no_default_rpath {
 diff --git a/mkspecs/features/qt.prf b/mkspecs/features/qt.prf
-index acf7bd651fd..6092fd59658 100644
+index 8697237b42..d099755fe7 100644
 --- a/mkspecs/features/qt.prf
 +++ b/mkspecs/features/qt.prf
 @@ -2,9 +2,6 @@

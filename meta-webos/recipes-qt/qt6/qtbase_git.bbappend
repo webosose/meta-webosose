@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos120"
+EXTENDPRAUTO:append = "webos121"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -105,16 +105,17 @@ SRC_URI:append = " \
 # https://bugreports.qt.io/browse/WEBOSCI-66
 # https://bugreports.qt.io/browse/WEBOSCI-81
 # https://bugreports.qt.io/browse/WEBOSCI-86
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.5.1;maxver=6.5.1"
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.5.x.patch;minver=6.5.2;maxver=6.5.*"
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.6.1.patch;minver=6.6.0;maxver=6.6.1"
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.6.x.patch;minver=6.6.2;maxver=6.6.*"
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.7.x.patch;minver=6.7.0;maxver=6.7.*"
-SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.8.x.patch;minver=6.8.0"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.5.1.patch;minver=6.5.1;maxver=6.5.1"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.5.2-x.patch;minver=6.5.2;maxver=6.5.*"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.6.0-1.patch;minver=6.6.0;maxver=6.6.1"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.6.2-x.patch;minver=6.6.2;maxver=6.6.*"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-_6.7.0-x.patch;minver=6.7.0;maxver=6.7.*"
+SRC_URI:append:class-native = " file://9902-Revert-Remove-perl-related-functionality-from-CMake-.patch;minver=6.8.0"
 # https://bugreports.qt.io/browse/WEBOSCI-73
-SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.5.1 "
+SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.5.1"
 # https://bugreports.qt.io/browse/WEBOSCI-76
-SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli.patch;minver=6.6.0"
+SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli_6.6.0-2.patch;minver=6.6.0;maxver=6.6.2"
+SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli.patch;minver=6.6.3"
 # https://bugreports.qt.io/browse/WEBOSCI-64
 SRC_URI:append:class-native = " file://9905-Revert-Remove-syncqt.pl.patch;minver=6.7.0"
 
