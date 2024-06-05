@@ -21,7 +21,6 @@ WEBOS_PKGCONFIG_BUILDDIR = "${B}"
 
 EXTRA_OECMAKE += "-DWEBOS_INSTALL_ROOT:PATH=/"
 
-WEBOS_TARGET_DISTRO_VARIANT ??= "bitbake-conf-in-meta-webos-was-not-parsed"
 WEBOS_TARGET_MACHINE_IMPL ??= "invalid-missing-inherit-webos_machine_impl_dep"
 WEBOS_TARGET_MACHINE_VARIANT ??= "invalid-missing-inherit-webos_machine_variant_dep"
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
@@ -83,24 +82,6 @@ EXTRA_OECMAKE_MACHINE_VARIANT = "${@ \
 }"
 EXTRA_OECMAKE_MACHINE_VARIANT[vardepvalue] = "${EXTRA_OECMAKE_MACHINE_VARIANT}"
 EXTRA_OECMAKE += "${EXTRA_OECMAKE_MACHINE_VARIANT}"
-
-# If DISTRO is unset, don't add -DWEBOS_TARGET_DISTRO. If it is set, always pass
-# it, even for -native components.
-EXTRA_OECMAKE_DISTRO = "${@ \
-    '-DWEBOS_TARGET_DISTRO:STRING=' + d.getVar('DISTRO') \
-    if bb.data.inherits_class('webos_distro_dep', d) and (d.getVar('DISTRO') or '') != '' else \
-    '' \
-}"
-EXTRA_OECMAKE_DISTRO[vardepvalue] = "${EXTRA_OECMAKE_DISTRO}"
-EXTRA_OECMAKE += "${EXTRA_OECMAKE_DISTRO}"
-
-EXTRA_OECMAKE_DISTRO_VARIANT = "${@ \
-    '-DWEBOS_TARGET_DISTRO_VARIANT:STRING=${WEBOS_TARGET_DISTRO_VARIANT}' \
-    if bb.data.inherits_class('webos_distro_variant_dep', d) and not bb.data.inherits_class('native', d) else \
-    '' \
-}"
-EXTRA_OECMAKE_DISTRO_VARIANT[vardepvalue] = "${EXTRA_OECMAKE_DISTRO_VARIANT}"
-EXTRA_OECMAKE += "${EXTRA_OECMAKE_DISTRO_VARIANT}"
 
 # This information is always useful to have around
 EXTRA_OECMAKE += "-Wdev"
