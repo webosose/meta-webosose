@@ -6,8 +6,8 @@ AUTHOR = "Vijaya Sundaram <vijaya.sundaram@lge.com>"
 SECTION = "webos/devel/tools"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.6.3-7_4c1b92bb80b71cae7df829bb9fabd5bc7c204d08"
-PR = "r3"
+WEBOS_VERSION = "1.6.5-8_a7603cd37dcafb5d27310f3960a007a6d4ce71e9"
+PR = "r0"
 
 inherit webos_component
 inherit webos_public_repo
@@ -23,4 +23,3 @@ S = "${WORKDIR}/git"
 do_compile() {
      :
 }
-
