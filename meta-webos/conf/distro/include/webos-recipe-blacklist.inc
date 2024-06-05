@@ -20,6 +20,8 @@ SKIP_RECIPE[qtdatavis3d] ?= "fails to build with ninja: error: unknown target 'i
 SKIP_RECIPE[qtgraphs] ?= "fails to build with ninja: error: unknown target 'install' http://gecko.lge.com:8000/Errors/Details/728937"
 SKIP_RECIPE[qtmultimedia] ?= "fails to build: qtmultimedia/6.0.0-r1/git/src/qtmultimediaquicktools/qsgvideonode_texture.cpp:56:30: error: 'class QSGRhiSupport' has no member named 'isRhiEnabled'. http://gecko.lge.com:8000/Errors/Details/565741"
 SKIP_RECIPE[qtpdf] ?= "fails to build with widgets disabled in qtbase: Failed to find required Qt component Widgets. http://gecko.lge.com:8000/Errors/Details/565740"
+SKIP_RECIPE[python3-pyqt6] ?= "fails to build with widgets disabled in qtbase: Project ERROR: Unknown module(s) in QT: widgets http://gecko.lge.com:8000/Errors/Details/800723"
+SKIP_RECIPE[python3-shiboken6] ?= "fails to build: python3-shiboken6-native/6.6.3/git/sources/shiboken6/ApiExtractor/include.h:58:16: error: strong_ordering in namespace Qt does not name a type http://gecko.lge.com:8000/Errors/Details/800722"
 SKIP_RECIPE[qtwebengine] ?= "fails to build with printing-and-pdf PACKAGECONFIG enabled (default): ERROR: Feature 'webengine_printing_and_pdf': Forcing to 'ON' breaks its condition: TARGET Qt::PrintSupport AND QT_FEATURE_printer AND ( CUPS_FOUND OR WIN32 ) Condition values dump: TARGET Qt::PrintSupport not found QT_FEATURE_printer not evaluated CUPS_FOUND = 'TRUE' WIN32 = '' http://gecko.lge.com:8000/Errors/Details/565744"
 SKIP_RECIPE[qtwebview] ?= "depends on blacklisted qtwebengine"
 SKIP_RECIPE[qtinterfaceframework] ?= "depends on blacklisted qtmultimedia"
