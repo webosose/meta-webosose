@@ -14,7 +14,7 @@ DEPENDS = "libpbnjson luna-service2 sqlite3 curl uriparser pmloglib jemalloc lun
 RDEPENDS:${PN} = "applicationinstallerutility"
 
 WEBOS_VERSION = "4.0.0-14_64d8126e478253529fee8692dff914245fc35005"
-PR = "r12"
+PR = "r13"
 
 inherit webos_component
 inherit webos_library
@@ -42,3 +42,5 @@ do_install:append() {
     rm -f ${D}${sysconfdir}/systemd/system/luna-download-mgr.service
     rm -f ${D}${sysconfdir}/systemd/system/scripts/luna-download-mgr.sh
 }
+
+PACKAGECONFIG[enable-app-specific-data-paths] = "-Denable_app_specific_data_paths:BOOL=True,-Denable_app_specific_data_paths:BOOL=False,"
