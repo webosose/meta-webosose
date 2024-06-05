@@ -2,8 +2,8 @@
 
 require conf/distro/include/webos.inc
 
-# Increament when features are changed
-_pr_suffix .= ".0"
+# Increment when features are changed
+_pr_suffix .= ".1"
 
 # Keep in sync with setting in oe-core/meta/conf/distro/include/default-distrovars.inc
 # TODO: Maybe change this to use "_remove" when it's introduced in bitbake
@@ -11,11 +11,13 @@ _pr_suffix .= ".0"
 # Split some features to separate variables
 # Remove argp (not used in OE anymore) and x11 (not needed for webOS OSE)
 WEBOS_DISTRO_FEATURES_DEFAULT = "debuginfod"
-WEBOS_DISTRO_FEATURES_OPENGL = "opengl"
+WEBOS_DISTRO_FEATURES_OPENGL = ""
 WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM = ""
 # Remove pci pcmcia
 WEBOS_DISTRO_FEATURES_BUSES = ""
 WEBOS_DISTRO_FEATURES_USB = ""
+# connman requires wifi even it disable wifi in package config
+# http://gecko.lge.com:8000/Errors/Details/802656
 WEBOS_DISTRO_FEATURES_CONNECTIVITY = "wifi"
 WEBOS_DISTRO_FEATURES_NETWORKING = ""
 

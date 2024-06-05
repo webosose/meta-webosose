@@ -2,7 +2,7 @@
 
 require conf/distro/include/features/webos-features-minimal.inc
 
-# Increament when features are changed
+# Increment when features are changed
 _pr_suffix .= ".0"
 
 # Addition/removal distro features

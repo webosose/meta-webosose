@@ -2,11 +2,12 @@
 
 require conf/distro/include/features/webos-features-core-boot.inc
 
-# Increament when features are changed
-_pr_suffix .= ".1"
+# Increment when features are changed
+_pr_suffix .= ".2"
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_DEFAULT += "alsa ext2 irda largefile xattr"
+WEBOS_DISTRO_FEATURES_OPENGL += "opengl"
 WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM += "wayland"
 WEBOS_DISTRO_FEATURES_USB += "usbhost usbgadget"
 WEBOS_DISTRO_FEATURES_CONNECTIVITY += "bluetooth ipv6"
