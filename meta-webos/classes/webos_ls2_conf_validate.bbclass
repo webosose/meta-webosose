@@ -153,7 +153,7 @@ fakeroot python do_validate_ls2_acg() {
         msg = "=== LIST BEGIN: Groups considered as exception ===\n"
         for group in sorted(skip_group):
             msg += "  %s\n" % group
-        msg += "=== LIST END ===\n"
+        msg += "=== LIST END ==="
         bb.note(msg)
     # Always skip 'allowedNames' which is being used a key in old-style groups.json
     skip_group.append("allowedNames")
@@ -170,7 +170,7 @@ fakeroot python do_validate_ls2_acg() {
                     with open(entry.path) as fp:
                         groups_json = json.load(fp)
                         groups.update(filter(lambda x: x not in skip_group, groups_json.keys()))
-        msg += "Done reading groups from %s\n" % dir
+        msg += "Done reading groups from %s" % dir
         bb.debug(1, msg)
         return groups
 
@@ -187,8 +187,8 @@ fakeroot python do_validate_ls2_acg() {
                     if not group in groups:
                         missing_groups.add(group)
             for group in sorted(missing_groups):
-                msg += "  %s%s" % (group, " => missing" if not group in groups else "\n")
-        msg += "Done checking groups in %s\n" % perm_entry.name
+                msg += "  %s%s" % (group, " => missing\n" if not group in groups else "\n")
+        msg += "Done checking groups in %s" % perm_entry.name
         bb.debug(1, msg)
         return missing_groups
 
@@ -205,7 +205,7 @@ fakeroot python do_validate_ls2_acg() {
     msg += "=== LIST BEGIN: Groups used in api-permissions.d(%s) ===\n" % rootfs_api_perms_d
     for group in sorted(groups_defined2):
         msg += "  %s\n" % group
-    msg += "=== LIST END ===\n"
+    msg += "=== LIST END ==="
     bb.debug(2, msg)
 
     # Merge groups from "groups.d" and "api-permissions.d" with showing differences.
@@ -217,13 +217,13 @@ fakeroot python do_validate_ls2_acg() {
         msg += "=== LIST BEGIN: Groups used in api-permissions.d but not defined in groups.d ===\n"
         for group in sorted(groups_defined2):
             msg += "  %s\n" % group
-        msg += "=== LIST END ===\n"
+        msg += "=== LIST END ==="
         bb.note(msg)
     groups_valid = groups_defined.union(groups_defined2)
     msg = "=== LIST BEGIN: Groups considered as valid ===\n"
     for group in sorted(groups_valid):
         msg += "  %s\n" % group
-    msg += "=== LIST END ===\n"
+    msg += "=== LIST END ==="
     bb.note(msg)
 
     # Iterate files in "client-permissions.d" and list up groups
@@ -242,16 +242,18 @@ fakeroot python do_validate_ls2_acg() {
     # Raise a warning or error(if enabled) if any missing group is found.
     cnt = len(groups_missing)
     if cnt > 0:
-        msg = "Found %d group(s) used in client-permissions.d but not defined\n" % cnt
+        msg = "Found %d group(s) used in client-permissions.d but not defined, should be fixed in a distro with ACG enabled\n" % cnt
         msg += "=== LIST BEGIN ===\n"
         for group in sorted(groups_missing):
             msg += "'%s' being used in:\n" % group
             for entry in sorted(groups_missing[group]):
                 msg += "  %s\n" % entry
-        msg += "=== LIST END =====\n"
-        bb.note(msg)
+        msg += "=== LIST END ====="
         if d.getVar("WEBOS_LS2_CONF_VALIDATE_ERROR_ON_WARNING") != "0":
-            bb.fatal("Fatal error while checking groups, aborting!")
+            msg += "\nFatal error while checking groups, aborting!"
+            bb.fatal(msg)
+        else:
+            bb.note(msg)
 }
 
 addtask do_validate_ls2_security_conf after do_rootfs before do_image
