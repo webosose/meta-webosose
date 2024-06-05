@@ -34,6 +34,8 @@ BUILD_TYPE = "Release"
 OUT_DIR = "${B}/${BUILD_TYPE}"
 OUT_IMAGE_DIR = "${OUT_DIR}/image"
 
+HOST_TOOLCHAIN_GCC = "host_toolchain=\"//build/toolchain/cros:host\""
+
 GN_ARGS = "\
     cros_host_ar=\"${BUILD_AR}\"\
     cros_host_cc=\"${BUILD_CC}\"\
@@ -51,7 +53,6 @@ GN_ARGS = "\
     v8_snapshot_toolchain=\"//build/toolchain/cros:v8_snapshot_clang_${TARGET_CPU}\"\
     host_pkg_config=\"pkg-config-native\"\
     host_os=\"linux\"\
-    host_toolchain=\"//build/toolchain/cros:host\" \
     is_cross_linux_build=true\
     is_webos=true\
     is_debug=false\
@@ -63,6 +64,7 @@ GN_ARGS = "\
     webos_toolprefix=\"${HOST_PREFIX}\"\
     ${GN_ARGS_CLANG} \
     ${GN_ARGS_LIBCXX} \
+    ${HOST_TOOLCHAIN_GCC} \
 "
 
 GN_ARGS_CLANG = "is_clang=false"
