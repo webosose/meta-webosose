@@ -15,7 +15,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=2ee41112a44fe7014dce33e26468ba93"
 SECTION = "net"
 
-PR = "r0"
+PR = "r1"
 PV = "1.7.4"
 
 SRCREV = "d638a11725ecdaf683be6167709c4712559cde79"
@@ -58,3 +58,9 @@ inherit cmake systemd
 
 SYSTEMD_SERVICE:${PN} = "fluent-bit.service"
 TARGET_CC_ARCH:append = " ${SELECTED_OPTIMIZATION}"
+
+# bundled monkey in fluentbit/1.7.4/lib/monkey
+# fails to build without fcommon as shown in:
+# http://gecko.lge.com:8000/Errors/Details/822527
+# https://bugs.gentoo.org/707642
+CFLAGS += "-fcommon"
