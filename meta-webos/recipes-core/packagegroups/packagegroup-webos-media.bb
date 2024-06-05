@@ -4,7 +4,7 @@ DESCRIPTION = "Components for media added to webOS"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r2"
+PR = "r3"
 
 inherit packagegroup
 inherit features_check
@@ -29,6 +29,7 @@ RDEPENDS:${PN} = " \
     gstreamer1.0-plugins-base \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-ugly \
+    ${VIRTUAL-RUNTIME_mediarecorder} \
     ${VIRTUAL-RUNTIME_umediaserver} \
 "
 
@@ -36,7 +37,6 @@ RDEPENDS:${PN} = " \
 RDEPENDS:${PN}:append:webos = " \
     com.webos.app.videoplayer \
     ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
-    ${VIRTUAL-RUNTIME_mediarecorder} \
 "
 
 # Add to qemu target only
