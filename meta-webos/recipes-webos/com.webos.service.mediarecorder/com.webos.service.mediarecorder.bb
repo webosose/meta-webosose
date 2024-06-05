@@ -1,4 +1,5 @@
 # Copyright (c) 2023-2024 LG Electronics, Inc.
+
 SUMMARY = "Media Recorder Service"
 AUTHOR = "Sungho Lee <shl.lee@lge.com>"
 SECTION = "webos/services"
@@ -15,7 +16,7 @@ DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 DEPENDS += "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 
 WEBOS_VERSION = "1.0.0-7_8faaa2f728696f31bd2aed94e1020ca16ce94612"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_cmake
@@ -24,6 +25,8 @@ inherit webos_public_repo
 inherit webos_system_bus
 inherit webos_daemon
 inherit webos_machine_impl_dep
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
