@@ -16,6 +16,8 @@ inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
@@ -23,7 +25,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-28_b5faa9d53c3bc37f4617e93e456a264edc49d754"
-PR = "r13"
+PR = "r14"
 
 # http://gpro.lge.com/c/webosose/media-codec-interface/+/396335 CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \

@@ -18,6 +18,8 @@ inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_pkgconfig
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 # media-resource-calculator since submissions 47 isn't usable for any other MACHINE than
 # raspberrypi3
@@ -28,7 +30,7 @@ inherit webos_pkgconfig
 # qemux86-64
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
-PR = "r19"
+PR = "r20"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator webos-wayland-extensions"
 RDEPENDS:${PN} = "gstreamer1.0-plugins-webosrs"
 DEPENDS:append:rpi = " virtual/libomxil"

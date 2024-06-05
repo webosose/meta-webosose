@@ -17,8 +17,10 @@ inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_pkgconfig
+inherit features_check                                                                                                                                                                                                                       
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
-PR = "r17"
+PR = "r18"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
