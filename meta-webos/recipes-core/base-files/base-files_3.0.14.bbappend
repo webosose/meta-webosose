@@ -6,7 +6,7 @@ inherit webos_filesystem_paths
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
-EXTENDPRAUTO:append = "webos15"
+EXTENDPRAUTO:append = "webos16"
 
 dirs700 = " \
     ${webos_db8datadir}/temp \
@@ -70,4 +70,12 @@ do_install:append:hardware() {
 generate_fstab_entries() {
     echo "# additional in-memory storage for db8"
     echo "tmpfs ${webos_db8datadir}/temp tmpfs size=80M,mode=0700 0 0"
+}
+
+PR:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack1', '', d)}"
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'set_tmpfs_star', '', d)}"
+
+set_tmpfs_star () {
+    fstab="${D}/${sysconfdir}/fstab"
+    awk '$1 == "tmpfs" {$4=$4",smackfsroot=*"} {print}' $fstab > "$fstab.tmp" && mv $fstab.tmp $fstab
 }

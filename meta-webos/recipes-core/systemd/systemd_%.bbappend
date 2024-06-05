@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos14"
+EXTENDPRAUTO:append = "webos15"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -48,4 +48,32 @@ FILES:${PN} += "${@oe.utils.conditional('DISTRO', 'webos','${datadir}/dbus-1/sys
 # Currently we don't support this policy in qemu, so removing from systemd's configuration
 do_install:append:qemuall() {
     rm -rf ${D}/${base_libdir}/systemd/network/99-default.link
+}
+
+PR:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack4', '', d)}"
+PATCH_SMACK = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', '\
+    file://0001-SMACK-add-loading-unconfined-label.patch \
+    file://0001-meson-add-smack-default-process-label-option.patch \
+    file://0001-fileio.c-fix-build-with-smack-enabled.patch \
+', '', d)}"
+
+SRC_URI:append = " ${PATCH_SMACK}"
+
+SYSTEMD_SMACK_RUN_LABEL = "System"
+SYSTEMD_SMACK_DEFAULT_PROCESS_LABEL = "System::Run"
+
+EXTRA_OEMESON_SMACK = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', '\
+    -Dsmack-run-label=${SYSTEMD_SMACK_RUN_LABEL} \
+    -Dsmack-default-process-label=${SYSTEMD_SMACK_DEFAULT_PROCESS_LABEL} \
+', '', d)}"
+
+EXTRA_OEMESON:append = " ${EXTRA_OEMESON_SMACK}"
+
+do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'set_tmp_star', '', d)}"
+
+set_tmp_star () {
+    tmpmount="${D}/${systemd_unitdir}/system/tmp.mount"
+    if [ -f "$tmpmount" ]; then
+        sed -i -e 's/^Options=/Options=smackfsroot=*,/' "$tmpmount"
+    fi
 }

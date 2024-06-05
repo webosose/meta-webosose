@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r51"
+PR = "r52"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -66,6 +66,7 @@ VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
 
 RDEPENDS:${PN} = " \
     activitymanager \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'attr smack com.webos.app.test.smack.native', '', d)} \
     com.webos.app.camera \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', 'com.webos.service.camera', '', d)} \
     configurator \

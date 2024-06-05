@@ -23,7 +23,7 @@ ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
 
-INC_PR = "r73"
+INC_PR = "r74"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -311,5 +311,8 @@ FILES:${PN}-dev = " \
     ${includedir} \
 "
 
-export CCACHE_MAXSIZE = "3800M"
+PR:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
+PATCH_SMACK = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'file://0001-run_app_shell-add-SMACK-labeling-based-on-AppID_79.patch', '', d)}"
+SRC_URI:append = " ${PATCH_SMACK}"
 
+export CCACHE_MAXSIZE = "3800M"

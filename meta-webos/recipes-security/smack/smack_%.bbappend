@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "smack4"
+EXTENDPRAUTO:append = "webos4"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
