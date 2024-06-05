@@ -22,7 +22,7 @@ RDEPENDS:${PN} += "qml-webos-framework qml-webos-bridge"
 WEBOS_VERSION = "1.0.0-17_4fe324a62ee8d06e344e935f17cbda3d3e568b59"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r3"
+PR = "r4"
 
 inherit webos_enhanced_submissions
 inherit webos_public_repo
@@ -31,6 +31,8 @@ inherit webos_qmake6
 inherit systemd
 inherit webos_system_bus
 inherit webos_app
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 QMAKE_PROFILES = "${S}/com.webos.app.mediagallery.pro"
 QE_QMAKE_PATH_HEADERS = "${QE_QMAKE_PATH_QT_HEADERS}"
