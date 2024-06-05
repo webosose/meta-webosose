@@ -19,7 +19,7 @@ RPROVIDES:${PN}-examples = " \
 "
 
 WEBOS_VERSION = "1.0.0-169_5a2860ca78815cb135dc4120f204c31bad5d7ab9"
-PR = "r36"
+PR = "r37"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -30,6 +30,8 @@ inherit webos_filesystem_paths
 inherit webos_distro_variant_dep
 inherit webos_qmllint
 inherit webos_public_repo
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

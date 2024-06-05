@@ -16,7 +16,7 @@ RDEPENDS:${PN} = "qtbase-plugins configd"
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
 WEBOS_VERSION = "0.99.0+20-102_b3c5fe41a33b6dd3d5c11b704c6ff2c8974ef7b6"
-PR = "r35"
+PR = "r36"
 
 inherit webos_daemon
 inherit webos_enhanced_submissions
@@ -24,6 +24,8 @@ inherit webos_qmake6
 inherit webos_machine_impl_dep
 inherit webos_filesystem_paths
 inherit webos_public_repo
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
