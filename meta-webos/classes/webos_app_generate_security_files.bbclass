@@ -14,6 +14,7 @@
 inherit webos_system_bus
 
 WEBOS_SYSTEM_BUS_CONFIGURE_FILES ??= "TRUE"
+WEBOS_SYSTEM_BUS_ACG_ENABLED ??= "FALSE"
 
 def webos_app_generate_security_files_write_permission_file(d, app_info):
     import os
@@ -30,38 +31,74 @@ def webos_app_generate_security_files_write_permission_file(d, app_info):
 
     if "requiredPermissions" in app_info:
         permission[key] = app_info["requiredPermissions"]
-    else:
-        permission[key] = []
-        pub_bus = False
-        prv_bus = False
-        trust_level = app_info.get("trustLevel", "default")
-        if trust_level == "default":
-            pub_bus = True
-        elif trust_level == "trusted":
-            pub_bus = True
-            prv_bus = True
-        elif trust_level == "netcast":
-            # According to https://wiki.lgsvl.com/display/webOSDocs/Security+Level+for+web+applications
-            # netcast level dosn't have access to public and private bus
-            pass
-        else:
-            bb.fatal("Unexpected trustLevel: " + trust_level)
-
-        if type == "web":
-            if "com.palm." in app_id or "com.webos." in app_id:
+        if d.getVar("WEBOS_SYSTEM_BUS_ACG_ENABLED") == "FALSE":
+            pub_bus = False
+            prv_bus = False
+            trust_level = app_info.get("trustLevel", "default")
+            if trust_level == "default":
+                pub_bus = True
+            elif trust_level == "trusted":
+                pub_bus = True
                 prv_bus = True
-        elif type == "qml":
-            prv_bus = True
-            pub_bus = True
-        elif type == "native":
-            pub_bus = True
+            elif trust_level == "netcast":
+                # According to https://wiki.lgsvl.com/display/webOSDocs/Security+Level+for+web+applications
+                # netcast level dosn't have access to public and private bus
+                pass
+            else:
+                bb.fatal("Unexpected trustLevel: " + trust_level)
 
-        if prv_bus:
-            permission[key].append("private")
-            pub_bus = True
+            if type == "web":
+                if "com.palm." in app_id or "com.webos." in app_id:
+                    prv_bus = True
+            elif type == "qml":
+                prv_bus = True
+                pub_bus = True
+            elif type == "native":
+                pub_bus = True
 
-        if pub_bus:
-            permission[key].append("public")
+            if prv_bus:
+                if "private" not in permission[key]:
+                    permission[key].append("private")
+                pub_bus = True
+
+            if pub_bus:
+                if "public" not in permission[key]:
+                    permission[key].append("public")
+    else:
+        if d.getVar("WEBOS_SYSTEM_BUS_ACG_ENABLED") == "TRUE":
+            permission[key] = []
+        else:
+            permission[key] = []
+            pub_bus = False
+            prv_bus = False
+            trust_level = app_info.get("trustLevel", "default")
+            if trust_level == "default":
+                pub_bus = True
+            elif trust_level == "trusted":
+                pub_bus = True
+                prv_bus = True
+            elif trust_level == "netcast":
+                # According to https://wiki.lgsvl.com/display/webOSDocs/Security+Level+for+web+applications
+                # netcast level dosn't have access to public and private bus
+                pass
+            else:
+                bb.fatal("Unexpected trustLevel: " + trust_level)
+
+            if type == "web":
+                if "com.palm." in app_id or "com.webos." in app_id:
+                    prv_bus = True
+            elif type == "qml":
+                prv_bus = True
+                pub_bus = True
+            elif type == "native":
+                pub_bus = True
+
+            if prv_bus:
+                permission[key].append("private")
+                pub_bus = True
+
+            if pub_bus:
+                permission[key].append("public")
 
     if d.getVar("DISTRO") == "webos" or d.getVar("DISTRO") == "webos-auto":
         if type == "qml":
