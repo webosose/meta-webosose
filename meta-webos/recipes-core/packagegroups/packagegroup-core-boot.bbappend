@@ -1,6 +1,6 @@
 # Copyright (c) 2023-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_nyx_modules_providers ??= " \
@@ -17,8 +17,10 @@ RDEPENDS:${PN} += " \
     lsb-release \
     procps \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-essential', ' \
+        activitymanager \
         bootd \
         configd \
+        configurator \
         luna-sysservice \
         makedevs \
         pmlogctl \
