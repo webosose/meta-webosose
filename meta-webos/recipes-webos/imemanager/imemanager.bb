@@ -15,7 +15,7 @@ DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative malii
 RDEPENDS:${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
 WEBOS_VERSION = "1.0.0-30_4380d482f1779485963f996d53390eef4ca99875"
-PR = "r6"
+PR = "r7"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -23,6 +23,8 @@ inherit webos_qmake6
 inherit webos_system_bus
 inherit webos_public_repo
 inherit webos_qt_localization
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 WEBOS_REPO_NAME = "ime-manager"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
