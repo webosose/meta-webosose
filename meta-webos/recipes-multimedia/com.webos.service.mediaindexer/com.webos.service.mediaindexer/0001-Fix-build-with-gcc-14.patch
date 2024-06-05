@@ -1,0 +1,63 @@
+From c4502c260e46af74a7738c0958aa9f02e67b07b5 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 25 Apr 2024 16:31:58 +0200
+Subject: [PATCH] Fix build with gcc-14
+
+:Release Notes:
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/822528
+
+FAILED: src/CMakeFiles/com.webos.service.mediaindexer.dir/mediaitem.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot -DCACHE_DIRECTORY=\"/media/.cache/\" -DCACHE_JSONFILE=\"cache.json\" -DHAS_GSTREAMER -DHAS_LUNA -DHAS_PMLOG -DHAS_TAGLIB -DJSON_CONFIGURATION_FILE=\"/etc/com.webos.service.mediaindexer/com.webos.service.mediaindexer.conf\" -DLOGGING_THREAD_ID -DPARALLEL_META_EXTRACTION=10 -DPERFCHECK_ENABLE=1 -DTHUMBNAIL_DIRECTORY=\"/media/.thumbnail/\" -DTHUMBNAIL_EXTENSION=\".jpg\" -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/taglib -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/orc-0.4 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/. -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/./jsonparser -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/./log -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/./mediaindexerclient -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/./perf -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/./cache -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git=/usr/src/debug/com.webos.service.mediaindexer/1.0.0-32  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git=/usr/src/debug/com.webos.service.mediaindexer/1.0.0-32  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/build=/usr/src/debug/com.webos.service.mediaindexer/1.0.0-32  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/build=/usr/src/debug/com.webos.service.mediaindexer/1.0.0-32  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot-native=  -fvisibility-inlines-hidden -std=c++17 -Wall -Wextra -fno-permissive -pthread -Wno-unused-parameter -Wno-deprecated-declarations -Wno-type-limits -Wno-comment -Werror=return-type -Werror=reorder -Werror=uninitialized -fPIC -Wl,--no-undefined -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/taglib -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -pthread -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -pthread -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/orc-0.4 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/recipe-sysroot/usr/include -g -MD -MT src/CMakeFiles/com.webos.service.mediaindexer.dir/mediaitem.cpp.o -MF src/CMakeFiles/com.webos.service.mediaindexer.dir/mediaitem.cpp.o.d -o src/CMakeFiles/com.webos.service.mediaindexer.dir/mediaitem.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.mediaindexer/1.0.0-32/git/src/mediaitem.cpp
+../git/src/mediaitem.cpp: In static member function 'static bool MediaItem::extTypeSupported(const std::string&)':
+../git/src/mediaitem.cpp:110:24: error: no matching function for call to 'find(std::vector<std::__cxx11::basic_string<char> >::iterator, std::vector<std::__cxx11::basic_string<char> >::iterator, const std::string&)'
+  110 |     auto it = std::find(notSupportedExt_.begin(), notSupportedExt_.end(), ext);
+      |               ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ../recipe-sysroot/usr/include/c++/14.0.1/bits/locale_facets.h:48,
+                 from ../recipe-sysroot/usr/include/c++/14.0.1/bits/basic_ios.h:37,
+                 from ../recipe-sysroot/usr/include/c++/14.0.1/ios:46,
+                 from ../recipe-sysroot/usr/include/c++/14.0.1/ostream:40,
+                 from ../recipe-sysroot/usr/include/c++/14.0.1/iostream:41,
+                 from ../recipe-sysroot/usr/include/pbnjson/cxx/JValue.h:44,
+                 from ../recipe-sysroot/usr/include/pbnjson.hpp:99,
+                 from ../git/src/mediaitem.h:21,
+                 from ../git/src/mediaitem.cpp:17:
+../recipe-sysroot/usr/include/c++/14.0.1/bits/streambuf_iterator.h:435:5: note: candidate: 'template<class _CharT2> typename __gnu_cxx::__enable_if<std::__is_char<_CharT2>::__value, std::istreambuf_iterator<_CharT, std::char_traits<_CharT> > >::__type std::find(istreambuf_iterator<_CharT, char_traits<_CharT> >, istreambuf_iterator<_CharT, char_traits<_CharT> >, const _CharT2&)'
+  435 |     find(istreambuf_iterator<_CharT> __first,
+      |     ^~~~
+../recipe-sysroot/usr/include/c++/14.0.1/bits/streambuf_iterator.h:435:5: note:   template argument deduction/substitution failed:
+../git/src/mediaitem.cpp:110:24: note:   '__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char>*, std::vector<std::__cxx11::basic_string<char> > >' is not derived from 'std::istreambuf_iterator<_CharT, std::char_traits<_CharT> >'
+  110 |     auto it = std::find(notSupportedExt_.begin(), notSupportedExt_.end(), ext);
+      |               ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ninja: build stopped: subcommand failed.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: I380df95b7f3c1ad755722ee321a8abd2ec4e2bda
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.mediaindexer/+/404106 Fix build with gcc-14]
+
+ src/mediaitem.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/mediaitem.cpp b/src/mediaitem.cpp
+index bd451a8..864f1f1 100644
+--- a/src/mediaitem.cpp
++++ b/src/mediaitem.cpp
+@@ -18,6 +18,7 @@
+ #include "device.h"
+ #include "plugins/pluginfactory.h"
+ #include "plugins/plugin.h"
++#include <algorithm>
+ #include <cinttypes>
+ #include <gio/gio.h>
+ #include <exception>
