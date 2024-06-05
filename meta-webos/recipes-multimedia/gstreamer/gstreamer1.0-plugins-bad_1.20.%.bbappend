@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos7"
+EXTENDPRAUTO:append = "webos8"
 
 PACKAGECONFIG:remove = "rsvg"
 

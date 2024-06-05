@@ -334,7 +334,7 @@ index 0761304ce3..33e08ce643 100644
 +video_info_failed:
 +  {
 +    GST_ELEMENT_ERROR (sink, CORE, NEGOTIATION, (NULL),
-+        (sink, "failed to post video info message!"));
++        ("failed to post video info message!"));
 +    goto done;
 +  }
 +
