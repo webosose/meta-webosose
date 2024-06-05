@@ -86,12 +86,6 @@ EXTRA_OECMAKE += "${EXTRA_OECMAKE_MACHINE_VARIANT}"
 # This information is always useful to have around
 EXTRA_OECMAKE += "-Wdev"
 
-# Fixup in case CMake files don't recognize the new value i586 for
-# CMAKE_SYSTEM_PROCESSOR (e.g. nodejs)
-do_generate_toolchain_file:append() {
-    sed '/CMAKE_SYSTEM_PROCESSOR/ s/i586/i686/' -i ${WORKDIR}/toolchain.cmake
-}
-
 # Used in webOS.cmake _webos_set_from_env
 export webos_accttemplatesdir
 export webos_applicationsdir
