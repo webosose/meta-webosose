@@ -1,0 +1,52 @@
+From e707319d738642fd8e83f015e009709e627d6851 Mon Sep 17 00:00:00 2001
+From: Chen Qi <Qi.Chen@windriver.com>
+Date: Wed, 16 Aug 2017 10:44:41 +0800
+Subject: [PATCH] libgcrypt: fix building error with '-O2' in sysroot path
+
+Characters like '-O2' or '-Ofast' will be replaced by '-O1' when
+compiling cipher.
+If we are cross compiling libgcrypt and sysroot contains such
+characters, we would
+get compile errors because the sysroot path has been modified.
+
+Fix this by adding blank spaces before and after the original matching
+pattern in the
+sed command.
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+
+Rebase to 1.8.0
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+Upstream-Status: Pending
+
+ cipher/Makefile.am | 2 +-
+ random/Makefile.am | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cipher/Makefile.am b/cipher/Makefile.am
+index eb798aa0..fe7a55dc 100644
+--- a/cipher/Makefile.am
++++ b/cipher/Makefile.am
+@@ -150,7 +150,7 @@ gost-s-box: gost-s-box.c
+ 
+ 
+ if ENABLE_O_FLAG_MUNGING
+-o_flag_munging = sed -e 's/-O\([2-9sg][2-9sg]*\)/-O1/' -e 's/-Ofast/-O1/g'
++o_flag_munging = sed -e 's/ -O\([2-9sg][2-9sg]*\) / -O1 /' -e 's/ -Ofast / -O1 /g'
+ else
+ o_flag_munging = cat
+ endif
+diff --git a/random/Makefile.am b/random/Makefile.am
+index 3163862c..18327c05 100644
+--- a/random/Makefile.am
++++ b/random/Makefile.am
+@@ -55,7 +55,7 @@ jitterentropy-base.c jitterentropy.h jitterentropy-base-user.h
+ 
+ # The rndjent module needs to be compiled without optimization.  */
+ if ENABLE_O_FLAG_MUNGING
+-o_flag_munging = sed -e 's/-O\([1-9sg][1-9sg]*\)/-O0/g' -e 's/-Ofast/-O0/g'
++o_flag_munging = sed -e 's/ -O\([1-9sg][1-9sg]*\) / -O0 /g' -e 's/ -Ofast / -O0 /g'
+ else
+ o_flag_munging = cat
+ endif
