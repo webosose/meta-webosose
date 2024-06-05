@@ -217,7 +217,7 @@ python do_write_ls2_api_list() {
         bb.note("BUILDHISTORY_DIR_IMAGE '%s' is empty or isn't a directory (probably buildhistory isn't enabled), will not create %s file there" % (d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file))
         return
     output = os.path.join(d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file)
-    json_info_as_string = json.dumps(ls_api_info).replace("'", '"')
+    json_info_as_string = json.dumps(ls_api_info)
     with open(output, 'w') as f:
         f.write(json_info_as_string)
     bb.note("BUILD Path of ls2_api_list.json file : " + output)
