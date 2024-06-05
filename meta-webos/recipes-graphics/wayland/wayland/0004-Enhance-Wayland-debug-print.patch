@@ -369,10 +369,12 @@ diff --git a/src/wayland-util.c b/src/wayland-util.c
 index c89a67b..dbc9ffd 100644
 --- a/src/wayland-util.c
 +++ b/src/wayland-util.c
-@@ -30,8 +30,12 @@
+@@ -30,8 +30,14 @@
  #include <string.h>
  #include <stdarg.h>
  
++#include <pthread.h>
++#include <unistd.h>
 +#include "../config.h"
  #include "wayland-util.h"
  #include "wayland-private.h"
