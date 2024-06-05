@@ -15,6 +15,16 @@ do_write_ls2_api_list[doc] = "Collects ls2 api information of the image"
 python do_write_ls2_api_list() {
     import os,json,glob,re
 
+    def read_from_json(json_file):
+        with open(json_file, 'r') as file:
+            raw_lines = file.read()
+        try:
+            parsed_json = json.loads(raw_lines)
+            return parsed_json
+        except json.JSONDecodeError as e:
+            bb.note('Error parsing JSON: {e}')
+            return None
+
     def remove_comments_from_json(json_file):
         with open(json_file, 'r') as file:
             lines = file.readlines()
@@ -84,10 +94,12 @@ python do_write_ls2_api_list() {
 
     def process_ls2_group_files(file_path):
         groups = []
-        # Remove comments and read JSON data in file
-        groups_data = remove_comments_from_json(file_path)
+        groups_data = read_from_json(file_path)
+        if groups_data is None:
+            groups_data = remove_comments_from_json(file_path)
         if groups_data is None:
             bb.note('Failed to read JSON or commented JSON in file %s'%(file_path))
+            return None
         for key, value in groups_data.items():
             if key == "allowedNames": #skip old groups file key
                 continue
@@ -102,21 +114,25 @@ python do_write_ls2_api_list() {
 
     def process_ls2_role_files(file_path):
         trustLevelDetails = []
-        role_data = remove_comments_from_json(file_path)
+        role_data = read_from_json(file_path)
         if role_data is None:
-            bb.warn('Failed to read JSON or commented JSON in file %s'%(file_path))
+            role_data = remove_comments_from_json(file_path)
+        if role_data is None:
+            bb.note('Failed to read JSON or commented JSON in file %s'%(file_path))
             return None
         # convert to {file name : content} object
-        file_name = os.path.basename(file_path).replace(".role.json", "")
+        file_name = os.path.basename(file_path).replace(".role.json", "").replace(".app.json", "")
         trustLevelDetails.append({file_name: role_data})
         return trustLevelDetails
 
     def process_ls2_client_permissions_files(file_path):
         client_permissions = []
-        # Remove comments and parse JSON
-        permission_data = remove_comments_from_json(file_path)
+        permission_data = read_from_json(file_path)
+        if permission_data is None:
+            permission_data = remove_comments_from_json(file_path)
         if permission_data is None:
             bb.note('Failed to parse JSON due to comment removal.')
+            return None
         for key, value in permission_data.items():
             client_permissions.append({key: value})
         return client_permissions
@@ -198,7 +214,7 @@ python do_write_ls2_api_list() {
 
     ls2_output_file = d.getVar("LS2_API_LIST_FILENAME")
     if not (d.getVar('BUILDHISTORY_DIR_IMAGE') and os.path.isdir(d.getVar('BUILDHISTORY_DIR_IMAGE'))):
-        bb.warn("BUILDHISTORY_DIR_IMAGE '%s' is empty or isn't a directory (probably buildhistory isn't enabled), will not create %s file there" % (d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file))
+        bb.note("BUILDHISTORY_DIR_IMAGE '%s' is empty or isn't a directory (probably buildhistory isn't enabled), will not create %s file there" % (d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file))
         return
     output = os.path.join(d.getVar('BUILDHISTORY_DIR_IMAGE'), ls2_output_file)
     json_info_as_string = json.dumps(ls_api_info).replace("'", '"')
