@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r50"
+PR = "r51"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -42,7 +42,7 @@ VIRTUAL-RUNTIME_com.webos.service.flowmanager ?= "com.webos.service.flowmanager"
 VIRTUAL-RUNTIME_com.webos.service.flowmanager:armv4 = ""
 VIRTUAL-RUNTIME_com.webos.service.flowmanager:armv5 = ""
 
-VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "com.webos.app.mediagallery"
+VIRTUAL-RUNTIME_com.webos.app.mediagallery ?= "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'com.webos.app.mediagallery', '', d)}"
 
 VIRTUAL-RUNTIME_com.webos.app.notification ?= "com.webos.app.notification"
 VIRTUAL-RUNTIME_com.webos.app.notification:armv4 = ""
@@ -99,7 +99,7 @@ RDEPENDS:${PN}:append:webos = " \
     com.webos.service.storageaccess \
     ebd \
     event-monitor-pdm \
-    g-media-pipeline \
+    ${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'g-media-pipeline', '', d)} \
     gssdp \
     gupnp \
     ${VIRTUAL-RUNTIME_ai} \

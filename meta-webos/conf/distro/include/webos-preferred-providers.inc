@@ -123,7 +123,7 @@ VIRTUAL-RUNTIME_ntp = "ntp sntp"
 VIRTUAL-RUNTIME_surface-manager = "luna-surfacemanager-base"
 VIRTUAL-RUNTIME_surface-manager-conf = "auto-luna-surface-manager"
 VIRTUAL-RUNTIME_surface-manager-extension = "auto-luna-surface-manager"
-VIRTUAL-RUNTIME_surface-manager-tests = "luna-surfacemanager-base-tests"
+VIRTUAL-RUNTIME_surface-manager-tests = "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'luna-surfacemanager-base-tests', '', d)}"
 
 # Options: com.webos.service.pdm, physical-device-manager, physical-device-manager2
 VIRTUAL-RUNTIME_pdm = "com.webos.service.pdm"
