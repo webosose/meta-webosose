@@ -56,7 +56,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r2"
+PR = "r3"
 S = "${WORKDIR}/git"
 
 ARM_INSTRUCTION_SET = "arm"
@@ -113,3 +113,8 @@ FILES_SOLIBSDEV = ""
 FILES:${PN} += "${datadir}/*"
 
 INSANE_SKIP:${PN} = "textrel"
+
+# many cases of:
+# git/src/f16-dwconv2d-chw/gen/5x5s2p2-minmax-neonfp16arith-3x4.c:37:41: error: passing argument 1 of 'vld1_dup_f16' from incompatible pointer type [-Wincompatible-pointer-types]
+# http://gecko.lge.com:8000/Errors/Details/821678
+CFLAGS += "-Wno-error=incompatible-pointer-types"
