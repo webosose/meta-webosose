@@ -3,7 +3,7 @@
 require conf/distro/include/features/webos-features-minimal.inc
 
 # Increment when features are changed
-_pr_suffix .= ".0"
+_pr_suffix .= ".1"
 
 # Addition/removal distro features
 
@@ -25,7 +25,7 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
     webos-camera \
     webos-connectivity \
     webos-diagnostics \
-    webos-graphics \
+    webos-graphics-extended \
     webos-i18n \
     webos-media \
     webos-media-drm \

@@ -49,7 +49,7 @@ WEBOS_IMAGE_EXTRA_INSTALL = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-connectivity', 'packagegroup-webos-connectivity', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-dac', 'libcap-bin', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-diagnostics', 'packagegroup-webos-diagnostics', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-graphics', 'packagegroup-webos-graphics', '', d)} \
+    ${@bb.utils.contains_any('DISTRO_FEATURES', 'webos-graphics webos-graphics-extended', 'packagegroup-webos-graphics', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-i18n', 'packagegroup-webos-i18n', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-media', 'packagegroup-webos-media', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-media-drm', 'packagegroup-webos-media-drm', '', d)} \
