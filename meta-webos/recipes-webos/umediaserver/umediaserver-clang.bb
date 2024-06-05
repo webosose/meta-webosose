@@ -10,7 +10,7 @@ PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
 
 WEBOS_REPO_NAME = "umediaserver"
 
-PR = "${INC_PR}.3"
+PR = "${INC_PR}.4"
 
 OECMAKE_CXX_FLAGS += "-Wno-c++11-narrowing -Wno-format-security"
 OECMAKE_TARGET_COMPILE = "umedia_api resource_mgr_client resource_mgr_client_c"
@@ -29,7 +29,7 @@ do_install() {
 
     install -d ${D}/${PKGCONFIG_DIR}
     install -v -m 644 ${B}/src/media_client/umedia_api.pc ${D}/${PKGCONFIG_DIR}/umedia_api_clang.pc
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${D}/${PKGCONFIG_DIR}/umedia_api_clang.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/; /^libdir=.*\/lib32$/ s/$/\/cbe/; /^libdir=.*\/lib64$/ s/$/\/cbe/;' ${D}/${PKGCONFIG_DIR}/umedia_api_clang.pc
 
     install -d ${D}${includedir}/cbe
     install -v -m 644 ${S}/include/public/*.h ${D}${includedir}/cbe

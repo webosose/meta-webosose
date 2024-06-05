@@ -6,7 +6,7 @@ require libpbnjson.bb
 
 WEBOS_REPO_NAME = "libpbnjson"
 
-PR = "r3"
+PR = "r4"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -31,8 +31,9 @@ do_install:append() {
     mv -n ${D}${includedir}/pbnjson ${D}${includedir}/cbe/${BPN}
     mv -n ${D}${includedir}/*.h* ${D}${includedir}/cbe/${BPN}
 
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${D}/${PKGCONFIG_DIR}/pbnjson_c.pc
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${D}/${PKGCONFIG_DIR}/pbnjson_cpp.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/; /^libdir=.*\/lib32$/ s/$/\/cbe/; /^libdir=.*\/lib64$/ s/$/\/cbe/;' ${D}/${PKGCONFIG_DIR}/pbnjson_c.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/; /^libdir=.*\/lib32$/ s/$/\/cbe/; /^libdir=.*\/lib64$/ s/$/\/cbe/;' ${D}/${PKGCONFIG_DIR}/pbnjson_cpp.pc
+
     mv -n ${D}/${PKGCONFIG_DIR}/pbnjson_c.pc ${D}/${PKGCONFIG_DIR}/pbnjson_c_clang.pc
     mv -n ${D}/${PKGCONFIG_DIR}/pbnjson_cpp.pc ${D}/${PKGCONFIG_DIR}/pbnjson_cpp_clang.pc
 }

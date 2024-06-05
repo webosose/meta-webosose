@@ -6,7 +6,7 @@ require media-codec-interface.bb
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r5"
+PR = "r6"
 
 CXXFLAGS +=" \
     -I${STAGING_INCDIR}/media-resource-calculator-clang \
@@ -28,7 +28,7 @@ do_configure:prepend() {
 do_install:append() {
     install -d ${D}/${LIBCBE_DIR}
     mv ${D}/${libdir}/*.so* ${D}/${LIBCBE_DIR}
-    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/' ${D}/${PKGCONFIG_DIR}/media-codec-interface.pc
+    sed -i '/^libdir=.*\/lib$/ s/$/\/cbe/; /^libdir=.*\/lib32$/ s/$/\/cbe/; /^libdir=.*\/lib64$/ s/$/\/cbe/;' ${D}/${PKGCONFIG_DIR}/media-codec-interface.pc
 }
 
 FILES:${PN} += "${LIBCBE_DIR}/lib*${SOLIBS}"
