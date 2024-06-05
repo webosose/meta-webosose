@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0"
 
 WEBOS_VERSION = "2.0.0-2_62a67a5fdce9918eda41a2f4479a2c97307bceec"
-PR = "r6"
+PR = "r7"
 
 inherit webos_component
 inherit webos_public_repo
@@ -31,3 +31,8 @@ WEBOS_SYSTEMD_SERVICE = "pm-klog-daemon.service"
 #      fprintf(fp, gOutBuff+counter);
 #      ^~~~~~~
 SECURITY_STRINGFORMAT = ""
+
+# http://gecko.lge.com:8000/Errors/Details/821713
+# pmklogd/2.0.0-2/build/Configured/src/PmKLogDaemon.c:274:30: error: implicit declaration of function 'g_strstr_len' [-Wimplicit-function-declaration]
+# pmklogd/2.0.0-2/build/Configured/src/PmKLogDaemon.c:298:28: error: implicit declaration of function 'g_str_has_prefix' [-Wimplicit-function-declaration]
+CFLAGS += "-Wno-error=implicit-function-declaration"
