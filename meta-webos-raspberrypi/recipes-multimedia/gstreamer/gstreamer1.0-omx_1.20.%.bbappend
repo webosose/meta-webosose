@@ -1,12 +1,15 @@
 # Copyright (c) 2018-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append:rpi = "webosrpi6"
+EXTENDPRAUTO:append:rpi = "webosrpi8"
 
 CPPFLAGS:append:rpi = " -I${STAGING_INCDIR}/IL \
     -I${STAGING_INCDIR}/interface/vcos/pthreads \
     -I${STAGING_INCDIR}/interface/vmcs_host/linux"
 
 DEPENDS:append:rpi = " virtual/egl virtual/libomxil"
+
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 EXTRA_LDFLAGS:rpi = "-lEGL -lbcm_host -lvcos -lvchiq_arm -lopenmaxil"
 
