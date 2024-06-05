@@ -17,7 +17,7 @@ inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_pkgconfig
-inherit features_check                                                                                                                                                                                                                       
+inherit features_check
 ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 PR = "r19"
@@ -25,7 +25,7 @@ PR = "r19"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.56_5b4d655302a5e964d048871206c7559209d6adc3"
+WEBOS_VERSION = "1.0.0-gav.57_e2a52834710cfe7b5896433112583be8edfb27b1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
