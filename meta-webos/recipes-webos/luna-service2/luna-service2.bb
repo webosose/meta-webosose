@@ -16,7 +16,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-40_57c81fcbeba84df6934d6cbf61579ad74cacaead"
-PR = "r32"
+PR = "r33"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
@@ -61,3 +61,8 @@ FILES:${PN}-perf += "${webos_testsdir}/${BPN}-perf"
 INSANE_SKIP:${PN}-ptest += "libdir"
 # luna-service2-dbg: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/.debug/libls-hublib-test.so
 INSANE_SKIP:${PN}-dbg += "libdir"
+
+# http://gecko.lge.com:8000/Errors/Details/821701
+# luna-service2/3.21.2-37/git/src/libluna-service2/transport.c:2001:50: error: passing argument 2 of '_LSTransportMessageGetString' from incompatible pointer type [-Wincompatible-pointer-types]
+# luna-service2/3.21.2-37/git/src/libluna-service2/transport.c:6758:12: error: returning 'LSTransportTrustLevelGroupBitmask *' from a function with incompatible return type 'LSTransportCategoryBitmask *' [-Wincompatible-pointer-types]
+CFLAGS += "-Wno-error=incompatible-pointer-types"
