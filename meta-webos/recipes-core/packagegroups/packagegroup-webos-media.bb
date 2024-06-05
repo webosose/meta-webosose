@@ -4,17 +4,14 @@ DESCRIPTION = "Components for media added to webOS"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r3"
+PR = "r4"
 
 inherit packagegroup
 inherit features_check
 
 REQUIRED_DISTRO_FEATURES = "webos-media"
 
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller ?= ""
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller:raspberrypi4 = "com.webos.service.mediacontroller"
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller:qemux86 = "com.webos.service.mediacontroller"
-VIRTUAL-RUNTIME_com.webos.service.mediacontroller:qemux86-64 = "com.webos.service.mediacontroller"
+VIRTUAL-RUNTIME_com.webos.service.mediacontroller ?= "com.webos.service.mediacontroller"
 
 VIRTUAL-RUNTIME_umediaserver ?= "umediaserver"
 VIRTUAL-RUNTIME_umediaserver:armv4 = ""
@@ -31,12 +28,12 @@ RDEPENDS:${PN} = " \
     gstreamer1.0-plugins-ugly \
     ${VIRTUAL-RUNTIME_mediarecorder} \
     ${VIRTUAL-RUNTIME_umediaserver} \
+    ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
 "
 
 # Add to webos distro only
 RDEPENDS:${PN}:append:webos = " \
     com.webos.app.videoplayer \
-    ${VIRTUAL-RUNTIME_com.webos.service.mediacontroller} \
 "
 
 # Add to qemu target only
