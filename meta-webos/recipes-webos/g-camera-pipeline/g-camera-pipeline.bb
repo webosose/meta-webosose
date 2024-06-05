@@ -18,12 +18,12 @@ inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_pkgconfig
 
-PR = "r16"
+PR = "r17"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.49_84c1ac89a789287f34a9b0f5ce0cd40c712365d7"
+WEBOS_VERSION = "1.0.0-gav.52_c77d83e1bfcaa805ada7ec4f3e2a1c477e55a589"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
@@ -37,3 +37,14 @@ FILES:${PN} += "${libdir}/gstreamer-1.0/*.so"
 PACKAGECONFIG[use-rpi] = "-DUSE_RPI:BOOL=True,-DUSE_RPI:BOOL=False,"
 PACKAGECONFIG[use-emulator] = "-DUSE_EMULATOR:BOOL=True,-DUSE_EMULATOR:BOOL=False,"
 PACKAGECONFIG:append:emulator = " use-emulator"
+
+# Calculate display plane resource
+PACKAGECONFIG[use-display-resource] = "-DUSE_DISPLAY_RESOURCE:BOOL=True,-DUSE_DISPLAY_RESOURCE:BOOL=False,"
+
+# Use camsrc
+PACKAGECONFIG[use-camsrc] = "-DUSE_CAMSRC:BOOL=True,-DUSE_CAMSRC:BOOL=False,"
+
+# Pro UMS
+PACKAGECONFIG[pro-ums] = "-DPRO_UMS:BOOL=True,-DPRO_UMS:BOOL=False,"
+
+PACKAGECONFIG:webos = "use-display-resource use-camsrc"
