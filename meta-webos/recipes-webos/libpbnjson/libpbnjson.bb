@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "yajl glib-2.0 gperf-native flex-native lemon-native gmp uriparser boost"
 
 WEBOS_VERSION = "2.15.0-16_45ed7fcd0123f7b970c12d1434d9364cd4024571"
-PR = "r15"
+PR = "r16"
 
 inherit webos_component
 inherit webos_public_repo
@@ -38,3 +38,10 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 BBCLASSEXTEND = "native"
+
+# http://gecko.lge.com:8000/Errors/Details/821697
+# libpbnjson/2.15.0-16/git/src/pbnjson_c/validation/instance_types.gperf:124:8: error: initialization of 'const char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+# ...
+# libpbnjson/2.15.0-16/git/src/pbnjson_c/validation/schema_keywords.gperf:190:8: error: initialization of 'const char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+# ...
+CFLAGS += "-Wno-error=int-conversion"
