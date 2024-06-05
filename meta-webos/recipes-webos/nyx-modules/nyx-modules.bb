@@ -16,7 +16,7 @@ RDEPENDS:${PN} = "lsb-release gzip"
 
 WEBOS_VERSION = "7.1.0-24_f5e0d88ac5dc6d6d027be9e4e876ebbb6682c77c"
 
-PR = "r19"
+PR = "r20"
 
 EXTRA_OECMAKE += "\
     -DDISTRO_VERSION:STRING='${DISTRO_VERSION}' \
@@ -57,3 +57,9 @@ inherit webos_distro_variant_dep
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
+
+# http://gecko.lge.com:8000/Errors/Details/821714
+# nyx-modules/7.1.0-22/git/src/keys/keys_common.c:84:91: error: passing argument 4 of 'g_key_file_get_string_list' from incompatible pointer type [-Wincompatible-pointer-types]
+# nyx-modules/7.1.0-22/git/src/keys/keys_common.c:211:11: error: passing argument 1 of 'pipe2' from incompatible pointer type [-Wincompatible-pointer-types]
+# nyx-modules/7.1.0-22/git/src/device_info/device_info_generic.c:363:16: error: implicit declaration of function 'isspace' [-Wimplicit-function-declaration]
+CFLAGS += "-Wno-error=incompatible-pointer-types -Wno-error=implicit-function-declaration"
