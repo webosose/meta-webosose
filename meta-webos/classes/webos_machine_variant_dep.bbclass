@@ -19,11 +19,3 @@ WEBOS_EXTRA_MACHINEOVERRIDES_VARIANT = "${@ \
     if d.getVar('WEBOS_TARGET_MACHINE_VARIANT') else \
     '' \
 }"
-
-# Append this to EXTRA_OEMAKE to allow your makefile be distro variant-dependent:
-WEBOS_EXTRA_OEMAKE_MACHINE_VARIANT_DEP = "${@ \
-    'WEBOS_TARGET_MACHINE_VARIANT=${WEBOS_TARGET_MACHINE_VARIANT}' \
-    if not bb.data.inherits_class('native', d) else \
-    '' \
-}"
-WEBOS_EXTRA_OEMAKE_MACHINE_VARIANT_DEP[vardepvalue] = "${WEBOS_EXTRA_OEMAKE_MACHINE_VARIANT_DEP}"

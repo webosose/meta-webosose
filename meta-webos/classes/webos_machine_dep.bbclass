@@ -14,6 +14,4 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 # there are separate subdirectories instead of suffixes.)
 # WORKDIR:append = "-${PACKAGE_ARCH}"
 
-# Append this to EXTRA_OEMAKE to allow your makefile be MACHINE-dependent:
 WEBOS_MACHINE ?= "${MACHINE}"
-WEBOS_EXTRA_OEMAKE_MACHINE_DEP = "MACHINE=${WEBOS_MACHINE}"
