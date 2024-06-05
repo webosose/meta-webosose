@@ -1,7 +1,7 @@
 # Copyright (c) 2020-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append:rpi = "webosrpi7"
+EXTENDPRAUTO:append:rpi = "webosrpi8"
 
-RDEPENDS:${PN}:append:rpi = " libcec-examples"
+RDEPENDS:${PN}:append:rpi = "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', ' libcec-examples', '', d)}"
 
-NYX_MODULES_REQUIRED:append:rpi = "NYXMOD_OW_CEC;"
+NYX_MODULES_REQUIRED:append:rpi = "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'NYXMOD_OW_CEC;', '', d)}"
