@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 "
 DEPENDS = "librolegen glib-2.0 libpbnjson luna-service2"
 
-WEBOS_VERSION = "2.0.0-4_13eaf63ab5ec5c4dd62b02f176c0b60894251b1c"
+WEBOS_VERSION = "2.0.0-6_279dbc2015b045dddd1bc0bcee4c761b718618d6"
 PR = "r6"
 
 inherit webos_component
