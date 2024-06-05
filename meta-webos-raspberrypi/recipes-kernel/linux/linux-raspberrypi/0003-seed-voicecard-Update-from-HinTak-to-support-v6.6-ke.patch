@@ -1,0 +1,174 @@
+From faf2878b18b114156cdbc425cdbfea82a9ed7019 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 25 Mar 2023 13:42:12 +0100
+Subject: [PATCH] seed-voicecard: Update from HinTak to support v6.6 kernel
+
+as in:
+https://github.com/HinTak/seeed-voicecard/commits/v6.6
+https://github.com/HinTak/seeed-voicecard/commit/0bb3ca6c980e8e25f8f4957920d3be3e47e7ac3e
+https://github.com/HinTak/seeed-voicecard/commit/a03624a0cef3a85b145cc4820c7a7171855e052f
+https://github.com/HinTak/seeed-voicecard/commit/a46c3f6324438cc3e5321f7d7b9c4b7c8a50db19
+https://github.com/HinTak/seeed-voicecard/commit/2a40c7dbffb69bbbdab08d65801fe84050e610e6
+https://github.com/HinTak/seeed-voicecard/commit/cc37c8fb52ac969b94c3d2cd36895b8cdb2b8646
+
+linux $ cp -a seeed-voicecard/ac10*[ch] seeed-voicecard/seeed-voicecard.c seeed-voicecard/sound-compatible-4.18.h sound/soc/codecs/
+linux $ cp -a seeed-voicecard/seeed-[48]mic-voicecard-overlay.dts arch/arm/boot/dts/overlays/
+linux $ chmod 644 sound/soc/codecs/ac108.h
+linux $ dos2unix sound/soc/codecs/ac108.h
+
+Signed-off-by: Martin Jansa <martin2.jansa@lgepartner.com>
+---
+Upstream-Status: Pending [seeedstudio.com is hopefully trying to upstream this to upstream kernel or at least rpi kernel fork, but I haven't found any proof of that https://github.com/respeaker/seeed-voicecard/commits/master also wasn't updated for long time, luckily there is better maintained fork https://github.com/HinTak/seeed-voicecard which already supports 6.6 kernel as well (which we need to support Scarthgap where meta-raspberrypi already uses 6.6 kernel like Raspberry Pi OS now)]
+
+ sound/soc/codecs/ac101.c           |  4 ++--
+ sound/soc/codecs/ac108.c           | 28 ++++++++++++++--------------
+ sound/soc/codecs/seeed-voicecard.c | 14 ++++++++++----
+ 3 files changed, 26 insertions(+), 20 deletions(-)
+
+diff --git a/sound/soc/codecs/ac101.c b/sound/soc/codecs/ac101.c
+index 23837a7544bd..323876c48621 100644
+--- a/sound/soc/codecs/ac101.c
++++ b/sound/soc/codecs/ac101.c
+@@ -955,7 +955,7 @@ void ac101_aif_shutdown(struct snd_pcm_substream *substream, struct snd_soc_dai
+ 
+ 	AC101_DBG("stream = %s, play: %d, capt: %d, active: %d\n", 
+ 		snd_pcm_stream_str(substream),
+-		codec_dai->stream_active[SNDRV_PCM_STREAM_PLAYBACK], codec_dai->stream_active[SNDRV_PCM_STREAM_CAPTURE],
++		codec_dai->stream[SNDRV_PCM_STREAM_PLAYBACK].active, codec_dai->stream[SNDRV_PCM_STREAM_CAPTURE].active,
+ 		snd_soc_dai_active(codec_dai));
+ 
+ 	if (!snd_soc_dai_active(codec_dai)) {
+@@ -1080,7 +1080,7 @@ int ac101_hw_params(struct snd_pcm_substream *substream,
+ 	freq_out = _FREQ_24_576K;
+ 	for (i = 0; i < ARRAY_SIZE(codec_aif1_fs); i++) {
+ 		if (codec_aif1_fs[i].samp_rate == params_rate(params)) {
+-			if (codec_dai->stream_active[SNDRV_PCM_STREAM_CAPTURE] && dmic_used && codec_aif1_fs[i].samp_rate == 44100) {
++			if (codec_dai->stream[SNDRV_PCM_STREAM_CAPTURE].active && dmic_used && codec_aif1_fs[i].samp_rate == 44100) {
+ 				ac101_update_bits(codec, AIF_SR_CTRL, (0xf<<AIF1_FS), (0x4<<AIF1_FS));
+ 			} else {
+ 				ac101_update_bits(codec, AIF_SR_CTRL, (0xf<<AIF1_FS), ((codec_aif1_fs[i].srbit)<<AIF1_FS));
+diff --git a/sound/soc/codecs/ac108.c b/sound/soc/codecs/ac108.c
+index 9709cb89ed1c..d9fae1a7f5c0 100644
+--- a/sound/soc/codecs/ac108.c
++++ b/sound/soc/codecs/ac108.c
+@@ -653,7 +653,7 @@ static int ac108_hw_params(struct snd_pcm_substream *substream, struct snd_pcm_h
+ 
+ 	dev_dbg(dai->dev, "%s() stream=%s play:%d capt:%d +++\n", __func__,
+ 			snd_pcm_stream_str(substream),
+-			dai->stream_active[SNDRV_PCM_STREAM_PLAYBACK], dai->stream_active[SNDRV_PCM_STREAM_CAPTURE]);
++			dai->stream[SNDRV_PCM_STREAM_PLAYBACK].active, dai->stream[SNDRV_PCM_STREAM_CAPTURE].active);
+ 
+ 	if (ac10x->i2c101) {
+ 		ret = ac101_hw_params(substream, params, dai);
+@@ -664,8 +664,8 @@ static int ac108_hw_params(struct snd_pcm_substream *substream, struct snd_pcm_h
+ 		}
+ 	}
+ 
+-	if ((substream->stream == SNDRV_PCM_STREAM_CAPTURE && dai->stream_active[SNDRV_PCM_STREAM_PLAYBACK])
+-	 || (substream->stream == SNDRV_PCM_STREAM_PLAYBACK && dai->stream_active[SNDRV_PCM_STREAM_CAPTURE])) {
++	if ((substream->stream == SNDRV_PCM_STREAM_CAPTURE && dai->stream[SNDRV_PCM_STREAM_PLAYBACK].active)
++	 || (substream->stream == SNDRV_PCM_STREAM_PLAYBACK && dai->stream[SNDRV_PCM_STREAM_CAPTURE].active)) {
+ 		/* not configure hw_param twice */
+ 		/* return 0; */
+ 	}
+@@ -1410,7 +1410,15 @@ static const struct regmap_config ac108_regmap = {
+ 	.max_register = 0xDF,
+ 	.cache_type = REGCACHE_FLAT,
+ };
+-static int ac108_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *i2c_id) {
++static const struct i2c_device_id ac108_i2c_id[] = {
++	{ "ac108_0", 0 },
++	{ "ac108_1", 1 },
++	{ "ac108_2", 2 },
++	{ "ac108_3", 3 },
++	{ "ac101", AC101_I2C_ID },
++	{ }
++};
++static int ac108_i2c_probe(struct i2c_client *i2c) {
+ 	struct device_node *np = i2c->dev.of_node;
+ 	unsigned int val = 0;
+ 	int ret = 0, index;
+@@ -1423,11 +1431,11 @@ static int ac108_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *i
+ 		}
+ 	}
+ 
+-	index = (int)i2c_id->driver_data;
++	index = (int)i2c_match_id(ac108_i2c_id, i2c)->driver_data;
+ 	if (index == AC101_I2C_ID) {
+ 		ac10x->i2c101 = i2c;
+ 		i2c_set_clientdata(i2c, ac10x);
+-		ret = ac101_probe(i2c, i2c_id);
++		ret = ac101_probe(i2c, i2c_match_id(ac108_i2c_id, i2c));
+ 		if (ret) {
+ 			ac10x->i2c101 = NULL;
+ 			return ret;
+@@ -1520,14 +1528,6 @@ static void ac108_i2c_remove(struct i2c_client *i2c) {
+ 	}
+ }
+ 
+-static const struct i2c_device_id ac108_i2c_id[] = {
+-	{ "ac108_0", 0 },
+-	{ "ac108_1", 1 },
+-	{ "ac108_2", 2 },
+-	{ "ac108_3", 3 },
+-	{ "ac101", AC101_I2C_ID },
+-	{ }
+-};
+ MODULE_DEVICE_TABLE(i2c, ac108_i2c_id);
+ 
+ static const struct of_device_id ac108_of_match[] = {
+diff --git a/sound/soc/codecs/seeed-voicecard.c b/sound/soc/codecs/seeed-voicecard.c
+index 886eb0ece6b3..8ddf691eb13e 100644
+--- a/sound/soc/codecs/seeed-voicecard.c
++++ b/sound/soc/codecs/seeed-voicecard.c
+@@ -220,7 +220,7 @@ static int seeed_voice_card_trigger(struct snd_pcm_substream *substream, int cmd
+ 
+ 	dev_dbg(rtd->card->dev, "%s() stream=%s  cmd=%d play:%d, capt:%d\n",
+ 		__FUNCTION__, snd_pcm_stream_str(substream), cmd,
+-		dai->stream_active[SNDRV_PCM_STREAM_PLAYBACK], dai->stream_active[SNDRV_PCM_STREAM_CAPTURE]);
++		dai->stream[SNDRV_PCM_STREAM_PLAYBACK].active, dai->stream[SNDRV_PCM_STREAM_CAPTURE].active);
+ 
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+@@ -242,7 +242,7 @@ static int seeed_voice_card_trigger(struct snd_pcm_substream *substream, int cmd
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 		/* capture channel resync, if overrun */
+-		if (dai->stream_active[SNDRV_PCM_STREAM_CAPTURE] && substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		if (dai->stream[SNDRV_PCM_STREAM_CAPTURE].active && substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 			break;
+ 		}
+ 
+@@ -262,7 +262,7 @@ static int seeed_voice_card_trigger(struct snd_pcm_substream *substream, int cmd
+ 
+ 	dev_dbg(rtd->card->dev, "%s() stream=%s  cmd=%d play:%d, capt:%d;finished %d\n",
+ 		__FUNCTION__, snd_pcm_stream_str(substream), cmd,
+-		dai->stream_active[SNDRV_PCM_STREAM_PLAYBACK], dai->stream_active[SNDRV_PCM_STREAM_CAPTURE], ret);
++		dai->stream[SNDRV_PCM_STREAM_PLAYBACK].active, dai->stream[SNDRV_PCM_STREAM_CAPTURE].active, ret);
+ 
+ 	return ret;
+ }
+@@ -311,7 +311,7 @@ static int asoc_simple_parse_dai(struct device_node *node,
+ 	 * 2) user need to rebind Sound Card everytime
+ 	 *    if he unbinded CPU or Codec.
+ 	 */
+-	ret = snd_soc_of_get_dai_name(node, &dlc->dai_name);
++	ret = snd_soc_of_get_dai_name(node, &dlc->dai_name, 0);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -396,8 +396,14 @@ static int asoc_simple_init_dai_link_params(struct snd_soc_pcm_runtime *rtd)
+ 	params->channels_min = hw.channels_min;
+ 	params->channels_max = hw.channels_max;
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,4,0)
++	dai_link->c2c_params = params;
++	dai_link->num_c2c_params = 1;
++#else
++	/* apparently this goes back to 5.6.x */
+ 	dai_link->params = params;
+ 	dai_link->num_params = 1;
++#endif
+ 
+ 	return 0;
+ }
