@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "libpbnjson boost"
 
-WEBOS_VERSION = "1.0.1-9_261db721a692f45ab8be452f49d278a2ae1594ee"
+WEBOS_VERSION = "1.0.1-10_9bf79f1cceba90a91fafdec7be0a38e05a3ab2f1"
 PR = "r3"
 
 inherit webos_component
