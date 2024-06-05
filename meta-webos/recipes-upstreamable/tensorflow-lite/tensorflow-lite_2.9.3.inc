@@ -67,7 +67,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r3"
+PR = "r4"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -163,3 +163,18 @@ EXTRA_OECMAKE += " \
     -DPTHREADPOOL_SOURCE_DIR=${S}/pthreadpool-source \
     -DPSIMD_SOURCE_DIR=${S}/psimd-source \
 "
+
+# with -mcpu=cortex-a76+crypto used instead of -mcpu=cortex-a76 + -march=armv8.2-a+crypto
+# after http://gpro.lge.com/c/bsp/samsung/meta-samsung-bsp/+/404399 tune-cortexa76.inc: delete, the same is in oe-core
+# https://git.openembedded.org/openembedded-core/commit/meta/conf/machine/include/arm/armv8-2a?h=scarthgap&id=e64f0c1b6ac5d598a79a21de5f3060f83cb9523e
+# __ARM_FEATURE_DOTPROD is defined (see https://github.com/gcc-mirror/gcc/commit/ba09dd21b342bb8b7ef8122c08ee478e7de95825)
+# and build fails with:
+# http://gecko.lge.com:8000/Errors/Details/826324
+# git/tensorflow/lite/kernels/internal/optimized/depthwiseconv_3x3_filter_common.h:132:58: error: cannot convert '__Int32x2_t' to 'int8x8_t'
+# git/tensorflow/lite/kernels/internal/optimized/depthwiseconv_3x3_filter_common.h:134:58: error: cannot convert '__Int32x2_t' to 'int8x8_t'
+# git/tensorflow/lite/kernels/internal/optimized/depthwiseconv_3x3_filter_common.h:136:58: error: cannot convert '__Int32x2_t' to 'int8x8_t'
+# git/tensorflow/lite/kernels/internal/optimized/depthwiseconv_3x3_filter_common.h:140:58: error: cannot convert '__Int32x2_t' to 'int8x8_t'
+# use -flax-vector-conversions as suggested in:
+# https://stackoverflow.com/questions/56055359/tensorflow-lite-arm64-error-cannot-convert-const-int8x8-t
+# until upgrading to newer version which will have this resolved properly
+CXXFLAGS += "-flax-vector-conversions"
