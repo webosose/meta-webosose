@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r49"
+PR = "r50"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -23,12 +23,6 @@ VIRTUAL-RUNTIME_memorymanager ?= "com.webos.service.memorymanager"
 # .bbappend in meta-<distro> to do PR/PRINC/PR_append bump anyway so it's easier
 # to change this variable in .bbappend together with bump.
 #
-
-VIRTUAL-RUNTIME_g-media-pipeline ?= ""
-VIRTUAL-RUNTIME_g-media-pipeline:rpi = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline:qemux86 = "g-media-pipeline"
-VIRTUAL-RUNTIME_g-media-pipeline:qemux86-64 = "g-media-pipeline"
-
 
 VIRTUAL-RUNTIME_nodejs-module-node-red ?= "node-red"
 VIRTUAL-RUNTIME_nodejs-module-node-red:armv4 = ""
@@ -90,7 +84,6 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_com.webos.app.notification} \
     ${VIRTUAL-RUNTIME_com.webos.app.volume} \
     ${VIRTUAL-RUNTIME_com.webos.service.intent} \
-    ${VIRTUAL-RUNTIME_g-media-pipeline} \
     ${VIRTUAL-RUNTIME_memorymanager} \
     ${VIRTUAL-RUNTIME_mojoservicelauncher} \
     ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
@@ -106,6 +99,7 @@ RDEPENDS:${PN}:append:webos = " \
     com.webos.service.storageaccess \
     ebd \
     event-monitor-pdm \
+    g-media-pipeline \
     gssdp \
     gupnp \
     ${VIRTUAL-RUNTIME_ai} \
