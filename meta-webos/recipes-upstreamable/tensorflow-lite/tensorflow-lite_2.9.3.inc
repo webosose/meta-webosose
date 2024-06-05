@@ -67,7 +67,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r2"
+PR = "r3"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -107,7 +107,7 @@ OECMAKE_SOURCEPATH = "${S}/tensorflow/lite"
 
 PACKAGECONFIG ?= "xnnpack"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'gpu-delegate', 'gpu', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', 'gl-backend', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'gl-backend', '', d), '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DTFLITE_ENABLE_XNNPACK=ON,-DTFLITE_ENABLE_XNNPACK=OFF"
