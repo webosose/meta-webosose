@@ -4,9 +4,11 @@ DESCRIPTION = "Packages used by all distro variants of webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r2"
+PR = "r3"
 
 inherit packagegroup
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "webos-graphics webos-graphics-extended"
 
 VIRTUAL-RUNTIME_browser_fonts ?= "webos-fonts"
 VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
