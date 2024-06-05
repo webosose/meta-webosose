@@ -21,7 +21,7 @@ inherit webos_system_bus
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
 
-INC_PR = "r70"
+INC_PR = "r71"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
@@ -65,6 +65,7 @@ PACKAGECONFIG[webos-camera] = "use_webos_camera=true,use_webos_camera=false, cam
 PACKAGECONFIG[webos-audio] = "use_webos_audio=true,use_webos_audio=false, pulseaudio"
 PACKAGECONFIG[test-coverage] = "enable_neva_test_coverage_build=true,enable_neva_test_coverage_build=false"
 PACKAGECONFIG[smack] = "enable_webos_smack=true, enable_webos_smack=false"
+PACKAGECONFIG[dcheck] = "dcheck_is_configurable=true"
 
 GN_ARGS:append = " \
     enable_memorymanager_webapi=true\
@@ -284,6 +285,9 @@ RDEPENDS:${WAM_DEMO_APPLICATION} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
 # it aborts if libudev.so.1 is missing
 RDEPENDS:${PN} += "libudev"
+
+# for libpci.so
+RDEPENDS:${PN} += "libpci"
 
 # The text relocations are intentional -- see comments in [GF-52468]
 # TODO: check if we need INSANE_SKIP on ldflags
