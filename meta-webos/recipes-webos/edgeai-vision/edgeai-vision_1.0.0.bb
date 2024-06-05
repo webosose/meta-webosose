@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=6e87e90c168c712da8accb5afc402bf4\
 "
 
-WEBOS_VERSION = "1.0.0-59_6b25b9856d31a4e8c6dc019c6169ffe92ca340ef"
+WEBOS_VERSION = "1.0.0-plugin.13_2b0d4532b7e415e0a5e518c14386d66b98ae46ff"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r11"
+PR = "r12"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -28,13 +28,14 @@ inherit features_check
 REQUIRED_DISTRO_FEATURES = "webos-aiframework"
 
 DEPENDS = " \
-    msgpack-cpp \
-    rapidjson \
     flatbuffers \
-    opencv \
-    tensorflow-lite \
     googletest \
+    msgpack-cpp \
+    nlohmann-json \
+    opencv \
     pmloglib \
+    rapidjson \
+    tensorflow-lite \
     xsimd \
     xtensor \
     xtl \
@@ -43,11 +44,15 @@ DEPENDS = " \
 AIF_INSTALL_DIR = "${datadir}/aif"
 AIF_INSTALL_TEST_DIR = "${AIF_INSTALL_DIR}/test"
 AIF_INSTALL_EXAMPLE_DIR = "${AIF_INSTALL_DIR}/example"
+AIF_ALLOWED_EXTENSIONS = "libedgeai-vision-base"
+AIF_EXTENSION_REGISTRY_PATH = "/tmp/edgeai_extension_registry.json"
 
 EXTRA_OECMAKE += "-DAIF_INSTALL_DIR=${AIF_INSTALL_DIR}"
 EXTRA_OECMAKE += "-DAIF_INSTALL_TEST_DIR=${AIF_INSTALL_TEST_DIR}"
 EXTRA_OECMAKE += "-DAIF_INSTALL_EXAMPLE_DIR=${AIF_INSTALL_EXAMPLE_DIR}"
 EXTRA_OECMAKE += "-DWITH_UPDATABLE_MODELS=OFF"
+EXTRA_OECMAKE += "-DAIF_ALLOWED_EXTENSIONS=${AIF_ALLOWED_EXTENSIONS}"
+EXTRA_OECMAKE += "-DAIF_EXTENSION_REGISTRY_PATH=${AIF_EXTENSION_REGISTRY_PATH}"
 
 PACKAGECONFIG ?= "xnnpack"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'gpu-delegate', 'gpu', '', d)}"
@@ -55,7 +60,7 @@ PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', 'edgetpu'
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'armnn', 'armnn', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'ml-library-size-reduction', '', 'examples', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'auto-acceleration', 'ads', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu fittv', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DWITH_XNNPACK:BOOL=TRUE,-DWITH_XNNPACK:BOOL=FALSE"
@@ -65,7 +70,6 @@ PACKAGECONFIG[armnn] = "-DWITH_ARMNN:BOOL=TRUE,-DWITH_ARMNN:BOOL=FALSE,armnn"
 PACKAGECONFIG[examples] = "-DWITH_EXAMPLES=ON -DWITH_EXTRA_MODELS=ON,-DWITH_EXAMPLES=OFF -DWITH_EXTRA_MODELS=OFF,,"
 PACKAGECONFIG[ads] = "-DWITH_AUTO_DELEGATE=ON,-DWITH_AUTO_DELEGATE=OFF,tflite-auto-delegation"
 PACKAGECONFIG[npu] = "-DWITH_NPU=ON,-DWITH_NPU=OFF,tflite-npu-delegate"
-PACKAGECONFIG[fittv] = "-DWITH_FITTV:BOOL=TRUE,-DWITH_FITTV:BOOL=FALSE"
 PACKAGECONFIG[nnapi] = "-DWITH_NNAPI=ON,-DWITH_NNAPI=OFF"
 
 PACKAGES =+ "${PN}-tests"
@@ -78,4 +82,9 @@ FILES:${PN}-tests = " \
 
 FILES:${PN} += " \
     ${AIF_INSTALL_DIR} \
+    ${libdir}/edgeai-extensions \
+"
+
+FILES:${PN}-dev += " \
+    ${libdir}/edgeai-extensions/*.so \
 "
