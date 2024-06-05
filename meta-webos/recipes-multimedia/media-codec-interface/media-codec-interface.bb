@@ -25,7 +25,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 DEPENDS:append:rpi = " virtual/libomxil"
 
 WEBOS_VERSION = "1.0.0-28_b5faa9d53c3bc37f4617e93e456a264edc49d754"
-PR = "r14"
+PR = "r15"
 
 # http://gpro.lge.com/c/webosose/media-codec-interface/+/396335 CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
@@ -34,5 +34,6 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
 
 S = "${WORKDIR}/git"
 
-PACKAGECONFIG ?= "support-reacquire"
+PACKAGECONFIG_REACQUIRE ?= "support-reacquire"
+PACKAGECONFIG ?= "${PACKAGECONFIG_REACQUIRE}"
 PACKAGECONFIG[support-reacquire] = "-DSUPPORT_REACQUIRE:BOOL=True,-DSUPPORT_REACQUIRE:BOOL=False"
