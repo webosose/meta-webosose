@@ -23,7 +23,7 @@ RDEPENDS:${PN}:append:class-target = " ${VIRTUAL-RUNTIME_stat} ${VIRTUAL-RUNTIME
 RDEPENDS:${PN}-tests:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.2.0-32_11ae879176e14f80d8dd103150947f9a4f8b7a5d"
-PR = "r41"
+PR = "r42"
 
 inherit webos_component
 inherit webos_public_repo
@@ -40,6 +40,7 @@ EXTRA_OECMAKE:append:class-native = " -DWEBOS_CONFIG_BUILD_TESTS:BOOL=FALSE -DUS
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-CMakeLists.txt-replace-std-c-14-with-std-c-17-for-ic.patch \
+    file://0002-test-Don-t-use-long-deprecated-boost-filesystem-path.patch \
 "
 S = "${WORKDIR}/git"
 
