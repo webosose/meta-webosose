@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos121"
+EXTENDPRAUTO:append = "webos122"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -26,7 +26,8 @@ PACKAGECONFIG:remove = "widgets"
 PACKAGECONFIG:append = " harfbuzz"
 
 # Configure to compile with GL ES2 instead of default desktop GL
-PACKAGECONFIG_GL = "gles2"
+PACKAGECONFIG_GL = "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'gles2', '', d)}"
+
 # We had this enabled in our old gpro/meta-qt5 recipe
 PACKAGECONFIG:append = " icu"
 # We had this enabled in our old gpro/meta-qt5 recipe
@@ -70,7 +71,7 @@ PACKAGECONFIG:remove = "system-pcre2"
 
 PACKAGECONFIG:remove = "libinput"
 
-PACKAGECONFIG:append = " kms"
+PACKAGECONFIG:append = "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', ' kms', '', d)}"
 
 # Depending on whether LTTNG support is enabled or not for the build we need to
 # depend on the LTTNG providers to not let the build fail
@@ -136,7 +137,7 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
 # /usr/include/QtGui/qtgui-config.h will either use gl3.h or gl2.h based
 # on QT_FEATURE_opengles3.
 # https://bugreports.qt.io/browse/WEBOSCI-82
-RRECOMMENDS:${PN}-dev += "libgles3-mesa-dev"
+RRECOMMENDS:${PN}-dev += "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'libgles3-mesa-dev', '', d)}"
 
 export CCACHE_MAXSIZE = "1200M"
 
