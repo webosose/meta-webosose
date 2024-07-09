@@ -17,7 +17,7 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-71_3d61aa27e87fa827fb240aa9e37c41fa7491c787"
-PR = "r29"
+PR = "r30"
 
 inherit webos_component
 inherit webos_cmake
@@ -27,7 +27,9 @@ inherit webos_system_bus
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-replace-std-gnu-0x-with-std-c-17-for-.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd

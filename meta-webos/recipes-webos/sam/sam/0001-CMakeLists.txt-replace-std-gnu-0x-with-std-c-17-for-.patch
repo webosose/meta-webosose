@@ -1,0 +1,52 @@
+From 9b2e009fcb393d53de5abb984f5646722c6e11c2 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 31 May 2024 09:03:47 +0000
+Subject: [PATCH] CMakeLists.txt: replace -std=gnu++0x with -std=c++17 for
+ icu-75-1
+
+:Release Notes:
+icu-75 now requires C++17 (up from C++11) and C11 (up from C99).
+https://icu.unicode.org/download/75
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/854468
+
+FAILED: CMakeFiles/sam.dir/src/bus/client/SettingService.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot -DBOOST_ATOMIC_DYN_LINK -DBOOST_ATOMIC_NO_LIB -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_FILESYSTEM_NO_LIB -DBOOST_REGEX_DYN_LINK -DBOOST_REGEX_NO_LIB -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB -DLOGGER_ENABLED -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot/usr/include/libmount -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot/usr/include/blkid -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/git/src -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/build/Configured/src -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/git=/usr/src/debug/sam/2.0.0-71  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/git=/usr/src/debug/sam/2.0.0-71  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/build=/usr/src/debug/sam/2.0.0-71  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/build=/usr/src/debug/sam/2.0.0-71  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/recipe-sysroot-native=  -fvisibility-inlines-hidden -Wall -std=gnu++0x -DBOOST_SIGNALS_NO_DEPRECATION_WARNING -pthread -DUSE_PMLOG_DECLARATION -DUSE_PMLOG_DECLARATION -Wl,--no-undefined -DNDEBUG -MD -MT CMakeFiles/sam.dir/src/bus/client/SettingService.cpp.o -MF CMakeFiles/sam.dir/src/bus/client/SettingService.cpp.o.d -o CMakeFiles/sam.dir/src/bus/client/SettingService.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/sam/2.0.0-71/git/src/bus/client/SettingService.cpp
+In file included from ../recipe-sysroot/usr/include/unicode/locid.h:39,
+                 from ../git/src/bus/client/SettingService.cpp:20:
+../recipe-sysroot/usr/include/unicode/localpointer.h:561:26: error: parameter declared 'auto'
+  561 | template <typename Type, auto closeFunction>
+      |                          ^~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: If1ad2600958c08f66d3a792db00b17c320293880
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/sam/+/409712 CMakeLists.txt: replace -std=gnu++0x with -std=c++17 for icu-75-1]
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 888e186..7b2fffe 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,7 +26,7 @@ include(webOS/webOS)
+ 
+ webos_modules_init(1 0 0 QUALIFIER RC4)
+ webos_component(2 0 0)
+-webos_add_compiler_flags(ALL -Wall -std=gnu++0x)
++webos_add_compiler_flags(ALL -Wall -std=c++17)
+ webos_add_compiler_flags(ALL -DBOOST_SIGNALS_NO_DEPRECATION_WARNING)
+ 
+ add_definitions(-DLOGGER_ENABLED)
