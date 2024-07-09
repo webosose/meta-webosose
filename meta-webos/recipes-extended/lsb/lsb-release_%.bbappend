@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos10.${WEBOS_DISTRO_BUILD_ID}"
+EXTENDPRAUTO:append = "webos11.${WEBOS_DISTRO_BUILD_ID}"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -17,7 +17,7 @@ BUILD_DISTRIB_ID = "${@'${WEBOS_TARGET_CORE_OS}'.capitalize()}"
 TRIMED_DISTRO_VERSION = "${@oe.utils.trim_version('${DISTRO_VERSION}')}"
 
 do_configure:append() {
-    cp ${WORKDIR}/dist-update ${S}/dist-update
+    cp ${UNPACKDIR}/dist-update ${S}/dist-update
     if [ ! -z ${PACKAGE_FEED_URI} -a ! -z ${PACKAGE_FEED_BASE_PATH} ]; then
         sed -e "s#@PACKAGE_FEED_URI@#${PACKAGE_FEED_URI}#" -e "s#@PACKAGE_FEED_BASE_PATH@#${PACKAGE_FEED_BASE_PATH}#" -e"s#@PACKAGE_DISTRO@#${DISTRO}#" -e"s#@TRIMED_DISTRO_VERSION@#${TRIMED_DISTRO_VERSION}#" -i ${S}/dist-update
         URI="${@os.path.join('${PACKAGE_FEED_URI}','${PACKAGE_FEED_BASE_PATH}','${DISTRO}','${TRIMED_DISTRO_VERSION}')}"
