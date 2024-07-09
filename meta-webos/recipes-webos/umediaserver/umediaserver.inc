@@ -38,7 +38,7 @@ COMPATIBLE_MACHINE:armv7ve = "(.*)"
 COMPATIBLE_MACHINE:x86 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
-WEBOS_VERSION = "1.0.0-gav.46_6867736010545963dcc66574ed31f38c75a8cfda"
+WEBOS_VERSION = "1.0.0-gav.47_ecbbfcbb00fe07c340247a5bf0f73d12f874dee1"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-uMediaserver-add-missing-include-to-fix-build-with-b.patch \

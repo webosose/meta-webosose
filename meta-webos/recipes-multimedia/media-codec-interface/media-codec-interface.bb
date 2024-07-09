@@ -24,7 +24,7 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^r
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS:append:rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-28_b5faa9d53c3bc37f4617e93e456a264edc49d754"
+WEBOS_VERSION = "1.0.0-29_c7de6620734cdbac9c61b818f1892639dd83d18a"
 PR = "r15"
 
 # http://gpro.lge.com/c/webosose/media-codec-interface/+/396335 CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}
