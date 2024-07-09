@@ -1,9 +1,9 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
 NATIVESDK_PKGGRP_HOST_FOR_WAYLAND = "\
-     nativesdk-qtwayland-tools \
+     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'nativesdk-qtwayland-tools', '', d)} \
      nativesdk-wayland-dev \
 "
 
