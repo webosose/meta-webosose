@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append:rpi = "webosrpi5"
+EXTENDPRAUTO:append:rpi = "webosrpi6"
 
 # The recipe in meta-oe already has conditional dependency:
 # DEPENDS:append:rpi = "${@bb.utils.contains('MACHINE_FEATURES', 'vc4graphics', '', ' userland', d)}"
@@ -13,7 +13,3 @@ ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 FILESEXTRAPATHS:prepend:rpi := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:rpi = " file://0001-Fix-MessageReceived.patch"
-
-# Backport a fix from:
-# https://lists.openembedded.org/g/openembedded-devel/message/98906
-RDEPENDS:${PN}-examples:append:rpi = " ${PN}"
