@@ -17,8 +17,17 @@ Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
 
 Rebase to 1.8.0
 Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+
+Backport of:
+https://lists.gnupg.org/pipermail/gcrypt-devel/2024-June/005655.html
+  https://git.gnupg.org/cgi-bin/gitweb.cgi?p=libgcrypt.git;a=commit;h=7d9817ca935a35fe6c8e2c2c7615825fa08a3a19
+https://lists.gnupg.org/pipermail/gcrypt-devel/2024-May/005651.html
+  https://git.gnupg.org/cgi-bin/gitweb.cgi?p=libgcrypt.git;a=commit;h=5afadba008918d651afefb842ae123cc18454c74
+which will probably be included in upcomming 1.11 release
+and an additional fix for the issues introduced when upstreaming this:
+https://lists.gnupg.org/pipermail/gcrypt-devel/2024-June/005655.html
 ---
-Upstream-Status: Pending
+Upstream-Status: Submitted [https://lists.gnupg.org/pipermail/gcrypt-devel/2024-June/005655.html]
 
  cipher/Makefile.am | 2 +-
  random/Makefile.am | 2 +-
@@ -33,7 +42,7 @@ index eb798aa0..fe7a55dc 100644
  
  if ENABLE_O_FLAG_MUNGING
 -o_flag_munging = sed -e 's/-O\([2-9sg][2-9sg]*\)/-O1/' -e 's/-Ofast/-O1/g'
-+o_flag_munging = sed -e 's/ -O\([2-9sg][2-9sg]*\) / -O1 /' -e 's/ -Ofast / -O1 /g'
++o_flag_munging = sed -e 's/ -O\([2-9sg][2-9sg]*\) / -O1 /g' -e 's/ -Ofast / -O1 /g'
  else
  o_flag_munging = cat
  endif
