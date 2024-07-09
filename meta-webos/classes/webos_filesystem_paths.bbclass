@@ -7,6 +7,7 @@
 webos_bootdir = "${base_prefix}/boot"
 webos_browserpluginsdir = "${libdir}/BrowserPlugins"
 webos_defaultconfdir = "${sysconfdir}/default"
+webos_datadir = "${base_prefix}/data"
 webos_execstatedir = "${localstatedir}/lib"
 webos_fontsdir = "${datadir}/fonts"
 webos_homedir = "${base_prefix}/home"
