@@ -15,7 +15,7 @@ DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 # Record pipeline
 DEPENDS += "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 
-WEBOS_VERSION = "1.0.0-7_8faaa2f728696f31bd2aed94e1020ca16ce94612"
+WEBOS_VERSION = "1.0.0-8_fb19559d8e717bd98ed4abe04975793917ada728"
 PR = "r4"
 
 inherit webos_component
