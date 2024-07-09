@@ -24,4 +24,4 @@ PREFERRED_VERSION_gst-validate1.0           = "${GSTREAMER_VERSION}"
 # gst-examples is not kept in sync with the rest of gst-* recipes
 # PREFERRED_VERSION_gst-examples              = "${GSTREAMER_VERSION}"
 
-RUSTVERSION = "1.63.0"
+RUSTVERSION = "1.75.0"
