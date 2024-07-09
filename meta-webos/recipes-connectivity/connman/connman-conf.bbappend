@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
 
 SRC_URI += " \
     file://main.conf \
@@ -15,7 +15,7 @@ WEBOS_SYSTEMD_REPLACE_OTHERS = "-DWEBOS_CONNMAN_PREACTIVATE_INTERFACE_LIST="${WE
 
 do_install:append() {
     install -d ${D}${sysconfdir}/connman
-    install -m 0644 ${WORKDIR}/main.conf ${D}${sysconfdir}/connman/
+    install -m 0644 ${UNPACKDIR}/main.conf ${D}${sysconfdir}/connman/
 }
 
 FILES:${PN} += " \
