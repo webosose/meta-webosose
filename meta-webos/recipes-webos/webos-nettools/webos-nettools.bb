@@ -15,7 +15,7 @@ RDEPENDS:${PN} = "iputils"
 
 WEBOS_REPO_NAME = "com.webos.service.nettools"
 
-WEBOS_VERSION = "1.1.0-6_5ebd0866e9709d88db9c433746ccfcbc7561d48f"
+WEBOS_VERSION = "1.1.0-7_7b06a3208a6ae5e7dfdc2dd2e7e3e37858f6ac68"
 PR = "r1"
 
 inherit webos_component
