@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=6e87e90c168c712da8accb5afc402bf4\
 "
 
-WEBOS_VERSION = "1.0.0-plugin.13_2b0d4532b7e415e0a5e518c14386d66b98ae46ff"
+WEBOS_VERSION = "1.0.0-plugin.16_0339d49e73135a50540ede1d25195ba1d60ab1da"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
