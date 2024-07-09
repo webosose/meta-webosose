@@ -6,7 +6,7 @@ require media-codec-interface.bb
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r6"
+PR = "r7"
 
 CXXFLAGS +=" \
     -I${STAGING_INCDIR}/media-resource-calculator-clang \
@@ -15,7 +15,7 @@ CXXFLAGS +=" \
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 DEPENDS:remove = "media-resource-calculator umediaserver"
 DEPENDS += "media-resource-calculator-clang umediaserver-clang"
 

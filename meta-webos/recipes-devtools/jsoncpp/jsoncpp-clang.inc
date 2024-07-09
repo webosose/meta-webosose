@@ -2,11 +2,11 @@
 
 inherit clang_cmake
 
-PR = "r4"
+PR = "r5"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 
 OECMAKE_CXX_FLAGS += "-DJSON_USE_EXCEPTION=0"
 

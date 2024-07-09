@@ -4,7 +4,7 @@ require webruntime_120.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r0"
+PR = "r1"
 
 inherit clang_libc
 
@@ -12,7 +12,7 @@ GCC_CROSS_VER = "11.3.0"
 DEPEXT = "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', '', '-clang', d)}"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', 'system-libcxx', d)}"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 
 GN_ARGS_CLANG = "is_clang=true"
 

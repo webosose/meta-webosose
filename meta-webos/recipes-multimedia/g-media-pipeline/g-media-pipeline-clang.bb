@@ -7,11 +7,11 @@ require g-media-pipeline.bb
 FILESEXTRAPATHS:prepend := "${THISDIR}/g-media-pipeline:"
 WEBOS_REPO_NAME = "g-media-pipeline"
 
-PR = "r4"
+PR = "r5"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 DEPENDS:remove = "umediaserver media-resource-calculator"
 DEPENDS += "umediaserver-clang media-resource-calculator-clang"
 
