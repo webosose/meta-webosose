@@ -1,13 +1,13 @@
 # Copyright (c) 2012-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos11"
+EXTENDPRAUTO:append = "webos12"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += "file://e2fsck.conf"
 
 do_install:append() {
     install -d ${D}${sysconfdir}
-    install -v -m 0644 ${WORKDIR}/e2fsck.conf ${D}${sysconfdir}/
+    install -v -m 0644 ${UNPACKDIR}/e2fsck.conf ${D}${sysconfdir}/
 }
 
 VIRTUAL-RUNTIME_bash ?= "bash"
