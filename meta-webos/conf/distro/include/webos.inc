@@ -495,3 +495,7 @@ CVE_CHECK_SHOW_WARNINGS = "0"
 
 # Specify the name of the recipe you want to exclude from the cve check.
 CVE_CHECK_SKIP_RECIPE += "${MLPREFIX}configurator"
+
+# Backport UNPACKDIR variable from styhead
+# https://git.openembedded.org/openembedded-core/commit/?id=e022d62ba917790af2121da57646271ef17c03fa
+UNPACKDIR ??= "${WORKDIR}"
