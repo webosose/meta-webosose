@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi36"
+EXTENDPRAUTO:append = "webosrpi37"
 
 CMDLINE:append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 
@@ -12,8 +12,6 @@ SRC_URI += "\
     file://0001-kernel-seed-voicecard.patch \
     file://0002-seed-voicecard-Update-from-HinTak-to-support-v6.1-ke.patch;minver=6.1.0 \
     file://0003-seed-voicecard-Update-from-HinTak-to-support-v6.6-ke.patch;minver=6.6.0 \
-    file://0001-wifi-cfg80211-Add-my-certificate.patch \
-    file://0002-wifi-cfg80211-fix-certs-build-to-not-depend-on-file-.patch \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://docker.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://ebtables.cfg', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'virtualization', 'file://lxc.cfg', '', d)} \
