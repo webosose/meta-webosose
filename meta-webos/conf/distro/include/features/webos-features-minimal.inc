@@ -11,7 +11,7 @@ WEBOS_DISTRO_FEATURES_OPENGL += "opengl"
 WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM += "wayland"
 
 # You can specify extra webos distro features.
-WEBOS_DISTRO_FEATURES_EXTENDED += "webos-graphics webos-qt webos-touch"
+WEBOS_DISTRO_FEATURES_EXTENDED += "webos-graphics webos-touch"
 
 # Addition/removal image features
 IMAGE_FEATURES += "webos-minimal"
