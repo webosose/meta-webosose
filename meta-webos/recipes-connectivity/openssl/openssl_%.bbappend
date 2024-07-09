@@ -1,12 +1,6 @@
 # Copyright (c) 2013-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos23"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-
-SRC_URI:append = " \
-    file://0001-null-pmeth-engine.patch \
-"
+EXTENDPRAUTO:append = "webos24"
 
 inherit update-alternatives
 ALTERNATIVE:${PN}-conf = "openssl-cnf2"
