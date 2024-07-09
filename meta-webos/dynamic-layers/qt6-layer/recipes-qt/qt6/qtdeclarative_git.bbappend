@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos86"
+EXTENDPRAUTO:append = "webos87"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -33,7 +33,7 @@ inherit webos_qmake6_paths
 DEPENDS:append:class-native = " python3-regex-native"
 SRC_URI:append:class-native = " file://qmllint-supplement.py"
 do_install:append:class-native() {
-    install -m 755 ${WORKDIR}/qmllint-supplement.py ${D}${OE_QMAKE_PATH_QT_BINS}
+    install -m 755 ${UNPACKDIR}/qmllint-supplement.py ${D}${OE_QMAKE_PATH_QT_BINS}
 }
 
 # TODO: To workaround the build issue where a recipe that depends on
