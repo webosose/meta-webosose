@@ -332,6 +332,25 @@ WARN_QA:append = " version-going-backwards webos-enh-sub-warning"
 WEBOS_ERROR_QA_AUTOREV ?= "webos-enh-sub-autorev-error"
 ERROR_QA:append = " webos-enh-sub-error acg-dirty acg-json ${WEBOS_ERROR_QA_AUTOREV} acg-api acg-perm ls2-role ls2-schema"
 ERROR_QA:remove = " version-going-backwards"
+
+# currently not used in OSE, but add it here to keep the same ERROR_QA across DISTROs (as much as possible)
+ERROR_QA:append = " license_notice"
+ERROR_QA:append = " incomp-lic-no-whitelist-error"
+WARN_QA:append  = " incomp-lic-shlibdeps-warning"
+
+# Add perm-file QA check based on distro feature
+# perm-file currently isn't used since http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/380606
+# perm-line and perm-config are used since initial implementation in: http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/367700
+# but were never added to ERRROR_QA
+# This doesn't need to be conditional on DISTRO_FEATURES as the *-dac.inc
+# won't be included by DISTROs which don't want it (and without it nothing
+# will call oe.qa.handle_error("perm-{file,line,config}", msg, d).
+ERROR_QA:append = " perm-file perm-line perm-config"
+
+# work around until https://bugzilla.yoctoproject.org/show_bug.cgi?id=15515 is implemented
+ERROR_QA[vardepvalue] = "${ERROR_QA}"
+WARN_QA[vardepvalue] = "${ERROR_QA}"
+
 # Move all default WARN_QA from insane.bbclass to ERROR_QA to prevent silently re-introducing these issues
 DEFAULT_WARN_QA = "\
     libdir xorg-driver-abi \
