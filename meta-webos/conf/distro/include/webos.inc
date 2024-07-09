@@ -390,6 +390,9 @@ PACKAGE_ARCH:pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFI
 # because -cpu options are missing in QEMU_OPTIONS
 PACKAGE_ARCH:pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
 
+# Component can dynamically configure the make system
+WEBOS_MAKE_SYSTEM:pn-luna-sysservice = "${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'webos_cmake_qt6', 'webos_cmake', d)}"
+
 # This is needed e.g. for nodejs where PACKAGE_ARCH is set to MACHINE_ARCH
 # but instead of depending on qemuwrapper-cross it creates its own qemu wrapper
 # with help of qemu.bbclass's qemu_wrapper_cmdline which uses QEMU_OPTIONS with:

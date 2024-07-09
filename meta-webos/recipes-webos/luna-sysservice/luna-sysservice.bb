@@ -17,7 +17,7 @@ DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib ny
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode luna-init"
 
 WEBOS_VERSION = "4.4.0-26_ffe9b48d169a3ee34ea1c9657af0b099af3898ed"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_public_repo
@@ -25,7 +25,7 @@ inherit webos_enhanced_submissions
 inherit webos_system_bus
 inherit webos_machine_dep
 inherit webos_daemon
-inherit webos_cmake_qt6
+inherit ${WEBOS_MAKE_SYSTEM}
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
