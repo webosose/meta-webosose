@@ -1,0 +1,57 @@
+From a9a3ec6b517a6b728e65ffaa82336981802e6494 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Tue, 23 Apr 2024 19:06:35 +0900
+Subject: [PATCH] Fix build issue with uic
+
+Check if Qt::Widgets before enabling uic.
+
+Change-Id: I5b1e6cf3820b8ad522c4895c632e7f35331acd09
+---
+Upstream-Status: Pending
+
+ .../loadFromModuleTranslationsCppType/CMakeLists.txt   | 10 ++++++----
+ .../loadFromModuleTranslationsQmlType/CMakeLists.txt   | 10 ++++++----
+ 2 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsCppType/CMakeLists.txt b/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsCppType/CMakeLists.txt
+index f6fa23e010..60ebfab04d 100644
+--- a/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsCppType/CMakeLists.txt
++++ b/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsCppType/CMakeLists.txt
+@@ -17,10 +17,12 @@ qt_add_qml_module(i18nLoadFromModuleCppType
+     QML_FILES Main.qml
+ )
+ 
+-qt_internal_extend_target(i18nLoadFromModuleCppType
+-    ENABLE_AUTOGEN_TOOLS
+-        uic
+-)
++if(TARGET Qt::Widgets)
++    qt_internal_extend_target(i18nLoadFromModuleCppType
++        ENABLE_AUTOGEN_TOOLS
++            uic
++    )
++endif()
+ 
+ qt_add_resources(i18nLoadFromModuleCppType "loadFromModuleCppTypeQmFile"
+     PREFIX
+diff --git a/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsQmlType/CMakeLists.txt b/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsQmlType/CMakeLists.txt
+index 088648040d..4cb1177815 100644
+--- a/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsQmlType/CMakeLists.txt
++++ b/tests/auto/qml/qqmlapplicationengine/loadFromModuleTranslationsQmlType/CMakeLists.txt
+@@ -17,10 +17,12 @@ qt_add_qml_module(i18nLoadFromModuleQmlType
+     QML_FILES Main.qml
+ )
+ 
+-qt_internal_extend_target(i18nLoadFromModuleQmlType
+-    ENABLE_AUTOGEN_TOOLS
+-        uic
+-)
++if(TARGET Qt::Widgets)
++    qt_internal_extend_target(i18nLoadFromModuleQmlType
++        ENABLE_AUTOGEN_TOOLS
++            uic
++    )
++endif()
+ 
+ qt_add_resources(i18nLoadFromModuleQmlType "loadFromModuleQmlTypeQmFile"
+     PREFIX

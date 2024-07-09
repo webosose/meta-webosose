@@ -450,6 +450,10 @@ FORTRAN:forcevariable = ",fortran"
 # Qt major version to use
 QT_VERSION ?= "6"
 
+# Disable ptests of Qt recipes as unused and burdensome
+# Some ptests are even broken due to dependency to Qt::Widget
+QT_PTEST_ENABLED = "0"
+
 # Add author and rp maintainer to package metadata
 # PACKAGE_ADD_{AUTHOR,RPMAINTAINER}_METADATA is set by pkg_add_extra_metadata handler in webos_base.bbclass
 PACKAGE_ADD_AUTHOR_METADATA ?= "${AUTHOR}"

@@ -1,7 +1,7 @@
 # Copyright (c) 2023-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
-# backport the fix from:
-# https://codereview.qt-project.org/c/yocto/meta-qt6/+/482948 qttools: add PACKAGECONFIG for clang dependency
-PACKAGECONFIG[clang] = "-DFEATURE_clang=ON,-DFEATURE_clang=OFF,clang"
+PACKAGECONFIG[linguist] = "-DFEATURE_linguist=ON,-DFEATURE_linguist=OFF"
+# lrelease is being used by webos_qt_localization.bbclass
+PACKAGECONFIG:append:class-native = " linguist"

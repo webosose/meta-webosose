@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos85"
+EXTENDPRAUTO:append = "webos86"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -14,15 +14,18 @@ SRC_URI:append = " \
 "
 
 # Upstream-Status: Submitted
-# NOTE: Increase maxver when upgrading Qt version
 SRC_URI:append = " \
-    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch;maxver=6.6.0 \
+    file://0001-Check-if-a-device-in-knownPointingDevices-is-destroy.patch;maxver=${WEBOS_PATCH_MAXVER} \
+"
+
+# Upstream-Status: Pending
+SRC_URI:append = " \
+    file://0002-Fix-build-issue-with-uic.patch;minver=6.7.0 \
 "
 
 # Upstream-Status: Inappropriate
-# NOTE: Increase maxver when upgrading Qt version
 SRC_URI:append = " \
-    file://0002-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch;maxver=6.6.0 \
+    file://9901-Revert-Don-t-hide-the-inputMethod-when-finishing-the.patch;maxver=${WEBOS_PATCH_MAXVER} \
 "
 
 # Supplement tool for qmllint

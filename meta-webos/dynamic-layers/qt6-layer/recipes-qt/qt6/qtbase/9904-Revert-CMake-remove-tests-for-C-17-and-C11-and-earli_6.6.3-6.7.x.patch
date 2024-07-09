@@ -1,4 +1,4 @@
-From c2460e4c50372cc1d0401529ecb7a663bedaec36 Mon Sep 17 00:00:00 2001
+From 29a3a5337268ceba915cc7ee6dc2e56de98fbc36 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Fri, 14 Apr 2023 06:16:46 +0900
 Subject: [PATCH] Revert "CMake: remove tests for C++17 and C11 and earlier"
@@ -13,12 +13,12 @@ Upstream-Status: Inappropriate [webOS specific]
  3 files changed, 109 insertions(+), 4 deletions(-)
 
 diff --git a/configure.cmake b/configure.cmake
-index 1e144ac37c0..65048419d13 100644
+index 037aab9b2d2..be6eed299a1 100644
 --- a/configure.cmake
 +++ b/configure.cmake
-@@ -233,6 +233,51 @@ qt_config_compile_test(glibc_234
- int main() {}"
- )
+@@ -211,6 +211,51 @@ endif()
+ # machineTuple
+ qt_config_compile_test_machine_tuple("machine tuple")
  
 +# cxx14
 +qt_config_compile_test(cxx14
@@ -68,7 +68,7 @@ index 1e144ac37c0..65048419d13 100644
  # cxx20
  qt_config_compile_test(cxx20
      LABEL "C++20 support"
-@@ -688,10 +733,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
+@@ -618,10 +663,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
      NEGATE
      NAME "no_plugin_manifest"
  )
@@ -99,7 +99,7 @@ index 1e144ac37c0..65048419d13 100644
  )
  qt_feature_config("c++20" QMAKE_PUBLIC_QT_CONFIG)
  qt_feature("c++2a" PUBLIC
-@@ -705,6 +769,17 @@ qt_feature("c++2b" PUBLIC
+@@ -635,6 +699,17 @@ qt_feature("c++2b" PUBLIC
      CONDITION QT_FEATURE_cxx20 AND (CMAKE_VERSION VERSION_GREATER_EQUAL "3.20") AND TEST_cxx2b
  )
  qt_feature_config("c++2b" QMAKE_PUBLIC_QT_CONFIG)
@@ -117,7 +117,7 @@ index 1e144ac37c0..65048419d13 100644
  qt_feature("precompile_header"
      LABEL "Using precompiled headers"
      CONDITION BUILD_WITH_PCH AND TEST_precompile_header
-@@ -1213,6 +1288,16 @@ qt_configure_add_summary_entry(
+@@ -1101,6 +1176,16 @@ qt_configure_add_summary_entry(
      ARGS "optimize_full"
  )
  qt_configure_add_summary_entry(ARGS "shared")

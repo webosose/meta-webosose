@@ -549,7 +549,7 @@ new file mode 100644
 index 0000000000..0f436ffacf
 --- /dev/null
 +++ b/mkspecs/features/qt_common.prf
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,165 @@
 +#
 +#  W A R N I N G
 +#  -------------
@@ -574,6 +574,7 @@ index 0000000000..0f436ffacf
 +qtConfig(c99): CONFIG += c99
 +qtConfig(c11): CONFIG += c11
 +qtConfig(separate_debug_info): CONFIG += separate_debug_info
++qtConfig(stack-protector-strong): CONFIG += stack_protector_strong
 +contains(TEMPLATE, .*lib) {
 +    # module and plugins
 +    unix:qtConfig(reduce_relocations): CONFIG += bsymbolic_functions
