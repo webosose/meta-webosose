@@ -4,15 +4,15 @@ DESCRIPTION = "Components for graphics added to webOS"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r2"
+PR = "r3"
 
 inherit packagegroup
 inherit features_check
 
 ANY_OF_DISTRO_FEATURES = "webos-graphics webos-graphics-extended"
 
-VIRTUAL-RUNTIME_surface-manager ?= "luna-surfacemanager-base"
-VIRTUAL-RUNTIME_surface-manager-conf ?= "luna-surfacemanager-conf"
+VIRTUAL-RUNTIME_surface-manager ?= "${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'luna-surfacemanager-base', '', d)}"
+VIRTUAL-RUNTIME_surface-manager-conf ?= "${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'luna-surfacemanager-conf', '', d)}"
 VIRTUAL-RUNTIME_surface-manager-extension ?= ""
 VIRTUAL-RUNTIME_webappmanager ?= ""
 
