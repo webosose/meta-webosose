@@ -2,7 +2,7 @@
 
 # This script helps to replace the webos path variable in *.service.in or *.sh.in
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.5.0)
 project(webos_systemd NONE)
 
 include(webOS/webOS)
