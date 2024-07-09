@@ -16,13 +16,15 @@ RDEPENDS:${PN} = " \
 "
 
 WEBOS_VERSION = "0.0.1-45_741ca8e031397515c95b142f87ec832f93206e4b"
-PR = "r7"
+PR = "r8"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_qmllint
 inherit webos_system_bus
+inherit features_check
+ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
