@@ -6,7 +6,7 @@ HOMEPAGE = "http://www.rust-lang.org"
 #
 LLVM_RELEASE = "17.0.6"
 
-require rust-source.inc
+require rust-source-1.75.0.inc
 
 SRC_URI += "file://0002-llvm-allow-env-override-of-exe-path.patch;striplevel=2 \
             file://0001-AsmMatcherEmitter-sort-ClassInfo-lists-by-name-as-we.patch;striplevel=2 \

@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
     file://LICENSE-THIRD-PARTY;md5=f257ad009884cb88a3a87d6920e7180a \
 "
 
-require rust-source.inc
-require rust-snapshot.inc
+require rust-source-1.75.0.inc
+require rust-snapshot-1.75.0.inc
 
 S = "${RUSTSRC}/src/tools/cargo"
 CARGO_VENDORING_DIRECTORY = "${RUSTSRC}/vendor"

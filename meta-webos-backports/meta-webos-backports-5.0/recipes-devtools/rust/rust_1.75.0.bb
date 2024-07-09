@@ -209,8 +209,8 @@ rust_runx () {
 }
 rust_runx[vardepsexclude] += "PARALLEL_MAKE"
 
-require rust-source.inc
-require rust-snapshot.inc
+require rust-source-1.75.0.inc
+require rust-snapshot-1.75.0.inc
 
 INSANE_SKIP:${PN}:class-native = "already-stripped"
 FILES:${PN} += "${libdir}/rustlib"

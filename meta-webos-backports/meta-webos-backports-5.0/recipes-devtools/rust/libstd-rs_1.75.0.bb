@@ -4,7 +4,7 @@ SECTION = "devel"
 LICENSE = "(MIT | Apache-2.0) & Unicode-TOU"
 LIC_FILES_CHKSUM = "file://../../COPYRIGHT;md5=c2cccf560306876da3913d79062a54b9"
 
-require rust-source.inc
+require rust-source-1.75.0.inc
 
 # The dummy crate named `sysroot` represents the standard library target.
 #
