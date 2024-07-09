@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=014f1a23c3da49aa929b21a96808ab22"
 
 inherit npm
 
-PR = "r1"
+PR = "r2"
 
 SRC_URI = "\
     https://github.com/${BPN}/${BPN}/releases/download/${PV}/${BPN}-${PV}.zip \
@@ -19,8 +19,8 @@ S = "${WORKDIR}/${BPN}"
 
 do_install:append() {
     # Service
-    install -d ${D}${systemd_unitdir}/system/
-    install -m 0644 ${WORKDIR}/${BPN}.service ${D}${systemd_unitdir}/system/
+    install -d ${D}${systemd_system_unitdir}/
+    install -m 0644 ${WORKDIR}/${BPN}.service ${D}${systemd_system_unitdir}/
 
     # Remove hardware specific files
     rm -v ${D}/${bindir}/${BPN}-pi

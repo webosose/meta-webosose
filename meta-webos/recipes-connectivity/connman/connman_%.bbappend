@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos24"
+EXTENDPRAUTO:append = "webos25"
 SYSTEMD_SERVICE:${PN}:remove = "connman.service"
 # connman.service is provided by connman-conf
 RDEPENDS:${PN} += "connman-conf"
@@ -17,7 +17,7 @@ inherit webos_public_repo
 inherit webos_enhanced_submissions
 
 do_install:append() {
-    rm -vf ${D}${systemd_unitdir}/system/connman.service
+    rm -vf ${D}${systemd_system_unitdir}/connman.service
 }
 
 # http://gecko.lge.com:8000/Errors/Details/821746

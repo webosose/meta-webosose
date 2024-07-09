@@ -13,7 +13,7 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0004-Add-plugins-for-dashboard.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r3"
+PR = "r4"
 
 GO_IMPORT = "import"
 
@@ -87,9 +87,9 @@ do_install() {
     install -m 0755 ${TELEGRAF_OUT}/usr/bin/telegraf ${D}${bindir}/
 
     # /usr/lib
-    install -d ${D}${systemd_unitdir}/system
+    install -d ${D}${systemd_system_unitdir}
     sed -i 's/User=telegraf/User=root/g' ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service
-    install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system
+    install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_system_unitdir}
 
     #install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/init.sh ${D}${libdir}/telegraf/scripts/
     #install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${libdir}/telegraf/scripts/
