@@ -4,7 +4,7 @@ DESCRIPTION = "meta-webos components used in webOS OSE"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r52"
+PR = "r53"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -90,6 +90,7 @@ RDEPENDS:${PN} = " \
     ${VIRTUAL-RUNTIME_nodejs-module-node-red} \
     ${VIRTUAL-RUNTIME_unifiedsearch} \
     ${WEBOS_FOSS_MISSING_FROM_RDEPENDS} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wifi', 'wireless-regdb-static', '', d)} \
 "
 
 RDEPENDS:${PN}:append:webos = " \
@@ -107,7 +108,6 @@ RDEPENDS:${PN}:append:webos = " \
     ${VIRTUAL-RUNTIME_com.webos.app.statusbar} \
     ${VIRTUAL-RUNTIME_com.webos.service.flowmanager} \
     ${VIRTUAL-RUNTIME_contextintentmgr} \
-    wireless-regdb-static \
 "
 
 # XXX These FOSS components must be explicitly added because they are missing
