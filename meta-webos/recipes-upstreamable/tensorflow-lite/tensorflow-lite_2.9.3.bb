@@ -35,7 +35,7 @@ do_install() {
 
     # install pkgconfig file
     install -d ${D}${libdir}/pkgconfig
-    install -m 0644 ${WORKDIR}/tensorflowlite.pc.in ${D}${libdir}/pkgconfig/tensorflowlite.pc
+    install -m 0644 ${UNPACKDIR}/tensorflowlite.pc.in ${D}${libdir}/pkgconfig/tensorflowlite.pc
     sed -i 's:@version@:${PV}:g
         s:@libdir@:${libdir}:g
         s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/tensorflowlite.pc

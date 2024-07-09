@@ -67,7 +67,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r4"
+PR = "r5"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
