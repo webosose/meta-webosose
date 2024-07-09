@@ -35,11 +35,11 @@ install_units() {
     install -d ${WORKDIR}/staging-units
 
     for f in ${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}; do
-        cp ${WORKDIR}/$f ${WORKDIR}/staging-units/
+        cp ${UNPACKDIR}/$f ${WORKDIR}/staging-units/
     done
 
     if [ $(ls ${WORKDIR}/staging-units | wc -l) -gt 0 ]; then
-        ls ${WORKDIR}/replace.cmake >/dev/null 2>/dev/null && cp ${WORKDIR}/replace.cmake ${WORKDIR}/staging-units/CMakeLists.txt
+        ls ${UNPACKDIR}/replace.cmake >/dev/null 2>/dev/null && cp ${UNPACKDIR}/replace.cmake ${WORKDIR}/staging-units/CMakeLists.txt
         (cd ${WORKDIR} && \
          cmake staging-units \
                  -DIN_FILES="${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}" \
