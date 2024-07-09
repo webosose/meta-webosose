@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos7"
+EXTENDPRAUTO:append = "webos8"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-npm:append:class-target = " ${VIRTUAL-RUNTIME_bash}"

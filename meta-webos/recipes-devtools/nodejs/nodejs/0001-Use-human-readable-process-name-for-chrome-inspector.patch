@@ -1,6 +1,6 @@
-From 50cca61c8a580df90132749e476426ac862356a4 Mon Sep 17 00:00:00 2001
+From 1e355df093ba930261d3b46bb711510576a48b42 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
-Date: Wed, 19 Aug 2020 09:50:56 +0900
+Date: Tue, 30 Apr 2024 14:40:38 +0900
 Subject: [PATCH] Use human readable process name for chrome inspector
 
 Release Notes:
@@ -37,7 +37,7 @@ Upstream-Status: Pending
  3 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/src/inspector_io.cc b/src/inspector_io.cc
-index 7e0b3ea63cf..b6b50f7e031 100644
+index b7b8f21e..b02f408c 100644
 --- a/src/inspector_io.cc
 +++ b/src/inspector_io.cc
 @@ -361,7 +361,11 @@ std::vector<std::string> InspectorIoDelegate::GetTargetIds() {
@@ -54,22 +54,22 @@ index 7e0b3ea63cf..b6b50f7e031 100644
  
  std::string InspectorIoDelegate::GetTargetUrl(const std::string& id) {
 diff --git a/src/node_internals.h b/src/node_internals.h
-index f7314c906e5..88af39d6fb8 100644
+index 427cfab4..eaaa4ae2 100644
 --- a/src/node_internals.h
 +++ b/src/node_internals.h
-@@ -91,6 +91,7 @@ void SignalExit(int signal, siginfo_t* info, void* ucontext);
+@@ -94,6 +94,7 @@ void SignalExit(int signal, siginfo_t* info, void* ucontext);
  
  std::string GetProcessTitle(const char* default_title);
  std::string GetHumanReadableProcessName();
 +std::string GetHumanReadableProcessNameWithoutPID();
  
- v8::Maybe<bool> InitializeContextRuntime(v8::Local<v8::Context> context);
- bool InitializePrimordials(v8::Local<v8::Context> context);
+ v8::Maybe<bool> InitializeBaseContextForSnapshot(
+     v8::Local<v8::Context> context);
 diff --git a/src/util.cc b/src/util.cc
-index b881f9f9f88..5574545a408 100644
+index 443bbb1e..f608e374 100644
 --- a/src/util.cc
 +++ b/src/util.cc
-@@ -164,6 +164,10 @@ std::string GetHumanReadableProcessName() {
+@@ -165,6 +165,10 @@ std::string GetHumanReadableProcessName() {
    return SPrintF("%s[%d]", GetProcessTitle("Node.js"), uv_os_getpid());
  }
  
@@ -77,6 +77,6 @@ index b881f9f9f88..5574545a408 100644
 +  return SPrintF("%s", GetProcessTitle("Node.js"));
 +}
 +
- std::vector<std::string> SplitString(const std::string& in,
-                                      char delim,
-                                      bool skipEmpty) {
+ std::vector<std::string_view> SplitString(const std::string_view in,
+                                           const std::string_view delim) {
+   std::vector<std::string_view> out;
