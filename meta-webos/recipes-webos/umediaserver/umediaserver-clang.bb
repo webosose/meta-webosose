@@ -9,8 +9,9 @@ PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
 PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
 
 WEBOS_REPO_NAME = "umediaserver"
+FILESEXTRAPATHS:prepend := "${THISDIR}/umediaserver:"
 
-PR = "${INC_PR}.4"
+PR = "${INC_PR}.5"
 
 OECMAKE_CXX_FLAGS += "-Wno-c++11-narrowing -Wno-format-security"
 OECMAKE_TARGET_COMPILE = "umedia_api resource_mgr_client resource_mgr_client_c"

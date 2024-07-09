@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-INC_PR = "r27"
+INC_PR = "r28"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -40,7 +40,9 @@ COMPATIBLE_MACHINE:x86-64 = "(.*)"
 
 WEBOS_VERSION = "1.0.0-gav.46_6867736010545963dcc66574ed31f38c75a8cfda"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-uMediaserver-add-missing-include-to-fix-build-with-b.patch \
+"
 S = "${WORKDIR}/git"
 
 # umediaserver-python contains the Python bindings
