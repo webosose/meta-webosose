@@ -12,16 +12,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "lttng-ust libpbnjson pmloglib glib-2.0"
-
-RDEPENDS:${PN} += " \
-    babeltrace \
-    lttng-tools \
-    lttng-modules \
-"
+DEPENDS = "libpbnjson pmloglib glib-2.0"
 
 WEBOS_VERSION = "1.0.0-17_f6d4399f296df2b4bead4dda7f3e56090634fd6b"
-PR = "r13"
+PR = "r14"
 
 inherit webos_component
 inherit webos_cmake
