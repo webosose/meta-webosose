@@ -4,7 +4,7 @@ DESCRIPTION = "Components for i18n added to webOS"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r0"
+PR = "r1"
 
 inherit packagegroup
 inherit features_check
@@ -34,7 +34,7 @@ WEBOS_PACKAGESET_TZDATA ?= " \
 "
 
 RDEPENDS:${PN} = " \
-    ilib-qml-plugin \
-    ilib-webapp \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'ilib-qml-plugin', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webos-graphics', 'ilib-webapp', '', d)} \
     ${WEBOS_PACKAGESET_TZDATA} \
 "
