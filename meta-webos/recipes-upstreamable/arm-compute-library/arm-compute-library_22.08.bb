@@ -15,7 +15,7 @@ SRC_URI = " \
     file://arm-compute-library.pc.in \
 "
 
-PR = "r2"
+PR = "r3"
 
 S = "${WORKDIR}/git"
 
@@ -117,7 +117,7 @@ do_install() {
 
     #install pkgconfig
     install -d ${D}${libdir}/pkgconfig
-    install -m 0644 ${WORKDIR}/arm-compute-library.pc.in ${D}${libdir}/pkgconfig/arm-compute-library.pc
+    install -m 0644 ${UNPACKDIR}/arm-compute-library.pc.in ${D}${libdir}/pkgconfig/arm-compute-library.pc
     sed -i 's:@version@:${PV}:g
         s:@libdir@:${libdir}:g
         s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/arm-compute-library.pc
