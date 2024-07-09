@@ -16,8 +16,8 @@ DEPENDS = "luna-service2 libpbnjson uriparser libxml2 sqlite3 pmloglib nyx-lib l
 
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode luna-init"
 
-WEBOS_VERSION = "4.4.0-26_ffe9b48d169a3ee34ea1c9657af0b099af3898ed"
-PR = "r13"
+WEBOS_VERSION = "4.4.0-27_44dcdebc51107b4f807401385f9f584057032884"
+PR = "r14"
 
 inherit webos_component
 inherit webos_public_repo
@@ -26,15 +26,6 @@ inherit webos_system_bus
 inherit webos_machine_dep
 inherit webos_daemon
 inherit webos_cmake
-
-# avoid qt6-cmake inherit - migrate this to inherit_defer after upgrading to scarthgap with:
-# https://git.openembedded.org/openembedded-core/commit/?h=scarthgap&id=451363438d38bd4552d5bcec4a92332f5819a5d4
-# https://git.openembedded.org/bitbake/commit/?h=2.8&id=5c2e840eafeba1f0f754c226b87bfb674f7bea29
-# now it needs to be set in DISTRO config
-PACKAGECONFIG ??= "qt"
-PACKAGECONFIG[qt] = ",,qtbase"
-EXTRA_INHERIT = "${@bb.utils.contains('PACKAGECONFIG', 'qt', 'qt6-cmake', '', d)}"
-inherit ${EXTRA_INHERIT}
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
