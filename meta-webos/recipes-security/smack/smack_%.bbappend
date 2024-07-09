@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
@@ -16,11 +16,11 @@ RDEPENDS:${PN}-ptest:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFE
 
 do_install:append (){
     install -d ${D}${sysconfdir}/smack/netlabel.d
-    install -v -m 0644 ${WORKDIR}/default-access ${D}${sysconfdir}/smack/accesses.d/
-    install -v -m 0644 ${WORKDIR}/unconfined ${D}${sysconfdir}/smack/
-    install -v -m 0644 ${WORKDIR}/onlycap ${D}${sysconfdir}/smack/
+    install -v -m 0644 ${UNPACKDIR}/default-access ${D}${sysconfdir}/smack/accesses.d/
+    install -v -m 0644 ${UNPACKDIR}/unconfined ${D}${sysconfdir}/smack/
+    install -v -m 0644 ${UNPACKDIR}/onlycap ${D}${sysconfdir}/smack/
     install -d ${D}${datadir}/smack
-    install -v -m 0755 ${WORKDIR}/smack_rules_gen ${D}${datadir}/smack/smack_rules_gen
+    install -v -m 0755 ${UNPACKDIR}/smack_rules_gen ${D}${datadir}/smack/smack_rules_gen
 }
 
 RDEPENDS:${PN} += "python3-shell"
