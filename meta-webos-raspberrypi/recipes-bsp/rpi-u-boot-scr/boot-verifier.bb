@@ -8,7 +8,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 RDEPENDS:${PN} = "u-boot-fw-utils u-boot-env"
 
-PR = "r0"
+PR = "r1"
 
 inherit systemd
 
@@ -18,7 +18,7 @@ SRC_URI = " \
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}
-    install -v -m 0644 ${WORKDIR}/boot-verifier.service ${D}${systemd_system_unitdir}
+    install -v -m 0644 ${UNPACKDIR}/boot-verifier.service ${D}${systemd_system_unitdir}
 }
 
 SYSTEMD_SERVICE:${PN} = " boot-verifier.service"
