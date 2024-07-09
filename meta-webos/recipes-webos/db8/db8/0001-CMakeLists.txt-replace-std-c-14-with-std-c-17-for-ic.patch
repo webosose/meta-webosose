@@ -1,0 +1,153 @@
+From edef1cd4bcafc159aef97c7474c797e0191f5970 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 31 May 2024 09:03:47 +0000
+Subject: [PATCH] CMakeLists.txt: replace -std=c++14 with -std=c++17 for
+ icu-75-1
+
+:Release Notes:
+icu-75 now requires C++17 (up from C++11) and C11 (up from C99).
+https://icu.unicode.org/download/75
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/854464
+
+FAILED: src/db/CMakeFiles/mojodb.dir/MojDbTextCollator.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot -DBOOST_REGEX_DYN_LINK -DBOOST_REGEX_NO_LIB -Dmojodb_EXPORTS -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/git/inc -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot/usr/lib/glib-2.0/include -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/git=/usr/src/debug/db8/3.2.0-32  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/git=/usr/src/debug/db8/3.2.0-32  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/build=/usr/src/debug/db8/3.2.0-32  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/build=/usr/src/debug/db8/3.2.0-32  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/recipe-sysroot-native=  -fvisibility-inlines-hidden -pthread -DUSE_PMLOG -DWITH_SNAPPY_COMPRESSION -Wall -Wextra -fPIC -Wconversion -std=c++14 -Wno-unused-but-set-variable -Wno-unused-variable -fno-exceptions -frename-registers -DMOJ_LINUX -fno-strict-aliasing -Wno-psabi -DMOJ_INTERNAL -D_REENTRANT -Werror=return-type -Wno-unused-parameter -Wno-empty-body -Wl,--no-undefined -DWITH_SEARCH_QUERY_CACHE -DNDEBUG -fPIC -MD -MT src/db/CMakeFiles/mojodb.dir/MojDbTextCollator.cpp.o -MF src/db/CMakeFiles/mojodb.dir/MojDbTextCollator.cpp.o.d -o src/db/CMakeFiles/mojodb.dir/MojDbTextCollator.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/db8/3.2.0-32/git/src/db/MojDbTextCollator.cpp
+In file included from ../recipe-sysroot/usr/include/unicode/uset.h:36,
+                 from ../recipe-sysroot/usr/include/unicode/unorm2.h:35,
+                 from ../recipe-sysroot/usr/include/unicode/unorm.h:25,
+                 from ../recipe-sysroot/usr/include/unicode/ucol.h:17,
+                 from ../git/src/db/MojDbTextCollator.cpp:22:
+../recipe-sysroot/usr/include/unicode/localpointer.h:561:26: error: 'auto' parameter not permitted in this context
+  561 | template <typename Type, auto closeFunction>
+      |                          ^~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: If1ad2600958c08f66d3a792db00b17c320293880
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/db8/+/409713 CMakeLists.txt: replace -std=c++14 with -std=c++17 for icu-75-1]
+
+ CMakeLists.txt                    | 2 +-
+ test/db-core/CMakeLists.txt       | 2 +-
+ test/db-media/CMakeLists.txt      | 2 +-
+ test/dbclient-perf/CMakeLists.txt | 2 +-
+ test/leveldb/CMakeLists.txt       | 2 +-
+ test/lmdb/CMakeLists.txt          | 2 +-
+ test/mojocore/CMakeLists.txt      | 2 +-
+ test/sandwich/CMakeLists.txt      | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4f5457d..fc9aa69 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -110,7 +110,7 @@ include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
+ webos_build_pkgconfig(files/pkgconfig/mojodb)
+ webos_build_pkgconfig(files/pkgconfig/db8)
+ 
+-webos_add_compiler_flags(ALL -Wall -Wextra -fPIC -Wconversion -std=c++14
++webos_add_compiler_flags(ALL -Wall -Wextra -fPIC -Wconversion -std=c++17
+                          -Wno-unused-but-set-variable -Wno-unused-variable
+                          -fno-exceptions -frename-registers -DMOJ_LINUX -fno-strict-aliasing
+                          -Wno-psabi
+diff --git a/test/db-core/CMakeLists.txt b/test/db-core/CMakeLists.txt
+index ca84588..aea40bd 100644
+--- a/test/db-core/CMakeLists.txt
++++ b/test/db-core/CMakeLists.txt
+@@ -20,7 +20,7 @@ project(gtest_db_core C CXX)
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ include_directories(../db)
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++17)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/db-media/CMakeLists.txt b/test/db-media/CMakeLists.txt
+index 8e817cb..54a5fc2 100644
+--- a/test/db-media/CMakeLists.txt
++++ b/test/db-media/CMakeLists.txt
+@@ -20,7 +20,7 @@ project(gtest_db_media C CXX)
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ include_directories(../db)
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++17)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/dbclient-perf/CMakeLists.txt b/test/dbclient-perf/CMakeLists.txt
+index 4ea5a1b..6fa11ad 100644
+--- a/test/dbclient-perf/CMakeLists.txt
++++ b/test/dbclient-perf/CMakeLists.txt
+@@ -15,7 +15,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+-add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++17)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/leveldb/CMakeLists.txt b/test/leveldb/CMakeLists.txt
+index 3a489ac..aae69e4 100644
+--- a/test/leveldb/CMakeLists.txt
++++ b/test/leveldb/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_leveldb C CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++17)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/lmdb/CMakeLists.txt b/test/lmdb/CMakeLists.txt
+index 3b4d996..d994a0a 100644
+--- a/test/lmdb/CMakeLists.txt
++++ b/test/lmdb/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_lmdb CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++17)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
+diff --git a/test/mojocore/CMakeLists.txt b/test/mojocore/CMakeLists.txt
+index bbe5c49..6d05bd0 100644
+--- a/test/mojocore/CMakeLists.txt
++++ b/test/mojocore/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_mojocore C CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -std=c++14 -Wno-deprecated -pthread)
++add_definitions(-Wall -std=c++17 -Wno-deprecated -pthread)
+ 
+ add_executable(${PROJECT_NAME}
+                Runner.cpp
+diff --git a/test/sandwich/CMakeLists.txt b/test/sandwich/CMakeLists.txt
+index 6617f48..cd79959 100644
+--- a/test/sandwich/CMakeLists.txt
++++ b/test/sandwich/CMakeLists.txt
+@@ -19,7 +19,7 @@ project(gtest_sandwich CXX)
+ 
+ include_directories(${WEBOS_GTEST_INCLUDES})
+ 
+-add_definitions(-Wall -Wno-deprecated -pthread -std=c++14)
++add_definitions(-Wall -Wno-deprecated -pthread -std=c++17)
+ 
+ foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
+     set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
