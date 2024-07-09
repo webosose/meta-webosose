@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 PV = "grouper"
-PR = "r6"
+PR = "r7"
 
 SRCREV = "3164995622300286ef2bb14d7fdc2792dae045b7"
 
@@ -50,12 +50,12 @@ do_install:append() {
 
     # install pkgconfig file
     install -d ${D}${libdir}/pkgconfig
-    install -m 0644 ${WORKDIR}/edgetpu.pc.in ${D}${libdir}/pkgconfig/edgetpu.pc
+    install -m 0644 ${UNPACKDIR}/edgetpu.pc.in ${D}${libdir}/pkgconfig/edgetpu.pc
     sed -i 's:@version@:${PV}:g
         s:@libdir@:${libdir}:g
         s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/edgetpu.pc
 
-    install -m 0644 ${WORKDIR}/edgetpu-max.pc.in ${D}${libdir}/pkgconfig/edgetpu-max.pc
+    install -m 0644 ${UNPACKDIR}/edgetpu-max.pc.in ${D}${libdir}/pkgconfig/edgetpu-max.pc
     sed -i 's:@version@:${PV}:g
         s:@libdir@:${libdir}:g
         s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/edgetpu-max.pc
