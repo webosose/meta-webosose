@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi3"
+EXTENDPRAUTO:append = "webosrpi4"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI += "\
@@ -9,7 +9,7 @@ SRC_URI += "\
 "
 
 do_install:append() {
-    install -m 0755 ${WORKDIR}/btuart ${D}${bindir}
+    install -m 0755 ${UNPACKDIR}/btuart ${D}${bindir}
     rm -vf ${D}${systemd_system_unitdir}/bthelper@.service
     rm -vf ${D}${bindir}/bthelper
     rm -vrf ${D}${sysconfdir}
