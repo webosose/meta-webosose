@@ -27,6 +27,8 @@ SKIP_RECIPE[qtwebview] ?= "depends on blacklisted qtwebengine"
 SKIP_RECIPE[qtinterfaceframework] ?= "depends on blacklisted qtmultimedia"
 SKIP_RECIPE[qtspeech] ?= "depends on blacklisted qtmultimedia"
 SKIP_RECIPE[python3-pyside6] ?= "depends on blacklisted qtmultimedia, qtcharts, qtdatavis3d, qtconnectivity, qtspeech, qtgraphs"
+SKIP_RECIPE[qttranslations] ?= "depends on linguist being enabled in target qttools, which got disabled in http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/406780/14/meta-webos/dynamic-layers/qt6-layer/recipes-qt/qt6/qttools_git.bbappend"
+SKIP_RECIPE[packagegroup-qt6-essentials] ?= "rdepends on blacklisted qttranslations to rprovide qttranslations-qtbase, qttranslations-qtdeclarative"
 
 # oe-core
 SKIP_RECIPE[efivar] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, makeguids Your linker is not supported guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds http://gecko.lge.com:8000/Errors/Details/565720', '', d)}"
