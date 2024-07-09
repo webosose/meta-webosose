@@ -1,5 +1,8 @@
 # Copyright (c) 2013-2024 LG Electronics, Inc.
 
+inherit features_check
+REQUIRED_DISTRO_FEATURES = "webos-qt"
+
 inherit qt6-qmake
 inherit webos_filesystem_paths
 # To use OE_QMAKE_PATH_QT_* under meta-lg-webos/

@@ -3,7 +3,7 @@
 require conf/distro/include/features/webos-features-core-boot.inc
 
 # Increment when features are changed
-_pr_suffix .= ".1"
+_pr_suffix .= ".2"
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_DEFAULT += "ext2 irda largefile xattr"
@@ -14,6 +14,14 @@ WEBOS_DISTRO_FEATURES_NETWORKING += "nfs zeroconf"
 # You can specify extra webos distro features.
 WEBOS_DISTRO_FEATURES_EXTENDED = "webos-essential"
 DISTRO_FEATURES:append = " ${WEBOS_DISTRO_FEATURES_EXTENDED}"
+# Also have to add webos distro features extended to distro features native and nativesdk, if not
+# | ERROR: Required build target 'nativesdk-packagegroup-sdk-host' has no buildable providers.
+# | Missing or unbuildable dependency chain was: ['nativesdk-packagegroup-sdk-host', 'nativesdk-qtwayland-tools']
+#
+# | ERROR: Nothing PROVIDES 'qtwayland-native' (but qtwayland-webos.bb DEPENDS on or otherwise requires it)
+# | qtwayland-native was skipped: missing required distro feature 'webos-qt' (not in DISTRO_FEATURES)
+DISTRO_FEATURES_NATIVE:append = " ${WEBOS_DISTRO_FEATURES_EXTENDED}"
+DISTRO_FEATURES_NATIVESDK:append = " ${WEBOS_DISTRO_FEATURES_EXTENDED}"
 
 # Addition/removal preferred provider or version
 VIRTUAL-RUNTIME_initscripts = "webos-initscripts"

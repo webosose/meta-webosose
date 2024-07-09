@@ -4,6 +4,9 @@
 
 # from meta-qt5
 
+inherit features_check
+REQUIRED_DISTRO_FEATURES = "webos-qt"
+
 QT_DIR_NAME ?= ""
 
 # This is useful for target recipes to reference native mkspecs
