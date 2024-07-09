@@ -15,8 +15,8 @@ DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 # Record pipeline
 DEPENDS += "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 
-WEBOS_VERSION = "1.0.0-8_fb19559d8e717bd98ed4abe04975793917ada728"
-PR = "r4"
+WEBOS_VERSION = "1.0.0-9_e44e3bca3049590b92e37d0a6c836474f1e6eb85"
+PR = "r5"
 
 inherit webos_component
 inherit webos_cmake
@@ -38,7 +38,7 @@ WEBOS_SYSTEMD_SERVICE = "com.webos.service.mediarecorder.service"
 PACKAGECONFIG[use-rpi] = "-DUSE_RPI:BOOL=True,-DUSE_RPI:BOOL=False,"
 
 # Build a native app for testing the media recorder
-PACKAGECONFIG[test-apps] = "-DWITH_CAMERA_TEST=ON,-DWITH_CAMERA_TEST=OFF, webos-wayland-extensions jpeg, ${PN}-test-apps"
+PACKAGECONFIG[test-apps] = "-DWITH_RECORD_TEST=ON,-DWITH_RECORD_TEST=OFF, webos-wayland-extensions jpeg, ${PN}-test-apps"
 
 PACKAGES += "${PN}-test-apps"
 
