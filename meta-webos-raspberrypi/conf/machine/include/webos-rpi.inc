@@ -99,3 +99,16 @@ WKS_FILE = "sdimage-raspberrypi-webos.wks"
 
 # Use Fake KMS until surface-manager is fixed to support Full KMS, see WRP-5
 VC4DTBO = "vc4-fkms-v3d"
+
+# overwrite 5.15 used for rpi3 and rpi4 MACHINEs in kirkstone:
+# conf/machine/include/rpi-default-versions.inc:PREFERRED_VERSION_linux-raspberrypi ??= "5.15.%"
+# conf/machine/raspberrypi5.conf:PREFERRED_VERSION_linux-raspberrypi = "6.1%"
+# all rpi MACHINEs use 6.1 since mickledore and 6.6 since scarthgap (keep in mind that this won't work in langdale)
+# See meta-raspberrypi/recipes-kernel/linux/linux-raspberrypi_6.1.bb
+# 6.1.61 (backported to kirkstone for rpi5), no 6.1 in langdale, 6.1.54 mickledore, 6.1.61 nanbield, 6.1.77 scarthgap
+# and meta-webos-backports/meta-webos-backports-5.0/dynamic-layers/raspberrypi/recipes-kernel/linux/linux-raspberrypi_6.1.bb
+# 6.1.77 backported from scarthgap for all releases (the same backports send upstream, except for long dead langdale)
+# For scarthgap see meta-raspberrypi/recipes-kernel/linux/linux-raspberrypi_6.6.bb
+# 6.6.22 scarthgap (uses this one by default)
+# Be aware that meta-webos-backports-5.0 has lower priority (34) than meta-raspberrypi (50) in our weboslayers.py
+PREFERRED_VERSION_linux-raspberrypi = "6.1.77%"
