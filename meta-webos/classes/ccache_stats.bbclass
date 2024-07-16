@@ -7,6 +7,12 @@ CCACHE_STATS = "${TOPDIR}/ccache_stats.json"
 CCACHE_STATS[vardepsexclude] = "TOPDIR"
 
 python do_ccache_stats() {
+    import time
+    # get_timedata() function is declared in the buildstats.bbclass
+    elapsedtime = get_timedata("__timedata_task", d, time.time()) or ""
+    if elapsedtime:
+        elapsedtime = d.expand("%0.2f seconds" % elapsedtime)
+
     def getHit(stdout: str):
         """
         stdout is passed under the form.
@@ -50,7 +56,7 @@ python do_ccache_stats() {
             with open(ccache_stats_json, 'r') as f:
                 data_json = json.load(f)
         with open(ccache_stats_json, 'w') as f:
-            data_json[pn] = hit_rate
+            data_json[pn] = "%s, %s" % (hit_rate, elapsedtime)
             json.dump(data_json,f,indent='\t',sort_keys=True)
         bb.utils.unlockfile(lock)
 
