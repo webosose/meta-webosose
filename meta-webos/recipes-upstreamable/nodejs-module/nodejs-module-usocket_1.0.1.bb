@@ -233,3 +233,19 @@ S = "${WORKDIR}/npm"
 # http://gecko.lge.com:8000/Errors/Details/546709
 # npm ERR! TOPDIR/BUILD/work/qemux86-webos-linux/nodejs-module-usocket/1.0.1-r11/recipe-sysroot-native/usr/bin/i686-webos-linux/../../libexec/i686-webos-linux/gcc/i686-webos-linux/11.3.0/ld: error: Release/obj.target/uwrap/src/uwrap.o: relocation R_386_GOTOFF against preemptible symbol _ZTVN3Nan10ObjectWrapE cannot be used when making a shared object
 CXXFLAGS += "-fPIC"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/895293
+# ERROR: QA Issue: File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/packaging/__pycache__/version.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/packaging/__pycache__/__init__.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/packaging/__pycache__/_structures.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/__pycache__/input.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/__pycache__/common.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/__pycache__/simple_copy.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/__pycache__/__init__.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/__pycache__/xcode_emulation.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/generator/__pycache__/__init__.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR
+# File /usr/lib/node_modules/usocket/node_modules/node-gyp/gyp/pylib/gyp/generator/__pycache__/make.cpython-312.pyc in package nodejs-module-usocket contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

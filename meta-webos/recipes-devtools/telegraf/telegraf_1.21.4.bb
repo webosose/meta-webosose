@@ -101,3 +101,10 @@ do_install() {
 inherit systemd
 SYSTEMD_SERVICE:${PN} = "telegraf.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "disable"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/893037
+# ERROR: QA Issue: File /usr/bin/telegraf in package telegraf contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

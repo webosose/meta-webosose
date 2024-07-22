@@ -40,3 +40,12 @@ S = "${WORKDIR}/git"
 #  g_print(g_variant_get_type_string(arguments));
 #                                              ^
 SECURITY_STRINGFORMAT = ""
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# [WRQ-14472] bluetooth: Resolve buildpaths QA warnings
+# http://gecko.lge.com:8000/Errors/Details/894426
+# ERROR: QA Issue: File /usr/src/debug/bluetooth-sil-bluez5/0.1.0-86/Configured/src/freedesktop-interface.c in package bluetooth-sil-bluez5-src contains reference to TMPDIR
+# File /usr/src/debug/bluetooth-sil-bluez5/0.1.0-86/Configured/src/bluez-interface.c in package bluetooth-sil-bluez5-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

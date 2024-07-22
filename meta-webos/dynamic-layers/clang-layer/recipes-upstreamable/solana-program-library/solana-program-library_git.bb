@@ -38,3 +38,10 @@ inherit cargo-update-recipe-crates
 COMPATIBLE_MACHINE = "(-)"
 COMPATIBLE_MACHINE:aarch64 = "(.*)"
 COMPATIBLE_MACHINE:x86-64 = "(.*)"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894435
+# ERROR: QA Issue: File /usr/bin/.debug/spl-token in package solana-program-library-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

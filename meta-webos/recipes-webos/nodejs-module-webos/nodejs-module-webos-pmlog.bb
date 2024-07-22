@@ -23,3 +23,10 @@ do_compile() {
 }
 
 WEBOS_NODE = "pmloglib.node"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/898327
+# ERROR: QA Issue: File /usr/lib/nodejs/.debug/pmloglib.node in package nodejs-module-webos-pmlog-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

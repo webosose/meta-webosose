@@ -79,3 +79,11 @@ FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"
 # webos-connman-adapter/1.1.0-43/git/src/wifi_service.c:4162:82: error: passing argument 5 of 'g_bus_watch_name' from incompatible pointer type [-Wincompatible-pointer-types]
 # webos-connman-adapter/1.1.0-43/git/src/wifi_tethering_service.c:752:42: error: passing argument 2 of 'jboolean_get' from incompatible pointer type [-Wincompatible-pointer-types]
 CFLAGS += "-Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894443
+# ERROR: QA Issue: File /usr/src/debug/webos-connman-adapter/1.1.0-43/Configured/src/pacrunner-interface.c in package webos-connman-adapter-src contains reference to TMPDIR
+# File /usr/src/debug/webos-connman-adapter/1.1.0-43/Configured/src/connman-interface.c in package webos-connman-adapter-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

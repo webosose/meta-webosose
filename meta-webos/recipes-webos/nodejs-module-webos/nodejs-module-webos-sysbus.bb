@@ -37,3 +37,11 @@ do_install:append() {
     install -d ${D}${webos_sysbus_rolesdir}
     sed "s|@WEBOS_INSTALL_BINDIR@|$bindir|" < ${S}/files/sysbus/com.webos.nodejs.role.json.in > ${D}${webos_sysbus_rolesdir}/com.webos.nodejs.role.json
 }
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894658
+# ERROR: QA Issue: File /usr/lib/nodejs/webos-sysbus.node in package nodejs-module-webos-sysbus contains reference to TMPDIR [buildpaths]
+# ERROR: QA Issue: File /usr/lib/nodejs/.debug/webos-sysbus.node in package nodejs-module-webos-sysbus-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

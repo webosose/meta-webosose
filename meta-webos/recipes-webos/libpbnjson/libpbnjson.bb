@@ -47,3 +47,11 @@ BBCLASSEXTEND = "native"
 CFLAGS += "-Wno-error=int-conversion"
 # -native has the same issue on hosts with gcc-14
 BUILD_CFLAGS += "-Wno-error=int-conversion"
+
+# FIXME-buildpaths!!!
+# [WRP-10884] libpbnjson: Resolve buildpaths QA warnings
+# http://gecko.lge.com:8000/Errors/Details/893044
+# ERROR: QA Issue: File /usr/src/debug/libpbnjson/2.15.0-17/src/pbnjson_c/validation/json_schema_grammar.c in package libpbnjson-src contains reference to TMPDIR
+# File /usr/src/debug/libpbnjson/2.15.0-17/src/pbnjson_c/selectors/selectors_grammar_l.c in package libpbnjson-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

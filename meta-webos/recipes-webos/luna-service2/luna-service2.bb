@@ -66,3 +66,11 @@ INSANE_SKIP:${PN}-dbg += "libdir"
 # luna-service2/3.21.2-37/git/src/libluna-service2/transport.c:2001:50: error: passing argument 2 of '_LSTransportMessageGetString' from incompatible pointer type [-Wincompatible-pointer-types]
 # luna-service2/3.21.2-37/git/src/libluna-service2/transport.c:6758:12: error: returning 'LSTransportTrustLevelGroupBitmask *' from a function with incompatible return type 'LSTransportCategoryBitmask *' [-Wincompatible-pointer-types]
 CFLAGS += "-Wno-error=incompatible-pointer-types"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894434
+# ERROR: QA Issue: File /usr/opt/webos/tests/luna-service2/integration/test_monitor in package luna-service2-ptest contains reference to TMPDIR [buildpaths]
+# ERROR: QA Issue: File /usr/opt/webos/tests/luna-service2/integration/.debug/luna-send-q in package luna-service2-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

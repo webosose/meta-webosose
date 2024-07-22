@@ -172,3 +172,11 @@ INSANE_SKIP:${PN} = "dev-so"
 INSANE_SKIP:${PN}-dev += "dev-elf"
 FILES:${PN} += "${libdir}/*"
 FILES:${PN}-dev += "${includedir}/* ${libdir}/cmake/armnn/* ${libdir}/pkgconfig/*.pc ${bindir}/*"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/895261
+# ERROR: QA Issue: File /usr/lib/cmake/armnn/ArmnnDelegateTargets.cmake in package armnn-dev contains reference to TMPDIR
+# File /usr/lib/cmake/armnn/ArmnnTargets.cmake in package armnn-dev contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

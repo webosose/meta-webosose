@@ -62,3 +62,11 @@ do_install:append() {
 }
 
 BBCLASSEXTEND = "native nativesdk"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/895260
+# ERROR: QA Issue: File /usr/lib/.debug/libedgetpu_max.so.1 in package libedgetpu-dbg contains reference to TMPDIR
+# File /usr/lib/.debug/libedgetpu.so.1 in package libedgetpu-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

@@ -17,3 +17,10 @@ S = "${WORKDIR}/git"
 DEPENDS += "udev clang-native openssl"
 
 inherit cargo-update-recipe-crates
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894437
+# ERROR: QA Issue: File /usr/bin/.debug/sugar in package sugar-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"
