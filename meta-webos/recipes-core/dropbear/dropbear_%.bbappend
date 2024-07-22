@@ -4,11 +4,7 @@ inherit webos_machine_impl_dep
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos9"
-
-# (In the emulator) our openssh is installed in /opt prefix, set the sftp path
-# this overrides default value set in oe-core's dropbear.inc
-CFLAGS:append:emulator = " -DSFTPSERVER_PATH=\\"/opt/openssh/lib/openssh/sftp-server\\""
+EXTENDPRAUTO:append = "webos10"
 
 # move startup scripts in different packages
 PACKAGES =+ "${PN}-sysvinit"
