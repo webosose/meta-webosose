@@ -1,0 +1,44 @@
+From fb37fe44cc480337dedbd76ef2b0eb7f3c90550a Mon Sep 17 00:00:00 2001
+From: "mint.choi" <mint.choi@lge.com>
+Date: Thu, 1 Aug 2024 16:50:51 +0900
+Subject: [PATCH] Seeed voicecard nonatomic pcm operation
+
+:Release Notes:
+Fix seeed voice card driver
+
+:Detailed Notes:
+seeed driver controls i2c transfer with schedule function inside
+alsa trigger(atomic) and this causes kernel schedule bug.
+This patch is to change pcm operation to nonatomic.
+
+:Testing Performed:
+Local test done
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRQ-31294] CCC: webos-raspberrypi: linux-raspberrypi=webosrpi38
+[WRQ-30207] Display is freezing after Connecting Mic array
+            device for beamforming.
+[WRQ-30383] [OSE API]: Display of raspberrypi4 device is freezing
+            after connecting "Mic Array for beamforming"
+
+---
+Upstream-Status: Pending
+
+ sound/soc/codecs/seeed-voicecard.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/codecs/seeed-voicecard.c b/sound/soc/codecs/seeed-voicecard.c
+index 886eb0ece6b3..896e22496db0 100644
+--- a/sound/soc/codecs/seeed-voicecard.c
++++ b/sound/soc/codecs/seeed-voicecard.c
+@@ -804,6 +804,7 @@ static int seeed_voice_card_probe(struct platform_device *pdev)
+ 		dai_link[i].num_codecs		= 1;
+ 		dai_link[i].platforms		= &dai_props[i].platforms;
+ 		dai_link[i].num_platforms	= 1;
++		dai_link[i].nonatomic	= 1;
+ 	}
+ 
+ 	priv->dai_props			= dai_props;
