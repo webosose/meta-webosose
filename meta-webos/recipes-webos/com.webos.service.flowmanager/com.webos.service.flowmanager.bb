@@ -18,7 +18,7 @@ inherit webos_enhanced_submissions
 inherit webos_npm_env
 
 require flowmanager.inc
-PR = "r10"
+PR = "r11"
 
 # The same restrition as nodejs (and node-red)
 COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
@@ -48,9 +48,6 @@ do_compile:append() {
 }
 
 FILES:${PN} += "${webos_servicesdir}"
-
-# [http://gpro.lge.com/c/webosose/com.webos.service.flowmanager/+/348056 webpack: use sha256 instead of ancient md4 to fix build with openssl-3]
-SRC_URI += "file://0001-webpack-use-sha256-instead-of-ancient-md4-to-fix-bui.patch"
 
 # Workaround for network access issue during do_compile task
 do_compile[network] = "1"
