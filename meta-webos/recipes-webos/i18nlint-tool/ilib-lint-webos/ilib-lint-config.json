@@ -1,0 +1,35 @@
+ {
+    "name": "webOS-lint",
+    "sourceLocale": "en-KR",
+    "locales": [],
+    "plugins": [
+        "ilib-lint-webos"
+    ],
+    "rulesets": {
+        "webos-translation-rules": {
+            "resource-url-match": true,
+            "resource-named-params": true,
+            "resource-quote-style": true,
+            "resource-unique-keys": true,
+            "resource-edge-whitespace": true,
+            "resource-completeness": true,
+            "resource-no-fullwidth-latin": false,
+            "resource-no-fullwidth-digits": false,
+            "resource-no-fullwidth-punctuation-subset": false,
+            "resource-no-space-between-double-and-single-byte-character": false,
+            "resource-no-halfwidth-kana-characters": false,
+            "resource-no-double-byte-space": false,
+            "resource-no-space-with-fullwidth-punctuation": false
+        }
+    },
+    "filetypes":{
+        "xliff" : {
+            "ruleset": [
+                "webos-translation-rules"
+            ]
+        }
+    },
+    "paths": {
+        "**/[a-z][a-z]*-([A-Z][A-Z]).xliff": "xliff"
+    }
+}
