@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 json-c pmloglib libpbnjson"
 RDEPENDS:${PN} += "telegraf"
 
-WEBOS_VERSION = "1.0.0-12_09765a8908962147e7f137d3811cb2443ba234d7"
+WEBOS_VERSION = "1.0.0-13_803b98116d12139a5075ddca0310cde0f67c216b"
 PR = "r1"
 
 inherit systemd

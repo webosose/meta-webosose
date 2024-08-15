@@ -11,9 +11,10 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0002-Remove-unused-plugins-for-v1.21.4.patch;patchdir=src/${GO_IMPORT} \
     file://0003-Apply-inputs.socket_listener-plugin-for-sdkagent.patch;patchdir=src/${GO_IMPORT} \
     file://0004-Add-plugins-for-dashboard.patch;patchdir=src/${GO_IMPORT} \
+    file://0005-Change-telegraf-config-directory.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r4"
+PR = "r5"
 
 GO_IMPORT = "import"
 
@@ -96,6 +97,8 @@ do_install() {
 
     # /var
     #install -d ${D}${localstatedir}/log/telegraf
+    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent
+    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent/telegraf.d
 }
 
 inherit systemd
