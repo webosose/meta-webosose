@@ -6,15 +6,15 @@ AUTHOR = "Ki-Joong Lee <kijoong.lee@lge.com>"
 SECTION = "libs"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
-    file://oss-pkg-info.yaml;md5=6e87e90c168c712da8accb5afc402bf4\
+    file://LICENSE;md5=d46cc1e419bce84e1021fb5426e4363a \
+    file://oss-pkg-info.yaml;md5=b175693811514d0ad08577aa0fc5f16a\
 "
 
-WEBOS_VERSION = "1.0.0-plugin.16_0339d49e73135a50540ede1d25195ba1d60ab1da"
+WEBOS_VERSION = "1.1.0-69_42efe9588b747e37f187b9a4fd66a2d62f6e9955"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r12"
+PR = "r0"
 S = "${WORKDIR}/git"
 
 inherit cmake
