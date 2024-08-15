@@ -1,9 +1,9 @@
 # Copyright (c) 2012-2024 LG Electronics, Inc.
 
-# Make chromium108 the default webruntime
+# Set default chromium version for webruntime and mksnapshot
 PREFERRED_VERSION_webruntime = "120.%"
-PREFERRED_VERSION_webruntime-clang = "120.%"
-PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "120.%"
+PREFERRED_VERSION_webruntime-clang = "${PREFERRED_VERSION_webruntime}"
+PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "${PREFERRED_VERSION_webruntime}"
 
 # Prefer gstreamer version 1.20.% from oe-core for webos
 GSTREAMER_VERSION = "1.20.%"
