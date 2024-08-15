@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos24"
+EXTENDPRAUTO:append = "webos25"
 
 inherit update-alternatives
 ALTERNATIVE:${PN}-conf = "openssl-cnf2"
@@ -16,3 +16,10 @@ FILES:openssl-conf = "${sysconfdir}/ssl/openssl.cnf*"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-ptest:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS:${PN}-ptest:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+
+SRC_URI += " \
+    file://0471-Coverity-1528492-Fix-possible-memory-leak-if-t-NULL.patch \
+    file://0472-Fix-a-mem-leak-when-the-FIPS-provider-is-used-in-a-d.patch \
+"
