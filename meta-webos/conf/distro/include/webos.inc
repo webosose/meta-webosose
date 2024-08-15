@@ -27,6 +27,7 @@ require conf/distro/include/no-static-libs.inc
 # can be dropped once the same is included in defaultsetup.inc:
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-July/153408.html
 require conf/distro/include/security_flags.inc
+SECURITY_STACK_PROTECTOR = "-fstack-protector-all"
 
 # Enable -Werror=return-type flag
 EXTRA_WEBOS_WERROR = "-Werror=return-type"
