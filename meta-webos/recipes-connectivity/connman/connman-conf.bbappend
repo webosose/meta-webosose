@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos5"
+EXTENDPRAUTO:append = "webos6"
 
 SRC_URI += " \
     file://main.conf \
