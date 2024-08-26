@@ -1,0 +1,37 @@
+From 2c673c2d75b82f8406eb3f85853c7487d4b42287 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 19 Aug 2024 18:21:40 +0000
+Subject: [PATCH] gator_trace_sched.c: use strscpy instead of long deprecated
+ strlcpy
+
+strlcpy was finally removed in:
+https://github.com/torvalds/linux/commit/d26270061ae66b915138af7cd73ca6f8b85e6b44
+
+fixes:
+http://gecko.lge.com:8000/Errors/Details/926808
+
+In file included from ../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_main.c:268:
+../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_trace_sched.c: In function 'emit_pid_name':
+../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_trace_sched.c:105:13: error: implicit declaration of function 'strlcpy'; did you mean 'strncpy'? [-Wimplicit-function-declaration]
+  105 |         if (strlcpy(taskcomm, comm, TASK_COMM_LEN) == TASK_COMM_LEN - 1) {
+      |             ^~~~~~~
+      |             strncpy
+---
+Upstream-Status: Pending
+
+ driver/gator_trace_sched.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/driver/gator_trace_sched.c b/driver/gator_trace_sched.c
+index 3c6b283..aadc169 100644
+--- a/driver/gator_trace_sched.c
++++ b/driver/gator_trace_sched.c
+@@ -102,7 +102,7 @@ static void emit_pid_name(const char *comm, struct task_struct *task)
+         }
+ 
+         /* emit pid names, cannot use get_task_comm, as it's not exported on all kernel versions */
+-        if (strlcpy(taskcomm, comm, TASK_COMM_LEN) == TASK_COMM_LEN - 1) {
++        if (strscpy(taskcomm, comm, TASK_COMM_LEN) == TASK_COMM_LEN - 1) {
+             /* append ellipses if comm has length of TASK_COMM_LEN - 1 */
+             strcat(taskcomm, "...");
+         }

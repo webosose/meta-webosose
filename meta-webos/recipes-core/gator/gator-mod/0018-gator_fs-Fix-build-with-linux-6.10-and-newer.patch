@@ -1,0 +1,56 @@
+From 831de28ec48b0b8909224e4a7fd06613ef84567e Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 19 Aug 2024 20:11:04 +0200
+Subject: [PATCH] gator_fs: Fix build with linux-6.10 and newer
+
+In linux commit 12cd44023651666bd44baa36a5c999698890debb:
+https://github.com/torvalds/linux/commit/12cd44023651666bd44baa36a5c999698890debb
+
+i_atime and i_mtime were renamed to avoid direct access
+
+with additional changes in:
+https://lore.kernel.org/all/20240517-amtime-v1-1-7b804ca4be8f@kernel.org/
+
+fixes:
+http://gecko.lge.com:8000/Errors/Details/926806
+
+../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_fs.c: In function 'gatorfs_get_inode':
+../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_fs.c:48:16: error: 'struct inode' has no member named 'i_atime'; did you mean '__i_atime'?
+   48 |         inode->i_atime = inode->i_mtime = current_time(inode);
+      |                ^~~~~~~
+      |                __i_atime
+../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_fs.c:48:33: error: 'struct inode' has no member named 'i_mtime'; did you mean '__i_mtime'?
+   48 |         inode->i_atime = inode->i_mtime = current_time(inode);
+      |                                 ^~~~~~~
+      |                                 __i_mtime
+../../../work/qemux86_64-webos-linux/gator-mod/6.7+git/git/driver/gator_fs.c:49:45: error: 'struct inode' has no member named 'i_mtime'; did you mean '__i_mtime'?
+   49 |         inode_set_ctime_to_ts(inode, inode->i_mtime);
+      |                                             ^~~~~~~
+      |                                             __i_mtime
+
+after linux-libc-headers were updated to v6.10 in:
+https://git.openembedded.org/openembedded-core/commit/?id=3f852c2c958c80c652e902ab0532cefdc82e6549
+---
+Upstream-Status: Pending
+
+ driver/gator_fs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/driver/gator_fs.c b/driver/gator_fs.c
+index e151685..7b95273 100644
+--- a/driver/gator_fs.c
++++ b/driver/gator_fs.c
+@@ -44,9 +44,12 @@ static struct inode *gatorfs_get_inode(struct super_block *sb, int mode)
+         inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+ #elif LINUX_VERSION_CODE < KERNEL_VERSION(6, 6, 0)
+         inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+-#else
++#elif LINUX_VERSION_CODE < KERNEL_VERSION(6, 10, 0)
+         inode->i_atime = inode->i_mtime = current_time(inode);
+         inode_set_ctime_to_ts(inode, inode->i_mtime);
++#else
++        inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
++        inode_set_atime_to_ts(inode, inode_get_ctime(inode));
+ #endif
+     }
+     return inode;
