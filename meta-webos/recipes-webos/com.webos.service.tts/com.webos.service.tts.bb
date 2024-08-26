@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleapis grpc"
 
-WEBOS_VERSION = "1.0.0-30_a363f395abd518507b753b5f1dabff58e82009dd"
+WEBOS_VERSION = "1.0.0-31_1cfc3af67708cddfe81efba2b79a8c5704ed3c0d"
 PR = "r9"
 
 inherit webos_component
