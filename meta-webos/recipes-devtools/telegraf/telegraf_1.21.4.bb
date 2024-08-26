@@ -14,7 +14,7 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0005-Change-telegraf-config-directory.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r5"
+PR = "r6"
 
 GO_IMPORT = "import"
 
@@ -104,6 +104,11 @@ do_install() {
 inherit systemd
 SYSTEMD_SERVICE:${PN} = "telegraf.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "disable"
+
+# fails only with 32bit MACHINEs it seems
+# http://gecko.lge.com:8000/Errors/Details/910073
+# ERROR: QA Issue: telegraf: ELF binary /usr/bin/telegraf has relocations in .text [textrel]
+INSANE_SKIP:${PN} += "textrel"
 
 # FIXME-buildpaths!!!
 # [WRP-10883] buildpath QA issues
