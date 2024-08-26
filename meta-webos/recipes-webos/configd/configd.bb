@@ -14,7 +14,7 @@ DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
 RDEPENDS:${PN} += "configd-data"
 
 WEBOS_VERSION = "1.2.0-24_b3864ffd57d4c1ffc2bb59cbea014e6338ea5bae"
-PR = "r21"
+PR = "r22"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -25,7 +25,9 @@ inherit webos_machine_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Logger-fix-segfaults-with-64bit-time_t.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
