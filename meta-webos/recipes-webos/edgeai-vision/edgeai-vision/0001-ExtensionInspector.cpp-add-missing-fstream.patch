@@ -1,0 +1,63 @@
+From edba5c23da4816d78f08d974f349e1339da85618 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Thu, 23 May 2024 17:17:24 +0000
+Subject: [PATCH] ExtensionInspector.cpp: add missing fstream
+
+:Release Notes:
+Fix the build failure introduced with the upgrade from:
+http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/424467
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/921041
+
+FAILED: core/CMakeFiles/edgeai-vision.dir/base/ExtensionLoader.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot -DAFFINE_TRANS -DBOOST_ATOMIC_DYN_LINK -DBOOST_ATOMIC_NO_LIB -DBOOST_DATE_TIME_DYN_LINK -DBOOST_DATE_TIME_NO_LIB -DBOOST_FILESYSTEM_DYN_LINK -DBOOST_FILESYSTEM_NO_LIB -DBOOST_IOSTREAMS_DYN_LINK -DBOOST_IOSTREAMS_NO_LIB -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB -DBOOST_THREAD_DYN_LINK -DBOOST_THREAD_NO_LIB -DEDGEAI_VISION_EXTENSION_REGISTRY_PATH=\"/tmp/edgeai_extension_registry.json\" -DEDGEAI_VISION_HOME=\"/usr/share/aif\" -DENABLE_DEBUG -DGAUSSIANDARK -DLOG_APPLICATION=\"AIF\" -DUSE_EXTRA_MODELS -DUSE_XNNPACK -DXTENSOR_USE_XSIMD -Dedgeai_vision_EXPORTS -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot/usr/include/opencv4 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/third_party -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/log -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/tools -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/base -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/delegate -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/facade -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/pipe -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot  -O2 -g -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git=/usr/src/debug/edgeai-vision/1.1.0-69  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git=/usr/src/debug/edgeai-vision/1.1.0-69  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/build=/usr/src/debug/edgeai-vision/1.1.0-69  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/build=/usr/src/debug/edgeai-vision/1.1.0-69  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/recipe-sysroot-native=  -pipe -fvisibility-inlines-hidden -std=gnu++17 -fPIC -MD -MT core/CMakeFiles/edgeai-vision.dir/base/ExtensionLoader.cpp.o -MF core/CMakeFiles/edgeai-vision.dir/base/ExtensionLoader.cpp.o.d -o core/CMakeFiles/edgeai-vision.dir/base/ExtensionLoader.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/edgeai-vision/1.1.0-69/git/core/base/ExtensionLoader.cpp
+../git/core/base/ExtensionLoader.cpp: In member function 'aif::t_aif_status aif::ExtensionLoader::initFromRegistryFile()':
+../git/core/base/ExtensionLoader.cpp:138:41: error: variable 'std::ifstream ifs' has initializer but incomplete type
+  138 |     std::ifstream ifs(m_registryFilePath);
+      |                                         ^
+../git/core/base/ExtensionLoader.cpp:25:1: note: 'std::ifstream' is defined in header '<fstream>'; this is probably fixable by adding '#include <fstream>'
+   24 | #include <thread>
+  +++ |+#include <fstream>
+   25 | #include <unistd.h>
+../git/core/base/ExtensionLoader.cpp: In member function 'bool aif::ExtensionLoader::isNeededToGenRegistryFile()':
+../git/core/base/ExtensionLoader.cpp:490:45: error: variable 'std::ifstream ifs' has initializer but incomplete type
+  490 |         std::ifstream ifs(m_registryFilePath);
+      |                                             ^
+../git/core/base/ExtensionLoader.cpp:490:45: note: 'std::ifstream' is defined in header '<fstream>'; this is probably fixable by adding '#include <fstream>'
+../git/core/base/ExtensionLoader.cpp: In member function 'std::string aif::ExtensionLoader::getRegistryStampFilePath(bool)':
+../git/core/base/ExtensionLoader.cpp:575:47: error: variable 'std::ofstream ofs' has initializer but incomplete type
+  575 |   std::ofstream ofs(stampExtensionInfoFilePath);
+      |                                               ^
+../git/core/base/ExtensionLoader.cpp:575:47: note: 'std::ofstream' is defined in header '<fstream>'; this is probably fixable by adding '#include <fstream>'
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: I39723bc96b8d23cc092b5648cebf09c275105035
+Originally-Reviewed-on: http://gpro.lge.com/c/webosose/edge-ai-computer-vision/+/408141
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/edge-ai-computer-vision/+/426983 ExtensionInspector.cpp: add missing fstream]
+
+ core/base/ExtensionLoader.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/core/base/ExtensionLoader.cpp b/core/base/ExtensionLoader.cpp
+index ef38cdb..ca6f6d2 100644
+--- a/core/base/ExtensionLoader.cpp
++++ b/core/base/ExtensionLoader.cpp
+@@ -17,6 +17,7 @@
+ #include <dlfcn.h>
+ #include <exception>
+ #include <filesystem>
++#include <fstream>
+ #include <initializer_list>
+ #include <regex>
+ #include <sstream>
