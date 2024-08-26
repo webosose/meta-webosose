@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos124"
+EXTENDPRAUTO:append = "webos125"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -121,8 +121,8 @@ SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-fo
 SRC_URI:append = " file://9903-Revert-Remove-qmake-files-that-provide-support-for-b.patch;minver=6.8.0"
 # https://bugreports.qt.io/browse/WEBOSCI-76
 SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli_6.6.0-2.patch;minver=6.6.0;maxver=6.6.2"
-SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli_6.6.3-6.7.x.patch;minver=6.6.3;maxver=6.7.*"
-SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli.patch;minver=6.8.0"
+SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli_6.6.3-6.7.2.patch;minver=6.6.3;maxver=6.7.2"
+SRC_URI:append = " file://9904-Revert-CMake-remove-tests-for-C-17-and-C11-and-earli.patch;minver=6.7.3"
 # https://bugreports.qt.io/browse/WEBOSCI-64
 SRC_URI:append:class-native = " file://9905-Revert-Remove-syncqt.pl.patch;minver=6.7.0"
 
