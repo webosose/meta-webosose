@@ -9,6 +9,7 @@ inherit pkgconfig
 
 SRC_URI += "git://github.com/solana-labs/solana.git;protocol=https;nobranch=1 \
     file://0001-account_info.rs-Fix-build-with-rust-1.72-and-newer.patch \
+    file://0002-cpi.rs-Fix-build-with-rust-1.77-and-newer.patch \
 "
 SRCREV = "05ffda9b16bfa9c784b22bbb0483f5a567373ae5"
 S = "${WORKDIR}/git"

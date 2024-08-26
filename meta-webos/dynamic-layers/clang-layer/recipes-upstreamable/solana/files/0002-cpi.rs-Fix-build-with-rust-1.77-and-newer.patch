@@ -1,0 +1,42 @@
+From 3a63c337bdea8512f2ac5effb83842e6f862caf7 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 16 Aug 2024 12:44:45 +0200
+Subject: [PATCH] cpi.rs: Fix build with rust-1.77 and newer
+
+:Release Notes:
+After rust upgrade in oe-core from 1.75.0 to 1.77.2 in:
+https://git.openembedded.org/openembedded-core/commit/?id=c3a996c3b06b11a5e2b07dbf820f3e3eb1e28782
+solana was failing to build.
+
+:Detailed Notes:
+Add a work around for issue fixed properly in solana 0.17.0 with:
+https://github.com/solana-labs/solana/commit/0f417199186042028269830401687efe23e0ae18
+
+for other fixes we should just upgrade solana in OSE to latest.
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+---
+Upstream-Status: Backport [resolved in upstream in v1.17.0 with https://github.com/solana-labs/solana/commit/0f417199186042028269830401687efe23e0ae18]
+
+ programs/bpf_loader/src/syscalls/cpi.rs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/programs/bpf_loader/src/syscalls/cpi.rs b/programs/bpf_loader/src/syscalls/cpi.rs
+index 96eaf81034..c5febb1d79 100644
+--- a/programs/bpf_loader/src/syscalls/cpi.rs
++++ b/programs/bpf_loader/src/syscalls/cpi.rs
+@@ -522,6 +522,7 @@ impl<'a, 'b> SyscallInvokeSigned<'a, 'b> for SyscallInvokeSignedC<'a, 'b> {
+                 vm_addr,
+                 size_of::<u64>() as u64,
+             )?;
++            #[allow(invalid_reference_casting)]
+             let ref_to_len_in_vm = unsafe { &mut *(addr as *mut u64) };
+ 
+             Ok(CallerAccount {
