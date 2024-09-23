@@ -31,10 +31,6 @@ SKIP_RECIPE[qttranslations] ?= "depends on linguist being enabled in target qtto
 SKIP_RECIPE[packagegroup-qt6-essentials] ?= "rdepends on blacklisted qttranslations to rprovide qttranslations-qtbase, qttranslations-qtdeclarative"
 SKIP_RECIPE[qtdoc] ?= "depends on blacklisted qtpdf, qtmultimedia, qtgraphs, qtcharts"
 
-# oe-core
-SKIP_RECIPE[efivar] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, makeguids Your linker is not supported guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds http://gecko.lge.com:8000/Errors/Details/565720', '', d)}"
-SKIP_RECIPE[efibootmgr] ?= "depends on blacklisted efivar"
-
 # meta-oe
 SKIP_RECIPE[exprtk] ?= "fails to fetch: WARNING: Failed to fetch URL git://github.com/ArashPartow/exprtk.git;branch=master;protocol=https, attempting MIRRORS if available DEBUG: Fetcher failure: Unable to find revision 281c2ccc65b8f91c012ea3725ebcef406378a225 in branch master even from upstream: http://gecko.lge.com:8000/Errors/Details/565715"
 SKIP_RECIPE[fwts] ?= "fails to build with: fwts/22.01.00-r0/build/src/lib/src/.libs/libfwts.so: error: undefined reference to 'gzgets' http://gecko.lge.com:8000/Errors/Details/565736"
