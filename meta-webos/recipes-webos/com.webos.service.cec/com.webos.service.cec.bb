@@ -14,7 +14,7 @@ DEPENDS = "glib-2.0 libpbnjson luna-service2 pmloglib nyx-lib"
 
 COMPATIBLE_MACHINE = "^raspberrypi4-64$"
 
-WEBOS_VERSION = "1.0.0-7_c4c185284ad3586c863192873739a8bdce48345b"
+WEBOS_VERSION = "1.0.0-8_16dd275185c088fad7c38f5b65e9d533f50b532b"
 PR = "r1"
 
 inherit webos_component
