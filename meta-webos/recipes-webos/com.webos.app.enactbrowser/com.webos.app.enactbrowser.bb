@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-17.browsershell.7_1b55dfe07804f38d4a7611fbbb0479ac8ab04d37"
+WEBOS_VERSION = "1.0.0-17.browsershell.8_f67712cb63e099cd92a811de6fbfecf6d63ba64b"
 PR = "r22"
 
 inherit webos_public_repo
