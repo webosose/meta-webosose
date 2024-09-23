@@ -23,18 +23,17 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.7.3"
+PV = "2.9.1"
 
-SRCREV = "ef92fc6465407d1539b8f1d989bd2eb55e96bcc7"
-SRCREV_enact = "020e8fd4ad58352274ec85a1842eeab01f12dbca"
+SRCREV = "dd89a1bb6dd3416034cddbfbc75eaa37b6121828"
+SRCREV_enact = "c57448446c3737614f6540c733e059274b37bbac"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
 
 # Ordered dependency list for Sandstone; provides shrink-wrap style locking in of package versions
 WEBOS_ENACT_DEPENDENCIES ??= "\
-    classnames@2.3.2 \
-    direction@1.0.4 \
+    classnames@2.5.1 \
     dom-walk@0.1.2 \
     global@4.4.0 \
     ilib@14.20.0 \
@@ -47,10 +46,10 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
     parse-headers@2.0.5 \
     process@0.11.10 \
     prop-types@15.8.1 \
-    react@18.2.0 \
-    react-dom@18.2.0 \
-    react-is@18.2.0 \
-    scheduler@0.23.0 \
+    react@18.3.1 \
+    react-dom@18.3.1 \
+    react-is@18.3.1 \
+    scheduler@0.23.2 \
     warning@4.0.3 \
     xhr@2.6.0 \
     xtend@4.0.2 \
@@ -59,7 +58,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r16"
+PR = "r0"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"

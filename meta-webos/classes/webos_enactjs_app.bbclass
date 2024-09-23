@@ -148,10 +148,36 @@ do_compile() {
 
     # compile and install node modules in source directory
     bbnote "Begin NPM install process"
-    # Remove any errant package locks since we are solely handling shrinkwrap
-    rm -f package-lock.json
+    ATTEMPTS=0
+    STATUS=-1
+    while [ ${STATUS} -ne 0 ] ; do
+        ATTEMPTS=$(expr ${ATTEMPTS} + 1)
+        if [ ${ATTEMPTS} -gt 5 ] ; then
+            bberror "All attempts to NPM install have failed; exiting!"
+            exit ${STATUS}
+        fi
 
-    ${WEBOS_NPM_BIN} ${NPM_OPTS}
+        # Remove any errant package locks since we are solely handling shrinkwrap
+        rm -f package-lock.json
+
+        # backup the shrinkwrap in the event "npm install" alters it
+        if [ -f npm-shrinkwrap.json ] ; then
+            cp -f npm-shrinkwrap.json npm-shrinkwrap.json.orig
+        fi
+
+        bbnote "NPM install attempt #${ATTEMPTS} (of 5)..." && echo
+        STATUS=0
+        timeout --kill-after=5m 15m ${WEBOS_NPM_BIN} ${NPM_OPTS} || eval "STATUS=\$?"
+        if [ ${STATUS} -ne 0 ] ; then
+            bbwarn "...NPM process failed with status ${STATUS}"
+        else
+            bbnote "...NPM process succeeded" && echo
+        fi
+        # restore backup shrinkwrap file
+        if [ -f npm-shrinkwrap.json.orig ] ; then
+            mv -f npm-shrinkwrap.json.orig npm-shrinkwrap.json
+        fi
+    done
 
     if [ ! -z "${WEBOS_ENACTJS_ILIB_OVERRIDE}" ] ; then
         ## only override ilib if using Enact submission via shrinkwrap override

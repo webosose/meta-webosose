@@ -5,7 +5,7 @@ DESCRIPTION = "A tool to convert jsdoc to typescript definition files"
 AUTHOR = "EnactUnassigned <enact.swp@lge.com>"
 SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://README.md;beginline=117;md5=fc6d432d87734ce8bb4b52b375ed6766"
+LIC_FILES_CHKSUM = "file://README.md;beginline=114;md5=06c21a8c43ba289feb62c713df825cc0"
 
 inherit npm
 inherit webos_enact_repo
@@ -20,6 +20,5 @@ SRC_URI = " \
     npmsw://${THISDIR}/${BPN}/npm-shrinkwrap.json \
 "
 
-# latest is 1.0.4
-PV = "1.0.0"
-SRCREV = "c2d04d1b4a14405a13ee27080fc1545b8c4649cd"
+PV = "1.0.6"
+SRCREV = "f20070af2612e8bf434ea6aa38782d6f30118ccc"
