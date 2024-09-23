@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
 
 # Adds dependency on GPLv2 tbb
 PACKAGECONFIG:remove = "tbb"
@@ -21,7 +21,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-apps:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS:${PN}-apps:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
-export CCACHE_MAXSIZE = "1500M"
+export CCACHE_MAXSIZE = "2G"
 
 # FIXME-buildpaths!!!
 # [WRP-10883] buildpath QA issues

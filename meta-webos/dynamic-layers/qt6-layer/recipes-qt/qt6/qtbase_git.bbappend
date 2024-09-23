@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos125"
+EXTENDPRAUTO:append = "webos126"
 
 # Remove LGPL3-only files
 python do_patch:append() {
@@ -144,6 +144,3 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
 # on QT_FEATURE_opengles3.
 # https://bugreports.qt.io/browse/WEBOSCI-82
 RRECOMMENDS:${PN}-dev += "${@bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'libgles3-mesa-dev', '', d)}"
-
-export CCACHE_MAXSIZE = "1200M"
-

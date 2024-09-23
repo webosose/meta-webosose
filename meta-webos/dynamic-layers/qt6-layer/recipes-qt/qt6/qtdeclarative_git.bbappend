@@ -2,7 +2,7 @@
 
 inherit webos_qt_global
 
-EXTENDPRAUTO:append = "webos87"
+EXTENDPRAUTO:append = "webos88"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -46,6 +46,3 @@ SYSROOT_DIRS:append = " \
     ${bindir} \
     ${libexecdir} \
 "
-
-export CCACHE_MAXSIZE = "1G"
-

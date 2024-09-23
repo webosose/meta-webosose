@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos8"
+EXTENDPRAUTO:append = "webos9"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-npm:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
@@ -10,4 +10,4 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += "file://0001-Use-human-readable-process-name-for-chrome-inspector.patch"
 
-export CCACHE_MAXSIZE = "3800M"
+export CCACHE_MAXSIZE = "5G"

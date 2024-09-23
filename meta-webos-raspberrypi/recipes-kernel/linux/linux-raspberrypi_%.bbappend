@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi38"
+EXTENDPRAUTO:append = "webosrpi39"
 
 CMDLINE:append = " rw cgroup_memory=1 cgroup_enable=memory swapaccount=1"
 
@@ -51,5 +51,3 @@ do_deploy:append() {
     # However the image link is required in raspberrypi
     ln -sf ${type}-${KERNEL_IMAGE_NAME}.bin ${DEPLOYDIR}/${type}-${KERNEL_IMAGE_LINK_NAME}.bin
 }
-
-export CCACHE_MAXSIZE = "1G"
