@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "wayland wayland-native"
 
-WEBOS_VERSION = "1.0.0-46_9ccf2cf894f9f5de46f110bba40aa0decb37acea"
+WEBOS_VERSION = "1.0.0-47_bc1d96ba4be586eb57453ea5d4ee41170baf8c53"
 PR = "r6"
 
 inherit webos_component
