@@ -19,7 +19,7 @@ RDEPENDS:${PN} = "${VIRTUAL-RUNTIME_init_manager} ${VIRTUAL-RUNTIME_bash} python
 PROVIDES = "initscripts"
 RPROVIDES:${PN} = "initscripts initd-functions"
 
-WEBOS_VERSION = "3.0.0-101_a54d0d644359961e883f91da3a9cdc953738186c"
+WEBOS_VERSION = "3.0.0-102_3ac4a454a79375f9bfaf97a8964de04ef90089ac"
 PR = "r19"
 
 inherit webos_component
