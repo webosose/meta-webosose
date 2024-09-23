@@ -21,7 +21,6 @@ MACHINE_EXTRA_RRECOMMENDS:remove = "kernel-modules"
 MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS:remove = "kernel-modules"
 MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS:append = " ${RPI_KERNEL_MODULES}"
 RPI_KERNEL_MODULES = " \
-    kernel-module-bcm2835-gpiomem \
     kernel-module-bcm2835-wdt \
     kernel-module-bluetooth \
     kernel-module-brcmfmac \
@@ -36,6 +35,7 @@ RPI_KERNEL_MODULES = " \
     kernel-module-hmac \
     kernel-module-i2c-bcm2708 \
     kernel-module-media \
+    kernel-module-raspberrypi-gpiomem \
     kernel-module-rfcomm \
     kernel-module-snd-bcm2835 \
     kernel-module-snd-usb-audio \
