@@ -500,9 +500,18 @@ RPMBUILD_EXTRA_PARAMS = " --define '_Author Author' --define '_RP-Maintainer RP-
 export CCACHE_CONFIGPATH = "${@bb.utils.which('${BBPATH}', 'conf/ccache.conf')}"
 export CCACHE_COMPILERCHECK = "content"
 export CCACHE_READONLY ?= "1"
+# Do not use ccache by default.
+CCACHE_DISABLE ?= "1"
 
 # Enable ccache read-only or read-write, Add the following variable to prevent sstate cache miss.
-BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY"
+BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY CCACHE_DISABLE"
+
+# ccache allowed component list
+CCACHE_DISABLE:pn-webruntime = "0"
+CCACHE_DISABLE:pn-webruntime-clang = "0"
+CCACHE_DISABLE:pn-nodejs = "0"
+CCACHE_DISABLE:pn-opencv = "0"
+CCACHE_DISABLE:pn-arm-compute-library = "0"
 
 # Disable showing warning logs when unpatched CVEs are found using INHERIT += "cve_check"
 CVE_CHECK_SHOW_WARNINGS = "0"
