@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupnp"
 
-WEBOS_VERSION = "1.0.0-28_822af8acf44e566c63b6731ed7cff74190be3206"
+WEBOS_VERSION = "1.0.0-29_8ffaa9688a6f5494b3fcb5cfdce4b48d850f2c29"
 PR = "r8"
 
 inherit webos_component
