@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS= "glib-2.0 libxml2 luna-service2 pmloglib libgdrive libpbnjson curl gupnp"
 
-WEBOS_VERSION = "1.0.0-29_8ffaa9688a6f5494b3fcb5cfdce4b48d850f2c29"
-PR = "r8"
+WEBOS_VERSION = "1.0.0-30_7f8cc7ae2bfdf6f36f2a91c97439027a7ff2df72"
+PR = "r9"
 
 inherit webos_component
 inherit webos_public_repo
@@ -23,7 +23,5 @@ inherit webos_pkgconfig
 inherit webos_system_bus
 inherit webos_machine_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-use-pkg-config-for-libcurl-and-respec.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
