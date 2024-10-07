@@ -19,6 +19,7 @@ PREFERRED_VERSION_gstreamer1.0-omx          = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gstreamer1.0-python       = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gstreamer1.0-rtsp-server  = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gstreamer1.0-vaapi        = "${GSTREAMER_VERSION}"
+PREFERRED_VERSION_gstreamer1.0-adaptive-ng  = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gst-devtools              = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gst-validate1.0           = "${GSTREAMER_VERSION}"
 # gst-examples is not kept in sync with the rest of gst-* recipes
