@@ -16,6 +16,7 @@ S = "${WORKDIR}/git"
 SRC_URI = " \
     ${ENACTJS_GIT_REPO}/sandstone.git;name=main${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/sandstone \
     ${ENACTJS_GIT_REPO}/enact;name=enact${WEBOS_GIT_PROTOCOL};nobranch=1;destsuffix=git/enact \
+    file://custom_skin.js \
 "
 
 # NOTE: PV is the Sandstone version (which uses the Semantic Versioning spec),
@@ -58,7 +59,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r0"
+PR = "r1"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
@@ -98,6 +99,7 @@ do_compile() {
 do_install() {
     install -d ${D}${datadir}/javascript/enact-sandstone/@enact
     cp -R --no-dereference --preserve=mode,links -v ${S}/node_modules/* ${D}${datadir}/javascript/enact-sandstone
+    find ${UNPACKDIR} -name "custom_skin.js" -exec cp {} ${D}${datadir}/javascript/enact-sandstone \;
 }
 
 SYSROOT_DIRS += "${datadir}"
