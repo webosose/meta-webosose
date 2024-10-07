@@ -1,0 +1,25 @@
+From 6bfd6f31912755b0861b07b315857834fa4fa7cc Mon Sep 17 00:00:00 2001
+From: Hieu Van Nguyen <hieu2.nguyen@lge.com>
+Date: Fri, 16 Aug 2024 09:31:06 +0000
+Subject: [PATCH] progs/setcap.c: Use "return 0" instead of "exit (0)"
+
+Use "return 0" at the end of main() function to enable
+checking for Stack Overflow at Runtime - CANARY.
+No canary found when use exit(0) at the end of main() function
+---
+Upstream-Status: Inappropriate [webOS specific]
+
+ progs/setcap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/progs/setcap.c b/progs/setcap.c
+index 737efcca4f..236fa90db4 100644
+--- a/progs/setcap.c
++++ b/progs/setcap.c
+@@ -301,5 +301,5 @@ int main(int argc, char **argv)
+ 	cap_free(cap_d);
+     }
+ 
+-    exit(0);
++    return 0;
+ }
