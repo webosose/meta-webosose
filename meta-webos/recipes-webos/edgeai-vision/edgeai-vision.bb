@@ -10,13 +10,11 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=b175693811514d0ad08577aa0fc5f16a\
 "
 
-WEBOS_VERSION = "1.1.0-69_42efe9588b747e37f187b9a4fd66a2d62f6e9955"
+WEBOS_VERSION = "1.1.0-77_4b3e07018ce1e15b599a589df6dd5997978f1831"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-ExtensionInspector.cpp-add-missing-fstream.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r1"
+PR = "r2"
 S = "${WORKDIR}/git"
 
 inherit cmake
