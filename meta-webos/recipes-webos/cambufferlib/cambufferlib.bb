@@ -20,7 +20,7 @@ inherit webos_pkgconfig
 
 DEPENDS = "pmloglib"
 
-WEBOS_VERSION = "1.0.0-13_7ac62e21654dfe17b1ffd3ca7851ed000f338b96"
+WEBOS_VERSION = "1.0.0-14_7ab1ca6ac2ca8553c4978e6bcaaddb2c4e180de8"
 PR = "r2"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
