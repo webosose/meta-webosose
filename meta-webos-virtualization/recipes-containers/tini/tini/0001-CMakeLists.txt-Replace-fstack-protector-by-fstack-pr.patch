@@ -1,0 +1,29 @@
+From 4391d1aa9ff63370c87bd61e443202ae6f1b4db9 Mon Sep 17 00:00:00 2001
+From: Hieu Van Nguyen <hieu2.nguyen@lge.com>
+Date: Sat, 21 Sep 2024 17:27:10 +0000
+Subject: [PATCH] CMakeLists.txt: Replace -fstack-protector by
+ -fstack-protector-all
+
+Replace -fstack-protector by -fstack-protector-all to protect all
+function.
+The -fstack-protector-all option is used for all components since:
+http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/426367
+---
+Upstream-Status: Inappropriate [webOS specific]
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4a6cab12fc..d3fae5938d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -53,7 +53,7 @@ if(NOT HAS_BUILTIN_FORTIFY)
+ 	add_definitions(-D_FORTIFY_SOURCE=2)
+ endif()
+ 
+-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Werror -Wextra -Wall -pedantic-errors -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat")
++set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Werror -Wextra -Wall -pedantic-errors -O2 -fstack-protector-all --param=ssp-buffer-size=4 -Wformat")
+ set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bsymbolic-functions -Wl,-z,relro")
+ 
+ # Build
