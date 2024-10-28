@@ -14,7 +14,7 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0005-Change-telegraf-config-directory.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r6"
+PR = "r7"
 
 GO_IMPORT = "import"
 
@@ -50,7 +50,6 @@ do_compile() {
     # Pass the needed cflags/ldflags so that cgo
     # can find the needed headers files and libraries
     export CFLAGS=""
-    export LDFLAGS=""
     export CGO_CFLAGS="${BUILDSDK_CFLAGS} --sysroot=${STAGING_DIR_TARGET}"
     export CGO_LDFLAGS="${BUILDSDK_LDFLAGS} --sysroot=${STAGING_DIR_TARGET}"
 
@@ -60,7 +59,11 @@ do_compile() {
     export GOARM="7"
     export DESTDIR="${TELEGRAF_OUT}"
     export buildbin="${WORKDIR}/build/bin/telegraf"
-    export LDFLAGS="-w"
+    if [ "${CGO_ENABLED}" = "1" ]; then
+        export LDFLAGS="-w -buildmode=pie"
+    else
+        export LDFLAGS="-w"
+    fi
     export glibc_version="${GLIBCVERSION}"
 
     cd ${S}/src/${GO_IMPORT}
