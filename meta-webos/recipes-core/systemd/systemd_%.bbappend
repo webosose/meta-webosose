@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos17"
+EXTENDPRAUTO:append = "webos18"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -42,7 +42,7 @@ PACKAGECONFIG:append = " \
     elfutils \
 "
 
-CFLAGS += "-fstack-protector-all"
+CFLAGS += "${SECURITY_STACK_PROTECTOR}"
 
 FILES:${PN} += "${@oe.utils.conditional('DISTRO', 'webos','${datadir}/dbus-1/system.d/com.webos.MemoryManager1.conf', '', d)}"
 
