@@ -16,7 +16,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-44_f116a5088f4d6918c50ad90eb7f8b0aa3decd12d"
-PR = "r34"
+PR = "r35"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
@@ -69,3 +69,7 @@ INSANE_SKIP:${PN}-dbg += "libdir"
 # ERROR: QA Issue: File /usr/opt/webos/tests/luna-service2/integration/.debug/luna-send-q in package luna-service2-dbg contains reference to TMPDIR [buildpaths]
 ERROR_QA:remove = "buildpaths"
 WARN_QA:append = " buildpaths"
+
+# http://gecko.lge.com:8000/Errors/Details/984690
+# luna-service2/3.21.2-44/git/src/libluna-service2/transport_message.c:1249:12: error: implicit declaration of function '_LSTransportSendQueryPid'; did you mean '_LSTransportSendReply'? [-Wimplicit-function-declaration]
+CFLAGS += "-Wno-error=implicit-function-declaration"
