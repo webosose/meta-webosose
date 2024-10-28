@@ -121,8 +121,8 @@ do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
 
 # Build only wic.vmdk for qemux86*, otherwise wic.vmdk might conflict with tar.gz and cause errors like:
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
-IMAGE_FSTYPES:qemux86 = "wic.vmdk"
-IMAGE_FSTYPES:qemux86-64 = "wic.vmdk"
+IMAGE_FSTYPES:qemux86 = "wic.vmdk.gz"
+IMAGE_FSTYPES:qemux86-64 = "wic.vmdk.gz"
 
 # Create the CVE status as a json file and set file name as below.
 # CVE status will be generated only when INHERIT += "cve_check"

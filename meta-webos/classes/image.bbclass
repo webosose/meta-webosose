@@ -93,6 +93,10 @@ do_webos_deploy_fixup:prepend() {
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.vmdk
 
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk.gz ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk.gz \
+               ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.vmdk.gz
+
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.testdata.json ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.testdata.json \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.testdata.json
