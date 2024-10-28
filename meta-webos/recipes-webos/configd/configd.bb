@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
 RDEPENDS:${PN} += "configd-data"
 
-WEBOS_VERSION = "1.2.0-24_b3864ffd57d4c1ffc2bb59cbea014e6338ea5bae"
+WEBOS_VERSION = "1.2.0-25_c7cc1a2ca9fae4840b04ff81595f946cb1120260"
 PR = "r22"
 
 inherit webos_component
@@ -36,10 +36,3 @@ WEBOS_SYSTEMD_SERVICE = "configd.service"
 PACKAGES =+ "${PN}-tests"
 FILES:${PN}-tests = "${libexecdir}/tests/*"
 FILES:${PN} += "${webos_sysbus_datadir}"
-
-# http://gecko.lge.com:8000/Errors/Details/821712
-# configd/1.2.0-20/git/src/libconfigd/libconfigd.c:335:17: error: passing argument 4 of 'LSCall' from incompatible pointer type [-Wincompatible-pointer-types]
-# configd/1.2.0-20/git/src/libconfigd/libconfigd.c:870:13: error: passing argument 4 of 'LSCallOneReply' from incompatible pointer type [-Wincompatible-pointer-types]
-# configd/1.2.0-20/git/src/libconfigd/libconfigd.c:939:29: error: passing argument 4 of 'LSCallOneReply' from incompatible pointer type [-Wincompatible-pointer-types]
-# configd/1.2.0-20/git/src/libconfigd/libconfigd.c:970:25: error: passing argument 4 of 'LSCallOneReply' from incompatible pointer type [-Wincompatible-pointer-types]
-CFLAGS += "-Wno-error=incompatible-pointer-types"
