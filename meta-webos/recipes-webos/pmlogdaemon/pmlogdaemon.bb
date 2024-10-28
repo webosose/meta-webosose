@@ -16,7 +16,7 @@ DEPENDS = "pmloglib zlib glib-2.0 libpbnjson pmloglib-private luna-service2"
 RDEPENDS:${PN} = "busybox"
 
 WEBOS_VERSION = "3.1.0-15_4b4e74c08a7aa02d4eee9ec94d4459a1ca640c77"
-PR = "r12"
+PR = "r13"
 
 inherit webos_component
 inherit webos_public_repo
@@ -36,7 +36,7 @@ S = "${WORKDIR}/git"
 
 do_install:append() {
     if ${@bb.utils.contains('PACKAGECONFIG', 'whitelist', 'true', 'false', d)} ; then
-        install -m 644 ${WORKDIR}/whitelist.txt ${D}${sysconfdir}/PmLogDaemon
+        install -m 644 ${UNPACKDIR}/whitelist.txt ${D}${sysconfdir}/PmLogDaemon
     fi
 }
 FILES:${PN} += "${datadir}/PmLogDaemon"

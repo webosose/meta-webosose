@@ -64,3 +64,21 @@ TARGET_CC_ARCH:append = " ${SELECTED_OPTIMIZATION}"
 # http://gecko.lge.com:8000/Errors/Details/822527
 # https://bugs.gentoo.org/707642
 CFLAGS += "-fcommon"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894430
+# ERROR: QA Issue: File /usr/src/debug/fluentbit/1.7.4/src/stream_processor/parser/sql_lex.c in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/stream_processor/parser/sql_lex.h in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/stream_processor/parser/sql_parser.c in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/stream_processor/parser/sql_parser.h in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/record_accessor/ra_parser.h in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/record_accessor/ra_parser.c in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/record_accessor/ra_lex.c in package fluentbit-src contains reference to TMPDIR
+# File /usr/src/debug/fluentbit/1.7.4/src/record_accessor/ra_lex.h in package fluentbit-src contains reference to TMPDIR [buildpaths]
+# ERROR: QA Issue: File /usr/bin/fluent-bit in package fluentbit contains reference to TMPDIR [buildpaths]
+# ERROR: QA Issue: File /usr/bin/.debug/fluent-bit in package fluentbit-dbg contains reference to TMPDIR
+# File /usr/lib/fluent-bit/.debug/libfluent-bit.so in package fluentbit-dbg contains reference to TMPDIR [buildpaths]
+# ERROR: QA Issue: File /usr/include/fluent-bit/flb_info.h in package fluentbit-dev contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

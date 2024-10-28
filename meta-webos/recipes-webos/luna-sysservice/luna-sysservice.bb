@@ -12,12 +12,12 @@ LIC_FILES_CHKSUM = " \
 
 VIRTUAL-RUNTIME_ntp ?= "sntp"
 
-DEPENDS = "luna-service2 libpbnjson qtbase uriparser libxml2 sqlite3 pmloglib nyx-lib libwebosi18n"
+DEPENDS = "luna-service2 libpbnjson uriparser libxml2 sqlite3 pmloglib nyx-lib libwebosi18n"
 
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_ntp} tzcode luna-init"
 
-WEBOS_VERSION = "4.4.0-26_ffe9b48d169a3ee34ea1c9657af0b099af3898ed"
-PR = "r11"
+WEBOS_VERSION = "4.4.0-30_f943d3f051a60cfb249227709e9365ad4109bd9d"
+PR = "r14"
 
 inherit webos_component
 inherit webos_public_repo
@@ -25,7 +25,7 @@ inherit webos_enhanced_submissions
 inherit webos_system_bus
 inherit webos_machine_dep
 inherit webos_daemon
-inherit webos_cmake_qt6
+inherit webos_cmake
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

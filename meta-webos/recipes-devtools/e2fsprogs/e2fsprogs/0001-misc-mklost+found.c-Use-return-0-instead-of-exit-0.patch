@@ -1,0 +1,24 @@
+From be209586b14fec396ef0e55ae2fd91f966206863 Mon Sep 17 00:00:00 2001
+From: Duy Van Nguyen <duy8.nguyen@lge.com>
+Date: Mon, 26 Aug 2024 03:33:19 +0000
+Subject: [PATCH] Use "return 0" at the end of main() function to enable
+ checking for Stack Overflow at Runtime - CANARY.
+
+No canary found when use exit(0) at the end of main() function
+---
+Upstream-Status: Inappropriate [webOS specific]
+
+ misc/mklost+found.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/misc/mklost+found.c b/misc/mklost+found.c
+index 14311877..842dbf12 100644
+--- a/misc/mklost+found.c
++++ b/misc/mklost+found.c
+@@ -83,5 +83,5 @@ int main (int argc, char ** argv)
+ 			exit (1);
+ 		}
+ 	}
+-	exit (0);
++	return 0;
+ }

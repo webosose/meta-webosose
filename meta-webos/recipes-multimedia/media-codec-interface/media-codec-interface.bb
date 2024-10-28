@@ -1,7 +1,7 @@
 # Copyright (c) 2021-2024 LG Electronics, Inc.
 
 SUMMARY = "Media codec interface for webOS"
-AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"
+AUTHOR = "Pankaj Kumar Maharana <pankaj.maharana@lge.com>"
 SECTION = "webos/media"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
@@ -24,13 +24,10 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^r
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator"
 DEPENDS:append:rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-28_b5faa9d53c3bc37f4617e93e456a264edc49d754"
-PR = "r15"
+WEBOS_VERSION = "1.0.0-32_c1e4dd09d9294e8d79e4b94bdb15ba2bf7e23f05"
+PR = "r17"
 
-# http://gpro.lge.com/c/webosose/media-codec-interface/+/396335 CMakeLists.txt: respect ${CMAKE_INSTALL_LIBDIR}
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-respect-CMAKE_INSTALL_LIBDIR.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
 

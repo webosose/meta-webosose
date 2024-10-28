@@ -27,6 +27,7 @@ require conf/distro/include/no-static-libs.inc
 # can be dropped once the same is included in defaultsetup.inc:
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-July/153408.html
 require conf/distro/include/security_flags.inc
+SECURITY_STACK_PROTECTOR = "-fstack-protector-all"
 
 # Enable -Werror=return-type flag
 EXTRA_WEBOS_WERROR = "-Werror=return-type"
@@ -184,7 +185,7 @@ WEBOS_IMAGE_NAME_PARTITION_SUFFIX ?= ""
 IMAGE_NAME = "${IMAGE_BASENAME}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}"
 IMAGE_LINK_NAME = "${IMAGE_NAME}${IMAGE_VERSION_SUFFIX}"
 
-INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}${IMAGE_VERSION_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
+INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
 
 # Use a different naming scheme for webOS kernel images that uses the component
 # name instead of the name of the image format (KERNEL_IMAGETYPE) and leaves off
@@ -241,12 +242,6 @@ WEBOS_DEFAULT_EXTRA_RRECOMMENDS = ""
 
 DISTRO_EXTRA_RDEPENDS += " ${WEBOS_DEFAULT_EXTRA_RDEPENDS}"
 DISTRO_EXTRA_RRECOMMENDS += " ${WEBOS_DEFAULT_EXTRA_RRECOMMENDS}"
-
-# Undo:
-# https://git.openembedded.org/openembedded-core/commit/?id=a98188e83b2c027d99cc38e3367e1ec2a98efbb0
-# https://git.openembedded.org/openembedded-core/commit/?h=dunfell&id=93796b2787c410385d3176495e5307327449d2f7
-# just use -O when using new openssh-9 and want to scp from image with dropbear
-BAD_RECOMMENDATIONS += "openssh-sftp-server"
 
 USER_CLASSES ?= ""
 
@@ -332,6 +327,25 @@ WARN_QA:append = " version-going-backwards webos-enh-sub-warning"
 WEBOS_ERROR_QA_AUTOREV ?= "webos-enh-sub-autorev-error"
 ERROR_QA:append = " webos-enh-sub-error acg-dirty acg-json ${WEBOS_ERROR_QA_AUTOREV} acg-api acg-perm ls2-role ls2-schema"
 ERROR_QA:remove = " version-going-backwards"
+
+# currently not used in OSE, but add it here to keep the same ERROR_QA across DISTROs (as much as possible)
+ERROR_QA:append = " license_notice"
+ERROR_QA:append = " incomp-lic-no-whitelist-error"
+WARN_QA:append  = " incomp-lic-shlibdeps-warning"
+
+# Add perm-file QA check based on distro feature
+# perm-file currently isn't used since http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/380606
+# perm-line and perm-config are used since initial implementation in: http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/367700
+# but were never added to ERRROR_QA
+# This doesn't need to be conditional on DISTRO_FEATURES as the *-dac.inc
+# won't be included by DISTROs which don't want it (and without it nothing
+# will call oe.qa.handle_error("perm-{file,line,config}", msg, d).
+ERROR_QA:append = " perm-file perm-line perm-config"
+
+# work around until https://bugzilla.yoctoproject.org/show_bug.cgi?id=15515 is implemented
+ERROR_QA[vardepvalue] = "${ERROR_QA}"
+WARN_QA[vardepvalue] = "${ERROR_QA}"
+
 # Move all default WARN_QA from insane.bbclass to ERROR_QA to prevent silently re-introducing these issues
 DEFAULT_WARN_QA = "\
     libdir xorg-driver-abi \
@@ -450,6 +464,10 @@ FORTRAN:forcevariable = ",fortran"
 # Qt major version to use
 QT_VERSION ?= "6"
 
+# Disable ptests of Qt recipes as unused and burdensome
+# Some ptests are even broken due to dependency to Qt::Widget
+QT_PTEST_ENABLED = "0"
+
 # Add author and rp maintainer to package metadata
 # PACKAGE_ADD_{AUTHOR,RPMAINTAINER}_METADATA is set by pkg_add_extra_metadata handler in webos_base.bbclass
 PACKAGE_ADD_AUTHOR_METADATA ?= "${AUTHOR}"
@@ -482,12 +500,25 @@ RPMBUILD_EXTRA_PARAMS = " --define '_Author Author' --define '_RP-Maintainer RP-
 export CCACHE_CONFIGPATH = "${@bb.utils.which('${BBPATH}', 'conf/ccache.conf')}"
 export CCACHE_COMPILERCHECK = "content"
 export CCACHE_READONLY ?= "1"
+# Do not use ccache by default.
+CCACHE_DISABLE ?= "1"
 
 # Enable ccache read-only or read-write, Add the following variable to prevent sstate cache miss.
-BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY"
+BB_HASHEXCLUDE_COMMON:append = " CCACHE_READONLY CCACHE_NOREADONLY CCACHE_DISABLE"
+
+# ccache allowed component list
+CCACHE_DISABLE:pn-webruntime = "0"
+CCACHE_DISABLE:pn-webruntime-clang = "0"
+CCACHE_DISABLE:pn-nodejs = "0"
+CCACHE_DISABLE:pn-opencv = "0"
+CCACHE_DISABLE:pn-arm-compute-library = "0"
 
 # Disable showing warning logs when unpatched CVEs are found using INHERIT += "cve_check"
 CVE_CHECK_SHOW_WARNINGS = "0"
 
 # Specify the name of the recipe you want to exclude from the cve check.
 CVE_CHECK_SKIP_RECIPE += "${MLPREFIX}configurator"
+
+# Backport UNPACKDIR variable from styhead
+# https://git.openembedded.org/openembedded-core/commit/?id=e022d62ba917790af2121da57646271ef17c03fa
+UNPACKDIR ??= "${WORKDIR}"

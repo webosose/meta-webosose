@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
 
-WEBOS_VERSION = "1.0.0-34_4e1ab4e3a5d2c7168dcc7d6c41ee607fb1616d49"
+WEBOS_VERSION = "1.0.0-35_1c8e66b1e794a31d36d11fdc2afd4834184d70dd"
 PR = "r9"
 
 inherit webos_component
@@ -38,3 +38,11 @@ S = "${WORKDIR}/git"
 
 inherit webos_systemd
 WEBOS_SYSTEMD_SERVICE = "webos-hfp-service.service"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# [WRQ-14472] bluetooth: Resolve buildpaths QA warnings
+# http://gecko.lge.com:8000/Errors/Details/894436
+# ERROR: QA Issue: File /usr/src/debug/com.webos.service.hfp/1.0.0-34/Configured/src/ofono-interface.c in package com.webos.service.hfp-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

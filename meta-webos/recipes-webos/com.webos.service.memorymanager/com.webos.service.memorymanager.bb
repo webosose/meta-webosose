@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 glib-2.0-native luna-service2 libpbnjson pmloglib"
 
-WEBOS_VERSION = "1.0.0-63_db714511a2ba4b85c8b894b07f7880add4e527a8"
+WEBOS_VERSION = "1.0.0-64_09ef171f89efaa3956db3afe3781d7949aef117c"
 PR = "r12"
 
 inherit webos_component
@@ -29,3 +29,10 @@ S = "${WORKDIR}/git"
 
 inherit webos_systemd
 WEBOS_SYSTEMD_SERVICE = "memorymanager.service.in"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894439
+# ERROR: QA Issue: File /usr/src/debug/com.webos.service.memorymanager/1.0.0-63/src/memorymanager/MMBus.c in package com.webos.service.memorymanager-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

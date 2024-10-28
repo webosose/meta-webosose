@@ -1,0 +1,25 @@
+From 2378ff5c575eac3a4eb2c90efb0d10cf08ccf1b1 Mon Sep 17 00:00:00 2001
+From: "hung14.nguyen" <hung14.nguyen@lge.com>
+Date: Thu, 27 Jun 2024 18:54:12 +0900
+Subject: [PATCH] change ExecStart argument
+
+Change ExecStart argument for telegraf config directory.
+---
+Upstream-Status: Inappropriate [webos specific]
+
+ scripts/telegraf.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/telegraf.service b/scripts/telegraf.service
+index ff9860d5c..cde07a412 100644
+--- a/scripts/telegraf.service
++++ b/scripts/telegraf.service
+@@ -6,7 +6,7 @@ After=network.target
+ [Service]
+ EnvironmentFile=-/etc/default/telegraf
+ User=telegraf
+-ExecStart=/usr/bin/telegraf -config /etc/telegraf/telegraf.conf -config-directory /etc/telegraf/telegraf.d $TELEGRAF_OPTS
++ExecStart=/usr/bin/telegraf -config /etc/telegraf/telegraf.conf -config-directory /var/lib/com.webos.service.sdkagent/telegraf.d $TELEGRAF_OPTS
+ ExecReload=/bin/kill -HUP $MAINPID
+ Restart=on-failure
+ RestartForceExitStatus=SIGPIPE

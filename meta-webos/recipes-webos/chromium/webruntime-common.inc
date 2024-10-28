@@ -34,8 +34,6 @@ BUILD_TYPE = "Release"
 OUT_DIR = "${B}/${BUILD_TYPE}"
 OUT_IMAGE_DIR = "${OUT_DIR}/image"
 
-HOST_TOOLCHAIN_GCC = "host_toolchain=\"//build/toolchain/cros:host\""
-
 GN_ARGS = "\
     cros_host_ar=\"${BUILD_AR}\"\
     cros_host_cc=\"${BUILD_CC}\"\
@@ -64,11 +62,14 @@ GN_ARGS = "\
     webos_toolprefix=\"${HOST_PREFIX}\"\
     ${GN_ARGS_CLANG} \
     ${GN_ARGS_LIBCXX} \
+    ${GN_ARGS_HOST_LIBCXX} \
     ${HOST_TOOLCHAIN_GCC} \
 "
 
 GN_ARGS_CLANG = "is_clang=false"
 GN_ARGS_LIBCXX = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'use_custom_libcxx=true', 'use_custom_libcxx=false', d)}"
+GN_ARGS_HOST_LIBCXX = "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', 'use_custom_libcxx_for_host=true', '', d)}"
+HOST_TOOLCHAIN_GCC = "${@oe.utils.conditional('WEBRUNTIME_TOOLCHAIN', '-clang', '', 'host_toolchain=\\"//build/toolchain/cros:host\\"', d)}"
 
 # Respect ld-is-gold in DISTRO_FEATURES when enabling gold
 # Similar patch applied in meta-browser

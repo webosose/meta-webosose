@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi6"
+EXTENDPRAUTO:append = "webosrpi7"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
@@ -14,7 +14,7 @@ SRC_URI:append = " \
 do_compile:append() {
     sed -e 's/@@KERNEL_IMAGETYPE@@/${KERNEL_IMAGETYPE}/' \
         -e 's/@@KERNEL_BOOTCMD@@/${KERNEL_BOOTCMD}/' \
-        "${WORKDIR}/${UENV_FILE}" > "${WORKDIR}/uEnv.txt"
+        "${UNPACKDIR}/${UENV_FILE}" > "${WORKDIR}/uEnv.txt"
 }
 
 do_deploy:append() {

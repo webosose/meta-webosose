@@ -15,8 +15,8 @@ RDEPENDS:${PN} = "iputils"
 
 WEBOS_REPO_NAME = "com.webos.service.nettools"
 
-WEBOS_VERSION = "1.1.0-6_5ebd0866e9709d88db9c433746ccfcbc7561d48f"
-PR = "r1"
+WEBOS_VERSION = "1.1.0-9_6ef8de89551bf4ee5d54ff7ab24f3d409a22726c"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo
@@ -25,5 +25,17 @@ inherit webos_cmake
 inherit webos_daemon
 inherit webos_system_bus
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://nettools_access_control.conf \
+"
 S = "${WORKDIR}/git"
+
+do_install:append() {
+    install -d ${D}${sysconfdir}
+    install -m 444 ${UNPACKDIR}/nettools_access_control.conf ${D}${sysconfdir}/nettools_access_control.conf
+}
+
+FILES:${PN} += "${sysconfdir}/nettools_access_control.conf"
+
+# Ensure the configuration file is included in the package
+CONFFILES:${PN} += "${sysconfdir}/nettools_access_control.conf"

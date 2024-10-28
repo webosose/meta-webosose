@@ -1,0 +1,40 @@
+From 4bf50f1a9723d89678c53f486acf4c35a06810f6 Mon Sep 17 00:00:00 2001
+From: "soonwon.hong" <soonwon.hong@lge.com>
+Date: Thu, 20 Apr 2023 08:51:33 +0900
+Subject: [PATCH] Add error case about no space
+
+:Release Notes:
+
+:Detailed Notes:
+
+:Testing Performed:
+
+:QA Notes:
+
+:Issues Addressed:
+[GF-9999] Summary
+---
+Upstream-Status: Pending
+
+ libopkg/opkg_archive.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
+index ded7141..59abcab 100644
+--- a/libopkg/opkg_archive.c
++++ b/libopkg/opkg_archive.c
+@@ -426,9 +426,12 @@ static int extract_entry(struct archive *a, struct archive_entry *entry,
+         break;
+ 
+     case ARCHIVE_WARN:
+-        opkg_msg(NOTICE, "Warning when extracting archive entry '%s': %s (errno=%d)\n",
++        opkg_msg(NOTICE, "Warning when extracting archive entry '%s': %s (errno=%d) : %s\n",
+                  archive_entry_pathname(entry), archive_error_string(a),
+-                 archive_errno(a));
++                 archive_errno(a), strerror(archive_errno(a)));
++        if (archive_errno(a) == ENOSPC)
++            return -1;
++
+         break;
+ 
+     case ARCHIVE_RETRY:

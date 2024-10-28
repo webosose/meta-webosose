@@ -4,7 +4,7 @@ require webruntime_120.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r0"
+PR = "r1"
 
 inherit clang_libc
 
@@ -12,7 +12,7 @@ GCC_CROSS_VER = "11.3.0"
 DEPEXT = "${@bb.utils.contains('WEBRUNTIME_CLANG_STDLIB', '1', '', '-clang', d)}"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', 'system-libcxx', d)}"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 
 GN_ARGS_CLANG = "is_clang=true"
 
@@ -67,3 +67,10 @@ do_configure:prepend() {
     [ -f ${STAGING_DATADIR}/pkgconfig/gmp-player-client-clang.pc ] && \
         ln -snf gmp-player-client-clang.pc ${STAGING_DATADIR}/pkgconfig/gmp-player-client.pc
 }
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894428
+# ERROR: QA Issue: File /usr/lib/.debug/libcbe.so in package webruntime-clang-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

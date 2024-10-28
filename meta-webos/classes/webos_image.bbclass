@@ -16,9 +16,10 @@
 # webos-extract-ls2-api:    Add task to extract luna-service2 api list
 # webos-validate-ls2-conf:  Add task to validate LS2 sysbus files
 # webos-production-image:   Specific features to productize
+# webos-checksec-scan:      Add functionality to perform checksec to rootfs
 #
 # and IMAGE_FEATURES from core-image
-IMAGE_FEATURES[validitems] = "webos-minimal webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-validate-ls2-conf webos-production-image "
+IMAGE_FEATURES[validitems] = "webos-minimal webos-systemapps webos-testapps webos-extended webos-devel webos-test webos-extract-ls2-api webos-validate-ls2-conf webos-production-image webos-checksec-scan"
 
 FEATURE_PACKAGES_webos-minimal = "packagegroup-webos-minimal"
 FEATURE_PACKAGES_webos-systemapps = "packagegroup-webos-systemapps"
@@ -63,7 +64,10 @@ IMAGE_CLASSES += "${@bb.utils.contains('IMAGE_FEATURES', 'webos-validate-ls2-con
 
 # webOS supports the generation of oss package information file.
 # $ bitbake -c write_oss_pkg_info <image>
-IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info ${@bb.utils.contains('IMAGE_FEATURES', 'webos-extract-ls2-api', 'webos_ls2_api_list', '', d)}"
+IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info \
+    ${@bb.utils.contains('IMAGE_FEATURES', 'webos-extract-ls2-api', 'webos_ls2_api_list', '', d)} \
+    ${@bb.utils.contains('IMAGE_FEATURES', 'webos-checksec-scan', 'webos_checksec_scan', '', d)} \
+"
 
 # Add ${webos_sysconfdir}/build/image-name during image construction that contains the image name
 ROOTFS_POSTPROCESS_COMMAND += "rootfs_set_image_name ; clean_python_installation ; verify_acg ; "
@@ -117,8 +121,8 @@ do_rootfs[depends] += "libpbnjson-native:do_populate_sysroot"
 
 # Build only wic.vmdk for qemux86*, otherwise wic.vmdk might conflict with tar.gz and cause errors like:
 # | tar: ./usr/lib/perl/5.24.1/unicore/lib/Bc/EN.pl: file changed as we read it
-IMAGE_FSTYPES:qemux86 = "wic.vmdk"
-IMAGE_FSTYPES:qemux86-64 = "wic.vmdk"
+IMAGE_FSTYPES:qemux86 = "wic.vmdk.gz"
+IMAGE_FSTYPES:qemux86-64 = "wic.vmdk.gz"
 
 # Create the CVE status as a json file and set file name as below.
 # CVE status will be generated only when INHERIT += "cve_check"

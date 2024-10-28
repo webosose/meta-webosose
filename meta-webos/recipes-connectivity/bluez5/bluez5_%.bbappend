@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos31"
+EXTENDPRAUTO:append = "webos32"
 
 RRECOMMENDS:${PN} += " \
     glibc-gconv-utf-16 \
@@ -58,12 +58,12 @@ EXTRA_OECONF:remove = "--enable-external-ell"
 
 do_install:append () {
     install -d ${D}${sysconfdir}/bluetooth
-    install -v -m 0644  ${WORKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
+    install -v -m 0644  ${UNPACKDIR}/main.conf ${D}${sysconfdir}/bluetooth/
 }
 
 do_install:append:raspberrypi4 () {
     install -d  ${D}${sysconfdir}/modprobe.d
-    install -m 644 ${WORKDIR}/blacklistbtusb.conf  ${D}${sysconfdir}/modprobe.d/blacklistbtusb.conf
+    install -m 644 ${UNPACKDIR}/blacklistbtusb.conf  ${D}${sysconfdir}/modprobe.d/blacklistbtusb.conf
 }
 
 FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"

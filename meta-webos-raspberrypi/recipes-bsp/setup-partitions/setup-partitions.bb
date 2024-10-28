@@ -10,7 +10,7 @@ RPROVIDES:${PN} = "part-initializer"
 
 RDEPENDS:${PN} = "e2fsprogs-resize2fs parted"
 
-PR = "r5"
+PR = "r6"
 
 inherit systemd
 inherit webos_filesystem_paths
@@ -23,9 +23,9 @@ SRC_URI = " \
 do_install() {
     # install service/script files
     install -d ${D}${systemd_system_unitdir}
-    install -v -m 0644 ${WORKDIR}/setup-partitions.service ${D}${systemd_system_unitdir}
+    install -v -m 0644 ${UNPACKDIR}/setup-partitions.service ${D}${systemd_system_unitdir}
     install -d ${D}${sysconfdir}/systemd/system/scripts
-    install -v -m 0755 ${WORKDIR}/setup-partitions.sh ${D}${sysconfdir}/systemd/system/scripts
+    install -v -m 0755 ${UNPACKDIR}/setup-partitions.sh ${D}${sysconfdir}/systemd/system/scripts
 
     # enable overlay by default
     install -d ${D}${webos_sysmgr_localstatedir}/preferences

@@ -10,7 +10,7 @@ RPROVIDES:${PN} = "part-initializer"
 
 RDEPENDS:${PN} = "e2fsprogs-resize2fs parted"
 
-PR = "r2"
+PR = "r3"
 
 inherit systemd
 
@@ -21,9 +21,9 @@ SRC_URI = " \
 
 do_install() {
     install -d ${D}${systemd_system_unitdir}
-    install -v -m 0644 ${WORKDIR}/resize-rootfs.service ${D}${systemd_system_unitdir}
+    install -v -m 0644 ${UNPACKDIR}/resize-rootfs.service ${D}${systemd_system_unitdir}
     install -d ${D}${sysconfdir}/systemd/system/scripts
-    install -v -m 0755 ${WORKDIR}/resize-rootfs.sh ${D}${sysconfdir}/systemd/system/scripts
+    install -v -m 0755 ${UNPACKDIR}/resize-rootfs.sh ${D}${sysconfdir}/systemd/system/scripts
 }
 
 SYSTEMD_SERVICE:${PN} = " resize-rootfs.service"

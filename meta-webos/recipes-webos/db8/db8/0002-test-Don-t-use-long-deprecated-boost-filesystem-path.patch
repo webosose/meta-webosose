@@ -1,0 +1,52 @@
+From bb295431d349406259209ad1c1200a8ec6109305 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 31 May 2024 12:40:32 +0200
+Subject: [PATCH] test: Don't use long deprecated boost::filesystem::path::leaf
+
+:Release Notes:
+It was replaced with filename() in 2008:
+https://github.com/boostorg/filesystem/commit/fb65347b54bb9e027ef18b5ef80b2c509f90efe9
+and is deprecated since then until finally removed in
+boost 1.85.0:
+https://www.boost.org/doc/libs/1_85_0/libs/filesystem/doc/deprecated.html
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/854668
+
+In file included from ../git/test/performance/testsuite.cpp:18:
+../git/test/performance/report.h: In function 'MojErr combineAvgNumbers2Report(const boost::filesystem::path&, const std::map<unsigned int, std::vector<boost::chrono::duration<long int, std::ratio<1, 1000000000> > > >&)':
+../git/test/performance/report.h:40:34: error: 'class boost::filesystem::path' has no member named 'leaf'
+   40 |     if (reportPath.parent_path().leaf().compare("1")) {
+      |                                  ^~~~
+../git/test/performance/report.h:52:50: warning
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: I09387f190df76249d98d4005654e2863850e54b2
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/db8/+/409717 test: Don't use long deprecated boost::filesystem::path::leaf]
+
+ test/performance/report.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/performance/report.h b/test/performance/report.h
+index ffe89a0..caebfe6 100644
+--- a/test/performance/report.h
++++ b/test/performance/report.h
+@@ -37,7 +37,7 @@ MojErr combineAvgNumbers2Report(const boost::filesystem::path& reportPath, const
+     full_path += boost::filesystem::path::preferred_separator;
+ 
+     //ignore multi threaded reports for combining report
+-    if (reportPath.parent_path().leaf().compare("1")) {
++    if (reportPath.parent_path().filename().compare("1")) {
+         std::cout << "ignore multi threaded reports" << std::endl;
+         return MojErrNone;
+     }

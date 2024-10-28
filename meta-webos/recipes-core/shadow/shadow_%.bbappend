@@ -1,6 +1,6 @@
 # Copyright (c) 2014-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos3"
+EXTENDPRAUTO:append = "webos4"
 
 PACKAGES =+ "${PN}-gpl"
 
@@ -16,4 +16,10 @@ ALTERNATIVE:${PN}-base:remove = "su"
 #added by TVPLAT-267601
 do_install:append() {
     rm -v ${D}${base_bindir}/su
+}
+
+# This is as per the security guideline
+FAIL_DELAY = "10"
+do_install:append() {
+    sed -i 's#^FAIL_DELAY.*$#FAIL_DELAY ${FAIL_DELAY}#g' ${D}${sysconfdir}/login.defs
 }

@@ -1,0 +1,5060 @@
+From c1fa076aca96044863c8aa6d2046cc2c58ee307f Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Fri, 3 Mar 2023 10:52:22 +0900
+Subject: [PATCH] Revert "Remove qmake files that provide support for building
+ Qt modules"
+
+This reverts commit d8a87b6942b68c4fcba3665993ae75b29c549b02.
+
+---
+Upstream-Status: Inappropriate [webOS specific]
+
+ mkspecs/features/data/unix/findclasslist.pl |   46 +
+ mkspecs/features/qt_android_deps.prf        |   93 +
+ mkspecs/features/qt_app.prf                 |   65 +
+ mkspecs/features/qt_build_config.prf        |  153 ++
+ mkspecs/features/qt_build_extra.prf         |   41 +
+ mkspecs/features/qt_build_paths.prf         |   29 +
+ mkspecs/features/qt_clear_installs.prf      |   12 +
+ mkspecs/features/qt_common.prf              |  165 ++
+ mkspecs/features/qt_configure.prf           | 2471 +++++++++++++++++++
+ mkspecs/features/qt_docs.prf                |  126 +
+ mkspecs/features/qt_docs_targets.prf        |   45 +
+ mkspecs/features/qt_example_installs.prf    |  130 +
+ mkspecs/features/qt_helper_lib.prf          |  120 +
+ mkspecs/features/qt_installs.prf            |   64 +
+ mkspecs/features/qt_module.prf              |  355 +++
+ mkspecs/features/qt_module_headers.prf      |  305 +++
+ mkspecs/features/qt_module_pris.prf         |  245 ++
+ mkspecs/features/qt_parts.prf               |   77 +
+ mkspecs/features/qt_plugin.prf              |  101 +
+ mkspecs/features/qt_prefix_build_check.prf  |   21 +
+ mkspecs/features/qt_targets.prf             |    4 +
+ mkspecs/features/qt_test_helper.prf         |   34 +
+ mkspecs/features/qt_tool.prf                |   78 +
+ mkspecs/features/qt_tracepoints.prf         |   54 +
+ mkspecs/features/uikit/qt_parts.prf         |    5 +
+ mkspecs/features/win32/qt_dll.prf           |    1 +
+ 26 files changed, 4840 insertions(+)
+ create mode 100644 mkspecs/features/data/unix/findclasslist.pl
+ create mode 100644 mkspecs/features/qt_android_deps.prf
+ create mode 100644 mkspecs/features/qt_app.prf
+ create mode 100644 mkspecs/features/qt_build_config.prf
+ create mode 100644 mkspecs/features/qt_build_extra.prf
+ create mode 100644 mkspecs/features/qt_build_paths.prf
+ create mode 100644 mkspecs/features/qt_clear_installs.prf
+ create mode 100644 mkspecs/features/qt_common.prf
+ create mode 100644 mkspecs/features/qt_configure.prf
+ create mode 100644 mkspecs/features/qt_docs.prf
+ create mode 100644 mkspecs/features/qt_docs_targets.prf
+ create mode 100644 mkspecs/features/qt_example_installs.prf
+ create mode 100644 mkspecs/features/qt_helper_lib.prf
+ create mode 100644 mkspecs/features/qt_installs.prf
+ create mode 100644 mkspecs/features/qt_module.prf
+ create mode 100644 mkspecs/features/qt_module_headers.prf
+ create mode 100644 mkspecs/features/qt_module_pris.prf
+ create mode 100644 mkspecs/features/qt_parts.prf
+ create mode 100644 mkspecs/features/qt_plugin.prf
+ create mode 100644 mkspecs/features/qt_prefix_build_check.prf
+ create mode 100644 mkspecs/features/qt_targets.prf
+ create mode 100644 mkspecs/features/qt_test_helper.prf
+ create mode 100644 mkspecs/features/qt_tool.prf
+ create mode 100644 mkspecs/features/qt_tracepoints.prf
+ create mode 100644 mkspecs/features/uikit/qt_parts.prf
+ create mode 100644 mkspecs/features/win32/qt_dll.prf
+
+diff --git a/mkspecs/features/data/unix/findclasslist.pl b/mkspecs/features/data/unix/findclasslist.pl
+new file mode 100644
+index 0000000000..14043de846
+--- /dev/null
++++ b/mkspecs/features/data/unix/findclasslist.pl
+@@ -0,0 +1,46 @@
++#!/usr/bin/env perl
++# Copyright (C) 2016 Intel Corporation.
++# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
++
++use strict;
++my $syntax = "findclasslist.pl\n" .
++             "Replaces each \@FILE:filename\@ in stdin with the classes found in that file\n";
++
++# Match a struct or class declaration at the top-level, but not a forward
++# declaration
++my $classmatch = qr/^(?:struct|class)(?:\s+Q_\w*_EXPORT)?\s+([\w:]+)(\s*;$)?/;
++
++# Match an exported namespace
++my $nsmatch = qr/^namespace\s+Q_\w+_EXPORT\s+([\w:]+)/;
++
++$\ = $/;
++while (<STDIN>) {
++    chomp;
++    unless (/\@FILE:(.*)\@/) {
++        print;
++        next;
++    }
++
++    # Replace this line with the class list
++    my $fname = $1;
++    open HDR, "<$1" or die("Could not open header $1: $!");
++    while (my $line = <HDR>) {
++        if ($line =~ /\bELFVERSION:(\S+)\b/) {
++            last if $1 eq "stop";
++            <HDR> if $1 eq "ignore-next"; # load next line
++            next if $1 eq "ignore" or $1 eq "ignore-next";
++        }
++
++        $line =~ s,\s*(//.*)?$,,;  # remove // comments and trailing space
++        next unless $line =~ $nsmatch or $line =~ $classmatch;
++        next if $2 ne "";       # forward declaration
++
++        # split the namespace-qualified or nested class identifiers
++        my $sym = ($1 =~ s/:$//r); # remove trailing :
++        my @sym = split /::/, $sym;
++        @sym = map { sprintf "%d%s", length $_, $_; } @sym;
++        $sym = sprintf "    *%s*;", join("", @sym);
++        printf "%-55s # %s:%d\n", $sym, $fname, $.;
++    }
++    close HDR;
++}
+diff --git a/mkspecs/features/qt_android_deps.prf b/mkspecs/features/qt_android_deps.prf
+new file mode 100644
+index 0000000000..0fff45f458
+--- /dev/null
++++ b/mkspecs/features/qt_android_deps.prf
+@@ -0,0 +1,93 @@
++
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++# Generates an xml file to match the library in lib/ listing the dependencies
++# of the module on JNI-based libraries etc. Used for deployment of an Android
++# app.
++
++ANDROID_DEPENDS_DIR = $$MODULE_BASE_OUTDIR/lib/
++DEPENDENCY_FILE = $$ANDROID_DEPENDS_DIR$$TARGET-android-dependencies.xml
++build_pass|single_android_abi:!isEmpty(QT_ARCH): {
++    !isEmpty(MODULE_PLUGIN_TYPES) {
++        for(PLUGIN_TYPE, MODULE_PLUGIN_TYPES) {
++            ANDROID_BUNDLED_FILES += "plugins/$$PLUGIN_TYPE"
++        }
++    }
++
++    !isEmpty(ANDROID_JAR_DEPENDENCIES) {
++        for(JAR_FILE, ANDROID_JAR_DEPENDENCIES) {
++            INIT_CLASS = $$section(JAR_FILE, ":", 1, 1)
++            !isEmpty(INIT_CLASS): INIT_CLASS = "initClass=\"$$INIT_CLASS\""
++            JAR_FILE = $$section(JAR_FILE, ":", 0, 0)
++            FILE_CONTENT += "<jar file=\"$$JAR_FILE\" $$INIT_CLASS />"
++        }
++    }
++
++    !isEmpty(ANDROID_BUNDLED_JAR_DEPENDENCIES) {
++        for(JAR_FILE, ANDROID_BUNDLED_JAR_DEPENDENCIES) {
++            INIT_CLASS = $$section(JAR_FILE, ":", 1, 1)
++            !isEmpty(INIT_CLASS): INIT_CLASS = "initClass=\"$$INIT_CLASS\""
++            JAR_FILE = $$section(JAR_FILE, ":", 0, 0)
++            FILE_CONTENT += "<jar bundling=\"1\" file=\"$$JAR_FILE\" $$INIT_CLASS />"
++        }
++    }
++
++    !isEmpty(ANDROID_LIB_DEPENDENCIES) {
++        for(LIB_FILE, ANDROID_LIB_DEPENDENCIES) {
++            EXTENDS = $$section(LIB_FILE, ":", 1, 1)
++            !isEmpty(EXTENDS): EXTENDS = "extends=\"$$EXTENDS\""
++            LIB_FILE = $$section(LIB_FILE, ":", 0, 0)
++            LIB_FILE = $$replace(LIB_FILE,"\.so", "_$${QT_ARCH}.so")
++            !isEmpty(EXTENDS): EXTENDS = $$replace(EXTENDS,"\.so", "_$${QT_ARCH}.so")
++            FILE_CONTENT += "<lib file=\"$$LIB_FILE\" $$EXTENDS />"
++        }
++    }
++
++    !isEmpty(ANDROID_LIB_DEPENDENCY_REPLACEMENTS) {
++        for(REPLACEMENT, ANDROID_LIB_DEPENDENCY_REPLACEMENTS) {
++            REPLACEMENT_FILE = $$section(REPLACEMENT, ":", 0, 0)
++            LIB_FILE = $$section(REPLACEMENT, ":", 1, 1)
++            REPLACEMENT_FILE = $$replace(REPLACEMENT_FILE,"\.so", "_$${QT_ARCH}.so")
++            FILE_CONTENT += "<lib file=\"$$LIB_FILE\" replaces=\"$$REPLACEMENT_FILE\" />"
++        }
++    }
++
++    !isEmpty(ANDROID_BUNDLED_FILES) {
++        for (BUNDLED_FILE, ANDROID_BUNDLED_FILES) {
++            BUNDLED_FILE = $$replace(BUNDLED_FILE,"\.so", "_$${QT_ARCH}.so")
++            FILE_CONTENT += "<bundled file=\"$$BUNDLED_FILE\" />"
++        }
++    }
++
++    !isEmpty(ANDROID_PERMISSIONS) {
++        for (ANDROID_PERMISSION, ANDROID_PERMISSIONS) {
++            FILE_CONTENT += "<permission name=\"$$ANDROID_PERMISSION\" />"
++        }
++    }
++
++    !isEmpty(ANDROID_FEATURES) {
++        for (ANDROID_FEATURE, ANDROID_FEATURES) {
++            FILE_CONTENT += "<feature name=\"$$ANDROID_FEATURE\" />"
++        }
++    }
++
++
++    !isEmpty(FILE_CONTENT) {
++        FILE_CONTENT = "<rules><dependencies><lib name=\"$$TARGET\"><depends>" $$FILE_CONTENT "</depends></lib></dependencies></rules>"
++        write_file($$DEPENDENCY_FILE, FILE_CONTENT)|error()
++    }
++}
++
++!isEmpty(ANDROID_JAR_DEPENDENCIES)|!isEmpty(ANDROID_LIB_DEPENDENCIES)|!isEmpty(ANDROID_LIB_DEPENDENCY_REPLACEMENTS)|!isEmpty(ANDROID_BUNDLED_JAR_DEPENDENCIES)|!isEmpty(ANDROID_BUNDLED_FILES) {
++    install_dependencies_file.files = $$DEPENDENCY_FILE
++    install_dependencies_file.path = $$[QT_INSTALL_LIBS]
++    INSTALLS += install_dependencies_file
++}
+diff --git a/mkspecs/features/qt_app.prf b/mkspecs/features/qt_app.prf
+new file mode 100644
+index 0000000000..8354f30eea
+--- /dev/null
++++ b/mkspecs/features/qt_app.prf
+@@ -0,0 +1,65 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++TEMPLATE = app
++
++load(qt_build_paths)
++DESTDIR = $$MODULE_BASE_OUTDIR/bin
++
++isEmpty(VERSION): VERSION = $$MODULE_VERSION
++isEmpty(QMAKE_TARGET_DESCRIPTION): \
++    QMAKE_TARGET_DESCRIPTION = "Qt $$title($$TARGET)"
++
++isEmpty(QMAKE_INFO_PLIST): CONFIG -= app_bundle
++
++host_build: QT -= gui   # no host tool will ever use gui
++host_build:force_bootstrap {
++    !build_pass:qtConfig(release_tools): CONFIG += release
++    contains(QT, core(-private)?|xml) {
++        QT -= core core-private xml
++        QT += bootstrap-private
++    }
++    target.path = $$[QT_HOST_BINS]
++} else {
++    !build_pass:qtConfig(debug_and_release): CONFIG += release
++    target.path = $$[QT_INSTALL_BINS]
++    CONFIG += relative_qt_rpath  # Qt's tools and apps should be relocatable
++}
++INSTALLS += target
++
++load(qt_targets)
++load(qt_common)
++
++qtSetQmlPath()
++
++no_launch_target: return()
++
++load(resolve_target)
++launch.commands = $$shell_quote($$shell_path($$QMAKE_RESOLVED_TARGET))
++QMAKE_EXTRA_TARGETS += launch
++
++# Add environment for non-installed builds.
++QT_TOOL_NAME = target
++qtAddTargetEnv(launch.commands, QT)
++
++isEmpty(BUILDS)|build_pass {
++    launch.depends = first
++} else {
++    # For exclusive builds, run the app only once.
++    launch.CONFIG = recursive
++    launch.target = launch_all
++    launch.recurse_target = launch
++    launch.commands =
++
++    launch_first.depends = $$eval($$first(BUILDS).target)-launch
++    launch_first.target = launch
++    QMAKE_EXTRA_TARGETS += launch_first
++}
+diff --git a/mkspecs/features/qt_build_config.prf b/mkspecs/features/qt_build_config.prf
+new file mode 100644
+index 0000000000..1eab561ef7
+--- /dev/null
++++ b/mkspecs/features/qt_build_config.prf
+@@ -0,0 +1,153 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++!contains(QMAKE_INTERNAL_INCLUDED_FILES, .*qmodule\\.pri) {
++    QMAKE_QT_MODULE = $$[QT_HOST_DATA/get]/mkspecs/qmodule.pri
++    !exists($$QMAKE_QT_MODULE)|!include($$QMAKE_QT_MODULE, "", true) {
++        debug(1, "Cannot load qmodule.pri!")
++    } else {
++        debug(1, "Loaded qmodule.pri from ($$QMAKE_QT_MODULE)")
++    }
++} else {
++    debug(1, "Not loading qmodule.pri twice")
++}
++
++PRECOMPILED_DIR = .pch
++OBJECTS_DIR = .obj
++MOC_DIR = .moc
++RCC_DIR = .rcc
++UI_DIR = .uic
++TRACEGEN_DIR = .tracegen
++QMLCACHE_DIR = .qmlcache
++LRELEASE_DIR = .qm
++intel_icl {
++    # ICL 14.0 has a bug that makes it not find #includes in dirs starting with .
++    MOC_DIR = tmp/moc
++    RCC_DIR = tmp/rcc
++    UI_DIR = tmp/uic
++}
++
++QMAKE_DIR_REPLACE_SANE = PRECOMPILED_DIR OBJECTS_DIR MOC_DIR RCC_DIR UI_DIR
++
++load(qt_prefix_build_check)
++
++# force_independent can be set externally. prefix_build not.
++qtIsPrefixBuild($$[QT_HOST_DATA]): \
++    CONFIG += prefix_build force_independent
++
++!build_pass:!isEmpty(_QMAKE_SUPER_CACHE_):force_independent {
++    # When doing a -prefix build of top-level qt5/qt.pro, we need to announce
++    # this repo's output dir to the other repos.
++    MODULE_BASE_OUTDIR = $$shadowed($$dirname(_QMAKE_CONF_))
++    !contains(QTREPOS, $$MODULE_BASE_OUTDIR): \
++        cache(QTREPOS, add super, MODULE_BASE_OUTDIR)
++    # This repo's module pris' location needs to be made known to qmake.
++    isEmpty(MODULE_QMAKE_OUTDIR): MODULE_QMAKE_OUTDIR = $$MODULE_BASE_OUTDIR
++    modpath = $$MODULE_QMAKE_OUTDIR/mkspecs/modules
++    !contains(QMAKEMODULES, $$modpath): \
++        cache(QMAKEMODULES, add super, modpath)
++    unset(modpath)
++}
++
++defineTest(qtSetQmlPath) {
++    !qtConfig(static)|host_build|no_import_scan: \
++        return()
++    deps = $$replace(QT, -private$, _private)
++    deps = $$resolve_depends(deps, "QT.")
++    !contains(deps, qml): \
++        return()
++
++    isEmpty(QTREPOS): \
++        QTREPOS = $$shadowed($$dirname(_QMAKE_CONF_))
++    for (qrep, QTREPOS): \
++        exists($$qrep/qml): \
++            QMLPATHS += $$qrep/qml
++    export(QMLPATHS)
++}
++
++# Apply extra compiler flags passed via configure last.
++CONFIG = qt_build_extra $$CONFIG
++
++# Don't actually try to install anything in non-prefix builds.
++# This is much easier and safer than making every single INSTALLS
++# assignment conditional.
++!prefix_build: \
++    CONFIG += qt_clear_installs
++
++cross_compile: \
++    CONFIG += force_bootstrap
++
++android|uikit: \
++    CONFIG += builtin_testdata
++
++# Prevent warnings about object files without any symbols
++macos: CONFIG += no_warn_empty_obj_files
++
++# Make sure the doc features are loaded last since they depend on other
++# features setting up things like includepaths to find everything.
++CONFIG = prepare_docs qt_docs_targets $$CONFIG
++
++CONFIG += \
++    utf8_source \
++    create_prl link_prl \
++    no_private_qt_headers_warning QTDIR_build \
++    qt_example_installs \
++    # Qt modules get compiled without exceptions enabled by default.
++    # However, testcases should be still built with exceptions.
++    exceptions_off testcase_exceptions
++
++# Under Windows, this is neither necessary (transitive deps are automatically
++# resolved), nor functional (.res files end up in .prl files and break things).
++unix: CONFIG += explicitlib
++
++# By default we want tests on macOS to be built as standalone executables
++macos: CONFIG += testcase_no_bundle
++
++# Override MinGW's definition in _mingw.h
++mingw: DEFINES += WINVER=0x0A00 _WIN32_WINNT=0x0A00
++
++defineTest(qtBuildPart) {
++    bp = $$eval($$upper($$section(_QMAKE_CONF_, /, -2, -2))_BUILD_PARTS)
++    isEmpty(bp): bp = $$QT_BUILD_PARTS
++    contains(bp, $$1): return(true)
++    return(false)
++}
++
++defineTest(qtNomakeTools) {
++    qtBuildPart(tools): return()
++    for (d, 1) {
++        $${d}.CONFIG += no_default_target no_default_install
++        export($${d}.CONFIG)
++    }
++}
++
++# This overloads the same function from qt_functions.prf.
++# This is not in qt_module.prf, as that gets loaded too late.
++defineTest(qtConfig) {
++    modules = $$QT $$QT_PRIVATE $$QT_FOR_PRIVATE $$QT_FOR_CONFIG
++    modules ~= s,-private$,_private,g
++    modules = $$resolve_depends(modules, "QT.", ".depends")
++    isEmpty(MODULE): \
++        MODULE = $$section($$list($$basename(_PRO_FILE_)), ., 0, 0)
++    exists($$OUT_PWD/qt$${MODULE}-config.pri) {
++        include($$OUT_PWD/qt$${MODULE}-config.pri)
++        modules += $${MODULE} $${MODULE}_private
++    }
++    modules += global global_private
++    modules = $$reverse(modules)
++    for (module, modules) {
++        contains(QT.$${module}.enabled_features, $$1): \
++            return(true)
++        contains(QT.$${module}.disabled_features, $$1): \
++            return(false)
++    }
++    error("Could not find feature $${1}.")
++}
+diff --git a/mkspecs/features/qt_build_extra.prf b/mkspecs/features/qt_build_extra.prf
+new file mode 100644
+index 0000000000..a1512c3a19
+--- /dev/null
++++ b/mkspecs/features/qt_build_extra.prf
+@@ -0,0 +1,41 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++equals(TEMPLATE, subdirs): return()
++
++# It's likely that these extra flags will be wrong for host builds,
++# and the bootstrapped tools usually don't need them anyway.
++host_build:cross_compile: return()
++
++# The headersclean check needs defines and includes even for
++# header-only modules.
++DEFINES += $$EXTRA_DEFINES
++INCLUDEPATH += $$EXTRA_INCLUDEPATH
++
++# The other flags are relevant only for actual libraries.
++equals(TEMPLATE, aux): return()
++
++QMAKE_LIBDIR += $$EXTRA_LIBDIR
++QMAKE_FRAMEWORKPATH += $$EXTRA_FRAMEWORKPATH
++
++# Static libs need no rpaths
++static: return()
++
++for (rp, EXTRA_RPATHS) {
++    absrp = $$absolute_path($$rp, $$[QT_INSTALL_LIBS])
++    !isEqual(absrp, $$rp) {
++        isEmpty(QMAKE_REL_RPATH_BASE)|!contains(INSTALLS, target): \
++            rp = $$absrp
++        else: \
++            rp = $$relative_path($$absrp, $$qtRelativeRPathBase())
++    }
++    QMAKE_RPATHDIR += $$rp
++}
+diff --git a/mkspecs/features/qt_build_paths.prf b/mkspecs/features/qt_build_paths.prf
+new file mode 100644
+index 0000000000..8e4ef3e803
+--- /dev/null
++++ b/mkspecs/features/qt_build_paths.prf
+@@ -0,0 +1,29 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++# Find the module's source root dir.
++isEmpty(_QMAKE_CONF_): error("Project has no top-level .qmake.conf file.")
++MODULE_BASE_INDIR = $$dirname(_QMAKE_CONF_)
++REAL_MODULE_BASE_OUTDIR = $$shadowed($$MODULE_BASE_INDIR)
++MODULE_BASE_OUTDIR = $$REAL_MODULE_BASE_OUTDIR
++!isEmpty(MODULE_BASE_DIR): MODULE_SYNCQT_DIR = $$MODULE_BASE_DIR    # compat for webkit
++isEmpty(MODULE_SYNCQT_DIR): MODULE_SYNCQT_DIR = $$MODULE_BASE_INDIR
++isEmpty(MODULE_QMAKE_OUTDIR): MODULE_QMAKE_OUTDIR = $$MODULE_BASE_OUTDIR
++
++exists($$MODULE_BASE_INDIR/.git): \
++    CONFIG += git_build
++
++!force_independent {
++    # If the module is not built independently, everything ends up in qtbase.
++    # This is the case in non-prefix builds, except for selected modules.
++    MODULE_BASE_OUTDIR = $$[QT_INSTALL_PREFIX]
++    MODULE_QMAKE_OUTDIR = $$[QT_INSTALL_PREFIX]
++}
+diff --git a/mkspecs/features/qt_clear_installs.prf b/mkspecs/features/qt_clear_installs.prf
+new file mode 100644
+index 0000000000..66d12f9d6d
+--- /dev/null
++++ b/mkspecs/features/qt_clear_installs.prf
+@@ -0,0 +1,12 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++INSTALLS =
+diff --git a/mkspecs/features/qt_common.prf b/mkspecs/features/qt_common.prf
+new file mode 100644
+index 0000000000..0f436ffacf
+--- /dev/null
++++ b/mkspecs/features/qt_common.prf
+@@ -0,0 +1,164 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++QMAKE_DIR_REPLACE_SANE += DESTDIR
++CONFIG -= debug_and_release_target
++
++DEFINES *= QT_NO_NARROWING_CONVERSIONS_IN_CONNECT
++
++qtConfig(c++11): CONFIG += c++11 strict_c++
++qtConfig(c++14): CONFIG += c++14
++qtConfig(c++1z): CONFIG += c++1z
++qtConfig(c++2a): CONFIG += c++2a
++qtConfig(c++2b): CONFIG += c++2b
++qtConfig(c99): CONFIG += c99
++qtConfig(c11): CONFIG += c11
++qtConfig(separate_debug_info): CONFIG += separate_debug_info
++contains(TEMPLATE, .*lib) {
++    # module and plugins
++    unix:qtConfig(reduce_relocations): CONFIG += bsymbolic_functions
++}
++contains(TEMPLATE, .*lib)|contains(TEMPLATE, aux) {
++    !isEmpty(_QMAKE_SUPER_CACHE_): \
++        rplbase = $$dirname(_QMAKE_SUPER_CACHE_)/[^/][^/]*
++    else: \
++        rplbase = $$MODULE_BASE_OUTDIR
++    host_build {
++        qqt_libdir = \$\$\$\$[QT_HOST_LIBS]
++        qt_libdir = $$[QT_HOST_LIBS]
++    } else {
++        qqt_libdir = \$\$\$\$[QT_INSTALL_LIBS]
++        qt_libdir = $$[QT_INSTALL_LIBS]
++    }
++    contains(QMAKE_DEFAULT_LIBDIRS, $$qt_libdir) {
++        lib_replace0.match = $$rplbase/lib/
++        lib_replace0.replace = $$qqt_libdir/
++        lib_replace0.CONFIG = path
++        QMAKE_PRL_INSTALL_REPLACE += lib_replace0
++        lib_replace.match = "[^ ']*$$rplbase/lib"
++        lib_replace.replace =
++    } else {
++        lib_replace.match = $$rplbase/lib
++        lib_replace.replace = $$qqt_libdir
++    }
++    lib_replace.CONFIG = path
++    QMAKE_PRL_INSTALL_REPLACE += lib_replace
++    !equals(qt_libdir, $$rplbase/lib) {
++        qtlibdir_replace.match = $$qt_libdir
++        qtlibdir_replace.replace = $$qqt_libdir
++        qtlibdir_replace.CONFIG = path
++        QMAKE_PRL_INSTALL_REPLACE += qtlibdir_replace
++    }
++}
++contains(TEMPLATE, .*lib)|darwin {
++    if(!host_build|!cross_compile):qtConfig(reduce_exports): CONFIG += hide_symbols
++}
++
++# Apple deprecated the entire OpenGL API in favor of Metal, which
++# we are aware of, so silence the deprecation warnings in code.
++# This does not apply to user-code, which will need to silence
++# their own warnings if they use the deprecated APIs explicitly.
++macos: DEFINES += GL_SILENCE_DEPRECATION
++uikit: DEFINES += GLES_SILENCE_DEPRECATION
++
++qtConfig(force_asserts): DEFINES += QT_FORCE_ASSERTS
++
++# The remainder of this file must not apply to host tools/libraries,
++# as the host compiler's version and capabilities are not checked.
++host_build:cross_compile: return()
++
++# Extra warnings for Qt non-example code, to ensure cleanliness of the sources.
++# The block below may turn these warnings into errors for some Qt targets.
++# -Wdate-time: warn if we use __DATE__ or __TIME__ (we want to be able to reproduce the exact same binary)
++# -Wvla: use of variable-length arrays (an extension to C++)
++clang {
++    clang_ver = $${QT_CLANG_MAJOR_VERSION}.$${QT_CLANG_MINOR_VERSION}
++    apple_ver = $${QT_APPLE_CLANG_MAJOR_VERSION}.$${QT_APPLE_CLANG_MINOR_VERSION}
++    versionAtLeast(clang_ver, 3.5): \
++        QMAKE_CXXFLAGS_WARN_ON += -Wdate-time
++
++    versionAtLeast(clang_ver, 3.6)|versionAtLeast(apple_ver, 6.3): \
++        QMAKE_CXXFLAGS_WARN_ON += -Winconsistent-missing-override
++
++    darwin {
++        QMAKE_CXXFLAGS_WARN_ON += \
++            -Wobjc-interface-ivars \
++            -Wobjc-method-access \
++            -Wobjc-multiple-method-names
++
++        # Clang/LLVM 5.0 and Xcode 9.0 introduced unguarded availability warnings.
++        # The same construct has been a hard error in Swift from the very beginning.
++        versionAtLeast(clang_ver, 5.0)|versionAtLeast(apple_ver, 9.0): \
++            QMAKE_CXXFLAGS_WARN_ON += \
++                -Werror=unguarded-availability \
++                -Werror=unguarded-availability-new \
++                -Werror=unsupported-availability-guard
++    }
++} else: gcc:!intel_icc {
++    QMAKE_CXXFLAGS_WARN_ON += -Wvla
++    # GCC 5 fixed -Wmissing-field-initializers for when there are no initializers
++    lessThan(QT_GCC_MAJOR_VERSION, 5): QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-field-initializers
++    # GCC 5 introduced -Wdate-time
++    greaterThan(QT_GCC_MAJOR_VERSION, 4): QMAKE_CXXFLAGS_WARN_ON += -Wdate-time
++    # GCC 6 introduced these
++    greaterThan(QT_GCC_MAJOR_VERSION, 5): QMAKE_CXXFLAGS_WARN_ON += -Wshift-overflow=2 -Wduplicated-cond
++    # GCC 7 has a lot of false positives relating to this, so disable completely
++    greaterThan(QT_GCC_MAJOR_VERSION, 6): QMAKE_CXXFLAGS_WARN_ON += -Wno-stringop-overflow
++    # GCC 9 introduced -Wformat-overflow in -Wall, but it is buggy:
++    greaterThan(QT_GCC_MAJOR_VERSION, 8): QMAKE_CXXFLAGS_WARN_ON += -Wno-format-overflow
++    ver = $${QT_GCC_MAJOR_VERSION}.$${QT_GCC_MINOR_VERSION}
++    versionAtLeast(ver, 9.2): QMAKE_CXXFLAGS_WARN_ON += -Wsuggest-override
++}
++
++warnings_are_errors:warning_clean {
++    # If the module declares that it has does its clean-up of warnings, enable -Werror.
++    # This setting is compiler-dependent anyway because it depends on the version of the
++    # compiler.
++    clang {
++        # Apple clang 4.0-4.2,5.0-5.1,6.0-6.4,7.0-7.3,8.0-8.3,9.0-9.2
++        # Regular clang 3.x-7.0
++        apple_ver = $${QT_APPLE_CLANG_MAJOR_VERSION}.$${QT_APPLE_CLANG_MINOR_VERSION}
++        reg_ver = $${QT_CLANG_MAJOR_VERSION}.$${QT_CLANG_MINOR_VERSION}
++        contains(apple_ver, "4\\.[012]|5\\.[01]|6\\.[01234]|7\\.[0123]|8\\.[0123]|9\\.[012]")|contains(reg_ver, "[345]\\.|[67]\\.0") {
++            QMAKE_CXXFLAGS_WARN_ON += -Werror -Wno-error=\\$${LITERAL_HASH}warnings -Wno-error=deprecated-declarations $$WERROR
++        }
++    } else:intel_icc:linux {
++        # Intel CC 13.0 - 18.0, on Linux only
++        ver = $${QT_ICC_MAJOR_VERSION}.$${QT_ICC_MINOR_VERSION}
++        linux:contains(ver, "(1[345678]\\.|19\\.0)") {
++            # 177: function "entity" was declared but never referenced
++            #      (too aggressive; ICC reports even for functions created due to template instantiation)
++            # 1224: #warning directive
++            # 1478: function "entity" (declared at line N) was declared deprecated
++            # 1786: function "entity" (declared at line N of "file") was declared deprecated ("message")
++            # 1881: argument must be a constant null pointer value
++            #      (NULL in C++ is usually a literal 0)
++            QMAKE_CXXFLAGS_WARN_ON += -Werror -ww177,1224,1478,1786,1881 $$WERROR
++        }
++    } else:gcc:!clang:!intel_icc:!rim_qcc {
++        # GCC 4.6-4.9, 5.x, ...
++        ver = $${QT_GCC_MAJOR_VERSION}.$${QT_GCC_MINOR_VERSION}
++        contains(ver, "(4\\.[6789]|[5-9]\\..)") {
++            QMAKE_CXXFLAGS_WARN_ON += -Werror -Wno-error=cpp -Wno-error=deprecated-declarations $$WERROR
++
++            # GCC prints this bogus warning, after it has inlined a lot of code
++            # error: assuming signed overflow does not occur when assuming that (X + c) < X is always false
++            QMAKE_CXXFLAGS_WARN_ON += -Wno-error=strict-overflow
++
++            # Work-around for bug https://code.google.com/p/android/issues/detail?id=58135
++            android: QMAKE_CXXFLAGS_WARN_ON += -Wno-error=literal-suffix
++        }
++    } else:msvc:!intel_icl {
++        # enable for MSVC 2015, MSVC 2017
++        contains(MSVC_VER, "1[45].0"): QMAKE_CXXFLAGS_WARN_ON += -WX
++    }
++    unset(ver)
++}
+diff --git a/mkspecs/features/qt_configure.prf b/mkspecs/features/qt_configure.prf
+new file mode 100644
+index 0000000000..4c18dbf953
+--- /dev/null
++++ b/mkspecs/features/qt_configure.prf
+@@ -0,0 +1,2471 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++QT_CONFIGURE_REPORT =
++QT_CONFIGURE_NOTES =
++QT_CONFIGURE_WARNINGS =
++QT_CONFIGURE_ERRORS =
++
++defineTest(qtConfAddReport) {
++    QT_CONFIGURE_REPORT += "$$join(1, $$escape_expand(\\n))"
++    export(QT_CONFIGURE_REPORT)
++}
++
++defineTest(qtConfAddNote) {
++    QT_CONFIGURE_NOTES += "Note: $$join(1, $$escape_expand(\\n))"
++    export(QT_CONFIGURE_NOTES)
++}
++
++defineTest(qtConfAddWarning) {
++    QT_CONFIGURE_WARNINGS += "WARNING: $$join(1, $$escape_expand(\\n))"
++    export(QT_CONFIGURE_WARNINGS)
++}
++
++defineTest(qtConfAddError) {
++    QT_CONFIGURE_ERRORS += "ERROR: $$join(1, $$escape_expand(\\n))"
++    export(QT_CONFIGURE_ERRORS)
++    equals(2, log):qt_conf_tests_allowed {
++        CONFIG += mention_config_log
++        export(CONFIG)
++    }
++}
++
++defineTest(qtConfFatalError) {
++    qtConfAddError($$1, $$2)
++    qtConfPrintReport()
++    error()
++}
++
++# Return a string list for the specified JSON path, which may be either a
++# single string or an array of strings.
++# Note that this returns a variable name, so it can be directly iterated over.
++defineReplace(qtConfScalarOrList) {
++    defined($$1, var): return($$1)
++    vals = $$list()
++    for (i, $${1}._KEYS_): \
++        $$vals += $$eval($${1}.$$i)
++    export($$vals)
++    return($$vals)
++}
++
++defineTest(qtConfCommandlineSetInput) {
++    arg = $${1}
++    val = $${2}
++    !isEmpty($${currentConfig}.commandline.options.$${arg}.name): \
++        arg = $$eval($${currentConfig}.commandline.options.$${arg}.name)
++    !isEmpty(config.input.$$arg) {
++        oldval = $$eval(config.input.$$arg)
++        equals(oldval, $$val): \
++            qtConfAddNote("Option '$$arg' with value '$$val' was specified twice")
++        else: \
++            qtConfAddNote("Overriding option '$$arg' with '$$val' (was: '$$oldval')")
++    }
++
++    config.input.$$arg = $$val
++    export(config.input.$$arg)
++}
++
++defineReplace(qtConfGetNextCommandlineArg) {
++    c = $$take_first(QMAKE_EXTRA_ARGS)
++    export(QMAKE_EXTRA_ARGS)
++    return($$c)
++}
++
++defineReplace(qtConfPeekNextCommandlineArg) {
++    return($$first(QMAKE_EXTRA_ARGS))
++}
++
++defineTest(qtConfCommandline_boolean) {
++    opt = $${1}
++    val = $${2}
++    isEmpty(val): val = yes
++
++    !equals(val, yes):!equals(val, no) {
++        qtConfAddError("Invalid value given for boolean command line option '$$opt'.")
++        return()
++    }
++
++    qtConfCommandlineSetInput($$opt, $$val)
++}
++
++defineTest(qtConfCommandline_void) {
++    opt = $${1}
++    val = $${2}
++    !isEmpty(val) {
++        qtConfAddError("Command line option '$$opt' expects no argument ('$$val' given).")
++        return()
++    }
++
++    val = $$eval($${currentConfig}.commandline.options.$${opt}.value)
++    isEmpty(val): val = yes
++
++    qtConfCommandlineSetInput($$opt, $$val)
++}
++
++defineTest(qtConfCommandline_enum) {
++    opt = $${1}
++    val = $${2}
++    isEmpty(val): val = yes
++
++    # validate and map value
++    mapped = $$eval($${currentConfig}.commandline.options.$${opt}.values.$${val})
++    isEmpty(mapped) {
++        # just a list of allowed values
++        for (i, $${currentConfig}.commandline.options.$${opt}.values._KEYS_) {
++            equals($${currentConfig}.commandline.options.$${opt}.values.$${i}, $$val) {
++                mapped = $$val
++                break()
++            }
++        }
++    }
++    isEmpty(mapped) {
++        qtConfAddError("Invalid value '$$val' supplied to command line option '$$opt'.")
++        return()
++    }
++
++    qtConfCommandlineSetInput($$opt, $$mapped)
++}
++
++defineTest(qtConfValidateValue) {
++    opt = $${1}
++    val = $${2}
++
++    validValues = $$eval($${currentConfig}.commandline.options.$${opt}.values._KEYS_)
++    isEmpty(validValues): \
++        return(true)
++
++    for (i, validValues) {
++        equals($${currentConfig}.commandline.options.$${opt}.values.$${i}, $$val): \
++            return(true)
++    }
++
++    qtConfAddError("Invalid value '$$val' supplied to command line option '$$opt'.")
++    return(false)
++}
++
++defineTest(qtConfCommandline_string) {
++    opt = $${1}
++    val = $${2}
++    nextok = $${3}
++    isEmpty(val):$$nextok: val = $$qtConfGetNextCommandlineArg()
++
++    # Note: Arguments which are variable assignments are legit here.
++    contains(val, "^-.*")|isEmpty(val) {
++        qtConfAddError("No value supplied to command line option '$$opt'.")
++        return()
++    }
++
++    !qtConfValidateValue($$opt, $$val): \
++        return()
++
++    qtConfCommandlineSetInput($$opt, $$val)
++}
++
++defineTest(qtConfCommandline_optionalString) {
++    opt = $${1}
++    val = $${2}
++    nextok = $${3}
++    isEmpty(val) {
++        $$nextok: val = $$qtConfPeekNextCommandlineArg()
++        contains(val, "^-.*|[A-Z0-9_]+=.*")|isEmpty(val): \
++            val = "yes"
++        else: \
++            val = $$qtConfGetNextCommandlineArg()
++    }
++
++    !qtConfValidateValue($$opt, $$val): \
++        return()
++
++    qtConfCommandlineSetInput($$opt, $$val)
++}
++
++
++defineTest(qtConfCommandline_addString) {
++    opt = $${1}
++    val = $${2}
++    nextok = $${3}
++    isEmpty(val):$$nextok: val = $$qtConfGetNextCommandlineArg()
++
++    # Note: Arguments which are variable assignments are legit here.
++    contains(val, "^-.*")|isEmpty(val) {
++        qtConfAddError("No value supplied to command line option '$$opt'.")
++        return()
++    }
++
++    !qtConfValidateValue($$opt, $$val): \
++        return()
++
++    !isEmpty($${currentConfig}.commandline.options.$${opt}.name): \
++        opt = $$eval($${currentConfig}.commandline.options.$${opt}.name)
++
++    config.input.$$opt += $$val
++    export(config.input.$$opt)
++}
++
++defineTest(qtConfCommandline_redo) {
++    !exists($$OUT_PWD/config.opt) {
++        qtConfAddError("No config.opt present - cannot redo configuration.")
++        return()
++    }
++    QMAKE_EXTRA_REDO_ARGS = $$cat($$OUT_PWD/config.opt, lines)
++    export(QMAKE_EXTRA_REDO_ARGS)  # just for config.log
++    QMAKE_EXTRA_ARGS = $$QMAKE_EXTRA_REDO_ARGS $$QMAKE_EXTRA_ARGS
++    export(QMAKE_EXTRA_ARGS)
++    QMAKE_REDO_CONFIG = true
++    export(QMAKE_REDO_CONFIG)
++}
++
++defineTest(qtConfParseCommandLine) {
++    customCalls =
++    for (cc, allConfigs) {
++        custom = $$eval($${cc}.commandline.custom)
++
++        !isEmpty(custom) {
++            customCall = qtConfCommandline_$$custom
++            !defined($$customCall, test): \
++                error("Custom command line callback '$$custom' is undefined.")
++            customCalls += $$customCall
++        }
++    }
++
++    for (ever) {
++        c = $$qtConfGetNextCommandlineArg()
++        isEmpty(c): break()
++
++        didCustomCall = false
++        for (customCall, customCalls) {
++            $${customCall}($$c) {
++                didCustomCall = true
++                break()
++            }
++        }
++        $$didCustomCall: \
++            next()
++
++        contains(c, "([A-Z0-9_]+)=(.*)") {
++            opt = $$replace(c, "^([A-Z0-9_]+)=(.*)", "\\1")
++            val = $$replace(c, "^([A-Z0-9_]+)=(.*)", "\\2")
++            for (cc, allConfigs) {
++                var = $$eval($${cc}.commandline.assignments.$${opt})
++                !isEmpty(var): \
++                    break()
++            }
++            isEmpty(var) {
++                qtConfAddError("Assigning unknown variable '$$opt' on command line.")
++                return()
++            }
++            config.input.$$var = $$val
++            export(config.input.$$var)
++            next()
++        }
++
++        # parse out opt and val
++        nextok = false
++        contains(c, "^--?enable-(.*)") {
++            opt = $$replace(c, "^--?enable-(.*)", "\\1")
++            val = yes
++        } else: contains(c, "^--?(disable|no)-(.*)") {
++            opt = $$replace(c, "^--?(disable|no)-(.*)", "\\2")
++            val = no
++        } else: contains(c, "^--([^=]+)=(.*)") {
++            opt = $$replace(c, "^--([^=]+)=(.*)", "\\1")
++            val = $$replace(c, "^--([^=]+)=(.*)", "\\2")
++        } else: contains(c, "^--(.*)") {
++            opt = $$replace(c, "^--(.*)", "\\1")
++            val =
++        } else: contains(c, "^-(.*)") {
++            opt = $$replace(c, "^-(.*)", "\\1")
++            val =
++            nextok = true
++            for (cc, allConfigs) {
++                type = $$eval($${cc}.commandline.options.$${opt})
++                !isEmpty(type): break()
++                type = $$eval($${cc}.commandline.options.$${opt}.type)
++                !isEmpty(type): break()
++            }
++            isEmpty(type):contains(opt, "(qt|system)-.*") {
++                val = $$replace(opt, "(qt|system)-(.*)", "\\1")
++                opt = $$replace(opt, "(qt|system)-(.*)", "\\2")
++            }
++        } else {
++            qtConfAddError("Invalid command line parameter '$$c'.")
++            return()
++        }
++
++        for (cc, allConfigs) {
++            type = $$eval($${cc}.commandline.options.$${opt})
++            isEmpty(type): \
++                type = $$eval($${cc}.commandline.options.$${opt}.type)
++            isEmpty(type) {
++                # no match in the regular options, try matching the prefixes
++                for (p, $${cc}.commandline.prefix._KEYS_) {
++                    e = "^-$${p}(.*)"
++                    contains(c, $$e) {
++                        opt = $$eval($${cc}.commandline.prefix.$${p})
++                        val = $$replace(c, $$e, "\\1")
++                        nextok = true
++                        type = "addString"
++                        break()
++                    }
++                }
++            }
++            !isEmpty(type) {
++                currentConfig = $$cc
++                break()
++            }
++        }
++        # handle builtin [-no]-feature-xxx
++        isEmpty(type):contains(opt, "feature-(.*)") {
++            opt ~= s,^feature-,,
++            found = false
++            for (cc, allConfigs) {
++                contains($${cc}.features._KEYS_, $$opt) {
++                    found = true
++                    break()
++                }
++            }
++            !$$found {
++                qtConfAddError("Enabling/Disabling unknown feature '$$opt'.")
++                return()
++            }
++            # this is a boolean enabling/disabling the corresponding feature
++            type = boolean
++        }
++
++        # Skip the -qmake option.
++        isEmpty(type):contains(opt, "qmake") {
++            next()
++        }
++
++        isEmpty(type):contains(opt, "skip") {
++            isEmpty(skipOptionWarningAdded) {
++                qtConfAddWarning("Command line option -skip is only effective in top-level builds.")
++                skipOptionWarningAdded = 1
++            }
++            val = $$qtConfGetNextCommandlineArg()
++            next()
++        }
++
++        isEmpty(type) {
++            qtConfAddError("Unknown command line option '$$c'.")
++            equals(config.input.continue, yes): \
++                next()
++            else: \
++                return()
++        }
++
++        call = "qtConfCommandline_$${type}"
++        !defined($$call, test): \
++            error("Command line option '$$c' has unknown type '$$type'.")
++
++        # now that we have opt and value, process it
++        $${call}($$opt, $$val, $$nextok)
++    }
++}
++
++defineReplace(qtConfToolchainSupportsFlag) {
++    test_out_dir = $$OUT_PWD/$$basename(QMAKE_CONFIG_TESTS_DIR)
++    test_cmd_base = "$$QMAKE_CD $$system_quote($$system_path($$test_out_dir)) &&"
++
++    conftest = "int main() { return 0; }"
++    write_file("$$test_out_dir/conftest.cpp", conftest)|error()
++
++    qtRunLoggedCommand("$$test_cmd_base $$QMAKE_CXX $$QMAKE_CXXFLAGS $${1} -o conftest-out conftest.cpp"): \
++        return(true)
++    return(false)
++}
++
++defineTest(qtConfTest_compilerSupportsFlag) {
++    flag = $$eval($${1}.flag)
++
++    return($$qtConfToolchainSupportsFlag($$flag))
++}
++
++defineTest(qtConfTest_linkerSupportsFlag) {
++    flag = $$eval($${1}.flag)
++
++    use_bfd_linker: \
++        LFLAGS = -fuse-ld=bfd
++    use_gold_linker: \
++        LFLAGS = -fuse-ld=gold
++    use_lld_linker: \
++        LFLAGS = -fuse-ld=lld
++
++    return($$qtConfToolchainSupportsFlag($$LFLAGS "-Wl,$$flag"))
++}
++
++defineReplace(qtConfFindInPathList) {
++    # This nesting is consistent with Apple ld -search_paths_first,
++    # and presumably with GNU ld (no actual documentation found).
++    for (dir, 2) {
++        for (file, 1) {
++            exists("$$dir/$$file"): \
++                return("$$dir/$$file")
++        }
++    }
++    return()
++}
++
++defineReplace(qtConfFindInPath) {
++    ensurePathEnv()
++    equals(QMAKE_HOST.os, Windows):!contains(1, .*\\.exe): 1 = $${1}.exe
++    return($$qtConfFindInPathList($$1, $$2 $$QMAKE_PATH_ENV))
++}
++
++defineReplace(qtConfPkgConfigEnv) {
++    env =
++    !isEmpty(PKG_CONFIG_SYSROOT_DIR): env = "$${SETENV_PFX}PKG_CONFIG_SYSROOT_DIR=$${PKG_CONFIG_SYSROOT_DIR}$${SETENV_SFX} "
++    !isEmpty(PKG_CONFIG_LIBDIR): env = "$$env$${SETENV_PFX}PKG_CONFIG_LIBDIR=$${PKG_CONFIG_LIBDIR}$${SETENV_SFX} "
++    return($$env)
++}
++
++defineReplace(qtConfPkgConfig) {
++    host = $$1
++    isEmpty(host): host = false
++
++    $$host {
++        pkg_config = $$qtConfFindInPath("pkg-config")
++    } else {
++        pkg_config = "$$qtConfPkgConfigEnv()$$PKG_CONFIG_EXECUTABLE"
++    }
++
++    return($$pkg_config)
++}
++
++defineTest(qtConfPkgConfigPackageExists) {
++    isEmpty(1)|isEmpty(2): \
++        return(false)
++
++    !qtRunLoggedCommand("$${1} --exists --silence-errors $${2}"): \
++        return(false)
++
++    return(true)
++}
++
++defineReplace(qtSystemQuote) {
++    args =
++    for (a, 1): \
++        args += $$system_quote($$a)
++    return($$args)
++}
++
++defineReplace(qtConfPrepareArgs) {
++    return($$qtSystemQuote($$split(1)))
++}
++
++defineTest(qtConfSetupLibraries) {
++    asspfx = $${currentConfig}.commandline.assignments
++    for (l, $${currentConfig}.libraries._KEYS_) {
++        lpfx = $${currentConfig}.libraries.$${l}
++        # 'export' may be omitted, in which case it falls back to the library's name
++        !defined($${lpfx}.export, var) {
++            $${lpfx}.export = $$replace(l, -, _)
++            export($${lpfx}.export)
++        }
++        # 'export' may also be empty, but we need a derived identifier
++        alias = $$eval($${lpfx}.export)
++        isEmpty(alias): alias = $$replace(l, -, _)
++        $${lpfx}.alias = $$alias
++        export($${lpfx}.alias)
++        # make it easy to refer to the library by its export name.
++        $${currentConfig}.exports._KEYS_ += $$alias
++        $${currentConfig}.exports.$$alias += $$l
++        export($${currentConfig}.exports.$$alias)
++        isEmpty($${lpfx}.sources._KEYS_): \
++            error("Library $$l defines no sources")
++        for (s, $${lpfx}.sources._KEYS_) {
++            spfx = $${lpfx}.sources.$${s}
++            # link back to parent object
++            $${spfx}.library = $$l
++            export($${spfx}.library)
++            # a plain string is transformed into a structure
++            isEmpty($${spfx}._KEYS_) {
++                $${spfx}.libs = $$eval($${spfx})
++                export($${spfx}.libs)
++            }
++            # if the type is missing (implicitly in the case of plain strings), assume 'inline'
++            isEmpty($${spfx}.type) {
++                $${spfx}.type = inline
++                export($${spfx}.type)
++            }
++        }
++    }
++    $${currentConfig}.exports._KEYS_ = $$unique($${currentConfig}.exports._KEYS_)
++    export($${currentConfig}.exports._KEYS_)
++
++    for (alias, $${currentConfig}.exports._KEYS_) {
++        ua = $$upper($$alias)
++        $${asspfx}._KEYS_ += \
++            $${ua}_PREFIX $${ua}_INCDIR $${ua}_LIBDIR \
++            $${ua}_LIBS $${ua}_LIBS_DEBUG $${ua}_LIBS_RELEASE
++        uapfx = $${asspfx}.$${ua}
++        $${uapfx}_PREFIX = $${alias}.prefix
++        $${uapfx}_INCDIR = $${alias}.incdir
++        $${uapfx}_LIBDIR = $${alias}.libdir
++        $${uapfx}_LIBS = $${alias}.libs
++        $${uapfx}_LIBS_DEBUG = $${alias}.libs.debug
++        $${uapfx}_LIBS_RELEASE = $${alias}.libs.release
++        export($${uapfx}_PREFIX)
++        export($${uapfx}_INCDIR)
++        export($${uapfx}_LIBDIR)
++        export($${uapfx}_LIBS)
++        export($${uapfx}_LIBS_DEBUG)
++        export($${uapfx}_LIBS_RELEASE)
++    }
++    export($${asspfx}._KEYS_)
++
++    # reverse mapping for assignments on command line.
++    for (a, $${asspfx}._KEYS_) {
++        apfx = $${asspfx}.$${a}
++        ra = config.commandline.rev_assignments.$$eval($$apfx)
++        $$ra = $$a
++        export($$ra)
++    }
++}
++
++defineReplace(qtGccSysrootifiedPath) {
++    return($$replace(1, ^=, $$[QT_SYSROOT]))
++}
++
++defineReplace(qtGccSysrootifiedPaths) {
++    sysrootified =
++    for (path, 1): \
++        sysrootified += $$qtGccSysrootifiedPath($$path)
++    return($$sysrootified)
++}
++
++# libs-var, libs, in-paths
++defineTest(qtConfResolveLibs) {
++    for (path, 3): \
++        pre_lflags += -L$$path
++    $$1 = $$pre_lflags $$2
++    export($$1)
++    return(true)
++}
++
++# libs-var, in-paths, libs
++defineTest(qtConfResolvePathLibs) {
++    ret = true
++    gcc: \
++        local_paths = $$qtGccSysrootifiedPaths($$2)
++    else: \
++        local_paths = $$2
++    for (libdir, local_paths) {
++        !exists($$libdir/.) {
++            qtLog("Library path $$val_escape(libdir) is invalid.")
++            ret = false
++        }
++    }
++    !qtConfResolveLibs($$1, $$3, $$2): \
++        ret = false
++    return($$ret)
++}
++
++defineReplace(qtConfGetTestSourceList) {
++    result =
++    !isEmpty($${1}.test.inherit) {
++        base = $$section(1, ., 0, -2)
++        for (i, $${1}.test.inherit): \
++            result += $$qtConfGetTestSourceList($${base}.$$i)
++    }
++    return($$result $$1)
++}
++
++defineReplace(qtConfGetTestIncludes) {
++    defined($${1}._KEYS_, var) {
++        1st = $$first($${1}._KEYS_)
++        equals(1st, 0) {
++            # array; recurse for every element
++            ret =
++            for (k, $${1}._KEYS_): \
++                ret += $$qtConfGetTestIncludes($${1}.$$k)
++            return($$ret)
++        }
++        # object; try condition and recurse
++        !defined($${1}.headers, var):!defined($${1}.headers._KEYS_, var): \  # just plain broken without it
++            error("headers object '$$1' has no nested headers entry")
++        cond = $$eval($${1}.condition)
++        isEmpty(cond): \  # would be pointless otherwise
++            error("headers object '$$1' has no condition")
++        !$$qtConfEvaluate($$cond) {
++            qtLog("header entry '$$1' failed condition '$$cond'.")
++            return()
++        }
++        qtLog("header entry '$$1' passed condition.")
++        return($$qtConfGetTestIncludes($${1}.headers))
++    }
++    return($$eval($$1))  # plain string - or nothing (can happen for top-level call only)
++}
++
++# includes-var, in-paths, test-object-var
++defineTest(qtConfResolvePathIncs) {
++    ret = true
++    gcc: \
++        local_paths = $$qtGccSysrootifiedPaths($$2)
++    else: \
++        local_paths = $$2
++    for (incdir, local_paths) {
++        !exists($$incdir/.) {
++            qtLog("Include path $$val_escape(incdir) is invalid.")
++            ret = false
++        }
++    }
++    2 -= $$QMAKE_DEFAULT_INCDIRS
++    $$1 = $$2
++    export($$1)
++    wasm {
++        # FIXME: emcc downloads pre-built libraries and adds their include
++        # path to the clang call dynamically. it would be possible to parse
++        # the emcc -s USE_xyz=1 --cflags output to populate xzy_INCDIR and
++        # thus make the code below work.
++        return($$ret)
++    }
++    tests = $$qtConfGetTestSourceList($$3)
++    hdrs =
++    for (test, tests): \
++        hdrs += $$qtConfGetTestIncludes($${test}.headers)
++    for (hdr, hdrs) {
++        h = $$qtConfFindInPathList($$hdr, $$2 $$EXTRA_INCLUDEPATH $$QMAKE_DEFAULT_INCDIRS)
++        isEmpty(h) {
++            qtLog("$$hdr not found in [$$val_escape(2)] and global paths.")
++            ret = false
++        }
++    }
++    return($$ret)
++}
++
++# the library is specified inline in a 'libs' field.
++# overrides from the command line are accepted.
++defineTest(qtConfLibrary_inline) {
++    lib = $$eval($${1}.library)
++    !defined($${1}.libs, var):isEmpty($${1}.builds._KEYS_): \
++        error("'inline' source in library '$$lib' specifies neither 'libs' nor 'builds'.")
++
++    # library lists are specified as strings in the json sources for
++    # readability, but it's a pain to work with that, so expand it now.
++    eval($${1}.libs = $$eval($${1}.libs))
++    export($${1}.libs)
++    for (b, $${1}.builds._KEYS_) {
++        eval($${1}.builds.$${b} = $$eval($${1}.builds.$${b}))
++        export($${1}.builds.$${b})
++    }
++
++    # if multiple libraries provide the same export, it makes sense
++    # to make them recognize the same input variables.
++    input = $$eval($${2}.alias)
++
++    # build-specific direct libs. overwrites inline libs.
++    vars =
++    any = false
++    all = true
++    for (b, $$list(debug release)) {
++        iv = $${input}.libs.$${b}
++        vars += $$eval(config.commandline.rev_assignments.$${iv})
++        defined(config.input.$${iv}, var) {
++            eval($${1}.builds.$${b} = $$eval(config.input.$${iv}))
++            export($${1}.builds.$${b})
++            $${1}.builds._KEYS_ *= $${b}
++            any = true
++        } else {
++            all = false
++        }
++    }
++    $$any {
++        !$$all {
++            qtConfAddError("Either none or all of $$join(vars, ", ", [, ]) must be specified.")
++            return(false)
++        }
++        export($${1}.builds._KEYS_)
++        # we also reset the generic libs, to avoid surprises.
++        $${1}.libs =
++        export($${1}.libs)
++    }
++
++    # direct libs. overwrites inline libs.
++    defined(config.input.$${input}.libs, var) {
++        eval($${1}.libs = $$eval(config.input.$${input}.libs))
++        export($${1}.libs)
++    }
++
++    includes = $$eval(config.input.$${input}.incdir)
++
++    # prefix. prepends to (possibly overwritten) inline libs.
++    prefix = $$eval(config.input.$${input}.prefix)
++    !isEmpty(prefix) {
++        includes += $$prefix/include
++        $${1}.libs = -L$$prefix/lib $$eval($${1}.libs)
++        export($${1}.libs)
++    }
++
++    libdir = $$eval(config.input.$${input}.libdir)
++    !isEmpty(libdir) {
++        libs =
++        for (ld, libdir): \
++            libs += -L$$ld
++        $${1}.libs = $$libs $$eval($${1}.libs)
++        export($${1}.libs)
++    }
++
++    !qtConfResolvePathIncs($${1}.includedir, $$includes, $$2): \
++        return(false)
++
++    return(true)
++}
++
++# the library is provided by the qmake spec.
++# this source type cannot fail.
++defineTest(qtConfLibrary_makeSpec) {
++    spec = $$eval($${1}.spec)
++    isEmpty(spec): \
++        error("makeSpec source in library '$$eval($${1}.library)' does not specify 'spec'.")
++
++    !qtConfResolvePathLibs($${1}.libs, $$eval(QMAKE_LIBDIR_$$spec), $$eval(QMAKE_LIBS_$$spec)): \
++        return(false)
++
++    !qtConfResolvePathIncs($${1}.includedir, $$eval(QMAKE_INCDIR_$$spec), $$2): \
++        return(false)
++
++    !isEmpty(QMAKE_EXPORT_INCDIR_$$spec) {
++        $${1}.exportincludedir = $$eval(QMAKE_EXPORT_INCDIR_$$spec)
++        export($${1}.exportincludedir)
++    }
++
++    # note that the object is re-exported, because we resolve the libraries.
++
++    return(true)
++}
++
++# the library is found via pkg-config.
++defineTest(qtConfLibrary_pkgConfig) {
++    pkg_config = $$qtConfPkgConfig($$eval($${1}.host))
++    isEmpty(pkg_config) {
++        qtLog("pkg-config use disabled globally.")
++        return(false)
++    }
++    args = $$qtConfPrepareArgs($$eval($${1}.args))
++
++    !qtConfPkgConfigPackageExists($$pkg_config, $$args) {
++        qtLog("pkg-config did not find package.")
++        return(false)
++    }
++
++    qtRunLoggedCommand("$$pkg_config --modversion $$args", version)|return(false)
++    version ~= s/[^0-9.].*$//
++    $${1}.version = $$first(version)
++    export($${1}.version)
++
++    qtRunLoggedCommand("$$pkg_config --libs-only-L $$args", libpaths)|return(false)
++    qtRunLoggedCommand("$$pkg_config --libs-only-l $$args", libs)|return(false)
++    eval(libs = $$libpaths $$libs)
++    !qtConfResolveLibs($${1}.libs, $$libs): \
++        return(false)
++    contains($${1}.libs, ".*\\.$${QMAKE_EXTENSION_STATICLIB}$") {
++        qtRunLoggedCommand("$$pkg_config --static --libs $$args", libs)|return(false)
++        # Split by space
++        eval(libs = $$libs)
++        !qtConfResolveLibs($${1}.libs, $$libs): \
++            return(false)
++    }
++
++    qtRunLoggedCommand("$$pkg_config --cflags $$args", $${1}.cflags)|return(false)
++    # Split CFLAGS into stuff that goes into DEFINES, INCLUDEPATH, and other stuff.
++    # The compound variable is still set in case something wants to use it outside
++    # regular library exports.
++    defines =
++    includes =
++    ignored =
++    eval(cflags = $$eval($${1}.cflags))
++    for (i, cflags) {
++        contains(i, "-I.*") {
++            i ~= s/^-I//
++            includes += $$i
++        } else: contains(i, "-D.*") {
++            i ~= s/^-D//
++            defines += $$i
++        } else {
++            # Sometimes, pkg-config files include other flags
++            # we really don't need and shouldn't add.
++            ignored += $$i
++        }
++    }
++    !isEmpty(ignored): \
++        qtLog("Note: Dropped compiler flags '$$ignored'.")
++    !qtConfResolvePathIncs($${1}.includedir, $$includes, $$2): \
++        return(false)
++    $${1}.defines = $$defines
++
++    # now remove the content of the transitive deps we know about.
++    largs = $$qtConfAllLibraryArgs($$eval($${2}.dependencies))
++    for (la, largs): \
++        eval("$$la")
++    USES = $$eval($$list($$upper($$replace(QMAKE_USE, -, _))))
++    # _CC == _LD for configure's library sources, so pick first arbitrarily.
++    DEPS = $$resolve_depends(USES, QMAKE_DEPENDS_, _CC)
++    for (DEP, DEPS) {
++        $${1}.libs -= $$eval(QMAKE_LIBS_$${DEP})
++        $${1}.includedir -= $$eval(QMAKE_INCDIR_$${DEP})
++        $${1}.defines -= $$eval(QMAKE_DEFINES_$${DEP})
++    }
++    export($${1}.libs)
++    export($${1}.includedir)
++    export($${1}.defines)
++
++    return(true)
++}
++
++defineTest(qtConfTest_getPkgConfigVariable) {
++    pkg_config = $$qtConfPkgConfig($$eval($${1}.host))
++    isEmpty(pkg_config): \
++        return(false)
++    args = $$qtConfPrepareArgs($$eval($${1}.pkg-config-args))
++
++    !qtConfPkgConfigPackageExists($$pkg_config, $$args): \
++        return(false)
++
++    variable = $$eval($${1}.pkg-config-variable)
++    qtRunLoggedCommand("$$pkg_config --variable=$$variable $$args", $${1}.value)|return(false)
++    export($${1}.value)
++    $${1}.cache += value
++    export($${1}.cache)
++    return(true)
++}
++
++defineReplace(qtConfLibraryArgs) {
++    NAME = $$upper($$replace($${1}.library, -, _))
++    qmake_args = "QMAKE_LIBS_$${NAME} = $$val_escape($${1}.libs)"
++    for (b, $${1}.builds._KEYS_): \
++        qmake_args += "QMAKE_LIBS_$${NAME}_$$upper($$b) = $$val_escape($${1}.builds.$${b})"
++    includedir = $$eval($${1}.includedir)
++    !isEmpty(includedir): \
++        qmake_args += "QMAKE_INCDIR_$${NAME} = $$val_escape(includedir)"
++    defines = $$eval($${1}.defines)
++    !isEmpty(defines): \
++        qmake_args += "QMAKE_DEFINES_$${NAME} = $$val_escape(defines)"
++    depends = $$eval($${2}.dependencies)
++    !isEmpty(depends) {
++        dep_uses =
++        for (use, depends): \
++            dep_uses += $$section(use, :, 1, 1)
++        qmake_args += \
++            "QMAKE_DEPENDS_$${NAME}_CC = $$upper($$replace(dep_uses, -, _))" \
++            "QMAKE_DEPENDS_$${NAME}_LD = $$upper($$replace(dep_uses, -, _))"
++    }
++    return($$qmake_args)
++}
++
++defineReplace(qtConfAllLibraryArgs) {
++    isEmpty(1): return()
++    dep_uses =
++    for (use, 1): \
++        dep_uses += $$section(use, :, 1, 1)
++    dep_args =
++    seen =
++    for(ever) {
++        isEmpty(1): break()
++        use = $$take_last(1)
++        contains(seen, $$use): next()
++        seen += $$use
++        use_cfg = $$section(use, :, 0, 0)
++        !isEmpty(use_cfg) {
++            use_lib = $$section(use, :, 1, 1)
++            lpfx = $${use_cfg}.libraries.$$use_lib
++            dep_args += $$qtConfLibraryArgs($${lpfx}.sources.$$eval($${lpfx}.source), $$lpfx)
++            1 += $$eval($${lpfx}.dependencies)
++        }
++    }
++    return("QMAKE_USE += $$dep_uses" $$dep_args)
++}
++
++defineTest(qtConfExportLibrary) {
++    lpfx = $${currentConfig}.libraries.$$1
++    alias = $$eval($${lpfx}.alias)
++    $${currentConfig}.found.$$alias = $$1
++    export($${currentConfig}.found.$$alias)
++    name = $$eval($${lpfx}.export)
++    isEmpty(name): return()
++    spfx = $${lpfx}.sources.$$eval($${lpfx}.source)
++    !$$qtConfEvaluate($$eval($${spfx}.export)): return()
++
++    output = privatePro
++    NAME = $$upper($$name)
++    # LIBS is emitted even if empty, as this allows the library to be "seen".
++    libs = $$eval($${spfx}.libs)
++    qtConfOutputVar(assign, $$output, QMAKE_LIBS_$$NAME, $$libs)
++    for (b, $${spfx}.builds._KEYS_) {
++        blibs = $$eval($${spfx}.builds.$${b})
++        qtConfOutputVar(assign, $$output, QMAKE_LIBS_$${NAME}_$$upper($$b), $$blibs)
++    }
++    defines = $$eval($${spfx}.defines)
++    !isEmpty(defines): qtConfOutputVar(assign, $$output, QMAKE_DEFINES_$$NAME, $$defines)
++    includes = $$eval($${spfx}.exportincludedir)
++    !equals(includes, -) {
++        isEmpty(includes): includes = $$eval($${spfx}.includedir)
++        !isEmpty(includes): qtConfOutputVar(assign, $$output, QMAKE_INCDIR_$$NAME, $$includes)
++    }
++    uses = $$eval($${lpfx}.dependencies)
++    !isEmpty(uses) {
++        # FIXME: ideally, we would export transitive deps only for static
++        # libs, to not extend the link interface unduly. however, the system
++        # does currently not differentiate between public and private deps.
++        depends =
++        for (use, uses) {
++            use_cfg = $$section(use, :, 0, 0)
++            use_lib = $$section(use, :, 1, 1)
++            !isEmpty(use_cfg): \
++                depends += $$upper($$eval($${use_cfg}.libraries.$${use_lib}.export))
++            else: \
++                depends += $$upper($$replace(use_lib, -, _))
++        }
++        # we use suffixes instead of infixes, because $$resolve_depends() demands it.
++        qtConfOutputVar(assign, $$output, QMAKE_DEPENDS_$${NAME}_CC, $$depends)
++        qtConfOutputVar(assign, $$output, QMAKE_DEPENDS_$${NAME}_LD, $$depends)
++    }
++    !isEmpty($${currentConfig}.module): \
++        qtConfExtendVar($$output, "QT.$${currentModule}_private.libraries", $$name)
++}
++
++defineTest(qtConfHandleLibrary) {
++    lpfx = $${currentConfig}.libraries.$$1
++    defined($${lpfx}.result, var): return()
++
++    alias = $$eval($${lpfx}.alias)
++    !isEmpty($${currentConfig}.found.$$alias) {
++        # this happening indicates a logic error in the conditions
++        # of the feature(s) referring to this library.
++        # note that this does not look across module boundaries, as
++        # multiple modules may know the same libraries; de-duplication
++        # happens via the cache (obviously, this assumes identical
++        # definitions and logic).
++        error("A library exporting '$$alias' was already found.")
++    }
++
++    qtConfEnsureTestTypeDeps("library")
++    !qtConfTestPrepare_compile($$lpfx) {
++        $${lpfx}.result = false
++        export($${lpfx}.result)
++        return()
++    }
++    $${lpfx}.dependencies = $$eval($${lpfx}.resolved_uses)
++    export($${lpfx}.dependencies)
++
++    qtConfLoadResult($${lpfx}, $$1, "library") {
++        $$eval($${lpfx}.result): \
++            qtConfExportLibrary($$1)
++        return()
++    }
++
++    qtLogTestIntro($${lpfx}, "looking for library $${1}")
++    qtPersistLog()
++
++    result = false
++    for (s, $${lpfx}.sources._KEYS_) {
++        spfx = $${lpfx}.sources.$${s}
++
++        t = $$eval($${spfx}.type)
++        call = qtConfLibrary_$$t
++        !defined($$call, test): \
++            error("Library $${1} source $${s} has unknown type '$$t'")
++
++        qtLog("Trying source $$s (type $$t) of library $${1} ...")
++
++        cond = $$eval($${spfx}.condition)
++        !$$qtConfEvaluate($$cond) {
++            qtLog("  => source failed condition '$$cond'.")
++            next()
++        }
++
++        !$${call}($$spfx, $$lpfx) {
++            qtLog("  => source produced no result.")
++            next()
++        }
++
++        $${lpfx}.source = $$s
++        export($${lpfx}.source)
++
++        # if the library defines a test, use it to verify the source.
++        defined($${lpfx}.test, var)|defined($${lpfx}.test._KEYS_, var) {
++            $${lpfx}.resolved_uses = $$currentConfig:$$1
++            $${lpfx}.host = $$eval($${spfx}.host)
++            !qtConfTest_compile($$lpfx) {
++                qtLog(" => source failed verification.")
++                next()
++            }
++        }
++
++        qtLog(" => source accepted.")
++
++        $${lpfx}.cache += source
++        for (v, $$list(libs includedir cflags version export)): \
++            $${lpfx}.cache += sources.$${s}.$${v}
++        for (b, $${spfx}.builds._KEYS_): \
++            $${lpfx}.cache += sources.$${s}.builds.$${b}
++
++        # immediately output the library as well.
++        qtConfExportLibrary($$1)
++
++        result = true
++        break()
++    }
++
++    $${lpfx}.msgs = $$qtPersistedLog()
++    export($${lpfx}.msgs)
++
++    qtLogTestResult($${lpfx}, $$result)
++
++    $${lpfx}.result = $$result
++    export($${lpfx}.result)
++    qtConfSaveResult($${lpfx}, $$1)
++}
++
++# This is a fake test type for the test dependency system.
++defineTest(qtConfTest_library) {
++    error("The test type 'library' may not be instantiated.")
++}
++
++defineTest(qtConfTestPrepare_compile) {
++    !isEmpty($${1}.use._KEYS_) {
++        uses =
++        for (k, $${1}.use._KEYS_) {
++            use = $$eval($${1}.use.$${k}.lib)
++            isEmpty(use): \
++                error("'use' entry $$k in test $$1 lacks 'lib' field.")
++            !$$qtConfEvaluate($$eval($${1}.use.$${k}.condition)): \
++                next()
++            uses += $$use
++        }
++    } else {
++        uses = $$split($${1}.use)
++    }
++    for (u, uses) {
++        libConfig =
++        exports = $$eval($${currentConfig}.exports.$$u)
++        !isEmpty(exports) {
++            # using a local library by exported name.
++            ru = $$eval($${currentConfig}.found.$$u)
++            !isEmpty(ru) {
++                # if it was already found, all is good.
++                u = $$ru
++            } else: count(exports, 1) {
++                # otherwise, if there is only one option, ensure it's resolved.
++                u = $$exports
++                qtConfHandleLibrary($$u)
++            } else {
++                # otherwise, verify that all options were resolved.
++                for (x, exports) {
++                    isEmpty($${currentConfig}.libraries.$${x}.result) {
++                        # the higher-level logic is in the features, which we cannot
++                        # infer from here. so the only option is failing.
++                        error("Test $$1 refers to yet unresolved library export '$$u'")
++                    }
++                }
++                return(false)
++            }
++            libConfig = $$currentConfig
++        } else: contains($${currentConfig}.libraries._KEYS_, $$u) {
++            # using a local library by real name. this should be the exception.
++            qtConfHandleLibrary($$u)
++            libConfig = $$currentConfig
++        } else {
++            for (d, QMAKE_LIBRARY_DEPS) {
++                exports = $$eval($${d}.exports.$$u)
++                !isEmpty(exports) {
++                    # using a foreign library by exported name.
++                    # foreign libraries may be external (if they are from a different
++                    # repository and the build is modular), and using these by real
++                    # name is impossible. so for consistency, uses by real name are
++                    # limited to local libraries.
++                    ru = $$eval($${d}.found.$$u)
++                    !isEmpty(ru) {
++                        u = $$ru
++                        libConfig = $$d
++                        break()
++                    }
++                    for (x, exports) {
++                        isEmpty($${d}.libraries.$${x}.result): \
++                            error("Test $$1 refers to unresolved library export '$$u' in '$$d'")
++                    }
++                    return(false)
++                }
++            }
++        }
++        isEmpty(libConfig) {
++            nu = $$upper($$replace(u, -, _))
++            !defined(QMAKE_LIBS_$$nu, var): \
++                error("Test $$1 tries to use undeclared library '$$u'")
++            # using an external library by exported name.
++            $${1}.resolved_uses += :$$u
++        } else {
++            lpfx = $${libConfig}.libraries.$${u}
++            !equals($${lpfx}.result, true): \
++                return(false)
++            $${1}.resolved_uses += $$libConfig:$$u
++        }
++    }
++    export($${1}.resolved_uses)
++    return(true)
++}
++
++defineTest(qtConfPrepareCompileTestSource) {
++    test_dir = $$2
++
++    tests = $$qtConfGetTestSourceList($$1)
++
++    test_lang = "c++"
++    for (test, tests): \
++        test_lang += $$eval($${test}.test.lang)
++    test_lang = $$last(test_lang)  # Last non-empty, that is.
++
++    equals(test_lang, "c++"): suffix = "cpp"
++    else: equals(test_lang, "c"): suffix = "c"
++    else: equals(test_lang, "objc"): suffix = "m"
++    else: equals(test_lang, "objc++"): suffix = "mm"
++    else: error("Unknown language '$$test_lang' in compile test $$1")
++
++    # Create source code
++    contents = "/* Generated by configure */"
++    # Custom code before includes
++    for (test, tests): \
++        for (ent, $$qtConfScalarOrList($${test}.test.head)): \
++            contents += $$ent
++    # Includes
++    for (test, tests) {
++        hdrs = $$qtConfGetTestIncludes($${test}.test.include)
++        isEmpty(hdrs): \
++            hdrs = $$qtConfGetTestIncludes($${test}.headers)
++        for (ent, hdrs): \
++            contents += "$${LITERAL_HASH}include <$$ent>"
++    }
++    # Custom code after includes
++    for (test, tests): \
++        for (ent, $$qtConfScalarOrList($${test}.test.tail)): \
++            contents += $$ent
++    # And finally the custom code inside main()
++    contents += \
++        "int main(int argc, char **argv)" \
++        "{" \
++        "    (void)argc; (void)argv;" \
++        "    /* BEGIN TEST: */"
++    for (test, tests): \
++        for (ent, $$qtConfScalarOrList($${test}.test.main)): \
++            contents += "    $$ent"
++    contents += \
++        "    /* END TEST */" \
++        "    return 0;" \
++        "}"
++    write_file($$test_dir/main.$$suffix, contents)|error()
++
++    for (test, tests) {
++        for (file, $$qtConfScalarOrList($${test}.test.files._KEYS_)): \
++            write_file($$test_dir/$$file, $$qtConfScalarOrList($${test}.test.files.$${file}))|error()
++    }
++
++    # Create stub .pro file
++    contents = "SOURCES = main.$$suffix"
++    # Custom project code
++    pwd = $$val_escape($${currentConfig}.dir)
++    for (test, tests): \
++        for (ent, $$qtConfScalarOrList($${test}.test.qmake)): \
++            contents += $$replace(ent, "@PWD@", $$pwd)
++    write_file($$test_dir/$$basename(test_dir).pro, contents)|error()
++}
++
++defineTest(qtConfTest_compile) {
++    test = $$eval($${1}.test)
++    host = $$eval($${1}.host)
++    isEmpty(host): host = false
++
++    test_base_out_dir = $$OUT_PWD/$$basename(QMAKE_CONFIG_TESTS_DIR)
++    isEmpty(test) {
++        test_dir = $$test_base_out_dir/$$section(1, ".", -1)
++        test_out_dir = $$test_dir
++        qtConfPrepareCompileTestSource($$1, $$test_dir)
++    } else {
++        test_dir = $$QMAKE_CONFIG_TESTS_DIR/$$test
++        test_out_dir = $$test_base_out_dir/$$test
++        !isEmpty($${1}.pro): \
++            test_dir = $$test_dir/$$eval($${1}.pro)
++    }
++    test_cmd_base = "$$QMAKE_CD $$system_quote($$system_path($$test_out_dir)) &&"
++
++    qmake_args = $$qtConfPkgConfigEnv()$$system_quote($$system_path($$QMAKE_QMAKE))
++    !isEmpty(QMAKE_QTCONF): \
++        qmake_args += -qtconf $$system_quote($$QMAKE_QTCONF)
++
++    # Disable qmake features which are typically counterproductive for tests
++    qmake_args += "\"CONFIG -= qt debug_and_release app_bundle lib_bundle\""
++
++    # allow tests to behave differently depending on the type of library
++    # being built (shared/static). e.g. see config.tests/unix/icu
++    shared: \
++        qmake_configs = "shared"
++    else: \
++        qmake_configs = "static"
++
++    use_bfd_linker: \
++        qmake_configs += "use_bfd_linker"
++    use_gold_linker: \
++        qmake_configs += "use_gold_linker"
++    use_lld_linker: \
++        qmake_configs += "use_lld_linker"
++
++    # disable warnings from the builds, since they're just noise at this point.
++    qmake_configs += "warn_off"
++
++    # add console to the CONFIG variable when running the tests, so that they
++    # can work with a regular main() entry point on Windows.
++    qmake_configs += "console"
++
++    # for platforms with multiple architectures (macOS, iOS, tvOS, watchOS),
++    # make sure tests are only built for a single architecture
++    qmake_configs += "single_arch"
++
++    qmake_args += "\"CONFIG += $$qmake_configs\""
++
++    !$$host|!cross_compile {
++        # add compiler flags, these are set for the target and should not be applied to host tests
++        !isEmpty(EXTRA_DEFINES): \
++            qmake_args += $$system_quote(DEFINES += $$val_escape(EXTRA_DEFINES))
++        !isEmpty(EXTRA_LIBDIR): \
++            qmake_args += $$system_quote(QMAKE_LIBDIR += $$val_escape(EXTRA_LIBDIR))
++        !isEmpty(EXTRA_FRAMEWORKPATH): \
++            qmake_args += $$system_quote(QMAKE_FRAMEWORKPATH += $$val_escape(EXTRA_FRAMEWORKPATH))
++        !isEmpty(EXTRA_INCLUDEPATH): \
++            qmake_args += $$system_quote(INCLUDEPATH += $$val_escape(EXTRA_INCLUDEPATH))
++        qmake_args += $$EXTRA_QMAKE_ARGS
++    }
++
++    # make sure to make this the last override (because of -early)
++    cross_compile {
++        # must be done before loading default_pre.prf.
++        qmake_args += -early "\"CONFIG += cross_compile\""
++    }
++
++    # Clean up after previous run
++    exists($$test_out_dir/Makefile): \
++        QMAKE_MAKE = "$$QMAKE_MAKE clean && $$QMAKE_MAKE"
++
++    mkpath($$test_out_dir)|error()
++    cont = "CONFIG += QTDIR_build"
++    write_file($$test_base_out_dir/.qmake.cache, cont)|error()
++
++    $${1}.literal_args += $$qtConfAllLibraryArgs($$eval($${1}.resolved_uses))
++
++    # add possible command line args
++    qmake_args += \
++        $$qtConfPrepareArgs($$eval($${1}.args)) \
++        $$qtSystemQuote($$eval($${1}.literal_args))
++
++    qtRunLoggedCommand("$$test_cmd_base $$qmake_args $$system_quote($$test_dir)") {
++        qtRunLoggedCommand("$$test_cmd_base $$QMAKE_MAKE"): \
++            return(true)
++    }
++
++    return(false)
++}
++
++defineTest(qtConfTest_files) {
++    for(i, $${1}.files._KEYS_) {
++        f = $$eval($${1}.files.$${i})
++        qtLog("Searching for file $${f}.")
++        contains(f, ".*\\.h") {
++            file = $$qtConfFindInPathList($$f, $$EXTRA_INCLUDEPATH $$QMAKE_DEFAULT_INCDIRS)
++        } else: contains(f, ".*\\.(lib|so|a)") {
++            file = $$qtConfFindInPathList($$f, $$EXTRA_LIBDIR $$QMAKE_DEFAULT_LIBDIRS)
++        } else {
++            # assume we're looking for an executable
++            file = $$qtConfFindInPath($$f, $$EXTRA_PATH)
++        }
++        isEmpty(file) {
++            qtLog("    Not found.");
++            return(false)
++        }
++        qtLog("    Found at $${file}.")
++    }
++    return(true)
++}
++
++defineTest(logn) {
++    log("$${1}$$escape_expand(\\n)")
++}
++
++defineTest(qtLogTestIntro) {
++    label = $$eval($${1}.label)
++    isEmpty(label): return()
++
++    isEmpty(3): log("Checking for $${label}... ")
++    $$QMAKE_CONFIG_VERBOSE: log("$$escape_expand(\\n)")
++    write_file($$QMAKE_CONFIG_LOG, 2, append)
++}
++
++defineTest(qtLogTestResult) {
++    isEmpty($${1}.label): return()
++
++    !isEmpty($${1}.log) {
++        field = $$eval($${1}.log)
++        log_msg = $$eval($${1}.$$field)
++        msg = "test $$1 gave result $$log_msg"
++    } else: $${2} {
++        log_msg = yes
++        msg = "test $$1 succeeded"
++    } else {
++        log_msg = no
++        msg = "test $$1 FAILED"
++    }
++    $$QMAKE_CONFIG_VERBOSE: log_msg = $$msg
++    isEmpty(3): logn("$$log_msg")
++    write_file($$QMAKE_CONFIG_LOG, msg, append)
++}
++
++defineTest(qtConfSaveResult) {
++    equals($${1}.cache, -): \
++        return()
++    keys = result msgs $$eval($${1}.cache)
++    cont = "cache.$${2}._KEYS_ = $$keys"
++    cache.$${2}._KEYS_ = $$keys
++    export(cache.$${2}._KEYS_)
++    for (k, keys) {
++        cont += "cache.$${2}.$${k} = $$val_escape($${1}.$${k})"
++        cache.$${2}.$${k} = $$eval($${1}.$${k})
++        export(cache.$${2}.$${k})
++    }
++    write_file($$QMAKE_CONFIG_CACHE, cont, append)|error()
++}
++
++defineTest(qtConfLoadResult) {
++    equals(QMAKE_CONFIG_CACHE_USE, none): \
++        return(false)
++    isEmpty(cache.$${2}._KEYS_): \
++        return(false)
++    equals(QMAKE_CONFIG_CACHE_USE, positive):!$$eval(cache.$${2}.result): \
++        return(false)
++    for (k, cache.$${2}._KEYS_) {
++        $${1}.$${k} = $$eval(cache.$${2}.$${k})
++        export($${1}.$${k})
++    }
++    # we could print the cached result, but that's basically just noise -
++    # the explicitly generated summary is supposed to contain all relevant
++    # information.
++    qtLogTestIntro($$1, "loaded result for $$3 $$1", false)
++    qtLog($$eval($${1}.msgs))
++    qtLogTestResult($$1, $$eval($${1}.result), false)
++    return(true)
++}
++
++defineTest(qtConfIsBoolean) {
++    equals(1, "true")|equals(1, "false"): \
++        return(true)
++    return(false)
++}
++
++defineTest(qtConfSetupTestTypeDeps) {
++    for (tt, $${currentConfig}.testTypeDependencies._KEYS_) {
++        !defined(qtConfTest_$${tt}, test): \
++            error("Declaring dependency for undefined test type '$$tt'.")
++        for (f, $${currentConfig}.testTypeDependencies.$${tt}._KEYS_) {
++            feature = $$eval($${currentConfig}.testTypeDependencies.$${tt}.$${f})
++            isEmpty($${currentConfig}.features.$${feature}._KEYS_): \
++                error("Test type '$$tt' depends on undefined feature '$$feature'.")
++        }
++    }
++    # Test type aliasing means that one test type's callback is called by
++    # another test type's callback. Put differently, one callback forwards
++    # the call to another one. The former representation is more natural
++    # (and concise) to write, while the latter is more efficient to process.
++    # Hence, this function inverts the mapping.
++    for (tt, $${currentConfig}.testTypeAliases._KEYS_) {
++        !defined(qtConfTest_$${tt}, test): \
++            error("Aliasing undefined test type '$$tt'.")
++        for (tta, $${currentConfig}.testTypeAliases.$${tt}._KEYS_) {
++            type = $$eval($${currentConfig}.testTypeAliases.$${tt}.$${tta})
++            !defined(qtConfTest_$${type}, test): \
++                error("Aliasing '$$tt' to undefined test type '$$type'.")
++            $${currentConfig}.testTypeForwards.$${type} += $$tt
++            export($${currentConfig}.testTypeForwards.$${type})
++        }
++    }
++}
++
++defineTest(qtConfEnsureTestTypeDepsOne) {
++    depsn = $${currentConfig}.testTypeDependencies.$${1}._KEYS_
++    !isEmpty($$depsn) {
++        for (dep, $$depsn) {
++            feature = $$eval($${currentConfig}.testTypeDependencies.$${1}.$${dep})
++            !qtConfCheckFeature($$feature): \
++                error("Test type '$$1' depends on non-emitted feature $${feature}.")
++        }
++        $$depsn =
++        export($$depsn)
++    }
++    fwdsn = $${currentConfig}.testTypeForwards.$${1}
++    !isEmpty($$fwdsn) {
++        for (fwd, $$fwdsn): \
++           qtConfEnsureTestTypeDepsOne($$fwd)
++        $$fwdsn =
++        export($$fwdsn)
++    }
++}
++
++defineTest(qtConfEnsureTestTypeDeps) {
++    qtConfEnsureTestTypeDepsOne($$1)
++    currentConfig = config.builtins
++    qtConfEnsureTestTypeDepsOne($$1)
++}
++
++defineTest(qtRunSingleTest) {
++    tpfx = $${currentConfig}.tests.$${1}
++    defined($${tpfx}.result, var): \
++        return()
++
++    type = $$eval($${tpfx}.type)
++    call = "qtConfTest_$$type"
++    !defined($$call, test): \
++        error("Configure test $${1} refers to nonexistent type $$type")
++
++    qtConfEnsureTestTypeDeps($$type)
++
++    preCall = "qtConfTestPrepare_$$type"
++    defined($$preCall, test):!$${preCall}($${tpfx}) {
++        $${tpfx}.result = false
++        export($${tpfx}.result)
++        # don't cache the result; the pre-deps have their own caches.
++        return()
++    }
++
++    # note: we do this only after resolving the dependencies and the
++    # preparation (which may resolve libraries), so that caching does
++    # not alter the execution order (and thus the output).
++    qtConfLoadResult($${tpfx}, $$1, "config test"): \
++        return()
++
++    qtLogTestIntro($${tpfx}, "executing config test $${1}")
++    qtPersistLog()
++
++    result = false
++    $${call}($${tpfx}): result = true
++
++    $${tpfx}.msgs = $$qtPersistedLog()
++    export($${tpfx}.msgs)
++
++    qtLogTestResult($${tpfx}, $$result)
++
++    $${tpfx}.result = $$result
++    export($${tpfx}.result)
++    qtConfSaveResult($${tpfx}, $$1)
++}
++
++defineTest(qtConfHaveModule) {
++    module = $$replace(1, -, _)
++    !isEmpty(QT.$${module}.skip):$$eval(QT.$${module}.skip): \
++        return(false)
++    !isEmpty(QT.$${module}.name): \
++        return(true)
++    return(false)
++}
++
++defineReplace(qtConfEvaluate) {
++    isEmpty(1): return(true)
++
++    1 ~= s/$$escape_expand(\\t)/ /g
++    1 ~= s/$$escape_expand(\\r)//g
++    1 ~= s/$$escape_expand(\\n) */ /g
++    expr = $${1}
++    expr ~= s/&&/ && /g
++    expr ~= s/\\|\\|/ || /g
++    expr ~= s/!/ ! /g
++    expr ~= s/\\(/ ( /g
++    expr ~= s/\\)/ ) /g
++    expr ~= s/ *== */==/g
++    expr ~= s/ *! = */!=/g
++    expr_list = $$eval($$list($$expr))
++    return($$qtConfEvaluateSubExpression($${1}, $$expr_list, 0))
++}
++
++defineReplace(qtConfEvaluateSingleExpression) {
++    e = $${2}
++
++    equals(e, true) {
++        result = true
++    } else: equals(e, false) {
++        result = false
++    } else: contains(e, "^[0-9]+$") {
++        # numbers
++        result = $$e
++    } else: contains(e, "^'.*'$") {
++        # quoted literals
++        result = $$replace(e, "^'(.*)'$", "\\1")
++    } else: contains(e, "^tests\\..*") {
++        !qt_conf_tests_allowed: \
++            error("Expression '$${1}' refers to a test, which is not allowed at this stage of configuring.")
++        test = $$section(e, ".", 1, 1)
++        var = $$section(e, ".", 2, -1)
++        isEmpty(var): \
++            var = result
++        !contains($${currentConfig}.tests._KEYS_, $$test): \
++            error("Unknown test object $${test} in expression '$${1}'.")
++        qtRunSingleTest($$test)
++        result = $$eval($${currentConfig}.tests.$${test}.$${var})
++    } else: contains(e, "^libs\\..*") {
++        !qt_conf_tests_allowed: \
++            error("Expression '$${1}' refers to a library, which is not allowed at this stage of configuring.")
++        lib = $$section(e, ".", 1, 1)
++        var = $$section(e, ".", 2, -1)
++        isEmpty(var): \
++            var = result
++        !contains($${currentConfig}.libraries._KEYS_, $$lib): \
++            error("Unknown library object $${lib} in expression '$${1}'.")
++        qtConfHandleLibrary($$lib)
++        !defined($${currentConfig}.libraries.$${lib}.$${var}, var): \
++            var = sources.$$eval($${currentConfig}.libraries.$${lib}.source).$$var
++        result = $$eval($${currentConfig}.libraries.$${lib}.$${var})
++    } else: contains(e, "^features\\..*") {
++        feature = $$section(e, ".", 1, 1)
++        var = $$section(e, ".", 2, -1)
++        isEmpty(var): \
++            var = available
++        !contains($${currentConfig}.features._KEYS_, $$feature) {
++            # this is basically a copy of what qtConfig() in qt_build_config.prf
++            # does, but we produce a nicer error message.
++            for (module, QMAKE_CONFIG_DEPS) {
++                contains(QT.$${module}.enabled_features, $$feature): \
++                    result = true
++                else: contains(QT.$${module}.disabled_features, $$feature): \
++                    result = false
++                else: \
++                    next()
++                !equals(var, available): \
++                    error("Expression '$$1' is accessing field '$$var' of non-local feature $${feature}.")
++                return($$result)
++            }
++            error("Unknown feature object $${feature} in expression '$${1}'.")
++        }
++        !qtConfCheckFeature($$feature): \
++            error("Expression '$$1' is accessing non-emitted feature $${feature}.")
++        result = $$eval($${currentConfig}.features.$${feature}.$${var})
++    } else: contains(e, "^config\\..*") {
++        var = $$replace(e, "^config\\.", "")
++        result = false
++        contains(CONFIG, $$var): result = true
++    } else: contains(e, "^module\\..*") {
++        var = $$replace(e, "^module\\.", "")
++        result = false
++        qtConfHaveModule($$var): result = true
++    } else: contains(e, "^arch\\..*") {
++        var = $$replace(e, "^arch\\.", "")
++        result = false
++        isEmpty(QT_ARCH): \
++            qtConfCheckFeature(architecture)
++        contains(QT_ARCH, $$var): result = true
++    } else: contains(e, "^subarch\\..*") {
++        var = $$replace(e, "^subarch\\.", "")
++        result = false
++        isEmpty(QT_ARCH): \
++            qtConfCheckFeature(architecture)
++        contains(QT_CPU_FEATURES.$$QT_ARCH, $$var): result = true
++    } else: contains(e, "^input\\..*") {
++        result = $$eval(config.$$e)
++    } else: contains(e, "^var\\..*") {
++        var = $$replace(e, "^var\\.", "")
++        result = $$eval($$var)
++    } else: contains(e, "^call\\..*") {
++        call = $$replace(e, "^call\\.", "qtConfFunc_")
++        !defined($$call, replace): \
++            error("Call $$call referenced in expression '$${1}' does not exist")
++        eval(result = \$\$"$$call"())
++    } else {
++        error("Unrecognized token $$e in expression '$${1}'")
++    }
++    return($$result)
++}
++
++defineReplace(qtConfEvaluateSubExpression) {
++    expr_list = $${2}
++    result = true
++    negate = false
++    runSubExpression = false
++    nesting_level = 0
++    for (n, $${3}..$$num_add($$size(expr_list), -1)) {
++        e = $$member(expr_list, $$n)
++        $$runSubExpression {
++            runSubExpression = false
++            result = $$qtConfEvaluateSubExpression($${1}, $$expr_list, $$n)
++        } else: isEqual(e, "(") {
++            isEqual(nesting_level, 0): runSubExpression = true
++            nesting_level = $$num_add($$nesting_level, 1)
++            next()
++        } else: isEqual(e, ")") {
++            nesting_level = $$num_add($$nesting_level, -1)
++            lessThan(nesting_level, 0): break()
++            next()
++        } else: greaterThan(nesting_level, 0) {
++            next()
++        } else: isEqual(e, "!") {
++            negate = true
++            next()
++        } else: isEqual(e, "&&") {
++            !qtConfIsBoolean($$result): \
++                error("Left hand side of && is non-boolean value '$$result' in expression '$${1}'")
++            !$$result: return(false)
++        } else: isEqual(e, "||") {
++            !qtConfIsBoolean($$result): \
++                error("Left hand side of || is non-boolean value '$$result' in expression '$${1}'")
++            $$result: return(true)
++        } else {
++            contains(e, ".*==.*") {
++                lhs = $$qtConfEvaluateSingleExpression($${1}, $$replace(e, "==.*", ""))
++                rhs = $$qtConfEvaluateSingleExpression($${1}, $$replace(e, ".*==", ""))
++                result = false
++                equals(lhs, $$rhs): result = true
++            } else: contains(e, ".*!=.*") {
++                lhs = $$qtConfEvaluateSingleExpression($${1}, $$replace(e, "!=.*", ""))
++                rhs = $$qtConfEvaluateSingleExpression($${1}, $$replace(e, ".*!=", ""))
++                result = false
++                !equals(lhs, $$rhs): result = true
++            } else {
++                result = $$qtConfEvaluateSingleExpression($${1}, $$e)
++            }
++        }
++        $$negate {
++            !qtConfIsBoolean($$result): \
++                error("Attempting to negate a non-boolean value '$$result' in expression '$${1}'")
++            $$result: \
++                result = false
++            else: \
++                result = true
++            negate = false
++        }
++    }
++    return($$result)
++}
++
++defineReplace(qtIsFeatureEnabled) {
++    enable = $$eval($${currentConfig}.features.$${1}.enable)
++    !isEmpty(enable) {
++        $$qtConfEvaluate($$enable): \
++            return(true)
++    } else {
++        equals(config.input.$${1}, "yes"): \
++            return(true)
++    }
++
++    return(false)
++}
++
++defineReplace(qtIsFeatureDisabled) {
++    disable = $$eval($${currentConfig}.features.$${1}.disable)
++    !isEmpty(disable) {
++        $$qtConfEvaluate($$disable): \
++            return(true)
++    } else {
++        equals(config.input.$${1}, "no"): \
++            return(true)
++    }
++
++    return(false)
++}
++
++defineReplace(qtConfCheckSingleCondition) {
++    result = $$qtConfEvaluate($$2)
++
++    !qtConfIsBoolean($$result): \
++        error("Evaluation of condition '$$2' yielded non-boolean value '$$result' in feature '$${1}'.")
++
++    !$$result {
++        $${3} {
++            qtConfAddError("Feature '$${1}' was enabled, but the pre-condition '$$2' failed.", log)
++            $$result = true
++        }
++    }
++    return($$result)
++}
++
++defineTest(qtConfCheckFeature) {
++    fpfx = $${currentConfig}.features.$${1}
++
++    available = $$eval($${fpfx}.available)
++    !isEmpty(available): return(true)
++
++    # skip features that will not get emitted anyway
++    emitIf = $$qtConfEvaluate($$eval($${fpfx}.emitIf))
++    enabled = $$qtIsFeatureEnabled($$1)
++    disabled = $$qtIsFeatureDisabled($$1)
++
++    !$$emitIf {
++        $$enabled|$$disabled: \
++            qtConfAddWarning("Feature $${1} is insignificant in this configuration, ignoring related command line option(s).")
++        return(false)
++    }
++
++    $$disabled {
++        result = false
++    } else: !$$enabled:!$$qtConfEvaluate($$eval($${fpfx}.autoDetect)) {
++        # feature not auto-detected and not explicitly enabled
++        result = false
++    } else {
++        result = true
++        for (condition, $$qtConfScalarOrList($${fpfx}.condition)) {
++            result = $$qtConfCheckSingleCondition($$1, $$condition, $$enabled)
++            !$$result: break()
++        }
++    }
++    $${fpfx}.available = $$result
++    export($${fpfx}.available)
++
++    for (i, $${fpfx}.output._KEYS_): \
++        qtConfProcessOneOutput($${1}, $$i)
++
++    return(true)
++}
++
++defineTest(qtConfCheckModuleCondition) {
++    QT.$${currentModule}.skip = false
++    !$$qtConfEvaluate($$eval($${currentConfig}.condition)): \
++        QT.$${currentModule}.skip = true
++    export(QT.$${currentModule}.skip)
++
++    # ensure qtConfHaveModule() works
++    QT.$${currentModule}.name = -
++    export(QT.$${currentModule}.name)
++}
++
++
++defineTest(qtConfProcessFeatures) {
++    for (feature, $${currentConfig}.features._KEYS_): \
++        qtConfCheckFeature($$feature)
++}
++
++#
++# reporting
++#
++
++defineReplace(qtConfPadCols) {
++    pad = $$num_add($$str_size($$2), -$$str_size($${1}))
++    lessThan(pad, 0): pad = 0
++    return("$$1 $$str_member($$2, 0, $$pad) $$3")
++}
++
++defineTest(qtConfReportPadded) {
++    qtConfAddReport($$qtConfPadCols($$1, "........................................", $$2))
++}
++
++defineReplace(qtConfCollectFeatures) {
++    l =
++    for (feature, $$list($${1})) {
++        $$eval($${currentConfig}.features.$${feature}.available): \
++            l += $$eval($${currentConfig}.features.$${feature}.label)
++    }
++
++    isEmpty(l): return("<none>")
++    return($$join(l, ' '))
++}
++
++defineTest(qtConfReport_featureList) {
++    qtConfReportPadded($${1}, $$qtConfCollectFeatures($${2}))
++}
++
++defineReplace(qtConfFindFirstAvailableFeature) {
++    for (feature, $$list($${1})) {
++        isEmpty($${currentConfig}.features.$${feature}._KEYS_): \
++            error("Asking for a report on undefined feature $${2}.")
++        $$eval($${currentConfig}.features.$${feature}.available): \
++            return($$eval($${currentConfig}.features.$${feature}.label))
++    }
++
++    return("<none>")
++}
++
++defineTest(qtConfReport_firstAvailableFeature) {
++    qtConfReportPadded($${1}, $$qtConfFindFirstAvailableFeature($${2}))
++}
++
++defineTest(qtConfReport_feature) {
++    !contains($${currentConfig}.features._KEYS_, $$2): \
++        error("Asking for a report on undefined feature $${2}.")
++
++    # hide report for not emitted features
++    isEmpty($${currentConfig}.features.$${2}.available): \
++        return()
++
++    $$eval($${currentConfig}.features.$${2}.available) {
++        result = "yes"
++        !isEmpty(3): result = "$${3}"
++    } else {
++        result = "no"
++        !isEmpty(4): result = "$${4}"
++    }
++
++    text = $$eval($${currentConfig}.features.$${2}.label)
++
++    qtConfReportPadded($${1}$$text, $$result)
++}
++
++defineTest(qtConfReport_note) {
++    qtConfAddNote($${1})
++}
++
++defineTest(qtConfReport_warning) {
++    qtConfAddWarning($${1})
++}
++
++defineTest(qtConfReport_error) {
++    qtConfAddError($${1}, log)
++}
++
++defineTest(qtConfReport_fatal) {
++    qtConfFatalError($${1})
++}
++
++defineTest(qtConfCreateReportRecurse) {
++    equals(2, false) {
++        indent = ""
++        recurse = false
++    } else {
++        indent = $${2}
++        recurse = true
++    }
++
++    keys = $$eval($${1}._KEYS_)
++    for (n, keys) {
++        entry = $${1}.$$n
++        subKeys = $$eval($${entry}._KEYS_)
++        contains(subKeys, condition) {
++            r = true
++            for (condition, $$qtConfScalarOrList($${entry}.condition)) {
++                r = $$qtConfEvaluate($$condition)
++                !$$r: break()
++            }
++            !qtConfIsBoolean($$r): \
++                error("Evaluation of condition '$$condition' in report entry $${entry} yielded non-boolean value '$$r'.")
++            !$$r: next()
++        }
++        contains(subKeys, "section") {
++            !$$recurse: \
++                error("Report type 'section' is not allowed in '$$1'.")
++            section = $$eval($${entry}.section)
++            qtConfAddReport("$$indent$$section:")
++            qtConfCreateReportRecurse("$${entry}.entries", "$$indent  ")
++        } else: !isEmpty($${entry}) {
++            feature = $$eval($${entry})
++            qtConfReport_feature($$indent, $$feature)
++        } else {
++            text = $$eval($${entry}.message)
++            isEmpty($${entry}.type): \
++                error("Report entry $${entry} doesn't define a type.")
++            r = "qtConfReport_$$eval($${entry}.type)"
++            !defined($$r, test): \
++                error("Undefined report type $$eval($${entry}.type) used in report entry $${entry}.")
++            args = $$eval($${entry}.args)
++            $${r}($$indent$${text}, $$args)
++        }
++    }
++}
++
++defineTest(qtConfProcessEarlyChecks) {
++    qtConfCreateReportRecurse($${currentConfig}.earlyReport, false)
++}
++
++defineTest(qtConfCreateReport) {
++    qtConfCreateReportRecurse($${currentConfig}.report, false)
++}
++
++defineTest(qtConfCreateSummary) {
++    qtConfCreateReportRecurse($${currentConfig}.summary, "")
++}
++
++defineTest(qtConfPrintReport) {
++    blocks = \
++        "$$join(QT_CONFIGURE_REPORT, $$escape_expand(\\n))" \
++        "$$join(QT_CONFIGURE_NOTES, $$escape_expand(\\n\\n))" \
++        "$$join(QT_CONFIGURE_WARNINGS, $$escape_expand(\\n\\n))"
++
++    !isEmpty(QT_CONFIGURE_ERRORS) {
++        blocks += "$$join(QT_CONFIGURE_ERRORS, $$escape_expand(\\n\\n))"
++        mention_config_log:!$$QMAKE_CONFIG_VERBOSE: \
++            blocks += "Check config.log for details."
++    }
++    blocks = "$$join(blocks, $$escape_expand(\\n\\n))"
++    logn($$blocks)
++    !isEmpty(QT_CONFIGURE_ERRORS):!equals(config.input.continue, yes): \
++        error()
++    write_file($$OUT_PWD/config.summary, blocks)|error()
++}
++
++defineTest(qtConfCheckErrors) {
++    !isEmpty(QT_CONFIGURE_ERRORS):!equals(config.input.continue, yes): \
++        qtConfPrintReport()
++}
++
++#
++# output generation
++#
++
++defineTest(qtConfOutput_libraryPaths) {
++    qtLog("Global lib dirs: [$$val_escape(EXTRA_LIBDIR)] [$$val_escape(QMAKE_DEFAULT_LIBDIRS)]")
++    qtLog("Global inc dirs: [$$val_escape(EXTRA_INCLUDEPATH)] [$$val_escape(QMAKE_DEFAULT_INCDIRS)]")
++}
++
++# qtConfOutputVar(modifier, output, name, value)
++defineTest(qtConfOutputVar) {
++    modifier = $$1
++    output = $$2
++    name = $$3
++    value = $$val_escape(4)
++
++    defined($${currentConfig}.output.$${output}.assign.$${name}, var): \
++        error("Trying to overwrite assigned variable '$$name' in '$$output' using modifier '$$modifier'.")
++
++    equals(modifier, assign) {
++        !isEmpty($${currentConfig}.output.$${output}.append.$${name})|!isEmpty($${currentConfig}.output.$${output}.remove.$${name}): \
++            error("Trying to assign variable '$$name' in '$$output', which has already appended or removed parts.")
++        $${currentConfig}.output.$${output}.assign.$${name} = $$value
++    } else: equals(modifier, append) {
++        contains($${currentConfig}.output.$${output}.remove.$${name}, $$value): \
++            error("Trying to append removed '$$value' to variable '$$name' in '$$output'.")
++        $${currentConfig}.output.$${output}.append.$${name} += $$value
++    } else: equals(modifier, remove) {
++        contains($${currentConfig}.output.$${output}.append.$${name}, $$value): \
++            error("Trying to remove appended '$$value' to variable '$$name' in '$$output'.")
++        $${currentConfig}.output.$${output}.remove.$${name} += $$value
++    } else {
++        error("Invalid modifier '$$modifier' passed to qtConfOutputVar.")
++    }
++    $${currentConfig}.output.$${output}.$${modifier}._KEYS_ *= $${name}
++    export($${currentConfig}.output.$${output}.$${modifier}.$${name})
++    export($${currentConfig}.output.$${output}.$${modifier}._KEYS_)
++}
++
++# qtConfExtendVar(output, name, value)
++defineTest(qtConfExtendVar) {
++    output = $$1
++    name = $$2
++    value = $$val_escape(3)
++
++    !defined($${currentConfig}.output.$${output}.assign.$${name}, var): \
++        error("Trying to extend undefined variable '$$name' in '$$output'.")
++
++    $${currentConfig}.output.$${output}.assign.$${name} += $$value
++    export($${currentConfig}.output.$${output}.assign.$${name})
++}
++
++defineTest(qtConfOutputVarHelper) {
++    !isEmpty($${2}.public):$$eval($${2}.public) {
++        output = "publicPro"
++    } else {
++        output = "privatePro"
++    }
++
++    negative = $$eval($${2}.negative)
++    isEmpty(negative): negative = false
++    equals(3, $$negative): return()
++
++    name = $$eval($${2}.name)
++    isEmpty(name): \
++        error("Output type 'var$$title($$1)' used in feature '$$eval($${2}.feature)' without a 'name' entry.")
++
++    value = $$qtConfEvaluate($$eval($${2}.value))
++    !isEmpty($${2}.eval):$$qtConfEvaluate($$eval($${2}.eval)): \
++        eval(value = $$value)
++    qtConfOutputVar($$1, $$output, $$name, $$value)
++    equals(output, "publicPro"):!isEmpty($${currentConfig}.module): \
++        qtConfExtendVar($$output, "QT.$${currentModule}.exports", $$name)
++}
++
++defineTest(qtConfOutput_varAssign) {
++    qtConfOutputVarHelper(assign, $$1, $$2)
++}
++
++defineTest(qtConfOutput_varAppend) {
++    qtConfOutputVarHelper(append, $$1, $$2)
++}
++
++defineTest(qtConfOutput_varRemove) {
++    qtConfOutputVarHelper(remove, $$1, $$2)
++}
++
++defineTest(qtConfOutputConfigVar) {
++    pro = $$3
++    var = $$4
++    modular = $$5
++
++    negative = $$eval($${1}.negative)
++    isEmpty(negative): negative = false
++    equals(2, $$negative): return()
++
++    val = $$eval($${1}.name)
++    isEmpty(val) {
++        val = $$eval($${1}.feature)
++        $$negative: val = no-$$val
++    }
++
++    isEmpty($${currentConfig}.module)|!$$modular: \
++        qtConfOutputVar(append, $$pro, $$var, $$val)
++    else: \
++        qtConfExtendVar($$pro, "QT.$${currentModule}.$$var", $$val)
++}
++
++defineTest(qtConfOutput_publicQtConfig) {
++    qtConfOutputConfigVar($$1, $$2, "publicPro", "QT_CONFIG", true)
++}
++
++defineTest(qtConfOutput_publicConfig) {
++    !isEmpty($${currentConfig}.module): \
++        error("Cannot use output type 'publicConfig' in module-local feature '$$eval($${1}.feature)'.")
++    qtConfOutputConfigVar($$1, $$2, "publicPro", "CONFIG", false)
++}
++
++defineTest(qtConfOutput_privateConfig) {
++    qtConfOutputConfigVar($$1, $$2, "privatePro", "CONFIG", false)
++}
++
++defineTest(qtConfOutputSetDefine) {
++    $${currentConfig}.output.$${1}.$${2} = $${3}
++    $${currentConfig}.output.$${1}._KEYS_ *= $${2}
++    export($${currentConfig}.output.$${1}.$${2})
++    export($${currentConfig}.output.$${1}._KEYS_)
++}
++
++defineTest(qtConfOutput_define) {
++    output = publicHeader
++    define = $$eval($${1}.name)
++    value = $$qtConfEvaluate($$eval($${1}.value))
++    isEmpty(define): \
++        error("Output type 'define' used in feature '$$eval($${1}.feature)' without a 'name' entry.")
++
++    negative = $$eval($${1}.negative)
++    isEmpty(negative): negative = false
++    equals(2, $$negative): return()
++
++    qtConfOutputSetDefine($$output, $$define, $$value)
++}
++
++defineTest(qtConfOutput_feature) {
++    name = "$$eval($${1}.name)"
++    isEmpty(name): \
++        name = $$eval($${1}.feature)
++
++    $${2} {
++        isEmpty($${currentConfig}.module): \
++            qtConfOutputVar(append, "publicPro", "QT_CONFIG", $$name)
++        else: \
++            qtConfExtendVar("publicPro", "QT.$${currentModule}.QT_CONFIG", $$name)
++    } else {
++        f = $$upper($$replace(name, -, _))
++        qtConfOutputSetDefine("publicHeader", "QT_NO_$$f")
++    }
++}
++
++defineTest(qtConfSetModuleName) {
++    currentModule = $$eval($${currentConfig}.module)
++    isEmpty(currentModule): \
++        currentModule = global
++    export(currentModule)
++}
++
++defineTest(qtConfSetupModuleOutputs) {
++    qtConfOutputVar(assign, "publicPro", "QT.$${currentModule}.enabled_features", )
++    qtConfOutputVar(assign, "publicPro", "QT.$${currentModule}.disabled_features", )
++    qtConfOutputVar(assign, "privatePro", "QT.$${currentModule}_private.enabled_features", )
++    qtConfOutputVar(assign, "privatePro", "QT.$${currentModule}_private.disabled_features", )
++    !isEmpty($${currentConfig}.module) {
++        qtConfOutputVar(assign, "publicPro", "QT.$${currentModule}.QT_CONFIG", )
++        qtConfOutputVar(assign, "publicPro", "QT.$${currentModule}.exports", )
++        qtConfOutputVar(assign, "privatePro", "QT.$${currentModule}_private.libraries", )
++    }
++}
++
++defineTest(qtConfOutput_publicFeature) {
++    name = "$$eval($${1}.name)"
++    isEmpty(name): \
++        name = $$eval($${1}.feature)
++    feature = $$replace(name, [-+.], _)
++
++    $${2} {
++        qtConfExtendVar("publicPro", "QT.$${currentModule}.enabled_features", $$name)
++        QT.$${currentModule}.enabled_features += $$name
++        export(QT.$${currentModule}.enabled_features)
++        qtConfOutputSetDefine("publicHeader", "QT_FEATURE_$$feature", 1)
++    } else {
++        qtConfExtendVar("publicPro", "QT.$${currentModule}.disabled_features", $$name)
++        QT.$${currentModule}.disabled_features += $$name
++        export(QT.$${currentModule}.disabled_features)
++        qtConfOutputSetDefine("publicHeader", "QT_FEATURE_$$feature", -1)
++    }
++}
++
++defineTest(qtConfOutput_privateFeature) {
++    name = "$$eval($${1}.name)"
++    isEmpty(name): \
++        name = $$eval($${1}.feature)
++    feature = $$replace(name, [-+.], _)
++
++    $${2} {
++        qtConfExtendVar("privatePro", "QT.$${currentModule}_private.enabled_features", $$name)
++        QT.$${currentModule}_private.enabled_features += $$name
++        export(QT.$${currentModule}_private.enabled_features)
++        qtConfOutputSetDefine("privateHeader", "QT_FEATURE_$$feature", 1)
++    } else {
++        qtConfExtendVar("privatePro", "QT.$${currentModule}_private.disabled_features", $$name)
++        QT.$${currentModule}_private.disabled_features += $$name
++        export(QT.$${currentModule}_private.disabled_features)
++        qtConfOutputSetDefine("privateHeader", "QT_FEATURE_$$feature", -1)
++    }
++}
++
++defineTest(qtConfProcessOneOutput) {
++    feature = $${1}
++    fpfx = $${currentConfig}.features.$${feature}
++    opfx = $${fpfx}.output.$${2}
++
++    call = $$eval($${opfx}.type)
++    isEmpty(call) {
++        # output is just a string, not an object
++        call = $$eval($$opfx)
++    }
++    !defined("qtConfOutput_$$call", test): \
++        error("Undefined type '$$call' in output '$$2' of feature '$$feature'.")
++
++    !$$qtConfEvaluate($$eval($${opfx}.condition)): \
++        return()
++
++    $${opfx}.feature = $$feature
++    qtConfOutput_$${call}($$opfx, $$eval($${fpfx}.available))
++}
++
++defineTest(qtConfProcessOutput) {
++    !contains($${currentConfig}._KEYS_, "features"): \
++        return()
++
++    basedir = $$shadowed($$eval($${currentConfig}.dir))
++    module = $$eval($${currentConfig}.module)
++
++    # write it to the output files
++    !defined($${currentConfig}.files._KEYS_, var) {
++        # set defaults that should work for most Qt modules
++        isEmpty(module): \
++            error("Neither module nor files section specified in configuration file.")
++
++        $${currentConfig}.files._KEYS_ = publicPro privatePro publicHeader privateHeader
++        $${currentConfig}.files.publicPro = qt$${module}-config.pri
++        $${currentConfig}.files.privatePro = qt$${module}-config.pri  # sic!
++        $${currentConfig}.files.publicHeader = qt$${module}-config.h
++        $${currentConfig}.files.privateHeader = qt$${module}-config_p.h
++    }
++
++    for (type, $${currentConfig}.files._KEYS_) {
++        contains(type, ".*Pro") {
++            for (k, $${currentConfig}.output.$${type}.assign._KEYS_): \
++                $${currentConfig}.output.$$type += "$$k = $$eval($${currentConfig}.output.$${type}.assign.$$k)"
++            for (k, $${currentConfig}.output.$${type}.remove._KEYS_): \
++                $${currentConfig}.output.$$type += "$$k -= $$eval($${currentConfig}.output.$${type}.remove.$$k)"
++            for (k, $${currentConfig}.output.$${type}.append._KEYS_): \
++                $${currentConfig}.output.$$type += "$$k += $$eval($${currentConfig}.output.$${type}.append.$$k)"
++        } else: contains(type, ".*Header") {
++            for (define, $${currentConfig}.output.$${type}._KEYS_) {
++                value = $$eval($${currentConfig}.output.$${type}.$${define})
++                $${currentConfig}.output.$$type += "$${LITERAL_HASH}define $$define $$value"
++            }
++        }
++
++        content = $$eval($${currentConfig}.output.$${type})
++
++        !isEmpty(module): \
++            call = qtConfOutputPostProcess_$${module}_$${type}
++        else: \
++            call = qtConfOutputPostProcess_$${type}
++        defined($$call, replace): \
++            eval(content = \$\$"$$call"(\$\$content))
++
++        file = $$eval($${currentConfig}.files.$${type})
++        fileCont.$$file += $$content
++        fileCont._KEYS_ *= $$file
++    }
++
++    for (file, fileCont._KEYS_): \
++        write_file($$basedir/$$file, fileCont.$$file)|error()
++}
++
++#
++# tie it all together
++#
++
++!isEmpty(_QMAKE_SUPER_CACHE_):!equals(OUT_PWD, $$dirname(_QMAKE_SUPER_CACHE_)) {
++    # sub-repo within a top-level build; no need to configure anything.
++    !isEmpty(QMAKE_EXTRA_ARGS) {
++        # sub-projects don't get the extra args passed down automatically,
++        # so we can use their presence to detect misguided attempts to
++        # configure the repositories separately.
++        # caveat: a plain qmake call is indistinguishable from a recursion
++        # (by design), so we cannot detect this case.
++        error("You cannot configure $$TARGET separately within a top-level build.")
++    }
++    return()
++}
++
++config.$${TARGET}.dir = $$_PRO_FILE_PWD_
++cfgs = $$TARGET
++!isEmpty(_QMAKE_SUPER_CACHE_) {
++    for (s, SUBDIRS) {
++        config.$${s}.dir = $$_PRO_FILE_PWD_/$${s}
++        cfgs += $$s
++    }
++}
++configsToProcess =
++for (c, cfgs) {
++    s = $$eval(config.$${c}.dir)
++    exists($$s/configure.json): \
++        configsToProcess += $$c
++}
++isEmpty(configsToProcess) {
++    !isEmpty(QMAKE_EXTRA_ARGS): \
++        error("This module does not accept configure command line arguments.")
++    return()
++}
++
++load(configure_base)
++
++QMAKE_POST_CONFIGURE =
++config.builtins.dir = $$PWD/data
++configsToProcess = builtins $$configsToProcess
++allConfigs =
++for(ever) {
++    isEmpty(configsToProcess): \
++        break()
++
++    thisConfig = $$take_first(configsToProcess)
++    currentConfig = config.$$thisConfig
++    thisDir = $$eval($${currentConfig}.dir)
++    jsonFile = $$thisDir/configure.json
++    priFile = $$thisDir/configure.pri
++
++    # load configuration data
++    configure_data = $$cat($$jsonFile, blob)
++    !parseJson(configure_data, $$currentConfig): \
++        error("Invalid or non-existent file $${jsonFile}.")
++    exists($$priFile): \
++        !include($$priFile): error()
++
++    # only configs which contain more than just subconfigs are saved for later.
++    $${currentConfig}._KEYS_ -= subconfigs
++    !isEmpty($${currentConfig}._KEYS_) {
++        allConfigs += $$currentConfig
++        contains($${currentConfig}._KEYS_, libraries) {
++            qtConfSetupLibraries()
++            # this ensures that references in QMAKE_LIBRARY_DEPS are unique.
++            qtConfSetModuleName()
++            ex = $$eval(config.modules.$${currentModule})
++            !isEmpty(ex): \
++                error("Module $$currentModule is claimed by both $$currentConfig and $${ex}.")
++            config.modules.$${currentModule} = $$currentConfig
++        }
++    }
++
++    # prepend all subconfigs to files to keep a depth first search order
++    subconfigs =
++    for(n, $${currentConfig}.subconfigs._KEYS_) {
++        subconfig = $$eval($${currentConfig}.subconfigs.$${n})
++        name = $${thisConfig}_$$basename(subconfig)
++        ex = $$eval(config.$${name}.dir)
++        !isEmpty(ex): \
++            error("Basename clash between $$thisDir/$$subconfig and $${ex}.")
++        config.$${name}.dir = $$thisDir/$$subconfig
++        subconfigs += $$name
++    }
++    configsToProcess = $$subconfigs $$configsToProcess
++}
++# 'builtins' is used for command line parsing and test type dependency
++# injection, but its features must not be processed regularly.
++allModuleConfigs = $$member(allConfigs, 1, -1)
++
++QMAKE_SAVED_ARGS = $$QMAKE_EXTRA_ARGS
++QMAKE_REDO_CONFIG = false
++qtConfParseCommandLine()
++qtConfCheckErrors()
++
++!isEmpty(config.input.list-features) {
++    all_ft =
++    for (currentConfig, allModuleConfigs) {
++        for (k, $${currentConfig}.features._KEYS_) {
++            pp = $$eval($${currentConfig}.features.$${k}.purpose)
++            !isEmpty(pp) {
++                pfx = $$eval($${currentConfig}.features.$${k}.section)
++                !isEmpty(pfx): pfx = "$$pfx: "
++                all_ft += $$qtConfPadCols($$k, ".......................", \
++                                          $$pfx$$section(pp, $$escape_expand(\\n), 0, 0))
++            }
++        }
++    }
++    all_ft = $$sorted(all_ft)
++    logn()
++    for (ft, all_ft): \
++        logn($$ft)
++    error()
++}
++
++!isEmpty(config.input.list-libraries) {
++    logn()
++    for (currentConfig, allModuleConfigs) {
++        !isEmpty($${currentConfig}.exports._KEYS_) {
++            !isEmpty($${currentConfig}.module): \
++                logn($$eval($${currentConfig}.module):)
++            else: \
++                logn($$section(currentConfig, ., -1):)
++            all_xp =
++            for (xport, $${currentConfig}.exports._KEYS_) {
++                libs = $$eval($${currentConfig}.exports.$$xport)
++                isEqual($${currentConfig}.libraries.$$first(libs).export, "") {  # not isEmpty()!
++                    !isEmpty(config.input.verbose): \
++                        all_xp += "$$xport!"
++                } else {
++                    out = "$$xport"
++                    !isEmpty(config.input.verbose):!isEqual(xport, $$libs): \
++                        out += "($$libs)"
++                    all_xp += "$$out"
++                }
++            }
++            all_xp = $$sorted(all_xp)
++            all_xp ~= s,^([^!]*)!$,(\\1),g
++            for (xp, all_xp): \
++                logn("  $$xp")
++        }
++    }
++    error()
++}
++
++QMAKE_CONFIG_VERBOSE = $$eval(config.input.verbose)
++isEmpty(QMAKE_CONFIG_VERBOSE): \
++    QMAKE_CONFIG_VERBOSE = false
++QMAKE_CONFIG_LOG = $$OUT_PWD/config.log
++write_file($$QMAKE_CONFIG_LOG, "")
++qtLog("Command line: $$qtSystemQuote($$QMAKE_SAVED_ARGS)")
++$$QMAKE_REDO_CONFIG: \
++    qtLog("config.opt: $$qtSystemQuote($$QMAKE_EXTRA_REDO_ARGS)")
++
++for (currentConfig, allModuleConfigs) {
++    qtConfSetModuleName()
++    qtConfSetupModuleOutputs()
++    # do early checks, mainly to validate the command line
++    qtConfProcessEarlyChecks()
++}
++qtConfCheckErrors()
++
++QMAKE_CONFIG_CACHE = $$OUT_PWD/config.cache
++QMAKE_CONFIG_CACHE_USE = $$eval(config.input.cache_use)
++cache_recheck = $$eval(config.input.cache_recheck)
++equals(cache_recheck, yes) {
++    QMAKE_CONFIG_CACHE_USE = positive
++    cache_recheck =
++}
++isEmpty(QMAKE_CONFIG_CACHE_USE): \
++    QMAKE_CONFIG_CACHE_USE = all
++!equals(QMAKE_CONFIG_CACHE_USE, none) {
++    include($$QMAKE_CONFIG_CACHE, , true)
++    # this crudely determines when to discard the cache. this also catches the case
++    # of no cache being there in the first place.
++    !equals(cache.platform, $$[QMAKE_SPEC])|!equals(cache.xplatform, $$[QMAKE_XSPEC]) {
++        QMAKE_CONFIG_CACHE_USE = none
++    } else: !isEmpty(cache_recheck) {
++        for (cr, $$list($$split(cache_recheck, ","))) {
++            !isEmpty(cache.$${cr}._KEYS_) {
++                cache.$${cr}._KEYS_ =
++            } else {
++                qtConfAddWarning("Attempting to discard non-cached result '$$cr'.")
++            }
++        }
++    }
++}
++equals(QMAKE_CONFIG_CACHE_USE, none) {
++    cont = \
++        "cache.platform = $$[QMAKE_SPEC]" \
++        "cache.xplatform = $$[QMAKE_XSPEC]"
++    write_file($$QMAKE_CONFIG_CACHE, cont)
++}
++
++CONFIG += qt_conf_tests_allowed
++logn()
++logn("Running configuration tests...")
++
++for (currentConfig, allModuleConfigs) {
++    tdir = $$eval($${currentConfig}.testDir)
++    isEmpty(tdir): tdir = config.tests
++    QMAKE_CONFIG_TESTS_DIR = $$absolute_path($$tdir, $$eval($${currentConfig}.dir))
++
++    qtConfSetModuleName()
++
++    qtConfSetupTestTypeDeps()
++
++    # correctly setup dependencies
++    QMAKE_CONFIG_DEPS = global global_private
++    QMAKE_LIBRARY_DEPS = $$eval(config.modules.global)
++    !isEmpty($${currentConfig}.module) {
++        for (d, $${currentConfig}.depends._KEYS_) {
++            dep = $$replace($${currentConfig}.depends.$$d, -private$, _private)
++            gdep = $$replace(dep, _private$, )
++            dep *= $$gdep
++            QMAKE_CONFIG_DEPS += $$dep
++            !isEqual(gdep, $$dep): \  # libraries are in the private module.
++                QMAKE_LIBRARY_DEPS += $$eval(config.modules.$$gdep)
++        }
++    }
++
++    qtConfCheckModuleCondition()
++
++    qtConfHaveModule($$currentModule) {
++        # process all features
++        qtConfProcessFeatures()
++    } else {
++        qtConfOutputVar(assign, "privatePro", "QT.$${currentModule}.skip", "true")
++    }
++
++    # generate files and reports
++    qtConfProcessOutput()
++    qtConfHaveModule($$currentModule) {
++        qtConfCreateReport()
++        qtConfCreateSummary()
++    } else {
++        QT_CONFIGURE_SKIPPED_MODULES += "    $$currentModule"
++    }
++}
++
++!isEmpty(QT_CONFIGURE_SKIPPED_MODULES): \
++    qtConfAddNote("The following modules are not being compiled in this configuration:" $$QT_CONFIGURE_SKIPPED_MODULES)
++
++logn("Done running configuration tests.")
++logn()
++
++!$$QMAKE_REDO_CONFIG {
++    write_file($$OUT_PWD/config.opt, QMAKE_SAVED_ARGS)|error()
++}
++
++# these come from the pri files loaded above.
++for (p, QMAKE_POST_CONFIGURE): \
++    eval($$p)
++
++logn("Configure summary:")
++logn()
++qtConfPrintReport()
++
++load(qt_prefix_build_check)
++
++# final notes for the user
++logn()
++logn("Qt is now configured for building. Just run '$$QMAKE_MAKE_NAME'.")
++pfx = $$[QT_INSTALL_PREFIX]
++qtIsPrefixBuild($$pfx) {
++    logn("Once everything is built, you must run '$$QMAKE_MAKE_NAME install'.")
++    logn("Qt will be installed into '$$system_path($$pfx)'.")
++} else {
++    logn("Once everything is built, Qt is installed.")
++    logn("You should NOT run '$$QMAKE_MAKE_NAME install'.")
++    logn("Note that this build cannot be deployed to other machines or devices.")
++}
++logn()
++logn("Prior to reconfiguration, make sure you remove any leftovers from")
++logn("the previous build.")
++logn()
+diff --git a/mkspecs/features/qt_docs.prf b/mkspecs/features/qt_docs.prf
+new file mode 100644
+index 0000000000..2a079c90a9
+--- /dev/null
++++ b/mkspecs/features/qt_docs.prf
+@@ -0,0 +1,126 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++!exists($$QMAKE_DOCS): error("Cannot find documentation specification file $$QMAKE_DOCS")
++
++qtver.name = QT_VERSION
++qtver.value = $$VERSION
++isEmpty(qtver.value): qtver.value = $$MODULE_VERSION
++isEmpty(qtver.value): error("No version for documentation specified.")
++qtmver.name = QT_VER
++qtmver.value = $$replace(qtver.value, ^(\\d+\\.\\d+).*$, \\1)
++qtvertag.name = QT_VERSION_TAG
++qtvertag.value = $$replace(qtver.value, \\.,)
++qtdocs.name = QT_INSTALL_DOCS
++qtdocs.value = $$[QT_INSTALL_DOCS/src]
++builddir.name = BUILDDIR
++builddir.value = $$OUT_PWD
++QT_TOOL_ENV = qtver qtmver qtvertag qtdocs builddir
++qtPrepareTool(QDOC, qdoc)
++QT_TOOL_ENV =
++
++# On Windows, put the includes into a .inc file which QDoc will read, if the project
++# has too many includes. We do this to overcome a command-line limit on Windows.
++QDOC_WIN_INCLUDETEMP=
++INCLUDE_PATHS=$$INCPATH
++win32:count(INCLUDE_PATHS, 30, >) {
++    QDOC_WIN_INCLUDETEMP = $$OUT_PWD/qdocincludepaths.inc
++    QDOC_WIN_INCLUDETEMP_CONTENT =
++    for (inc, INCLUDE_PATHS): \
++        QDOC_WIN_INCLUDETEMP_CONTENT += -I$$inc
++    write_file($$absolute_path($$QDOC_WIN_INCLUDETEMP, $$OUT_PWD), QDOC_WIN_INCLUDETEMP_CONTENT)|error()
++}
++
++isEmpty(QDOC_WIN_INCLUDETEMP) {
++    QDOC_INCLUDE_PATHS=$(INCPATH)
++} else {
++    QDOC_INCLUDE_PATHS=@$$shell_quote($$QDOC_WIN_INCLUDETEMP)
++}
++
++macos: QDOC_INCLUDE_PATHS += $$join(QMAKE_DEFAULT_INCDIRS," -I","-I")
++
++!build_online_docs: qtPrepareLibExecTool(QHELPGENERATOR, qhelpgenerator)
++
++qtPrepareLibExecTool(QTATTRIBUTIONSSCANNER, qtattributionsscanner)
++
++# qtPrepareTool() must be called outside a build pass, as it protects
++# against concurrent wrapper creation by omitting it during build passes.
++# However, creating the actual targets is reserved to the build passes.
++debug_and_release:!build_pass: return()
++
++load(qt_build_paths)
++QMAKE_DOCS_BASE_OUTDIR = $$MODULE_BASE_OUTDIR/doc
++
++QMAKE_DOCS_TARGET = $$replace(QMAKE_DOCS, ^(.*/)?(.*)\\.qdocconf$, \\2)
++isEmpty(QMAKE_DOCS_TARGETDIR): QMAKE_DOCS_TARGETDIR = $$QMAKE_DOCS_TARGET
++QMAKE_DOCS_OUTPUTDIR = $$QMAKE_DOCS_BASE_OUTDIR/$$QMAKE_DOCS_TARGETDIR
++
++QDOC += -outputdir $$shell_quote($$QMAKE_DOCS_OUTPUTDIR)
++!build_online_docs: \
++    QDOC += -installdir $$shell_quote($$[QT_INSTALL_DOCS])
++PREP_DOC_INDEXES =
++DOC_INDEXES =
++!isEmpty(QTREPOS) {
++    prepare_docs {
++        # This is not for linking, but for providing type information.
++        mps =
++        deps = $$replace(QT, -private$, )
++        deps = $$resolve_depends(deps, "QT.")
++        for (d, deps): \
++            mps += $$dirname(QT.$${d}.libs)
++        mps = $$unique(mps)
++        for (mp, mps): \
++            PREP_DOC_INDEXES += -indexdir $$shell_quote($$mp/doc)
++    }
++    for(qrep, QTREPOS): \
++        DOC_INDEXES += -indexdir $$shell_quote($$qrep/doc)
++} else {
++    prepare_docs: \
++        PREP_DOC_INDEXES += -indexdir $$shell_quote($$[QT_INSTALL_DOCS/get])
++    DOC_INDEXES += -indexdir $$shell_quote($$[QT_INSTALL_DOCS/get])
++}
++
++qtattributionsscanner.target = qtattributionsscanner
++qtattributionsscanner.commands = $$QTATTRIBUTIONSSCANNER $$shell_quote($$MODULE_BASE_INDIR) \
++    --filter "QDocModule=$$QMAKE_DOCS_TARGET" -o $$shell_quote($$OUT_PWD/codeattributions.qdoc)
++qtattributionsscanner.CONFIG += phony
++QMAKE_EXTRA_TARGETS += qtattributionsscanner
++
++doc_command = $$QDOC $$QMAKE_DOCS
++prepare_docs {
++    prepare_docs.commands += $$doc_command -prepare $$PREP_DOC_INDEXES -no-link-errors $$QDOC_INCLUDE_PATHS
++    generate_docs.commands += $$doc_command -generate $$DOC_INDEXES $$QDOC_INCLUDE_PATHS
++    prepare_docs.depends += qtattributionsscanner
++} else {
++    html_docs.commands += $$doc_command $$DOC_INDEXES $(QDOC_INCLUDE_PATHS)
++    html_docs.depends += qtattributionsscanner
++}
++
++!build_online_docs {
++    qch_docs.commands = $$QHELPGENERATOR $$shell_quote($$QMAKE_DOCS_OUTPUTDIR/$${QMAKE_DOCS_TARGET}.qhp) -o $$shell_quote($$QMAKE_DOCS_BASE_OUTDIR/$${QMAKE_DOCS_TARGET}.qch)
++
++    inst_html_docs.files = $$QMAKE_DOCS_OUTPUTDIR
++    inst_html_docs.path = $$[QT_INSTALL_DOCS]
++    inst_html_docs.CONFIG += no_check_exist directory no_default_install no_build
++    INSTALLS += inst_html_docs
++
++    inst_qch_docs.files = $$QMAKE_DOCS_BASE_OUTDIR/$${QMAKE_DOCS_TARGET}.qch
++    inst_qch_docs.path = $$[QT_INSTALL_DOCS]
++    inst_qch_docs.CONFIG += no_check_exist no_default_install no_build
++    INSTALLS += inst_qch_docs
++
++    install_html_docs.depends = install_inst_html_docs
++    uninstall_html_docs.depends = uninstall_inst_html_docs
++    install_qch_docs.depends = install_inst_qch_docs
++    uninstall_qch_docs.depends = uninstall_inst_qch_docs
++    install_docs.depends = install_html_docs install_qch_docs
++    uninstall_docs.depends = uninstall_html_docs uninstall_qch_docs
++}
+diff --git a/mkspecs/features/qt_docs_targets.prf b/mkspecs/features/qt_docs_targets.prf
+new file mode 100644
+index 0000000000..9e96432462
+--- /dev/null
++++ b/mkspecs/features/qt_docs_targets.prf
+@@ -0,0 +1,45 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++DOC_TARGETS = \
++    install_html_docs uninstall_html_docs \
++    install_qch_docs uninstall_qch_docs \
++    install_docs uninstall_docs \
++    qch_docs
++
++prepare_docs {
++    DOC_TARGETS += prepare_docs generate_docs
++    html_docs.commands = $(MAKE) -f $(MAKEFILE) prepare_docs && $(MAKE) -f $(MAKEFILE) generate_docs
++    QMAKE_EXTRA_TARGETS += html_docs
++} else {
++    DOC_TARGETS += html_docs
++}
++
++docs.commands = $(MAKE) -f $(MAKEFILE) html_docs && $(MAKE) -f $(MAKEFILE) qch_docs
++QMAKE_EXTRA_TARGETS += docs
++
++contains(TEMPLATE, subdirs) {
++    for(inst, DOC_TARGETS): \
++        prepareRecursiveTarget($$inst)
++} else {
++    !isEmpty(BUILDS):!build_pass {
++        sub = $$first(BUILDS)
++        for(inst, DOC_TARGETS) {
++            $${inst}.CONFIG = recursive
++            $${inst}.recurse = $$sub
++        }
++    }
++    # Apps and libs request docs creation by setting QMAKE_DOCS.
++    # This is a backwards compat hack - technically, the modules which need it
++    # are supposed to load(qt_docs) themselves.
++    !isEmpty(QMAKE_DOCS): load(qt_docs)
++}
++QMAKE_EXTRA_TARGETS += $$DOC_TARGETS
+diff --git a/mkspecs/features/qt_example_installs.prf b/mkspecs/features/qt_example_installs.prf
+new file mode 100644
+index 0000000000..7f8a6ec69c
+--- /dev/null
++++ b/mkspecs/features/qt_example_installs.prf
+@@ -0,0 +1,130 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++defineTest(addInstallFiles) {
++    for(sf, 2) {
++        sf = $$relative_path($$sf, $$_PRO_FILE_PWD_)
++        contains(sf, \\..*) {
++            check_examples: message("Notice: $$_PRO_FILE_ refers to $$sf")
++        } else {
++            sfp = $$replace(sf, /.*, )
++            !equals(sfp, $$sf): \
++                $$1 *= $$sfp
++            else: \
++                $$1 += $$sf
++        }
++    }
++    export($$1)
++}
++
++probase = $$relative_path($$_PRO_FILE_PWD_, $$dirname(_QMAKE_CONF_)/examples)
++isEmpty(probase)|contains(probase, ^\\..*): \
++    return()
++
++contains(TEMPLATE, "vc.*"): \
++    return()
++
++contains(TEMPLATE, .*app): \
++    qtSetQmlPath()
++
++for(ex, EXAMPLE_FILES): \
++    sourcefiles += $$files($$absolute_path($$ex, $$_PRO_FILE_PWD_))
++for(res, RESOURCES) {
++    !contains(res, .*\\.qrc): \
++        next()
++    rfile = $$absolute_path($$res, $$_PRO_FILE_PWD_)
++    rpath = $$dirname(rfile)
++    rcont = $$cat($$rfile, lines)
++    for (rline, rcont) {
++        resrc = $$replace(rline, ^[ \\t]*<file[^>]*>([^<]+)</file>[ \\t]*$, \\1)
++        !equals(resrc, $$rline): \
++            sourcefiles += $$absolute_path($$resrc, $$rpath)
++    }
++}
++for(res, RC_FILE) {
++    rfile = $$absolute_path($$res, $$_PRO_FILE_PWD_)
++    rpath = $$dirname(rfile)
++    rcont = $$cat($$rfile, lines)
++    for (rline, rcont) {
++        resrc = $$replace(rline, "^\\d+\\s+ICON\\s+[^\"]*\"([^\"]+)\"\$", \\1)
++        !equals(resrc, $$rline): \
++            sourcefiles += $$absolute_path($$resrc, $$rpath)
++    }
++}
++sourcefiles += \
++    $$ANDROID_PACKAGE_SOURCE_DIR \
++    $$QMAKE_INFO_PLIST \
++    $$DISTFILES
++extras = \
++    $$_PRO_FILE_PWD_/README \
++    $$_PRO_FILE_PWD_/README.TXT \
++    $$_PRO_FILE_PWD_/qmldir \
++    $$files($$_PRO_FILE_PWD_/*.pri) \
++    $$replace(_PRO_FILE_, \\.pro$, .qmlproject) \
++    $$replace(_PRO_FILE_, \\.pro$, .json) \
++    $$replace(_PRO_FILE_, \\.pro$, .inf)
++for(extra, extras): \
++    exists($$extra): \
++        sourcefiles += $$extra
++
++# Just for Qt Creator
++OTHER_FILES += $$sourcefiles
++
++sourcefiles += \
++    $$_PRO_FILE_ $$RC_FILE $$DEF_FILE \
++    $$SOURCES $$HEADERS $$FORMS $$RESOURCES $$TRANSLATIONS \
++    $$DBUS_ADAPTORS $$DBUS_INTERFACES
++addInstallFiles(sources.files, $$sourcefiles)
++sources.path = $$[QT_INSTALL_EXAMPLES]/$$probase
++INSTALLS += sources
++
++check_examples {
++    srcfiles = $$sources.files
++    for(inst, INSTALLS): \
++        !equals(inst, target):!contains($${inst}.CONFIG, no_check_exist): \
++            for(file, $${inst}.files): \
++                instfiles += $$files($$absolute_path($$file, $$_PRO_FILE_PWD_))
++    addInstallFiles(srcfiles, $$instfiles)
++
++    thefiles = $$files($$_PRO_FILE_PWD_/*)
++    for(i, thefiles): \
++        allfiles += $$relative_path($$i, $$_PRO_FILE_PWD_)
++    for(i, srcfiles): \
++        allfiles -= $$relative_path($$i, $$_PRO_FILE_PWD_)
++    for(i, SUBDIRS) {
++        sd = $$eval($${i}.file)
++        !isEmpty(sd) {
++            sd ~= s,/.*,,
++        } else {
++            sd = $$eval($${i}.subdir)
++            isEmpty(sd): sd = $$i
++        }
++        allfiles -= $$sd
++    }
++    allfiles -= doc
++    !isEmpty(allfiles): warning("remaining files in $$_PRO_FILE_PWD_: $$allfiles")
++}
++
++equals(TEMPLATE, app)|equals(TEMPLATE, lib) {
++    !contains(INSTALLS, target) {
++        !install_ok: \
++            error("$$_PRO_FILE_ is lacking an install target.")
++        else: check_examples: \
++            warning("$$_PRO_FILE_ is lacking an install target.")
++    } else: !equals(target.path, $$sources.path) {
++        !install_ok: \
++            error("$$_PRO_FILE_ installs target to unexpected location.")
++        else: check_examples: \
++            warning("$$_PRO_FILE_ installs target to unexpected location.")
++    }
++}
++
++CONFIG += relative_qt_rpath  # Examples built as part of Qt should be relocatable
+diff --git a/mkspecs/features/qt_helper_lib.prf b/mkspecs/features/qt_helper_lib.prf
+new file mode 100644
+index 0000000000..964e256ee0
+--- /dev/null
++++ b/mkspecs/features/qt_helper_lib.prf
+@@ -0,0 +1,120 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++load(qt_build_paths)
++
++TEMPLATE = lib
++CONFIG -= qt
++QT =  # In case qt is re-added.
++
++INCLUDEPATH += $$MODULE_INCLUDEPATH
++DEFINES += $$MODULE_DEFINES
++
++CONFIG -= warning_clean  # Don't presume 3rd party code to be clean
++load(qt_common)
++
++qtConfig(debug_and_release): CONFIG += debug_and_release
++qtConfig(build_all): CONFIG += build_all
++
++DESTDIR = $$MODULE_BASE_OUTDIR/lib
++DLLDESTDIR = $$MODULE_BASE_OUTDIR/bin
++
++THE_TARGET = $$qt5LibraryTarget($$TARGET)
++
++MODULE = $$replace(TARGET, ^qt, )
++MODULE ~= s,-,_,
++MODULE_PRI = $$MODULE_QMAKE_OUTDIR/mkspecs/modules/qt_ext_$${MODULE}.pri
++ucmodule = $$upper($$MODULE)
++win32|CONFIG(static, static|shared) {
++    prefix = $$QMAKE_PREFIX_STATICLIB
++    suffix = $$QMAKE_EXTENSION_STATICLIB
++} else {
++    prefix = $$QMAKE_PREFIX_SHLIB
++    suffix = $$QMAKE_EXTENSION_SHLIB
++}
++
++!build_pass {
++    CC_USES =
++    LD_USES =
++    for (use, QMAKE_USE) {
++        use = $$split(use, /)
++        name = $$take_first(use)
++        nu = $$upper($$replace(name, -, _))
++        !contains(use, linkonly): CC_USES += $$nu
++        !contains(use, nolink): LD_USES += $$nu
++    }
++    CC_USES = $$unique(CC_USES)
++    LD_USES = $$unique(LD_USES)
++    MODULE_PRI_CONT = \
++        "QMAKE_DEPENDS_$${ucmodule}_CC =$$join(CC_USES, " ", " ")" \
++        "QMAKE_DEPENDS_$${ucmodule}_LD =$$join(LD_USES, " ", " ")" \
++        "QMAKE_INCDIR_$${ucmodule} = $$val_escape(MODULE_INCLUDEPATH)" \
++        "QMAKE_DEFINES_$${ucmodule} = $$val_escape(MODULE_DEFINES)"
++    !single_android_abi:android {
++        MODULE_PRI_CONT += "QMAKE_LIBS_$${ucmodule} ="
++    } else: if(msvc|qtConfig(debug_and_release)): {
++        win32: \
++            MODULE_DEBUG_LIBS = $$DESTDIR/$$prefix$${TARGET}d.$$suffix
++        else: darwin: \
++            MODULE_DEBUG_LIBS = $$DESTDIR/$$prefix$${TARGET}_debug.$$suffix
++        else: \
++            error("'$$QMAKE_PLATFORM' does not do debug_and_release.")
++        MODULE_RELEASE_LIBS = $$DESTDIR/$$prefix$${TARGET}.$$suffix
++        MODULE_PRI_CONT += \
++            "QMAKE_LIBS_$${ucmodule} =" \  # Needed for the module to be recognized.
++            "QMAKE_LIBS_$${ucmodule}_DEBUG = $$val_escape(MODULE_DEBUG_LIBS)" \
++            "QMAKE_LIBS_$${ucmodule}_RELEASE = $$val_escape(MODULE_RELEASE_LIBS)"
++    } else {
++        MODULE_LIBS = $$DESTDIR/$$prefix$${THE_TARGET}.$$suffix
++        MODULE_PRI_CONT += \
++            "QMAKE_LIBS_$${ucmodule} = $$val_escape(MODULE_LIBS)"
++    }
++    write_file($$MODULE_PRI, MODULE_PRI_CONT)|error()
++} else: android {
++    ABI_TARGET = $$qt5LibraryTarget($$TARGET)
++    ABI_MODULE_LIBS = $$DESTDIR/$$prefix$${ABI_TARGET}.$$suffix
++    MODULE_PRI_CONT = "QMAKE_LIBS_$${ucmodule}_$${QT_ARCH} = $$val_escape(ABI_MODULE_LIBS)"
++    write_file($$MODULE_PRI, MODULE_PRI_CONT, append)|error()
++}
++
++TARGET = $$THE_TARGET
++
++# In static builds of Qt, convenience libraries must be installed,
++# as in this case they are not linked to the final library/plugin.
++installed|if(!not_installed:qtConfig(static)) {
++    !isEmpty(MODULE_EXT_HEADERS) {
++        headers.files = $${MODULE_EXT_HEADERS}
++        headers.path = $$[QT_INSTALL_HEADERS]/$$TARGET
++        INSTALLS += headers
++    } else {
++        !isEmpty(MODULE_EXT_HEADERS_DIR) {
++            headers.files = $$MODULE_EXT_HEADERS_DIR/*
++            headers.path = $$[QT_INSTALL_HEADERS]/$$TARGET
++            INSTALLS += headers
++        }
++    }
++
++    CONFIG += qt_install_module
++    rpl_header_base = $$MODULE_INCLUDEPATH
++    rpl_lib_base = $${MODULE_LIBS}
++    qqt_dir = \$\$\$\$[QT_INSTALL_HEADERS]
++    pri_header_replace.match = $$rpl_header_base
++    pri_header_replace.replace = $$qqt_dir/$$TARGET
++    pri_header_replace.CONFIG = path
++    pri_header_replace.filename = qt_ext_$${MODULE}.pri
++    qqt_dir = \$\$\$\$[QT_INSTALL_LIBS]
++    pri_lib_replace.match = $$rpl_lib_base
++    pri_lib_replace.replace = $$qqt_dir/$$prefix$${THE_TARGET}.$$suffix
++    pri_lib_replace.CONFIG = path
++    pri_lib_replace.filename = qt_ext_$${MODULE}.pri
++    QMAKE_INSTALL_REPLACE += pri_header_replace pri_lib_replace
++    load(qt_installs)
++}
+diff --git a/mkspecs/features/qt_installs.prf b/mkspecs/features/qt_installs.prf
+new file mode 100644
+index 0000000000..1ebca17366
+--- /dev/null
++++ b/mkspecs/features/qt_installs.prf
+@@ -0,0 +1,64 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++#library
++!qt_no_install_library {
++    win32 {
++       host_build: \
++           dlltarget.path = $$[QT_HOST_BINS]
++       else: \
++           dlltarget.path = $$[QT_INSTALL_BINS]
++       INSTALLS += dlltarget
++    }
++    host_build: \
++        target.path = $$[QT_HOST_LIBS]
++    else: \
++        target.path = $$[QT_INSTALL_LIBS]
++    !static: target.CONFIG = no_dll
++    INSTALLS += target
++}
++
++#headers
++qt_install_headers {
++    gen_headers.files = $$SYNCQT.GENERATED_HEADER_FILES
++    gen_headers.path = $$[QT_INSTALL_HEADERS]/$$MODULE_INCNAME
++    INSTALLS += gen_headers
++
++    targ_headers.files = $$SYNCQT.HEADER_FILES $$SYNCQT.INJECTED_HEADER_FILES
++    targ_headers.path = $$[QT_INSTALL_HEADERS]/$$MODULE_INCNAME
++    INSTALLS += targ_headers
++
++    private_headers.files = $$SYNCQT.PRIVATE_HEADER_FILES $$SYNCQT.INJECTED_PRIVATE_HEADER_FILES
++    private_headers.path = $$[QT_INSTALL_HEADERS]/$$MODULE_INCNAME/$$VERSION/$$MODULE_INCNAME/private
++    generated_privates: \
++        private_headers.CONFIG += no_check_exist
++    INSTALLS += private_headers
++
++    qpa_headers.files = $$SYNCQT.QPA_HEADER_FILES
++    qpa_headers.path = $$[QT_INSTALL_HEADERS]/$$MODULE_INCNAME/$$VERSION/$$MODULE_INCNAME/qpa
++    INSTALLS += qpa_headers
++}
++
++#module
++qt_install_module {
++    !isEmpty(MODULE_PRI) {
++        pritarget.path = $$[QT_HOST_DATA]/mkspecs/modules
++        pritarget.files = $$MODULE_PRI
++        INSTALLS += pritarget
++    } else: isEmpty(MODULE_PRIVATE_PRI) {
++        warning("Project $$basename(_PRO_FILE_) is a module, but has not defined MODULE_PRI, which is required for Qt to expose the module to other projects.")
++    }
++    !isEmpty(MODULE_PRIVATE_PRI) {
++        privpritarget.path = $$[QT_HOST_DATA]/mkspecs/modules
++        privpritarget.files = $$MODULE_PRIVATE_PRI
++        INSTALLS += privpritarget
++    }
++}
+diff --git a/mkspecs/features/qt_module.prf b/mkspecs/features/qt_module.prf
+new file mode 100644
+index 0000000000..6ef7dbc69f
+--- /dev/null
++++ b/mkspecs/features/qt_module.prf
+@@ -0,0 +1,355 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++isEmpty(MODULE):MODULE = $$section($$list($$basename(_PRO_FILE_)), ., 0, 0)
++isEmpty(VERSION): VERSION = $$MODULE_VERSION
++isEmpty(VERSION): error("Module does not define version.")
++
++isEmpty(MODULE_CFG_FILE): MODULE_CFG_FILE = qt$${MODULE}-config
++exists($$OUT_PWD/$${MODULE_CFG_FILE}.pri) {
++    include($$OUT_PWD/$${MODULE_CFG_FILE}.pri)
++    CONFIG += generated_privates
++}
++
++skip = $$eval(QT.$${MODULE}.skip)
++isEmpty(skip): skip = false
++requires(!$$skip)
++
++# Compile as shared/DLL or static according to the option given to configure
++# unless overridden. Host builds are always static
++host_build|staticlib: CONFIG += static
++
++host_build {
++    QT -= gui   # no host module will ever use gui
++    force_bootstrap {
++        !build_pass:qtConfig(release_tools): CONFIG += release
++        contains(QT, core(-private)?|xml) {
++            QT -= core core-private xml
++            QT += bootstrap-private
++        }
++    } else {
++        !build_pass:qtConfig(debug_and_release): CONFIG += release
++    }
++}
++
++qtConfig(framework) {
++    minimal_syncqt: \
++        CONFIG += module_frameworks
++    else: CONFIG(shared, static|shared): \
++        CONFIG += module_frameworks lib_bundle
++}
++
++CONFIG += relative_qt_rpath  # Qt libraries should be relocatable
++
++# Qt libraries should only use Application Extension safe APIs
++darwin:!no_app_extension_api_only: CONFIG += app_extension_api_only
++
++ucmodule = $$upper($$MODULE)
++
++isEmpty(MODULE_INCNAME): MODULE_INCNAME = $$TARGET
++
++internal_module: \
++    MODULE_DEPENDS += $$replace(QT, -private$, _private)
++else: \
++    MODULE_DEPENDS += $$replace(QT, -private$, )
++MODULE_DEPENDS = $$unique(MODULE_DEPENDS)
++contains(MODULE_DEPENDS, $$MODULE): \
++    error("$$TARGET depends on itself.")
++
++contains(TARGET, QtAddOn.*): \
++    MODULE_DEFINE = QT_ADDON_$${ucmodule}_LIB
++else: \
++    MODULE_DEFINE = QT_$${ucmodule}_LIB
++MODULE_DEFINES = $$MODULE_DEFINE $$MODULE_DEFINES
++
++# Make sure that the supporting runtime is linked into the application when
++# the module is built with exceptions enabled.
++integrity:CONFIG(exceptions, exceptions|exceptions_off): \
++    MODULE_CONFIG += exceptions
++
++load(qt_build_paths)
++
++header_module {
++    TEMPLATE     = aux
++    CONFIG      += force_qt  # Needed for the headers_clean tests.
++    !lib_bundle: \
++        CONFIG  += qt_no_install_library
++
++    # Allow creation of .prl, .la and .pc files.
++    target.path = $$[QT_INSTALL_LIBS]
++    target.CONFIG += dummy_install
++    INSTALLS    += target
++} else {
++    TEMPLATE     = lib
++}
++DESTDIR          = $$MODULE_BASE_OUTDIR/lib
++DLLDESTDIR       = $$MODULE_BASE_OUTDIR/bin
++
++CONFIG          += target_qt
++
++QMAKE_DOCS_TARGETDIR = qt$${MODULE}
++
++load(qt_common)
++!no_module_headers: load(qt_module_headers)
++load(qt_module_pris)
++
++INCLUDEPATH *= $$eval(QT.$${MODULE}.includes) $$eval(QT.$${MODULE}_private.includes)
++
++# If Qt was configured with -debug-and-release then build the module the same way
++# - unless this is a host library
++!host_build:if(win32|mac):!macx-xcode {
++    qtConfig(debug_and_release): CONFIG += debug_and_release
++    qtConfig(build_all): CONFIG += build_all
++}
++
++QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
++
++QT_PRIVATE += $$QT_FOR_PRIVATE
++unset(QT_FOR_PRIVATE)
++QMAKE_USE_PRIVATE += $$QMAKE_USE_FOR_PRIVATE
++unset(QMAKE_USE_FOR_PRIVATE)
++
++contains(TARGET, QtAddOn.*): \
++    DEFINES += QT_BUILD_ADDON_$${ucmodule}_LIB
++else: \
++    DEFINES += QT_BUILD_$${ucmodule}_LIB
++
++# OS X and iOS frameworks
++lib_bundle {
++   # Set the CFBundleIdentifier prefix for Qt frameworks
++   QMAKE_TARGET_BUNDLE_PREFIX = org.qt-project
++   QMAKE_FRAMEWORK_VERSION = "A" # Not based on Qt major version
++   CONFIG += sliced_bundle
++   header_module {
++        CONFIG += bundle
++        QMAKE_BUNDLE_NAME = $$TARGET
++        QMAKE_BUNDLE_EXTENSION = .framework
++        QMAKE_INFO_PLIST = $$QMAKESPEC/Info.plist.lib
++   }
++   !build_all| \
++           if(if(!debug_and_release|CONFIG(release, debug|release))) {
++        FRAMEWORK_HEADERS.version = Versions
++        FRAMEWORK_HEADERS.files = \
++            $$SYNCQT.HEADER_FILES $$SYNCQT.GENERATED_HEADER_FILES $$SYNCQT.INJECTED_HEADER_FILES
++        FRAMEWORK_HEADERS.path = Headers
++        FRAMEWORK_PRIVATE_HEADERS.version = Versions
++        FRAMEWORK_PRIVATE_HEADERS.files = \
++            $$SYNCQT.PRIVATE_HEADER_FILES $$SYNCQT.INJECTED_PRIVATE_HEADER_FILES
++        FRAMEWORK_PRIVATE_HEADERS.path = Headers/$$VERSION/$$MODULE_INCNAME/private
++        FRAMEWORK_QPA_HEADERS.version = Versions
++        FRAMEWORK_QPA_HEADERS.files = $$SYNCQT.QPA_HEADER_FILES
++        FRAMEWORK_QPA_HEADERS.path = Headers/$$VERSION/$$MODULE_INCNAME/qpa
++        QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS FRAMEWORK_PRIVATE_HEADERS FRAMEWORK_QPA_HEADERS
++   }
++}
++
++mac {
++   macx-g++ {
++       QMAKE_CFLAGS += -fconstant-cfstrings
++       QMAKE_CXXFLAGS += -fconstant-cfstrings
++   }
++
++   qtConfig(rpath): \
++       QMAKE_SONAME_PREFIX = @rpath
++   else: \
++       CONFIG += absolute_library_soname
++}
++
++DEFINES += QT_BUILDING_QT
++win32 {
++    INCLUDEPATH += tmp
++    CONFIG += skip_target_version_ext
++    # If the code is really "unsafe" then it is unsafe on
++    # other platforms as well; so fixing these warnings just
++    # for MSVC builds, would clutter the code and wouldn't help
++    # in fixing issues that might exist on other platforms.
++    # Using the same functions across all supported platforms
++    # keeps the code clean and helps in writing code that is
++    # safe across all platforms.
++    DEFINES *= _CRT_SECURE_NO_WARNINGS
++
++    DEFINES += _USE_MATH_DEFINES
++}
++
++aix-g++* {
++     QMAKE_CFLAGS   += -mminimal-toc
++     QMAKE_CXXFLAGS += -mminimal-toc
++}
++
++sse2:!contains(QT_CPU_FEATURES.$$QT_ARCH, sse2):!host_build:!if(static:qtConfig(shared)) {
++    # If the compiler supports SSE2, enable it unconditionally in all of Qt shared libraries
++    # (and only the libraries). This is not expected to be a problem because:
++    # - on Windows, sharing of libraries is uncommon
++    # - on Mac OS X, all x86 CPUs already have SSE2 support (we won't even reach here)
++    # - on Linux, the dynamic loader can find the libraries on LIBDIR/sse2/
++    # The last guarantee does not apply to executables and plugins, so we can't enable for them.
++    QT_CPU_FEATURES.$$QT_ARCH += sse sse2
++    QMAKE_CFLAGS += $$QMAKE_CFLAGS_SSE2
++    QMAKE_CXXFLAGS += $$QMAKE_CFLAGS_SSE2
++}
++
++clang {
++    apple_clang_ver = $${QT_APPLE_CLANG_MAJOR_VERSION}.$${QT_APPLE_CLANG_MINOR_VERSION}
++    reg_clang_ver = $${QT_CLANG_MAJOR_VERSION}.$${QT_CLANG_MINOR_VERSION}
++    versionAtLeast(apple_clang_ver, 5.1)|versionAtLeast(reg_clang_ver, 3.4): \
++        CONFIG += compiler_supports_fpmath
++} else: gcc {
++    CONFIG += compiler_supports_fpmath
++}
++
++equals(QT_ARCH, i386):contains(QT_CPU_FEATURES.$$QT_ARCH, sse2):compiler_supports_fpmath {
++    # Turn on SSE-based floating-point math
++    QMAKE_CFLAGS += -mfpmath=sse
++    QMAKE_CXXFLAGS += -mfpmath=sse
++}
++
++android: CONFIG += qt_android_deps no_linker_version_script
++
++!header_module:unix:!isEmpty(QMAKE_LFLAGS_VERSION_SCRIPT):!no_linker_version_script:!static {
++    verscript = $${TARGET}.version
++    QMAKE_LFLAGS += $${QMAKE_LFLAGS_VERSION_SCRIPT}$$verscript
++
++    internal_module {
++        verscript_content = "Qt_$${QT_MAJOR_VERSION}_PRIVATE_API { *; };"
++    } else {
++        verscript_content = "Qt_$${QT_MAJOR_VERSION}_PRIVATE_API {" \
++                            "    qt_private_api_tag*;"
++
++        private_api_headers = $$SYNCQT.PRIVATE_HEADER_FILES $$SYNCQT.QPA_HEADER_FILES
++
++        for(header, private_api_headers): \
++            verscript_content += "    @FILE:$$header@"
++        verscript_content += "};"
++
++        current = Qt_$$QT_MAJOR_VERSION
++        verscript_content += "$$current { *; };"
++        isEmpty(QT_NAMESPACE): tag_symbol = qt_version_tag
++        else:                  tag_symbol = qt_version_tag_$$QT_NAMESPACE
++
++        for(i, 0..$$QT_MINOR_VERSION) {
++            previous = $$current
++            current = Qt_$${QT_MAJOR_VERSION}.$$i
++            equals(i, $$QT_MINOR_VERSION): verscript_content += "$$current { $$tag_symbol; } $$previous;"
++            else:                          verscript_content += "$$current {} $$previous;"
++        }
++
++        # Add a post-processing step to replace the @FILE:filename@
++        verscript_in = $${verscript}.in
++        verscriptprocess.name = linker version script ${QMAKE_FILE_BASE}
++        verscriptprocess.input = verscript_in
++        verscriptprocess.CONFIG += no_link target_predeps
++        verscriptprocess.depends = $$private_api_headers
++        verscriptprocess.output = $$verscript
++        verscriptprocess.commands = perl $${PWD}/data/unix/findclasslist.pl < ${QMAKE_FILE_IN} > $@
++        silent:verscriptprocess.commands = @echo creating linker version script ${QMAKE_FILE_BASE} && $$verscriptprocess.commands
++        QMAKE_EXTRA_COMPILERS += verscriptprocess
++
++        verscript = $$verscript_in
++    }
++    write_file($$OUT_PWD/$$verscript, verscript_content)|error()
++    unset(current)
++    unset(previous)
++    unset(verscript)
++    unset(verscript_content)
++}
++
++#install directives
++load(qt_installs)
++
++load(qt_targets)
++
++# this builds on top of qt_common
++!internal_module:if(unix|mingw):!if(darwin:debug_and_release:CONFIG(debug, debug|release)) {
++    CONFIG += create_pc
++    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
++    host_build: \
++        QMAKE_PKGCONFIG_LIBDIR = $$[QT_HOST_LIBS]
++    else: \
++        QMAKE_PKGCONFIG_LIBDIR = $$[QT_INSTALL_LIBS/raw]
++    lib_bundle {
++        QMAKE_PKGCONFIG_INCDIR = $$[QT_INSTALL_LIBS/raw]/$${MODULE_INCNAME}.framework/Headers
++        QMAKE_PKGCONFIG_CFLAGS = -D$$MODULE_DEFINE
++    } else {
++        QMAKE_PKGCONFIG_INCDIR = $$[QT_INSTALL_HEADERS/raw]
++        QMAKE_PKGCONFIG_CFLAGS = -D$$MODULE_DEFINE -I${includedir}/$$MODULE_INCNAME
++        for(inc, MODULE_AUX_INCLUDES): \
++            QMAKE_PKGCONFIG_CFLAGS += -I${includedir}/$$section(inc, /, 1, 1)
++    }
++    QMAKE_PKGCONFIG_NAME = $$replace(TARGET, ^Qt, "Qt$$QT_MAJOR_VERSION ")
++    QMAKE_PKGCONFIG_FILE = $$replace(TARGET, ^Qt, Qt$$QT_MAJOR_VERSION)$$qtPlatformTargetSuffix()
++    for(i, MODULE_DEPENDS): \
++        QMAKE_PKGCONFIG_REQUIRES += $$replace(QT.$${i}.name, ^Qt, Qt$$section(QT.$${i}.VERSION, ., 0, 0))$$qtPlatformTargetSuffix()
++    isEmpty(QMAKE_PKGCONFIG_DESCRIPTION): \
++        QMAKE_PKGCONFIG_DESCRIPTION = $$replace(TARGET, ^Qt, "Qt ") module
++    !isEmpty(lib_replace0.match) {
++        pclib_replace0.match = $$lib_replace0.match
++        pclib_replace0.replace = $$QMAKE_PKGCONFIG_LIBDIR/
++        pclib_replace0.CONFIG = path
++        QMAKE_PKGCONFIG_INSTALL_REPLACE += pclib_replace0
++    }
++    pclib_replace.match = $$lib_replace.match
++    !isEmpty(lib_replace.replace): \
++        pclib_replace.replace = $$QMAKE_PKGCONFIG_LIBDIR
++    pclib_replace.CONFIG = path
++    QMAKE_PKGCONFIG_INSTALL_REPLACE += pclib_replace
++}
++!lib_bundle:unix {
++    CONFIG += create_libtool
++    host_build: \
++        QMAKE_LIBTOOL_LIBDIR = $$[QT_HOST_LIBS]
++    else: \
++        QMAKE_LIBTOOL_LIBDIR = "=$$[QT_INSTALL_LIBS/raw]"
++    !isEmpty(lib_replace0.match) {
++        ltlib_replace0.match = $$lib_replace0.match
++        ltlib_replace0.replace = $$QMAKE_LIBTOOL_LIBDIR/
++        ltlib_replace0.CONFIG = path
++        QMAKE_LIBTOOL_INSTALL_REPLACE += ltlib_replace0
++    }
++    ltlib_replace.match = $$lib_replace.match
++    !isEmpty(lib_replace.replace): \
++        ltlib_replace.replace = $$QMAKE_LIBTOOL_LIBDIR
++    ltlib_replace.CONFIG = path
++    QMAKE_LIBTOOL_INSTALL_REPLACE += ltlib_replace
++}
++
++contains(QT_PRODUCT, OpenSource.*):DEFINES *= QT_OPENSOURCE
++DEFINES *= QT_NO_CAST_TO_ASCII QT_ASCII_CAST_WARNINGS
++DEFINES *= QT_MOC_COMPAT #we don't need warnings from calling moc code in our generated code
++DEFINES *= QT_USE_QSTRINGBUILDER
++DEFINES *= QT_DEPRECATED_WARNINGS
++
++win32 {
++    # On Windows, due to the way DLLs work, we need to export all functions,
++    # including the inlines
++    DEFINES *= QT_DISABLE_DEPRECATED_BEFORE=0x040800
++} else {
++    # On other platforms, Qt's own compilation goes needs to compile the Qt 5.0 API
++    DEFINES *= QT_DISABLE_DEPRECATED_BEFORE=0x050000
++}
++DEFINES *= QT_DEPRECATED_WARNINGS_SINCE=0x060000
++
++msvc {
++    QMAKE_CFLAGS_RELEASE                  += -guard:cf
++    QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO   += -guard:cf
++    QMAKE_CXXFLAGS_RELEASE                += -guard:cf
++    QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -guard:cf
++    QMAKE_LFLAGS_RELEASE                  += /GUARD:CF
++    QMAKE_LFLAGS_RELEASE_WITH_DEBUGINFO   += /GUARD:CF
++
++    QMAKE_LFLAGS += /LARGEADDRESSAWARE
++}
++
++win32 {
++    DEFINES *= _WIN32_WINNT=0x0A00
++    DEFINES *= WINVER=0x0A00
++}
++
++TARGET = $$qt5LibraryTarget($$TARGET$$QT_LIBINFIX)  # Do this towards the end
+diff --git a/mkspecs/features/qt_module_headers.prf b/mkspecs/features/qt_module_headers.prf
+new file mode 100644
+index 0000000000..9541a560eb
+--- /dev/null
++++ b/mkspecs/features/qt_module_headers.prf
+@@ -0,0 +1,305 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++load(qt_build_paths)
++
++!build_pass:git_build {
++    qtPrepareLibExecTool(QMAKE_SYNCQT, syncqt, , system)
++    minimal_syncqt {
++        QMAKE_SYNCQT += -minimal $$QMAKE_SYNCQT_OPTIONS
++    } else {
++        qtConfig(private_tests): \   # -developer-build
++            QMAKE_SYNCQT += -check-includes
++    }
++    for(mod, MODULE_INCNAME): \
++        QMAKE_SYNCQT += -module $$mod
++    QMAKE_SYNCQT += \
++        -version $$VERSION -outdir $$system_quote($$MODULE_BASE_OUTDIR) \
++        -builddir $$system_quote($$REAL_MODULE_BASE_OUTDIR) $$MODULE_SYNCQT_DIR
++    !silent: message($$QMAKE_SYNCQT)
++    system($$QMAKE_SYNCQT)|error("Failed to run: $$QMAKE_SYNCQT")
++
++    !minimal_syncqt {
++        include-distclean.commands = \
++            $$QMAKE_DEL_TREE $$shell_quote($$shell_path($$MODULE_BASE_OUTDIR/include/$$MODULE_INCNAME))
++        QMAKE_EXTRA_TARGETS += include-distclean
++        DISTCLEAN_DEPS += include-distclean
++    }
++}
++
++# Pre-generated headers in the source tree (tar-ball) and
++# - shadow build or
++# - non-shadow non-prefix build of a module which is not qtbase
++#   (because the build-time generated headers all end up in qtbase).
++!git_build: \
++        if(!equals(_PRO_FILE_PWD_, $$OUT_PWD) \
++           |if(!prefix_build:!equals(MODULE_BASE_INDIR, $$[QT_HOST_PREFIX]))): \
++    CONFIG += split_incpath
++
++# To avoid stuffing the code with repetetive conditionals,
++# we parametrize the names of the variables we assign to.
++
++# Internal modules have no private part - they *are* private.
++!internal_module: \
++    prv = _PRIVATE
++
++# When doing a framework build with a prefix, the module needs to point
++# into the frameworks' Headers dirs directly, as no shared include/ dir
++# is installed.
++# However, during the build, it needs to point into the shared include/
++# dir, as the framework doesn't even exist yet. For bootstrapped modules
++# which borrow headers from "proper" modules, this situation persists
++# even beyond the module's own build. The implication of this is that
++# qmake might never use a framework's headers in a non-prefix build,
++# as there is no separate set of .pri files for users outside Qt.
++# Borrowing is assumed to happen from modules which, in a framework build,
++# actually are frameworks.
++prefix_build:module_frameworks: \
++    fwd = _FWD
++# When using a split include path during the build, the installed module's
++# include path is also structurally different from that in the build dir.
++prefix_build:split_incpath: \
++    sfwd = _FWD
++
++ibase = \$\$QT_MODULE_INCLUDE_BASE
++MODULE$${fwd}_INCLUDES = $$ibase
++split_incpath {
++    bibase = $$val_escape(MODULE_BASE_OUTDIR)/include
++    MODULE$${sfwd}_INCLUDES += $$bibase
++}
++for(mod, MODULE_INCNAME) {
++    mibase = $$ibase/$$mod
++    MODULE$${fwd}_INCLUDES += $$mibase
++    MODULE$${fwd}$${prv}_INCLUDES += $$mibase/$$VERSION $$mibase/$$VERSION/$$mod
++    split_incpath {
++        mbibase = $$bibase/$$mod
++        MODULE$${sfwd}_INCLUDES += $$mbibase
++        generated_privates: \
++            MODULE$${sfwd}$${prv}_INCLUDES += $$mbibase/$$VERSION $$mbibase/$$VERSION/$$mod
++    }
++    prefix_build:module_frameworks {
++        mfbase = \$\$QT_MODULE_LIB_BASE/$${mod}$${QT_LIBINFIX}.framework/Headers
++        MODULE_INCLUDES += $$mfbase
++        MODULE$${prv}_INCLUDES += $$mfbase/$$VERSION $$mfbase/$$VERSION/$$mod
++    }
++}
++MODULE_INCLUDES += $$MODULE_AUX_INCLUDES
++MODULE_PRIVATE_INCLUDES += $$MODULE_PRIVATE_AUX_INCLUDES
++
++minimal_syncqt: return()
++
++defineTest(syncQtResolve) {
++    out =
++    for (f, SYNCQT.$$1): \
++        out += $$absolute_path($$f, $$2)
++    SYNCQT.$$1 = $$out
++    export(SYNCQT.$$1)
++}
++
++#load up the headers info
++git_build: \
++    INC_PATH = $$MODULE_BASE_OUTDIR
++else: \
++    INC_PATH = $$MODULE_BASE_INDIR
++include($$INC_PATH/include/$$MODULE_INCNAME/headers.pri, "", true)
++syncQtResolve(HEADER_FILES, $$_PRO_FILE_PWD_)
++syncQtResolve(PRIVATE_HEADER_FILES, $$_PRO_FILE_PWD_)
++syncQtResolve(QPA_HEADER_FILES, $$_PRO_FILE_PWD_)
++syncQtResolve(GENERATED_HEADER_FILES, $$INC_PATH/include/$$MODULE_INCNAME)
++!lib_bundle: \  # Headers are embedded into the bundle, so don't install them separately.
++    CONFIG += qt_install_headers
++
++alien_syncqt: return()
++
++MODULE_INC_OUTDIR = $$MODULE_BASE_OUTDIR/include/$$MODULE_INCNAME
++
++isEmpty(MODULE_CFG_FILE): MODULE_CFG_FILE = qt$${MODULE}-config
++exists($$OUT_PWD/$${MODULE_CFG_FILE}.h) {
++    fwd_rel = $$relative_path($$OUT_PWD, $$REAL_MODULE_BASE_OUTDIR)
++    SYNCQT.INJECTIONS += \
++        $$fwd_rel/$${MODULE_CFG_FILE}.h:$${MODULE_CFG_FILE}.h \
++        $$fwd_rel/$${MODULE_CFG_FILE}_p.h:$$MODULE_VERSION/$$MODULE_INCNAME/private/$${MODULE_CFG_FILE}_p.h
++}
++
++for (injection, SYNCQT.INJECTIONS) {
++    injects = $$split(injection, :)
++    dst_hdr = $$absolute_path($$member(injects, 0), $$REAL_MODULE_BASE_OUTDIR)
++    ofwd_hdr = $$member(injects, 1)
++    fwd_hdr = $$replace(ofwd_hdr, ^\\^, )
++    MAIN_FWD = $$MODULE_INC_OUTDIR/$$fwd_hdr
++    MAIN_FWD_CONT = '$${LITERAL_HASH}include "$$relative_path($$dst_hdr, $$dirname(MAIN_FWD))"'
++    write_file($$MAIN_FWD, MAIN_FWD_CONT)|error()
++    equals(fwd_hdr, ofwd_hdr): touch($$MAIN_FWD, $$dst_hdr)
++    !git_build: QMAKE_DISTCLEAN += $$MAIN_FWD
++    !contains(ofwd_hdr, .*/private/.*): \
++        SYNCQT.INJECTED_HEADER_FILES += $$dst_hdr
++    else: \
++        SYNCQT.INJECTED_PRIVATE_HEADER_FILES += $$dst_hdr
++    injects = $$member(injects, 2, -1)
++    for (inject, injects) {
++        CLASS_FWD = $$MODULE_INC_OUTDIR/$$inject
++        CLASS_FWD_CONT = '$${LITERAL_HASH}include "$$fwd_hdr"'
++        write_file($$CLASS_FWD, CLASS_FWD_CONT)|error()
++        touch($$CLASS_FWD, $$MAIN_FWD)
++        !git_build: QMAKE_DISTCLEAN += $$CLASS_FWD
++        SYNCQT.INJECTED_HEADER_FILES += $$CLASS_FWD
++    }
++}
++
++autogen_warning = \
++    "/* This file was generated by qmake with the info from <root>/$$relative_path($$_PRO_FILE_, $$MODULE_BASE_INDIR). */"
++
++# Create a module master depends header
++MODULE_MASTER_DEPS_HEADER = $$MODULE_BASE_OUTDIR/include/$$MODULE_INCNAME/$${MODULE_INCNAME}Depends
++!build_pass {
++    MODULE_MASTER_DEPS_HEADER_CONT = $$autogen_warning
++    MODULE_MASTER_DEPS_HEADER_CONT += "$${LITERAL_HASH}ifdef __cplusplus /* create empty PCH in C mode */"
++    for(dep, MODULE_DEPENDS) {
++        depname = $$eval(QT.$${dep}.master_header)
++        isEmpty(depname): \
++            depname = $$eval(QT.$${dep}.name)
++        MODULE_MASTER_DEPS_HEADER_CONT += "$${LITERAL_HASH}include <$$depname/$$depname>"
++    }
++    MODULE_MASTER_DEPS_HEADER_CONT += "$${LITERAL_HASH}endif"
++    write_file($$MODULE_MASTER_DEPS_HEADER, MODULE_MASTER_DEPS_HEADER_CONT)|error()
++    !git_build: QMAKE_DISTCLEAN += $$MODULE_MASTER_DEPS_HEADER
++}
++SYNCQT.HEADER_FILES += $$MODULE_MASTER_DEPS_HEADER
++
++# Automatically enable precompiled headers for Qt modules with more than 2 sources
++combined_SOURCES = $$SOURCES $$OBJECTIVE_SOURCES
++count(combined_SOURCES, 2, >) {
++    # except for Gcc/Windows: Larger precompiled headers crash cc1plus.exe
++    # (e.g. with i686-4.8.2-release-posix-dwarf-rt_v3-rev3)
++    !if(gcc:equals(QMAKE_HOST.os, Windows)):!equals(TEMPLATE, aux) {
++        !defined(PRECOMPILED_HEADER, "var"): PRECOMPILED_HEADER = $$MODULE_MASTER_DEPS_HEADER
++    }
++} else {
++    CONFIG -= precompile_header
++}
++unset(combined_SOURCES)
++
++headersclean:!internal_module {
++    # Make sure that the header compiles with our strict options
++    hcleanDEFS = -DQT_NO_CAST_TO_ASCII=1 \
++                 -DQT_NO_CAST_FROM_ASCII=1 \
++                 -UQT_RESTRICTED_CAST_FROM_ASCII \
++                 -DQT_NO_URL_CAST_FROM_STRING=1 \
++                 -DQT_NO_CAST_FROM_BYTEARRAY=1 \
++                 -DQT_NO_KEYWORDS=1 \
++                 -DQT_USE_QSTRINGBUILDER \
++                 -DQT_USE_FAST_OPERATOR_PLUS \
++                 -Dsignals=int \
++                 -Dslots=int \
++                 -Demit=public: \
++                 -Dforeach=public: \
++                 -Dforever=public:
++
++    gcc:!rim_qcc {
++        # Turn on some extra warnings not found in -Wall -Wextra.
++        # Common to GCC, Clang and ICC (and other compilers that masquerade as GCC):
++        hcleanFLAGS = -Wall -Wextra -Werror \
++                      -Woverloaded-virtual -Wshadow -Wundef -Wfloat-equal \
++                      -Wnon-virtual-dtor -Wpointer-arith -Wformat-security \
++                      -Wno-long-long -Wno-variadic-macros -pedantic-errors
++
++        intel_icc {
++            # these warnings are disabled because explicit constructors with zero or
++            # multiple arguments are permitted in C++11:
++            # 2304: non-explicit constructor with single argument may cause implicit type conversion
++            # 2305: declaration of 'explicit' constructor without a single argument is redundant
++            hcleanFLAGS += -wd2304,2305
++            greaterThan(QT_ICC_MAJOR_VERSION, 13) {
++                # ICC 14+ has a bug with -Wshadow, emitting it for cases where there's no shadowing
++                # (issue ID 0000698329, task DPD200245740)
++                hcleanFLAGS -= -Wshadow
++            }
++        } else {
++            # options accepted by GCC and Clang
++            hcleanFLAGS += -Wchar-subscripts -Wold-style-cast
++
++            !contains(QT_ARCH, arm):!contains(QT_ARCH, mips): \
++                hcleanFLAGS += -Wcast-align
++
++            clang_ver = $${QT_CLANG_MAJOR_VERSION}.$${QT_CLANG_MINOR_VERSION}
++            versionAtLeast(clang_ver, 3.8): hcleanFLAGS += -Wdouble-promotion -Wshorten-64-to-32
++
++            !clang {
++                # options accepted only by GCC
++
++                gcc_ver = $${QT_GCC_MAJOR_VERSION}.$${QT_GCC_MINOR_VERSION}
++                versionAtLeast(gcc_ver, 4.5): hcleanFLAGS += -Wdouble-promotion
++                versionAtLeast(gcc_ver, 4.9): hcleanFLAGS += -Wfloat-conversion
++                # GCC 9 has a lot of false positives relating to this, so disable completely
++                greaterThan(QT_GCC_MAJOR_VERSION, 8): hcleanFLAGS += -Wno-deprecated-copy
++                # GCC 9 introduced this
++                greaterThan(QT_GCC_MAJOR_VERSION, 8): hcleanFLAGS += -Wno-redundant-move
++                # GCC 9 introduced this
++                greaterThan(QT_GCC_MAJOR_VERSION, 8): hcleanFLAGS += -Wno-format-overflow
++                # GCC 9 introduced this
++                greaterThan(QT_GCC_MAJOR_VERSION, 8): hcleanFLAGS += -Wno-init-list-lifetime
++
++                c++11 {
++                    # only enabled for actual c++11 builds due to
++                    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52806
++                    hcleanFLAGS += -Wzero-as-null-pointer-constant
++                }
++            }
++        }
++
++        # Use strict mode C++11 or C++98, with no GNU extensions (see -pedantic-errors above).
++        # The module might set CONFIG += c++11, but it might also change QMAKE_CXXFLAGS_CXX11
++        # or the module (or the mkspec) can set the C++11 flag on QMAKE_CXXFLAGS
++        # (or QMAKE_CXXFLAGS_{RELEASE,DEBUG} but that's unlikely).
++        c++11:contains(QMAKE_CXXFLAGS_CXX11, -std=gnu++11) {
++            hcleanFLAGS += -std=c++11
++        } else: contains(QMAKE_CXXFLAGS, -std=gnu++11) {
++            hcleanFLAGS += -std=c++11
++        } else: c++11:contains(QMAKE_CXXFLAGS_CXX11, -std=gnu++0x) {
++            hcleanFLAGS += -std=c++0x
++        } else: contains(QMAKE_CXXFLAGS, -std=gnu++0x) {
++            hcleanFLAGS += -std=c++0x
++        } else: !c++11:!contains(QMAKE_CXXFLAGS, -std=c++0x):!contains(QMAKE_CXXFLAGS, -std=c++11) {
++            hcleanFLAGS += -std=c++98
++        }
++
++        hcleanCOMMAND = $(CXX) -c $(CXXFLAGS) $$hcleanFLAGS $(INCPATH) $$hcleanDEFS -xc++ ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
++    } else: msvc:!intel_icl {
++        # -Za enables strict standards behavior, but we can't add it because
++        # <windows.h> and <GL.h> violate the standards.
++        hcleanFLAGS = -WX -W3
++
++        hcleanCOMMAND = $(CXX) -c $(CXXFLAGS) $$hcleanFLAGS $(INCPATH) $$hcleanDEFS -FI${QMAKE_FILE_IN} -Fo${QMAKE_FILE_OUT} \
++                        $$[QT_INSTALL_DATA/src]/mkspecs/features/data/dummy.cpp
++    }
++
++    !isEmpty(hcleanCOMMAND):if(!qtConfig(debug_and_release)|CONFIG(release, debug|release)) {
++        CLEAN_HEADERS =
++        for (h, SYNCQT.CLEAN_HEADER_FILES) {
++            hh = $$split(h, :)
++            hr = $$member(hh, 1)
++            isEmpty(hr)|qtConfig($$hr): \
++                CLEAN_HEADERS += $$member(hh, 0)
++        }
++        CLEAN_HEADERS -= $$HEADERSCLEAN_EXCLUDE
++        header_check.dependency_type = TYPE_C
++        header_check.CONFIG += no_link
++        header_check.output = ${QMAKE_VAR_OBJECTS_DIR}header_${QMAKE_FILE_BASE}$${first(QMAKE_EXT_OBJ)}
++        header_check.input = CLEAN_HEADERS
++        header_check.variable_out = PRE_TARGETDEPS
++        header_check.name = headercheck ${QMAKE_FILE_IN}
++        header_check.commands = $$hcleanCOMMAND
++        QMAKE_EXTRA_COMPILERS += header_check
++    }
++    unset(hcleanCOMMAND)
++    unset(hcleanFLAGS)
++    unset(hcleanDEFS)
++}
+diff --git a/mkspecs/features/qt_module_pris.prf b/mkspecs/features/qt_module_pris.prf
+new file mode 100644
+index 0000000000..1cf2afcac6
+--- /dev/null
++++ b/mkspecs/features/qt_module_pris.prf
+@@ -0,0 +1,245 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++load(qt_build_paths)
++force_independent|split_incpath: \
++    CONFIG += need_fwd_pri
++mod_work_pfx = $$MODULE_QMAKE_OUTDIR/mkspecs/modules
++need_fwd_pri: \
++    mod_inst_pfx = $$MODULE_QMAKE_OUTDIR/mkspecs/modules-inst
++else: \
++    mod_inst_pfx = $$mod_work_pfx
++!internal_module {
++    MODULE_ID = $$MODULE
++    mods_to_load = $$MODULE
++    !no_private_module {
++        MODULE_PRIVATE_PRI = $$mod_inst_pfx/qt_lib_$${MODULE}_private.pri
++        mods_to_load += $${MODULE}_private
++    }
++} else {
++    MODULE_ID = $${MODULE}_private
++    mods_to_load = $${MODULE}_private
++}
++need_fwd_pri: \
++    pris_to_load = $$MODULE_ID
++else: \
++    pris_to_load = $$mods_to_load
++MODULE_PRI = $$mod_inst_pfx/qt_lib_$${MODULE_ID}.pri
++MODULE_FWD_PRI = $$mod_work_pfx/qt_lib_$${MODULE_ID}.pri
++
++defineReplace(qtGetFeaturesForModule) {
++    enabled = $$unique(QT.$${1}.enabled_features)
++    disabled = $$unique(QT.$${1}.disabled_features)
++    result = \
++        "QT.$${1}.enabled_features =$$join(enabled, " ", " ")" \
++        "QT.$${1}.disabled_features =$$join(disabled, " ", " ")"
++    return($$result)
++}
++
++defineReplace(qtGetExportsForModule) {
++    result =
++    for (var, QT.$${1}.exports): \
++        result += "$$var = $$val_escape($$var)"
++    return($$result)
++}
++
++defineReplace(qtExportDepsForModule) {
++    result =
++    for (lib, QT.$${1}.libraries) {
++        NAME = $$upper($$lib)
++        vars = \
++            QMAKE_DEPENDS_$${NAME}_CC QMAKE_DEPENDS_$${NAME}_LD \
++            QMAKE_DEFINES_$$NAME QMAKE_INCDIR_$$NAME
++        for (var, vars) {
++            expvar = $$var
++            expvar ~= s/^QMAKE_/QMAKE_EXPORT_/
++            defined($$expvar, var):equals($$expvar, -): next()
++            !defined($$expvar, var): expvar = $$var
++            defined($$expvar, var): \
++                result += "$$var = $$val_escape($$expvar)"
++        }
++    }
++    return($$result)
++}
++
++defineReplace(qtExportLibsForModule) {
++    result =
++    for (lib, QT.$${1}.libraries) {
++        NAME = $$upper($$lib)
++        vars = \
++            QMAKE_LIBS_$$NAME QMAKE_LIBS_$${NAME}_DEBUG QMAKE_LIBS_$${NAME}_RELEASE
++        for (var, vars) {
++            expvar = $$var
++            expvar ~= s/^QMAKE_/QMAKE_EXPORT_/
++            defined($$expvar, var):equals($$expvar, -): next()
++            !defined($$expvar, var): expvar = $$var
++            defined($$expvar, var): \
++                result += "$$var$${2} = $$val_escape($$expvar)"
++        }
++    }
++    return($$result)
++}
++
++!build_pass {
++
++    # Create a module .pri file
++    host_build: \
++        module_libs = "\$\$QT_MODULE_HOST_LIB_BASE"
++    else: \
++        module_libs = "\$\$QT_MODULE_LIB_BASE"
++    # In addition to the library's private deps, the private module's deps
++    # are logically runtime deps of the public module.
++    runtime_deps = $$QT_PRIVATE $$QT_FOR_PRIVATE
++    !isEmpty(runtime_deps): \
++        module_rundep = "QT.$${MODULE_ID}.run_depends = $$replace(runtime_deps, -private$, _private)"
++    else: \
++        module_rundep =
++    module_build_type = v2
++    static: \
++        module_build_type += staticlib
++    lib_bundle: \
++        module_build_type += lib_bundle
++    module_frameworks: \
++        MODULE_FRAMEWORKS = " \$\$QT_MODULE_LIB_BASE"
++    internal_module: \
++        module_build_type += internal_module
++    ltcg: \
++        module_build_type += ltcg
++    module_module =
++    !equals(TEMPLATE, aux) {
++        module_module = $$TARGET$$QT_LIBINFIX
++        !lib_bundle: module_module ~= s,^Qt,Qt$$QT_MAJOR_VERSION,
++    }
++    !isEmpty(MODULE_CONFIG): \
++        module_config = "QT.$${MODULE_ID}.CONFIG = $$MODULE_CONFIG"
++    else: \
++        module_config =
++    !isEmpty(MODULE_PLUGIN_TYPES): \
++        module_plugtypes = "QT.$${MODULE_ID}.plugin_types = $$replace(MODULE_PLUGIN_TYPES, /[^.]+\\.[^.]+$, )"
++    else: \
++        module_plugtypes =
++    !isEmpty(MODULE_MASTER_HEADER): \
++        module_master = "QT.$${MODULE_ID}.master_header = $$MODULE_MASTER_HEADER"
++    else: \
++        module_master =
++    MODULE_PRI_CONT = \
++        "QT.$${MODULE_ID}.VERSION = $${VERSION}" \
++        "" \
++        "QT.$${MODULE_ID}.name = $$TARGET" \
++        "QT.$${MODULE_ID}.module = $$module_module" \
++        "QT.$${MODULE_ID}.ldflags = $$MODULE_LDFLAGS" \
++        "QT.$${MODULE_ID}.libs = $$module_libs" \
++        $$module_master \
++        "QT.$${MODULE_ID}.includes = $$MODULE_INCLUDES" \
++        "QT.$${MODULE_ID}.frameworks =$$MODULE_FRAMEWORKS"
++    !host_build: MODULE_PRI_CONT += \
++        "QT.$${MODULE_ID}.bins = \$\$QT_MODULE_BIN_BASE" \
++        $$module_plugtypes
++    MODULE_PRI_CONT += \
++        "QT.$${MODULE_ID}.depends =$$join(MODULE_DEPENDS, " ", " ")" \
++        $$module_rundep \
++        "QT.$${MODULE_ID}.uses =$$join(QMAKE_USE, " ", " ")" \
++        "QT.$${MODULE_ID}.module_config =$$join(module_build_type, " ", " ")" \
++        $$module_config \
++        "QT.$${MODULE_ID}.DEFINES = $$val_escape(MODULE_DEFINES)" \
++        $$qtGetFeaturesForModule($$MODULE_ID) \
++        $$qtGetExportsForModule($$MODULE_ID) \
++        "QT_CONFIG +=$$join(QT.$${MODULE_ID}.QT_CONFIG, " ", " ")" \
++        "" \
++        "QT_MODULES += $$MODULE"
++    MODULE_PRI_CONT += $$MODULE_PRI_EXTRA_CONTENT
++    write_file($$MODULE_PRI, MODULE_PRI_CONT)|error()
++    !internal_module:!no_private_module {
++        module_build_type += internal_module
++        private_deps = $$QT
++        private_deps -= $$MODULE_DEPENDS
++        private_deps += $$MODULE $$QT_FOR_PRIVATE
++        private_deps ~= s,-private$,_private,g
++        MODULE_PRIVATE_PRI_CONT = \
++            "QT.$${MODULE}_private.VERSION = $${VERSION}" \
++            "" \
++            "QT.$${MODULE}_private.name = $${TARGET}" \   # Same name as base module
++            "QT.$${MODULE}_private.module =" \
++            "QT.$${MODULE}_private.libs = $$module_libs" \
++            "QT.$${MODULE}_private.includes = $$MODULE_PRIVATE_INCLUDES" \
++            "QT.$${MODULE}_private.frameworks =" \
++            "QT.$${MODULE}_private.depends = $$private_deps" \
++            "QT.$${MODULE}_private.uses =$$join(QMAKE_USE_FOR_PRIVATE, " ", " ")" \
++            "QT.$${MODULE}_private.module_config =$$join(module_build_type, " ", " ")" \
++            $$qtGetFeaturesForModule($${MODULE}_private) \
++            "" \
++            $$qtExportDepsForModule($${MODULE}_private) \
++            $$qtExportLibsForModule($${MODULE}_private)
++        write_file($$MODULE_PRIVATE_PRI, MODULE_PRIVATE_PRI_CONT)|error()
++    }
++    MODULE_PRI_FILES = $$MODULE_PRI $$MODULE_PRIVATE_PRI
++
++    need_fwd_pri {
++
++        !git_build: \
++            MODULE_BASE_INCDIR = $$MODULE_BASE_INDIR
++        else: \
++            MODULE_BASE_INCDIR = $$MODULE_BASE_OUTDIR
++
++        # Create a forwarding module .pri file
++        MODULE_FWD_PRI_CONT = \
++            "QT_MODULE_BIN_BASE = $$val_escape(MODULE_BASE_OUTDIR)/bin" \
++            "QT_MODULE_INCLUDE_BASE = $$val_escape(MODULE_BASE_INCDIR)/include" \
++            "QT_MODULE_LIB_BASE = $$val_escape(MODULE_BASE_OUTDIR)/lib" \
++            "QT_MODULE_HOST_LIB_BASE = $$val_escape(MODULE_BASE_OUTDIR)/lib" \
++            "include($$val_escape(MODULE_PRI))" \
++            "QT.$${MODULE_ID}.priority = 1"
++        !internal_module:!no_private_module: MODULE_FWD_PRI_CONT += \
++            "include($$val_escape(MODULE_PRIVATE_PRI))" \
++            "QT.$${MODULE}_private.priority = 1"
++        !isEmpty(MODULE_FWD_INCLUDES) {
++            !lib_bundle: \
++                pls = +
++            MODULE_FWD_PRI_CONT += \
++                "QT.$${MODULE_ID}.includes $$pls= $$MODULE_FWD_INCLUDES"
++            !internal_module: \
++                MODULE_FWD_PRI_CONT += \
++                    "QT.$${MODULE}_private.includes $$pls= $$MODULE_FWD_PRIVATE_INCLUDES"
++        }
++        write_file($$MODULE_FWD_PRI, MODULE_FWD_PRI_CONT)|error()
++        touch($$MODULE_FWD_PRI, $$MODULE_PRI)
++        MODULE_PRI_FILES += $$MODULE_FWD_PRI
++
++    } else {
++
++        # This is needed for the direct include() below. Mirrors qt_config.prf
++        QT_MODULE_BIN_BASE = $$[QT_INSTALL_BINS]
++        QT_MODULE_INCLUDE_BASE = $$[QT_INSTALL_HEADERS]
++        QT_MODULE_LIB_BASE = $$[QT_INSTALL_LIBS]
++        QT_MODULE_HOST_LIB_BASE = $$[QT_HOST_LIBS]
++
++    }
++
++    # Then, inject the new module into the current cache state
++    !contains(QMAKE_INTERNAL_INCLUDED_FILES, $$MODULE_PRI): \ # before the actual include()!
++        cache(QMAKE_INTERNAL_INCLUDED_FILES, add transient, MODULE_PRI_FILES)
++    for(pri, pris_to_load): \
++        include($$mod_work_pfx/qt_lib_$${pri}.pri)
++    for(mod, mods_to_load) {
++        for(var, $$list(VERSION MAJOR_VERSION MINOR_VERSION PATCH_VERSION \
++                        name module depends run_depends plugin_types module_config CONFIG DEFINES \
++                        priority includes bins libs frameworks \
++                )):defined(QT.$${mod}.$$var, var):cache(QT.$${mod}.$$var, transient)
++    }
++    cache(QT_MODULES, transient)
++
++} else:android:!no_private_module:!internal_module {
++    MODULE_PRIVATE_PRI_CONT = $$qtExportLibsForModule($${MODULE}_private, _$${QT_ARCH})
++    write_file($$MODULE_PRIVATE_PRI, MODULE_PRIVATE_PRI_CONT, append)|error()
++}
++
++# Schedule the regular .pri file for installation
++CONFIG += qt_install_module
+diff --git a/mkspecs/features/qt_parts.prf b/mkspecs/features/qt_parts.prf
+new file mode 100644
+index 0000000000..579ade09c8
+--- /dev/null
++++ b/mkspecs/features/qt_parts.prf
+@@ -0,0 +1,77 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++# Ensure that each module has a .qmake.cache when properly qmake'd.
++cache()
++
++load(qt_configure)
++
++load(qt_build_config)
++
++TEMPLATE = subdirs
++
++bp = $$eval($$upper($$TARGET)_BUILD_PARTS)
++!isEmpty(bp): QT_BUILD_PARTS = $$bp
++
++exists($$_PRO_FILE_PWD_/src/src.pro) {
++    sub_src.subdir = src
++    sub_src.target = sub-src
++    SUBDIRS += sub_src
++
++    exists($$_PRO_FILE_PWD_/tools/tools.pro) {
++        sub_tools.subdir = tools
++        sub_tools.target = sub-tools
++        sub_tools.depends = sub_src
++        # conditional treatment happens on a case-by-case basis
++        SUBDIRS += sub_tools
++    }
++}
++
++exists($$_PRO_FILE_PWD_/examples/examples.pro) {
++    sub_examples.subdir = examples
++    sub_examples.target = sub-examples
++    contains(SUBDIRS, sub_src): sub_examples.depends = sub_src
++    contains(SUBDIRS, sub_tools): sub_examples.depends += sub_tools
++    !contains(QT_BUILD_PARTS, examples): sub_examples.CONFIG = no_default_target no_default_install
++    SUBDIRS += sub_examples
++}
++
++exists($$_PRO_FILE_PWD_/tests/tests.pro) {
++    sub_tests.subdir = tests
++    sub_tests.target = sub-tests
++    contains(SUBDIRS, sub_src): sub_tests.depends = sub_src   # The tests may have a run-time only dependency on other parts
++    contains(SUBDIRS, sub_tools): sub_tests.depends += sub_tools
++    sub_tests.CONFIG = no_default_install
++    !contains(QT_BUILD_PARTS, tests): sub_tests.CONFIG += no_default_target
++    SUBDIRS += sub_tests
++}
++
++QT_BUILD_PARTS -= libs tools examples tests
++!isEmpty(QT_BUILD_PARTS): warning("Unknown build part(s): $$QT_BUILD_PARTS")
++
++QMAKE_DISTCLEAN += \
++    .qmake.cache \
++    config.cache \
++    config.log \
++    mkspecs/modules/*.pri \
++    mkspecs/modules-inst/*.pri
++
++tests = $$files($$_PRO_FILE_PWD_/config.tests/*.pro, true)
++testdirs =
++for (t, tests): \
++    testdirs += $$relative_path($$dirname(t), $$_PRO_FILE_PWD_)
++testdirs = $$unique(testdirs)
++for (td, testdirs) {
++    t = $$basename(td)-distclean
++    $${t}.commands = -$$QMAKE_CD $$shell_path($$td) && $(MAKE) distclean
++    QMAKE_EXTRA_TARGETS += $$t
++    DISTCLEAN_DEPS += $$t
++}
+diff --git a/mkspecs/features/qt_plugin.prf b/mkspecs/features/qt_plugin.prf
+new file mode 100644
+index 0000000000..df798ae446
+--- /dev/null
++++ b/mkspecs/features/qt_plugin.prf
+@@ -0,0 +1,101 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++load(qt_build_paths)
++
++isEmpty(PLUGIN_TYPE): error("PLUGIN_TYPE (plugins/ subdirectory) needs to be defined.")
++
++TEMPLATE = lib
++CONFIG += plugin
++DESTDIR = $$MODULE_BASE_OUTDIR/plugins/$$PLUGIN_TYPE
++
++win32:CONFIG(shared, static|shared) {
++    # Embed a VERSIONINFO resource into the plugin's DLL.
++    isEmpty(VERSION): VERSION = $$QT_VERSION
++    CONFIG += skip_target_version_ext
++}
++
++tool_plugin {
++    !build_pass:qtConfig(debug_and_release): CONFIG += release
++} else:if(win32|mac):!macx-xcode {
++    qtConfig(debug_and_release): CONFIG += debug_and_release
++    qtConfig(build_all): CONFIG += build_all
++}
++
++CONFIG += relative_qt_rpath  # Qt's plugins should be relocatable
++
++# Qt libraries should only use Application Extension safe APIs
++darwin:!no_app_extension_api_only: CONFIG += app_extension_api_only
++
++isEmpty(MODULE): MODULE = $$basename(TARGET)
++
++CONFIG(static, static|shared)|prefix_build {
++    mod_work_pfx = $$MODULE_QMAKE_OUTDIR/mkspecs/modules
++    force_independent: \
++        mod_inst_pfx = $$MODULE_QMAKE_OUTDIR/mkspecs/modules-inst
++    else: \
++        mod_inst_pfx = $$mod_work_pfx
++    MODULE_PRI = $$mod_inst_pfx/qt_plugin_$${MODULE}.pri
++    MODULE_FWD_PRI = $$mod_work_pfx/qt_plugin_$${MODULE}.pri
++
++    !build_pass {
++        qt_plugin_deps = $$QT $$QT_PRIVATE
++        qt_plugin_deps ~= s,-private$,_private,g
++
++        MODULE_PRI_CONT = \
++            "QT_PLUGIN.$${MODULE}.TYPE = $$PLUGIN_TYPE" \
++            "QT_PLUGIN.$${MODULE}.EXTENDS =$$join(PLUGIN_EXTENDS, " ", " ")" \
++            "QT_PLUGIN.$${MODULE}.DEPENDS = $$qt_plugin_deps" \
++            "QT_PLUGIN.$${MODULE}.CLASS_NAME = $$PLUGIN_CLASS_NAME" \
++            "QT_PLUGINS += $$MODULE"
++        write_file($$MODULE_PRI, MODULE_PRI_CONT)|error()
++        MODULE_PRI_FILES = $$MODULE_PRI
++
++        force_independent {
++
++            # Create a forwarding module .pri file
++            MODULE_FWD_PRI_CONT = \
++                "QT_PLUGIN.$${MODULE}.PATH = $$MODULE_BASE_OUTDIR/plugins" \
++                "include($$MODULE_PRI)"
++            write_file($$MODULE_FWD_PRI, MODULE_FWD_PRI_CONT)|error()
++            touch($$MODULE_FWD_PRI, $$MODULE_PRI)
++            MODULE_PRI_FILES += $$MODULE_FWD_PRI
++
++        }
++
++        # Then, inject the new module into the current cache state
++        !contains(QMAKE_INTERNAL_INCLUDED_FILES, $$MODULE_FWD_PRI): \ # before the actual include()!
++            cache(QMAKE_INTERNAL_INCLUDED_FILES, add transient, MODULE_PRI_FILES)
++        include($$MODULE_FWD_PRI)
++        for(var, $$list(TYPE EXTENDS CLASS_NAME PATH)): \
++            defined(QT_PLUGIN.$${MODULE}.$$var, var): \
++                cache(QT_PLUGIN.$${MODULE}.$$var, transient)
++        cache(QT_PLUGINS, transient)
++    }
++
++    CONFIG(static, static|shared) {
++        pritarget.path = $$[QT_HOST_DATA]/mkspecs/modules
++        pritarget.files = $$MODULE_PRI
++        INSTALLS += pritarget
++    }
++}
++
++target.path = $$[QT_INSTALL_PLUGINS]/$$PLUGIN_TYPE
++INSTALLS += target
++
++TARGET = $$qt5LibraryTarget($$TARGET$$QT_LIBINFIX, "plugins/$$PLUGIN_TYPE/")
++
++DEFINES *= QT_DEPRECATED_WARNINGS
++
++load(qt_targets)
++load(qt_common)
++
++QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
+diff --git a/mkspecs/features/qt_prefix_build_check.prf b/mkspecs/features/qt_prefix_build_check.prf
+new file mode 100644
+index 0000000000..5b21efa367
+--- /dev/null
++++ b/mkspecs/features/qt_prefix_build_check.prf
+@@ -0,0 +1,21 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++defineTest(qtIsPrefixBuild) {
++    prefixdir = $$1
++    # qtbase non-prefix build?
++    exists($$prefixdir/.qmake.cache)|exists($$prefixdir/CMakeCache.txt): \
++        return(false)
++    # top-level non-prefix build?
++    contains(prefixdir, .*/qtbase):if(exists($$dirname(prefixdir)/.qmake.super)|exists($$dirname(prefixdir)/CMakeCache.txt)): \
++        return(false)
++    return(true)
++}
+diff --git a/mkspecs/features/qt_targets.prf b/mkspecs/features/qt_targets.prf
+new file mode 100644
+index 0000000000..be897db7c9
+--- /dev/null
++++ b/mkspecs/features/qt_targets.prf
+@@ -0,0 +1,4 @@
++QMAKE_TARGET_COMPANY = The Qt Company Ltd.
++isEmpty(QMAKE_TARGET_PRODUCT): QMAKE_TARGET_PRODUCT = Qt5
++isEmpty(QMAKE_TARGET_DESCRIPTION): QMAKE_TARGET_DESCRIPTION = C++ Application Development Framework
++QMAKE_TARGET_COPYRIGHT = Copyright (C) 2022 The Qt Company Ltd.
+diff --git a/mkspecs/features/qt_test_helper.prf b/mkspecs/features/qt_test_helper.prf
+new file mode 100644
+index 0000000000..86b65dd884
+--- /dev/null
++++ b/mkspecs/features/qt_test_helper.prf
+@@ -0,0 +1,34 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++# If an auto test needs a helper application, this helper should
++# be put into the same directory as the test itself. This common
++# folder should be the test's "main directory" or a "debug" or "release"
++# subfolder inside this main directory if debug_and_release is enabled.
++# Additionally the helper's executable is suffixed with "_helper" to
++# avoid name clashes with its folder.
++
++CONFIG += cmdline
++
++debug_and_release {
++    CONFIG(debug, debug|release) {
++        TARGET = ../../debug/$${TARGET}_helper
++    } else {
++        TARGET = ../../release/$${TARGET}_helper
++    }
++} else {
++    TARGET = ../$${TARGET}_helper
++}
++
++parentFolder = $$dirname(_PRO_FILE_PWD_)
++testFolder = $$basename(parentFolder)
++target.path = $$[QT_INSTALL_TESTS]/$$testFolder
++INSTALLS += target
+diff --git a/mkspecs/features/qt_tool.prf b/mkspecs/features/qt_tool.prf
+new file mode 100644
+index 0000000000..a8d589f0fa
+--- /dev/null
++++ b/mkspecs/features/qt_tool.prf
+@@ -0,0 +1,78 @@
++#
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++CONFIG += no_launch_target
++load(qt_app)
++
++CONFIG += console
++DEFINES *= QT_USE_QSTRINGBUILDER
++
++# If we are doing a prefix build, create a "module" pri which enables
++# qtPrepareTool() to work with the non-installed build.
++# Non-bootstrapped tools always need this because of the environment setup.
++!build_pass:if(!host_build|!force_bootstrap|force_independent|!isEmpty(HOST_QT_TOOLS)) {
++    isEmpty(MODULE):MODULE = $$TARGET
++
++    load(qt_build_paths)
++
++    TOOL_PRI = $$MODULE_QMAKE_OUTDIR/mkspecs/modules/qt_tool_$${MODULE}.pri
++
++    vars = binary depends
++
++    !host_build|isEmpty(HOST_QT_TOOLS) {
++        load(resolve_target)
++
++        !host_build|!force_bootstrap: MODULE_DEPENDS = $$replace(QT, -private$, _private)
++
++        !isEmpty(QT_TOOL_ENV) {
++            vars += envvars
++            module_var_names =
++            module_var_sets =
++            for(var, QT_TOOL_ENV) {
++                vars += env.$${var}.name env.$${var}.value
++                module_var_names += QT_TOOL.$${MODULE}.env.$${var}
++                module_var_sets += \
++                    "QT_TOOL.$${MODULE}.env.$${var}.name = $$val_escape($${var}.name)" \
++                    "QT_TOOL.$${MODULE}.env.$${var}.value = $$val_escape($${var}.value)"
++            }
++            module_envvars = \
++                "QT_TOOL.$${MODULE}.envvars = $$module_var_names" \
++                $$module_var_sets
++        } else {
++            module_envvars =
++        }
++
++        bin = $$system_path($$QMAKE_RESOLVED_TARGET)
++    } else {
++        bin = $${HOST_QT_TOOLS}/$${TARGET}
++        equals(QMAKE_HOST.os, Windows): bin = $${bin}.exe
++        bin = $$system_path($$bin)
++    }
++
++    TOOL_PRI_CONT = \
++        "QT_TOOL.$${MODULE}.binary = $$val_escape(bin)" \
++        "QT_TOOL.$${MODULE}.depends =$$join(MODULE_DEPENDS, " ", " ")" \
++        $$module_envvars
++    write_file($$TOOL_PRI, TOOL_PRI_CONT)|error()
++
++    # Then, inject the new tool into the current cache state
++    !contains(QMAKE_INTERNAL_INCLUDED_FILES, $$TOOL_PRI) { # before the actual include()!
++        added = $$TOOL_PRI
++        cache(QMAKE_INTERNAL_INCLUDED_FILES, add transient, added)
++        unset(added)
++    }
++    include($$TOOL_PRI)
++    for(var, vars): \
++        cache(QT_TOOL.$${MODULE}.$$var, transient)
++
++}
++# The variable is re-used by qtPrepareTool(), and we really don't want that.
++unset(QT_TOOL_ENV)
+diff --git a/mkspecs/features/qt_tracepoints.prf b/mkspecs/features/qt_tracepoints.prf
+new file mode 100644
+index 0000000000..f115e9a115
+--- /dev/null
++++ b/mkspecs/features/qt_tracepoints.prf
+@@ -0,0 +1,54 @@
++#  W A R N I N G
++#  -------------
++#
++# This file is not part of the Qt API.  It exists purely as an
++# implementation detail.  It may change from version to version
++# without notice, or even be removed.
++#
++# We mean it.
++#
++
++qtPrepareLibExecTool(QMAKE_TRACEGEN, tracegen)
++
++isEmpty(TRACEGEN_DIR): TRACEGEN_DIR = .
++
++PROVIDER_NAME = qt$$lower($$MODULE)
++INCLUDEPATH += $$absolute_path($$TRACEGEN_DIR, $$OUT_PWD)
++HEADER_PATH = $$OUT_PWD/$$TRACEGEN_DIR/$${PROVIDER_NAME}_tracepoints_p$${first(QMAKE_EXT_H)}
++
++if(qtConfig(lttng)|qtConfig(etw)) {
++    SOURCE_PATH = $$OUT_PWD/$$TRACEGEN_DIR/$${PROVIDER_NAME}_tracepoints$${first(QMAKE_EXT_CPP)}
++
++    isEmpty(BUILDS)|build_pass {
++        impl_file_contents = \
++            "$${LITERAL_HASH}define TRACEPOINT_CREATE_PROBES" \
++            "$${LITERAL_HASH}define TRACEPOINT_DEFINE" \
++            "$${LITERAL_HASH}include \"$${HEADER_PATH}\""
++
++        write_file($$SOURCE_PATH, impl_file_contents)|error()
++    }
++
++    GENERATED_SOURCES += $$SOURCE_PATH
++
++    tracegen.input = TRACEPOINT_PROVIDER
++    tracegen.output = $$HEADER_PATH
++    tracegen.variable_out = HEADERS
++    tracegen.depends += $$QMAKE_TRACEGEN_EXE
++    tracegen.CONFIG = target_predeps
++
++    qtConfig(lttng) {
++        tracegen.commands = $$QMAKE_TRACEGEN lttng ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
++        QMAKE_USE_PRIVATE += lttng-ust
++    } else {
++        tracegen.commands = $$QMAKE_TRACEGEN etw ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
++    }
++
++    QMAKE_EXTRA_COMPILERS += tracegen
++
++    DEFINES += Q_TRACEPOINT
++} else {
++    isEmpty(BUILDS)|build_pass {
++        header_file_contents = "$${LITERAL_HASH}include <private/qtrace_p.h>"
++        write_file($$HEADER_PATH, header_file_contents)|error()
++    }
++}
+diff --git a/mkspecs/features/uikit/qt_parts.prf b/mkspecs/features/uikit/qt_parts.prf
+new file mode 100644
+index 0000000000..81814a62b0
+--- /dev/null
++++ b/mkspecs/features/uikit/qt_parts.prf
+@@ -0,0 +1,5 @@
++
++# Disable tests for anything but qtbase for now
++!equals(TARGET, qtbase): QT_BUILD_PARTS -= tests
++
++load(qt_parts)
+diff --git a/mkspecs/features/win32/qt_dll.prf b/mkspecs/features/win32/qt_dll.prf
+new file mode 100644
+index 0000000000..f03c0c08c1
+--- /dev/null
++++ b/mkspecs/features/win32/qt_dll.prf
+@@ -0,0 +1 @@
++CONFIG *= qt

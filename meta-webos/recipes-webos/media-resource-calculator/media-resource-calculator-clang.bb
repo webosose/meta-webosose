@@ -6,11 +6,11 @@ require media-resource-calculator.bb
 
 WEBOS_REPO_NAME = "media-resource-calculator"
 
-PR = "r3"
+PR = "r4"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 
 PKGCONFIG_DIR = "${libdir}/pkgconfig"
 

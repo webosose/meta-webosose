@@ -1,0 +1,66 @@
+From 0749fb30ba00f65ff8beb49fd94130b96c213249 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 31 May 2024 12:05:26 +0000
+Subject: [PATCH] uMediaserver: add missing #include to fix build with
+ boost-1.85.0
+
+:Release Notes:
+https://www.boost.org/doc/libs/1_85_0/libs/filesystem/doc/deprecated.html
+operations.hpp
+  The header provides filesystem_error, file_status, directory_entry,
+  directory_iterator, recursive_directory_iterator and associated enums
+  and functions.
+
+  Explicitly include headers exception.hpp, file_status.hpp and/or
+  directory.hpp to introduce the required components.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/854828
+
+FAILED: src/server/CMakeFiles/umediaserver.dir/uMediaserver.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot -DUMS_INTERNAL_API_VERSION=2 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/include/public -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/server -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/logger -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/timer -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/utils -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/resource_manager -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/ums_connector -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/pipeline -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/process_pool -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/pipeline_manager -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/dbi -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/registry -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git=/usr/src/debug/umediaserver/1.0.0-gav.46  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git=/usr/src/debug/umediaserver/1.0.0-gav.46  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/build=/usr/src/debug/umediaserver/1.0.0-gav.46  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/build=/usr/src/debug/umediaserver/1.0.0-gav.46  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot-native=  -fvisibility-inlines-hidden -std=c++11 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/include/public -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/resource_manager -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -pthread -pthread -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include/orc-0.4 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysroot/usr/include -DLTTNG_PMTRACE -DTRACEPOINT_DEFINE -DTRACEPOINT_PROBE_DYNAMIC_LINKAGE -DENABLE_PMTRACE -DPERFLOG_USE_PMLOG -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/recipe-sysrootinclude -DNDEBUG -MD -MT src/server/CMakeFiles/umediaserver.dir/uMediaserver.cpp.o -MF src/server/CMakeFiles/umediaserver.dir/uMediaserver.cpp.o.d -o src/server/CMakeFiles/umediaserver.dir/uMediaserver.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/umediaserver/1.0.0-gav.46/git/src/server/uMediaserver.cpp
+../git/src/server/uMediaserver.cpp: In member function 'void uMediaServer::uMediaserver::readDynamicPipelineConfigs()':
+../git/src/server/uMediaserver.cpp:336:21: error: 'directory_iterator' is not a member of 'fs'; did you mean 'directory_entry'?
+  336 |                 fs::directory_iterator end_iter;
+      |                     ^~~~~~~~~~~~~~~~~~
+      |                     directory_entry
+../git/src/server/uMediaserver.cpp:337:26: error: 'directory_iterator' is not a member of 'fs'; did you mean 'directory_entry'?
+  337 |                 for (fs::directory_iterator dir_iter(dynamic_config_dir); dir_iter!=end_iter; dir_iter++) {
+      |                          ^~~~~~~~~~~~~~~~~~
+      |                          directory_entry
+../git/src/server/uMediaserver.cpp:337:75: error: 'dir_iter' was not declared in this scope
+  337 |                 for (fs::directory_iterator dir_iter(dynamic_config_dir); dir_iter!=end_iter; dir_iter++) {
+      |                                                                           ^~~~~~~~
+../git/src/server/uMediaserver.cpp:337:85: error: 'end_iter' was not declared in this scope
+  337 |                 for (fs::directory_iterator dir_iter(dynamic_config_dir); dir_iter!=end_iter; dir_iter++) {
+      |                                                                                     ^~~~~~~~
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: I6ad507d2499b4c99f3419b70a21eff60e7e655aa
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/umediaserver/+/409750 uMediaserver: add missing #include to fix build with boost-1.85.0]
+
+ src/server/uMediaserver.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/server/uMediaserver.cpp b/src/server/uMediaserver.cpp
+index 51d381e..58ce00b 100644
+--- a/src/server/uMediaserver.cpp
++++ b/src/server/uMediaserver.cpp
+@@ -33,6 +33,7 @@
+ #include <fstream>
+ #include <functional>
+ #include <boost/filesystem/operations.hpp>
++#include <boost/filesystem/directory.hpp>
+ #include <sys/inotify.h>
+ #include <libconfig.h++>
+ 

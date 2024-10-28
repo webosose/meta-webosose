@@ -59,15 +59,6 @@ for iface in @WEBOS_CONNMAN_PREACTIVATE_INTERFACE_LIST@; do
     ifconfig $iface up || :
 done
 
-# Send DAD(Duplicate Address Detection) packet for link-local address in IPv6
-# there is a timing issue with creating the link-local address and bringing up
-# the eth0 interface to send out the packet.
-# Also We don't use this change in NFS for developer.
-if [ $IS_NFS = "NO" ] ; then
-     ifconfig eth0 up || :
-     ifconfig eth0 down || :
-fi
-
 sysctl -w net.core.rmem_max=524288
 
 exec /usr/sbin/connmand -n --nobacktrace ${EXTRA_PARAM} --noplugin=bluetooth,bluetooth_legacy

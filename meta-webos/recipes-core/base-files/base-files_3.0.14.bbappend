@@ -6,7 +6,9 @@ inherit webos_filesystem_paths
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
-EXTENDPRAUTO:append = "webos16"
+EXTENDPRAUTO:append = "webos17"
+
+BASEFILESISSUEINSTALL = ""
 
 dirs700 = " \
     ${webos_db8datadir}/temp \

@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos6"
+EXTENDPRAUTO:append = "webos7"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -10,6 +10,6 @@ SRC_URI += "\
 "
 
 do_configure:prepend () {
-    cp -v ${WORKDIR}/passwd.master ${S}/
-    cp -v ${WORKDIR}/group.master ${S}/
+    cp -v ${UNPACKDIR}/passwd.master ${S}/
+    cp -v ${UNPACKDIR}/group.master ${S}/
 }

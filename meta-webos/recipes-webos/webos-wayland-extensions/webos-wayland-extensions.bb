@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "wayland wayland-native"
 
-WEBOS_VERSION = "1.0.0-46_9ccf2cf894f9f5de46f110bba40aa0decb37acea"
+WEBOS_VERSION = "1.0.0-47_bc1d96ba4be586eb57453ea5d4ee41170baf8c53"
 PR = "r6"
 
 inherit webos_component
@@ -24,3 +24,11 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 FILES:${PN}-dev += "${datadir}/*"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/893032
+# ERROR: QA Issue: File /usr/share/pkgconfig/wayland-webos-client.pc in package webos-wayland-extensions-dev contains reference to TMPDIR
+# File /usr/share/pkgconfig/wayland-webos-server.pc in package webos-wayland-extensions-dev contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

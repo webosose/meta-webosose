@@ -3,7 +3,7 @@
 require conf/distro/include/features/webos-features-headless.inc
 
 # Increment when features are changed
-_pr_suffix .= ".4"
+_pr_suffix .= ".5"
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_DEFAULT += "alsa"

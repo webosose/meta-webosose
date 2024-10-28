@@ -1,0 +1,77 @@
+From 8bfe69328d1f84014bc42ec11aadaaf3ce5a4234 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Mon, 19 Aug 2024 16:44:52 +0200
+Subject: [PATCH] Logger: fix segfaults with 64bit time_t
+
+:Release Notes:
+It was already reported by gcc in log.do_compile:
+
+configd/1.2.0-24/git $ grep Wformat= ../temp/log.do_compile | sort -u
+../git/src/common/util/Logger.hpp:238:21: warning: format '%ld' expects argument of type 'long int', but argument 2 has type '__time64_t' {aka 'long long int'} [-Wformat=]
+../git/src/common/util/Logger.hpp:278:46: warning: format '%ld' expects argument of type 'long int', but argument 4 has type '__time64_t' {aka 'long long int'} [-Wformat=]
+
+but it wasn't fatal for the build, "only" causes segfault in runtime.
+
+:Detailed Notes:
+Fixes:
+  Program received signal SIGSEGV, Segmentation fault.
+  __GI_strlen () at ../sysdeps/i386/i586/strlen.S:93
+  warning: Source file is more recent than executable.
+  93              movl (%eax), %ecx       /* get word (= 4 bytes) in question */
+  (gdb) bt
+  #0  __GI_strlen () at ../sysdeps/i386/i586/strlen.S:93
+  #1  0xb78e6b49 in __printf_buffer (buf=0xbffff788, format=0x4710a0 "[%5ld.%09ld] [%-7s] %-15s ", ap=0xbffff880 "\251\031G", mode_flags=2) at /usr/src/debug/glibc/2.40+git/stdio-common/vfprintf-process-arg.c:435
+  #2  0xb790684a in __vsnprintf_internal (string=0x48b828 <Logger::getInstance()::s_logger+520> "[  136.000000000] [", maxlen=1024, format=0x4710a0 "[%5ld.%09ld] [%-7s] %-15s ", args=0xbffff874 "\210", mode_flags=2) at vsnprintf.c:96
+  #3  0xb79b5aa0 in ___snprintf_chk (s=0x48b828 <Logger::getInstance()::s_logger+520> "[  136.000000000] [", maxlen=1024, flag=1, slen=4294967295, format=0x4710a0 "[%5ld.%09ld] [%-7s] %-15s ") at snprintf_chk.c:38
+  #4  0x0046f81b in snprintf (__s=0x48b828 <Logger::getInstance()::s_logger+520> "[  136.000000000] [", __n=1024, __fmt=0x4710a0 "[%5ld.%09ld] [%-7s] %-15s ") at /usr/include/bits/stdio2.h:68
+  #5  Logger::writeFile<char const*, int, char const*, LogLevel, LogType, char const*, char const*> (this=<optimized out>, logLevel=0x4719a9 "info", msgid=0x47177d "MAIN",
+      format=0x474b9c "(%s, %d) %s : LogLevel(%d) / LogType(%d) / LogPath(%s) / BootStatus(%s)") at /usr/src/debug/configd/1.2.0-24/src/common/util/Logger.hpp:278
+  #6  Logger::write<char const*, int, char const*, LogLevel, LogType, char const*, char const*> (this=<optimized out>, level=0x4719a9 "info", msgid=0x47177d "MAIN",
+      format=0x474b9c "(%s, %d) %s : LogLevel(%d) / LogType(%d) / LogPath(%s) / BootStatus(%s)") at /usr/src/debug/configd/1.2.0-24/src/common/util/Logger.hpp:212
+  #7  Logger::info<char const*, int, char const*, LogLevel, LogType, char const*, char const*> (msgid=0x47177d "MAIN", format=0x474b9c "(%s, %d) %s : LogLevel(%d) / LogType(%d) / LogPath(%s) / BootStatus(%s)")
+      at /usr/src/debug/configd/1.2.0-24/src/common/util/Logger.hpp:174
+  #8  Logger::info<char const*, int, char const*, LogLevel, LogType, char const*, char const*> (msgid=0x47177d "MAIN", format=0x474b9c "(%s, %d) %s : LogLevel(%d) / LogType(%d) / LogPath(%s) / BootStatus(%s)")
+      at /usr/src/debug/configd/1.2.0-24/src/common/util/Logger.hpp:171
+  #9  Setting::printSetting (warning: could not convert 'pbnjson::JValue' from the host encoding (ANSI_X3.4-1968) to UTF-32.
+  This normally should not happen, please file a bug report.
+  this=0x48bea0 <Setting::getInstance()::_instance>) at /usr/src/debug/configd/1.2.0-24/src/configd/setting/Setting.cpp:204
+  #10 0x0041e84e in main (argc=1, argv=0xbffffa54) at /usr/src/debug/configd/1.2.0-24/src/configd/setting/Setting.h:42
+
+:Testing Performed:
+Build Successful
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRQ-32810] configd segfaults with 64-bit time_t
+
+Change-Id: I8d0b9ea01adf41e41f7c09852b4b5fa617dff1ac
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/configd/+/428558 Logger: fix segfaults with 64bit time_t]
+
+ src/common/util/Logger.hpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/common/util/Logger.hpp b/src/common/util/Logger.hpp
+index 4ea6f3c..f1095db 100644
+--- a/src/common/util/Logger.hpp
++++ b/src/common/util/Logger.hpp
+@@ -235,7 +235,7 @@ private:
+             cerr << "Error in clock_gettime" << endl;
+         }
+ 
+-        printf("[%5ld.%09ld] [%-7s] %-15s ", time.tv_sec, time.tv_nsec, logLevel, msgid);
++        printf("[%5jd.%09jd] [%-7s] %-15s ", (intmax_t) time.tv_sec, (intmax_t) time.tv_nsec, logLevel, msgid);
+         printf(format, args...);
+         printf("\n");
+         return true;
+@@ -275,7 +275,7 @@ private:
+         if (sizeof...(args) == 0) {
+             m_fileStream << "[" << logLevel << "] " << msgid << " "<< format << endl;
+         } else {
+-            cnt = snprintf(m_buf, 1024, "[%5ld.%09ld] [%-7s] %-15s ", time.tv_sec, time.tv_nsec, logLevel, msgid);
++            cnt = snprintf(m_buf, 1024, "[%5jd.%09jd] [%-7s] %-15s ", (intmax_t) time.tv_sec, (intmax_t) time.tv_nsec, logLevel, msgid);
+             cnt += snprintf(m_buf + strlen(m_buf), 1024 - strlen(m_buf), format, args...);
+             if (cnt < 0 || cnt > 1024) {
+                 return false;

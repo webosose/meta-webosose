@@ -10,11 +10,11 @@ FILESEXTRAPATHS:prepend = "${META_OE_LAYER}/recipes-test/googletest/files:"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
-PACKAGECONFIG[system-libcxx] = ",,llvm-native clang"
+PACKAGECONFIG[system-libcxx] = ",,libcxx"
 
 PROVIDES = ""
 
-PR = "r0"
+PR = "r1"
 
 do_install:append() {
     install -d ${D}/${LIBCBE_DIR}

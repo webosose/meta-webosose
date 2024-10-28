@@ -1,6 +1,6 @@
 # Copyright (c) 2018-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+EXTENDPRAUTO:append = "webos5"
 
 # Adds dependency on GPLv2 tbb
 PACKAGECONFIG:remove = "tbb"
@@ -21,5 +21,12 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-apps:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS:${PN}-apps:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
 
-export CCACHE_MAXSIZE = "1500M"
+export CCACHE_MAXSIZE = "2G"
 
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894546
+# ERROR: QA Issue: File /usr/src/debug/lib32-opencv/4.9.0/modules/dnn/layers/cpu_kernels/conv_block.neon.cpp in package lib32-opencv-src contains reference to TMPDIR
+# File /usr/src/debug/lib32-opencv/4.9.0/modules/dnn/layers/cpu_kernels/fast_gemm_kernels.neon.cpp in package lib32-opencv-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

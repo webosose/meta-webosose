@@ -18,8 +18,8 @@ index 9cebc03..a04a206 100644
      ]
  
 +dict = [
-+      '../dict.utf8',
-+      '../lm_sc.3gm.arpa'
++      'dict.utf8',
++      'lm_sc.3gm.arpa'
 +    ]
 +
  man1s = [

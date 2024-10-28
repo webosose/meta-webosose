@@ -18,7 +18,7 @@ SRC_URI = " \
 # Matches v${PV}
 SRCREV = "0ba0b2bf80f1d7aff1eff8de2b67eb04081b2af0"
 
-PR = "r1"
+PR = "r2"
 
 S = "${WORKDIR}/git"
 
@@ -146,12 +146,12 @@ do_install:append() {
 
         #install pkgconfig
         install -d ${D}${libdir}/pkgconfig
-        install -m 0644 ${WORKDIR}/armnn-tflite.pc.in ${D}${libdir}/pkgconfig/armnn-tflite.pc
+        install -m 0644 ${UNPACKDIR}/armnn-tflite.pc.in ${D}${libdir}/pkgconfig/armnn-tflite.pc
         sed -i 's:@version@:${PV}:g
             s:@libdir@:${libdir}:g
             s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/armnn-tflite.pc
 
-        install -m 0644 ${WORKDIR}/armnn-delegate.pc.in ${D}${libdir}/pkgconfig/armnn-delegate.pc
+        install -m 0644 ${UNPACKDIR}/armnn-delegate.pc.in ${D}${libdir}/pkgconfig/armnn-delegate.pc
         sed -i 's:@version@:${PV}:g
             s:@libdir@:${libdir}:g
             s:@includedir@:${includedir}:g' ${D}${libdir}/pkgconfig/armnn-delegate.pc
@@ -172,3 +172,11 @@ INSANE_SKIP:${PN} = "dev-so"
 INSANE_SKIP:${PN}-dev += "dev-elf"
 FILES:${PN} += "${libdir}/*"
 FILES:${PN}-dev += "${includedir}/* ${libdir}/cmake/armnn/* ${libdir}/pkgconfig/*.pc ${bindir}/*"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/895261
+# ERROR: QA Issue: File /usr/lib/cmake/armnn/ArmnnDelegateTargets.cmake in package armnn-dev contains reference to TMPDIR
+# File /usr/lib/cmake/armnn/ArmnnTargets.cmake in package armnn-dev contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

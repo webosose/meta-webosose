@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "luna-service2 db8 glib-2.0 pmloglib"
 
-WEBOS_VERSION = "3.0.0-14_eca86df876b95cf52872290fa522739e1e57e0b4"
+WEBOS_VERSION = "3.0.0-15_d3788f2dacab7f7576cd2c2d44c2b6e13eb8f712"
 PR = "r11"
 
 inherit webos_component

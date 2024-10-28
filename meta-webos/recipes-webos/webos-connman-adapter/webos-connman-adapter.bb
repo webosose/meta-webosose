@@ -13,8 +13,8 @@ SECTION = "webos/services"
 DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support nyx-lib"
 RDEPENDS:${PN} = "connman connman-client"
 
-WEBOS_VERSION = "1.1.0-43_282a9ab89a024c24c1a602ccd2f11e22995b3b96"
-PR = "r15"
+WEBOS_VERSION = "1.1.0-46_081d0a9f61c5f2735479818c657eee4e213c1c8f"
+PR = "r16"
 
 inherit webos_component
 inherit webos_public_repo
@@ -42,7 +42,7 @@ WEBOS_SYSTEMD_SCRIPT = "webos-connman-adapter.sh"
 
 do_install:append:raspberrypi4 () {
     install -d  ${D}${sysconfdir}/modprobe.d
-    install -m 644 ${WORKDIR}/blacklistcdc_ether.conf  ${D}${sysconfdir}/modprobe.d/blacklistcdc_ether.conf
+    install -m 644 ${UNPACKDIR}/blacklistcdc_ether.conf  ${D}${sysconfdir}/modprobe.d/blacklistcdc_ether.conf
 }
 
 FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"
@@ -79,3 +79,11 @@ FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"
 # webos-connman-adapter/1.1.0-43/git/src/wifi_service.c:4162:82: error: passing argument 5 of 'g_bus_watch_name' from incompatible pointer type [-Wincompatible-pointer-types]
 # webos-connman-adapter/1.1.0-43/git/src/wifi_tethering_service.c:752:42: error: passing argument 2 of 'jboolean_get' from incompatible pointer type [-Wincompatible-pointer-types]
 CFLAGS += "-Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894443
+# ERROR: QA Issue: File /usr/src/debug/webos-connman-adapter/1.1.0-43/Configured/src/pacrunner-interface.c in package webos-connman-adapter-src contains reference to TMPDIR
+# File /usr/src/debug/webos-connman-adapter/1.1.0-43/Configured/src/connman-interface.c in package webos-connman-adapter-src contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

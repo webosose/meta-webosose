@@ -35,11 +35,19 @@ install_units() {
     install -d ${WORKDIR}/staging-units
 
     for f in ${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}; do
-        cp ${WORKDIR}/$f ${WORKDIR}/staging-units/
+        cp ${UNPACKDIR}/$f ${WORKDIR}/staging-units/
+
+        if [ "${f#*.}" = "service" -o "${f#*.}" = "service.in" ]; then
+            BLOCKED_SERVICE="ConditionPathExists=!\/var\/webos-profile\/device\/blockedServices\/"$f
+
+            if ! grep -q "${BLOCKED_SERVICE}" ${WORKDIR}/staging-units/$f; then
+                sed -i -e "s/Description=.*$/&\n${BLOCKED_SERVICE}/" ${WORKDIR}/staging-units/$f
+            fi
+        fi
     done
 
     if [ $(ls ${WORKDIR}/staging-units | wc -l) -gt 0 ]; then
-        ls ${WORKDIR}/replace.cmake >/dev/null 2>/dev/null && cp ${WORKDIR}/replace.cmake ${WORKDIR}/staging-units/CMakeLists.txt
+        ls ${UNPACKDIR}/replace.cmake >/dev/null 2>/dev/null && cp ${UNPACKDIR}/replace.cmake ${WORKDIR}/staging-units/CMakeLists.txt
         (cd ${WORKDIR} && \
          cmake staging-units \
                  -DIN_FILES="${WEBOS_SYSTEMD_SERVICE} ${WEBOS_SYSTEMD_SCRIPT}" \

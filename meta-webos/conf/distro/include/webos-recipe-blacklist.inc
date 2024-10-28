@@ -27,15 +27,17 @@ SKIP_RECIPE[qtwebview] ?= "depends on blacklisted qtwebengine"
 SKIP_RECIPE[qtinterfaceframework] ?= "depends on blacklisted qtmultimedia"
 SKIP_RECIPE[qtspeech] ?= "depends on blacklisted qtmultimedia"
 SKIP_RECIPE[python3-pyside6] ?= "depends on blacklisted qtmultimedia, qtcharts, qtdatavis3d, qtconnectivity, qtspeech, qtgraphs"
-
-# oe-core
-SKIP_RECIPE[efivar] ?= "${@bb.utils.contains('DISTRO_FEATURES', 'ld-is-gold', 'Fails to build with gold, makeguids Your linker is not supported guids.txt guid-symbols.c include/efivar/efivar-guids.h guids.lds http://gecko.lge.com:8000/Errors/Details/565720', '', d)}"
-SKIP_RECIPE[efibootmgr] ?= "depends on blacklisted efivar"
+SKIP_RECIPE[qttranslations] ?= "depends on linguist being enabled in target qttools, which got disabled in http://gpro.lge.com/c/webos-pro/meta-lg-webos/+/406780/14/meta-webos/dynamic-layers/qt6-layer/recipes-qt/qt6/qttools_git.bbappend"
+SKIP_RECIPE[packagegroup-qt6-essentials] ?= "rdepends on blacklisted qttranslations to rprovide qttranslations-qtbase, qttranslations-qtdeclarative"
+SKIP_RECIPE[qtdoc] ?= "depends on blacklisted qtpdf, qtmultimedia, qtgraphs, qtcharts"
 
 # meta-oe
 SKIP_RECIPE[exprtk] ?= "fails to fetch: WARNING: Failed to fetch URL git://github.com/ArashPartow/exprtk.git;branch=master;protocol=https, attempting MIRRORS if available DEBUG: Fetcher failure: Unable to find revision 281c2ccc65b8f91c012ea3725ebcef406378a225 in branch master even from upstream: http://gecko.lge.com:8000/Errors/Details/565715"
 SKIP_RECIPE[fwts] ?= "fails to build with: fwts/22.01.00-r0/build/src/lib/src/.libs/libfwts.so: error: undefined reference to 'gzgets' http://gecko.lge.com:8000/Errors/Details/565736"
 SKIP_RECIPE[graphene] ?= "fails to build with: Could not find GIR file 'GObject-2.0.gir'; check XDG_DATA_DIRS or use --includedir, later moved from meta-oe to oe-core and possibly fixed in mickledore, http://gecko.lge.com:8000/Errors/Details/565726"
+SKIP_RECIPE[lv-drivers] ?= "not compatible with lvgl-9 from meta-webos-backports-5.0/recipes-graphics/lvgl, the recipe was removed from meta-oe in scarthgap http://gecko.lge.com:8000/Errors/Details/867539"
+SKIP_RECIPE[lv-lib-png] ?= "not compatible with lvgl-9 from meta-webos-backports-5.0/recipes-graphics/lvgl, the recipe was removed from meta-oe in scarthgap http://gecko.lge.com:8000/Errors/Details/867540"
+SKIP_RECIPE[dialog-lvgl] ?= "not compatible with lvgl-9 from meta-webos-backports-5.0/recipes-graphics/lvgl, the recipe was added in langdale with https://git.openembedded.org/meta-openembedded/commit/?id=8d75eff6af0fd6ccf8a45b5c98c4a0194e292a2f and removed from meta-oe in scarthgap https://git.openembedded.org/meta-openembedded/commit/?id=e4865f3ee0df8ad9f789a9612f8cb7147992222b"
 SKIP_RECIPE[mozjs-78] ?= "fails to build probably due to our backported rust upgrade with: error: Error loading target specification: Could not find specification for target 'aarch64-webos-linux'. Run `rustc --print target-list` for a list of built-in targets http://gecko.lge.com:8000/Errors/Details/565735"
 SKIP_RECIPE[mozjs-91] ?= "fails to build probably due to our backported rust upgrade with: error: Error loading target specification: Could not find specification for target 'aarch64-webos-linux'. Run `rustc --print target-list` for a list of built-in targets http://gecko.lge.com:8000/Errors/Details/565737"
 SKIP_RECIPE[netplan] ?= "fails to build with gold: aarch64-webos-linux/11.3.0/ld: error: abicompat.lds:10:8: syntax error, unexpected STRING http://gecko.lge.com:8000/Errors/Details/565730"

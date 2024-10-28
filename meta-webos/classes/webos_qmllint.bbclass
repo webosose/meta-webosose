@@ -5,7 +5,7 @@
 
 DEPENDS:append = " qtdeclarative-native libxml2-native"
 
-inherit qt6-paths
+inherit ${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'qt6-paths', '', d)}
 
 WEBOS_QMLLINT_EXTRA_VALIDATION ?= "0"
 WEBOS_QMLLINT_ERROR_ON_WARNING ?= "0"

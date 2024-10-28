@@ -1,0 +1,94 @@
+From a6e06f9cc5b4b55e0cb34088e64bd50411935f43 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 31 May 2024 09:03:47 +0000
+Subject: [PATCH] CMakeLists.txt: replace -std=c++11 with -std=c++17 for
+ icu-75-1
+
+:Release Notes:
+icu-75 now requires C++17 (up from C++11) and C11 (up from C99).
+https://icu.unicode.org/download/75
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/854744
+
+FAILED: src/activitymanager/CMakeFiles/activitymanager.dir/db/DB8Manager.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot -DBOOST_REGEX_DYN_LINK -DBOOST_REGEX_NO_LIB -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot/usr/include/mojodb -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/git/src/activitymanager -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/git/src/common -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/build/Configured/src/common -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/git=/usr/src/debug/activitymanager/3.0.0-43  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/git=/usr/src/debug/activitymanager/3.0.0-43  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/build=/usr/src/debug/activitymanager/3.0.0-43  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/build=/usr/src/debug/activitymanager/3.0.0-43  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot-native=  -fvisibility-inlines-hidden -DUSE_PMLOG_DECLARATION -DINIT_MANAGER_systemd -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/recipe-sysroot/usr/include -Wall -Wno-error=strict-aliasing -Wconversion -DMOJ_LINUX -DBOOST_SP_DISABLE_THREADS -DUSE_PMLOG -std=c++11 -Wl,--no-undefined -DNDEBUG -MD -MT src/activitymanager/CMakeFiles/activitymanager.dir/db/DB8Manager.cpp.o -MF src/activitymanager/CMakeFiles/activitymanager.dir/db/DB8Manager.cpp.o.d -o src/activitymanager/CMakeFiles/activitymanager.dir/db/DB8Manager.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/activitymanager/3.0.0-43/git/src/activitymanager/db/DB8Manager.cpp
+In file included from ../recipe-sysroot/usr/include/boost/bind.hpp:30,
+                 from ../git/src/activitymanager/Main.h:32,
+                 from ../git/src/activitymanager/db/ICompletion.h:22,
+                 from ../git/src/activitymanager/db/DB8Command.h:21,
+                 from ../git/src/activitymanager/db/DB8CommandDB.h:20,
+                 from ../git/src/activitymanager/db/DB8Manager.cpp:19:
+../recipe-sysroot/usr/include/boost/bind.hpp:36:1: note: '#pragma message: The practice of declaring the Bind placeholders (_1, _2, ...) in the global namespace is deprecated. Please use <boost/bind/bind.hpp> + using namespace boost::placeholders, or define BOOST_BIND_GLOBAL_PLACEHOLDERS to retain the current behavior.'
+   36 | BOOST_PRAGMA_MESSAGE(
+      | ^~~~~~~~~~~~~~~~~~~~
+In file included from ../recipe-sysroot/usr/include/unicode/uenum.h:25,
+                 from ../recipe-sysroot/usr/include/unicode/uloc.h:27,
+                 from ../recipe-sysroot/usr/include/unicode/ubrk.h:14,
+                 from ../recipe-sysroot/usr/include/mojodb/db/MojDbTextTokenizer.h:24,
+                 from ../recipe-sysroot/usr/include/mojodb/db/MojDbExtractor.h:24,
+                 from ../recipe-sysroot/usr/include/mojodb/db/MojDbQuery.h:27,
+                 from ../git/src/activitymanager/db/DB8Manager.cpp:21:
+../recipe-sysroot/usr/include/unicode/localpointer.h:561:26: error: parameter declared 'auto'
+  561 | template <typename Type, auto closeFunction>
+      |                          ^~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-17959] Create GPVB with Yocto 5.1 Styhead
+
+Change-Id: If1ad2600958c08f66d3a792db00b17c320293880
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/activitymanager/+/409720 CMakeLists.txt: replace -std=c++11 with -std=c++17 for icu-75-1]
+
+ src/activitymanager/CMakeLists.txt | 2 +-
+ src/am-monitor/CMakeLists.txt      | 2 +-
+ src/am-send/CMakeLists.txt         | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/activitymanager/CMakeLists.txt b/src/activitymanager/CMakeLists.txt
+index f38e2d2..8949277 100644
+--- a/src/activitymanager/CMakeLists.txt
++++ b/src/activitymanager/CMakeLists.txt
+@@ -52,7 +52,7 @@ webos_add_compiler_flags(ALL ${PMLOG_CFLAGS_OTHER})
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+ include_directories(${PROJECT_SOURCE_DIR}/src/common)
+ include_directories(${PROJECT_BINARY_DIR}/Configured/src/common)
+-webos_add_compiler_flags(ALL -Wall -Wno-error=strict-aliasing -Wconversion -DMOJ_LINUX -DBOOST_SP_DISABLE_THREADS -DUSE_PMLOG -std=c++11)
++webos_add_compiler_flags(ALL -Wall -Wno-error=strict-aliasing -Wconversion -DMOJ_LINUX -DBOOST_SP_DISABLE_THREADS -DUSE_PMLOG -std=c++17)
+ webos_add_compiler_flags(DEBUG -DMOJ_DEBUG)
+ 
+ # MojoDb generates warnings in core/MojObject.h, so no -Werror
+diff --git a/src/am-monitor/CMakeLists.txt b/src/am-monitor/CMakeLists.txt
+index a57ff6d..8eb4ce3 100644
+--- a/src/am-monitor/CMakeLists.txt
++++ b/src/am-monitor/CMakeLists.txt
+@@ -36,7 +36,7 @@ webos_add_compiler_flags(ALL ${PBNJSON_CPP_CFLAGS_OTHER})
+ set(BIN_NAME am-monitor)
+ 
+ # Compiling
+-webos_add_compiler_flags(ALL --std=c++11)
++webos_add_compiler_flags(ALL --std=c++17)
+ file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+ file(GLOB_RECURSE SRC_COMMON ${PROJECT_SOURCE_DIR}/src/common/*.cpp)
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+diff --git a/src/am-send/CMakeLists.txt b/src/am-send/CMakeLists.txt
+index 6b19bd6..b899a6e 100644
+--- a/src/am-send/CMakeLists.txt
++++ b/src/am-send/CMakeLists.txt
+@@ -28,7 +28,7 @@ webos_add_compiler_flags(ALL ${PBNJSON_CPP_CFLAGS_OTHER})
+ set(BIN_NAME am-send)
+ 
+ # Compiling
+-webos_add_compiler_flags(ALL --std=c++11)
++webos_add_compiler_flags(ALL --std=c++17)
+ file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+ file(GLOB_RECURSE SRC_COMMON ${PROJECT_SOURCE_DIR}/src/common/*.cpp)
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR})

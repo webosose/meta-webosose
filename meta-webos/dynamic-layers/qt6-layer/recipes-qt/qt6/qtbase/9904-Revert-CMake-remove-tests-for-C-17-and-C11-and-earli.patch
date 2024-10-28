@@ -1,0 +1,184 @@
+From 2e170628453a1058d099f450ab30e5fd73628ab5 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Fri, 14 Apr 2023 06:16:46 +0900
+Subject: [PATCH] Revert "CMake: remove tests for C++17 and C11 and earlier"
+
+This reverts commit 205f8fbff0708ee0425fcf1f300edca4f14da6cc.
+---
+Upstream-Status: Inappropriate [webOS specific]
+
+ configure.cmake                       | 87 ++++++++++++++++++++++++++-
+ mkspecs/features/mac/default_post.prf | 23 +++++++
+ mkspecs/features/qt.prf               |  3 -
+ 3 files changed, 109 insertions(+), 4 deletions(-)
+
+diff --git a/configure.cmake b/configure.cmake
+index e61a49ac82..495c925f43 100644
+--- a/configure.cmake
++++ b/configure.cmake
+@@ -249,6 +249,51 @@ qt_config_compile_test(glibc_234
+ int main() {}"
+ )
+ 
++# cxx14
++qt_config_compile_test(cxx14
++    LABEL "C++14 support"
++    CODE
++"#if __cplusplus > 201103L
++// Compiler claims to support C++14, trust it
++#else
++#  error __cplusplus must be > 201103L (the value of C++11)
++#endif
++
++int main(void)
++{
++    /* BEGIN TEST: */
++    /* END TEST: */
++    return 0;
++}
++"
++    CXX_STANDARD 14
++)
++
++# cxx17
++qt_config_compile_test(cxx17
++    LABEL "C++17 support"
++    CODE
++"#if __cplusplus > 201402L
++// Compiler claims to support C++17, trust it
++#else
++#  error __cplusplus must be > 201402L (the value for C++14)
++#endif
++#include <map>  // https://bugs.llvm.org//show_bug.cgi?id=33117
++#include <variant>
++
++int main(void)
++{
++    /* BEGIN TEST: */
++std::variant<int> v(42);
++int i = std::get<int>(v);
++std::visit([](const auto &) { return 1; }, v);
++    /* END TEST: */
++    return 0;
++}
++"
++    CXX_STANDARD 17
++)
++
+ # cxx20
+ qt_config_compile_test(cxx20
+     LABEL "C++20 support"
+@@ -733,10 +778,29 @@ qt_feature_config("plugin-manifests" QMAKE_PUBLIC_CONFIG
+     NEGATE
+     NAME "no_plugin_manifest"
+ )
++qt_feature("c++11" PUBLIC
++    LABEL "C++11"
++)
++qt_feature_config("c++11" QMAKE_PUBLIC_QT_CONFIG)
++qt_feature("c++14" PUBLIC
++    LABEL "C++14"
++    CONDITION QT_FEATURE_cxx11 AND TEST_cxx14
++)
++qt_feature_config("c++14" QMAKE_PUBLIC_QT_CONFIG)
++qt_feature("c++17" PUBLIC
++    LABEL "C++17"
++    CONDITION QT_FEATURE_cxx14 AND TEST_cxx17
++)
++qt_feature_config("c++17" QMAKE_PUBLIC_QT_CONFIG)
++qt_feature("c++1z" PUBLIC
++    LABEL "C++17"
++    CONDITION QT_FEATURE_cxx17
++)
++qt_feature_config("c++1z" QMAKE_PUBLIC_QT_CONFIG)
+ qt_feature("c++20" PUBLIC
+     LABEL "C++20"
+     AUTODETECT OFF
+-    CONDITION TEST_cxx20 AND NOT VXWORKS
++    CONDITION QT_FEATURE_cxx17 AND TEST_cxx20 AND NOT VXWORKS
+ )
+ qt_feature_config("c++20" QMAKE_PUBLIC_QT_CONFIG)
+ qt_feature("c++2a" PUBLIC
+@@ -750,6 +814,17 @@ qt_feature("c++2b" PUBLIC
+     CONDITION QT_FEATURE_cxx20 AND (CMAKE_VERSION VERSION_GREATER_EQUAL "3.20") AND TEST_cxx2b
+ )
+ qt_feature_config("c++2b" QMAKE_PUBLIC_QT_CONFIG)
++qt_feature("c89"
++    LABEL "C89"
++)
++qt_feature("c99" PUBLIC
++    LABEL "C99"
++    CONDITION c_std_99 IN_LIST CMAKE_C_COMPILE_FEATURES
++)
++qt_feature("c11" PUBLIC
++    LABEL "C11"
++    CONDITION QT_FEATURE_c99 AND c_std_11 IN_LIST CMAKE_C_COMPILE_FEATURES
++)
+ qt_feature("precompile_header"
+     LABEL "Using precompiled headers"
+     CONDITION BUILD_WITH_PCH AND TEST_precompile_header
+@@ -1279,6 +1354,16 @@ qt_configure_add_summary_entry(
+     ARGS "optimize_full"
+ )
+ qt_configure_add_summary_entry(ARGS "shared")
++qt_configure_add_summary_entry(
++    TYPE "firstAvailableFeature"
++    ARGS "c11 c99 c89"
++    MESSAGE "Using C standard"
++)
++qt_configure_add_summary_entry(
++    TYPE "firstAvailableFeature"
++    ARGS "c++2b c++20 c++17 c++14 c++11"
++    MESSAGE "Using C++ standard"
++)
+ qt_configure_add_summary_entry(
+     ARGS "ccache"
+     CONDITION UNIX
+diff --git a/mkspecs/features/mac/default_post.prf b/mkspecs/features/mac/default_post.prf
+index 22c84d6473..85ccf9ff8f 100644
+--- a/mkspecs/features/mac/default_post.prf
++++ b/mkspecs/features/mac/default_post.prf
+@@ -51,6 +51,29 @@ contains(TEMPLATE, .*app) {
+ 
+ !no_objective_c:CONFIG += objective_c
+ 
++qt {
++    qtConfig(static) {
++        # C++11 support means using libc++ instead of libstd++. As the
++        # two libraries are incompatible we need to ensure the end user
++        # project is built using the same C++11 support/no support as Qt.
++        qtConfig(c++11) {
++            CONFIG += c++11
++        } else: c++11 {
++            warning("Qt was not built with C++11 enabled, disabling feature")
++            CONFIG -= c++11
++        }
++
++        !c++11 {
++            # Explicitly use libstdc++ if C++11 support is not enabled,
++            # as otherwise the compiler will choose the standard library
++            # based on the deployment target, which for iOS 7 and OS X 10.9
++            # is libc++, and we can't mix and match the two.
++            QMAKE_CXXFLAGS += -stdlib=libstdc++
++            QMAKE_LFLAGS   += -stdlib=libstdc++
++        }
++    }
++}
++
+ # Add the same default rpaths as Xcode does for new projects.
+ # This is especially important for iOS/tvOS/watchOS where no other option is possible.
+ !no_default_rpath {
+diff --git a/mkspecs/features/qt.prf b/mkspecs/features/qt.prf
+index acf7bd651f..6092fd5965 100644
+--- a/mkspecs/features/qt.prf
++++ b/mkspecs/features/qt.prf
+@@ -2,9 +2,6 @@
+ # due to required Qt modules being missing.
+ !isEmpty(QMAKE_FAILED_REQUIREMENTS): return()
+ 
+-# hardcoded defaults
+-QT_CONFIG *= c99 c11 c++11 c++14 c++1z c++17
+-
+ qtConfig(thread): CONFIG *= thread
+ 
+ #handle defines

@@ -23,12 +23,13 @@ ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 DEPENDS = "virtual/gettext wayland wayland-native luna-service2 pixman freetype fontconfig openssl pango cairo icu webos-wayland-extensions libxkbcommon libexif dbus pciutils udev libcap alsa-lib virtual/egl elfutils-native libdrm atk gperf-native gconf libwebosi18n bison-native xorgproto nss nspr curl nspr-native nss-native pmloglib glib-2.0-native python3-six-native python3-beautifulsoup4-native python3-soupsieve-native python3-lxml-native python3-html5lib-native python3-webencodings-native"
 
-INC_PR = "r74"
+INC_PR = "r77"
 # Enable this in webos-local.conf or in recipe to build
 DEPLOY_CHROMEDRIVER ?= "false"
 DEPLOY_WAM_DEMO ?= "false"
 DEPLOY_BROWSER[vardeps] += "VIRTUAL-RUNTIME_com.webos.app.browser"
 DEPLOY_BROWSER ?= "${@oe.utils.conditional('VIRTUAL-RUNTIME_com.webos.app.browser', 'com.webos.app.browser', 'true', 'false', d)}"
+DEPLOY_BROWSERSHELL ?= "true"
 
 WEBRUNTIME_BUILD_TARGET = "webos:weboswebruntime"
 BROWSER_APP_BUILD_TARGET = "${@oe.utils.conditional('DEPLOY_BROWSER', 'true', 'chrome', '', d)}"
@@ -38,6 +39,9 @@ WAM_DEMO_CONFARGS = "${@oe.utils.conditional('DEPLOY_WAM_DEMO', 'true', 'is_wam_
 WAM_DEMO_BUILD_TARGET = "${@oe.utils.conditional('DEPLOY_WAM_DEMO', 'true', 'wam_demo', '', d)}"
 
 TARGET = "${WEBRUNTIME_BUILD_TARGET} ${BROWSER_APP_BUILD_TARGET} ${APPSHELL_BUILD_TARGET} ${CHROMEDRIVER_BUILD_TARGET} ${WAM_DEMO_BUILD_TARGET}"
+
+BROWSERSHELL_TARGET = "${@oe.utils.conditional('DEPLOY_BROWSERSHELL', 'true', 'browser_shell', '', d)}"
+TARGET:append = " ${BROWSERSHELL_TARGET}"
 
 # Skip do_install:append of webos_system_bus. It is not compatible with this component.
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
@@ -86,6 +90,10 @@ GN_ARGS:append = " \
     ${PACKAGECONFIG_CONFARGS}\
 "
 
+BROWSERSHELL_ENABLED = "${@oe.utils.conditional('DEPLOY_BROWSERSHELL', 'true', \
+                        'enable_browser_shell=true is_browser_shell_cbe=true', '', d)}"
+GN_ARGS:append = " ${BROWSERSHELL_ENABLED}"
+
 # More options to speed up the build
 GN_ARGS += "\
     enable_nacl=false\
@@ -121,7 +129,11 @@ do_compile:append() {
         ${NINJA} webos/install/default_browser
     fi
 
-    ${NINJA} webos/install/app_shell
+    if ${DEPLOY_BROWSERSHELL}; then
+        ${NINJA} webos/install/browser_shell
+    else
+        ${NINJA} webos/install/app_shell
+    fi
 
     if ${DEPLOY_CHROMEDRIVER} ; then
         ${NINJA} webos/install/chromedriver
@@ -197,7 +209,11 @@ do_install() {
     # libcbe.so, libminigbm.so, liblttng_provider.so
     install -v -m 0644 ${OUT_IMAGE_DIR}/${libdir}/*.so ${D}${libdir}
 
-    install_ls2_roles_acg ${APP_SHELL_RUNTIME}
+    if ${DEPLOY_BROWSERSHELL}; then
+        install_ls2_roles_acg ${BROWSERSHELL_APPLICATION}
+    else
+        install_ls2_roles_acg ${APP_SHELL_RUNTIME}
+    fi
 
     install -d ${D}${CBE_DATA_PATH}
     install -v -m 0644 ${OUT_IMAGE_DIR}/${CBE_DATA_PATH}/icudtl.dat ${D}${CBE_DATA_PATH}
@@ -216,12 +232,20 @@ do_install() {
     install -d ${D}${webos_pkgconfigdir}
     install -v -m 0644 ${OUT_IMAGE_DIR}${webos_pkgconfigdir}/libcbe.pc ${D}/${webos_pkgconfigdir}
 
-    install -d ${D}${APP_SHELL_RUNTIME_DIR}
-    install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/app_shell ${D}${APP_SHELL_RUNTIME_DIR}
-    install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/run_app_shell ${D}${APP_SHELL_RUNTIME_DIR}
-    modify_run_app_shell
+    if ${DEPLOY_BROWSERSHELL}; then
+        install -d ${D}${BROWSERSHELL_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${BROWSERSHELL_APPLICATION_DIR}/browser_shell ${D}${BROWSERSHELL_APPLICATION_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${BROWSERSHELL_APPLICATION_DIR}/run_browser_shell ${D}${BROWSERSHELL_APPLICATION_DIR}
 
-    ln -f ${D}${CBE_DATA_PATH}/snapshot_blob.bin ${D}${APP_SHELL_RUNTIME_DIR}/snapshot_blob.bin
+        ln -f ${D}${CBE_DATA_PATH}/snapshot_blob.bin ${D}${BROWSERSHELL_APPLICATION_DIR}/snapshot_blob.bin
+    else
+        install -d ${D}${APP_SHELL_RUNTIME_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/app_shell ${D}${APP_SHELL_RUNTIME_DIR}
+        install -v -m 0755 ${OUT_IMAGE_DIR}/${APP_SHELL_RUNTIME_DIR}/run_app_shell ${D}${APP_SHELL_RUNTIME_DIR}
+        modify_run_app_shell
+
+        ln -f ${D}${CBE_DATA_PATH}/snapshot_blob.bin ${D}${APP_SHELL_RUNTIME_DIR}/snapshot_blob.bin
+    fi
 
     if ${DEPLOY_BROWSER} ; then
         install_ls2_roles_acg ${BROWSER_APPLICATION}
@@ -258,6 +282,7 @@ SYSROOT_DIRS:append = " ${base_bindir}"
 PACKAGES:prepend = " \
     ${BROWSER_APPLICATION} \
     ${APP_SHELL_RUNTIME} \
+    ${BROWSERSHELL_APPLICATION}\
     ${CHROMEDRIVER_RUNTIME} \
     ${WAM_DEMO_APPLICATION} \
 "
@@ -270,6 +295,10 @@ FILES:${APP_SHELL_RUNTIME} += " \
     ${APP_SHELL_RUNTIME_DIR} \
 "
 
+FILES:${BROWSERSHELL_APPLICATION} += " \
+    ${BROWSERSHELL_APPLICATION_DIR} \
+"
+
 FILES:${CHROMEDRIVER_RUNTIME} += " \
     ${CHROMEDRIVER_RUNTIME_DIR} \
 "
@@ -280,9 +309,12 @@ FILES:${WAM_DEMO_APPLICATION} += " \
 
 RDEPENDS:${BROWSER_APPLICATION} += "${PN}"
 RDEPENDS:${APP_SHELL_RUNTIME} += "${PN} ${VIRTUAL-RUNTIME_gpu-libs}"
+RDEPENDS:${BROWSERSHELL_APPLICATION} += "${PN}"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
-RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs} ${APP_SHELL_RUNTIME}"
+RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
+RDEPENDS:${PN} += "${@oe.utils.conditional('DEPLOY_BROWSERSHELL', 'true', \
+                   ' ${BROWSERSHELL_APPLICATION}', ' ${APP_SHELL_RUNTIME}', d)}"
 RDEPENDS:${WAM_DEMO_APPLICATION} += "${VIRTUAL-RUNTIME_gpu-libs}"
 
 # it aborts if libudev.so.1 is missing
@@ -297,6 +329,7 @@ INSANE_SKIP:${PN} = "textrel ldflags"
 INSANE_SKIP:${PN}-dbg += "libdir"
 INSANE_SKIP:${MLPREFIX}${BROWSER_APPLICATION} += "libdir ldflags textrel"
 INSANE_SKIP:${MLPREFIX}${APP_SHELL_RUNTIME} += "libdir ldflags textrel"
+INSANE_SKIP:${MLPREFIX}${BROWSERSHELL_APPLICATION} += "libdir ldflags textrel"
 INSANE_SKIP:${MLPREFIX}${CHROMEDRIVER_RUNTIME} += "libdir ldflags textrel"
 INSANE_SKIP:${MLPREFIX}${WAM_DEMO_APPLICATION} += "libdir ldflags textrel"
 
@@ -315,4 +348,4 @@ PR:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
 PATCH_SMACK = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'file://0001-run_app_shell-add-SMACK-labeling-based-on-AppID_79.patch', '', d)}"
 SRC_URI:append = " ${PATCH_SMACK}"
 
-export CCACHE_MAXSIZE = "3800M"
+export CCACHE_MAXSIZE = "50G"

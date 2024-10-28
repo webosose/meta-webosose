@@ -1,0 +1,508 @@
+From ca2b491f588e1545e5f4dd8bea72f69607312f82 Mon Sep 17 00:00:00 2001
+From: "rajeshgopu.iv" <rajeshgopu.iv@lge.com>
+Date: Mon, 27 May 2024 15:21:38 +0530
+Subject: [PATCH] webos: fuse=webos2
+
+:Release Notes:
+App support for fuse passthrough
+
+:Detailed Notes:
+fuse=webos1..webos2
+Add 0002-fuse_passthrough_lib_fuse_5_17.patch
+
+:Testing Performed:
+Build Tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[WRQ-5879] Create kernel patch to support fuse passthrough
+
+---
+Upstream-Status: Pending
+
+ example/passthrough_hp.cc |  21 ++++-
+ include/fuse_common.h     |  17 ++++
+ include/fuse_kernel.h     | 159 +++++++++++++++++++++++++++++++++++---
+ include/fuse_lowlevel.h   |   2 +
+ lib/fuse_lowlevel.c       |  15 ++++
+ lib/fuse_versionscript    |   3 +-
+ 6 files changed, 205 insertions(+), 12 deletions(-)
+
+diff --git a/example/passthrough_hp.cc b/example/passthrough_hp.cc
+index 872fc73..0c455d2 100644
+--- a/example/passthrough_hp.cc
++++ b/example/passthrough_hp.cc
+@@ -154,6 +154,7 @@ struct Fs {
+     dev_t src_dev;
+     bool nosplice;
+     bool nocache;
++    bool passthrough;
+ };
+ static Fs fs{};
+ 
+@@ -201,6 +202,8 @@ static void sfs_init(void *userdata, fuse_conn_info *conn) {
+         conn->want |= FUSE_CAP_SPLICE_WRITE;
+     if (conn->capable & FUSE_CAP_SPLICE_READ && !fs.nosplice)
+         conn->want |= FUSE_CAP_SPLICE_READ;
++    if (conn->capable & FUSE_CAP_PASSTHROUGH && fs.passthrough)
++        conn->want |= FUSE_CAP_PASSTHROUGH;
+ }
+ 
+ 
+@@ -804,6 +807,13 @@ static void sfs_create(fuse_req_t req, fuse_ino_t parent, const char *name,
+     Inode& inode = get_inode(e.ino);
+     lock_guard<mutex> g {inode.m};
+     inode.nopen++;
++     if (fs.passthrough) {
++        int passthrough_fh = fuse_passthrough_enable(req, fd);
++        if (passthrough_fh <= 0)
++            cerr << "DEBUG: fuse_passthrough_enable returned: " << passthrough_fh << endl;
++        else
++            fi->passthrough_fh = passthrough_fh;
++    }
+     fuse_reply_create(req, &e, fi);
+ }
+ 
+@@ -857,6 +867,13 @@ static void sfs_open(fuse_req_t req, fuse_ino_t ino, fuse_file_info *fi) {
+     inode.nopen++;
+     fi->keep_cache = (fs.timeout != 0);
+     fi->fh = fd;
++    if (fs.passthrough) {
++        int passthrough_fh = fuse_passthrough_enable(req, fd);
++        if (passthrough_fh <= 0)
++            cerr << "DEBUG: fuse_passthrough_enable returned: " << passthrough_fh << endl;
++        else
++            fi->passthrough_fh = passthrough_fh;
++    }
+     fuse_reply_open(req, fi);
+ }
+ 
+@@ -1146,6 +1163,7 @@ static cxxopts::ParseResult parse_options(int argc, char **argv) {
+         ("help", "Print help")
+         ("nocache", "Disable all caching")
+         ("nosplice", "Do not use splice(2) to transfer data")
++        ("nopassthrough", "Do not use pass-through mode for read/write")
+         ("single", "Run single-threaded");
+ 
+     // FIXME: Find a better way to limit the try clause to just
+@@ -1173,6 +1191,7 @@ static cxxopts::ParseResult parse_options(int argc, char **argv) {
+     if (resolved_path == NULL)
+         warn("WARNING: realpath() failed with");
+     fs.source = std::string {resolved_path};
++    fs.passthrough = options.count("nopassthrough") == 0;
+     free(resolved_path);
+ 
+     return options;
+@@ -1224,7 +1243,7 @@ int main(int argc, char *argv[]) {
+     fuse_args args = FUSE_ARGS_INIT(0, nullptr);
+     if (fuse_opt_add_arg(&args, argv[0]) ||
+         fuse_opt_add_arg(&args, "-o") ||
+-        fuse_opt_add_arg(&args, "default_permissions,fsname=hpps") ||
++        fuse_opt_add_arg(&args, "rw,nosuid,nodev,noatime,allow_other,fsname=hpps") ||
+         (options.count("debug-fuse") && fuse_opt_add_arg(&args, "-odebug")))
+         errx(3, "ERROR: Out of memory");
+ 
+diff --git a/include/fuse_common.h b/include/fuse_common.h
+index ea4bdb0..3f836d7 100644
+--- a/include/fuse_common.h
++++ b/include/fuse_common.h
+@@ -92,6 +92,11 @@ struct fuse_file_info {
+ 	 * same file handle. */
+ 	uint64_t fh;
+ 
++	/** Passthrough file handle id.  May be filled in by filesystem in
++	 * create and open.  It is used to create a passthrough connection
++	 * between FUSE file and lower file system file. */
++	uint32_t passthrough_fh;
++
+ 	/** Lock owner id.  Available in locking operations and flush */
+ 	uint64_t lock_owner;
+ 
+@@ -394,6 +399,18 @@ struct fuse_loop_config {
+  */
+ #define FUSE_CAP_EXPLICIT_INVAL_DATA    (1 << 25)
+ 
++/**
++ * Indicates support for passthrough mode access for read/write operations.
++ *
++ * If this flag is set in the `capable` field of the `fuse_conn_info`
++ * structure, then the FUSE kernel module supports redirecting read/write
++ * operations to the lower file system instead of letting them to be handled
++ * by the FUSE daemon.
++ *
++ * This feature is disabled by default.
++ */
++#define FUSE_CAP_PASSTHROUGH            (1 << 31)
++
+ /**
+  * Ioctl flags
+  *
+diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
+index 018a00a..d82f324 100644
+--- a/include/fuse_kernel.h
++++ b/include/fuse_kernel.h
+@@ -38,6 +38,43 @@
+  *
+  * Protocol changelog:
+  *
++ * 7.1:
++ *  - add the following messages:
++ *      FUSE_SETATTR, FUSE_SYMLINK, FUSE_MKNOD, FUSE_MKDIR, FUSE_UNLINK,
++ *      FUSE_RMDIR, FUSE_RENAME, FUSE_LINK, FUSE_OPEN, FUSE_READ, FUSE_WRITE,
++ *      FUSE_RELEASE, FUSE_FSYNC, FUSE_FLUSH, FUSE_SETXATTR, FUSE_GETXATTR,
++ *      FUSE_LISTXATTR, FUSE_REMOVEXATTR, FUSE_OPENDIR, FUSE_READDIR,
++ *      FUSE_RELEASEDIR
++ *  - add padding to messages to accommodate 32-bit servers on 64-bit kernels
++ *
++ * 7.2:
++ *  - add FOPEN_DIRECT_IO and FOPEN_KEEP_CACHE flags
++ *  - add FUSE_FSYNCDIR message
++ *
++ * 7.3:
++ *  - add FUSE_ACCESS message
++ *  - add FUSE_CREATE message
++ *  - add filehandle to fuse_setattr_in
++ *
++ * 7.4:
++ *  - add frsize to fuse_kstatfs
++ *  - clean up request size limit checking
++ *
++ * 7.5:
++ *  - add flags and max_write to fuse_init_out
++ *
++ * 7.6:
++ *  - add max_readahead to fuse_init_in and fuse_init_out
++ *
++ * 7.7:
++ *  - add FUSE_INTERRUPT message
++ *  - add POSIX file lock support
++ *
++ * 7.8:
++ *  - add lock_owner and flags fields to fuse_release_in
++ *  - add FUSE_BMAP message
++ *  - add FUSE_DESTROY message
++ *
+  * 7.9:
+  *  - new fuse_getattr_in input argument of GETATTR
+  *  - add lk_flags in fuse_lk_in
+@@ -133,6 +170,20 @@
+  *
+  *  7.31
+  *  - add FUSE_WRITE_KILL_PRIV flag
++ *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
++ *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
++ *
++ *  7.32
++ *  - add flags to fuse_attr, add FUSE_ATTR_SUBMOUNT, add FUSE_SUBMOUNTS
++ *
++ *  7.33
++ *  - add FUSE_HANDLE_KILLPRIV_V2, FUSE_WRITE_KILL_SUIDGID, FATTR_KILL_SUIDGID
++ *  - add FUSE_OPEN_KILL_SUIDGID
++ *  - extend fuse_setxattr_in, add FUSE_SETXATTR_EXT
++ *  - add FUSE_SETXATTR_ACL_KILL_SGID
++ *
++ *  7.34
++ *  - add FUSE_SYNCFS
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -168,7 +219,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 31
++#define FUSE_KERNEL_MINOR_VERSION 34
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -192,7 +243,7 @@ struct fuse_attr {
+ 	uint32_t	gid;
+ 	uint32_t	rdev;
+ 	uint32_t	blksize;
+-	uint32_t	padding;
++	uint32_t	flags;
+ };
+ 
+ struct fuse_kstatfs {
+@@ -229,6 +280,7 @@ struct fuse_file_lock {
+ #define FATTR_MTIME_NOW	(1 << 8)
+ #define FATTR_LOCKOWNER	(1 << 9)
+ #define FATTR_CTIME	(1 << 10)
++#define FATTR_KILL_SUIDGID	(1 << 11)
+ 
+ /**
+  * Flags returned by the OPEN request
+@@ -274,6 +326,16 @@ struct fuse_file_lock {
+  * FUSE_CACHE_SYMLINKS: cache READLINK responses
+  * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
+  * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
++ * FUSE_MAP_ALIGNMENT: init_out.map_alignment contains log2(byte alignment) for
++ *		       foffset and moffset fields in struct
++ *		       fuse_setupmapping_out and fuse_removemapping_one.
++ * FUSE_SUBMOUNTS: kernel supports auto-mounting directory submounts
++ * FUSE_HANDLE_KILLPRIV_V2: fs kills suid/sgid/cap on write/chown/trunc.
++ *			Upon write/truncate suid/sgid is only killed if caller
++ *			does not have CAP_FSETID. Additionally upon
++ *			write/truncate sgid is killed only if file has group
++ *			execute permission. (Same as Linux VFS behavior).
++ * FUSE_SETXATTR_EXT:	Server supports extended struct fuse_setxattr_in
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -301,6 +363,11 @@ struct fuse_file_lock {
+ #define FUSE_CACHE_SYMLINKS	(1 << 23)
+ #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+ #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
++#define FUSE_MAP_ALIGNMENT	(1 << 26)
++#define FUSE_SUBMOUNTS		(1 << 27)
++#define FUSE_HANDLE_KILLPRIV_V2	(1 << 28)
++#define FUSE_SETXATTR_EXT	(1 << 29)
++#define FUSE_PASSTHROUGH	(1 << 31)
+ 
+ /**
+  * CUSE INIT request/reply flags
+@@ -330,11 +397,14 @@ struct fuse_file_lock {
+  *
+  * FUSE_WRITE_CACHE: delayed write from page cache, file handle is guessed
+  * FUSE_WRITE_LOCKOWNER: lock_owner field is valid
+- * FUSE_WRITE_KILL_PRIV: kill suid and sgid bits
++ * FUSE_WRITE_KILL_SUIDGID: kill suid and sgid bits
+  */
+ #define FUSE_WRITE_CACHE	(1 << 0)
+ #define FUSE_WRITE_LOCKOWNER	(1 << 1)
+-#define FUSE_WRITE_KILL_PRIV	(1 << 2)
++#define FUSE_WRITE_KILL_SUIDGID (1 << 2)
++
++/* Obsolete alias; this flag implies killing suid/sgid only. */
++#define FUSE_WRITE_KILL_PRIV	FUSE_WRITE_KILL_SUIDGID
+ 
+ /**
+  * Read flags
+@@ -376,6 +446,25 @@ struct fuse_file_lock {
+  */
+ #define FUSE_FSYNC_FDATASYNC	(1 << 0)
+ 
++/**
++ * fuse_attr flags
++ *
++ * FUSE_ATTR_SUBMOUNT: Object is a submount root
++ */
++#define FUSE_ATTR_SUBMOUNT      (1 << 0)
++
++/**
++ * Open flags
++ * FUSE_OPEN_KILL_SUIDGID: Kill suid and sgid if executable
++ */
++#define FUSE_OPEN_KILL_SUIDGID	(1 << 0)
++
++/**
++ * setxattr flags
++ * FUSE_SETXATTR_ACL_KILL_SGID: Clear SGID when system.posix_acl_access is set
++ */
++#define FUSE_SETXATTR_ACL_KILL_SGID	(1 << 0)
++
+ enum fuse_opcode {
+ 	FUSE_LOOKUP		= 1,
+ 	FUSE_FORGET		= 2,  /* no reply */
+@@ -422,9 +511,17 @@ enum fuse_opcode {
+ 	FUSE_RENAME2		= 45,
+ 	FUSE_LSEEK		= 46,
+ 	FUSE_COPY_FILE_RANGE	= 47,
++	FUSE_SETUPMAPPING	= 48,
++	FUSE_REMOVEMAPPING	= 49,
++	FUSE_SYNCFS		= 50,
++	FUSE_CANONICAL_PATH	= 2016,
+ 
+ 	/* CUSE specific operations */
+-	CUSE_INIT		= 4096
++	CUSE_INIT		= 4096,
++
++	/* Reserved opcodes: helpful to detect structure endian-ness */
++	CUSE_INIT_BSWAP_RESERVED	= 1048576,	/* CUSE_INIT << 8 */
++	FUSE_INIT_BSWAP_RESERVED	= 436207616,	/* FUSE_INIT << 24 */
+ };
+ 
+ enum fuse_notify_code {
+@@ -531,20 +628,20 @@ struct fuse_setattr_in {
+ 
+ struct fuse_open_in {
+ 	uint32_t	flags;
+-	uint32_t	unused;
++	uint32_t	open_flags;	/* FUSE_OPEN_... */
+ };
+ 
+ struct fuse_create_in {
+ 	uint32_t	flags;
+ 	uint32_t	mode;
+ 	uint32_t	umask;
+-	uint32_t	padding;
++	uint32_t	open_flags;	/* FUSE_OPEN_... */
+ };
+ 
+ struct fuse_open_out {
+ 	uint64_t	fh;
+ 	uint32_t	open_flags;
+-	uint32_t	padding;
++	uint32_t	passthrough_fh;
+ };
+ 
+ struct fuse_release_in {
+@@ -600,9 +697,13 @@ struct fuse_fsync_in {
+ 	uint32_t	padding;
+ };
+ 
++#define FUSE_COMPAT_SETXATTR_IN_SIZE 8
++
+ struct fuse_setxattr_in {
+ 	uint32_t	size;
+ 	uint32_t	flags;
++	uint32_t	setxattr_flags;
++	uint32_t	padding;
+ };
+ 
+ struct fuse_getxattr_in {
+@@ -652,7 +753,7 @@ struct fuse_init_out {
+ 	uint32_t	max_write;
+ 	uint32_t	time_gran;
+ 	uint16_t	max_pages;
+-	uint16_t	padding;
++	uint16_t	map_alignment;
+ 	uint32_t	unused[8];
+ };
+ 
+@@ -822,7 +923,11 @@ struct fuse_notify_retrieve_in {
+ };
+ 
+ /* Device ioctls: */
+-#define FUSE_DEV_IOC_CLONE	_IOR(229, 0, uint32_t)
++#define FUSE_DEV_IOC_MAGIC		229
++#define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
++/* 127 is reserved for the V1 interface implementation in Android (deprecated) */
++/* 126 is reserved for the V2 interface implementation in Android */
++#define FUSE_DEV_IOC_PASSTHROUGH_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 126, __u32)
+ 
+ struct fuse_lseek_in {
+ 	uint64_t	fh;
+@@ -845,4 +950,38 @@ struct fuse_copy_file_range_in {
+ 	uint64_t	flags;
+ };
+ 
++#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
++#define FUSE_SETUPMAPPING_FLAG_READ (1ull << 1)
++struct fuse_setupmapping_in {
++	/* An already open handle */
++	uint64_t	fh;
++	/* Offset into the file to start the mapping */
++	uint64_t	foffset;
++	/* Length of mapping required */
++	uint64_t	len;
++	/* Flags, FUSE_SETUPMAPPING_FLAG_* */
++	uint64_t	flags;
++	/* Offset in Memory Window */
++	uint64_t	moffset;
++};
++
++struct fuse_removemapping_in {
++	/* number of fuse_removemapping_one follows */
++	uint32_t        count;
++};
++
++struct fuse_removemapping_one {
++	/* Offset into the dax window start the unmapping */
++	uint64_t        moffset;
++	/* Length of mapping required */
++	uint64_t	len;
++};
++
++#define FUSE_REMOVEMAPPING_MAX_ENTRY   \
++		(PAGE_SIZE / sizeof(struct fuse_removemapping_one))
++
++struct fuse_syncfs_in {
++	uint64_t	padding;
++};
++
+ #endif /* _LINUX_FUSE_H */
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index d73e9fa..f8d55a5 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -1343,6 +1343,8 @@ int fuse_reply_attr(fuse_req_t req, const struct stat *attr,
+  */
+ int fuse_reply_readlink(fuse_req_t req, const char *link);
+ 
++int fuse_passthrough_enable(fuse_req_t req, unsigned int fd);
++
+ /**
+  * Reply with open parameters
+  *
+diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
+index d227688..1135a68 100644
+--- a/lib/fuse_lowlevel.c
++++ b/lib/fuse_lowlevel.c
+@@ -27,6 +27,7 @@
+ #include <errno.h>
+ #include <assert.h>
+ #include <sys/file.h>
++#include <sys/ioctl.h>
+ 
+ #ifndef F_LINUX_SPECIFIC_BASE
+ #define F_LINUX_SPECIFIC_BASE       1024
+@@ -387,6 +388,7 @@ static void fill_open(struct fuse_open_out *arg,
+ 		      const struct fuse_file_info *f)
+ {
+ 	arg->fh = f->fh;
++	arg->passthrough_fh = f->passthrough_fh;
+ 	if (f->direct_io)
+ 		arg->open_flags |= FOPEN_DIRECT_IO;
+ 	if (f->keep_cache)
+@@ -449,6 +451,15 @@ int fuse_reply_readlink(fuse_req_t req, const char *linkname)
+ 	return send_reply_ok(req, linkname, strlen(linkname));
+ }
+ 
++int fuse_passthrough_enable(fuse_req_t req, unsigned int fd) {
++    int ret;
++    ret = ioctl(req->se->fd, FUSE_DEV_IOC_PASSTHROUGH_OPEN, &fd);
++    if (ret <= 0)
++        fuse_log(FUSE_LOG_ERR, "fuse: passthrough_enable: %s\n", strerror(errno));
++
++    return ret;
++}
++
+ int fuse_reply_open(fuse_req_t req, const struct fuse_file_info *f)
+ {
+ 	struct fuse_open_out arg;
+@@ -1977,6 +1988,8 @@ void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
+ 				bufsize = max_bufsize;
+ 			}
+ 		}
++		if (arg->flags & FUSE_PASSTHROUGH)
++			se->conn.capable |= FUSE_PASSTHROUGH;
+ 	} else {
+ 		se->conn.max_readahead = 0;
+ 	}
+@@ -2093,6 +2106,8 @@ void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
+ 		outarg.flags |= FUSE_CACHE_SYMLINKS;
+ 	if (se->conn.want & FUSE_CAP_EXPLICIT_INVAL_DATA)
+ 		outarg.flags |= FUSE_EXPLICIT_INVAL_DATA;
++	if (se->conn.want & FUSE_CAP_PASSTHROUGH)
++		outarg.flags |= FUSE_PASSTHROUGH;
+ 	outarg.max_readahead = se->conn.max_readahead;
+ 	outarg.max_write = se->conn.max_write;
+ 	if (se->conn.proto_minor >= 13) {
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index a06f768..c408c50 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -164,8 +164,9 @@ FUSE_3.4 {
+ 
+ FUSE_3.7 {
+ 	global:
+-		fuse_set_log_func;
+ 		fuse_log;
++		fuse_passthrough_enable;
++		fuse_set_log_func;
+ } FUSE_3.4;
+ 
+ # Local Variables:

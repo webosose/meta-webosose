@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos8"
+EXTENDPRAUTO:append = "webos9"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -50,7 +50,7 @@ do_configure:append() {
 do_install:append() {
     # Remove the wpa_supplicant.service from upstream, but be aware that we're still
     # keeping upstream wpa_supplicant-nl80211@.service wpa_supplicant@.service  wpa_supplicant-wired@.service
-    rm -vf ${D}${systemd_unitdir}/system/wpa_supplicant.service
+    rm -vf ${D}${systemd_system_unitdir}/wpa_supplicant.service
 
     # Replace the removed wpa_supplicant.service from upstream with our =wpa-supplicant.service
     sed -i 's/SystemdService=wpa_supplicant.service/SystemdService=wpa-supplicant.service/g' ${D}/${datadir}/dbus-1/system-services/*service

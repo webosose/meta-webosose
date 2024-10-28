@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=014f1a23c3da49aa929b21a96808ab22"
 
 inherit npm
 
-PR = "r1"
+PR = "r4"
 
 SRC_URI = "\
     https://github.com/${BPN}/${BPN}/releases/download/${PV}/${BPN}-${PV}.zip \
@@ -19,8 +19,8 @@ S = "${WORKDIR}/${BPN}"
 
 do_install:append() {
     # Service
-    install -d ${D}${systemd_unitdir}/system/
-    install -m 0644 ${WORKDIR}/${BPN}.service ${D}${systemd_unitdir}/system/
+    install -d ${D}${systemd_system_unitdir}/
+    install -m 0644 ${UNPACKDIR}/${BPN}.service ${D}${systemd_system_unitdir}/
 
     # Remove hardware specific files
     rm -v ${D}/${bindir}/${BPN}-pi
@@ -41,3 +41,8 @@ FILES:${PN} += "\
 "
 
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
+
+# fails only with 32bit MACHINEs it seems
+# http://gecko.lge.com:8000/Errors/Details/911532
+# ERROR: QA Issue: node-red: ELF binary /usr/lib/node_modules/node-red/node_modules/bcrypt/lib/binding/napi-v3/bcrypt_lib.node has relocations in .text [textrel]
+INSANE_SKIP:${PN} += "textrel"

@@ -3,6 +3,9 @@
 # Localization-related settings and tasks for Qt apps
 #
 
+inherit features_check
+REQUIRED_DISTRO_FEATURES = "webos-qt"
+
 inherit webos_localizable
 inherit qt6-paths
 

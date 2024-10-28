@@ -1,7 +1,7 @@
 # Copyright (c) 2018-2024 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
-AUTHOR = "LUC VAN TRAN <luc2.tran@lge.com>"
+AUTHOR = "Luc Van Tran <luc2.tran@lge.com>"
 SECTION = "webos/apps"
 LICENSE = "LicenseRef-EnactBrowser-Evaluation"
 LIC_FILES_CHKSUM = " \
@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-83_b6db2aee4fb6dbcc4d0aca81dcb8de576f98aa54"
-PR = "r20"
+WEBOS_VERSION = "1.0.0-17.browsershell.9_421ccbadead50ed8ec274e948044e28a59ea1ef0"
+PR = "r22"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -22,9 +22,19 @@ WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
 WEBOS_SYSTEM_BUS_FILES_LOCATION = "${S}/files/sysbus"
 WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "PASS"
 
-WEBOS_ENACTJS_PACK_OPTS = "--isomorphic --production --snapshot"
+WEBOS_ENACTJS_PACK_OPTS = "--isomorphic --production"
 WEBOS_ENACTJS_ILIB_OVERRIDE = ""
 WEBOS_PREFERRED_GFX_IMAGE_FORMAT_ENABLED="0"
+
+SUPPORT_BROWSERSHELL = "true"
+
+WEBOS_ENACTJS_PACK_UIOVERLAY = "\
+    && cd ../../uioverlay/ \
+    && ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -l=used -o ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay \
+    && cd ../samples/enact-based \
+"
+WEBOS_ENACTJS_PACK_FOR_BROWSERSHELL = "${@oe.utils.conditional('SUPPORT_BROWSERSHELL', \
+   'true', '${WEBOS_ENACTJS_PACK_UIOVERLAY}', '', d)}"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
@@ -39,12 +49,41 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
     ${WEBOS_NODE_BIN} extract-inline.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} \
 "
 
+WEBOS_ENACTJS_PACK_OVERRIDE += "\
+    && cp -rf resources/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources \
+    && sed -i -E 's/(useBuiltInErrorPages:) *false/\1 true/g' ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/defaults.js \
+    && ./scripts/install-manifest.js --from=manifest.json --to=${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/manifest.json --version_suffix=`git rev-parse HEAD` \
+    ${WEBOS_ENACTJS_PACK_FOR_BROWSERSHELL} \
+"
+
 # Remove --production, because that causes
 # http://gecko.lge.com/Errors/Details/119724
 # Error: Cannot find module 'glob'
 WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional --verbose"
 
+do_compile:prepend() {
+    cd ${S}
+}
+
+do_install:prepend() {
+    cd ${S}
+}
+
 do_compile:append() {
+    if ${SUPPORT_BROWSERSHELL}; then
+        # download npm libraries for uioverlay
+        cd uioverlay
+        rm -rf node_modules
+        ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
+        git apply --no-index --verbose ../samples/enact-based/enact_agate_internal_l.patch
+        cd ../
+    fi
+
+    cd samples/enact-based
+    git apply --no-index --verbose enact_agate_internal_l.patch
+
+    cd ../../
+
     ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
     ${WEBOS_NODE_BIN} ./scripts/cli.js transpile
 }

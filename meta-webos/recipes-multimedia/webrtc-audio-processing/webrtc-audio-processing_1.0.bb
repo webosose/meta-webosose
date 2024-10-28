@@ -16,7 +16,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=da08a38a32a340c5d91e13ee86a118f2"
 DEPENDS:append:libc-musl = " libexecinfo"
 DEPENDS = "abseil-cpp"
 
-SRC_URI = "http://freedesktop.org/software/pulseaudio/${BPN}/${BP}.tar.gz \
+SRC_URI = "https://www.freedesktop.org/software/pulseaudio/${BPN}/${BP}.tar.gz \
     file://0001-Fix-return-type-errors.patch \
     file://0002-build-Use-cmake-to-look-up-abseil-dependency.patch \
     file://0003-build-Add-library-based-absl-detection-as-a-fallback.patch \
@@ -27,6 +27,8 @@ SRC_URI = "http://freedesktop.org/software/pulseaudio/${BPN}/${BP}.tar.gz \
 "
 
 SRC_URI[sha256sum] = "441a30d2717b2eb4145c6eb96c2d5a270fe0b4bc71aebf76716750c47be1936f"
+
+PR = "r1"
 
 LDFLAGS:append:libc-musl = " -lexecinfo"
 

@@ -13,7 +13,7 @@ inherit native
 
 # NOTE: It's only necessary to bump PR if the recipe itself changes
 # No need to bump PR when changing the values of PV and SRCREV (below)
-PR = "r14"
+PR = "r0"
 
 S = "${WORKDIR}/git"
 
@@ -29,5 +29,5 @@ SRC_URI = " \
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "6.0.4"
-SRCREV = "bfa987b8b349985e85e06727b8d6481b1b59df66"
+PV = "6.1.2"
+SRCREV = "263ad25dbb2a5a0545afbb3fd9aafb0ac2711ca8"

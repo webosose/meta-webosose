@@ -1,6 +1,9 @@
 # Copyright (c) 2013-2024 LG Electronics, Inc.
 
-inherit qt6-qmake
+inherit features_check
+REQUIRED_DISTRO_FEATURES = "webos-qt"
+
+inherit ${@bb.utils.contains('DISTRO_FEATURES', 'webos-qt', 'qt6-qmake', '', d)}
 inherit webos_filesystem_paths
 # To use OE_QMAKE_PATH_QT_* under meta-lg-webos/
 inherit webos_qmake6_paths

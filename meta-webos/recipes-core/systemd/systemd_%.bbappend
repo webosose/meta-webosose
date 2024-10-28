@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos15"
+EXTENDPRAUTO:append = "webos18"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -42,6 +42,8 @@ PACKAGECONFIG:append = " \
     elfutils \
 "
 
+CFLAGS += "${SECURITY_STACK_PROTECTOR}"
+
 FILES:${PN} += "${@oe.utils.conditional('DISTRO', 'webos','${datadir}/dbus-1/system.d/com.webos.MemoryManager1.conf', '', d)}"
 
 # By default systemd's Predictable Network Interface Names policy configured for qemu
@@ -72,7 +74,7 @@ EXTRA_OEMESON:append = " ${EXTRA_OEMESON_SMACK}"
 do_install[postfuncs] += "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'set_tmp_star', '', d)}"
 
 set_tmp_star () {
-    tmpmount="${D}/${systemd_unitdir}/system/tmp.mount"
+    tmpmount="${D}/${systemd_system_unitdir}/tmp.mount"
     if [ -f "$tmpmount" ]; then
         sed -i -e 's/^Options=/Options=smackfsroot=*,/' "$tmpmount"
     fi

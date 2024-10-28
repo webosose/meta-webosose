@@ -11,9 +11,10 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0002-Remove-unused-plugins-for-v1.21.4.patch;patchdir=src/${GO_IMPORT} \
     file://0003-Apply-inputs.socket_listener-plugin-for-sdkagent.patch;patchdir=src/${GO_IMPORT} \
     file://0004-Add-plugins-for-dashboard.patch;patchdir=src/${GO_IMPORT} \
+    file://0005-Change-telegraf-config-directory.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r3"
+PR = "r7"
 
 GO_IMPORT = "import"
 
@@ -49,7 +50,6 @@ do_compile() {
     # Pass the needed cflags/ldflags so that cgo
     # can find the needed headers files and libraries
     export CFLAGS=""
-    export LDFLAGS=""
     export CGO_CFLAGS="${BUILDSDK_CFLAGS} --sysroot=${STAGING_DIR_TARGET}"
     export CGO_LDFLAGS="${BUILDSDK_LDFLAGS} --sysroot=${STAGING_DIR_TARGET}"
 
@@ -59,7 +59,11 @@ do_compile() {
     export GOARM="7"
     export DESTDIR="${TELEGRAF_OUT}"
     export buildbin="${WORKDIR}/build/bin/telegraf"
-    export LDFLAGS="-w"
+    if [ "${CGO_ENABLED}" = "1" ]; then
+        export LDFLAGS="-w -buildmode=pie"
+    else
+        export LDFLAGS="-w"
+    fi
     export glibc_version="${GLIBCVERSION}"
 
     cd ${S}/src/${GO_IMPORT}
@@ -87,17 +91,31 @@ do_install() {
     install -m 0755 ${TELEGRAF_OUT}/usr/bin/telegraf ${D}${bindir}/
 
     # /usr/lib
-    install -d ${D}${systemd_unitdir}/system
+    install -d ${D}${systemd_system_unitdir}
     sed -i 's/User=telegraf/User=root/g' ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service
-    install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_unitdir}/system
+    install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_system_unitdir}
 
     #install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/init.sh ${D}${libdir}/telegraf/scripts/
     #install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${libdir}/telegraf/scripts/
 
     # /var
     #install -d ${D}${localstatedir}/log/telegraf
+    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent
+    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent/telegraf.d
 }
 
 inherit systemd
 SYSTEMD_SERVICE:${PN} = "telegraf.service"
 SYSTEMD_AUTO_ENABLE:${PN} = "disable"
+
+# fails only with 32bit MACHINEs it seems
+# http://gecko.lge.com:8000/Errors/Details/910073
+# ERROR: QA Issue: telegraf: ELF binary /usr/bin/telegraf has relocations in .text [textrel]
+INSANE_SKIP:${PN} += "textrel"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/893037
+# ERROR: QA Issue: File /usr/bin/telegraf in package telegraf contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"
