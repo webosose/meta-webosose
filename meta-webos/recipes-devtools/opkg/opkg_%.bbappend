@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos7"
+EXTENDPRAUTO:append = "webos8"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -9,6 +9,7 @@ SRC_URI:append = " \
     file://0002-Sort-opkg-list-file-content-to-speed-package-removal.patch \
     file://0003-Add-symlink-path-validity.patch \
     file://0007-Add-error-case-about-no-space.patch \
+    file://0008-Allow-multiple-f-flags.patch \
 "
 SRC_URI:append:class-target = " \
     file://0004-Mask-S_ISUID-and-S_ISGID-permission-bits.patch \

@@ -1,0 +1,137 @@
+From 1b3948380902385fe3cdb86227b119bd285c6a90 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Tue, 15 Oct 2024 17:02:33 +0900
+Subject: [PATCH] Allow multiple -f flags
+
+Read arguments for -f flags as much as given and load them all.
+---
+Upstream-Status: Submitted [https://lists.yoctoproject.org/g/opkg/message/126]
+
+ libopkg/opkg_conf.c | 46 +++++++++++++++++++++++++++++++--------------
+ libopkg/opkg_conf.h |  3 ++-
+ src/opkg.c          |  5 +++--
+ 3 files changed, 37 insertions(+), 17 deletions(-)
+
+diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
+index fa2bb69..45cc2e3 100644
+--- a/libopkg/opkg_conf.c
++++ b/libopkg/opkg_conf.c
+@@ -593,6 +593,9 @@ int opkg_conf_init(void)
+     str_list_init(&opkg_config->exclude_list);
+     str_list_init(&opkg_config->ignore_recommends_list);
+ 
++    opkg_config->conf_files = NULL;
++    opkg_config->conf_file_count = 0;
++
+     return 0;
+ }
+ 
+@@ -682,17 +685,20 @@ int opkg_conf_load(void)
+     if (!opkg_config->offline_root)
+         opkg_config->offline_root = xstrdup(getenv("OFFLINE_ROOT"));
+ 
+-    if (opkg_config->conf_file) {
+-        struct stat st;
+-        r = stat(opkg_config->conf_file, &st);
+-        if (r == -1) {
+-            opkg_perror(ERROR, "Couldn't stat %s", opkg_config->conf_file);
+-            goto err0;
++    if (opkg_config->conf_file_count > 0) {
++        opkg_msg(INFO, "Loading %d conf file(s).\n", opkg_config->conf_file_count);
++        for (i = 0; i < opkg_config->conf_file_count; i++) {
++            struct stat st;
++            r = stat(opkg_config->conf_files[i], &st);
++            if (r == -1) {
++                opkg_perror(ERROR, "Couldn't stat %s", opkg_config->conf_files[i]);
++                goto err0;
++            }
++            r = opkg_conf_parse_file(opkg_config->conf_files[i],
++                    &opkg_config->pkg_src_list, &opkg_config->dist_src_list);
++            if (r != 0)
++                goto err1;
+         }
+-        r = opkg_conf_parse_file(opkg_config->conf_file,
+-                &opkg_config->pkg_src_list, &opkg_config->dist_src_list);
+-        if (r != 0)
+-            goto err1;
+     } else {
+         const char *conf_file_dir = getenv("OPKG_CONF_DIR");
+         if (conf_file_dir == NULL)
+@@ -716,8 +722,8 @@ int opkg_conf_load(void)
+         free(etc_opkg_conf_pattern);
+ 
+         for (i = 0; i < globbuf.gl_pathc; i++) {
+-            int mismatch = globbuf.gl_pathv[i] && opkg_config->conf_file
+-                    && !strcmp(opkg_config->conf_file, globbuf.gl_pathv[i]);
++            int mismatch = globbuf.gl_pathv[i] && opkg_config->conf_file_count > 0
++                    && !strcmp(opkg_config->conf_files[0], globbuf.gl_pathv[i]);
+             if (mismatch)
+                 continue;
+             r = opkg_conf_parse_file (globbuf.gl_pathv[i],
+@@ -897,7 +903,13 @@ int opkg_conf_load(void)
+  err0:
+     nv_pair_list_deinit(&opkg_config->tmp_dest_list);
+     free(opkg_config->dest_str);
+-    free(opkg_config->conf_file);
++    if (opkg_config->conf_file_count > 0) {
++        for (i = 0; i < opkg_config->conf_file_count; i++)
++            free(opkg_config->conf_files[i]);
++        free(opkg_config->conf_files);
++        opkg_config->conf_file_count = 0;
++        opkg_config->conf_files = NULL;
++    }
+ 
+     return -1;
+ }
+@@ -914,7 +926,13 @@ void opkg_conf_deinit(void)
+         rm_r(opkg_config->cache_dir);
+ 
+     free(opkg_config->dest_str);
+-    free(opkg_config->conf_file);
++    if (opkg_config->conf_file_count > 0) {
++        for (i = 0; i < opkg_config->conf_file_count; i++)
++            free(opkg_config->conf_files[i]);
++        free(opkg_config->conf_files);
++        opkg_config->conf_file_count = 0;
++        opkg_config->conf_files = NULL;
++    }
+ 
+     pkg_src_list_deinit(&opkg_config->pkg_src_list);
+     pkg_src_list_deinit(&opkg_config->dist_src_list);
+diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
+index c17cf79..7f0b917 100644
+--- a/libopkg/opkg_conf.h
++++ b/libopkg/opkg_conf.h
+@@ -70,7 +70,8 @@ typedef struct opkg_conf {
+     pkg_dest_t *default_dest;
+     char *dest_str;
+ 
+-    char *conf_file;
++    char **conf_files;
++    size_t conf_file_count;
+ 
+     char *tmp_dir;
+     char *intercepts_dir; /* set to "/dev/null" to disable intercepts */
+diff --git a/src/opkg.c b/src/opkg.c
+index 3839932..1e7c64a 100644
+--- a/src/opkg.c
++++ b/src/opkg.c
+@@ -152,7 +152,8 @@ static int args_parse(int argc, char *argv[])
+             opkg_config->dest_str = xstrdup(optarg);
+             break;
+         case 'f':
+-            opkg_config->conf_file = xstrdup(optarg);
++            opkg_config->conf_files = realloc(opkg_config->conf_files, ++opkg_config->conf_file_count);
++            opkg_config->conf_files[opkg_config->conf_file_count - 1] = xstrdup(optarg);
+             break;
+         case 'o':
+             opkg_config->offline_root = xstrdup(optarg);
+@@ -343,7 +344,7 @@ static void usage()
+     printf("\t                                  3 debug\n");
+     printf("\t                                  4 debug level 2\n");
+     printf("\t-f <conf_file>                  Use <conf_file> as the opkg configuration file\n");
+-    printf("\t--conf <conf_file>\n");
++    printf("\t--conf <conf_file>                can be given multiple times\n");
+     printf("\t--cache-dir <path>              Specify cache directory.\n");
+     printf("\t-t, --tmp-dir <directory>       Specify tmp-dir.\n");
+     printf("\t-l, --lists-dir <directory>     Specify lists-dir.\n");
