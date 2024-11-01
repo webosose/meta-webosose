@@ -5,6 +5,7 @@ inherit webos_cmake_qt6
 FILES:${PN}-dev += " \
     ${libdir}/cmake/* \
     ${libdir}/metatypes/* \
+    ${libdir}/sbom/* \
     ${datadir}/modules/* \
 "
 
