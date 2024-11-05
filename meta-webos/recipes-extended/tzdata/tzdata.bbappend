@@ -7,7 +7,7 @@ EXTENDPRAUTO:append = "webos8"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI += "file://etcetera.patch"
+SRC_URI += "file://0001-etcetera-Add-fractional-Etc-GMT-time-zones.patch"
 
 inherit webos_filesystem_paths
 
