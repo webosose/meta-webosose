@@ -14,7 +14,7 @@ SRC_URI = "git://github.com/influxdata/telegraf.git;protocol=https;branch=releas
     file://0005-Change-telegraf-config-directory.patch;patchdir=src/${GO_IMPORT} \
 "
 
-PR = "r7"
+PR = "r8"
 
 GO_IMPORT = "import"
 
@@ -77,14 +77,6 @@ do_compile() {
 }
 
 do_install() {
-    # /etc
-    install -d ${D}${sysconfdir}/logrotate.d
-    install -d ${D}${sysconfdir}/telegraf
-    install -d ${D}${sysconfdir}/telegraf/telegraf.d
-
-    install -m 0644 ${TELEGRAF_OUT}/etc/logrotate.d/telegraf ${D}${sysconfdir}/logrotate.d/
-    install -m 0644 ${TELEGRAF_OUT}/etc/telegraf/telegraf.conf ${D}${sysconfdir}/telegraf/
-
     # /usr/bin
     install -d ${D}${bindir}
 
@@ -95,13 +87,13 @@ do_install() {
     sed -i 's/User=telegraf/User=root/g' ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service
     install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${systemd_system_unitdir}
 
-    #install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/init.sh ${D}${libdir}/telegraf/scripts/
-    #install -m 0644 ${TELEGRAF_OUT}/usr/lib/telegraf/scripts/telegraf.service ${D}${libdir}/telegraf/scripts/
-
     # /var
-    #install -d ${D}${localstatedir}/log/telegraf
+    install -d ${D}${localstatedir}/logrotate.d
     install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent
-    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent/telegraf.d
+    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent/telegraf
+    install -d ${D}${localstatedir}/lib/com.webos.service.sdkagent/telegraf/telegraf.d
+
+    install -m 0644 ${TELEGRAF_OUT}/etc/telegraf/telegraf.conf ${D}${localstatedir}/lib/com.webos.service.sdkagent/telegraf/
 }
 
 inherit systemd
