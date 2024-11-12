@@ -1,22 +1,28 @@
-From 1b3948380902385fe3cdb86227b119bd285c6a90 Mon Sep 17 00:00:00 2001
+From 8a3bc181aa7452eb291be47a6b6bd0ebbdb999ee Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 15 Oct 2024 17:02:33 +0900
-Subject: [PATCH] Allow multiple -f flags
+Subject: [PATCH] opkg: Allow multiple -f flags
 
 Read arguments for -f flags as much as given and load them all.
----
-Upstream-Status: Submitted [https://lists.yoctoproject.org/g/opkg/message/126]
 
- libopkg/opkg_conf.c | 46 +++++++++++++++++++++++++++++++--------------
- libopkg/opkg_conf.h |  3 ++-
- src/opkg.c          |  5 +++--
- 3 files changed, 37 insertions(+), 17 deletions(-)
+Signed-off-by: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Signed-off-by: Alex Stewart <alex.stewart@emerson.com>
+---
+Upstream-Status: Backport [https://git.yoctoproject.org/opkg/commit/?id=36d08b93d2859992b624a4ba2f412cfa5c766050]
+
+ libopkg/opkg_conf.c              | 46 ++++++++++++++++++++++----------
+ libopkg/opkg_conf.h              |  3 ++-
+ src/opkg.c                       |  5 ++--
+ tests/Makefile                   |  3 ++-
+ tests/misc/print_architecture.py | 25 +++++++++++++++++
+ 5 files changed, 64 insertions(+), 18 deletions(-)
+ create mode 100644 tests/misc/print_architecture.py
 
 diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
-index fa2bb69..45cc2e3 100644
+index 37fcd2c..8175e7f 100644
 --- a/libopkg/opkg_conf.c
 +++ b/libopkg/opkg_conf.c
-@@ -593,6 +593,9 @@ int opkg_conf_init(void)
+@@ -592,6 +592,9 @@ int opkg_conf_init(void)
      str_list_init(&opkg_config->exclude_list);
      str_list_init(&opkg_config->ignore_recommends_list);
  
@@ -26,7 +32,7 @@ index fa2bb69..45cc2e3 100644
      return 0;
  }
  
-@@ -682,17 +685,20 @@ int opkg_conf_load(void)
+@@ -681,17 +684,20 @@ int opkg_conf_load(void)
      if (!opkg_config->offline_root)
          opkg_config->offline_root = xstrdup(getenv("OFFLINE_ROOT"));
  
@@ -57,7 +63,7 @@ index fa2bb69..45cc2e3 100644
      } else {
          const char *conf_file_dir = getenv("OPKG_CONF_DIR");
          if (conf_file_dir == NULL)
-@@ -716,8 +722,8 @@ int opkg_conf_load(void)
+@@ -715,8 +721,8 @@ int opkg_conf_load(void)
          free(etc_opkg_conf_pattern);
  
          for (i = 0; i < globbuf.gl_pathc; i++) {
@@ -68,7 +74,7 @@ index fa2bb69..45cc2e3 100644
              if (mismatch)
                  continue;
              r = opkg_conf_parse_file (globbuf.gl_pathv[i],
-@@ -897,7 +903,13 @@ int opkg_conf_load(void)
+@@ -896,7 +902,13 @@ int opkg_conf_load(void)
   err0:
      nv_pair_list_deinit(&opkg_config->tmp_dest_list);
      free(opkg_config->dest_str);
@@ -83,7 +89,7 @@ index fa2bb69..45cc2e3 100644
  
      return -1;
  }
-@@ -914,7 +926,13 @@ void opkg_conf_deinit(void)
+@@ -913,7 +925,13 @@ void opkg_conf_deinit(void)
          rm_r(opkg_config->cache_dir);
  
      free(opkg_config->dest_str);
@@ -99,10 +105,10 @@ index fa2bb69..45cc2e3 100644
      pkg_src_list_deinit(&opkg_config->pkg_src_list);
      pkg_src_list_deinit(&opkg_config->dist_src_list);
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index c17cf79..7f0b917 100644
+index b7caa74..f20e226 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -70,7 +70,8 @@ typedef struct opkg_conf {
+@@ -69,7 +69,8 @@ typedef struct opkg_conf {
      pkg_dest_t *default_dest;
      char *dest_str;
  
@@ -113,20 +119,20 @@ index c17cf79..7f0b917 100644
      char *tmp_dir;
      char *intercepts_dir; /* set to "/dev/null" to disable intercepts */
 diff --git a/src/opkg.c b/src/opkg.c
-index 3839932..1e7c64a 100644
+index 7510fe8..b802bf0 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -152,7 +152,8 @@ static int args_parse(int argc, char *argv[])
+@@ -150,7 +150,8 @@ static int args_parse(int argc, char *argv[])
              opkg_config->dest_str = xstrdup(optarg);
              break;
          case 'f':
 -            opkg_config->conf_file = xstrdup(optarg);
-+            opkg_config->conf_files = realloc(opkg_config->conf_files, ++opkg_config->conf_file_count);
++            opkg_config->conf_files = realloc(opkg_config->conf_files, ++opkg_config->conf_file_count * sizeof(char*));
 +            opkg_config->conf_files[opkg_config->conf_file_count - 1] = xstrdup(optarg);
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
-@@ -343,7 +344,7 @@ static void usage()
+@@ -337,7 +338,7 @@ static void usage()
      printf("\t                                  3 debug\n");
      printf("\t                                  4 debug level 2\n");
      printf("\t-f <conf_file>                  Use <conf_file> as the opkg configuration file\n");
@@ -135,3 +141,48 @@ index 3839932..1e7c64a 100644
      printf("\t--cache-dir <path>              Specify cache directory.\n");
      printf("\t-t, --tmp-dir <directory>       Specify tmp-dir.\n");
      printf("\t-l, --lists-dir <directory>     Specify lists-dir.\n");
+diff --git a/tests/Makefile b/tests/Makefile
+index 9fba054..e7ea476 100644
+--- a/tests/Makefile
++++ b/tests/Makefile
+@@ -96,7 +96,8 @@ REGRESSION_TESTS := core/01_install.py \
+ 		    regress/issue13758.py \
+ 		    misc/filehash.py \
+ 		    misc/update_loses_autoinstalled_flag.py \
+-		    misc/version_comparisons.py
++		    misc/version_comparisons.py \
++		    misc/print_architecture.py
+ 
+ RUN_TESTS := $(REGRESSION_TESTS:%.py=run-%.py)
+ 
+diff --git a/tests/misc/print_architecture.py b/tests/misc/print_architecture.py
+new file mode 100644
+index 0000000..d921885
+--- /dev/null
++++ b/tests/misc/print_architecture.py
+@@ -0,0 +1,25 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0-only
++
++import os
++import opk, cfg, opkgcl
++
++opk.regress_init()
++
++arch_line1 = 'arch all 1'
++arch_line2 = 'arch any 2'
++expected = arch_line1 + '\n' + arch_line2 + '\n'
++
++with open('test_arch1.conf', 'w') as f:
++    f.write(arch_line1)
++with open('test_arch2.conf', 'w') as f:
++    f.write(arch_line2)
++
++(status, output) = opkgcl.opkgcl('-f test_arch1.conf -f test_arch2.conf print_architecture')
++if status != 0:
++    opk.fail("with an error '{}'".format(output))
++elif output != expected:
++    opk.fail("output didn't match.\nexpected:\n{}\nactual:\n{}".format(expected, output))
++
++os.remove('test_arch1.conf')
++os.remove('test_arch2.conf')
