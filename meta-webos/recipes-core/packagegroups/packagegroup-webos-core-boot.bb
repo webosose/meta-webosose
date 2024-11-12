@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7ca
 
 inherit packagegroup
 
-PR = "r0"
+PR = "r1"
 
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_nyx_modules_providers ??= " \
@@ -14,6 +14,12 @@ VIRTUAL-RUNTIME_nyx_modules_providers ??= " \
     nyx-modules-qemux86 \
 "
 VIRTUAL-RUNTIME_pdm ?= "com.webos.service.pdm"
+
+KERNEL_ESSENTIAL_PACKAGES = " \
+    kernel \
+    kernel-base \
+    kernel-image \
+"
 
 WEBOS_ESSENTIAL_PACKAGES = " \
     activitymanager \
@@ -34,11 +40,9 @@ WEBOS_ESSENTIAL_PACKAGES = " \
 
 RDEPENDS:${PN} += " \
     connman-client \
-    kernel \
-    kernel-base \
-    kernel-image \
     lsb-release \
     packagegroup-core-boot \
     procps \
+    ${KERNEL_ESSENTIAL_PACKAGES} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-essential', '${WEBOS_ESSENTIAL_PACKAGES}', '', d)} \
 "
