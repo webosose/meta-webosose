@@ -6,22 +6,19 @@ require media-codec-interface.bb
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r8"
+PR = "r9"
 
 CXXFLAGS +=" \
     -I${STAGING_INCDIR}/media-resource-calculator-clang \
     -I${STAGING_INCDIR}/cbe \
-    -I${STAGING_INCDIR}/mrp \
+    -I${STAGING_INCDIR}/gst-video-encoder \
 "
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
 PACKAGECONFIG[system-libcxx] = ",,libcxx"
-PACKAGECONFIG[mediarecorder-clang] = ",,com.webos.service.mediarecorder-clang,com.webos.service.mediarecorder-clang"
-PACKAGECONFIG += "mediarecorder-clang"
 
-DEPENDS:remove = "media-resource-calculator umediaserver"
-DEPENDS += "media-resource-calculator-clang umediaserver-clang"
+MEDIARECIPES = "umediaserver-clang media-resource-calculator-clang gst-video-encoder-clang"
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"
 
@@ -30,7 +27,7 @@ do_configure:prepend() {
 }
 
 do_configure:prepend() {
-    ln -snf buffer-encoder.pc ${STAGING_DATADIR}/pkgconfig/buffer-encoder.pc
+    ln -snf gst-video-encoder-clang.pc ${STAGING_DATADIR}/pkgconfig/gst-video-encoder.pc
 }
 
 do_install:append() {
