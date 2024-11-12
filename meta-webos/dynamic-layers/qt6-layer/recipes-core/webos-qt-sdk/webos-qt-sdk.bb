@@ -21,8 +21,6 @@ TOOLCHAIN_HOST_TASK += "${@oe.utils.conditional('EXTERNAL_TOOLCHAIN', '', 'packa
 TOOLCHAIN_TARGET_TASK += "${@oe.utils.conditional('EXTERNAL_TOOLCHAIN', '', '', '${MLPREFIX}linux-libc-headers', d)}"
 TOOLCHAIN_TARGET_TASK += "${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', 'packagegroup-webos-ml-sdk', '', d)}"
 
-TOOLCHAIN_OUTPUTNAME = "${SDK_NAME}-${WEBOS_DISTRO_BUILD_ID}"
-
 # By default, populate_sdk puts the toolchain in TOOLCHAIN_TARGET_TASK (which
 # controls what the bbclass packages).
 inherit populate_sdk
@@ -36,8 +34,6 @@ inherit webos_machine_dep
 IMAGE_FSTYPES = ""
 IMAGE_FSTYPES:qemux86 = ""
 IMAGE_FSTYPES:qemux86-64 = ""
-
-SDK_NAME = "${BPN}-${DISTRO}-${SDK_ARCH}-${WEBOS_DISTRO_BUILD_CODENAME}-${MACHINE_ARCH}"
 
 # Often triggers:
 # Exception: bb.process.ExecutionError: Execution of 'webos-qt-sdk/1.0-r1/temp/run.archive_sdk.41476' failed with exit code 1:
