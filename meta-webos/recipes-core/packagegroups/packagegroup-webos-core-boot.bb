@@ -1,6 +1,12 @@
 # Copyright (c) 2023-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
+DESCRIPTION = "Packages used by all distro variants of webOS OSE"
+LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+
+inherit packagegroup
+
+PR = "r0"
 
 VIRTUAL-RUNTIME_initscripts ?= "initscripts"
 VIRTUAL-RUNTIME_nyx_modules_providers ??= " \
@@ -32,6 +38,7 @@ RDEPENDS:${PN} += " \
     kernel-base \
     kernel-image \
     lsb-release \
+    packagegroup-core-boot \
     procps \
     ${@bb.utils.contains('DISTRO_FEATURES', 'webos-essential', '${WEBOS_ESSENTIAL_PACKAGES}', '', d)} \
 "

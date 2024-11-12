@@ -39,6 +39,7 @@ WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar
 
 WEBOS_IMAGE_BASE_INSTALL = " \
     packagegroup-core-boot \
+    packagegroup-webos-core-boot \
     ${WEBOS_IMAGE_EXTRA_INSTALL} \
 "
 
