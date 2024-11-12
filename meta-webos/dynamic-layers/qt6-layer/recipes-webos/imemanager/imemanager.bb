@@ -14,7 +14,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtbase luna-service2 luna-prefs qt-features-webos qtdeclarative maliit-framework-webos qtdeclarative-native"
 RDEPENDS:${PN} += "libhangul sunpinyin pyzy qml-webos-bridge openwnn-webos"
 
-WEBOS_VERSION = "1.0.0-31_55da1c739acaedc2b26ad66f4fb14761905bba8a"
+WEBOS_VERSION = "1.0.0-32_45ef0e7b8ec941caa045515d0ccad87b61d0b84d"
 PR = "r7"
 
 inherit webos_component
