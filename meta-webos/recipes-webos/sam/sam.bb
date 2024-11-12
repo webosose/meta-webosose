@@ -17,7 +17,7 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_webos-customization}"
 VIRTUAL-RUNTIME_webos-customization ?= ""
 
 WEBOS_VERSION = "2.0.0-76_f19a5c53816de021bd742be3c49c0606106dced0"
-PR = "r30"
+PR = "r31"
 
 inherit webos_component
 inherit webos_cmake
@@ -35,6 +35,9 @@ S = "${WORKDIR}/git"
 inherit webos_systemd
 WEBOS_SYSTEMD_SERVICE = "sam.service"
 WEBOS_SYSTEMD_SCRIPT = "sam.sh"
+
+PACKAGECONFIG:append = " ${@bb.utils.filter('DISTRO_FEATURES', 'smack', d)}"
+PACKAGECONFIG[smack] = "-Dapply_webos_smack:BOOL=True"
 
 PACKAGES =+ "${PN}-tests"
 ALLOW_EMPTY:${PN}-tests = "1"
