@@ -301,7 +301,7 @@ PTEST_ENABLED:pn-valgrind = "0"
 PTEST_ENABLED:pn-parted = "0"
 PTEST_ENABLED:pn-apr = "0"
 
-INHERIT_DISTRO ?= "debian devshell ccache sstate license buildstats-summary webos_base remove-libtool image-buildinfo ccache_stats"
+INHERIT_DISTRO ?= "devshell ccache sstate license buildstats-summary webos_base remove-libtool image-buildinfo ccache_stats"
 
 # Inherit icecc here, so that all builders have the same sstate signatures
 INHERIT_DISTRO += "icecc"
