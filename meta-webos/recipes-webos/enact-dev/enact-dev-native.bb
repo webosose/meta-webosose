@@ -29,5 +29,5 @@ SRC_URI = " \
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
 
-PV = "6.1.2"
-SRCREV = "263ad25dbb2a5a0545afbb3fd9aafb0ac2711ca8"
+PV = "6.1.3"
+SRCREV = "3f4d28c3d4a865090943694515c972631ead699c"

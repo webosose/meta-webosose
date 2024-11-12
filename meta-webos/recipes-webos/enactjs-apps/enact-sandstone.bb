@@ -24,10 +24,10 @@ SRC_URI = " \
 # algorithm properly recognizes that a pre-release precedes the associated final
 # release (e.g., 1.0-pre.1 < 1.0).
 
-PV = "2.9.1"
+PV = "2.9.4"
 
-SRCREV = "dd89a1bb6dd3416034cddbfbc75eaa37b6121828"
-SRCREV_enact = "c57448446c3737614f6540c733e059274b37bbac"
+SRCREV = "8fb150466b63c8b96e86b4cd4fa8c7acf1f8bbba"
+SRCREV_enact = "23496453557a7818e536a2f943a9970d540999db"
 
 do_fetch[vardeps] += "SRCREV_enact"
 SRCREV_FORMAT = "main_enact"
@@ -59,7 +59,7 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r1"
+PR = "r0"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
