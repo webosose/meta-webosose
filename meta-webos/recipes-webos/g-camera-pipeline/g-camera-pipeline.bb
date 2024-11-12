@@ -20,12 +20,12 @@ inherit webos_pkgconfig
 inherit features_check
 ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
-PR = "r19"
+PR = "r20"
 
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.63_297f771c598485f2264cf0f1e3370cc0dd253a91"
+WEBOS_VERSION = "1.0.0-gav.64_9228b2487336e3ad5f3c33d47cba44938fec33de"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
@@ -50,9 +50,3 @@ PACKAGECONFIG[use-camsrc] = "-DUSE_CAMSRC:BOOL=True,-DUSE_CAMSRC:BOOL=False,"
 PACKAGECONFIG[pro-ums] = "-DPRO_UMS:BOOL=True,-DPRO_UMS:BOOL=False,"
 
 PACKAGECONFIG:webos = "use-display-resource use-camsrc"
-
-# g-camera-pipeline/1.0.0-gav.44/git/camsrc/gstcamsrc.c:168:36: error: assignment to 'GstStateChangeReturn (*)(GstElement *, GstStateChange)' {aka 'GstStateChangeReturn (*)(struct _GstElement *, GstStateChange)'} from incompatible pointer type 'GstStateChangeReturn (*)(GstPushSrc *, GstStateChange)' {aka 'GstStateChangeReturn (*)(struct _GstPushSrc *, GstStateChange)'} [-Wincompatible-pointer-types]
-# g-camera-pipeline/1.0.0-gav.44/git/camsrc/gstcamsrc.c:389:73: error: passing argument 2 of 'camera_hal_if_get_buffer_fd' from incompatible pointer type [-Wincompatible-pointer-types]
-# g-camera-pipeline/1.0.0-gav.44/git/camsrc/gstcamsrc.c:515:30: error: implicit declaration of function 'camera_hal_if_destroy_dmafd'; did you mean 'camera_hal_if_destroy_buffer'? [-Wimplicit-function-declaration]
-# g-camera-pipeline/1.0.0-gav.44/git/camsrc/gstcamsrc.c:523:59: error: passing argument 1 of '((GstElementClass *)parent_class)->change_state' from incompatible pointer type [-Wincompatible-pointer-types]
-CFLAGS += "-Wno-error=incompatible-pointer-types -Wno-error=implicit-function-declaration"
