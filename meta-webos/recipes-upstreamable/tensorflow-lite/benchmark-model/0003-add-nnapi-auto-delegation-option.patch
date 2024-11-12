@@ -1,0 +1,89 @@
+From 8773c4efd27646e85a371268f3f44fb69a529cce Mon Sep 17 00:00:00 2001
+From: hayoyo <hayoyo.chang@lge.com>
+Date: Thu, 17 Oct 2024 13:51:32 +0900
+Subject: [PATCH] add nnapi auto delegation option
+
+
+add nnapi auto delegate options for tflite benchmark model app:
+
+MinRes and MinLatencyMinRes auto delegation policy options are added
+use_auto_delegate_caching, cache_dir, and model_token caching options are added
+---
+Upstream-Status: Inappropriate [webos specific]
+
+ tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc b/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc
+index ddf80e7e83b..87a5c2759c2 100644
+--- a/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc
++++ b/tensorflow/lite/tools/benchmark/benchmark_tflite_model.cc
+@@ -310,6 +310,12 @@ BenchmarkParams BenchmarkTfLiteModel::DefaultParams() {
+                           BenchmarkParam::Create<std::string>(""));
+   default_params.AddParam("ad_cpu_fallback_percentage",
+                           BenchmarkParam::Create<int32_t>(0));
++  default_params.AddParam("use_auto_delegate_caching",
++                          BenchmarkParam::Create<bool>(false));
++  default_params.AddParam("cache_dir",
++                          BenchmarkParam::Create<std::string>(""));
++  default_params.AddParam("model_token",
++                          BenchmarkParam::Create<std::string>(""));
+ #endif
+
+   tools::ProvidedDelegateList delegate_providers(&default_params);
+@@ -399,11 +405,21 @@ std::vector<Flag> BenchmarkTfLiteModel::GetFlags() {
+                        "  2. MaximumPrecision "
+                        "  3. MinimumLatency "
+                        "  4. EnableLoadBalancing"
+-                       "  5. PytorchModelGPU")
++                       "  5. PytorchModelGPU"
++                       "  6. MinRes"
++                       "  7. MinLatencyMinRes")
+     , CreateFlag<int32_t>("ad_cpu_fallback_percentage", &params_,
+                        "A percentage of operation that is forced to fallback "
+                        "to CPU. It is only valid when EnableLoadBalancing "
+                        "policy or PytorchModelGPU policy is set for ad_policy. ")
++    , CreateFlag<bool>("use_auto_delegate_caching", &params_,
++                       "Whether to run benchmark_model using auto delegate caching. "
++                       "By default it is set to be false. "
++                       "It selects cache files according to given cache_dir and model_token. ")
++    , CreateFlag<std::string>("cache_dir", &params_,
++                       "Directory to store the cached model files for auto delegation kMinRes or KMinLatencyMinRes.")
++    , CreateFlag<std::string>("model_token", &params_,
++                       "Model token for auto delegation kMinRes or KMinLatencyMinRes.")
+ #endif
+   };
+
+@@ -454,6 +470,11 @@ void BenchmarkTfLiteModel::LogParams() {
+                       "Auto delegation acceleration policy", verbose);
+   LOG_BENCHMARK_PARAM(int32_t, "ad_cpu_fallback_percentage",
+                       "Auto delegation cpu fallback percentage", verbose);
++  LOG_BENCHMARK_PARAM(bool, "use_auto_delegate_caching", "Use auto delegation caching", verbose);
++  LOG_BENCHMARK_PARAM(std::string, "cache_dir",
++                      "Auto delegation cached model directory", verbose);
++  LOG_BENCHMARK_PARAM(std::string, "model_token",
++                      "Auto delegation model token", verbose);
+ #endif
+
+   for (const auto& delegate_provider :
+@@ -696,9 +717,20 @@ TfLiteStatus BenchmarkTfLiteModel::Init() {
+       apm.setPolicy(aif::AccelerationPolicyManager::kPytorchModelGPU);
+       apm.setCPUFallbackPercentage(
+                       params_.Get<int32_t>("ad_cpu_fallback_percentage"));
++    }else if (acceleration_policy == "MinRes") {
++      apm.setPolicy(aif::AccelerationPolicyManager::kMinRes);
++    }else if (acceleration_policy == "MinLatencyMinRes") {
++      apm.setPolicy(aif::AccelerationPolicyManager::kMinLatencyMinRes);
+     } else {
+       TFLITE_LOG(INFO) << "Please input valid auto delegation policy.";
+     }
++
++    if(params_.Get<bool>("use_auto_delegate_caching")) {
++      std::string cache_dir = params_.Get<std::string>("cache_dir");
++      std::string model_token = params_.Get<std::string>("model_token");
++      apm.setNnapiCache(cache_dir, model_token);
++    }
++
+     ads.selectDelegate(*interpreter_, apm);
+   } else {
+     TF_LITE_ENSURE_STATUS(ApplyProvidedDelegates());
