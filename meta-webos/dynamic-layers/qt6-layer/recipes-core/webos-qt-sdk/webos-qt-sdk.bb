@@ -2,23 +2,12 @@
 
 SUMMARY = "webOS SDK Toolchain including qt host tools"
 
-PR = "r5"
+PR = "r6"
 
 TOOLCHAIN_HOST_TASK = "nativesdk-packagegroup-sdk-host"
 TOOLCHAIN_HOST_TASK += "nativesdk-packagegroup-qt6-toolchain-host"
-# Only add packagegroup-cross-canadian-${MACHINE} to TOOLCHAIN_HOST_TASK when
-# not using an external toolchain. Once we can figure out how to package up the
-# native portion of external-lg-toolchain, the recipe that implements it will
-# appear instead. For now, we are manually copying the external toolchain tree
-# into the SDK's native sysroot.
-EXTERNAL_TOOLCHAIN ??= ""
-TOOLCHAIN_HOST_TASK += "${@oe.utils.conditional('EXTERNAL_TOOLCHAIN', '', 'packagegroup-cross-canadian-${MACHINE}', '${MLPREFIX}meta-environment-${MACHINE}', d)}"
+TOOLCHAIN_HOST_TASK += "packagegroup-cross-canadian-${MACHINE}"
 
-# XXX When using external-lg-toolchain, need to explicitly include
-# linux-libc-headers because external-lg-toolchain puts the headers in that
-# package instead of in linux-libc-headers-dev (which is where the
-# linux-libc-headers recipe puts them).
-TOOLCHAIN_TARGET_TASK += "${@oe.utils.conditional('EXTERNAL_TOOLCHAIN', '', '', '${MLPREFIX}linux-libc-headers', d)}"
 TOOLCHAIN_TARGET_TASK += "${@bb.utils.contains('DISTRO_FEATURES', 'webos-aiframework', 'packagegroup-webos-ml-sdk', '', d)}"
 
 # By default, populate_sdk puts the toolchain in TOOLCHAIN_TARGET_TASK (which
