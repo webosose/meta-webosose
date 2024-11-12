@@ -15,8 +15,8 @@
 # SPDX-License-Identifier: Apache-2.0
 [Unit]
 Description=meta-webos - "%n"
-Requires=ls-hubd.service
-After=ls-hubd.service
+Requires=camera-registry.service ls-hubd.service
+After=camera-registry.service ls-hubd.service
 
 [Service]
 Type=simple

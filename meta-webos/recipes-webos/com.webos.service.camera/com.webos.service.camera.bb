@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json"
 
-WEBOS_VERSION = "1.0.0-47_a6cc82ed43e7b563e0befc2a45905b5b967e0703"
-PR = "r13"
+WEBOS_VERSION = "1.0.0-54_46bb6d43ed76ddccafbdff9ec5f4cf45a393566f"
+PR = "r14"
 
 inherit webos_component
 inherit webos_cmake
@@ -35,4 +35,10 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
-WEBOS_SYSTEMD_SERVICE = "com.webos.service.camera.service"
+WEBOS_SYSTEMD_SERVICE = "com.webos.service.camera.service camera-registry.service"
+WEBOS_SYSTEMD_SCRIPT = "camera-registry.sh"
+
+# To scan the plugins used by the camera service in /usr/lib/camera.
+FILES:${PN}-dev += "${libdir}/camera/lib*${SOLIBSDEV}"
+FILES:${PN} += "${libdir}/camera/lib*${SOLIBS}"
+
