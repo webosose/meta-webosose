@@ -6,7 +6,7 @@ SECTION = "webos/devel/tools"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
-PR = "r10"
+PR = "r0"
 
 inherit webos_npm_env
 inherit native
@@ -19,8 +19,9 @@ S = "${WORKDIR}/git"
 # iLib-js/ilib-loctool-webos-dist repository on GitHub. This version should correspond to the
 # tag whose hash is specified in SRCREV, so PV and SRCREV will always change
 # together.
-PV = "1.16.0"
-SRCREV = "ee0c270a19cf39268ea2314dee6e5bf8bbf44cf4"
+PV = "1.16.1"
+SRCREV = "29925e9bbd9a1c6bc7a2929a9c3e0651e136c257"
+
 
 # Skip the unwanted tasks
 do_configure[noexec] = "1"
