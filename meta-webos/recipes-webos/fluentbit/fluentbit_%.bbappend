@@ -1,6 +1,6 @@
 # Copyright (c) 2021-2024 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos5"
+EXTENDPRAUTO:append = "webos6"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -48,4 +48,5 @@ do_install:append() {
 SOLIBS = ".so*"
 FILES_SOLIBSDEV = ""
 
-INSANE_SKIP:${PN} = "installed-vs-shipped"
+# http://gecko.lge.com:8000/Errors/Details/999806
+FILES:${PN} += "${libdir}/fluent-bit/libfluent-bit.so"

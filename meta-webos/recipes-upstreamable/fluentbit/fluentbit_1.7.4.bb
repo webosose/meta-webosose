@@ -22,6 +22,7 @@ SRCREV = "d638a11725ecdaf683be6167709c4712559cde79"
 SRC_URI = "git://github.com/fluent/fluent-bit.git;branch=1.7;protocol=https \
     file://0001-mbedtls-Fix-build-failure-on-gcc-11.patch \
     file://0002-mbedtls-Fix-GCC-warning-in-ssl_calc_finished_tls_sha.patch \
+    file://0001-build-Make-systemd-init-systemd-detection-contingent.patch \
 "
 
 S = "${WORKDIR}/git"
