@@ -13,8 +13,8 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 pmloglib glib-2.0 libpbnjson gtest"
 RDEPENDS:${PN} += "configd-data"
 
-WEBOS_VERSION = "1.2.0-25_c7cc1a2ca9fae4840b04ff81595f946cb1120260"
-PR = "r22"
+WEBOS_VERSION = "1.2.0-26_ca3224fd680f4540c40bdc81ad2cafe06368ac11"
+PR = "r23"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -25,9 +25,7 @@ inherit webos_machine_dep
 inherit webos_distro_variant_dep
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-Logger-fix-segfaults-with-64bit-time_t.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
