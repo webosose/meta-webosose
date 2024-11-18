@@ -6,7 +6,7 @@ require media-codec-interface.bb
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r9"
+PR = "r10"
 
 CXXFLAGS +=" \
     -I${STAGING_INCDIR}/media-resource-calculator-clang \
@@ -17,8 +17,6 @@ CXXFLAGS +=" \
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
 PACKAGECONFIG[system-libcxx] = ",,libcxx"
-
-MEDIARECIPES = "umediaserver-clang media-resource-calculator-clang gst-video-encoder-clang"
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"
 

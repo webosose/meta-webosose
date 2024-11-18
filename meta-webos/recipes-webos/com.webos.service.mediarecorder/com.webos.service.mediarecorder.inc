@@ -15,7 +15,7 @@ DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 # Record pipeline
 DEPENDS += "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad"
 
-WEBOS_VERSION = "1.0.0-12_a82c20c20c520d0e43c9cb38461bb838648cfcd4"
+WEBOS_VERSION = "1.0.0-13_4100e3ee3eb652644da652597dc11df6f8516c52"
 INC_PR = "r6"
 
 inherit webos_component
@@ -56,3 +56,5 @@ PACKAGECONFIG[build-media-recorder] = "-DMEDIA_RECORDER_BUILD:BOOL=True,-DMEDIA_
 # build buffer encoder
 PACKAGECONFIG[build-buffer-encoder] = "-DBUFFER_ENCODER_BUILD:BOOL=True,-DBUFFER_ENCODER_BUILD=False,"
 
+# Use gst v4l2 encoder
+PACKAGECONFIG[gst-v4l2-encoder] = "-DGST_V4L2_ENCODER:BOOL=True,-DGST_V4L2_ENCODER:BOOL=False,"

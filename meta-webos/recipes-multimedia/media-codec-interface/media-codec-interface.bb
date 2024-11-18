@@ -21,12 +21,11 @@ ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
-MEDIARECIPES ?= "umediaserver media-resource-calculator gst-video-encoder"
-DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad ${MEDIARECIPES}"
-DEPENDS:append:rpi = " virtual/libomxil"
+CLANG_DEPENDENCY_SUFFIX ?= ""
+DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver${CLANG_DEPENDENCY_SUFFIX} media-resource-calculator${CLANG_DEPENDENCY_SUFFIX} gst-video-encoder${CLANG_DEPENDENCY_SUFFIX}"
 
 WEBOS_VERSION = "1.0.0-34_6aea2503073784525d3eda015c1e771a3f81428e"
-PR = "r18"
+PR = "r19"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
