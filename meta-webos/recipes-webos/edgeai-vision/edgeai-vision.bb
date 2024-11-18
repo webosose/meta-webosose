@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=b175693811514d0ad08577aa0fc5f16a\
 "
 
-WEBOS_VERSION = "1.1.0-77_4b3e07018ce1e15b599a589df6dd5997978f1831"
+WEBOS_VERSION = "1.1.0-85_7c5e9a1ebbb294bb7e0e564299820be94fea52e7"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r2"
+PR = "r3"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -58,7 +58,6 @@ PACKAGECONFIG ?= "xnnpack"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'gpu-delegate', 'gpu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', 'edgetpu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'armnn', 'armnn', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('DISTRO_FEATURES', 'ml-library-size-reduction', '', 'examples', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'auto-acceleration', 'ads', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'nnapi', 'nnapi', '', d)}"
@@ -67,16 +66,27 @@ PACKAGECONFIG[xnnpack] = "-DWITH_XNNPACK:BOOL=TRUE,-DWITH_XNNPACK:BOOL=FALSE"
 PACKAGECONFIG[gpu] = "-DWITH_GPU=ON, -DWITH_GPU=OFF"
 PACKAGECONFIG[edgetpu] = "-DWITH_EDGETPU:BOOL=TRUE,-DWITH_EDGETPU:BOOL=FALSE,libedgetpu"
 PACKAGECONFIG[armnn] = "-DWITH_ARMNN:BOOL=TRUE,-DWITH_ARMNN:BOOL=FALSE,armnn"
-PACKAGECONFIG[examples] = "-DWITH_EXAMPLES=ON -DWITH_EXTRA_MODELS=ON,-DWITH_EXAMPLES=OFF -DWITH_EXTRA_MODELS=OFF,,"
 PACKAGECONFIG[ads] = "-DWITH_AUTO_DELEGATE=ON,-DWITH_AUTO_DELEGATE=OFF,tflite-auto-delegation"
 PACKAGECONFIG[npu] = "-DWITH_NPU=ON,-DWITH_NPU=OFF,tflite-npu-delegate"
 PACKAGECONFIG[nnapi] = "-DWITH_NNAPI=ON,-DWITH_NNAPI=OFF"
 
+# =+ means prepends. so don't change the order, extra should be run before tests.
 PACKAGES =+ "${PN}-tests"
+PACKAGES =+ "${PN}-extra"
+PACKAGES =+ "${PN}-examples"
+
+FILES:${PN}-examples = " \
+    ${AIF_INSTALL_EXAMPLE_DIR} \
+    ${libdir}/libedgeai-example-tools.so.* \
+"
+
+FILES:${PN}-extra = " \
+    ${AIF_INSTALL_TEST_DIR}/edgeai-vision-test-extra* \
+    ${AIF_INSTALL_DIR}/extra_models \
+"
 
 FILES:${PN}-tests = " \
     ${AIF_INSTALL_TEST_DIR} \
-    ${AIF_INSTALL_TEST_DIR}/test-dl \
     ${AIF_INSTALL_DIR}/images \
 "
 
@@ -88,3 +98,5 @@ FILES:${PN} += " \
 FILES:${PN}-dev += " \
     ${libdir}/edgeai-extensions/*.so \
 "
+
+RDEPENDS:${PN}-examples += " ${PN}-extra"
