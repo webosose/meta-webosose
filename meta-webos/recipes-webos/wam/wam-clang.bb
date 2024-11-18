@@ -10,7 +10,7 @@ PROVIDES = "virtual/webappmanager-webos"
 
 WEBOS_REPO_NAME = "wam"
 
-PR = "${INC_PR}.7"
+PR = "${INC_PR}.8"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
@@ -21,12 +21,6 @@ DEPENDS:remove = "gtest googletest"
 DEPENDS += "googletest-clang"
 
 CXXFLAGS +="-I${STAGING_INCDIR}/cbe"
-
-OECMAKE_CXX_FLAGS += "\
-    -Wno-error=unused-command-line-argument \
-    -Wno-error=inconsistent-missing-override \
-    -Wno-format \
-"
 
 do_configure:prepend() {
     ln -snf jsoncpp-clang.pc ${STAGING_LIBDIR}/pkgconfig/jsoncpp.pc
