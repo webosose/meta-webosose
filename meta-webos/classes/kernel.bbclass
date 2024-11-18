@@ -15,14 +15,6 @@ inherit webos_deploy
 RPROVIDES:${KERNEL_PACKAGE_NAME}-base:append = " ${KERNEL_PACKAGE_NAME}-base"
 RPROVIDES:${KERNEL_PACKAGE_NAME}-image:append = " ${KERNEL_PACKAGE_NAME}-image"
 
-do_deploy:append() {
-    # The .bin-s are of no use to us.
-    for type in ${KERNEL_IMAGETYPES} ; do
-        rm -vf ${DEPLOYDIR}/${type}-${KERNEL_IMAGE_LINK_NAME}.bin
-        rm -vf ${DEPLOYDIR}/${type}
-    done
-}
-
 do_webos_deploy_fixup:prepend() {
     [ -e       ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_NAME}.bin ] && \
         ln -vf ${DEPLOY_DIR_IMAGE}/${KERNEL_IMAGE_NAME}.bin \
