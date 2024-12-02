@@ -13,8 +13,8 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib pmtrace boost icu"
 RDEPENDS:${PN} = "applicationinstallerutility ecryptfs-utils librolegen"
 
-WEBOS_VERSION = "1.0.0-43_da94c85dba584c828c0bb59cdad1ea03c982e4b0"
-PR = "r6"
+WEBOS_VERSION = "1.0.0-46_ff7b09a77857c202b359a49929eba877f4a9bb30"
+PR = "r7"
 
 inherit webos_component
 inherit webos_cmake
@@ -23,9 +23,7 @@ inherit webos_daemon
 inherit webos_system_bus
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-CMakeLists.txt-replace-std-c-11-with-std-c-17-for-ic.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
