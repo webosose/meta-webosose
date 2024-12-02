@@ -15,7 +15,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "libpbnjson pmloglib glib-2.0"
 
 WEBOS_VERSION = "1.0.0-17_f6d4399f296df2b4bead4dda7f3e56090634fd6b"
-PR = "r14"
+PR = "r15"
 
 inherit webos_component
 inherit webos_cmake
@@ -25,7 +25,9 @@ inherit webos_lttng
 inherit webos_public_repo
 inherit webos_prerelease_dep
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-PmTrace.h-fix-segfault-with-64bit-time_t.patch \
+"
 S = "${WORKDIR}/git"
 
 # The libmemtracker, libpmtrace, pmctl (library/header/binary files) will be installed in all builds except RELEASE mode.

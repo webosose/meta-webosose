@@ -1,0 +1,68 @@
+From 48197cfb455c41f7f998a07528ec21b3aa353bd4 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 15 Nov 2024 08:06:55 +0100
+Subject: [PATCH] PmTrace.h: fix segfault with 64bit time_t
+
+:Release Notes:
+Should fix the segfault seen in bootd and possibly few more blockers
+from WRR-2621
+
+:Detailed Notes:
+Fixes:
+  #0  __GI_strlen () at ../sysdeps/arm/armv6t2/strlen.S:126
+  #1  0xf74cd4b4 in __printf_buffer (buf=buf@entry=0xffac1c78, format=<optimized out>, ap=..., mode_flags=mode_flags@entry=2) at vfprintf-process-arg.c:435
+  #2  0xf74e097a in __vsnprintf_internal (string=string@entry=0xffac1df4 "{\"CLOCK\":15.000,\"PerfType\":\"", maxlen=<optimized out>, format=<optimized out>, args=..., args@entry=..., mode_flags=2) at vsnprintf.c:96
+  #3  0xf7540256 in ___vsnprintf_chk (s=s@entry=0xffac1df4 "{\"CLOCK\":15.000,\"PerfType\":\"", maxlen=<optimized out>, flag=flag@entry=1, slen=slen@entry=1024, format=<optimized out>,
+      format@entry=0x9e4a54 "{\"CLOCK\":%ld.%03d,\"PerfType\":\"%s\",\"PerfGroup\":\"%s\"} %s", ap=..., ap@entry=...) at vsnprintf_chk.c:34
+  #4  0xf77b2b52 in vsnprintf (__ap=..., __fmt=0x9e4a54 "{\"CLOCK\":%ld.%03d,\"PerfType\":\"%s\",\"PerfGroup\":\"%s\"} %s", __n=<optimized out>, __s=0xffac1df4 "{\"CLOCK\":15.000,\"PerfType\":\"") at /usr/include/bits/stdio2.h:68
+  #5  _PmLogMsgKV (context=<optimized out>, level=kPmLogLevel_Info, flags=1, msgid=0x9e4a4c "Boot", kv_count=3, check_keywords=0x9e4aa0 "CLOCK\001PerfType\001PerfGroup", check_formats=0x9e4a8c "%ld.%03d\001\"%s\"\001\"%s\"",
+      fmt=0x9e4a54 "{\"CLOCK\":%ld.%03d,\"PerfType\":\"%s\",\"PerfGroup\":\"%s\"} %s") at /usr/src/debug/lib32-pmloglib/3.3.0-101/src/PmLogLib.c:2893
+  #6  0x009de3de in Logger::performanceLog (this=this@entry=0x9f4f38 <g_Logger>, msgid=0x9e4a4c "Boot", format=0x9df15c "BOOTD_START") at /usr/src/debug/lib32-bootd/2.0.0-150.jcl4tv.81/src/bootd/util/Logger.cpp:331
+  #7  0x009758ba in main (argc=<optimized out>, argv=<optimized out>) at /usr/src/debug/lib32-bootd/2.0.0-150.jcl4tv.81/src/bootd/Main.cpp:45
+
+:Testing Performed:
+Local Test: OK
+
+:QA Notes:
+
+:Issues Addressed:
+[WRR-1920] bootd segfaults with 64-bit time_t
+[WRR-2621] Fix 64bit time_t issues in starfish built with Yocto 5.0
+           Scarthgap
+
+Change-Id: I5e58ff386f0fcde080990d37a013fe0382f31dfc
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webos-pro/pmtrace/+/456864 PmTrace.h: fix segfault with 64bit time_t]
+
+ include/PmTrace.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/PmTrace.h b/include/PmTrace.h
+index 0990628..af008ec 100644
+--- a/include/PmTrace.h
++++ b/include/PmTrace.h
+@@ -167,13 +167,13 @@ private:
+         struct timespec ts; \
+         clock_gettime(CLOCK_MONOTONIC, &ts); \
+         _PmLogMsgPerfLog(kv_count)(ctx, Info, msgid, \
+-            "CLOCK", "%ld.%03d", ts.tv_sec, ts.tv_nsec / 1000000, \
++            "CLOCK", "%jd.%03d", (intmax_t) ts.tv_sec, ts.tv_nsec / 1000000, \
+             "PerfType", "\"%s\"", type, \
+             "PerfGroup", "\"%s\"", group, \
+             __VA_ARGS__); \
+         if (tracepoint_enabled(pmtrace, perflog)) { \
+             char payload[128]; \
+-            snprintf(payload, 128, "{\"CLOCK\":%ld.%03d, \"PerfType\":\"%s\", \"PerfGroup\":\"%s\"}", ts.tv_sec, ts.tv_nsec / 1000000, type, group); \
++            snprintf(payload, 128, "{\"CLOCK\":%jd.%03d, \"PerfType\":\"%s\", \"PerfGroup\":\"%s\"}", (intmax_t) ts.tv_sec, ts.tv_nsec / 1000000, type, group); \
+             do_tracepoint(pmtrace, perflog, "perflog", msgid, payload); \
+         } \
+     } while(0)
+@@ -194,7 +194,7 @@ private:
+         struct timespec ts; \
+         char clk[CLOCK_STR_LEN]; \
+         clock_gettime(CLOCK_MONOTONIC, &ts); \
+-        snprintf(clk, CLOCK_STR_LEN, "%ld.%3d", ts.tv_sec, ts.tv_nsec / 1000000); \
++        snprintf(clk, CLOCK_STR_LEN, "%jd.%3d", (intmax_t) ts.tv_sec, ts.tv_nsec / 1000000); \
+         _PmtPerfLogSyslog(PMTKVS("ctx", ctx), PMTKVS("CLOCK", clk), PMTKVS("msgid", msgid), PMTKVS("PerfType", type), PMTKVS("PerfGroup", group), __VA_ARGS__); \
+         _PmtPerfLogLttng(ctx, msgid, PMTKVS("CLOCK", clk), PMTKVS("PerfType", type), PMTKVS("PerfGroup", group), __VA_ARGS__); \
+     } while(0)
