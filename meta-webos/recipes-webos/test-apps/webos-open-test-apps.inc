@@ -4,7 +4,7 @@ SECTION = "webos/apps"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-WEBOS_VERSION = "1.0.0-24_cd308777c02ba5a086ce48e0cc1c95720f9d80d2"
+WEBOS_VERSION = "1.0.0-25_8a65ca9487684761bfb6d2b324d2e3989e70ebaf"
 INC_PR = "r6"
 
 EXTRA_INHERIT ?= "webos_arch_indep webos_cmake"
