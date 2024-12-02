@@ -11,9 +11,9 @@ PACKAGECONFIG[system-libcxx] = ",,libcxx"
 WEBOS_REPO_NAME = "umediaserver"
 FILESEXTRAPATHS:prepend := "${THISDIR}/umediaserver:"
 
-PR = "${INC_PR}.6"
+PR = "${INC_PR}.7"
 
-OECMAKE_CXX_FLAGS += "-Wno-c++11-narrowing -Wno-format-security"
+OECMAKE_CXX_FLAGS += "-Wno-c++11-narrowing"
 OECMAKE_TARGET_COMPILE = "umedia_api resource_mgr_client resource_mgr_client_c"
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"
