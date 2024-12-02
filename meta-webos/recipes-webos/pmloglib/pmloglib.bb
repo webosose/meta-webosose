@@ -12,8 +12,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 libpbnjson"
 
-WEBOS_VERSION = "3.3.0-12_9df90d6fb7ac277aab287a6a4d9cedbb97c08b16"
-PR = "r12"
+WEBOS_VERSION = "3.3.0-13_a8e65eb3bf328f981750f235b30a3c3b4c6e23f7"
+PR = "r13"
 
 LEAD_SONAME = "libPmLogLib.so"
 EXTRA_OECMAKE += "-DWEBOS_DISTRO_PRERELEASE:STRING='${WEBOS_DISTRO_PRERELEASE}'"
@@ -29,7 +29,5 @@ inherit webos_pmlog_config
 PACKAGECONFIG ??= ""
 PACKAGECONFIG[whitelist] = "-DENABLE_WHITELIST:BOOL=TRUE, -DENABLE_WHITELIST:BOOL=FALSE"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
-    file://0001-PmLogInfoWithClock-fix-segfault-with-64bit-time_t.patch \
-"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
