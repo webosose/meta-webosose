@@ -19,7 +19,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_cpushareholder}"
 
 WEBOS_VERSION = "1.0.2-99_a698bc40c4e73d338bdf3310c31d1878978d231a"
-INC_PR = "r68"
+INC_PR = "r69"
 
 WAM_BUILD_SYSTEM ?= "webos_cmake"
 WAM_BUILD_DEFAULT_PLUGIN ?= "1"
@@ -92,6 +92,7 @@ install_units:append() {
         sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-in-process-stack-traces \\' $script
         sed -i '/export ENABLE_BLINK_FEATURES=/ s/$/,LocalResourceCodeCache,CustomEventExtension,WebCodecs,MediaStreamInsertableStreams/' $script
         sed -i -e "s/\$WAM_V8_CODE_CACHE_SWITCHES//g" $script
+        sed -i '/export WAM_COMMON_SWITCHES=\" \\/a\    --disable-font-subpixel-positioning \\' $script
 
         # disable pinch zoom
         sed -i '/--enable-aggressive-release-policy \\/a\     --disable-pinch \\' $script
