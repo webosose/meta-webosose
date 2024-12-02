@@ -7,8 +7,4 @@ CHROMIUM_OSS_PKG_INFO_CHKSUM = "file://oss-pkg-info.yaml;md5=42bb8d47fa48b571558
 
 WEBOS_REPO_NAME = "chromium120"
 WEBRUNTIME_REPO_VERSION = "120"
-WEBOS_VERSION = "120.0.6099.269-14_ac6f7692bad38d790c69e3e82d9ee8ec0ab4b24e"
-
-SRC_URI += " \
-    file://0001-Use-shlex-instead-of-pipes.patch \
-"
+WEBOS_VERSION = "120.0.6099.269-15_397e1b4689a05c2a82695f2df6bfe1bb121dd91f"
