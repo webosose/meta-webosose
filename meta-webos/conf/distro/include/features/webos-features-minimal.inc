@@ -14,4 +14,4 @@ WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM += "wayland"
 WEBOS_DISTRO_FEATURES_EXTENDED += "webos-graphics webos-touch"
 
 # Addition/removal image features
-IMAGE_FEATURES += "webos-minimal"
+IMAGE_FEATURES += "${@ 'webos-minimal' if bb.data.inherits_class('webos_image', d) else ''}"

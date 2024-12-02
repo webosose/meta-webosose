@@ -36,6 +36,6 @@ WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework auto-acceleration edgetp
 WEBOS_DISTRO_FEATURES_EXTENDED += "${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK}"
 
 # Addition/removal image features
-IMAGE_FEATURES += "webos-systemapps webos-testapps webos-extended"
+IMAGE_FEATURES += "${@ 'webos-systemapps webos-testapps webos-extended' if bb.data.inherits_class('webos_image', d) else ''}"
 
 NO_RECOMMENDATIONS = "0"

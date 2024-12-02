@@ -33,6 +33,6 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
 "
 
 # Addition/removal image features
-IMAGE_FEATURES += "webos-systemapps webos-systemservices"
+IMAGE_FEATURES += "${@ 'webos-systemapps webos-systemservices' if bb.data.inherits_class('webos_image', d) else ''}"
 
 NO_RECOMMENDATIONS = "0"

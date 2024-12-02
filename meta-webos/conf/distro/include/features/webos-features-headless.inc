@@ -33,4 +33,4 @@ VIRTUAL-RUNTIME_initscripts = "webos-initscripts"
 PREFERRED_RPROVIDER_initd-functions = "webos-initscripts"
 
 # Addition/removal image features
-IMAGE_FEATURES += "webos-extract-ls2-api webos-validate-ls2-conf"
+IMAGE_FEATURES += "${@ 'webos-extract-ls2-api webos-validate-ls2-conf' if bb.data.inherits_class('webos_image', d) else ''}"
