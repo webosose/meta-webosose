@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json"
 
-WEBOS_VERSION = "1.0.0-54_46bb6d43ed76ddccafbdff9ec5f4cf45a393566f"
+WEBOS_VERSION = "1.0.0-56_58c42e1b0b02e170dd76c3e81ec59acd513ac62d"
 PR = "r14"
 
 inherit webos_component
