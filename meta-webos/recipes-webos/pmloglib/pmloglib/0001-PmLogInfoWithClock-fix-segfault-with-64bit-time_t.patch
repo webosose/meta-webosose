@@ -1,0 +1,50 @@
+From 543c9caf6bd4f4e72e25140bb5821e7829c92eb5 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 15 Nov 2024 08:06:55 +0100
+Subject: [PATCH] PmLogInfoWithClock: fix segfault with 64bit time_t
+
+:Release Notes:
+Should fix the segfault seen in audiooputputd and possibly few more
+blockers from WRR-2621
+
+:Detailed Notes:
+Fixes:
+  #0 __GI_strlen () at ../sysdeps/arm/armv6t2/strlen.S:126
+  #1 0xf74124b4 in __printf_buffer (buf=buf@entry=0xf3519650, format=<optimized out>, ap=..., mode_flags=mode_flags@entry=2) at vfprintf-process-arg.c:435
+  #2 0xf742597a in __vsnprintf_internal (string=<optimized out>, maxlen=<optimized out>, format=<optimized out>, args=..., mode_flags=2) at vsnprintf.c:96
+  #3 0xf76deb52 in _PmLogMsgKV () from /usr/lib/libPmLogLib.so.3
+  #4 0xf78927ba in umiTVAudio::startXmlParsing() () from /usr/lib/libumi.so.1
+  #5 0xf75a4062 in ?? () from /usr/lib/libstdc++.so.6
+  #6 0xf742d424 in start_thread (arg=0x696c6720) at pthread_create.c:447
+  #7 0xf747c208 in ?? () at ../sysdeps/unix/sysv/linux/arm/clone3.S:71 from /usr/lib/libc.so.6
+
+:Testing Performed:
+Local Test: OK
+
+:QA Notes:
+
+:Issues Addressed:
+[WRR-1912] audiooutputd segfaults with 64-bit time_t
+[WRR-2621] Fix 64bit time_t issues in starfish built with Yocto 5.0
+           Scarthgap
+
+Change-Id: I5e58ff386f0fcde080990d37a013fe0382f31dfc
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/pmloglib/+/456556 PmLogInfoWithClock: fix segfault with 64bit time_t]
+
+ include/public/PmLogLib.h.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/public/PmLogLib.h.in b/include/public/PmLogLib.h.in
+index 9fed01d..4afc4de 100644
+--- a/include/public/PmLogLib.h.in
++++ b/include/public/PmLogLib.h.in
+@@ -1190,7 +1190,7 @@ proto:	void PmLogInfoWithClock(PmLogContext context, const char *msgid,
+ 		struct timespec ts;                                     \
+ 		clock_gettime(CLOCK_MONOTONIC, &ts);                    \
+ 		_PmLogMsgClock##kv_count(context, Info, msgid,          \
+-		  "CLOCK", "%ld.%03d", ts.tv_sec, ts.tv_nsec / 1000000, \
++		  "CLOCK", "%jd.%03ld", (intmax_t) ts.tv_sec, ts.tv_nsec / 1000000, \
+ 		  __VA_ARGS__);                                         \
+ 	} while (0)
+ 
