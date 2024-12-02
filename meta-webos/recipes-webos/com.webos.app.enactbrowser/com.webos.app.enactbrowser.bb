@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-17.browsershell.11_6224f84f2c7362a642366344f786ebb7c8711608"
-PR = "r23"
+PR = "r24"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -31,6 +31,8 @@ SUPPORT_BROWSERSHELL = "true"
 WEBOS_ENACTJS_PACK_UIOVERLAY = "\
     && cd ../../uioverlay/ \
     && ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -l=used -o ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay \
+    && rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay/resources \
+    && cp -rf ../samples/enact-based/resources/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay/resources \
     && cd ../samples/enact-based \
 "
 WEBOS_ENACTJS_PACK_FOR_BROWSERSHELL = "${@oe.utils.conditional('SUPPORT_BROWSERSHELL', \
