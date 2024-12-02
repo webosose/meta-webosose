@@ -38,7 +38,6 @@ WEBOS_IMAGE_DEFAULT_FEATURES:append:emulator = " ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE
 WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE') == '' else ''}"
 
 WEBOS_IMAGE_BASE_INSTALL = " \
-    packagegroup-core-boot \
     packagegroup-webos-core-boot \
     ${WEBOS_IMAGE_EXTRA_INSTALL} \
 "
