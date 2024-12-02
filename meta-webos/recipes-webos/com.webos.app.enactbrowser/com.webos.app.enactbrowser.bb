@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-17.browsershell.11_6224f84f2c7362a642366344f786ebb7c8711608"
-PR = "r22"
+PR = "r23"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -45,13 +45,12 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
     rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources && \
     rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/node_modules/@enact/moonstone/resources && \
     ln -sfn /usr/share/javascript/ilib/localedata/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ilibdata && \
-    cp -R --no-dereference --preserve=mode,links -v webos-locale.js label.js background.js defaults.js manifest.json pdf.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ && \
+    cp -R --no-dereference --preserve=mode,links -v webos-locale.js manifest.json pdf.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ && \
     ${WEBOS_NODE_BIN} extract-inline.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} \
 "
 
 WEBOS_ENACTJS_PACK_OVERRIDE += "\
     && cp -rf resources/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources \
-    && sed -i -E 's/(useBuiltInErrorPages:) *false/\1 true/g' ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/defaults.js \
     && ./scripts/install-manifest.js --from=manifest.json --to=${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/manifest.json --version_suffix=`git rev-parse HEAD` \
     ${WEBOS_ENACTJS_PACK_FOR_BROWSERSHELL} \
 "
