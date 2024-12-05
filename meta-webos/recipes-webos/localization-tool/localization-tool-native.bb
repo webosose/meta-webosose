@@ -12,7 +12,7 @@ inherit webos_npm_env
 inherit native
 DEPENDS = "nodejs-native node-gyp-packages-native"
 
-SRC_URI = "git://github.com/iLib-js/ilib-loctool-webos-dist.git;branch=master;protocol=https"
+SRC_URI = "git://github.com/iLib-js/ilib-loctool-webos-dist.git;branch=main;protocol=https"
 S = "${WORKDIR}/git"
 
 # PV is the version of the ilib-loctool-webos-dist distribution, as tagged in the
