@@ -1,0 +1,36 @@
+From 4b243378b451bd139466c242ae1e58753fea0fbf Mon Sep 17 00:00:00 2001
+From: "tho3.nguyen" <tho3.nguyen@lge.com>
+Date: Wed, 11 Dec 2024 14:58:53 +0900
+Subject: [PATCH] wayland-webos-*.pc.in: Remove redundant library directory
+ flags
+
+Change-Id: I7f8e64c82fd5405a9ddcb1c63490a6ee33fbe877
+---
+Upstream-Status: Backport [4b24337 (tag: submissions/48) wayland-webos-*.pc.in: Remove redundant library directory flags]
+
+ client/files/pkgconfig/wayland-webos-client.pc.in | 2 +-
+ server/files/pkgconfig/wayland-webos-server.pc.in | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/client/files/pkgconfig/wayland-webos-client.pc.in b/client/files/pkgconfig/wayland-webos-client.pc.in
+index 7da12b4..355004c 100644
+--- a/client/files/pkgconfig/wayland-webos-client.pc.in
++++ b/client/files/pkgconfig/wayland-webos-client.pc.in
+@@ -21,5 +21,5 @@ Name: @CMAKE_PROJECT_NAME@-client
+ Description: @WEBOS_PROJECT_SUMMARY@
+ Version: @WEBOS_COMPONENT_VERSION@
+ Requires.private: wayland-client
+-Libs: -L${libdir} -l@CMAKE_PROJECT_NAME@-client -L@WAYLAND_CLIENT_LIBRARY_DIRS@ -l@WAYLAND_CLIENT_LIBRARIES@
++Libs: -L${libdir} -l@CMAKE_PROJECT_NAME@-client -l@WAYLAND_CLIENT_LIBRARIES@
+ Cflags: -I${includedir}
+diff --git a/server/files/pkgconfig/wayland-webos-server.pc.in b/server/files/pkgconfig/wayland-webos-server.pc.in
+index a9318c7..7c256b5 100644
+--- a/server/files/pkgconfig/wayland-webos-server.pc.in
++++ b/server/files/pkgconfig/wayland-webos-server.pc.in
+@@ -20,5 +20,5 @@ includedir=@WEBOS_INSTALL_INCLUDEDIR@
+ Name: @CMAKE_PROJECT_NAME@-server
+ Description: @WEBOS_PROJECT_SUMMARY@
+ Version: @WEBOS_COMPONENT_VERSION@
+-Libs: -L${libdir} -l@CMAKE_PROJECT_NAME@-server -L@WAYLAND_SERVER_LIBRARY_DIRS@ -l@WAYLAND_SERVER_LIBRARIES@
++Libs: -L${libdir} -l@CMAKE_PROJECT_NAME@-server -l@WAYLAND_SERVER_LIBRARIES@
+ Cflags: -I${includedir}
