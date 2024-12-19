@@ -67,7 +67,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r5"
+PR = "r6"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -106,7 +106,7 @@ TUNE_CCARGS:remove = "${MCPU_OPTS_TO_REMOVE}"
 OECMAKE_SOURCEPATH = "${S}/tensorflow/lite"
 
 PACKAGECONFIG ?= "xnnpack"
-PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'gpu-delegate', 'gpu', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-gpu-delegate', 'gpu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'gl-backend', '', d), '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', 'nnapi', '', d)}"
 
