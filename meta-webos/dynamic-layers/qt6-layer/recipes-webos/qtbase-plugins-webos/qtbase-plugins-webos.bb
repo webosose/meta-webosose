@@ -12,17 +12,20 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtbase"
 
 WEBOS_VERSION = "1.0.0-33_82de55b24bdab921b0a41bb08631cea7e881e376"
-PR = "r9"
+PR = "r10"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_qt_global
+inherit features_check
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
+
+REQUIRED_COMBINED_FEATURES = "graphics-drm"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 PACKAGECONFIG ??= ""
