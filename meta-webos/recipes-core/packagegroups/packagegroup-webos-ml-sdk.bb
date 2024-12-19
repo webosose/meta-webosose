@@ -4,7 +4,7 @@ DESCRIPTION = "Machine learning dev components used in webOS"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
 
-PR = "r5"
+PR = "r6"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
@@ -122,7 +122,7 @@ AIFRAMEWORK_CORE = " \
 "
 
 AIFRAMEWORK_EXTENDED = " \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'armnn', '${USE_ARMNN}', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'webos-armnn', '${USE_ARMNN}', '', d)} \
     ${@bb.utils.contains('COMBINED_FEATURES', 'edgetpu', '${USE_EDGETPU}', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'xstack', '${USE_XSTACK}', '', d)} \
 "

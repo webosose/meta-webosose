@@ -9,7 +9,7 @@ _pr_suffix .= ".2"
 
 # Includes AI Framework. You can specify the packages to be installed using the following options:
 # webos-aiframework: If this feature is specified, tensorflow-lite, opencv, opencl, edgeai-vision will be installed.
-# armnn: Arm's ML SDKs arm-compute-library and armnn are installed. Along with this, the TFLite armnn-delegate for TFLite is installed.
+# webos-armnn: Arm's ML SDKs arm-compute-library and armnn are installed. Along with this, the TFLite armnn-delegate for TFLite is installed.
 # gpu-delegate: If the installation machine supports gpu acceleration, TFLite will build with the gpu delegate function.
 # webos-auto-acceleration: When this feature is added, the tflite-auto-delegation feature is enabled.
 # edgetpu: Install libraries for Google Coral Edge TPU.
