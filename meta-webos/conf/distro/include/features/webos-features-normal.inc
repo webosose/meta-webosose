@@ -29,7 +29,7 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
 # webos-gpu-delegate: If the installation machine supports gpu acceleration, TFLite will build with the gpu delegate function.
 # webos-auto-acceleration: When this feature is added, the tflite-auto-delegation feature is enabled.
 # webos-edgetpu: Install libraries for Google Coral Edge TPU.
-# ml-library-size-reduction: If the image does not have enough space to install all of the above ML libraries,
+# webos-ml-library-size-reduction: If the image does not have enough space to install all of the above ML libraries,
 # you can reduce the size of the installed library by adding this option. If this option is specified,
 # the examples and test codes are excluded from the installation.
 WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework webos-auto-acceleration webos-edgetpu webos-gpu-delegate"
