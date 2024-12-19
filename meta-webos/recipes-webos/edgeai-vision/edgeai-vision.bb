@@ -14,7 +14,7 @@ WEBOS_VERSION = "1.1.0-85_7c5e9a1ebbb294bb7e0e564299820be94fea52e7"
 WEBOS_REPO_NAME = "edge-ai-computer-vision"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
-PR = "r8"
+PR = "r9"
 S = "${WORKDIR}/git"
 
 inherit cmake
@@ -59,7 +59,7 @@ PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-gpu-delegate'
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-edgetpu', 'edgetpu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'webos-armnn', 'armnn', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-auto-acceleration', 'ads', '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'npu-delegate', 'npu', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-npu-delegate', 'npu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DWITH_XNNPACK:BOOL=TRUE,-DWITH_XNNPACK:BOOL=FALSE"
