@@ -28,11 +28,16 @@ WEBOS_LOCALIZATION_TARGET_LOCALES ?= ""
 WEBOS_LOCALIZATION_GENERATE_RESOURCES ?= "true"
 
 addtask do_generate_webos_localization after do_configure before do_install
-do_generate_webos_localization[depends] += "localization-tool-native:do_populate_sysroot"
+do_generate_webos_localization[depends] += "loctool-native:do_populate_sysroot ilib-loctool-webos-qml-native:do_populate_sysroot"
 # it's only needed for do_generate_webos_localization function and correctly added
 # above, but add it to normal DEPENDS as well to ensure that it's included in
 # recdeptask and then in webos-bom.json
-WEBOS_LOCALIZATION_DEPENDS += "localization-tool-native"
+WEBOS_LOCALIZATION_DEPENDS += "loctool-native \
+                               ilib-loctool-webos-qml-native \
+                               ilib-loctool-webos-javascript-native \
+                               ilib-loctool-webos-c-native \
+                               ilib-loctool-webos-cpp-native \
+                               ilib-loctool-webos-json-native"
 WEBOS_LOCALIZATION_DATA_PATH ?= "${S}"
 WEBOS_LOCALIZATION_SOURCE_DIR ?= "${S}"
 WEBOS_LOCALIZATION_SOURCE_RESOURCES ?= "${WEBOS_LOCALIZATION_SOURCE_DIR}/resources"
