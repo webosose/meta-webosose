@@ -408,7 +408,7 @@ PACKAGE_ARCH:pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFI
 PACKAGE_ARCH:pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
 
 # Added here as no better place for qemu machine
-MACHINE_FEATURES:append:qemuall = " graphics-drm"
+MACHINE_FEATURES:append:qemuall = " webos-graphics-drm"
 
 # This is needed e.g. for nodejs where PACKAGE_ARCH is set to MACHINE_ARCH
 # but instead of depending on qemuwrapper-cross it creates its own qemu wrapper
