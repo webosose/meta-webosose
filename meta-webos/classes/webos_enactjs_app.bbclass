@@ -22,8 +22,9 @@ inherit webos_enactjs_env
 #   - mksnapshot-cross to use the mksnapshot binary to build v8 app snapshot blobs
 #   - enact-framework, enact-sandstone to use a shared Enact framework libraries
 #   - coreutils-native to use timeout utility to prevent frozen NPM processes
-WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp mksnapshot-cross-${TARGET_ARCH} enact-framework enact-sandstone coreutils-native"
+WEBOS_ENACTJS_APP_DEPENDS = "ilib-webapp enact-framework enact-sandstone coreutils-native"
 DEPENDS:append = " ${WEBOS_ENACTJS_APP_DEPENDS}"
+DEPENDS:append = " ${@ 'mksnapshot-cross-${TARGET_ARCH}' if not d.getVar('WEBOS_ENACTJS_PACK_OVERRIDE').strip() and '--snapshot' in d.getVar('WEBOS_ENACTJS_PACK_OPTS') else ''}"
 
 # chromium doesn't build for armv[45]*
 COMPATIBLE_MACHINE = "(-)"
