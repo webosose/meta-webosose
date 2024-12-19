@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
-WEBOS_VERSION = "2.0.0-415_fd9e37fe0cd95aa07870d13922720a757771eae6"
-PR = "r62"
+WEBOS_VERSION = "2.0.0-416_983daed39928fb09d73bf4d7266d54c5e3beef73"
+PR = "r63"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -33,6 +33,12 @@ OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
 EXTRA_QMAKEVARS_PRE += "${@ 'CONFIG+=lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' }"
+
+# DRM/KMS configurations
+EGLFS_INTEGRATION ?= "eglfs_kms_webos"
+DRM_FORMAT ?= "abgr8888"
+EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('COMBINED_FEATURES', 'graphics-drm', 'CONFIG+=backend_drm EGLFS_INTEGRATION=${EGLFS_INTEGRATION} DRM_FORMAT=${DRM_FORMAT}', '', d)}"
+EXTRA_QMAKEVARS_PRE:append:qemuall = " CONFIG+=virtual_display_support"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 
@@ -71,6 +77,9 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_lsm-qpa}"
 inherit webos_system_bus
 inherit webos_qmllint
 
+# Make sure to contain com.webos.surfacemanager service's files only
+WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "SERVICE"
+
 # qt-features-webos have its own logic to install system bus files reason for
 # that is because only qmake knows where substitued files will be placed.
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
@@ -93,11 +102,10 @@ FILES:${PN}-gcov = " \
 PACKAGES =+ "${PN}-conf ${PN}-base ${PN}-base-tests"
 
 FILES:${PN}-conf += " \
-    ${sysconfdir}/surface-manager.d/ \
     ${webos_sysbus_apipermissionsdir} \
     ${webos_sysbus_groupsdir} \
     ${webos_sysbus_servicedir} \
-    ${webos_sysbus_manifestsdir}/luna-surfacemanager.manifest.json \
+    ${webos_sysbus_manifestsdir}/com.webos.surfacemanager.manifest.json \
     ${webos_sysbus_permissionsdir}/com.webos.surfacemanager.perm.json \
     ${webos_sysbus_rolesdir}/com.webos.surfacemanager.role.json \
 "
@@ -108,6 +116,7 @@ FILES:${PN}-base += " \
     ${OE_QMAKE_PATH_BINS}/ \
     ${datadir}/icons/ \
     ${datadir}/webos-keymap/webos-keymap.qmap \
+    ${sysconfdir}/surface-manager.d/ \
 "
 
 FILES:${PN}-base-tests += " \
@@ -118,4 +127,4 @@ FILES:${PN}-base-tests += " \
     ${webos_testsdir}/${BPN}/ \
 "
 
-RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components qtdeclarative-qmlplugins"
+RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components qtdeclarative-qmlplugins notificationmgr"
