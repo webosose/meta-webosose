@@ -4,7 +4,7 @@ require tensorflow-lite_2.9.3.inc
 
 inherit pkgconfig
 
-PR = "r5"
+PR = "r6"
 
 DEPENDS += " \
     tensorflow-lite \
@@ -16,7 +16,7 @@ SRC_URI += " \
     file://0003-add-nnapi-auto-delegation-option.patch \
 "
 
-PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'auto-acceleration', 'ads', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-auto-acceleration', 'ads', '', d)}"
 
 PACKAGECONFIG[ads] = "-DENABLE_AUTO_DELEGATE=ON,-DENABLE_AUTO_DELEGATE=OFF,tflite-auto-delegation"
 
