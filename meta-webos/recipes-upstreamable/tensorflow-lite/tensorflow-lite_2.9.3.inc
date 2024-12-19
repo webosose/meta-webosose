@@ -67,7 +67,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r6"
+PR = "r7"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
@@ -79,7 +79,7 @@ DEPENDS += " \
 "
 
 RDEPENDS:${PN} = " \
-    ${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', '${MLPREFIX}webos-nnruntime', '', d)} \
+    ${@bb.utils.contains('MACHINE_FEATURES', 'webos-nnapi', '${MLPREFIX}webos-nnruntime', '', d)} \
 "
 
 ARM_INSTRUCTION_SET = "arm"
@@ -108,7 +108,7 @@ OECMAKE_SOURCEPATH = "${S}/tensorflow/lite"
 PACKAGECONFIG ?= "xnnpack"
 PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-gpu-delegate', 'gpu', '', d)}"
 PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'gl-backend', bb.utils.contains_any('DISTRO_FEATURES', 'vulkan opengl', 'gl-backend', '', d), '', d)}"
-PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'nnapi', 'nnapi', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('MACHINE_FEATURES', 'webos-nnapi', 'nnapi', '', d)}"
 
 PACKAGECONFIG[xnnpack] = "-DTFLITE_ENABLE_XNNPACK=ON,-DTFLITE_ENABLE_XNNPACK=OFF"
 PACKAGECONFIG[gpu] = "-DTFLITE_ENABLE_GPU=ON,-DTFLITE_ENABLE_GPU=OFF"
