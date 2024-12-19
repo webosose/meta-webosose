@@ -3,7 +3,7 @@
 require conf/distro/include/features/webos-features-minimal.inc
 
 # Increment when features are changed
-_pr_suffix .= ".2"
+_pr_suffix .= ".3"
 
 # Addition/removal distro features
 WEBOS_DISTRO_FEATURES_EXTENDED += "virtualization"
@@ -28,11 +28,11 @@ WEBOS_DISTRO_FEATURES_EXTENDED += "\
 # webos-armnn: Arm's ML SDKs arm-compute-library and armnn are installed. Along with this, the TFLite armnn-delegate for TFLite is installed.
 # gpu-delegate: If the installation machine supports gpu acceleration, TFLite will build with the gpu delegate function.
 # webos-auto-acceleration: When this feature is added, the tflite-auto-delegation feature is enabled.
-# edgetpu: Install libraries for Google Coral Edge TPU.
+# webos-edgetpu: Install libraries for Google Coral Edge TPU.
 # ml-library-size-reduction: If the image does not have enough space to install all of the above ML libraries,
 # you can reduce the size of the installed library by adding this option. If this option is specified,
 # the examples and test codes are excluded from the installation.
-WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework webos-auto-acceleration edgetpu gpu-delegate"
+WEBOS_DISTRO_FEATURES_AI_FRAMEWORK = "webos-aiframework webos-auto-acceleration webos-edgetpu gpu-delegate"
 WEBOS_DISTRO_FEATURES_EXTENDED += "${WEBOS_DISTRO_FEATURES_AI_FRAMEWORK}"
 
 # Addition/removal image features
