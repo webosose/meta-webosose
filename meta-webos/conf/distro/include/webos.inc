@@ -224,6 +224,9 @@ BUILDCFG_VARS += "WEBOS_DISTRO_TOPDIR_REVISION WEBOS_DISTRO_TOPDIR_DESCRIBE"
 # Add build timestamp to what's displayed in build-id.txt for use in pruning script
 BUILDCFG_VARS += "DATETIME"
 
+# Describe webos profile in build configurations at the beginning of the build
+BUILDCFG_VARS += "WEBOS_TARGET_DISTRO_VARIANT DISTRO_FEATURES MACHINE_FEATURES IMAGE_FEATURES"
+
 # Add the same variables from BUILDCFG_VARS to /etc/buildinfo as well
 IMAGE_BUILDINFO_VARS = "${BUILDCFG_VARS}"
 
