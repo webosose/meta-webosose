@@ -1,0 +1,52 @@
+From a698058baf4cf4f216cc884bcbcc881cc4be32d7 Mon Sep 17 00:00:00 2001
+From: "sundeep.bisoye" <sundeep.bisoye@lge.com>
+Date: Thu, 16 Jan 2025 16:47:29 +0530
+Subject: [PATCH] Fix  error implicit-function-declaration
+
+:Release Notes:
+Resolve the implicit-function-declaration error to ensure
+compatibility and prevent potential build issues.
+
+:Detailed Notes:
+Resolving error implicit declaration of functions.
+CFLAGS += "-Wno-error=implicit-function-declaration.
+
+:Testing Performed:
+Locally Tested.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-16307] Resolving Build Path issues
+
+Change-Id: I7b6f5979cb92ee2c1cdcc8cdb31294b0b4a0a529
+Reviewed-on: http://gpro.lge.com/c/webos/luna-service2/+/466502
+---
+Upstream-Status: Backport [a698058 (tag: submissions/46) Fix error implicit-function-declaration]
+
+ src/libluna-service2/transport.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/libluna-service2/transport.h b/src/libluna-service2/transport.h
+index 905445f..660fe8a 100644
+--- a/src/libluna-service2/transport.h
++++ b/src/libluna-service2/transport.h
+@@ -1,4 +1,4 @@
+-// Copyright (c) 2008-2024 LG Electronics, Inc.
++// Copyright (c) 2008-2025 LG Electronics, Inc.
+ //
+ // Licensed under the Apache License, Version 2.0 (the "License");
+ // you may not use this file except in compliance with the License.
+@@ -164,6 +164,11 @@ bool _LSTransportInitializeTrustLevel(_LSTransport *transport, const char * prov
+                         , int provided_map_length,  const char * required_map_json, int required_map_length
+                         , const char * trust_as_string, int trust_string_length);
+ 
++pid_t _LSTransportSendQueryPid(const _LSTransportMessage *message);
++uid_t _LSTransportSendQueryUid(const _LSTransportMessage *message);
++gid_t _LSTransportSendQueryGid(const _LSTransportMessage *message);
++bool _LSTransportSendQueryProcessInfo(const _LSTransportMessage *message, LSProcessInfo *proc_info);
++
+ /** @brief Category pattern ACG bitmask
+  *
+  * When a new category is registered, every method is assigned a bitmask (ACG set) based
