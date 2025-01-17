@@ -26,19 +26,19 @@ EXTRA_OEGN_GOLD = ""
 GN_ARGS += "target_sysroot=\"${STAGING_DIR_TARGET}\""
 
 INCLUDE_PATH_STDLIB = " \
-    -I${STAGING_INCDIR}/c++/${GCC_CROSS_VER} \
-    -I${STAGING_INCDIR}/c++/${GCC_CROSS_VER}/${TARGET_SYS} \
+    -I../../${MLPREFIX}recipe-sysroot${includedir}/c++/${GCC_CROSS_VER} \
+    -I../../${MLPREFIX}recipe-sysroot${includedir}/c++/${GCC_CROSS_VER}/${TARGET_SYS} \
 "
 
 INCLUDE_PATH_LIBCXX_EXT = " \
-    -I${STAGING_INCDIR}/c++/v1 \
+    -I../../${MLPREFIX}recipe-sysroot${includedir}/c++/v1 \
 "
 
 INCLUDE_PATH_LIBCXX = "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', '', '${INCLUDE_PATH_LIBCXX_EXT}', d)}"
 INCLUDE_PATH_LIBCXX += " \
-    -I${STAGING_INCDIR}/cbe \
-    -I${STAGING_INCDIR}/cbe/gmp \
-    -I${STAGING_INCDIR}/media-resource-calculator-clang \
+    -I../../${MLPREFIX}recipe-sysroot${includedir}/cbe \
+    -I../../${MLPREFIX}recipe-sysroot${includedir}/cbe/gmp \
+    -I../../${MLPREFIX}recipe-sysroot${includedir}/media-resource-calculator-clang \
 "
 
 # tcmalloc build is broken with clang++ and -mthumb as shown in:
@@ -67,10 +67,3 @@ do_configure:prepend() {
     [ -f ${STAGING_DATADIR}/pkgconfig/gmp-player-client-clang.pc ] && \
         ln -snf gmp-player-client-clang.pc ${STAGING_DATADIR}/pkgconfig/gmp-player-client.pc
 }
-
-# FIXME-buildpaths!!!
-# [WRP-10883] buildpath QA issues
-# http://gecko.lge.com:8000/Errors/Details/894428
-# ERROR: QA Issue: File /usr/lib/.debug/libcbe.so in package webruntime-clang-dbg contains reference to TMPDIR [buildpaths]
-ERROR_QA:remove = "buildpaths"
-WARN_QA:append = " buildpaths"
