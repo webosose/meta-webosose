@@ -1,0 +1,67 @@
+From 9534631a7151ddffd20708b46f0e32b3ea854bc9 Mon Sep 17 00:00:00 2001
+From: "tho3.nguyen" <tho3.nguyen@lge.com>
+Date: Fri, 22 Nov 2024 11:11:12 +0900
+Subject: [PATCH] Fix gdbus code generation working directory
+
+:Release Notes:
+Set the working directory for gdbus code generation process.
+
+:Detailed Notes:
+Modify the CMakeLists.txt to set the WORKING_DIRECTORY for gdbus
+code generation to ${GDBUS_IF_DIR}. This ensures that generated
+files are placed in the correct directory. Adjusted the command
+to remove the path from generated file names since the working
+directory is now specified.
+
+Fix yocto buildpaths QA check below:
+WARNING: lib32-webos-connman-adapter-1.1.0-244-r14 do_package_qa: QA Issue: File /usr/src/debug/lib32-webos-connman-adapter/1.1.0-244/Configured/src/pacrunner-interface.c in package lib32-webos-connman-adapter-src contains reference to TMPDIR
+File /usr/src/debug/lib32-webos-connman-adapter/1.1.0-244/Configured/src/connman-interface.c in package lib32-webos-connman-adapter-src contains reference to TMPDIR [buildpaths]
+
+:Testing Performed:
+Locally build tested
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-9832] Autobuilder maintenance for Ringlet PI2 - S6
+[WRP-31951] webos-connman-adapter: Resolve buildpaths QA warnings
+
+Change-Id: I386f2862c4c500fab44e4b57035bd2a6ec38c698
+---
+Upstream-Status: Backport [9534631 (tag: submissions/50)Fix gdbus code generation working directory]
+
+ CMakeLists.txt | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2fa2af5..93c557f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2012-2021 LG Electronics, Inc.
++# Copyright (c) 2012-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -83,16 +83,18 @@ set(GDBUS_IF_DIR ${WEBOS_BINARY_CONFIGURED_DIR}/src)
+ file (MAKE_DIRECTORY ${GDBUS_IF_DIR})
+ 
+ execute_process(COMMAND ${GDBUS_CODEGEN_EXECUTABLE} --c-namespace ConnmanInterface --generate-c-code
+-			${GDBUS_IF_DIR}/connman-interface --interface-prefix net.connman.
++			connman-interface --interface-prefix net.connman.
+ 			${CMAKE_CURRENT_SOURCE_DIR}/files/xml/connman.xml
++			WORKING_DIRECTORY ${GDBUS_IF_DIR}
+ 			RESULT_VARIABLE codegen_failed)
+ if(codegen_failed)
+ 		message(FATAL_ERROR "Error in generating code for connman interface using gdbus-codegen")
+ endif()
+ 
+ execute_process(COMMAND ${GDBUS_CODEGEN_EXECUTABLE} --c-namespace PacrunnerInterface --generate-c-code
+-			${GDBUS_IF_DIR}/pacrunner-interface --interface-prefix org.pacrunner.
++			pacrunner-interface --interface-prefix org.pacrunner.
+ 			${CMAKE_CURRENT_SOURCE_DIR}/files/xml/pacrunner.xml
++			WORKING_DIRECTORY ${GDBUS_IF_DIR}
+ 			RESULT_VARIABLE codegen_failed)
+ if(codegen_failed)
+ 		message(FATAL_ERROR "Error in generating code for pacrunner interface using gdbus-codegen")
