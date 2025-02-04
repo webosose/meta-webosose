@@ -60,11 +60,11 @@ Upstream-Status: Pending
  1 file changed, 26 insertions(+)
 
 diff --git a/etcetera b/etcetera
-index a5ecd6de..31896786 100644
+index 948531c..e926934 100644
 --- a/etcetera
 +++ b/etcetera
-@@ -52,28 +52,54 @@ Link	Etc/GMT				GMT
- # Also, the time zone abbreviations are now compatible with %z.
+@@ -56,28 +56,54 @@ Link	Etc/GMT				GMT
+ # confusing if Etc/Unknown were made valid here.
  
  Zone	Etc/GMT-14	14	-	%z
 +Zone	Etc/GMT-13:30	13:30	-	%z
