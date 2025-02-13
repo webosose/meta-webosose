@@ -28,7 +28,9 @@ inherit webos_public_repo
 inherit features_check
 ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-reference-to-buildpaths.patch \
+"
 
 S = "${WORKDIR}/git"
 

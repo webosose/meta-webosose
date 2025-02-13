@@ -1,0 +1,57 @@
+From c808a561422a442b0a3e4c468a1b2034ce3604c5 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Thu, 13 Feb 2025 05:48:25 +0900
+Subject: [PATCH] Fix reference to buildpaths
+
+:Release Notes:
+Drop MALIIT_INSTALL_LIBS, INCLUDEPATH and LIBS from prf files.
+
+:Detailed Notes:
+There is no impact of building imemanager without them.
+Fixes:
+| File /usr/lib/mkspecs/features/maliit-defines.prf in package maliit-framework-webos-dev contains reference to TMPDIR
+| File /usr/lib/mkspecs/features/maliit-plugins.prf in package maliit-framework-webos-dev contains reference to TMPDIR
+| File /usr/lib/mkspecs/features/maliit-framework.prf in package maliit-framework-webos-dev contains reference to TMPDIR [buildpaths]
+
+:Testing Performed:
+Build tested, checked VKB sanity.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-16827] Resolve buildpaths warnings in scarthgap-webos for Yocto AB
+
+Change-Id: I76cb173f337e0a606ab26c68baf1366273df7e56
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/maliit-framework-webos/+/468336 Fix reference to buildpaths]
+
+ common/maliit-framework.prf.in | 1 -
+ src/maliit-defines.prf.in      | 1 -
+ src/maliit-plugins.prf.in      | 2 --
+ 3 files changed, 4 deletions(-)
+
+diff --git a/common/maliit-framework.prf.in b/common/maliit-framework.prf.in
+index 5963226..b7da365 100644
+--- a/common/maliit-framework.prf.in
++++ b/common/maliit-framework.prf.in
+@@ -1,2 +1 @@
+ DEFINES *= @MALIIT_FRAMEWORK_FEATURE@
+-INCLUDEPATH *= @INCLUDEDIR@/@MALIIT_FRAMEWORK_HEADER@
+diff --git a/src/maliit-defines.prf.in b/src/maliit-defines.prf.in
+index 56b7c24..38a996f 100644
+--- a/src/maliit-defines.prf.in
++++ b/src/maliit-defines.prf.in
+@@ -5,4 +5,3 @@ MALIIT_PREFIX=@PREFIX@
+ MALIIT_PLUGINS_DIR = @MALIIT_PLUGINS_DIR@
+ MALIIT_PLUGINS_DATA_DIR = @MALIIT_PLUGINS_DATA_DIR@
+ MALIIT_DATA_DIR = @MALIIT_DATA_DIR@
+-MALIIT_INSTALL_LIBS = @LIBDIR@
+diff --git a/src/maliit-plugins.prf.in b/src/maliit-plugins.prf.in
+index 220b6c4..bbba507 100644
+--- a/src/maliit-plugins.prf.in
++++ b/src/maliit-plugins.prf.in
+@@ -1,3 +1 @@
+-LIBS *= -L@LIBDIR@ -l@MALIIT_PLUGINS_LIB@
+-INCLUDEPATH *= @INCLUDEDIR@/@MALIIT_PLUGINS_HEADER@
+ CONFIG *= maliit-framework

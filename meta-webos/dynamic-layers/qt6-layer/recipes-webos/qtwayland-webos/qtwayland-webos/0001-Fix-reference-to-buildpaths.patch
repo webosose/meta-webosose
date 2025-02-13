@@ -1,0 +1,161 @@
+From 8db9d323272ccf0c605b9bcaeae4245ba64c9f76 Mon Sep 17 00:00:00 2001
+From: Jaeyoon Jung <jaeyoon.jung@lge.com>
+Date: Thu, 13 Feb 2025 10:08:34 +0900
+Subject: [PATCH] Fix reference to buildpaths
+
+:Release Notes:
+Remove the directory for libwebos-platform-interface.so from
+qt_internal_add_plugin().
+
+:Detailed Notes:
+Additionally add dependencies to webos-platform-interface from plugins
+to ensure the build order.
+Fixes:
+| File /usr/lib/cmake/Qt6Gui/Qt6WaylandPlatformInputContextPluginTargets.cmake in package qtwayland-webos-dev contains reference to TMPDIR
+| File /usr/lib/cmake/Qt6Gui/Qt6webos-wayland-eglTargets.cmake in package qtwayland-webos-dev contains reference to TMPDIR [buildpaths]
+
+:Testing Performed:
+Build tested, checked the sanity of Qt apps.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-16827] Resolve buildpaths warnings in scarthgap-webos for Yocto AB
+
+Change-Id: I79b2907b45d8e3d7ea49a3c6d2b36ac740a5c437
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/qtwayland-webos/+/468362 Fix reference to buildpaths]
+
+ src/CMakeLists.txt                                         | 7 ++++++-
+ src/plugins/platforminputcontexts/wayland/CMakeLists.txt   | 6 ++++--
+ src/plugins/platforms/webos-wayland-egl/CMakeLists.txt     | 6 ++++--
+ src/plugins/wayland-shell-integration/webos/CMakeLists.txt | 6 ++++--
+ src/webos-platform-interface/CMakeLists.txt                | 7 ++-----
+ 5 files changed, 20 insertions(+), 12 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 452c800..a40658c 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2023 LG Electronics, Inc.
++# Copyright (c) 2023-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -16,3 +16,8 @@
+ 
+ add_subdirectory(webos-platform-interface)
+ add_subdirectory(plugins)
++
++# webos-platform-interface must be built first
++add_dependencies(WaylandPlatformInputContextPlugin webos-platform-interface)
++add_dependencies(webos-wayland-egl webos-platform-interface)
++add_dependencies(WebOSWaylandWLShellIntegrationPlugin webos-platform-interface)
+diff --git a/src/plugins/platforminputcontexts/wayland/CMakeLists.txt b/src/plugins/platforminputcontexts/wayland/CMakeLists.txt
+index bc89c51..b2c49d1 100644
+--- a/src/plugins/platforminputcontexts/wayland/CMakeLists.txt
++++ b/src/plugins/platforminputcontexts/wayland/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2023 LG Electronics, Inc.
++# Copyright (c) 2023-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -21,6 +21,8 @@
+ # special case begin
+ pkg_check_modules(WAYLAND_WEBOS_CLIENT REQUIRED wayland-webos-client)
+ 
++link_directories(${CMAKE_BINARY_DIR}/lib)
++
+ qt_internal_add_plugin(WaylandPlatformInputContextPlugin
+     OUTPUT_NAME waylandplatforminputcontextplugin
+     PLUGIN_TYPE platforminputcontexts
+@@ -37,7 +39,7 @@ qt_internal_add_plugin(WaylandPlatformInputContextPlugin
+         Qt::Core
+         Qt::Gui
+         ${WAYLAND_WEBOS_CLIENT_LIBRARIES}
+-        ${CMAKE_BINARY_DIR}/lib/libwebos-platform-interface.so
++        libwebos-platform-interface.so
+ )
+ 
+ #### Keys ignored in scope 1:.:.:wayland.pro:<TRUE>:
+diff --git a/src/plugins/platforms/webos-wayland-egl/CMakeLists.txt b/src/plugins/platforms/webos-wayland-egl/CMakeLists.txt
+index 4b44fe1..4ba4b97 100644
+--- a/src/plugins/platforms/webos-wayland-egl/CMakeLists.txt
++++ b/src/plugins/platforms/webos-wayland-egl/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2023 LG Electronics, Inc.
++# Copyright (c) 2023-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -26,6 +26,8 @@ find_package(Qt6 REQUIRED COMPONENTS
+ 
+ find_package(LTTngUST)
+ 
++link_directories(${CMAKE_BINARY_DIR}/lib)
++
+ qt_internal_add_plugin(webos-wayland-egl
+     OUTPUT_NAME webos-wayland-egl
+     PLUGIN_TYPE platforms
+@@ -49,7 +51,7 @@ qt_internal_add_plugin(webos-wayland-egl
+     PUBLIC_LIBRARIES
+         Qt::Core
+         Qt::Gui
+-        ${CMAKE_BINARY_DIR}/lib/libwebos-platform-interface.so
++        libwebos-platform-interface.so
+ )
+ 
+ #### Keys ignored in scope 1:.:.:webos-wayland-egl.pro:<TRUE>:
+diff --git a/src/plugins/wayland-shell-integration/webos/CMakeLists.txt b/src/plugins/wayland-shell-integration/webos/CMakeLists.txt
+index 23a4e33..8b015fc 100644
+--- a/src/plugins/wayland-shell-integration/webos/CMakeLists.txt
++++ b/src/plugins/wayland-shell-integration/webos/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2023 LG Electronics, Inc.
++# Copyright (c) 2023-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -21,6 +21,8 @@
+ # special case begin
+ find_package(Qt6 REQUIRED COMPONENTS WlShellIntegrationPrivate)
+ 
++link_directories(${CMAKE_BINARY_DIR}/lib)
++
+ qt_internal_add_plugin(WebOSWaylandWLShellIntegrationPlugin
+     OUTPUT_NAME webos
+     PLUGIN_TYPE wayland-shell-integration
+@@ -31,7 +33,7 @@ qt_internal_add_plugin(WebOSWaylandWLShellIntegrationPlugin
+     LIBRARIES
+         Qt::WaylandClientPrivate
+         Qt::WlShellIntegrationPrivate
+-        ${CMAKE_BINARY_DIR}/lib/libwebos-platform-interface.so
++        libwebos-platform-interface.so
+ )
+ 
+ #### Keys ignored in scope 1:.:.:webos.pro:<TRUE>:
+diff --git a/src/webos-platform-interface/CMakeLists.txt b/src/webos-platform-interface/CMakeLists.txt
+index 7bf0af4..2701813 100644
+--- a/src/webos-platform-interface/CMakeLists.txt
++++ b/src/webos-platform-interface/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2023 LG Electronics, Inc.
++# Copyright (c) 2023-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -183,10 +183,7 @@ install(FILES
+     COMPONENT Development
+ )
+ 
+-install(FILES
+-    ${CMAKE_BINARY_DIR}/lib/libwebos-platform-interface.so.${VERSION_FULL}
+-    ${CMAKE_BINARY_DIR}/lib/libwebos-platform-interface.so.${SO_VERSION}
+-    ${CMAKE_BINARY_DIR}/lib/libwebos-platform-interface.so
++install(TARGETS webos-platform-interface
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ )
+ # special case end
