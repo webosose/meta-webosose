@@ -1,6 +1,7 @@
 # Copyright (c) 2015-2025 LG Electronics, Inc.
 
 inherit deploy
+inherit image-artifact-names
 
 # Always execute do_webos_deploy_fixup so that the
 # IMAGE_VERSION_SUFFIX portion of the image filenames, which is formed from
