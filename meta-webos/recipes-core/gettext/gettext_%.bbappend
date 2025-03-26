@@ -1,6 +1,6 @@
 # Copyright (c) 2020-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos1"
+EXTENDPRAUTO:append = "webos2"
 
 # We need to revert RDEPENDS changes from
 #
@@ -24,3 +24,8 @@ RRECOMMENDS:${PN}-ptest:remove:libc-glibc = "\
     locale-base-de-de.iso-8859-1 \
     locale-base-fr-fr.iso-8859-1 \
 "
+
+# ERROR: gettext-0.21.1-r0 do_package_qa: QA Issue: gettext-ptest rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS:${PN}-ptest:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}-ptest:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
