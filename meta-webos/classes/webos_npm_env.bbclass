@@ -35,7 +35,7 @@ WEBOS_NODE_SRC_URI = "https://nodejs.org/dist/v${WEBOS_NODE_VERSION}/node-v${WEB
 WEBOS_NODE_GYP = "node-gyp --arch '${TARGET_ARCH}' --nodedir '${UNPACKDIR}/node-v${WEBOS_NODE_VERSION}'"
 SRC_URI[node.sha256sum] = "d7cbcc5fbfb31e9001f3f0150bbeda59abe5dd7137aaa6273958cd59ce35ced7"
 
-do_compile:prepend() {
+do_npm_install:prepend() {
     # this is needed to use user's gitconfig (and other .gitconfig* gitconfig* files user might
     # have included from main .gitconfig file)  even after changing the HOME directory bellow
 

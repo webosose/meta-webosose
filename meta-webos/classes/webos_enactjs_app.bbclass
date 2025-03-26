@@ -148,6 +148,10 @@ do_npm_shrink_enact_override() {
 addtask do_npm_shrink_enact_override after do_patch do_prepare_recipe_sysroot before do_configure
 
 do_compile() {
+    :
+}
+
+do_compile:append() {
     working=$(pwd)
 
     bbnote "Using Enact project at ${WEBOS_ENACTJS_PROJECT_PATH}"
@@ -156,6 +160,16 @@ do_compile() {
     # clear local cache prior to each compile
     bbnote "Clearing any existing node_modules"
     rm -fr node_modules
+    cd ${working}
+}
+
+# FIXME: After fixing all of the enact app recipes, we have to remove this task
+# to aollow fetching npm sub-modules only for do_fetch.
+do_npm_install() {
+    working=$(pwd)
+
+    bbnote "Using Enact project at ${WEBOS_ENACTJS_PROJECT_PATH}"
+    cd ${S}/${WEBOS_ENACTJS_PROJECT_PATH}
 
     NPM_OPTS="${WEBOS_NPM_INSTALL_FLAGS} install"
     if [ -z "${WEBOS_ENACTJS_PACK_OVERRIDE}" ] ; then
@@ -169,6 +183,15 @@ do_compile() {
     rm -f package-lock.json
 
     ${WEBOS_NPM_BIN} ${NPM_OPTS}
+    cd ${working}
+}
+addtask do_npm_install after do_compile before do_npm_install_postprocess
+
+do_npm_install_postprocess() {
+    working=$(pwd)
+
+    bbnote "Using Enact project at ${WEBOS_ENACTJS_PROJECT_PATH}"
+    cd ${S}/${WEBOS_ENACTJS_PROJECT_PATH}
 
     if [ ! -z "${WEBOS_ENACTJS_ILIB_OVERRIDE}" ] ; then
         ## only override ilib if using Enact submission via shrinkwrap override
@@ -198,11 +221,14 @@ do_compile() {
     fi
     cd ${working}
 }
+addtask do_npm_install_postprocess after do_npm_install before do_install
 
 V8_SNAPSHOT_EXTRA_ARGS = " --turbo_instruction_scheduling"
 do_install() {
     working=$(pwd)
-    cd ${WEBOS_ENACTJS_PROJECT_PATH}
+
+    bbnote "Using Enact project at ${WEBOS_ENACTJS_PROJECT_PATH}"
+    cd ${S}/${WEBOS_ENACTJS_PROJECT_PATH}
 
     # Support optional transpiling to full ES5 if needed
     export ES5="${WEBOS_ENACTJS_FORCE_ES5}"
