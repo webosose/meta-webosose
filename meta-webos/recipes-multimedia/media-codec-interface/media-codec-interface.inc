@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 LG Electronics, Inc.
+# Copyright (c) 2021-2025 LG Electronics, Inc.
 
 SUMMARY = "Media codec interface for webOS"
 AUTHOR = "Pankaj Kumar Maharana <pankaj.maharana@lge.com>"

@@ -1,4 +1,4 @@
-# Copyright (c) 2024 LG Electronics, Inc.
+# Copyright (c) 2024-2025 LG Electronics, Inc.
 
 SUMMARY = "Utility library for camera service"
 AUTHOR = "Sungho Lee <shl.lee@lge.com>"
