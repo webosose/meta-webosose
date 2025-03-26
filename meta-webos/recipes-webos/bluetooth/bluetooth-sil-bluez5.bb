@@ -9,7 +9,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=92fcba59ec6480ce73cd35edd7995099 \
 "
 
-DEPENDS = "glib-2.0 pmloglib glib-2.0-native"
+DEPENDS = "glib-2.0 pmloglib glib-2.0-native python3-packaging-native"
 RDEPENDS:${PN} += "bluez5"
 
 # Handle case where it hasn't been set in DISTRO.conf/MACHINE.conf .
@@ -18,7 +18,7 @@ WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES ??= ""
 RDEPENDS:${PN} += "${@ bb.utils.contains('WEBOS_BLUETOOTH_ENABLED_SERVICE_CLASSES', 'FTP', 'bluez5-obex', '', d)}"
 
 WEBOS_VERSION = "0.1.0-87_91ed8541e63b298cda488585595a782b095da90c"
-PR = "r12"
+PR = "r13"
 
 inherit webos_component
 inherit webos_public_repo
@@ -28,6 +28,7 @@ inherit webos_pkgconfig
 inherit webos_machine_impl_dep
 inherit webos_machine_dep
 inherit webos_bluetooth_sil
+inherit python3native
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
