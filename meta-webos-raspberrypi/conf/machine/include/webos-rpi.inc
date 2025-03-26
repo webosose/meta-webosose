@@ -42,6 +42,7 @@ RPI_KERNEL_MODULES = " \
     kernel-module-bcm2835-wdt \
     kernel-module-bluetooth \
     kernel-module-brcmfmac \
+    kernel-module-brcmfmac-wcc \
     kernel-module-bridge \
     kernel-module-btbcm \
     kernel-module-btusb \
