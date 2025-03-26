@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 LG Electronics, Inc.
+# Copyright (c) 2022-2025 LG Electronics, Inc.
 
 SUMMARY = "Event Monitoring for com.webos.service.pdm service"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"

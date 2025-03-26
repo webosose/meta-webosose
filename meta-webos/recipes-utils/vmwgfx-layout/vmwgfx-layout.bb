@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 LG Electronics, Inc.
+# Copyright (c) 2019-2025 LG Electronics, Inc.
 
 SUMMARY = "Simple setlayout command tool for vmwgfx drm driver"
 LICENSE = "Apache-2.0"

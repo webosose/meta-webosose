@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 # Set default chromium version for webruntime and mksnapshot
 PREFERRED_VERSION_webruntime = "120.%"

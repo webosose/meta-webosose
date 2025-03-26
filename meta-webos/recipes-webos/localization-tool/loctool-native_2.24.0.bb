@@ -1,4 +1,4 @@
-# Copyright (c) 2024 LG Electronics, Inc.
+# Copyright (c) 2024-2025 LG Electronics, Inc.
 
 SUMMARY = "A string resource extractor for multiple files types and project types"
 # WARNING: the following LICENSE and LIC_FILES_CHKSUM values are best guesses - it is

@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 LG Electronics, Inc.
+# Copyright (c) 2022-2025 LG Electronics, Inc.
 
 SUMMARY = "TensorFlow Lite CPP Library"
 LICENSE = "Apache-2.0"

@@ -2,7 +2,7 @@
 
 # @@@LICENSE
 #
-# Copyright (c) 2015-2024 LG Electronics, Inc.
+# Copyright (c) 2015-2025 LG Electronics, Inc.
 #
 # Unless otherwise specified or set forth in the NOTICE file, all content,
 # including all source code files and documentation files in this repository are:

@@ -1,4 +1,4 @@
-# Copyright (c) 2024 LG Electronics, Inc.
+# Copyright (c) 2024-2025 LG Electronics, Inc.
 
 SUMMARY = "json type of file handler plugin for webOS platform loctool"
 # WARNING: the following LICENSE and LIC_FILES_CHKSUM values are best guesses - it is

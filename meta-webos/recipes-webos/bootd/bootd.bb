@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 SUMMARY = "Bootd single-shot launching service"
 DESCRIPTION = "Bootd is a simplified upstart-like component. It provides automatic single-shot launching at boot time"

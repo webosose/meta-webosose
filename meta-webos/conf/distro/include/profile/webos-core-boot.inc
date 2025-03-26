@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024 LG Electronics, Inc.
+# Copyright (c) 2023-2025 LG Electronics, Inc.
 
 # Define webos core-boot profile features
 require conf/distro/include/features/webos-features-core-boot.inc

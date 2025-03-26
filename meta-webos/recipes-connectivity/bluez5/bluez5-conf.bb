@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2024 LG Electronics, Inc.
+# Copyright (c) 2014-2025 LG Electronics, Inc.
 
 SUMMARY = "Machine specific configuration files for bluez5"
 AUTHOR = "Simon Busch <simon.busch@lge.com>"

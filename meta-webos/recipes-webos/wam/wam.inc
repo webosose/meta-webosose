@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2024 LG Electronics, Inc.
+# Copyright (c) 2015-2025 LG Electronics, Inc.
 
 SUMMARY = "WebAppMgr is responsible for running web applications on webOS"
 AUTHOR = "Donghyun Kim <donghyun11.kim@lge.com>"

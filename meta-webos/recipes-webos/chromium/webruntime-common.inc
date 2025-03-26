@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 LG Electronics, Inc.
+# Copyright (c) 2021-2025 LG Electronics, Inc.
 # This file configures common SRC_URI for both of mksnapshot and webruntime
 # Also it contains variables for gn command such as GN_ARGS
 

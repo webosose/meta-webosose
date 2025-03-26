@@ -1,4 +1,4 @@
-# Copyright (c) 2024 LG Electronics, Inc.
+# Copyright (c) 2024-2025 LG Electronics, Inc.
 
 require webruntime_120.bb
 

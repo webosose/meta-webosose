@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 # Place distro-wide PREFERRED_PROVIDER settings here. Place MACHINE-specific
 # settings (always with a _<MACHINE> override) in <MACHINE>.conf with a default

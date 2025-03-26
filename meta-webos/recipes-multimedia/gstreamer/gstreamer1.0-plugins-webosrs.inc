@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024 LG Electronics, Inc.
+# Copyright (c) 2023-2025 LG Electronics, Inc.
 
 SUMMARY = "GStreamer Rust Plugins common for webos"
 AUTHOR = "Seungwook Cha <seungwook.cha@lge.com>"

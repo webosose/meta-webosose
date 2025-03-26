@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2024 LG Electronics, Inc.
+# Copyright (c) 2023-2025 LG Electronics, Inc.
 
 export CCACHE_STATSLOG = "${T}/ccache_stats.log"
 

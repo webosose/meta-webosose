@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2024 LG Electronics, Inc.
+# Copyright (c) 2017-2025 LG Electronics, Inc.
 
 SUMMARY = "Application Install Service"
 AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"

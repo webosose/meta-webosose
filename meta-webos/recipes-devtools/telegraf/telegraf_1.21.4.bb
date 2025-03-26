@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 LG Electronics, Inc.
+# Copyright (c) 2022-2025 LG Electronics, Inc.
 
 HOMEPAGE = "https://github.com/influxdata/telegraf"
 SUMMARY = "Telegraf is the open source server agent to help you collect metrics from your stacks, sensors, and systems."

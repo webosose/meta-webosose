@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2024 LG Electronics, Inc.
+# Copyright (c) 2018-2025 LG Electronics, Inc.
 
 BROWSER_APPLICATION = "com.webos.app.browser"
 BROWSER_APPLICATION_DIR = "${webos_applicationsdir}/${BROWSER_APPLICATION}"

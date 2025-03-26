@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2024 LG Electronics, Inc.
+# Copyright (c) 2018-2025 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
 AUTHOR = "Luc Van Tran <luc2.tran@lge.com>"

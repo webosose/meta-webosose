@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 DESCRIPTION = "webOS component to manage all running activities."
 AUTHOR = "Guruprasad KN <guruprasad.kn@lge.com>"

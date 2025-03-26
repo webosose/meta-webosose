@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 LG Electronics, Inc.
+# Copyright (c) 2022-2025 LG Electronics, Inc.
 
 SUMMARY = "Sugar: Candy Machine CLI"
 HOMEPAGE = "https://github.com/metaplex-foundation/sugar"

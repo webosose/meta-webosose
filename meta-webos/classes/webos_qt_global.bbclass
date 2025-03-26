@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 LG Electronics, Inc.
+# Copyright (c) 2021-2025 LG Electronics, Inc.
 
 inherit features_check
 REQUIRED_DISTRO_FEATURES = "webos-qt"

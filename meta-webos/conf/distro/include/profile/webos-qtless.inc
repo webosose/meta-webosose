@@ -1,4 +1,4 @@
-# Copyright (c) 2024 LG Electronics, Inc.
+# Copyright (c) 2024-2025 LG Electronics, Inc.
 
 # Inherit webos headlesss profile
 require conf/distro/include/profile/webos-headless.inc
