@@ -1,4 +1,4 @@
-From 22a3d9b7a017ba260bc08599a9a6fe731f22081f Mon Sep 17 00:00:00 2001
+From 80453274900888d9504148c682730b11bc1381fe Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] Add webos interface
@@ -69,7 +69,7 @@ index 0000000000..cef8430362
 +
 +</busconfig>
 diff --git a/src/oom/meson.build b/src/oom/meson.build
-index 579bc0d4eb..bc0cecc83e 100644
+index 12035183de..b855f21ac7 100644
 --- a/src/oom/meson.build
 +++ b/src/oom/meson.build
 @@ -8,6 +8,10 @@ systemd_oomd_sources = files(
@@ -94,7 +94,7 @@ index 579bc0d4eb..bc0cecc83e 100644
                       install_dir : dbussystemservicedir)
  
 diff --git a/src/oom/oomd-manager.c b/src/oom/oomd-manager.c
-index b0a81474cc..cbb4749b96 100644
+index 4a43807b87..7636fab919 100644
 --- a/src/oom/oomd-manager.c
 +++ b/src/oom/oomd-manager.c
 @@ -14,6 +14,8 @@
@@ -106,7 +106,7 @@ index b0a81474cc..cbb4749b96 100644
  
  typedef struct ManagedOOMMessage {
          ManagedOOMMode mode;
-@@ -397,6 +399,9 @@ static int monitor_swap_contexts_handler(sd_event_source *s, uint64_t usec, void
+@@ -392,6 +394,9 @@ static int monitor_swap_contexts_handler(sd_event_source *s, uint64_t usec, void
                            m->system_context.swap_used, m->system_context.swap_total,
                            PERMYRIAD_AS_PERCENT_FORMAT_VAL(m->swap_used_limit_permyriad));
  
@@ -116,7 +116,7 @@ index b0a81474cc..cbb4749b96 100644
                  r = get_monitored_cgroup_contexts_candidates(m->monitored_swap_cgroup_contexts, &candidates);
                  if (r == -ENOMEM)
                          return log_oom();
-@@ -511,6 +516,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
+@@ -515,6 +520,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
                                  log_debug_errno(r, "Failed to update monitored memory pressure candidate cgroup contexts, ignoring: %m");
                          else
                                  clear_candidates = NULL;
@@ -126,11 +126,11 @@ index b0a81474cc..cbb4749b96 100644
                          r = oomd_kill_by_pgscan_rate(m->monitored_mem_pressure_cgroup_contexts_candidates, t->path, m->dry_run, &selected);
                          if (r == -ENOMEM)
 diff --git a/src/oom/oomd.c b/src/oom/oomd.c
-index 603baada5a..4f9713e9f9 100644
+index 6cfe1a3f4c..4fc1c32a0b 100644
 --- a/src/oom/oomd.c
 +++ b/src/oom/oomd.c
-@@ -15,6 +15,8 @@
- #include "pretty-print.c"
+@@ -16,6 +16,8 @@
+ #include "pretty-print.h"
  #include "psi-util.h"
  #include "signal-util.h"
 +#include "webos-manager.h"
@@ -138,7 +138,7 @@ index 603baada5a..4f9713e9f9 100644
  
  static bool arg_dry_run = false;
  static int arg_swap_used_limit_permyriad = -1;
-@@ -190,6 +192,9 @@ static int run(int argc, char *argv[]) {
+@@ -191,6 +193,9 @@ static int run(int argc, char *argv[]) {
  
          log_debug("systemd-oomd started%s.", arg_dry_run ? " in dry run mode" : "");
  

@@ -1,4 +1,4 @@
-From 4c066fff46c5851a28bd46c8342839b5f16f8f82 Mon Sep 17 00:00:00 2001
+From 648aa8a3432079c9aeccc3a6ea326672aacb086a Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Tue, 23 Nov 2021 10:42:42 +0900
 Subject: [PATCH] oomd: to some
@@ -10,10 +10,10 @@ Upstream-Status: Pending
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/oom/oomd-util.c b/src/oom/oomd-util.c
-index cef7519a74..0a73fe5480 100644
+index 24192f7b83..fc6a7f110a 100644
 --- a/src/oom/oomd-util.c
 +++ b/src/oom/oomd-util.c
-@@ -311,7 +311,7 @@ int oomd_cgroup_context_acquire(const char *path, OomdCGroupContext **ret) {
+@@ -402,7 +402,7 @@ int oomd_cgroup_context_acquire(const char *path, OomdCGroupContext **ret) {
          if (r < 0)
                  return log_debug_errno(r, "Error getting cgroup memory pressure path from %s: %m", path);
  

@@ -1,4 +1,4 @@
-From d1f67a98b65c3899ada48b6768803316e7673668 Mon Sep 17 00:00:00 2001
+From 624b95da2063a56295e4168c109e487f35206a00 Mon Sep 17 00:00:00 2001
 From: "gaurav.mahajan" <gaurav.mahajan@lge.com>
 Date: Mon, 22 May 2023 15:47:15 +0530
 Subject: [PATCH] Change ownership of media directory to support non-root media
@@ -13,11 +13,14 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 1 insertion(+)
 
 diff --git a/tmpfiles.d/systemd.conf.in b/tmpfiles.d/systemd.conf.in
-index 9b2357cd31..63bcaa5ac1 100644
+index fa838d8d06..326e1bfd14 100644
 --- a/tmpfiles.d/systemd.conf.in
 +++ b/tmpfiles.d/systemd.conf.in
-@@ -70,3 +70,4 @@ d /var/lib/systemd/coredump 0755 root root 3d
+@@ -64,6 +64,7 @@ d /var/lib/systemd/coredump 0755 root root 3d
  d /var/lib/private 0700 root root -
  d /var/log/private 0700 root root -
  d /var/cache/private 0700 root root -
 +d /media 0775 media media -
+ 
+ {% if ENABLE_EFI %}
+ # Copy sd-stub provided PCR signature and public key file from initrd into /run/, so that it will survive the initrd stage
