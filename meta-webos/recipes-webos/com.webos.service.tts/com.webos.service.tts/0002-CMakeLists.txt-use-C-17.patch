@@ -1,0 +1,65 @@
+From 8284e55ad70dc5680fde8498f01380b045af64b1 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 13 Dec 2023 17:58:43 +0100
+Subject: [PATCH] CMakeLists.txt: use C++17
+
+:Release Notes:
+Switch from C++14 to C++17, because C++17 is now needed after abseil-cpp
+dropped -DCMAKE_CXX_STANDARD=14 in:
+https://git.openembedded.org/meta-openembedded/commit/?id=190f7b50ac3d7d30cf9d31167fb74f7146c3c8ff
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/745187
+
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.tts/1.0.0-28/recipe-sysroot/usr/include/google/protobuf/descriptor.h:2019:53: error: invalid conversion from 'int' to 'const char*' [-fpermissive]
+ 2019 |       AddWarning(std::string(filename), std::string(element_name), descriptor,
+      |                                                     ^~~~~~~~~~~~
+      |                                                     |
+      |                                                     int
+
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.tts/1.0.0-28/recipe-sysroot/usr/include/google/protobuf/descriptor.h:2293:3: error: invalid conversion from 'const char*' to 'int' [-fpermissive]
+ 2293 |   ABSL_DCHECK(index < real_oneof_decl_count());
+      |   ^~~~~~~~~~~
+      |   |
+      |   const char*
+
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.tts/1.0.0-28/recipe-sysroot/usr/include/google/protobuf/generated_enum_reflection.h: At global scope:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.tts/1.0.0-28/recipe-sysroot/usr/include/google/protobuf/generated_enum_reflection.h:76:43: error: 'absl::string_view' has not been declared
+   76 |                                     absl::string_view name, int* value);
+      |                                           ^~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/com.webos.service.tts/1.0.0-28/recipe-sysroot/usr/include/google/protobuf/generated_enum_reflection.h:79:61: error: 'absl::string_view' has not been declared
+   79 | bool ParseNamedEnum(const EnumDescriptor* descriptor, absl::string_view name,
+      |                                                             ^~~~~~~~~~~
+
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+
+Change-Id: Ia5a6a7dbb2ad2e36682ed2f19b935d888ac9eb3b
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.tts/+/383767 CMakeLists.txt: use C++17]
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4c28c7b..1ce45cb 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -80,7 +80,7 @@ include_directories(src/include)
+ include_directories(src/utils)
+ 
+ 
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+ 
+ file(GLOB TTS_SOURCE
+ 	${CMAKE_SOURCE_DIR}/src/core/*.cpp

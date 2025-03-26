@@ -1,4 +1,4 @@
-From e9b1243f14689a312489da2de5d47b4554425f0b Mon Sep 17 00:00:00 2001
+From bcb22a3fe1391a97777a8ce57e77f0538f1def08 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin2.jansa@lgepartner.com>
 Date: Fri, 29 Sep 2023 20:40:25 +0200
 Subject: [PATCH] google: add gpr lib to TTS_ENGINE call
@@ -61,14 +61,16 @@ No change to image.
 
 :Issues Addressed:
 [WRP-310] Apply .patch files for hot-fix to corresponding repositories
----
-Upstream-Status: Pending
 
- src/engines/tts/google/CMakeLists.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Change-Id: I33403d27378896e2ab879899f0b4d071307a192b
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.tts/+/383766 google: add gpr lib to TTS_ENGINE call]
+
+ src/engines/tts/google/CMakeLists.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/src/engines/tts/google/CMakeLists.txt b/src/engines/tts/google/CMakeLists.txt
-index f04a47d..9b17f2d 100755
+index f04a47d..bcfdbac 100755
 --- a/src/engines/tts/google/CMakeLists.txt
 +++ b/src/engines/tts/google/CMakeLists.txt
 @@ -26,6 +26,15 @@ set(src ${CMAKE_CURRENT_SOURCE_DIR}/GoogleTTSEngine.cpp
