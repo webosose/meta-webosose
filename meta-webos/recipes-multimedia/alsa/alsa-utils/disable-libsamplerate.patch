@@ -1,4 +1,4 @@
-From 02d0e5bf0bce17014318180f63a79d8eb93504cf Mon Sep 17 00:00:00 2001
+From 6ab8af7b91bdd3a7a2f6b9dd3ffa6e3008c50ad0 Mon Sep 17 00:00:00 2001
 From: Martin Jansa <Martin.Jansa@gmail.com>
 Date: Thu, 18 Feb 2016 12:43:22 +0100
 Subject: [PATCH] configure.ac: add parameters to enable/disable libsamplerate
@@ -15,10 +15,10 @@ Upstream-Status: Pending
  1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 7938996..dd83749 100644
+index e079e24..c402dd1 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -38,8 +38,6 @@ AC_CHECK_HEADERS([alsa/use-case.h], [have_ucm="yes"], [have_ucm="no"],
+@@ -43,8 +43,6 @@ AC_CHECK_HEADERS([alsa/use-case.h], [have_ucm="yes"], [have_ucm="no"],
    [#include <alsa/asoundlib.h>])
  AC_CHECK_HEADERS([alsa/topology.h], [have_topology="yes"], [have_topology="no"],
    [#include <alsa/asoundlib.h>])
@@ -27,10 +27,10 @@ index 7938996..dd83749 100644
  
  AC_CHECK_LIB([asound], [snd_seq_client_info_get_card], [HAVE_SEQ_CLIENT_INFO_GET_CARD="yes"])
  if test "$HAVE_SEQ_CLIENT_INFO_GET_CARD" = "yes" ; then
-@@ -67,9 +65,23 @@ AM_CONDITIONAL(HAVE_RAWMIDI, test "$have_rawmidi" = "yes")
+@@ -78,9 +76,23 @@ AM_CONDITIONAL(HAVE_RAWMIDI, test "$have_rawmidi" = "yes")
  AM_CONDITIONAL(HAVE_SEQ, test "$have_seq" = "yes")
  AM_CONDITIONAL(HAVE_UCM, test "$have_ucm" = "yes")
- AM_CONDITIONAL(HAVE_TOPOLOGY, test "$have_topology" = "yes")
+ AM_CONDITIONAL(HAVE_TOPOLOGY, test "$have_topology" = "yes" -a "$ac_cv_header_dlfcn_h" = "yes")
 -AM_CONDITIONAL(HAVE_SAMPLERATE, test "$have_samplerate" = "yes")
  AM_CONDITIONAL(HAVE_FFADO, test "$have_ffado" = "yes")
  
