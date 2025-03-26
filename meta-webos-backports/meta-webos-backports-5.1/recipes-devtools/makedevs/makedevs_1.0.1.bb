@@ -3,12 +3,11 @@ DESCRIPTION = "${SUMMARY}"
 LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://makedevs.c;beginline=2;endline=2;md5=c3817b10013a30076c68a90e40a55570"
 SECTION = "base"
-SRC_URI = "file://makedevs.c"
-
 # In Yocto 4.0 where UNPACKDIR isn't officially introduced
-# files are supposed to be unpacked under WORKDIR, not UNPACKDIR.
-S = "${WORKDIR}"
-UNPACKDIR = "${S}"
+# files are unpacked under WORKDIR, not UNPACKDIR.
+SRC_URI = "file://makedevs.c;subdir=sources"
+
+S = "${WORKDIR}/sources"
 
 FILES:${PN}:append:class-nativesdk = " ${datadir}"
 
