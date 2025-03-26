@@ -10,10 +10,13 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.1.0-41_24e92ff40a32acc09ee178f9eae538d8b3b6d10b"
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    npmsw://${THISDIR}/${BPN}/npm-shrinkwrap.json \
+"
 S = "${WORKDIR}/git"
-PR = "r7"
+PR = "r8"
 
+inherit npm
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
 inherit webos_public_repo
@@ -23,5 +26,11 @@ inherit webos_localizable
 WEBOS_ENACTJS_APP_ID = "com.webos.app.home"
 WEBOS_LOCALIZATION_XLIFF_BASENAME = "home"
 
-# FIXME: Workaround for network access issue during do_npm_install task
-do_npm_install[network] = "1"
+EXTRA_OENPM = "${WEBOS_NPM_INSTALL_FLAGS} ${@oe.utils.conditional('WEBOS_ENACTJS_PACK_OVERRIDE', '', '--only=production', '', d)}"
+
+do_configure[prefuncs] += "npm_do_configure"
+do_compile[prefuncs] += "npm_do_compile"
+do_npm_install_postprocess:prepend() {
+    cp -rf ${NPM_BUILD}/lib/node_modules/com.webos.app.home/node_modules ${S}
+}
+do_npm_install[noexec] = "1"
