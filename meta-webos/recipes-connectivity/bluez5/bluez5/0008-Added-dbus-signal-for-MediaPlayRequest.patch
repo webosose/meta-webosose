@@ -52,7 +52,7 @@ diff --git a/profiles/audio/media.c b/profiles/audio/media.c
 index 62f53defa..1ce2792cb 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1970,7 +1970,7 @@ static uint32_t media_player_get_position(void *user_data)
+@@ -1974,7 +1974,7 @@ static uint32_t media_player_get_position(void *user_data)
  	sec = (uint32_t) timedelta;
  	msec = (uint32_t) ((timedelta - sec) * 1000);
  

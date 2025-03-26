@@ -65,7 +65,7 @@ index 615b641c9..af67ee6ee 100644
  const char *a2dp_setup_remote_path(struct a2dp_setup *setup);
  struct avdtp *a2dp_avdtp_get(struct btd_device *device);
 diff --git a/profiles/audio/avdtp.c b/profiles/audio/avdtp.c
-index 10ef380d4..4280c007c 100644
+index 3667e0840..85faf0fba 100644
 --- a/profiles/audio/avdtp.c
 +++ b/profiles/audio/avdtp.c
 @@ -469,6 +469,11 @@ static gboolean try_send(int sk, void *data, size_t len)
@@ -90,7 +90,7 @@ index 102a2603e..b167f2dab 100644
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 50b7b7edd..aaafbb8bd 100644
+index af5d809ba..27d621b86 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
 @@ -133,6 +133,19 @@ struct media_player {
@@ -113,7 +113,7 @@ index 50b7b7edd..aaafbb8bd 100644
  static void endpoint_request_free(struct endpoint_request *request)
  {
  	if (request->call)
-@@ -1481,6 +1494,9 @@ media_endpoint_create(struct media_adapter *adapter,
+@@ -1485,6 +1498,9 @@ media_endpoint_create(struct media_adapter *adapter,
  	}
  
  	endpoint->adapter = adapter;
@@ -123,7 +123,7 @@ index 50b7b7edd..aaafbb8bd 100644
  
  	for (i = 0; i < ARRAY_SIZE(init_table); i++) {
  		init = &init_table[i];
-@@ -3305,6 +3321,7 @@ int media_register(struct btd_adapter *btd_adapter)
+@@ -3309,6 +3325,7 @@ int media_register(struct btd_adapter *btd_adapter)
  		return -1;
  	}
  
@@ -149,7 +149,7 @@ index 2b579877b..704a25ea9 100644
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index ee70b00d2..f8883b19e 100644
+index 022390f0d..5c3b9037e 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
 @@ -67,6 +67,7 @@
@@ -170,7 +170,7 @@ index ee70b00d2..f8883b19e 100644
  	uint8_t discovery_type;		/* current active discovery type */
  	uint8_t discovery_enable;	/* discovery enabled/disabled */
  	bool discovery_suspended;	/* discovery has been suspended */
-@@ -365,6 +369,11 @@ typedef enum {
+@@ -366,6 +370,11 @@ typedef enum {
  	ADAPTER_AUTHORIZE_CHECK_CONNECTED
  } adapter_authorize_type;
  
@@ -182,7 +182,7 @@ index ee70b00d2..f8883b19e 100644
  static struct btd_adapter *btd_adapter_lookup(uint16_t index)
  {
  	GList *list;
-@@ -567,6 +576,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
+@@ -568,6 +577,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
  
  	g_key_file_set_boolean(key_file, "General", "Discoverable",
  							discoverable);
@@ -191,7 +191,7 @@ index ee70b00d2..f8883b19e 100644
  
  	if (adapter->discoverable_timeout != btd_opts.discovto)
  		g_key_file_set_integer(key_file, "General",
-@@ -3505,6 +3516,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
+@@ -3506,6 +3517,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
  
  	return TRUE;
  }
@@ -222,7 +222,7 @@ index ee70b00d2..f8883b19e 100644
  
  static void property_append_experimental(void *data, void *user_data)
  {
-@@ -3931,6 +3966,7 @@ static const GDBusPropertyTable adapter_properties[] = {
+@@ -3932,6 +3967,7 @@ static const GDBusPropertyTable adapter_properties[] = {
  					property_experimental_exists },
  	{ "Manufacturer", "q", property_get_manufacturer },
  	{ "Version", "y", property_get_version },
@@ -230,7 +230,7 @@ index ee70b00d2..f8883b19e 100644
  	{ }
  };
  
-@@ -5317,6 +5353,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
+@@ -5343,6 +5379,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
  	return false;
  }
  
@@ -242,7 +242,7 @@ index ee70b00d2..f8883b19e 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter)
  {
  	if (!adapter)
-@@ -6858,6 +6899,15 @@ static void load_config(struct btd_adapter *adapter)
+@@ -6884,6 +6925,15 @@ static void load_config(struct btd_adapter *adapter)
  		gerr = NULL;
  	}
  
@@ -258,7 +258,7 @@ index ee70b00d2..f8883b19e 100644
  	g_key_file_free(key_file);
  }
  
-@@ -6894,6 +6944,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6920,6 +6970,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  						btd_opts.did_version);
  	adapter->discoverable_timeout = btd_opts.discovto;
  	adapter->pairable_timeout = btd_opts.pairto;
@@ -266,7 +266,7 @@ index ee70b00d2..f8883b19e 100644
  
  	DBG("System name: %s", adapter->system_name);
  	DBG("Major class: %u", adapter->major_class);
-@@ -6904,6 +6955,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6930,6 +6981,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  	if (blocked > 0)
  		DBG("Power state: %s",
  			adapter_power_state_str(adapter->power_state));

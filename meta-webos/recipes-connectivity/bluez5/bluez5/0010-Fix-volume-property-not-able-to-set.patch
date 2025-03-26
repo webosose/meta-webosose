@@ -26,15 +26,15 @@ Upstream-Status: Pending
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
-index 23ea267f6..83dec8f0d 100644
+index a4696154a..f8a9116b3 100644
 --- a/profiles/audio/transport.c
 +++ b/profiles/audio/transport.c
-@@ -1176,7 +1176,7 @@ static int media_transport_init_source(struct media_transport *transport)
- 	transport->data = a2dp;
- 	transport->destroy = destroy_a2dp;
+@@ -1297,7 +1297,7 @@ static void *transport_a2dp_src_init(struct media_transport *transport,
+ 		return NULL;
  
+ 	a2dp = new0(struct a2dp_transport, 1);
 -	a2dp->volume = -1;
 +	a2dp->volume = 0;
- 	transport->sink_watch = sink_add_state_cb(service, sink_state_changed,
- 								transport);
+ 	a2dp->watch = sink_add_state_cb(service, sink_state_changed, transport);
  
+ 	return a2dp;
