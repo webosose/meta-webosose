@@ -1,18 +1,16 @@
-# Imported without any modification from:
-# https://git.openembedded.org/openembedded-core/tree/meta/recipes-multimedia/pulseaudio/pulseaudio.inc?id=73d538f20743017a44cea4c20dbe09a0327cfc71
-# before the pulseaudio 14 in oe-core was migrated to use Meson instead of Autotools in:
-# https://git.openembedded.org/openembedded-core/commit/?id=80bbea06e706fde3600950ea9ddfc38a1a76b8bb
-# but the old pulseaudio in:
-# meta-webos/recipes-multimedia/pulseaudio/pulseaudio_9.0.bb
-# still needs autotools, this file should be removed once OSE upgrades to some
-# recent pulseaudio.
+# Imported without any modification before this commit:
+# https://git.openembedded.org/openembedded-core/commit/?id=e5399a09bf44700f97607b283379172dac0cf9c7
+# because the change of the directory in populate_packages:prepend() is difficult to undo
 
 SUMMARY = "Sound server for Linux and Unix-like operating systems"
+DESCRIPTION = "A general purpose sound server intended to run as a middleware \
+between your applications and your hardware devices, either using ALSA or OSS."
 HOMEPAGE = "http://www.pulseaudio.org"
 AUTHOR = "Lennart Poettering"
 SECTION = "libs/multimedia"
 
-# Most of PulseAudio code is under LGPLv2.1+. There are a few exceptions:
+# Most of PulseAudio code is under LGPL-2.1-or-later. There are a few
+# exceptions:
 #
 # The "adrian" echo canceller variant has code under a non-standard permissive
 # license. See src/modules/echo-cancel/adrian-license.txt for details. This
@@ -46,11 +44,12 @@ SECTION = "libs/multimedia"
 # The dependency with the most complicated licensing considerations is libdbus.
 # When PACKAGECONFIG[dbus] is enabled (like it is by default), libdbus will be
 # used by both the server and the client library (libpulse). Does this affect
-# applications that use libpulse? It should be also noted that libdbus is
-# dual-licensed: either GPLv2+ or AFL-2 terms apply. Whose decision is it which
-# of the licenses apply? What a mess. Some people hold the view that libdbus is
-# a system library that is covered by the "special exception" in GPLv2's
-# section 3, and therefore libdbus's GPL license doesn't affect PulseAudio.
+# applications that use libpulse? It should also be noted that libdbus is
+# dual-licensed: either GPL-2.0-or-later or AFL-2.0 terms apply. Whose decision
+# is it which of the licenses apply? What a mess. Some people hold the view that
+# libdbus is a system library that is covered by the "special exception" in
+# GPLv2's section 3, and therefore libdbus's GPL license doesn't affect
+# PulseAudio.
 LICENSE = "LGPL-2.1-or-later & MIT & BSD-3-Clause"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=0e5cd938de1a7a53ea5adac38cc10c39 \
@@ -65,47 +64,47 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=0e5cd938de1a7a53ea5adac38cc10c39 \
                     file://src/pulsecore/filter/biquad.h;beginline=1;endline=4;md5=6d46d1365206528a20137355924233c1 \
 "
 
+# libtool is needed for libltdl, used in module loading.
 DEPENDS = "libatomic-ops libsndfile1 libtool"
 # optional
 DEPENDS += "udev alsa-lib glib-2.0"
 DEPENDS += "speexdsp libxml-parser-perl-native libcap"
 
-inherit autotools bash-completion pkgconfig useradd gettext perlnative systemd manpages gsettings
+inherit bash-completion meson pkgconfig useradd gettext perlnative systemd manpages gsettings
 
 # *.desktop rules wont be generated during configure and build will fail
 # if using --disable-nls
 USE_NLS = "yes"
 
-EXTRA_OECONF = "\
-		--disable-hal-compat \
-		--disable-orc \
-		--enable-tcpwrap=no \
-		--with-access-group=audio \
-		--disable-openssl \
-		--with-database=simple \
-		--without-zsh-completion-dir \
-		--with-udev-rules-dir=`pkg-config --variable=udevdir udev`/rules.d \
-		ac_cv_header_valgrind_memcheck_h=no \
-		--disable-tests \
-		--disable-running-from-build-tree \
+EXTRA_OEMESON = "\
+		-Dhal-compat=false \
+		-Dorc=disabled \
+		-Daccess_group=audio \
+		-Dopenssl=disabled \
+		-Ddatabase=simple \
+		-Dzshcompletiondir=no \
+		-Dudevrulesdir=`pkg-config --variable=udevdir udev`/rules.d \
+		-Dvalgrind=disabled \
+		-Dtests=false \
+		-Drunning-from-build-tree=false \
 "
 
 # soxr (the SoX Resampler library) doesn't seem to be currently packaged in
 # oe-core nor meta-oe, so let's not add a PACKAGECONFIG entry for it for now.
-EXTRA_OECONF += "--without-soxr"
+EXTRA_OEMESON += "-Dsoxr=disabled"
 
 # The FFTW dependency (for module-equalizer-sink) was removed in commit
 # ddbd713293 without explaining why it was not made a PACKAGECONFIG item
 # instead. Oh well, let's keep it disabled until someone expresses some
 # interest in having it enabled.
-EXTRA_OECONF += "--without-fftw"
+EXTRA_OEMESON += "-Dfftw=disabled"
 
 # The "adrian" echo canceller implementation has a non-standard license
 # (src/modules/echo-cancel/adrian-license.txt). It's a permissive license, so
 # the licensing terms are probably not problematic, but it would be an extra
 # hassle to add the license to OE-Core's set of licenses. The canceller isn't
 # very good anyway, better alternatives exist (such as the webrtc canceller).
-EXTRA_OECONF += "--disable-adrian-aec"
+EXTRA_OEMESON += "-Dadrian-aec=false"
 
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5', '', d)} \
                    ${@bb.utils.contains('DISTRO_FEATURES', 'zeroconf', 'avahi', '', d)} \
@@ -114,34 +113,24 @@ PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'bluetooth', 'bluez5'
                    dbus gsettings \
                    "
 
-PACKAGECONFIG[dbus] = "--enable-dbus,--disable-dbus,dbus"
-PACKAGECONFIG[bluez5] = "--enable-bluez5,--disable-bluez5,bluez5 sbc"
-PACKAGECONFIG[gconf] = "--enable-gconf,--disable-gconf,gconf"
-PACKAGECONFIG[gsettings] = "--enable-gsettings,--disable-gsettings,glib-2.0-native glib-2.0"
-PACKAGECONFIG[ofono] = "--enable-bluez5-ofono-headset,--disable-bluez5-ofono-headset,ofono"
-PACKAGECONFIG[gtk] = "--enable-gtk3,--disable-gtk3,gtk+3"
-PACKAGECONFIG[systemd] = "--enable-systemd-daemon --enable-systemd-login --enable-systemd-journal --with-systemduserunitdir=${systemd_user_unitdir},--disable-systemd-daemon --disable-systemd-login --disable-systemd-journal,systemd"
-PACKAGECONFIG[x11] = "--enable-x11,--disable-x11,virtual/libx11 libxtst libice libsm libxcb"
-PACKAGECONFIG[avahi] = "--enable-avahi,--disable-avahi,avahi"
-PACKAGECONFIG[jack] = "--enable-jack,--disable-jack,jack"
+PACKAGECONFIG[dbus] = "-Ddbus=enabled,-Ddbus=disabled,dbus"
+PACKAGECONFIG[bluez5] = "-Dbluez5=enabled,-Dbluez5=disabled,bluez5 sbc"
+PACKAGECONFIG[gsettings] = "-Dgsettings=enabled,-Dgsettings=disabled,glib-2.0-native glib-2.0"
+PACKAGECONFIG[ofono] = "-Dbluez5-ofono-headset=true,-Dbluez5-ofono-headset=false,ofono"
+PACKAGECONFIG[gtk] = "-Dgtk=enabled,-Dgtk=disabled,gtk+3"
+PACKAGECONFIG[systemd] = "-Dsystemd=enabled -Dsystemduserunitdir=${systemd_user_unitdir},-Dsystemd=disabled,systemd"
+PACKAGECONFIG[x11] = "-Dx11=enabled,-Dx11=disabled,virtual/libx11 libxtst libice libsm libxcb"
+PACKAGECONFIG[avahi] = "-Davahi=enabled,-Davahi=disabled,avahi"
+PACKAGECONFIG[jack] = "-Djack=enabled,-Djack=disabled,jack"
 # Since many embedded systems don't have non-root users, it's useful to be
 # able to use pulseaudio autospawn for root as well.
 PACKAGECONFIG[autospawn-for-root] = ",,,"
-PACKAGECONFIG[lirc] = "--enable-lirc,--disable-lirc,lirc"
-PACKAGECONFIG[webrtc] = "--enable-webrtc-aec,--disable-webrtc-aec,webrtc-audio-processing"
-PACKAGECONFIG[ipv6] = "--enable-ipv6,--disable-ipv6,"
-PACKAGECONFIG[manpages] = "--enable-manpages, --disable-manpages, "
-
-EXTRA_OECONF:append:arm = "${@bb.utils.contains("TUNE_FEATURES", "neon", "", " --enable-neon-opt=no", d)}"
-EXTRA_OECONF:append:armeb = "${@bb.utils.contains("TUNE_FEATURES", "neon", "", " --enable-neon-opt=no", d)}"
-
+PACKAGECONFIG[lirc] = "-Dlirc=enabled,-Dlirc=disabled,lirc"
+PACKAGECONFIG[webrtc] = "-Dwebrtc-aec=enabled,-Dwebrtc-aec=disabled,webrtc-audio-processing"
+PACKAGECONFIG[ipv6] = "-Dipv6=true,-Dipv6=false,"
+PACKAGECONFIG[manpages] = "-Dman=true,-Dman=false,"
 
 export TARGET_PFPU = "${TARGET_FPU}"
-
-# TODO: Use more fine granular version
-#OE_LT_RPATH_ALLOW=":${libdir}/pulse-0.9:"
-OE_LT_RPATH_ALLOW = "any"
-OE_LT_RPATH_ALLOW[export]="1"
 
 set_cfg_value () {
 	sed -i -e "s/\(; *\)\?$2 =.*/$2 = $3/" "$1"
@@ -152,7 +141,7 @@ set_cfg_value () {
 
 do_compile:append () {
 	if ${@bb.utils.contains('PACKAGECONFIG', 'autospawn-for-root', 'true', 'false', d)}; then
-		set_cfg_value src/client.conf allow-autospawn-for-root yes
+		set_cfg_value src/pulse/client.conf allow-autospawn-for-root yes
 	fi
 }
 
@@ -199,8 +188,7 @@ FILES:libpulse = "${libdir}/libpulse.so.* ${sysconfdir}/pulse/client.conf"
 FILES:libpulse-simple = "${libdir}/libpulse-simple.so.*"
 FILES:libpulse-mainloop-glib = "${libdir}/libpulse-mainloop-glib.so.*"
 
-FILES:${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala ${libdir}/cmake"   
-FILES:${PN}-conf = "${sysconfdir}"
+FILES:${PN}-dev += "${libdir}/pulse-${PV}/modules/*.la ${datadir}/vala"
 FILES:${PN}-bin += "${sysconfdir}/default/volatiles/04_pulse"
 FILES:${PN}-pa-info = "${bindir}/pa-info"
 FILES:${PN}-server = "${bindir}/pulseaudio ${bindir}/start-* ${sysconfdir} ${bindir}/pactl */udev/rules.d/*.rules */*/udev/rules.d/*.rules ${systemd_user_unitdir}/*"
@@ -270,7 +258,7 @@ RDEPENDS:pulseaudio-server = " \
 # If the server is installed, it's usually desirable to make ALSA applications
 # use PulseAudio. alsa-plugins-pulseaudio-conf will install the configuration
 # that makes the PulseAudio plugin the default ALSA device.
-RDEPENDS:pulseaudio-server += "alsa-plugins-pulseaudio-conf"
+RDEPENDS:pulseaudio-server += "${@bb.utils.contains('DISTRO_FEATURES', 'pulseaudio', 'alsa-plugins-pulseaudio-conf', '', d)}"
 
 # pulseaudio-module-console-kit is built whenever dbus is enabled by PACKAGECONFIG
 # but consolekit depends on libx11 and is available only for DISTRO with x11 in DISTRO_FEATURES
@@ -278,7 +266,6 @@ RDEPENDS:pulseaudio-module-console-kit =+ "${@bb.utils.contains('DISTRO_FEATURES
 RDEPENDS:pulseaudio-misc += "pulseaudio-module-cli-protocol-unix"
 
 FILES:${PN}-module-alsa-card += "${datadir}/pulseaudio/alsa-mixer"
-FILES:${PN}-module-gconf += "${libexecdir}/pulse/gconf-helper"
 
 GSETTINGS_PACKAGE = "${@bb.utils.contains('PACKAGECONFIG', 'gsettings', '${PN}-module-gsettings', '', d)}"
 FILES:${PN}-module-gsettings += "${libexecdir}/pulse/gsettings-helper ${datadir}/GConf/gsettings ${datadir}/glib-2.0/schemas"
