@@ -10,9 +10,9 @@ require com.webos.service.camera.inc
 
 WEBOS_REPO_NAME = "com.webos.service.camera"
 
-S = "${WORKDIR}/git/src/common"
+S = "${WORKDIR}/git/src/libs"
 
-PR = "${INC_PR}.1"
+PR = "${INC_PR}.2"
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 

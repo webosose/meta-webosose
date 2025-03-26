@@ -19,7 +19,7 @@ inherit webos_pkgconfig
 CLANG_DEPENDENCY_SUFFIX ?= ""
 DEPENDS = "pmloglib camera-utils${CLANG_DEPENDENCY_SUFFIX}"
 
-WEBOS_VERSION = "1.0.0-14_7ab1ca6ac2ca8553c4978e6bcaaddb2c4e180de8"
+WEBOS_VERSION = "1.0.0-16_62db7dba0ec87af133c46b2db817fcb136ca9763"
 INC_PR = "r3"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
