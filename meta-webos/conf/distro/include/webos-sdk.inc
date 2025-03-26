@@ -29,5 +29,9 @@ WEBOS_SDK_BASELINE_GDB = "14.2"
 # meta-environment and gdb-cross-canadian-arm fail to build, see:
 # https://jira2.lgsvl.com/browse/PLAT-68839?focusedCommentId=1106686&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-1106686
 SDK_TCMONIKER = "tc19"
+# append t64 to indicate 64-bit time_t ABI (see WRR-2615 Fix build with 64-bit time_t)
+# cannot use :arm override here, because it breaks meta-environment-machine (which is aarch64 and then the paths don't match with sdk)
+# http://gecko.lge.com:8000/Builds/Details/2687350
+SDK_TCMONIKER_TIME_T_SUFFIX = "t64"
 
-SDK_VERSION = "${SDK_TCMONIKER}-${WEBOS_SDK_RELEASE}-${WEBOS_SDK_BASELINE_BUILD_CODENAME}-${WEBOS_SDK_BASELINE_BUILD_ID}-${WEBOS_SDK_BASELINE_BUILD_DATE}-${WEBOS_DISTRO_BUILD_CODENAME}-${WEBOS_DISTRO_BUILD_ID}"
+SDK_VERSION = "${SDK_TCMONIKER}${SDK_TCMONIKER_TIME_T_SUFFIX}-${WEBOS_SDK_RELEASE}-${WEBOS_SDK_BASELINE_BUILD_CODENAME}-${WEBOS_SDK_BASELINE_BUILD_ID}-${WEBOS_SDK_BASELINE_BUILD_DATE}-${WEBOS_DISTRO_BUILD_CODENAME}-${WEBOS_DISTRO_BUILD_ID}"
