@@ -19,7 +19,7 @@ do_write_oss_pkg_info[nostamp] = "1"
 python do_write_oss_pkg_info() {
     imagename    = d.getVar("IMAGE_NAME")
     oss_filename = d.getVar("OSS_FILENAME")
-    manifest     = oe.path.join(d.getVar("OSS_DEPLOY_DIR"), imagename, "license.manifest")
+    manifest     = oe.path.join(d.getVar("OSS_DEPLOY_DIR"), d.getVar('SSTATE_PKGARCH'), imagename, "license.manifest")
     default_oss  = oe.path.join(d.getVar("TOPDIR"), 'build-templates', "%s-%s" % (imagename, oss_filename))
     target_oss   = oe.path.join(d.getVar("DEPLOY_DIR_IMAGE"), "%s-%s" % (d.getVar("IMAGE_BASENAME"), oss_filename))
 
