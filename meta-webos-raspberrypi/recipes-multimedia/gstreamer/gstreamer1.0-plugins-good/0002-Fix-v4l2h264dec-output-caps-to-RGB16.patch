@@ -1,4 +1,4 @@
-From 52d66651e0b45a266cfb4a56c8d88e5466b0c14d Mon Sep 17 00:00:00 2001
+From 5793ad4d803aa7556b4a401008d0b8e0201ed9b3 Mon Sep 17 00:00:00 2001
 From: "sapna.kumari" <sapna.kumari@lge.com>
 Date: Thu, 27 Aug 2020 06:39:27 +0000
 Subject: [PATCH] Fix v4l2h264dec output caps to RGB16
@@ -11,38 +11,38 @@ Upstream-Status: Pending
  1 file changed, 25 insertions(+)
 
 diff --git a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
-index 562b304777..b3d4b693c1 100644
+index 3019a09a13..896c75c471 100644
 --- a/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
 +++ b/subprojects/gst-plugins-good/sys/v4l2/gstv4l2videodec.c
-@@ -753,6 +753,31 @@ gst_v4l2_video_dec_handle_frame (GstVideoDecoder * decoder,
+@@ -474,6 +474,31 @@ gst_v4l2_video_dec_negotiate (GstVideoDecoder * decoder)
+   caps = gst_caps_fixate (caps);
  
-     GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
+   GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
++ 
++  /*Fix : Seeting caps to RGB16 if chosen caps are I420*/
++  GstStructure *s = gst_caps_get_structure(caps, 0);
++
++  const gchar *format = gst_structure_get_string (s, "format");
++  if (g_strcmp0 (format, "I420") == 0) {
++    gint width;
++    gst_structure_get_int(s, "width",&width);
++    gint height;
++    gst_structure_get_int(s,"height", &height);
++
++    GstCaps *new_caps = gst_caps_new_simple ("video/x-raw",
++      "format", G_TYPE_STRING, "RGB16",
++      "framerate", GST_TYPE_FRACTION, 0, 1,
++      "pixel-aspect-ratio", GST_TYPE_FRACTION, 1, 1,
++      "width", G_TYPE_INT, width,
++      "height", G_TYPE_INT, height,
++      "interlace-mode", G_TYPE_STRING, "progressive",
++      "colorimetry", G_TYPE_STRING, "1:1:5:4",
++      NULL);
++
++    caps = gst_caps_fixate(new_caps);
++
++    GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
++  }
  
-+    /*Fix : Seeting caps to RGB16 if chosen caps are I420*/
-+    GstStructure *s = gst_caps_get_structure(caps, 0);
-+
-+    const gchar *format = gst_structure_get_string (s, "format");
-+    if (g_strcmp0 (format, "I420") == 0) {
-+      gint width;
-+      gst_structure_get_int(s, "width",&width);
-+      gint height;
-+      gst_structure_get_int(s,"height", &height);
-+
-+      GstCaps *new_caps = gst_caps_new_simple ("video/x-raw",
-+        "format", G_TYPE_STRING, "RGB16",
-+        "framerate", GST_TYPE_FRACTION, 0, 1,
-+        "pixel-aspect-ratio", GST_TYPE_FRACTION, 1, 1,
-+        "width", G_TYPE_INT, width,
-+        "height", G_TYPE_INT, height,
-+			  "interlace-mode", G_TYPE_STRING, "progressive",
-+			  "colorimetry", G_TYPE_STRING, "1:1:5:4",
-+        NULL);
-+
-+      caps = gst_caps_fixate(new_caps);
-+
-+      GST_DEBUG_OBJECT (self, "Chosen decoded caps: %" GST_PTR_FORMAT, caps);
-+    }
-+
-     /* Try to set negotiated format, on success replace acquired format */
-     if (gst_v4l2_object_set_format (self->v4l2capture, caps, &error))
-       gst_video_info_from_caps (&info, caps);
+   /* Try to set negotiated format, on success replace acquired format */
+   if (gst_v4l2_object_set_format (self->v4l2capture, caps, &error))
