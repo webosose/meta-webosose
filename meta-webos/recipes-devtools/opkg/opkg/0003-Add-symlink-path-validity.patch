@@ -13,12 +13,12 @@ Upstream-Status: Pending
  4 files changed, 10 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index 03a4afb..7f71168 100644
+index 8dd902d..d50f3f0 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
-@@ -912,6 +912,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
-     ar->extract_flags = ARCHIVE_EXTRACT_OWNER | ARCHIVE_EXTRACT_PERM |
-         ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_UNLINK | ARCHIVE_EXTRACT_NO_OVERWRITE;
+@@ -920,6 +920,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
+     ar->extract_flags |= ARCHIVE_EXTRACT_FFLAGS | ARCHIVE_EXTRACT_XATTR;
+ #endif
  
 +    if (opkg_config->no_install_insecure_symlink)
 +        ar->extract_flags |= ARCHIVE_EXTRACT_SECURE_SYMLINKS;
@@ -51,10 +51,10 @@ index d13d50b..e5c8ae0 100644
      char *offline_root;
      char *overlay_root;
 diff --git a/src/opkg.c b/src/opkg.c
-index 544c58a..4e0dddc 100644
+index 0c729ff..1f99e0c 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -60,6 +60,7 @@ enum {
+@@ -61,6 +61,7 @@ enum {
      ARGS_OPT_AUTOREMOVE,
      ARGS_OPT_VOLATILE_CACHE,
      ARGS_OPT_COMBINE,
@@ -62,7 +62,7 @@ index 544c58a..4e0dddc 100644
      ARGS_OPT_NO_INSTALL_RECOMMENDS,
      ARGS_OPT_CACHE_DIR,
      ARGS_OPT_HOST_CACHE_DIR,
-@@ -107,6 +108,7 @@ static struct option long_options[] = {
+@@ -108,6 +109,7 @@ static struct option long_options[] = {
      {"noaction", 0, 0, ARGS_OPT_NOACTION},
      {"download-only", 0, 0, ARGS_OPT_DOWNLOAD_ONLY},
      {"nodeps", 0, 0, ARGS_OPT_NODEPS},
@@ -70,7 +70,7 @@ index 544c58a..4e0dddc 100644
      {"no-install-recommends", 0, 0, ARGS_OPT_NO_INSTALL_RECOMMENDS},
      {"offline-root", 1, 0, 'o'},
      {"add-arch", 1, 0, ARGS_OPT_ADD_ARCH},
-@@ -256,6 +258,9 @@ static int args_parse(int argc, char *argv[])
+@@ -257,6 +259,9 @@ static int args_parse(int argc, char *argv[])
          case ARGS_OPT_VOLATILE_CACHE:
              opkg_config->volatile_cache = 1;
              break;
