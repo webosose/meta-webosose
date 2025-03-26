@@ -375,10 +375,10 @@ WARN_QA[vardepvalue] = "${ERROR_QA}"
 
 # Move all default WARN_QA from insane.bbclass to ERROR_QA to prevent silently re-introducing these issues
 DEFAULT_WARN_QA = "\
-    libdir xorg-driver-abi \
+    libdir xorg-driver-abi buildpaths \
     textrel incompatible-license files-invalid \
     infodir build-deps src-uri-bad symlink-to-sysroot multilib \
-    invalid-packageconfig host-user-contaminated uppercase-pn patch-fuzz \
+    invalid-packageconfig host-user-contaminated uppercase-pn \
     mime mime-xdg unlisted-pkg-lics unhandled-features-check \
     missing-update-alternatives native-last missing-ptest \
     license-exists license-no-generic license-syntax license-format \
@@ -386,7 +386,7 @@ DEFAULT_WARN_QA = "\
     virtual-slash \
 "
 ERROR_QA:append = " ${DEFAULT_WARN_QA} patch-status"
-WARN_QA:remove = "${DEFAULT_WARN_QA}"
+WARN_QA = "32bit-time"
 
 # Default WEBOS_TARGET_* values (see webos_cmake.bbclass)
 WEBOS_TARGET_CORE_OS ?= "rockhopper"
