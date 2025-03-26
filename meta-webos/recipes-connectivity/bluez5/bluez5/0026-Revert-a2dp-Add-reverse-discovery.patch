@@ -1,4 +1,4 @@
-From 67564af7c0b82b4f0278c2033c0c58415d1d223a Mon Sep 17 00:00:00 2001
+From 84eff351c480c39571be806267188e2450e65d35 Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Thu, 12 Nov 2020 15:04:36 +0530
 Subject: [PATCH] Revert "a2dp: Add reverse discovery"
@@ -21,7 +21,6 @@ Builded and Tested
 
 :QA Notes:
 NA
-
 ---
 Upstream-Status: Pending
 
@@ -29,10 +28,10 @@ Upstream-Status: Pending
  1 file changed, 1 insertion(+), 13 deletions(-)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index 7865bce7f..3fac6207f 100644
+index 5ce43946b..2bbf3aad0 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
-@@ -633,12 +633,6 @@ static gboolean endpoint_match_codec_ind(struct avdtp *session,
+@@ -634,12 +634,6 @@ static gboolean endpoint_match_codec_ind(struct avdtp *session,
  	return TRUE;
  }
  
@@ -45,7 +44,7 @@ index 7865bce7f..3fac6207f 100644
  static gboolean endpoint_setconf_ind(struct avdtp *session,
  						struct avdtp_local_sep *sep,
  						struct avdtp_stream *stream,
-@@ -694,14 +688,8 @@ static gboolean endpoint_setconf_ind(struct avdtp *session,
+@@ -695,14 +689,8 @@ static gboolean endpoint_setconf_ind(struct avdtp *session,
  						setup_ref(setup),
  						endpoint_setconf_cb,
  						a2dp_sep->user_data);

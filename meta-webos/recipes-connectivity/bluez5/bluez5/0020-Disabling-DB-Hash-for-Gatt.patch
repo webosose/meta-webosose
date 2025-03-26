@@ -1,4 +1,4 @@
-From 8c3287d73a4db8b5b027135d76b33a5d01248e39 Mon Sep 17 00:00:00 2001
+From d8d5b1de4d9a08fc5d3a4976029739334090dddd Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Tue, 28 Jul 2020 16:04:27 +0530
 Subject: [PATCH] Disabling DB Hash for Gatt
@@ -15,7 +15,6 @@ NA
 :Issues Addressed:
 [PLAT-107885] Analyze and Adopt the changes for BlueZ 5.54 apis for
               GATT profile
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 
@@ -23,10 +22,10 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/src/gatt-database.c b/src/gatt-database.c
-index 01dd84e8e..b6c23260b 100644
+index 7221ffc87..1fb4b8f35 100644
 --- a/src/gatt-database.c
 +++ b/src/gatt-database.c
-@@ -1191,11 +1191,13 @@ static void db_hash_read_cb(struct gatt_db_attribute *attrib,
+@@ -1207,11 +1207,13 @@ static void db_hash_read_cb(struct gatt_db_attribute *attrib,
  
  	hash = gatt_db_get_hash(database->db);
  
@@ -41,7 +40,7 @@ index 01dd84e8e..b6c23260b 100644
  	state = find_device_state(database, &bdaddr, bdaddr_type);
  	if (state)
  		state->change_aware = true;
-@@ -1252,6 +1254,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
+@@ -1268,6 +1270,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
  	gatt_db_attribute_set_fixed_length(database->cli_feat, CLI_FEAT_SIZE);
  
  	/* Only expose database hash chrc if supported */
@@ -49,7 +48,7 @@ index 01dd84e8e..b6c23260b 100644
  	if (gatt_db_hash_support(database->db)) {
  		bt_uuid16_create(&uuid, GATT_CHARAC_DB_HASH);
  		database->db_hash = gatt_db_service_add_characteristic(service,
-@@ -1259,6 +1262,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
+@@ -1275,6 +1278,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
  				db_hash_read_cb, NULL, database);
  		gatt_db_attribute_set_fixed_length(database->db_hash, 16);
  	}

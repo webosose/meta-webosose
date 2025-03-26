@@ -1,4 +1,4 @@
-From 6bfa67eef487053ad5d33770939321d50c5e81cd Mon Sep 17 00:00:00 2001
+From 8e150fd9ff159f4b7b823fa1c42bcc22015e2bea Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 3 Nov 2020 11:32:38 +0530
 Subject: [PATCH] AVRCP MediaItem object path fix
@@ -19,7 +19,6 @@ NA
 :Issues Addressed:
 [PLAT-124915] Calling AVRCP search API results in
               icom.webos.service.bluetooth2 crash
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

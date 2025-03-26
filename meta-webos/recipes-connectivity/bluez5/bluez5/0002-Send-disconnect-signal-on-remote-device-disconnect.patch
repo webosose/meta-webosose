@@ -1,4 +1,4 @@
-From a5cc25ac4190a532a13d888169e019464c93d24f Mon Sep 17 00:00:00 2001
+From 7aa924395da214310bd446f5b7640694b52463d7 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Thu, 17 May 2018 18:15:48 +0530
 Subject: [PATCH] Send disconnect signal on remote device disconnect
@@ -19,7 +19,6 @@ Builded and tested
 :Issues Addressed:
 [PLAT-49640] Implementation of SPP profile Connect/Disconnect API in
              Bluez Sil
-
 ---
 Upstream-Status: Pending
 

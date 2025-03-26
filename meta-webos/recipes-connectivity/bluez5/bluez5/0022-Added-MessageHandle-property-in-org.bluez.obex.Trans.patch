@@ -1,4 +1,4 @@
-From ad458e4e6fc4f14f2448f161b7a17e51f797feaa Mon Sep 17 00:00:00 2001
+From 133fc1ac84d46d4442faf1d0ce7e331065fd44da Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 13:27:14 +0530
 Subject: [PATCH] Added MessageHandle property in org.bluez.obex.Transfer1
@@ -15,7 +15,6 @@ NA
 
 :Issues Addressed:
 [PLAT-107873] Add MessageHandle for pushMessage transfer in Bluez5
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

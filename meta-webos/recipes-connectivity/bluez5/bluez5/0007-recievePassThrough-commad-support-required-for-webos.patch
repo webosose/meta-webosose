@@ -1,4 +1,4 @@
-From a9c08b894fc01993f608ff3209ef8d4d57b4946a Mon Sep 17 00:00:00 2001
+From f7d101552edfd0c9aaa6c5c3b9cd223ee2c97d5e Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -56,7 +56,7 @@ index 6f64f162b..b002470f9 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index 0cd1b849f..deb6ba705 100644
+index 43642d4f8..ec407a808 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -185,6 +185,11 @@ enum {
@@ -143,7 +143,7 @@ index 0cd1b849f..deb6ba705 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -2241,6 +2282,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -2239,6 +2280,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -159,7 +159,7 @@ index 0cd1b849f..deb6ba705 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3269,6 +3319,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3272,6 +3322,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -168,7 +168,7 @@ index 0cd1b849f..deb6ba705 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4306,6 +4358,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4311,6 +4363,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->sirks = queue_new();
  	device->temporary = true;
  

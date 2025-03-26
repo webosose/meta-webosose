@@ -1,4 +1,4 @@
-From 903589b617de2149962cc12e2f5f4fe68291c859 Mon Sep 17 00:00:00 2001
+From 00ad4e7209dff3c93e3febfa360044bdbcf7b031 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 4 Jun 2020 04:49:48 +0000
 Subject: [PATCH] Support enabling avdtp delayReport
@@ -17,7 +17,6 @@ NA
 
 :Issues Addressed:
 [PLAT-98273] Implement AVDTP delay report interface
-
 ---
 Upstream-Status: Pending
 
@@ -35,10 +34,10 @@ Upstream-Status: Pending
  11 files changed, 97 insertions(+)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index 47b5dd7c3..7865bce7f 100644
+index b43161a13..5ce43946b 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
-@@ -2390,6 +2390,14 @@ found:
+@@ -2391,6 +2391,14 @@ found:
  	return avdtp_ref(chan->session);
  }
  
@@ -91,7 +90,7 @@ index 102a2603e..b167f2dab 100644
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 4568816db..48fc1b280 100644
+index d24329dcd..63ee334c7 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
 @@ -132,6 +132,19 @@ struct media_player {
@@ -114,7 +113,7 @@ index 4568816db..48fc1b280 100644
  static void endpoint_request_free(struct endpoint_request *request)
  {
  	if (request->call)
-@@ -1414,6 +1427,9 @@ media_endpoint_create(struct media_adapter *adapter,
+@@ -1437,6 +1450,9 @@ media_endpoint_create(struct media_adapter *adapter,
  	}
  
  	endpoint->adapter = adapter;
@@ -124,7 +123,7 @@ index 4568816db..48fc1b280 100644
  
  	for (i = 0; i < ARRAY_SIZE(init_table); i++) {
  		init = &init_table[i];
-@@ -3204,6 +3220,7 @@ int media_register(struct btd_adapter *btd_adapter)
+@@ -3227,6 +3243,7 @@ int media_register(struct btd_adapter *btd_adapter)
  		return -1;
  	}
  
@@ -133,7 +132,7 @@ index 4568816db..48fc1b280 100644
  
  	return 0;
 diff --git a/profiles/audio/media.h b/profiles/audio/media.h
-index 1de84a8ff..f9e3ca309 100644
+index 0eeb5746a..ad33c8816 100644
 --- a/profiles/audio/media.h
 +++ b/profiles/audio/media.h
 @@ -10,6 +10,7 @@
@@ -144,13 +143,13 @@ index 1de84a8ff..f9e3ca309 100644
  
  typedef void (*media_endpoint_cb_t) (struct media_endpoint *endpoint,
  					void *ret, int size, void *user_data);
-@@ -24,3 +25,4 @@ struct btd_adapter *media_endpoint_get_btd_adapter(
- 					struct media_endpoint *endpoint);
- 
+@@ -25,3 +26,4 @@ struct btd_adapter *media_endpoint_get_btd_adapter(
+ bool media_endpoint_is_broadcast(
+ 	struct media_endpoint *endpoint);
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index 2679d4302..79663f675 100644
+index 5ebfc4752..e2b66e1d3 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
 @@ -67,6 +67,7 @@
@@ -161,7 +160,7 @@ index 2679d4302..79663f675 100644
  
  #define MODE_OFF		0x00
  #define MODE_CONNECTABLE	0x01
-@@ -280,6 +281,9 @@ struct btd_adapter {
+@@ -285,6 +286,9 @@ struct btd_adapter {
  	bool filtered_discovery;	/* we are doing filtered discovery */
  	bool no_scan_restart_delay;	/* when this flag is set, restart scan
  					 * without delay */
@@ -171,7 +170,7 @@ index 2679d4302..79663f675 100644
  	uint8_t discovery_type;		/* current active discovery type */
  	uint8_t discovery_enable;	/* discovery enabled/disabled */
  	bool discovery_suspended;	/* discovery has been suspended */
-@@ -357,6 +361,11 @@ typedef enum {
+@@ -363,6 +367,11 @@ typedef enum {
  	ADAPTER_AUTHORIZE_CHECK_CONNECTED
  } adapter_authorize_type;
  
@@ -183,7 +182,7 @@ index 2679d4302..79663f675 100644
  static struct btd_adapter *btd_adapter_lookup(uint16_t index)
  {
  	GList *list;
-@@ -559,6 +568,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
+@@ -565,6 +574,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
  
  	g_key_file_set_boolean(key_file, "General", "Discoverable",
  							discoverable);
@@ -192,7 +191,7 @@ index 2679d4302..79663f675 100644
  
  	if (adapter->discoverable_timeout != btd_opts.discovto)
  		g_key_file_set_integer(key_file, "General",
-@@ -3491,6 +3502,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
+@@ -3497,6 +3508,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
  
  	return TRUE;
  }
@@ -223,7 +222,7 @@ index 2679d4302..79663f675 100644
  
  static void property_append_experimental(void *data, void *user_data)
  {
-@@ -3895,6 +3930,7 @@ static const GDBusPropertyTable adapter_properties[] = {
+@@ -3898,6 +3933,7 @@ static const GDBusPropertyTable adapter_properties[] = {
  	{ "Roles", "as", property_get_roles },
  	{ "ExperimentalFeatures", "as", property_get_experimental, NULL,
  					property_experimental_exists },
@@ -231,7 +230,7 @@ index 2679d4302..79663f675 100644
  	{ }
  };
  
-@@ -5272,6 +5308,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
+@@ -5276,6 +5312,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
  	return false;
  }
  
@@ -243,7 +242,7 @@ index 2679d4302..79663f675 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter)
  {
  	if (!adapter)
-@@ -6801,6 +6842,15 @@ static void load_config(struct btd_adapter *adapter)
+@@ -6817,6 +6858,15 @@ static void load_config(struct btd_adapter *adapter)
  		gerr = NULL;
  	}
  
@@ -259,7 +258,7 @@ index 2679d4302..79663f675 100644
  	g_key_file_free(key_file);
  }
  
-@@ -6837,6 +6887,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6853,6 +6903,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  						btd_opts.did_version);
  	adapter->discoverable_timeout = btd_opts.discovto;
  	adapter->pairable_timeout = btd_opts.pairto;
@@ -267,7 +266,7 @@ index 2679d4302..79663f675 100644
  
  	DBG("System name: %s", adapter->system_name);
  	DBG("Major class: %u", adapter->major_class);
-@@ -6847,6 +6898,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6863,6 +6914,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  	if (blocked > 0)
  		DBG("Power state: %s",
  			adapter_power_state_str(adapter->power_state));
@@ -309,10 +308,10 @@ index b7e7ebd61..176689859 100644
  	uint16_t	did_source;
  	uint16_t	did_vendor;
 diff --git a/src/main.c b/src/main.c
-index 8dfd2543b..ae32c13ba 100644
+index 2134fcf75..a8cb58ffb 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -85,6 +85,7 @@ static const char *supported_options[] = {
+@@ -82,6 +82,7 @@ static const char *supported_options[] = {
  	"MultiProfile",
  	"FastConnectable",
  	"SecureConnections",
@@ -320,7 +319,7 @@ index 8dfd2543b..ae32c13ba 100644
  	"Privacy",
  	"JustWorksRepairing",
  	"TemporaryTimeout",
-@@ -1035,6 +1036,9 @@ static void parse_general(GKeyFile *config)
+@@ -1032,6 +1033,9 @@ static void parse_general(GKeyFile *config)
  	parse_config_u32(config, "General", "RemoteNameRequestRetryDelay",
  					&btd_opts.name_request_retry_delay,
  					0, UINT32_MAX);

@@ -1,4 +1,4 @@
-From e6bcdf470c18203b87a6c480b35307ef328e71d5 Mon Sep 17 00:00:00 2001
+From 0e3a0d8d8f854bc5ac38978d0199d1fdaa035dfa Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Wed, 3 Jun 2020 18:08:39 +0530
 Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
@@ -16,7 +16,6 @@ Subject: [PATCH] Enabled EMAIL support based on MAPInstance Name Modified
 
 :Issues Addressed:
     [PLAT-107882] Implement BlueZ API support for MAP connection support
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

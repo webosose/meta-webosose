@@ -1,4 +1,4 @@
-From eb92042e9dc87cc9c4b6f6573cf81d77b97db9d9 Mon Sep 17 00:00:00 2001
+From 8d107719002670d2e34fa74bb247675742689fd7 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Fri, 7 Aug 2020 18:32:03 +0530
 Subject: [PATCH] Added Notification property in org.bluez.obex.MessageAccess1
@@ -14,7 +14,6 @@ NA
 
 :Issues Addressed:
 [PLAT-107891] Implement BlueZ API for getMessageNotificationEvent
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

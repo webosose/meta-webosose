@@ -1,4 +1,4 @@
-From a3f6c02d722b9de76bdefb438e06d6e06bd74087 Mon Sep 17 00:00:00 2001
+From a0a2012b203b5c1624266cda476f5c1a85c0c8d6 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 11 Apr 2018 11:03:20 +0530
 Subject: [PATCH] Fix advertise time out when default is set to zero
@@ -26,7 +26,7 @@ Upstream-Status: Pending
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/src/advertising.c b/src/advertising.c
-index 0dceb14c3..761d4d0bd 100644
+index 2c9a5a443..efd795712 100644
 --- a/src/advertising.c
 +++ b/src/advertising.c
 @@ -569,13 +569,18 @@ static bool parse_local_name(DBusMessageIter *iter,

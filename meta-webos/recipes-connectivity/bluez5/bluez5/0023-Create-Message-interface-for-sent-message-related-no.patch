@@ -1,4 +1,4 @@
-From e9fde8c10e451c635a517f6f5d10823a0b485bd5 Mon Sep 17 00:00:00 2001
+From 7a118d8801bf88553eea261843c821566319b11c Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 16:21:17 +0530
 Subject: [PATCH] Create Message interface for sent message related
@@ -16,7 +16,6 @@ NA
 
 :Issues Addressed:
 [PLAT-107873] Add MessageHandle for pushMessage transfer in Bluez5
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

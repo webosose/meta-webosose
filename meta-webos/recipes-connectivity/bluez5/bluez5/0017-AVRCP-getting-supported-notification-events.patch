@@ -1,4 +1,4 @@
-From 46bc38654877f72af0e02d8301fc325797e29664 Mon Sep 17 00:00:00 2001
+From 5ea04c913ef3358446d19fda94ea0e79069405b7 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -18,7 +18,6 @@ Built and Tested
 :Issues Addressed:
 [PLAT-102247] [AVRCP CT] Implement
               avrcp/internal/getSupportedNotificationEvents
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 
@@ -39,7 +38,7 @@ index f3f2009f4..4f17740da 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index 1e0cbaf28..0bc362260 100644
+index cdec9900a..b9a28ef05 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -300,6 +300,7 @@ struct btd_device {
@@ -68,7 +67,7 @@ index 1e0cbaf28..0bc362260 100644
  static gboolean dev_property_get_avrcp_ct_feature(const GDBusPropertyTable *property,
  					DBusMessageIter *iter, void *data)
  {
-@@ -2368,6 +2380,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
+@@ -2366,6 +2378,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
  	}
  }
  
@@ -83,7 +82,7 @@ index 1e0cbaf28..0bc362260 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3411,6 +3431,7 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3414,6 +3434,7 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_avrcp_ct_feature_exist},
  	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
  				NULL, dev_property_avrcp_tg_feature_exist},

@@ -1,4 +1,4 @@
-From 9109eaae4e2fd040ec5344fa6461ca53246f12ac Mon Sep 17 00:00:00 2001
+From 15f90c1ce644fc1121c68b1224a0f2f659bb29bf Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 25 Jan 2021 16:27:58 +0530
 Subject: [PATCH] Add support for meshd to use RAW channel
@@ -25,7 +25,6 @@ NA
 :Issues Addressed:
 [PLAT-123995] Analyze bluetooth-meshd and bluetoothd
               working together
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

@@ -1,4 +1,4 @@
-From 37b47fb0be2cc526aaa3588db65e0af96df2b08d Mon Sep 17 00:00:00 2001
+From 6c9a518901ba85f83832b1a9894235b2f04b8825 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Tue, 11 Aug 2020 15:18:43 +0530
 Subject: [PATCH] AVRCP addToNowPlaying return error when player not supports
@@ -17,7 +17,6 @@ NA
 :Issues Addressed:
 [PLAT-110696] Analyze and fix addToNowPlaying support in
               bluez5 stack
-
 ---
 Upstream-Status: Inappropriate [webos specific]
 

@@ -1,4 +1,4 @@
-From 8d707587ca71da13ffe694eef59c0e93cd0592a8 Mon Sep 17 00:00:00 2001
+From 2e8ad718a6b6432c3081d3e47a57626b23adda32 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Tue, 22 Jan 2019 23:25:18 +0530
 Subject: [PATCH] Implementation to get connected profiles uuids
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 49 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index e8ba3e657..0cd1b849f 100644
+index 60515b262..43642d4f8 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -230,6 +230,7 @@ struct btd_device {
@@ -81,7 +81,7 @@ index e8ba3e657..0cd1b849f 100644
  
  	if (dev->pending == NULL)
  		goto done;
-@@ -2621,6 +2650,14 @@ static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
+@@ -2624,6 +2653,14 @@ static DBusMessage *connect_profile(DBusConnection *conn, DBusMessage *msg,
  static void device_profile_disconnected(struct btd_device *dev,
  					struct btd_profile *profile, int err)
  {
@@ -96,7 +96,7 @@ index e8ba3e657..0cd1b849f 100644
  	if (!dev->disconnect)
  		return;
  
-@@ -3226,6 +3263,7 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3229,6 +3266,7 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "RSSI", "n", dev_property_get_rssi, NULL, dev_property_exists_rssi },
  	{ "Connected", "b", dev_property_get_connected },
  	{ "UUIDs", "as", dev_property_get_uuids },
@@ -104,7 +104,7 @@ index e8ba3e657..0cd1b849f 100644
  	{ "Modalias", "s", dev_property_get_modalias, NULL,
  						dev_property_exists_modalias },
  	{ "Adapter", "o", dev_property_get_adapter },
-@@ -3335,8 +3373,18 @@ void device_remove_connection(struct btd_device *device, uint8_t bdaddr_type,
+@@ -3338,8 +3376,18 @@ void device_remove_connection(struct btd_device *device, uint8_t bdaddr_type,
  	if (!state->connected)
  		return;
  
