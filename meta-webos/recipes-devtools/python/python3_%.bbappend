@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
 # We need to revert changes from
 #
@@ -17,6 +17,9 @@ EXTENDPRAUTO:append = "webos2"
 
 RDEPENDS:${PN}-ptest:remove:libc-glibc = " \
     locale-base-tr-tr.iso-8859-9 \
+    locale-base-tr-tr \
+    locale-base-fr-fr \
+    locale-base-de-de \
 "
 
 # ERROR: python3-3.8.1-r0 do_package_qa: QA Issue: /usr/lib/python3.8/test/ziptestdata/header.sh contained in package python3-tests requires /bin/bash, but no providers found in RDEPENDS:python3-tests? [file-rdeps]
