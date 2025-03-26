@@ -1,4 +1,4 @@
-From dd7f53233d422e4bde3074f4bab4958eb07e67b3 Mon Sep 17 00:00:00 2001
+From e87069cdb975185a0e53fcccc8ebd04b3ffe628b Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: depend on swap-on

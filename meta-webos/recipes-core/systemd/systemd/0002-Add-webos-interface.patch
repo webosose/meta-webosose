@@ -1,4 +1,4 @@
-From 80453274900888d9504148c682730b11bc1381fe Mon Sep 17 00:00:00 2001
+From 25fbd333cb82d4dc647c151103fd24d6871604ef Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] Add webos interface
@@ -69,12 +69,12 @@ index 0000000000..cef8430362
 +
 +</busconfig>
 diff --git a/src/oom/meson.build b/src/oom/meson.build
-index 12035183de..b855f21ac7 100644
+index 1c4e7f1e64..33f25f55e5 100644
 --- a/src/oom/meson.build
 +++ b/src/oom/meson.build
-@@ -8,6 +8,10 @@ systemd_oomd_sources = files(
+@@ -5,6 +5,10 @@ systemd_oomd_sources = files(
+         'oomd-manager.c',
          'oomd-util.c',
-         'oomd-util.h',
          'oomd.c',
 +        'webos-manager-bus.c',
 +        'webos-manager-bus.h',
@@ -83,7 +83,7 @@ index 12035183de..b855f21ac7 100644
  )
  
  oomctl_sources = files('oomctl.c')
-@@ -16,6 +20,9 @@ if conf.get('ENABLE_OOMD') == 1
+@@ -13,6 +17,9 @@ if conf.get('ENABLE_OOMD') == 1
          install_data('org.freedesktop.oom1.conf',
                       install_dir : dbuspolicydir)
  
@@ -126,10 +126,10 @@ index 4a43807b87..7636fab919 100644
                          r = oomd_kill_by_pgscan_rate(m->monitored_mem_pressure_cgroup_contexts_candidates, t->path, m->dry_run, &selected);
                          if (r == -ENOMEM)
 diff --git a/src/oom/oomd.c b/src/oom/oomd.c
-index 6cfe1a3f4c..4fc1c32a0b 100644
+index eb1b830605..61a8800389 100644
 --- a/src/oom/oomd.c
 +++ b/src/oom/oomd.c
-@@ -16,6 +16,8 @@
+@@ -17,6 +17,8 @@
  #include "pretty-print.h"
  #include "psi-util.h"
  #include "signal-util.h"
@@ -138,7 +138,7 @@ index 6cfe1a3f4c..4fc1c32a0b 100644
  
  static bool arg_dry_run = false;
  static int arg_swap_used_limit_permyriad = -1;
-@@ -191,6 +193,9 @@ static int run(int argc, char *argv[]) {
+@@ -192,6 +194,9 @@ static int run(int argc, char *argv[]) {
  
          log_debug("systemd-oomd started%s.", arg_dry_run ? " in dry run mode" : "");
  
