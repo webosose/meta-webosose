@@ -60,14 +60,14 @@ WEBOS_ENACT_DEPENDENCIES ??= "\
 # NOTE: We only need to bump PR if we change something OTHER than
 # PV, SRCREV or the dependencies statement above.
 
-PR = "r28"
+PR = "r29"
 
 # Skip unneeded tasks
 do_configure[noexec] = "1"
 
 do_compile() {
     cd ${S}
-    rm -fr node_modules
+    rm -fr node_modules node_modules_override
     mkdir node_modules
 
     for LIB in core ui spotlight i18n webos ; do
@@ -97,6 +97,9 @@ do_compile() {
     ${WEBOS_NPM_BIN} pack --loglevel=error ./enact/packages/webos
     ${WEBOS_NPM_BIN} pack --loglevel=error ${WEBOS_ENACT_DEPENDENCIES}
 
+    ${WEBOS_NPM_BIN} init -y
+    ${WEBOS_NPM_BIN} install *.tgz
+    mv node_modules node_modules_override
     for ARCHIVE in $(find . -name "*.tgz") ; do
         tar --warning=no-unknown-keyword -xzf ${ARCHIVE} package/package.json
         PKG=$(${WEBOS_NODE_BIN} -p "require('./package/package.json').name")
@@ -111,6 +114,7 @@ do_compile() {
 do_install() {
     install -d ${D}${datadir}/javascript/enact/@enact
     cp -R --no-dereference --preserve=mode,links -v ${S}/node_modules/* ${D}${datadir}/javascript/enact
+    cp -R --no-dereference --preserve=mode,links -v ${S}/node_modules_override ${D}${datadir}/javascript/enact
 }
 
 SYSROOT_DIRS += "${datadir}"
