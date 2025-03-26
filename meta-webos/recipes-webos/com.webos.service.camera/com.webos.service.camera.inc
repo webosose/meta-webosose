@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-59_f11ab5f25ea873136cecda3939c3c9de14c462ad"
-INC_PR = "r15"
+INC_PR = "r16"
 
 inherit webos_component
 inherit webos_cmake
@@ -16,5 +16,7 @@ inherit webos_public_repo
 inherit webos_system_bus
 inherit webos_daemon
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Fix-build-error-with-newer-clang.patch \
+"
 S = "${WORKDIR}/git"
