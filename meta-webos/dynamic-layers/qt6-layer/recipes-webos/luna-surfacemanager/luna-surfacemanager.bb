@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-420_5bbd010b7cb44af25d0d2910cec274a808aca091"
-PR = "r66"
+PR = "r67"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -39,6 +39,10 @@ EGLFS_INTEGRATION ?= "eglfs_kms_webos"
 DRM_FORMAT ?= "abgr8888"
 EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-graphics-drm', 'CONFIG+=backend_drm EGLFS_INTEGRATION=${EGLFS_INTEGRATION} DRM_FORMAT=${DRM_FORMAT}', '', d)}"
 EXTRA_QMAKEVARS_PRE:append:qemuall = " CONFIG+=virtual_display_support"
+
+# Devel mode
+CONFIG_DEVEL ?= "devel"
+EXTRA_QMAKEVARS_PRE += "CONFIG+=${CONFIG_DEVEL}"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 
