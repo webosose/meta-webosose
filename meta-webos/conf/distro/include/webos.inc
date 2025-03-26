@@ -134,7 +134,7 @@ TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 # their codename schemes.
 #
 WEBOS_DISTRO_PLATFORM_CODENAME ?= "${DISTRO}"
-WEBOS_DISTRO_VERSION_CODENAME ?= "${@base_get_metadata_git_branch('.', None).strip().translate(str.maketrans('','','()/'))}"
+WEBOS_DISTRO_VERSION_CODENAME ?= "${@oe.buildcfg.get_metadata_git_branch('.', None).strip().translate(str.maketrans('','','()/'))}"
 
 # Increase when release is not compatible to previous one which has the same distro platform
 WEBOS_DISTRO_RELEASE_EPOCH ?= ""
@@ -149,7 +149,7 @@ WEBOS_DISTRO_RELEASE_PLATFORMCODE ?= ""
 # This is the codename for the series of builds that are made from a branch.
 # It appears in the image filenames. It is expected that other distros will
 # override this based on their codename schemes.
-WEBOS_DISTRO_BUILD_CODENAME ?= "${@base_get_metadata_git_branch('.', None).strip().translate(str.maketrans('','','()/'))}"
+WEBOS_DISTRO_BUILD_CODENAME ?= "${@oe.buildcfg.get_metadata_git_branch('.', None).strip().translate(str.maketrans('','','()/'))}"
 
 #
 # All of the types of official build jobs should override WEBOS_DISTRO_BUILD_ID
@@ -215,8 +215,8 @@ kernel_do_install:append() {
 BUILDCFG_VARS += "WEBOS_DISTRO_RELEASE_CODENAME WEBOS_DISTRO_BUILD_ID"
 
 # Branch, revision and description of TOPDIR (build-* repository)
-WEBOS_DISTRO_TOPDIR_BRANCH ?= "${@base_get_metadata_git_branch('${TOPDIR}', None).strip()}"
-WEBOS_DISTRO_TOPDIR_REVISION ?= "${@base_get_metadata_git_revision('${TOPDIR}', None).strip()}"
+WEBOS_DISTRO_TOPDIR_BRANCH ?= "${@oe.buildcfg.get_metadata_git_branch('${TOPDIR}', None).strip()}"
+WEBOS_DISTRO_TOPDIR_REVISION ?= "${@oe.buildcfg.get_metadata_git_revision('${TOPDIR}', None).strip()}"
 WEBOS_DISTRO_TOPDIR_DESCRIBE ?= "${@webos_base_get_metadata_git_describe('${TOPDIR}', None).strip()}"
 # Don't add WEBOS_DISTRO_TOPDIR_BRANCH, because in many cases it can be "(nobranch)"
 BUILDCFG_VARS += "WEBOS_DISTRO_TOPDIR_REVISION WEBOS_DISTRO_TOPDIR_DESCRIBE"
