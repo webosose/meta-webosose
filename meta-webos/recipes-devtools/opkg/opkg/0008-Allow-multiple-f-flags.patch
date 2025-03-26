@@ -1,7 +1,7 @@
-From 8a3bc181aa7452eb291be47a6b6bd0ebbdb999ee Mon Sep 17 00:00:00 2001
+From 6ce0795711c912487972ae6fbcb68b31229a7f59 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 15 Oct 2024 17:02:33 +0900
-Subject: [PATCH] opkg: Allow multiple -f flags
+Subject: [PATCH] Allow multiple -f flags
 
 Read arguments for -f flags as much as given and load them all.
 
@@ -19,10 +19,10 @@ Upstream-Status: Backport [https://git.yoctoproject.org/opkg/commit/?id=36d08b93
  create mode 100644 tests/misc/print_architecture.py
 
 diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
-index 37fcd2c..8175e7f 100644
+index 9363fef..a80f1d2 100644
 --- a/libopkg/opkg_conf.c
 +++ b/libopkg/opkg_conf.c
-@@ -592,6 +592,9 @@ int opkg_conf_init(void)
+@@ -593,6 +593,9 @@ int opkg_conf_init(void)
      str_list_init(&opkg_config->exclude_list);
      str_list_init(&opkg_config->ignore_recommends_list);
  
@@ -32,7 +32,7 @@ index 37fcd2c..8175e7f 100644
      return 0;
  }
  
-@@ -681,17 +684,20 @@ int opkg_conf_load(void)
+@@ -682,17 +685,20 @@ int opkg_conf_load(void)
      if (!opkg_config->offline_root)
          opkg_config->offline_root = xstrdup(getenv("OFFLINE_ROOT"));
  
@@ -63,7 +63,7 @@ index 37fcd2c..8175e7f 100644
      } else {
          const char *conf_file_dir = getenv("OPKG_CONF_DIR");
          if (conf_file_dir == NULL)
-@@ -715,8 +721,8 @@ int opkg_conf_load(void)
+@@ -716,8 +722,8 @@ int opkg_conf_load(void)
          free(etc_opkg_conf_pattern);
  
          for (i = 0; i < globbuf.gl_pathc; i++) {
@@ -74,7 +74,7 @@ index 37fcd2c..8175e7f 100644
              if (mismatch)
                  continue;
              r = opkg_conf_parse_file (globbuf.gl_pathv[i],
-@@ -896,7 +902,13 @@ int opkg_conf_load(void)
+@@ -900,7 +906,13 @@ int opkg_conf_load(void)
   err0:
      nv_pair_list_deinit(&opkg_config->tmp_dest_list);
      free(opkg_config->dest_str);
@@ -89,7 +89,7 @@ index 37fcd2c..8175e7f 100644
  
      return -1;
  }
-@@ -913,7 +925,13 @@ void opkg_conf_deinit(void)
+@@ -917,7 +929,13 @@ void opkg_conf_deinit(void)
          rm_r(opkg_config->cache_dir);
  
      free(opkg_config->dest_str);
@@ -105,10 +105,10 @@ index 37fcd2c..8175e7f 100644
      pkg_src_list_deinit(&opkg_config->pkg_src_list);
      pkg_src_list_deinit(&opkg_config->dist_src_list);
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index b7caa74..f20e226 100644
+index 8022c7c..c40e801 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
-@@ -69,7 +69,8 @@ typedef struct opkg_conf {
+@@ -70,7 +70,8 @@ typedef struct opkg_conf {
      pkg_dest_t *default_dest;
      char *dest_str;
  
@@ -119,10 +119,10 @@ index b7caa74..f20e226 100644
      char *tmp_dir;
      char *intercepts_dir; /* set to "/dev/null" to disable intercepts */
 diff --git a/src/opkg.c b/src/opkg.c
-index 7510fe8..b802bf0 100644
+index 39c9225..81e7c81 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -150,7 +150,8 @@ static int args_parse(int argc, char *argv[])
+@@ -152,7 +152,8 @@ static int args_parse(int argc, char *argv[])
              opkg_config->dest_str = xstrdup(optarg);
              break;
          case 'f':
@@ -132,7 +132,7 @@ index 7510fe8..b802bf0 100644
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
-@@ -337,7 +338,7 @@ static void usage()
+@@ -343,7 +344,7 @@ static void usage()
      printf("\t                                  3 debug\n");
      printf("\t                                  4 debug level 2\n");
      printf("\t-f <conf_file>                  Use <conf_file> as the opkg configuration file\n");
@@ -142,11 +142,11 @@ index 7510fe8..b802bf0 100644
      printf("\t-t, --tmp-dir <directory>       Specify tmp-dir.\n");
      printf("\t-l, --lists-dir <directory>     Specify lists-dir.\n");
 diff --git a/tests/Makefile b/tests/Makefile
-index 9fba054..e7ea476 100644
+index e68a741..9b28379 100644
 --- a/tests/Makefile
 +++ b/tests/Makefile
-@@ -96,7 +96,8 @@ REGRESSION_TESTS := core/01_install.py \
- 		    regress/issue13758.py \
+@@ -101,7 +101,8 @@ REGRESSION_TESTS := core/01_install.py \
+ 		    regress/issue14459.py \
  		    misc/filehash.py \
  		    misc/update_loses_autoinstalled_flag.py \
 -		    misc/version_comparisons.py
