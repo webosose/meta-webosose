@@ -2,7 +2,7 @@
 
 inherit clang_cmake
 
-require recipes-test/googletest/googletest_git.bb
+require recipes-test/googletest/googletest_${PV}.bb
 
 # Needed for meta-oe/recipes-test/googletest/files/0001-work-around-GCC-6-11-ADL-bug.patch from
 # https://git.openembedded.org/meta-openembedded/commit/?h=kirkstone&id=8fb1e24fcc5fdaaafbfa03852c7b8bc3e995fe62
@@ -14,7 +14,7 @@ PACKAGECONFIG[system-libcxx] = ",,libcxx"
 
 PROVIDES = ""
 
-PR = "r1"
+PR = "r2"
 
 do_install:append() {
     install -d ${D}/${LIBCBE_DIR}
