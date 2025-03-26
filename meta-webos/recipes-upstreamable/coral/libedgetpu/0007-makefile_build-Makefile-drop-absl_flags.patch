@@ -1,0 +1,50 @@
+From 526a0bb0ecd1e49ec742dc404ac9de97aaf37027 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sun, 10 Mar 2024 14:08:14 +0000
+Subject: [PATCH] makefile_build/Makefile: drop absl_flags
+
+:Release Notes:
+abseil-cpp was upgraded in meta-oe with:
+https://git.openembedded.org/meta-openembedded/commit/?id=903c8e58ed2240f7214261c9005a38f15d782c29
+
+absl_flags was removed from absl with:
+https://github.com/abseil/abseil-cpp/commit/4038192a57cb75f7ee671f81a3378ff4c74c4f8e
+as it contained only workaround for older MSVC versions
+which doesn't seem to be needed by libedgetpu even with
+older abseil-cpp.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/793503
+
+Building throttled libedgetpu.so
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.2.0/ld.gold: error: cannot find -labsl_flags
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.2.0/ld.gold: error: cannot find -labsl_flags
+collect2: error: ld returned 1 exit status
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-504] Create GPVB with Yocto 5.0 Scarthgap
+---
+Upstream-Status: Pending
+
+ makefile_build/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/makefile_build/Makefile b/makefile_build/Makefile
+index 85283f9..e613e64 100644
+--- a/makefile_build/Makefile
++++ b/makefile_build/Makefile
+@@ -31,7 +31,6 @@ LIBEDGETPU_LDFLAGS := \
+ 	-Wl,--version-script=$(BUILDROOT)/tflite/public/libedgetpu.lds \
+ 	-fuse-ld=gold \
+ 	-lflatbuffers \
+-	-labsl_flags \
+ 	-labsl_flags_internal \
+ 	-labsl_flags_reflection \
+ 	-labsl_flags_marshalling \
