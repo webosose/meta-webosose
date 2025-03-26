@@ -26,7 +26,7 @@ COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^r
 CLANG_DEPENDENCY_SUFFIX ?= ""
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver${CLANG_DEPENDENCY_SUFFIX} media-resource-calculator${CLANG_DEPENDENCY_SUFFIX} gst-video-encoder${CLANG_DEPENDENCY_SUFFIX}"
 
-WEBOS_VERSION = "1.0.0-35_ec18e12aea16adffbf2038b297d3cf251ed2b820"
+WEBOS_VERSION = "1.0.0-36_70d4149d8d558148c68855356feab825ce282b7f"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
