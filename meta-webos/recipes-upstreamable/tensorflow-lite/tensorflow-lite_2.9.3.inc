@@ -72,11 +72,12 @@ SRC_URI += " \
     file://CVE2023/0016-CVE-2023-25676-Check-for-unexpected-scalars-in-the-shape-argument-t.patch \
     file://CVE2023/0017-CVE-2023-25801-Fix-security-vulnerability-with-FractionalMax-AVG-Po.patch \
     file://CVE2023/0018-CVE-2023-27579-Check-filter_input_channel-0-in-conv-kernel.patch \
+    file://0001-stl_emulation-span-count_-is-not-const-anymore-7226-.patch;patchdir=flatbuffers \
 "
 
 inherit cmake
 
-PR = "r10"
+PR = "r11"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \
