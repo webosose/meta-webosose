@@ -1,11 +1,10 @@
-From 25fbd333cb82d4dc647c151103fd24d6871604ef Mon Sep 17 00:00:00 2001
+From 316b49b080bc7019fa0298e19cd957e564d67ad1 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] Add webos interface
 
----
 Upstream-Status: Pending
-
+---
  src/oom/com.webos.MemoryManager1.conf | 40 ++++++++++++++++++++++++
  src/oom/meson.build                   |  7 +++++
  src/oom/oomd-manager.c                |  7 +++++
@@ -94,7 +93,7 @@ index 1c4e7f1e64..33f25f55e5 100644
                       install_dir : dbussystemservicedir)
  
 diff --git a/src/oom/oomd-manager.c b/src/oom/oomd-manager.c
-index 4a43807b87..7636fab919 100644
+index 08a29ec77b..bfed4bebd0 100644
 --- a/src/oom/oomd-manager.c
 +++ b/src/oom/oomd-manager.c
 @@ -14,6 +14,8 @@
@@ -123,10 +122,10 @@ index 4a43807b87..7636fab919 100644
 +                        // send MemoryPressure signal
 +                        send_signal_pressure(m, WEBOS_SIGNAL_TYPE_PSI);
  
-                         r = oomd_kill_by_pgscan_rate(m->monitored_mem_pressure_cgroup_contexts_candidates, t->path, m->dry_run, &selected);
-                         if (r == -ENOMEM)
+                         r = oomd_kill_by_pgscan_rate(m->monitored_mem_pressure_cgroup_contexts_candidates,
+                                                      /* prefix= */ t->path,
 diff --git a/src/oom/oomd.c b/src/oom/oomd.c
-index eb1b830605..61a8800389 100644
+index 60e81e7abe..588f7c6866 100644
 --- a/src/oom/oomd.c
 +++ b/src/oom/oomd.c
 @@ -17,6 +17,8 @@
@@ -266,10 +265,10 @@ index 0000000000..bed7413c6a
 +
 +int webos_manager_start(Manager *m);
 diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
-index 7af552ffe3..747f225b12 100644
+index ad187c6453..d853fe5490 100644
 --- a/units/systemd-oomd.service.in
 +++ b/units/systemd-oomd.service.in
-@@ -27,7 +27,7 @@ After=systemd-oomd.socket
+@@ -28,7 +28,7 @@ After=systemd-oomd.socket
  AmbientCapabilities=CAP_KILL CAP_DAC_OVERRIDE
  BusName=org.freedesktop.oom1
  CapabilityBoundingSet=CAP_KILL CAP_DAC_OVERRIDE

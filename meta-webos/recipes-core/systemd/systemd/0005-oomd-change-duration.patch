@@ -1,11 +1,10 @@
-From b9e3630604b0a6adb7942588a9a9f4f8e26c8b74 Mon Sep 17 00:00:00 2001
+From d997013d3cae842ff5bfea4cbc59978ad118dec7 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Tue, 23 Nov 2021 10:42:42 +0900
 Subject: [PATCH] oomd: change duration
 
----
 Upstream-Status: Pending
-
+---
  src/oom/oomd-manager.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 

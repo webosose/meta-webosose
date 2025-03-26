@@ -1,11 +1,10 @@
-From abe0bdd46c8d59378c59b6fbf649ecc70a4ab92b Mon Sep 17 00:00:00 2001
+From 11983bece6c2e5e859ed99d919a3cf8dcf833897 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: modify oomd.conf
 
----
 Upstream-Status: Pending
-
+---
  src/oom/oomd.conf | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 

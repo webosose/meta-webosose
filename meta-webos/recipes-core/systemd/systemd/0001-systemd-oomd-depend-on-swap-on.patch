@@ -1,20 +1,19 @@
-From e87069cdb975185a0e53fcccc8ebd04b3ffe628b Mon Sep 17 00:00:00 2001
+From 8ca1ac4a4452c4a3b272d5fc3f2de152d4e9eee2 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: depend on swap-on
 
----
 Upstream-Status: Pending
-
+---
  units/systemd-oomd.service.in | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
-index 9f248e2ba4..7af552ffe3 100644
+index c138f5eefa..ad187c6453 100644
 --- a/units/systemd-oomd.service.in
 +++ b/units/systemd-oomd.service.in
-@@ -12,6 +12,8 @@ Description=Userspace Out-Of-Memory (OOM) Killer
- Documentation=man:systemd-oomd.service(8)
+@@ -13,6 +13,8 @@ Documentation=man:systemd-oomd.service(8)
+ Documentation=man:org.freedesktop.oom1(5)
  DefaultDependencies=no
  Before=multi-user.target shutdown.target
 +Wants=swap-on.service

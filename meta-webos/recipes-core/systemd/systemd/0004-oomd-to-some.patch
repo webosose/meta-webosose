@@ -1,16 +1,15 @@
-From 60fa455604f8b867b8a1aa887a1a9ab324fef35a Mon Sep 17 00:00:00 2001
+From 9e7234138a02dcb6fbbd1bbb49e52929605d9210 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Tue, 23 Nov 2021 10:42:42 +0900
 Subject: [PATCH] oomd: to some
 
----
 Upstream-Status: Pending
-
+---
  src/oom/oomd-util.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/oom/oomd-util.c b/src/oom/oomd-util.c
-index f97b771c50..67a4afcdc2 100644
+index 49c10b5e16..884866665a 100644
 --- a/src/oom/oomd-util.c
 +++ b/src/oom/oomd-util.c
 @@ -408,7 +408,7 @@ int oomd_cgroup_context_acquire(const char *path, OomdCGroupContext **ret) {
