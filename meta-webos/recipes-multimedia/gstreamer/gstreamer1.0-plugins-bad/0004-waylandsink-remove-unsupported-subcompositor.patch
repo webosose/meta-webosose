@@ -1,4 +1,4 @@
-From a9f370da603e3301336e8f108439a6d85337cd6f Mon Sep 17 00:00:00 2001
+From 43036b2d34a7fbee1d586ae0f4c511024a5381a3 Mon Sep 17 00:00:00 2001
 From: Pankaj Maharana <pankaj.maharana@lge.com>
 Date: Thu, 3 Oct 2019 17:05:37 +0530
 Subject: [PATCH] waylandsink: remove unsupported subcompositor
@@ -438,7 +438,7 @@ index 1f83cb24b7..4ed3618179 100644
  gst_wl_display_get_xdg_wm_base (GstWlDisplay * self)
  {
 diff --git a/subprojects/gst-plugins-bad/gst-libs/gst/wayland/gstwlwindow.c b/subprojects/gst-plugins-bad/gst-libs/gst/wayland/gstwlwindow.c
-index 4aa53c3690..48d49e4b80 100644
+index 6004993f58..77cec7ff8e 100644
 --- a/subprojects/gst-plugins-bad/gst-libs/gst/wayland/gstwlwindow.c
 +++ b/subprojects/gst-plugins-bad/gst-libs/gst/wayland/gstwlwindow.c
 @@ -40,13 +40,9 @@ typedef struct _GstWlWindowPrivate
@@ -467,7 +467,7 @@ index 4aa53c3690..48d49e4b80 100644
  } GstWlWindowPrivate;
  
  G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
-@@ -163,6 +163,7 @@ gst_wl_window_init (GstWlWindow * self)
+@@ -167,6 +167,7 @@ gst_wl_window_init (GstWlWindow * self)
    GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
  
    priv->configured = TRUE;
@@ -475,7 +475,7 @@ index 4aa53c3690..48d49e4b80 100644
    g_cond_init (&priv->configure_cond);
    g_mutex_init (&priv->configure_mutex);
  }
-@@ -182,17 +183,9 @@ gst_wl_window_finalize (GObject * gobject)
+@@ -186,17 +187,9 @@ gst_wl_window_finalize (GObject * gobject)
      wp_viewport_destroy (priv->video_viewport);
  
    wl_proxy_wrapper_destroy (priv->video_surface_wrapper);
@@ -495,7 +495,7 @@ index 4aa53c3690..48d49e4b80 100644
  
    g_clear_object (&priv->display);
  
-@@ -200,7 +193,8 @@ gst_wl_window_finalize (GObject * gobject)
+@@ -204,7 +197,8 @@ gst_wl_window_finalize (GObject * gobject)
  }
  
  static GstWlWindow *
@@ -505,7 +505,7 @@ index 4aa53c3690..48d49e4b80 100644
  {
    GstWlWindow *self;
    GstWlWindowPrivate *priv;
-@@ -209,6 +203,8 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
+@@ -213,6 +207,8 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
    struct wl_region *region;
    struct wp_viewporter *viewporter;
  
@@ -514,7 +514,7 @@ index 4aa53c3690..48d49e4b80 100644
    self = g_object_new (GST_TYPE_WL_WINDOW, NULL);
    priv = gst_wl_window_get_instance_private (self);
    priv->display = g_object_ref (display);
-@@ -216,36 +212,34 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
+@@ -220,36 +216,34 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
    g_cond_init (&priv->configure_cond);
  
    compositor = gst_wl_display_get_compositor (display);
@@ -562,7 +562,7 @@ index 4aa53c3690..48d49e4b80 100644
  
    return self;
  }
-@@ -273,7 +267,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -277,7 +271,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
    struct xdg_wm_base *xdg_wm_base;
    struct zwp_fullscreen_shell_v1 *fullscreen_shell;
  
@@ -571,7 +571,7 @@ index 4aa53c3690..48d49e4b80 100644
    priv = gst_wl_window_get_instance_private (self);
  
    xdg_wm_base = gst_wl_display_get_xdg_wm_base (display);
-@@ -285,7 +279,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -289,7 +283,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
  
      /* First create the XDG surface */
      priv->xdg_surface = xdg_wm_base_get_xdg_surface (xdg_wm_base,
@@ -580,7 +580,7 @@ index 4aa53c3690..48d49e4b80 100644
      if (!priv->xdg_surface) {
        GST_ERROR ("Unable to get xdg_surface");
        goto error;
-@@ -305,7 +299,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -309,7 +303,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
  
      /* Finally, commit the xdg_surface state as toplevel */
      priv->configured = FALSE;
@@ -589,7 +589,7 @@ index 4aa53c3690..48d49e4b80 100644
      wl_display_flush (gst_wl_display_get_display (display));
  
      g_mutex_lock (&priv->configure_mutex);
-@@ -320,7 +314,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
+@@ -324,7 +318,7 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
      g_mutex_unlock (&priv->configure_mutex);
    } else if (fullscreen_shell) {
      zwp_fullscreen_shell_v1_present_surface (fullscreen_shell,
@@ -598,7 +598,7 @@ index 4aa53c3690..48d49e4b80 100644
    } else {
      GST_ERROR ("Unable to use either xdg_wm_base or zwp_fullscreen_shell.");
      goto error;
-@@ -350,20 +344,17 @@ gst_wl_window_new_in_surface (GstWlDisplay * display,
+@@ -354,20 +348,17 @@ gst_wl_window_new_in_surface (GstWlDisplay * display,
    GstWlWindowPrivate *priv;
    struct wl_region *region;
  
@@ -626,7 +626,7 @@ index 4aa53c3690..48d49e4b80 100644
  
    wl_surface_commit (parent);
  
-@@ -392,17 +383,6 @@ gst_wl_window_get_wl_surface (GstWlWindow * self)
+@@ -396,17 +387,6 @@ gst_wl_window_get_wl_surface (GstWlWindow * self)
    return priv->video_surface_wrapper;
  }
  
@@ -644,7 +644,7 @@ index 4aa53c3690..48d49e4b80 100644
  gboolean
  gst_wl_window_is_toplevel (GstWlWindow * self)
  {
-@@ -418,6 +398,7 @@ static void
+@@ -422,6 +402,7 @@ static void
  gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
  {
    GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
@@ -652,7 +652,7 @@ index 4aa53c3690..48d49e4b80 100644
    GstVideoRectangle src = { 0, };
    GstVideoRectangle dst = { 0, };
    GstVideoRectangle res;
-@@ -450,12 +431,18 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
+@@ -454,12 +435,18 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
      gst_video_center_rect (&src, &dst, &res, FALSE);
    }
  
@@ -673,7 +673,7 @@ index 4aa53c3690..48d49e4b80 100644
  
    priv->video_rectangle = res;
  }
-@@ -467,12 +454,7 @@ gst_wl_window_set_opaque (GstWlWindow * self, const GstVideoInfo * info)
+@@ -471,12 +458,7 @@ gst_wl_window_set_opaque (GstWlWindow * self, const GstVideoInfo * info)
    struct wl_compositor *compositor;
    struct wl_region *region;
  
@@ -686,7 +686,7 @@ index 4aa53c3690..48d49e4b80 100644
  
    if (!GST_VIDEO_INFO_HAS_ALPHA (info)) {
      /* Set video opaque */
-@@ -494,126 +476,34 @@ gst_wl_window_render (GstWlWindow * self, GstWlBuffer * buffer,
+@@ -498,20 +480,22 @@ gst_wl_window_render (GstWlWindow * self, GstWlBuffer * buffer,
          gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
      priv->video_height = info->height;
  
@@ -712,8 +712,9 @@ index 4aa53c3690..48d49e4b80 100644
 -      wl_surface_commit (priv->area_surface_wrapper);
 +      wl_surface_commit (priv->video_surface_wrapper);
        priv->is_area_surface_mapped = TRUE;
+       g_signal_emit (self, signals[MAP], 0);
      }
-   } else {
+@@ -519,106 +503,12 @@ gst_wl_window_render (GstWlWindow * self, GstWlBuffer * buffer,
      /* clear both video and parent surfaces */
      wl_surface_attach (priv->video_surface_wrapper, NULL, 0, 0);
      wl_surface_commit (priv->video_surface_wrapper);
@@ -820,7 +821,7 @@ index 4aa53c3690..48d49e4b80 100644
  void
  gst_wl_window_set_render_rectangle (GstWlWindow * self, gint x, gint y,
      gint w, gint h)
-@@ -629,7 +519,16 @@ gst_wl_window_set_render_rectangle (GstWlWindow * self, gint x, gint y,
+@@ -634,7 +524,16 @@ gst_wl_window_set_render_rectangle (GstWlWindow * self, gint x, gint y,
    priv->render_rectangle.w = w;
    priv->render_rectangle.h = h;
  
@@ -838,7 +839,7 @@ index 4aa53c3690..48d49e4b80 100644
  }
  
  const GstVideoRectangle *
-@@ -673,5 +572,5 @@ gst_wl_window_set_rotate_method (GstWlWindow * self,
+@@ -678,5 +577,5 @@ gst_wl_window_set_rotate_method (GstWlWindow * self,
  
    priv->buffer_transform = output_transform_from_orientation_method (method);
  
