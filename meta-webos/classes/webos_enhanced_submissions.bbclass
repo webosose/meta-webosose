@@ -76,13 +76,11 @@ def webos_enhsub_get_tag(d, webos_v):
 # Set WEBOS_SRCREV to value from WEBOS_VERSION.
 WEBOS_SRCREV = "${@webos_enhsub_get_srcrev(d, '${WEBOS_VERSION}')}"
 
-# we don't include SRCPV in PV, so we have to manually include SRCREVs in do_fetch vardeps
-do_fetch[vardeps] += "SRCREV_main SRCREV"
 SRCREV = "${WEBOS_SRCREV}"
 SRCREV_main = "${WEBOS_SRCREV}"
 
 # append WEBOS_PV_SUFFIX to PV when you're using 0 as WEBOS_SUBMISSION to make it clear which SHA-1 was built
-WEBOS_PV_SUFFIX = "+gitr${SRCPV}"
+WEBOS_PV_SUFFIX = ""
 
 # srcrev is mandatory and enough, don't put tag= in SRC_URI
 # to reenable you need to set WEBOS_GIT_TAG to ";tag=${WEBOS_GIT_PARAM_TAG}"
@@ -90,9 +88,6 @@ WEBOS_GIT_PARAM_TAG = "${@webos_enhsub_get_tag(d, '${WEBOS_VERSION}')}"
 WEBOS_GIT_TAG = ""
 
 WEBOS_GIT_PARAM_BRANCH = "${@webos_version_get_branch('${WEBOS_VERSION}')}"
-
-# When SRCREV isn't SHA-1 show error
-do_fetch[prefuncs] += "webos_enhsub_srcrev_sanity_check"
 
 # '0' in 'webos_submission' is used with AUTOREV or SHA-1 without matching tag
 # show non-fatal ERROR to make sure that it's not accidentally merged in master
