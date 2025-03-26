@@ -33,9 +33,6 @@ SKIP_RECIPE[qtdoc] ?= "depends on blacklisted qtpdf, qtmultimedia, qtgraphs, qtc
 
 # meta-oe
 SKIP_RECIPE[fwts] ?= "fails to build with: fwts/22.01.00-r0/build/src/lib/src/.libs/libfwts.so: error: undefined reference to 'gzgets' http://gecko.lge.com:8000/Errors/Details/565736"
-SKIP_RECIPE[lv-drivers] ?= "not compatible with lvgl-9 from meta-webos-backports-5.0/recipes-graphics/lvgl, the recipe was removed from meta-oe in scarthgap http://gecko.lge.com:8000/Errors/Details/867539"
-SKIP_RECIPE[lv-lib-png] ?= "not compatible with lvgl-9 from meta-webos-backports-5.0/recipes-graphics/lvgl, the recipe was removed from meta-oe in scarthgap http://gecko.lge.com:8000/Errors/Details/867540"
-SKIP_RECIPE[dialog-lvgl] ?= "not compatible with lvgl-9 from meta-webos-backports-5.0/recipes-graphics/lvgl, the recipe was added in langdale with https://git.openembedded.org/meta-openembedded/commit/?id=8d75eff6af0fd6ccf8a45b5c98c4a0194e292a2f and removed from meta-oe in scarthgap https://git.openembedded.org/meta-openembedded/commit/?id=e4865f3ee0df8ad9f789a9612f8cb7147992222b"
 SKIP_RECIPE[netplan] ?= "fails to build with gold: aarch64-webos-linux/11.3.0/ld: error: abicompat.lds:10:8: syntax error, unexpected STRING http://gecko.lge.com:8000/Errors/Details/565730"
 SKIP_RECIPE[transmission] ?= "fails to fetch: WARNING: Failed to fetch URL gitsm://github.com/transmission/transmission;branch=master;protocol=https, attempting MIRRORS if available DEBUG: Fetcher failure: Unable to find revision bb6b5a062ee594dfd4b7a12a6b6e860c43849bfd in branch master even from upstream: http://gecko.lge.com:8000/Errors/Details/565717"
 SKIP_RECIPE[vboxguestdrivers] ?= "BROKEN: kernel-module-vboxguest conflicts in pkgdata with the vboxguest kernel modules we have enabled in linux-yocto meta-webos/recipes-kernel/linux/linux-yocto/vbox_gfx.cfg:CONFIG_VBOXGUEST=m http://gecko.lge.com:8000/Errors/Details/565857"
