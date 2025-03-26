@@ -1,6 +1,6 @@
 # Copyright (c) 2020-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 # ERROR: fuse3-3.9.2-r0 do_package_qa: QA Issue: fuse3-ptest rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
@@ -9,7 +9,7 @@ RDEPENDS:${PN}-ptest:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFE
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 SRC_URI:append = " \
-    file://0002-support-fuse_passthrough-to-lib_fuse.patch \
+    file://0001-support-fuse_passthrough-to-lib_fuse.patch \
 "
 
 inherit webos_test_provider
