@@ -1,4 +1,4 @@
-From 66089ff883a5904898c4e7810422a5035d9f41b7 Mon Sep 17 00:00:00 2001
+From 2678b6b03f160a3afa50f376044297506edcf4f4 Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Tue, 10 Dec 2019 16:15:43 +0530
 Subject: [PATCH] Fix volume level notification not appearing after 127
@@ -29,10 +29,10 @@ Upstream-Status: Inappropriate [webos specific]
  2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index bea2e6358..a9c42450c 100644
+index 595f79d91..4568816db 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1776,8 +1776,8 @@ static void media_player_set_volume(int8_t volume, struct btd_device *dev,
+@@ -1905,8 +1905,8 @@ static void media_player_set_volume(int8_t volume, struct btd_device *dev,
  {
  	struct media_player *mp = user_data;
  
@@ -44,11 +44,11 @@ index bea2e6358..a9c42450c 100644
  	mp->volume = volume;
  }
 diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
-index 2827ff42d..f9c1a4a16 100644
+index 16a0e5941..abbe77a90 100644
 --- a/profiles/audio/transport.c
 +++ b/profiles/audio/transport.c
-@@ -749,8 +749,8 @@ static void set_volume(const GDBusPropertyTable *property,
- 	g_dbus_pending_property_success(id);
+@@ -776,8 +776,8 @@ static void set_volume(const GDBusPropertyTable *property,
+ 	}
  
  	volume = (int8_t)arg;
 -	if (a2dp->volume == volume)
@@ -58,7 +58,7 @@ index 2827ff42d..f9c1a4a16 100644
  
  	notify = transport->source_watch ? true : false;
  	if (notify) {
-@@ -1517,8 +1517,8 @@ void media_transport_update_volume(struct media_transport *transport,
+@@ -1661,8 +1661,8 @@ void media_transport_update_volume(struct media_transport *transport,
  		return;
  
  	/* Check if volume really changed */

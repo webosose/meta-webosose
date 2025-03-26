@@ -1,4 +1,4 @@
-From 30b1947069401365ed1fe5ff5531e7cca6f15d3b Mon Sep 17 00:00:00 2001
+From a9c08b894fc01993f608ff3209ef8d4d57b4946a Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -56,10 +56,10 @@ index 6f64f162b..b002470f9 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index 750232410..07dad435b 100644
+index 0cd1b849f..deb6ba705 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -170,6 +170,11 @@ enum {
+@@ -185,6 +185,11 @@ enum {
  	WAKE_FLAG_DISABLED,
  };
  
@@ -71,7 +71,7 @@ index 750232410..07dad435b 100644
  struct btd_device {
  	int ref_count;
  
-@@ -275,6 +280,8 @@ struct btd_device {
+@@ -291,6 +296,8 @@ struct btd_device {
  	time_t		name_resolve_failed_time;
  
  	int8_t		volume;
@@ -80,7 +80,7 @@ index 750232410..07dad435b 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1407,6 +1414,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
+@@ -1463,6 +1470,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
  	return bt_ad_has_manufacturer_data(device->ad, NULL);
  }
  
@@ -99,7 +99,7 @@ index 750232410..07dad435b 100644
  static void append_service_data(void *data, void *user_data)
  {
  	struct bt_ad_service_data *sd = data;
-@@ -1425,13 +1444,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1481,13 +1500,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	struct btd_device *device = data;
  	DBusMessageIter dict;
  
@@ -114,7 +114,7 @@ index 750232410..07dad435b 100644
  	bt_ad_foreach_service_data(device->ad, append_service_data, &dict);
  
  	dbus_message_iter_close_container(iter, &dict);
-@@ -1439,6 +1458,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1495,6 +1514,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -143,7 +143,7 @@ index 750232410..07dad435b 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -2037,6 +2078,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -2241,6 +2282,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -159,7 +159,7 @@ index 750232410..07dad435b 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3065,6 +3115,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3269,6 +3319,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -168,8 +168,8 @@ index 750232410..07dad435b 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4040,6 +4092,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
- 	device->adapter = adapter;
+@@ -4306,6 +4358,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+ 	device->sirks = queue_new();
  	device->temporary = true;
  
 +	device->passththough_key.state = NULL;
@@ -179,12 +179,12 @@ index 750232410..07dad435b 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 9e81fda9e..6297e04c0 100644
+index 3252e14ef..9dcb3c140 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -188,3 +188,5 @@ void btd_device_cleanup(void);
+@@ -196,3 +196,5 @@ typedef void (*bt_device_ad_func_t)(void *data, void *user_data);
  
- void btd_device_set_volume(struct btd_device *dev, int8_t volume);
- int8_t btd_device_get_volume(struct btd_device *dev);
+ void btd_device_foreach_ad(struct btd_device *dev, bt_device_ad_func_t func,
+ 							void *data);
 +
 +void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);

@@ -1,4 +1,4 @@
-From 9c23c9ab97a20f41e0e49b61809ab0e528fb3f37 Mon Sep 17 00:00:00 2001
+From 46bc38654877f72af0e02d8301fc325797e29664 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -27,10 +27,10 @@ Upstream-Status: Inappropriate [webos specific]
  2 files changed, 22 insertions(+)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 61478e913..ff9d9f97d 100644
+index f3f2009f4..4f17740da 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -3992,6 +3992,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
+@@ -3998,6 +3998,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
  			break;
  		}
  	}
@@ -39,10 +39,10 @@ index 61478e913..ff9d9f97d 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index be4b1d670..06863a304 100644
+index 1e0cbaf28..0bc362260 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -284,6 +284,7 @@ struct btd_device {
+@@ -300,6 +300,7 @@ struct btd_device {
  	struct key_code passththough_key;
  	uint8_t		avrcp_ct_features;
  	uint8_t		avrcp_tg_features;
@@ -50,7 +50,7 @@ index be4b1d670..06863a304 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1482,6 +1483,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+@@ -1538,6 +1539,17 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -68,7 +68,7 @@ index be4b1d670..06863a304 100644
  static gboolean dev_property_get_avrcp_ct_feature(const GDBusPropertyTable *property,
  					DBusMessageIter *iter, void *data)
  {
-@@ -2164,6 +2176,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
+@@ -2368,6 +2380,14 @@ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controll
  	}
  }
  
@@ -83,7 +83,7 @@ index be4b1d670..06863a304 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3207,6 +3227,7 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3411,6 +3431,7 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_avrcp_ct_feature_exist},
  	{ "AvrcpTGFeatures", "y", dev_property_get_avrcp_tg_feature,
  				NULL, dev_property_avrcp_tg_feature_exist},

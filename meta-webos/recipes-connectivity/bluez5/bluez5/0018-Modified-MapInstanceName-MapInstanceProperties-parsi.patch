@@ -1,4 +1,4 @@
-From 2aa47e4e4e88b83c3a9a524fc21e69535ec56815 Mon Sep 17 00:00:00 2001
+From 690515be2839c4c2df837483a26efcf23a39b936 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Tue, 14 Jul 2020 10:37:18 +0900
 Subject: [PATCH] Modified MapInstanceName & MapInstanceProperties parsing and
@@ -25,10 +25,10 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 167 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index 06863a304..7eed7d739 100644
+index 0bc362260..4fdc63dab 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -220,6 +220,8 @@ struct btd_device {
+@@ -235,6 +235,8 @@ struct btd_device {
  	char		*modalias;
  	struct btd_adapter	*adapter;
  	GSList		*uuids;
@@ -37,7 +37,7 @@ index 06863a304..7eed7d739 100644
  	GSList		*connected_uuids;
  	GSList		*primaries;		/* List of primary services */
  	GSList		*services;		/* List of btd_service */
-@@ -408,6 +410,7 @@ static gboolean store_device_info_cb(gpointer user_data)
+@@ -449,6 +451,7 @@ static gboolean store_device_info_cb(gpointer user_data)
  	char *str;
  	char class[9];
  	char **uuids = NULL;
@@ -45,7 +45,7 @@ index 06863a304..7eed7d739 100644
  	gsize length = 0;
  
  	device->store_id = 0;
-@@ -476,6 +479,35 @@ static gboolean store_device_info_cb(gpointer user_data)
+@@ -517,6 +520,35 @@ static gboolean store_device_info_cb(gpointer user_data)
  		g_key_file_remove_key(key_file, "General", "Services", NULL);
  	}
  
@@ -81,7 +81,7 @@ index 06863a304..7eed7d739 100644
  	if (device->vendor_src) {
  		g_key_file_set_integer(key_file, "DeviceID", "Source",
  					device->vendor_src);
-@@ -506,6 +538,7 @@ static gboolean store_device_info_cb(gpointer user_data)
+@@ -559,6 +591,7 @@ static gboolean store_device_info_cb(gpointer user_data)
  
  	g_key_file_free(key_file);
  	g_free(uuids);
@@ -89,7 +89,7 @@ index 06863a304..7eed7d739 100644
  
  	return FALSE;
  }
-@@ -775,6 +808,10 @@ static void device_free(gpointer user_data)
+@@ -828,6 +861,10 @@ static void device_free(gpointer user_data)
  	g_slist_free_full(device->uuids, g_free);
  	g_slist_free_full(device->primaries, g_free);
  	g_slist_free_full(device->svc_callbacks, svc_dev_remove);
@@ -100,7 +100,7 @@ index 06863a304..7eed7d739 100644
  
  	/* Reset callbacks since the device is going to be freed */
  	gatt_db_unregister(device->db, device->db_id);
-@@ -1343,6 +1380,46 @@ static gboolean dev_property_get_uuids(const GDBusPropertyTable *property,
+@@ -1399,6 +1436,46 @@ static gboolean dev_property_get_uuids(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -147,16 +147,16 @@ index 06863a304..7eed7d739 100644
  static gboolean dev_property_get_modalias(const GDBusPropertyTable *property,
  					DBusMessageIter *iter, void *data)
  {
-@@ -3242,6 +3319,8 @@ static const GDBusPropertyTable device_properties[] = {
- 	{ "WakeAllowed", "b", dev_property_get_wake_allowed,
- 				dev_property_set_wake_allowed,
+@@ -3448,6 +3525,8 @@ static const GDBusPropertyTable device_properties[] = {
  				dev_property_wake_allowed_exist },
+ 	{ "Sets", "a{oa{sv}}", dev_property_get_set, NULL,
+ 				dev_property_set_exists },
 +        { "MapInstances", "as", dev_property_get_mapInstances },
 +        { "MapInstanceProperties", "ai", dev_property_get_mapInstanceProperties },
  	{ }
  };
  
-@@ -3562,6 +3641,32 @@ static void load_services(struct btd_device *device, char **uuids)
+@@ -3825,6 +3904,32 @@ static void load_services(struct btd_device *device, char **uuids)
  	g_strfreev(uuids);
  }
  
@@ -189,7 +189,7 @@ index 06863a304..7eed7d739 100644
  static void convert_info(struct btd_device *device, GKeyFile *key_file)
  {
  	char filename[PATH_MAX];
-@@ -3614,7 +3719,7 @@ static void load_info(struct btd_device *device, const char *local,
+@@ -3877,7 +3982,7 @@ static void load_info(struct btd_device *device, const char *local,
  	gboolean store_needed = FALSE;
  	gboolean blocked;
  	gboolean wake_allowed;
@@ -198,7 +198,7 @@ index 06863a304..7eed7d739 100644
  	int source, vendor, product, version;
  	char **techno, **t;
  
-@@ -3710,6 +3815,23 @@ next:
+@@ -3975,6 +4080,23 @@ next:
  		device->bredr_state.svc_resolved = true;
  	}
  
@@ -222,7 +222,7 @@ index 06863a304..7eed7d739 100644
  	/* Load device id */
  	source = g_key_file_get_integer(key_file, "DeviceID", "Source", NULL);
  	if (source) {
-@@ -4998,6 +5120,29 @@ static int update_record(struct browse_req *req, const char *uuid,
+@@ -5267,6 +5389,29 @@ static int update_record(struct browse_req *req, const char *uuid,
  	return 0;
  }
  
@@ -252,7 +252,7 @@ index 06863a304..7eed7d739 100644
  static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
  {
  	struct btd_device *device = req->device;
-@@ -5055,6 +5200,23 @@ static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
+@@ -5324,6 +5469,23 @@ static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
  		if (!profile_uuid)
  			continue;
  
@@ -276,7 +276,7 @@ index 06863a304..7eed7d739 100644
  		if (bt_uuid_strcmp(profile_uuid, PNP_UUID) == 0) {
  			uint16_t source, vendor, product, version;
  			sdp_data_t *pdlist;
-@@ -5233,6 +5395,10 @@ static void search_cb(sdp_list_t *recs, int err, gpointer user_data)
+@@ -5502,6 +5664,10 @@ static void search_cb(sdp_list_t *recs, int err, gpointer user_data)
  	/* Propagate services changes */
  	g_dbus_emit_property_changed(dbus_conn, req->device->path,
  						DEVICE_INTERFACE, "UUIDs");

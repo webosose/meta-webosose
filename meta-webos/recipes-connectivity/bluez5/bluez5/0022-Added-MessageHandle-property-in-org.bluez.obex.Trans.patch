@@ -1,4 +1,4 @@
-From e4ead3bf22f422ecb327a8a07c690e9273f81b26 Mon Sep 17 00:00:00 2001
+From ad458e4e6fc4f14f2448f161b7a17e51f797feaa Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 13:27:14 +0530
 Subject: [PATCH] Added MessageHandle property in org.bluez.obex.Transfer1

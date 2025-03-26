@@ -1,4 +1,4 @@
-From 4564bd613eb15b23f1c8fd9b5aca3a2aaeb179c1 Mon Sep 17 00:00:00 2001
+From 588270b04249ed2b9fd61aa2e59ebbf1fe444097 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Tue, 5 Feb 2019 18:10:55 +0530
 Subject: [PATCH] avrcp getting remote device features list
@@ -29,10 +29,10 @@ Upstream-Status: Inappropriate [webos specific]
  3 files changed, 88 insertions(+)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index 1b3e6090a..61478e913 100644
+index 4063650c7..f3f2009f4 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
-@@ -4152,9 +4152,16 @@ static void target_init(struct avrcp *session)
+@@ -4158,9 +4158,16 @@ static void target_init(struct avrcp *session)
  				(1 << AVRCP_EVENT_TRACK_REACHED_END) |
  				(1 << AVRCP_EVENT_SETTINGS_CHANGED);
  
@@ -49,7 +49,7 @@ index 1b3e6090a..61478e913 100644
  	session->supported_events |=
  				(1 << AVRCP_EVENT_ADDRESSED_PLAYER_CHANGED) |
  				(1 << AVRCP_EVENT_AVAILABLE_PLAYERS_CHANGED) |
-@@ -4167,6 +4174,8 @@ static void target_init(struct avrcp *session)
+@@ -4173,6 +4180,8 @@ static void target_init(struct avrcp *session)
  	if (!(target->features & AVRCP_FEATURE_BROWSING))
  		return;
  
@@ -58,7 +58,7 @@ index 1b3e6090a..61478e913 100644
  	avrcp_connect_browsing(session);
  }
  
-@@ -4197,14 +4206,20 @@ static void controller_init(struct avrcp *session)
+@@ -4203,14 +4212,20 @@ static void controller_init(struct avrcp *session)
  	if (controller->version < 0x0103)
  		return;
  
@@ -80,10 +80,10 @@ index 1b3e6090a..61478e913 100644
  }
  
 diff --git a/src/device.c b/src/device.c
-index 3f9f1190d..efe3a636f 100644
+index 0cc574346..0adc0eab2 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -282,6 +282,8 @@ struct btd_device {
+@@ -298,6 +298,8 @@ struct btd_device {
  	int8_t		volume;
  
  	struct key_code passththough_key;
@@ -92,7 +92,7 @@ index 3f9f1190d..efe3a636f 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1480,6 +1482,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+@@ -1536,6 +1538,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -139,7 +139,7 @@ index 3f9f1190d..efe3a636f 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -2103,6 +2145,25 @@ void media_metadata_request(struct btd_device *dev)
+@@ -2307,6 +2349,25 @@ void media_metadata_request(struct btd_device *dev)
  			DBUS_TYPE_INVALID);
  }
  
@@ -165,7 +165,7 @@ index 3f9f1190d..efe3a636f 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3139,6 +3200,10 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3343,6 +3404,10 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_manufacturer_data_exist },
  	{ "KeyCode", "a{sv}", dev_property_get_key_code,
  				NULL, dev_property_key_code_exist},
@@ -176,7 +176,7 @@ index 3f9f1190d..efe3a636f 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4117,6 +4182,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4383,6 +4448,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->passththough_key.state = NULL;
  	device->passththough_key.key = NULL;
  
@@ -187,7 +187,7 @@ index 3f9f1190d..efe3a636f 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 549e53b81..3fcfd919d 100644
+index ae54e71cf..6856177d6 100644
 --- a/src/device.h
 +++ b/src/device.h
 @@ -10,6 +10,10 @@
@@ -201,7 +201,7 @@ index 549e53b81..3fcfd919d 100644
  
  struct btd_device;
  
-@@ -193,3 +197,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -201,3 +205,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  
  void media_play_request(struct btd_device *dev);
  void media_metadata_request(struct btd_device *dev);

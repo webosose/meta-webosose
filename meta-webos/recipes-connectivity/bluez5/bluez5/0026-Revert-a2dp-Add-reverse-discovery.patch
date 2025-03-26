@@ -1,4 +1,4 @@
-From 3175e56e54dd30e78131be257bd9ffc116cc7d40 Mon Sep 17 00:00:00 2001
+From 67564af7c0b82b4f0278c2033c0c58415d1d223a Mon Sep 17 00:00:00 2001
 From: Sameer Mulla <sameer.mulla@lge.com>
 Date: Thu, 12 Nov 2020 15:04:36 +0530
 Subject: [PATCH] Revert "a2dp: Add reverse discovery"

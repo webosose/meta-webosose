@@ -1,4 +1,4 @@
-From 152936938e500f4234810636b340af367f649aae Mon Sep 17 00:00:00 2001
+From 2e3b1df36a6621550363009190d3aba4d9079ee5 Mon Sep 17 00:00:00 2001
 From: "sungmok.shin" <sungmok.shin@lge.com>
 Date: Mon, 20 Apr 2020 19:24:45 +0900
 Subject: [PATCH] Set default pairing capability as "NoInputNoOutput"

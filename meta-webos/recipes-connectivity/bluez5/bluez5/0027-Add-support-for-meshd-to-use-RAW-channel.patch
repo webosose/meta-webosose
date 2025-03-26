@@ -1,4 +1,4 @@
-From c17b168d8b7c2a55f5f085662bc5905caea23086 Mon Sep 17 00:00:00 2001
+From 9109eaae4e2fd040ec5344fa6461ca53246f12ac Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 25 Jan 2021 16:27:58 +0530
 Subject: [PATCH] Add support for meshd to use RAW channel
@@ -52,7 +52,7 @@ index c8afbf53e..ee65ce485 100644
  LimitNPROC=1
  ProtectHome=true
 diff --git a/mesh/main.c b/mesh/main.c
-index 3bca020a0..b807fc0e7 100644
+index 145bcfa98..489bbef64 100644
 --- a/mesh/main.c
 +++ b/mesh/main.c
 @@ -36,6 +36,7 @@ static const char *storage_dir;
@@ -71,7 +71,7 @@ index 3bca020a0..b807fc0e7 100644
  	{ "help",	no_argument,		NULL, 'h' },
  	{ }
  };
-@@ -175,10 +177,11 @@ static bool parse_io(const char *optarg, enum mesh_io_type *type, void **opts)
+@@ -164,10 +166,11 @@ static bool parse_io(const char *optarg, enum mesh_io_type *type, void **opts)
  
  		return false;
  	} else if (strstr(optarg, "generic") == optarg) {
@@ -85,8 +85,8 @@ index 3bca020a0..b807fc0e7 100644
 -		*opts = index;
  
  		optarg += strlen("generic");
- 		if (!*optarg) {
-@@ -241,7 +244,7 @@ int main(int argc, char *argv[])
+ 		if (!*optarg || *optarg != ':')
+@@ -225,7 +228,7 @@ int main(int argc, char *argv[])
  	for (;;) {
  		int opt;
  
@@ -95,7 +95,7 @@ index 3bca020a0..b807fc0e7 100644
  									NULL);
  		if (opt < 0)
  			break;
-@@ -276,6 +279,9 @@ int main(int argc, char *argv[])
+@@ -260,6 +263,9 @@ int main(int argc, char *argv[])
  		case 'b':
  			dbus_debug = true;
  			break;
@@ -106,18 +106,18 @@ index 3bca020a0..b807fc0e7 100644
  			usage();
  			status = EXIT_SUCCESS;
 diff --git a/mesh/mesh-io-generic.c b/mesh/mesh-io-generic.c
-index 827128ec8..e9630e083 100644
+index 00932ade7..f50d282f7 100644
 --- a/mesh/mesh-io-generic.c
 +++ b/mesh/mesh-io-generic.c
-@@ -39,6 +39,7 @@ struct mesh_io_private {
+@@ -38,6 +38,7 @@ struct mesh_io_private {
  	uint16_t interval;
  	bool sending;
  	bool active;
 +	bool use_raw;
  };
  
- struct pvt_rx_reg {
-@@ -258,8 +259,11 @@ static void configure_hci(struct mesh_io_private *io)
+ struct process_data {
+@@ -250,8 +251,11 @@ static void configure_hci(struct mesh_io_private *io)
  
  	/* TODO: Move to suitable place. Set suitable masks */
  	/* Reset Command */
@@ -131,9 +131,9 @@ index 827128ec8..e9630e083 100644
  
  	/* Read local supported commands */
  	bt_hci_send(io->hci, BT_HCI_CMD_READ_LOCAL_COMMANDS, NULL, 0,
-@@ -388,7 +392,22 @@ static void hci_init(void *user_data)
- 	if (io->pvt->hci)
- 		bt_hci_unref(io->pvt->hci);
+@@ -383,7 +387,22 @@ static void hci_init(void *user_data)
+ 	/* Clear controller HCI list to suppress mgmt interface warnings */
+ 	mesh_mgmt_clear();
  
 -	io->pvt->hci = bt_hci_new_user_channel(io->index);
 +	if (io->pvt->use_raw)
@@ -155,7 +155,7 @@ index 827128ec8..e9630e083 100644
  	if (!io->pvt->hci) {
  		l_error("Failed to start mesh io (hci %u): %s", io->index,
  							strerror(errno));
-@@ -416,6 +435,10 @@ static bool dev_init(struct mesh_io *io, void *opts, void *user_data)
+@@ -411,6 +430,10 @@ static bool dev_init(struct mesh_io *io, void *opts, void *user_data)
  		return false;
  
  	io->pvt = l_new(struct mesh_io_private, 1);
@@ -164,10 +164,10 @@ index 827128ec8..e9630e083 100644
 +	io->index = io_opts->index;
 +	io->pvt->use_raw = io_opts->use_raw;
  
- 	io->pvt->rx_regs = l_queue_new();
  	io->pvt->tx_pkts = l_queue_new();
-@@ -822,7 +845,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
- 	if (l_queue_find(pvt->rx_regs, find_active, NULL))
+ 
+@@ -787,7 +810,8 @@ static bool recv_register(struct mesh_io *io, const uint8_t *filter,
+ 	if (l_queue_find(io->rx_regs, find_active, NULL))
  		active = true;
  
 -	if (!already_scanning || pvt->active != active) {
@@ -177,10 +177,10 @@ index 827128ec8..e9630e083 100644
  		cmd.enable = 0x00;	/* Disable scanning */
  		cmd.filter_dup = 0x00;	/* Report duplicates */
 diff --git a/mesh/mesh-io.h b/mesh/mesh-io.h
-index 9dd946cdf..ed067abe6 100644
+index f7711e786..17195e4ad 100644
 --- a/mesh/mesh-io.h
 +++ b/mesh/mesh-io.h
-@@ -32,6 +32,10 @@ struct mesh_io_recv_info {
+@@ -30,6 +30,10 @@ struct mesh_io_recv_info {
  	uint8_t chan;
  	int8_t rssi;
  };
@@ -192,7 +192,7 @@ index 9dd946cdf..ed067abe6 100644
  struct mesh_io_send_info {
  	enum mesh_io_timing_type type;
 diff --git a/mesh/mesh-mgmt.c b/mesh/mesh-mgmt.c
-index d37aeb5ac..eb7831cc5 100644
+index fd21a168a..8c599a01c 100644
 --- a/mesh/mesh-mgmt.c
 +++ b/mesh/mesh-mgmt.c
 @@ -86,6 +86,45 @@ static void set_exp_mesh_cb(uint8_t status, uint16_t length,
@@ -242,11 +242,11 @@ index d37aeb5ac..eb7831cc5 100644
  					const void *param, void *user_data)
  {
 diff --git a/mesh/mesh-mgmt.h b/mesh/mesh-mgmt.h
-index a3cd72faf..6dde5c725 100644
+index 570282297..d72d82ae3 100644
 --- a/mesh/mesh-mgmt.h
 +++ b/mesh/mesh-mgmt.h
-@@ -22,3 +22,4 @@ unsigned int mesh_mgmt_register(uint16_t event, uint16_t index,
- 				void *user_data, mgmt_destroy_func_t destroy);
+@@ -23,3 +23,4 @@ unsigned int mesh_mgmt_register(uint16_t event, uint16_t index,
  bool mesh_mgmt_unregister(unsigned int id);
  void mesh_mgmt_destroy(void);
+ void mesh_mgmt_clear(void);
 +bool set_powered(uint16_t mode, int index);
