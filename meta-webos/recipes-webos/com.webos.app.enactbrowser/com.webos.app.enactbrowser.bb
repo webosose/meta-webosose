@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-17.browsershell.14_cc56a521bbddb8ebab794dd42ed083ab0c167f7d"
-PR = "r24"
+PR = "r25"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -42,7 +42,7 @@ SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
 WEBOS_ENACTJS_PROJECT_PATH = "./samples/enact-based"
 WEBOS_ENACTJS_PACK_OVERRIDE = "\
-    ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} --verbose && \
+    ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} && \
     ${WEBOS_NODE_BIN} resbundler.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} && \
     rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources && \
     rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/node_modules/@enact/moonstone/resources && \
@@ -60,7 +60,7 @@ WEBOS_ENACTJS_PACK_OVERRIDE += "\
 # Remove --production, because that causes
 # http://gecko.lge.com/Errors/Details/119724
 # Error: Cannot find module 'glob'
-WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional --verbose"
+WEBOS_NPM_INSTALL_FLAGS = "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --without-ssl --insecure --no-optional"
 
 do_compile:prepend() {
     cd ${S}

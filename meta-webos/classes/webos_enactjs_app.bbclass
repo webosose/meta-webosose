@@ -218,7 +218,7 @@ do_install() {
     else
         # Normal App Build
         bbnote "Bundling Enact app to $appdir"
-        ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "$appdir" --verbose
+        ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -o "$appdir"
     fi
 
     if [ ! -f $appdir/index.html ] ; then

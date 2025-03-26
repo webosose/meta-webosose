@@ -25,7 +25,7 @@ WEBOS_NPM_BIN ?= "${STAGING_BINDIR_NATIVE}/npm"
 WEBOS_NPM_CACHE_DIR ?= "${WORKDIR}/npm-cache"
 WEBOS_NPM_REGISTRY ?= "https://registry.npmjs.org/"
 WEBOS_NPM_ARCH ?= "${@get_nodejs_arch(d)}"
-WEBOS_NPM_INSTALL_FLAGS ?= "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --production --without-ssl --insecure --no-optional --verbose"
+WEBOS_NPM_INSTALL_FLAGS ?= "--arch=${WEBOS_NPM_ARCH} --target_arch=${WEBOS_NPM_ARCH} --production --without-ssl --insecure --no-optional"
 
 WEBOS_NODE_BIN ??= "${STAGING_BINDIR_NATIVE}/node"
 
