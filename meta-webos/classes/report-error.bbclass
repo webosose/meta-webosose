@@ -355,7 +355,7 @@ python errorreport_handler () {
             if len(targets) > 2000:
                 targets = targets[:1997] + "..."
             jsondata['target'] = targets
-            jsondata['branch_commit'] = base_detect_branch(e.data) + ": " + base_detect_revision(e.data)
+            jsondata['branch_commit'] = str(oe.buildcfg.detect_branch(e.data)) + ": " + str(oe.buildcfg.detect_revision(e.data))
             jsondata['build_started'] = round(time.time())
             (username, email) = errorreport_get_user_info(e)
             jsondata['username'] = username.strip()
