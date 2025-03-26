@@ -13,8 +13,8 @@ SECTION = "webos/services"
 DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support nyx-lib python3-packaging-native"
 RDEPENDS:${PN} = "connman connman-client"
 
-WEBOS_VERSION = "1.1.0-49_075c399fa60903ce1f81e484bd66ab40fb609529"
-PR = "r18"
+WEBOS_VERSION = "1.1.0-50_085b6369346df4d0e6c6338b20df0a0a7ee6245f"
+PR = "r19"
 
 inherit webos_component
 inherit webos_public_repo
@@ -47,10 +47,3 @@ do_install:append:raspberrypi4 () {
 }
 
 FILES:${PN}:append:raspberrypi4 = " ${sysconfdir}/modprobe.d/*"
-# FIXME-buildpaths!!!
-# [WRP-10883] buildpath QA issues
-# http://gecko.lge.com:8000/Errors/Details/894443
-# ERROR: QA Issue: File /usr/src/debug/webos-connman-adapter/1.1.0-43/Configured/src/pacrunner-interface.c in package webos-connman-adapter-src contains reference to TMPDIR
-# File /usr/src/debug/webos-connman-adapter/1.1.0-43/Configured/src/connman-interface.c in package webos-connman-adapter-src contains reference to TMPDIR [buildpaths]
-ERROR_QA:remove = "buildpaths"
-WARN_QA:append = " buildpaths"
