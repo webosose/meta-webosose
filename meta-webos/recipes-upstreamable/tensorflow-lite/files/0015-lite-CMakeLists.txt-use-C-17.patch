@@ -1,0 +1,54 @@
+From 273b4a53070a458462379aa7fae80132bb70f460 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 13 Dec 2023 17:25:20 +0000
+Subject: [PATCH] lite/CMakeLists.txt: use C++17
+
+:Release Notes:
+Switch from C++14 to C++17, because C++17 is now needed after abseil-cpp
+dropped -DCMAKE_CXX_STANDARD=14 in:
+https://git.openembedded.org/meta-openembedded/commit/?id=190f7b50ac3d7d30cf9d31167fb74f7146c3c8ff
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/744961
+
+FAILED: CMakeFiles/tensorflow-lite.dir/delegates/gpu/common/selectors/default/convolution_selector.cc.o 
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot -DEIGEN_MPL2_ONLY -DNOMINMAX=1 -Dtensorflow_lite_EXPORTS -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git/tensorflow/lite/schema -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/vulkan_headers/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/opengl_headers/api -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/egl_headers/api -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/eigen -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/neon2sse -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/farmhash/src -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/flatbuffers/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/gemmlowp/public -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/gemmlowp -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build/ruy -march=armv8-a+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git=/usr/src/debug/tensorflow-lite/2.9.3  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git=/usr/src/debug/tensorflow-lite/2.9.3  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build=/usr/src/debug/tensorflow-lite/2.9.3  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/build=/usr/src/debug/tensorflow-lite/2.9.3  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot-native=  -fvisibility-inlines-hidden -std=c++17 -DNDEBUG -std=c++14 -fPIC -DGPU_DELEGATE_ONLY_GL -DEGL_NO_X11 -DTFLITE_BUILD_WITH_XNNPACK_DELEGATE -pthread -MD -MT CMakeFiles/tensorflow-lite.dir/delegates/gpu/common/selectors/default/convolution_selector.cc.o -MF CMakeFiles/tensorflow-lite.dir/delegates/gpu/common/selectors/default/convolution_selector.cc.o.d -o CMakeFiles/tensorflow-lite.dir/delegates/gpu/common/selectors/default/convolution_selector.cc.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git/tensorflow/lite/delegates/gpu/common/selectors/default/convolution_selector.cc
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot/usr/include/absl/types/variant.h:46,
+                 from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git/tensorflow/lite/delegates/gpu/common/operations.h:25,
+                 from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/git/tensorflow/lite/delegates/gpu/common/selectors/default/convolution_selector.cc:18:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot/usr/include/absl/utility/utility.h:164:12: error: 'in_place_t' has not been declared in 'std'
+  164 | using std::in_place_t;
+      |            ^~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/tensorflow-lite/2.9.3/recipe-sysroot/usr/include/absl/utility/utility.h:165:12: error: 'in_place' has not been declared in 'std'
+  165 | using std::in_place;
+      |            ^~~~~~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+---
+Upstream-Status: Pending
+
+ tensorflow/lite/CMakeLists.txt | 69 ++++++++++++++++++++++++++++------
+ 1 file changed, 58 insertions(+), 11 deletions(-)
+
+diff --git a/tensorflow/lite/CMakeLists.txt b/tensorflow/lite/CMakeLists.txt
+index 40f9485b5d6..f9fa171f590 100644
+--- a/tensorflow/lite/CMakeLists.txt
++++ b/tensorflow/lite/CMakeLists.txt
+@@ -79,7 +80,7 @@ if(TFLITE_KERNEL_TEST AND ${CMAKE_CROSSCOMPILING})
+   endif()
+ endif()
+ 
+-set(CMAKE_CXX_STANDARD 14)  # Some components require C++14.
++set(CMAKE_CXX_STANDARD 17)  # Some components require C++14 and absl needs C++17
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(_TFLITE_ENABLE_RUY "${TFLITE_ENABLE_RUY}")
+ if("${CMAKE_SYSTEM_NAME}" STREQUAL "Android")
