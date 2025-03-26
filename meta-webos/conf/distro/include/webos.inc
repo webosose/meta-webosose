@@ -195,11 +195,12 @@ IMAGE_VERSION_SUFFIX = "${WEBOS_IMAGE_BUILD_CODENAME}-${@oe.utils.conditional( \
 # during the build which has different WEBOS_DISTRO_BUILD_ID
 IMAGE_VERSION_SUFFIX[vardepsexclude] += "WEBOS_DISTRO_BUILD_ID"
 
-WEBOS_IMAGE_NAME_PARTITION_SUFFIX ?= ""
-IMAGE_NAME = "${IMAGE_BASENAME}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}"
+# Don't use default '.rootfs' suffix
+IMAGE_NAME_SUFFIX = ""
+IMAGE_NAME = "${IMAGE_BASENAME}${IMAGE_MACHINE_SUFFIX}${IMAGE_NAME_SUFFIX}"
 IMAGE_LINK_NAME = "${IMAGE_NAME}${IMAGE_VERSION_SUFFIX}"
 
-INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}-${MACHINE}${WEBOS_IMAGE_NAME_PARTITION_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
+INITRAMFS_IMAGE_NAME = "${@['${INITRAMFS_IMAGE}${IMAGE_MACHINE_SUFFIX}', ''][d.getVar('INITRAMFS_IMAGE') == '']}"
 
 # Use a different naming scheme for webOS kernel images that uses the component
 # name instead of the name of the image format (KERNEL_IMAGETYPE) and leaves off
