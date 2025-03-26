@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-420_5bbd010b7cb44af25d0d2910cec274a808aca091"
-PR = "r64"
+PR = "r65"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -66,6 +66,10 @@ do_install:append() {
 
 TARGET_CXXFLAGS:append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage -fprofile-dir=/tmp/luna-surfacemanager-gcov -O0', '', d)}"
 TARGET_LDFLAGS:append = " ${@bb.utils.contains('IMAGE_FEATURES', 'webos-test', '--coverage', '', d)}"
+# ld.lld: error: version script assignment of 'Qt_6.7' to symbol 'qt_version_tag' failed: symbol not defined
+# http://gecko.lge.com:8000/Errors/Details/887026
+# fatal since --no-undefined-version is the default since https://reviews.llvm.org/D135402
+TARGET_LDFLAGS:append = " -Wl,--undefined-version"
 
 VIRTUAL-RUNTIME_gpu-libs ?= ""
 RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_gpu-libs}"
