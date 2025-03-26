@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
 WEBOS_VERSION = "2.0.0-420_5bbd010b7cb44af25d0d2910cec274a808aca091"
-PR = "r65"
+PR = "r66"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -132,3 +132,26 @@ FILES:${PN}-base-tests += " \
 "
 
 RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components qtdeclarative-qmlplugins notificationmgr"
+
+# FIXME-buildpaths!!!
+# [WRP-10883] buildpath QA issues
+# http://gecko.lge.com:8000/Errors/Details/894442
+# ERROR: QA Issue: File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-input-manager.h in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-foreign.h in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-input-manager.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-tablet.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-tablet.h in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-foreign.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-surface-group.h in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/modules/weboscompositor/qwayland-server-webos-surface-group.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/base/utils/screen-tester/.rcc/qrc_qmake_qmake_immediate.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/base/tests/native/frame_latency_test/.rcc/qrc_resources.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/base/tests/native/touch_latency_test/.rcc/qrc_resources.cpp in package luna-surfacemanager-src contains reference to TMPDIR
+# File /usr/src/debug/luna-surfacemanager/2.0.0-405/base/tests/native/tablet_event_test/.rcc/qrc_tablet_event_test.cpp in package luna-surfacemanager-src contains reference to TMPDIR [buildpaths]
+# ERROR: QA Issue: File /usr/lib/libWebOSCoreCompositor.prl in package luna-surfacemanager-dev contains reference to TMPDIR
+# File /usr/include/WebOSCoreCompositor/0.0.1/WebOSCoreCompositor/private/qwayland-server-webos-input-manager.h in package luna-surfacemanager-dev contains reference to TMPDIR
+# File /usr/include/WebOSCoreCompositor/0.0.1/WebOSCoreCompositor/private/qwayland-server-webos-foreign.h in package luna-surfacemanager-dev contains reference to TMPDIR
+# File /usr/include/WebOSCoreCompositor/0.0.1/WebOSCoreCompositor/private/qwayland-server-webos-tablet.h in package luna-surfacemanager-dev contains reference to TMPDIR
+# File /usr/include/WebOSCoreCompositor/0.0.1/WebOSCoreCompositor/private/qwayland-server-webos-surface-group.h in package luna-surfacemanager-dev contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"
