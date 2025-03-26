@@ -2,7 +2,7 @@
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
-EXTENDPRAUTO:append = "webos38"
+EXTENDPRAUTO:append = "webos39"
 
 RRECOMMENDS:${PN} += " \
     glibc-gconv-utf-16 \
@@ -39,6 +39,7 @@ SRC_URI += " \
     file://0027-Add-support-for-meshd-to-use-RAW-channel.patch \
     file://0028-Enable-mesh-fixed-ell-undefined-symbol-error.patch \
     file://0029-Fix-implicit-function-and-incompitable-pointer-org.bluez.obex.Trans.patch \
+    file://0030-Sync-Add-support-for-meshd-to-use-RAW-channel-with-b.patch \
     file://main.conf \
     file://brcm43438.service \
 "

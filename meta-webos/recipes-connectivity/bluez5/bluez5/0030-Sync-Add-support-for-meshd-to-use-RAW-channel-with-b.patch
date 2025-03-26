@@ -1,0 +1,95 @@
+From d69e65393a50d332d662934c8b5537273ab8f753 Mon Sep 17 00:00:00 2001
+From: "gadekula.sravan" <gadekula.sravan@lge.com>
+Date: Thu, 23 Jan 2025 17:45:57 +0900
+Subject: [PATCH] Sync Add support for meshd to use RAW channel with bluez 5.72
+
+:Release Notes:
+Sync Add support for meshd to use RAW channel
+with bluez 5.72
+
+:Detailed Notes:
+Patch 0027 address bluetooth-meshd and bluetoothd can
+run in parallel but yacto 5.0 uses 5.72 version
+where 5.72 have major code changes in mesh which
+is not allowing bluetoothd to use RAW channel
+
+index is no longer private after 5.66 with:
+  commit 9966cb8b6999a5f54fc13acbd7e1526512a84342
+  Author: Brian Gix <brian.gix@intel.com>
+  Date:   Thu Sep 22 15:31:02 2022 -0700
+  Subject: mesh: Add new kernel MGMT based IO transport
+
+:Testing Performed:
+Built and tested
+
+:QA Notes:
+NA
+
+:Issues Addressed:
+[PLAT-123995] Analyze bluetooth-meshd and bluetoothd
+              working together
+[WRR-15840] [OSE -RPI4]:Failed to start discovery
+[WRR-16995] [OSE-RPI4_API] : "Failed to start discovery"
+              error occurred while startDiscovery
+---
+Upstream-Status: Inappropriate [webos specific]
+
+ mesh/bluetooth-mesh.service.in | 2 +-
+ mesh/mesh-io-api.h             | 1 +
+ mesh/mesh-io-generic.c         | 2 +-
+ mesh/mesh-io.c                 | 4 +++-
+ 4 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/mesh/bluetooth-mesh.service.in b/mesh/bluetooth-mesh.service.in
+index ee65ce4..8f8e082 100644
+--- a/mesh/bluetooth-mesh.service.in
++++ b/mesh/bluetooth-mesh.service.in
+@@ -5,7 +5,7 @@ ConditionPathIsDirectory=/sys/class/bluetooth
+ [Service]
+ Type=dbus
+ BusName=org.bluez.mesh
+-ExecStart=@pkglibexecdir@/bluetooth-meshd --nodetach --use_raw
++ExecStart=@pkglibexecdir@/bluetooth-meshd --nodetach --u --io generic:hci0
+ Capabilities=cap_net_admin,cap_net_bind_service
+ NotifyAccess=main
+ LimitNPROC=1
+diff --git a/mesh/mesh-io-api.h b/mesh/mesh-io-api.h
+index ae51cbc..182189c 100644
+--- a/mesh/mesh-io-api.h
++++ b/mesh/mesh-io-api.h
+@@ -49,6 +49,7 @@ struct mesh_io {
+ 	struct mesh_io_private		*pvt;
+ 	void				*user_data;
+ 	const struct mesh_io_api	*api;
++	struct mesh_io_opts             *io_opts;
+ };
+ 
+ struct mesh_io_table {
+diff --git a/mesh/mesh-io-generic.c b/mesh/mesh-io-generic.c
+index ccb396a..844ee4b 100644
+--- a/mesh/mesh-io-generic.c
++++ b/mesh/mesh-io-generic.c
+@@ -431,7 +431,7 @@ static bool dev_init(struct mesh_io *io, void *opts, void *user_data)
+ 
+ 	io->pvt = l_new(struct mesh_io_private, 1);
+ 	struct mesh_io_opts *io_opts;
+-	io_opts = (struct mesh_io_opts *)opts;
++	io_opts = (struct mesh_io_opts *)io->io_opts;
+ 	io->index = io_opts->index;
+ 	io->pvt->use_raw = io_opts->use_raw;
+ 
+diff --git a/mesh/mesh-io.c b/mesh/mesh-io.c
+index b953bf4..70414b8 100644
+--- a/mesh/mesh-io.c
++++ b/mesh/mesh-io.c
+@@ -158,7 +158,9 @@ struct mesh_io *mesh_io_new(enum mesh_io_type type, void *opts,
+ 	default_io = l_new(struct mesh_io, 1);
+ 	default_io->ready = cb;
+ 	default_io->user_data = user_data;
+-	default_io->favored_index = *(int *) opts;
++	struct mesh_io_opts *mesh_opts = (struct mesh_io_opts *)opts;
++	default_io->favored_index = mesh_opts->index;
++	default_io->io_opts = mesh_opts;
+ 	default_io->rx_regs = l_queue_new();
+ 
+ 	if (type >= MESH_IO_TYPE_AUTO) {
