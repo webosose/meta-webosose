@@ -24,5 +24,3 @@ PREFERRED_VERSION_gst-devtools              = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gst-validate1.0           = "${GSTREAMER_VERSION}"
 # gst-examples is not kept in sync with the rest of gst-* recipes
 # PREFERRED_VERSION_gst-examples              = "${GSTREAMER_VERSION}"
-
-PREFERRED_VERSION_jansson = "2.13.1"
