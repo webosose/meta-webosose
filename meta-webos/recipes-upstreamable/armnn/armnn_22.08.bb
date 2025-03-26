@@ -18,7 +18,7 @@ SRC_URI = " \
 # Matches v${PV}
 SRCREV = "0ba0b2bf80f1d7aff1eff8de2b67eb04081b2af0"
 
-PR = "r2"
+PR = "r3"
 
 S = "${WORKDIR}/git"
 
@@ -133,16 +133,8 @@ do_install:append() {
         done
         cd -
 
-        #install delegate cmake module
-        install -d ${D}${libdir}
-        install -d ${D}${libdir}/cmake
-        install -d ${D}${libdir}/cmake/armnn
-        cp $CP_ARGS "${B}/delegate/ArmnnDelegateConfig.cmake" "${D}${libdir}/cmake/armnn"
-        cp $CP_ARGS "${B}/delegate/CMakeFiles/Export/${baselib}/ArmnnDelegateTargets.cmake" "${D}${libdir}/cmake/armnn"
-        cp $CP_ARGS "${B}/delegate/CMakeFiles/Export/${baselib}/ArmnnDelegateTargets-release.cmake" "${D}${libdir}/cmake/armnn"
-
-        #remove duplicate files
-        rm ${D}${libdir}/ArmnnDelegate*.cmake
+        # move delegate cmake module to cmake/armnn subdirectory
+        mv ${D}${libdir}/ArmnnDelegate*.cmake ${D}${libdir}/cmake/armnn/
 
         #install pkgconfig
         install -d ${D}${libdir}/pkgconfig
