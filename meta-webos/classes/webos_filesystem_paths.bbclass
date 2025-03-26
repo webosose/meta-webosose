@@ -109,6 +109,7 @@ webos_sysmgr_datadir = "${libdir}/luna"
 webos_sysmgr_localstatedir = "${localstatedir}/luna"
 
 webos_cryptofsdir = "${webos_mediadir}/cryptofs"
+webos_systemdir = "${webos_mediadir}/system"
 
 # Everything under this tree is erased by a NYX_SYSTEM_ERASE_VAR erasure.
 webos_browserstoragedir = "${webos_cryptofsdir}/.browser"
@@ -124,6 +125,9 @@ webos_installedappsdir = "${webos_downloaded_applicationsdir}"
 webos_downloaded_frameworksdir = "${webos_downloadeddir}/usr/palm/frameworks"
 webos_downloaded_pluginsdir = "${webos_downloadeddir}/usr/palm/plugins"
 webos_downloaded_servicesdir = "${webos_downloadeddir}/usr/palm/services"
+
+# This is the tree for system apps updated
+webos_updateddir = "${webos_systemdir}/apps"
 
 # The specs for webos_execstatedir apply to this location with the additional
 # constraint that everything under this tree persists a NYX_SYSTEM_ERASE_VAR
