@@ -2,11 +2,11 @@
 
 inherit clang_cmake
 
-require media-codec-interface.bb
+require media-codec-interface.inc
 
 WEBOS_REPO_NAME = "media-codec-interface"
 
-PR = "r10"
+PR = "${INC_PR}.11"
 
 CXXFLAGS +=" \
     -I${STAGING_INCDIR}/media-resource-calculator-clang \
@@ -17,6 +17,11 @@ CXXFLAGS +=" \
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"
 PACKAGECONFIG[system-libcxx] = ",,libcxx"
+DEPENDS_TO_REMOVE_MCIL ?= ""
+DEPENDS_TO_ADD_MCIL ?= ""
+DEPENDS:remove = "${DEPENDS_TO_REMOVE_MCIL}"
+DEPENDS += "${DEPENDS_TO_ADD_MCIL}"
+
 
 PKGCONFIG_DIR = "${datadir}/pkgconfig"
 
