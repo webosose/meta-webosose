@@ -1,0 +1,50 @@
+From 2b8cd66dcec6cc9b47e6f8df732fbd0ddb4e31f5 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 3 Jan 2025 14:01:15 +0000
+Subject: [PATCH] resource_wrapper: add missing include
+
+:Release Notes:
+Add missing functional include.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/1076492
+
+FAILED: src/CMakeFiles/media-codec-interface-clang.dir/resource/resource_wrapper/resource_manager_client_wrapper.cpp.o
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot-native/usr/bin/clang++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot -DENABLE_WRAPPER -Dmedia_codec_interface_clang_EXPORTS -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/gstreamer-1.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/build/src -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/. -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/./api -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/./base -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/./impl -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/./resource -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/media-resource-calculator -mbranch-protection=standard --dyld-prefix=/usr -fstack-protector-all  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type -funwind-tables     --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot     --target=aarch64-webos-linux     -stdlib=libc++     -fuse-ld=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot-native/usr/bin/ld.lld     -nostdinc++     -isystem TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/c++/v1/     -Wl,-LTOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot//usr/lib/cbe     -Wl,-rpath,/usr/lib/cbe     -Wno-unused-command-line-argument     -D_LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS    -O2 -pipe -g -feliminate-unused-debug-types   -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git=/usr/src/debug/media-codec-interface-clang/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git=/usr/src/debug/media-codec-interface-clang/1.0.0-36  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/build=/usr/src/debug/media-codec-interface-clang/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/build=/usr/src/debug/media-codec-interface-clang/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot-native=  -fvisibility-inlines-hidden      -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/media-resource-calculator-clang     -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/cbe     -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/recipe-sysroot/usr/include/gst-video-encoder  -std=c++14 -DNDEBUG -fPIC -MD -MT src/CMakeFiles/media-codec-interface-clang.dir/resource/resource_wrapper/resource_manager_client_wrapper.cpp.o -MF src/CMakeFiles/media-codec-interface-clang.dir/resource/resource_wrapper/resource_manager_client_wrapper.cpp.o.d -o src/CMakeFiles/media-codec-interface-clang.dir/resource/resource_wrapper/resource_manager_client_wrapper.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/resource/resource_wrapper/resource_manager_client_wrapper.cpp
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/resource/resource_wrapper/resource_manager_client_wrapper.cpp:1:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/resource/resource_wrapper/resource_manager_client_wrapper.h:10:14: error: no template named 'function' in namespace 'std'
+   10 | typedef std::function<
+      |         ~~~~~^
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-clang/1.0.0-36/git/src/resource/resource_wrapper/resource_manager_client_wrapper.cpp:78:33: error: called object type 'ResourcePolicyActionCallback' (aka 'int') is not a function or function pointer
+   78 |   return policy_action_callback_(action, resources, requestor_type,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~^
+2 errors generated.
+
+:Testing Performed:
+QWTC-11286, QWTC-11287
+
+:QA Notes:
+
+:Issues Addressed:
+[WRR-1643] Prepare wrapper changes for integration
+
+Change-Id: Ib179d54076ea98749ffcbca3b54bf0b8e8c7d644
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/media-codec-interface/+/463988 resource_wrapper: add missing include]
+
+ src/resource/resource_wrapper/resource_manager_client_wrapper.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/resource/resource_wrapper/resource_manager_client_wrapper.h b/src/resource/resource_wrapper/resource_manager_client_wrapper.h
+index d5351c0..8a016cb 100644
+--- a/src/resource/resource_wrapper/resource_manager_client_wrapper.h
++++ b/src/resource/resource_wrapper/resource_manager_client_wrapper.h
+@@ -4,6 +4,7 @@
+ #include <ResourceManagerClient.h>
+ #else
+ #include <string>
++#include <functional>
+ 
+ namespace cpplib_glue {
+ namespace uMediaServer {

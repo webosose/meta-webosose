@@ -19,7 +19,7 @@ inherit webos_pkgconfig
 inherit features_check
 ANY_OF_DISTRO_FEATURES = "vulkan opengl"
 
-INC_PR = "r20"
+INC_PR = "r21"
 
 COMPATIBLE_MACHINE = "^qemux86$|^qemux86-64$|^raspberrypi3$|^raspberrypi3-64$|^raspberrypi4$|^raspberrypi4-64$"
 
@@ -28,7 +28,10 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 
 WEBOS_VERSION = "1.0.0-36_70d4149d8d558148c68855356feab825ce282b7f"
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-fix-linkage-order-for-WRAPPER_LIB.patch \
+    file://0002-resource_wrapper-add-missing-include.patch \
+"
 
 S = "${WORKDIR}/git"
 
