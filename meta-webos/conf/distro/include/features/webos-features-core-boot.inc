@@ -27,7 +27,8 @@ WEBOS_DISTRO_FEATURES_INIT_CONSIDERED = "sysvinit"
 
 DISTRO_FEATURES_BACKFILL_CONSIDERED += "${WEBOS_DISTRO_FEATURES_INIT_CONSIDERED}"
 
-WEBOS_DISTRO_FEATURES_LD = "ld-is-gold"
+# default (empty) is bfd, ld-is-gold was used before, ld-is-lld is another option
+WEBOS_DISTRO_FEATURES_LD = ""
 
 WEBOS_DISTRO_FEATURES_TEST = "ptest"
 
