@@ -3,7 +3,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=86d3f3a95c324c9479bd8986968f4327"
 
 PV = "grouper"
-PR = "r7"
+PR = "r8"
 
 SRCREV = "3164995622300286ef2bb14d7fdc2792dae045b7"
 
@@ -13,7 +13,8 @@ SRC_URI = " \
     file://0002-Makefile-modify.patch \
     file://0003-Fix-return-type-issues.patch \
     file://0004-Makefile-fix-race-condition.patch \
-    file://0001-Fix-build-with-gcc-13.patch \
+    file://0005-Fix-build-with-gcc-13.patch \
+    file://0006-makefile_build-Makefile-use-C-17.patch \
     file://edgetpu.pc.in \
     file://edgetpu-max.pc.in \
 "

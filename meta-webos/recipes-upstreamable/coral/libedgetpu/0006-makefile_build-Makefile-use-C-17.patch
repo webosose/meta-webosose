@@ -1,0 +1,77 @@
+From 391afcb00f30b1892e03bae4ad7851e3e7acf00c Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 13 Dec 2023 18:55:03 +0100
+Subject: [PATCH] makefile_build/Makefile: use C++17
+
+:Release Notes:
+Switch from C++14 to C++17, because C++17 is now needed after abseil-cpp
+dropped -DCMAKE_CXX_STANDARD=14 in:
+https://git.openembedded.org/meta-openembedded/commit/?id=190f7b50ac3d7d30cf9d31167fb74f7146c3c8ff
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/745178
+
+Compiling TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/git/makefile_build/../tflite/edgetpu_delegate_for_custom_op_tflite_plugin.cc
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/utility/utility.h:164:12: error: 'in_place_t' has not been declared in 'std'
+  164 | using std::in_place_t;
+      |            ^~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/utility/utility.h:165:12: error: 'in_place' has not been declared in 'std'
+  165 | using std::in_place;
+      |            ^~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/utility/utility.h:181:12: error: 'in_place_type' has not been declared in 'std'
+  181 | using std::in_place_type;
+      |            ^~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/utility/utility.h:182:12: error: 'in_place_type_t' has not been declared in 'std'
+  182 | using std::in_place_type_t;
+      |            ^~~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/utility/utility.h:198:12: error: 'in_place_index' has not been declared in 'std'
+  198 | using std::in_place_index;
+      |            ^~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/utility/utility.h:199:12: error: 'in_place_index_t' has not been declared in 'std'
+  199 | using std::in_place_index_t;
+      |            ^~~~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/types/optional.h:47:12: error: 'bad_optional_access' has not been declared in 'std'
+   47 | using std::bad_optional_access;
+      |            ^~~~~~~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/types/optional.h:48:12: error: 'optional' has not been declared in 'std'
+   48 | using std::optional;
+      |            ^~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/types/optional.h:49:12: error: 'make_optional' has not been declared in 'std'
+   49 | using std::make_optional;
+      |            ^~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/types/optional.h:50:12: error: 'nullopt_t' has not been declared in 'std'
+   50 | using std::nullopt_t;
+      |            ^~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/libedgetpu/grouper/recipe-sysroot/usr/include/absl/types/optional.h:51:12: error: 'nullopt' has not been declared in 'std'
+   51 | using std::nullopt;
+      |            ^~~~~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+---
+Upstream-Status: Pending
+
+ makefile_build/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/makefile_build/Makefile b/makefile_build/Makefile
+index fb779ee..85283f9 100644
+--- a/makefile_build/Makefile
++++ b/makefile_build/Makefile
+@@ -21,7 +21,7 @@ LIBEDGETPU_CXXFLAGS := \
+ 	${CXXFLAGS} \
+ 	-fPIC \
+ 	-Wall \
+-	-std=c++14 \
++	-std=c++17 \
+ 	-DDARWINN_PORT_DEFAULT
+ 
+ LIBEDGETPU_LDFLAGS := \
