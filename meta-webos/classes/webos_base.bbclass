@@ -138,7 +138,7 @@ python do_write_abi_xml_data() {
 }
 
 # analogous to base_get_metadata_git_branch from metadata_scm.bbclass
-def webos_base_get_metadata_git_describe(path, d):
+def webos_base_get_metadata_git_describe(path):
     import bb.process
 
     try:
