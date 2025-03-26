@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos1"
+EXTENDPRAUTO:append = "webos2"
 
 # We need to revert RDEPENDS changes from
 #
@@ -18,3 +18,9 @@ EXTENDPRAUTO:append = "webos1"
 RDEPENDS:${PN}-ptest:remove:libc-glibc = " \
     locale-base-fr-fr.iso-8859-1 \
 "
+
+# ERROR: QA Issue: m4-ptest rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
+# http://gecko.lge.com:8000/Errors/Details/565462
+VIRTUAL-RUNTIME_bash ?= "bash"
+RDEPENDS:${PN}-ptest:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
+RDEPENDS:${PN}-ptest:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
