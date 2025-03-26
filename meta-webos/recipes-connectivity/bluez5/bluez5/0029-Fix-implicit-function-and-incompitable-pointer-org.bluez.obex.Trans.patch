@@ -1,0 +1,65 @@
+From f56c3fd821b2cde2ff7c5e270b9144fb0c07a98e Mon Sep 17 00:00:00 2001
+From: "dileep.ragipindi" <dileep.ragipindi@lgepartner.com>
+Date: Tue, 24 Dec 2024 11:57:21 +0000
+Subject: [PATCH] Fix incompatible-pointer-types and
+ implicit-function-declaration build errors
+
+:Release Notes:
+Fix incompatible-pointer-types and implicit-function-declaration
+build errors
+
+:Detailed Notes:
+Add required changes to resolve incompatible-pointer-types and
+implicit-function-declaration build errors
+
+:Testing Performed:
+Builded and Tested
+
+:QA Notes:
+
+:Issues Addressed:
+[WRR-781] [Connectivity LGSI] Connectivity components
+          cflags security errors fix
+---
+Upstream-Status: Inappropriate [webos specific]
+
+ gobex/gobex-transfer.c | 2 +-
+ src/device.h           | 1 +
+ src/main.c             | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/gobex/gobex-transfer.c b/gobex/gobex-transfer.c
+index e93cf79..b5bdfdf 100644
+--- a/gobex/gobex-transfer.c
++++ b/gobex/gobex-transfer.c
+@@ -217,7 +217,7 @@ static void transfer_response(GObex *obex, GError *err, GObexPacket *rsp,
+
+ 	if (transfer->opcode == G_OBEX_OP_PUT) {
+ 		if(transfer->first_response)
+-			transfer->first_response(obex, &err, rsp, transfer->user_data);
++			transfer->first_response(obex, err, rsp, transfer->user_data);
+ 		req = g_obex_packet_new(transfer->opcode, FALSE,
+ 							G_OBEX_HDR_INVALID);
+ 		g_obex_packet_add_body(req, put_get_data, transfer);
+diff --git a/src/device.h b/src/device.h
+index c548bad..8dfcfde 100644
+--- a/src/device.h
++++ b/src/device.h
+@@ -224,3 +224,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+ void media_play_request(struct btd_device *dev);
+ void media_metadata_request(struct btd_device *dev);
+ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controller);
++void set_avrcp_ct_supported_events(struct btd_device* dev, uint16_t supportedEvents);
+diff --git a/src/main.c b/src/main.c
+index 56ad5c8..f0d5afb 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -1047,7 +1047,7 @@ static void parse_general(GKeyFile *config)
+ 					0, UINT32_MAX);
+
+ 	parse_config_bool(config, "General", "DelayReport",
+-					&btd_opts.delay_report);
++					(bool *)&btd_opts.delay_report);
+ }
+
+ static void parse_gatt_cache(GKeyFile *config)
