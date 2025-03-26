@@ -1,8 +1,6 @@
 # Copyright (c) 2024-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos4"
-
-FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
+EXTENDPRAUTO:append = "webos5"
 
 # ERROR: QA Issue: /usr/lib/libgcrypt/ptest/libgcrypt-1.10.1/tests/basic_all_hwfeature_combinations.sh contained in package libgcrypt-ptest requires /bin/bash, but no providers found in RDEPENDS:libgcrypt-ptest? [file-rdeps]
 VIRTUAL-RUNTIME_bash ?= "bash"
