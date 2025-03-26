@@ -17,32 +17,32 @@ do_image_wic[depends] += "virtual/kernel:do_webos_deploy_fixup"
 do_image_ostree[depends] += "virtual/kernel:do_webos_deploy_fixup"
 
 do_webos_deploy_fixup:prepend() {
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext3 ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext3 \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ext3 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ext3 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ext3
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext4 ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ext4 \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ext4 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ext4 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ext4
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.manifest ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.manifest \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.manifest ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.manifest \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.manifest
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.tar.gz ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.tar.gz \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.tar.gz ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.tar.gz \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.tar.gz
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.tar.bz2 ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.tar.bz2 \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.tar.bz2 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.tar.bz2 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.tar.bz2
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.cpio.gz ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.cpio.gz \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.cpio.gz ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.cpio.gz \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.cpio.gz
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}-dbg${IMAGE_NAME_SUFFIX}.tar.gz ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}-dbg${IMAGE_NAME_SUFFIX}.tar.gz \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}-dbg.tar.gz ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}-dbg.tar.gz \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}-dbg.tar.gz
 
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.vmdk ] && \
@@ -61,40 +61,40 @@ do_webos_deploy_fixup:prepend() {
         ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.qemuboot.conf \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.qemuboot.conf
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.rpi-sdimg ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.rpi-sdimg \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rpi-sdimg ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.rpi-sdimg \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.rpi-sdimg
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ostree ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ostree \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ostree ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ostree \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ostree
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ostree.tar.bz2 ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ostree.tar.bz2 \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ostree.tar.bz2 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ostree.tar.bz2 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ostree.tar.bz2
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.ota-ext4 \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ota-ext4 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.ota-ext4 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.ota-ext4
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.bmap ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.bmap \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.bmap ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.bmap \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.bmap
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.bz2 ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.bz2 \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.bz2 ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.bz2 \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.bz2
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.vmdk ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.vmdk \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.vmdk
 
-    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk.gz ] && \
-        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}${IMAGE_NAME_SUFFIX}.wic.vmdk.gz \
+    [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.vmdk.gz ] && \
+        ln -vf ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.wic.vmdk.gz \
                ${DEPLOY_DIR_IMAGE}/${IMAGE_LINK_NAME}.wic.vmdk.gz
 
     [ -e       ${DEPLOY_DIR_IMAGE}/${IMAGE_NAME}.testdata.json ] && \
