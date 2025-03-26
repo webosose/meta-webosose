@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos10"
+EXTENDPRAUTO:append = "webos11"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 

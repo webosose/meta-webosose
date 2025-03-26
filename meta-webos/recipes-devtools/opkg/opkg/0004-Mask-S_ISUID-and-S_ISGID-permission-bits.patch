@@ -1,4 +1,4 @@
-From 6e1830f99f81273803c5f903f067c4be6a828e00 Mon Sep 17 00:00:00 2001
+From 73a39ede64251b85b254905260f407141f9a0623 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
 Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
@@ -39,7 +39,7 @@ index 7f71168..88d3bf6 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 0143b18..3e8a683 100644
+index e5c8ae0..e2c5a2c 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
 @@ -125,6 +125,7 @@ typedef struct opkg_conf {
@@ -51,7 +51,7 @@ index 0143b18..3e8a683 100644
      /* ssl options: used only when opkg is configured with '--enable-curl',
       * otherwise always NULL or 0.
 diff --git a/src/opkg.c b/src/opkg.c
-index 80a52f1..3839932 100644
+index 4e0dddc..39c9225 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
 @@ -156,6 +156,7 @@ static int args_parse(int argc, char *argv[])

@@ -1,4 +1,4 @@
-From 591126ff8e12bc6c9b02b2c350f80d963d0d8423 Mon Sep 17 00:00:00 2001
+From 9121f930770b02eb1bfc8f3ce03ac35fb021da00 Mon Sep 17 00:00:00 2001
 From: Soonwon Hong <soonwon.hong@lge.com>
 Date: Fri, 19 May 2017 09:47:01 +0900
 Subject: [PATCH] Add symlink path validity
@@ -27,7 +27,7 @@ index 03a4afb..7f71168 100644
          ar->extract_flags &= ~ARCHIVE_EXTRACT_OWNER;
  
 diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
-index 37fcd2c..fa2bb69 100644
+index c2e1c2f..9363fef 100644
 --- a/libopkg/opkg_conf.c
 +++ b/libopkg/opkg_conf.c
 @@ -75,6 +75,7 @@ static opkg_option_t options[] = {
@@ -39,7 +39,7 @@ index 37fcd2c..fa2bb69 100644
      {"offline_root", OPKG_OPT_TYPE_STRING, &_conf.offline_root},
      {"overlay_root", OPKG_OPT_TYPE_STRING, &_conf.overlay_root},
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index b7caa74..0143b18 100644
+index d13d50b..e5c8ae0 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
 @@ -107,6 +107,7 @@ typedef struct opkg_conf {
@@ -51,7 +51,7 @@ index b7caa74..0143b18 100644
      char *offline_root;
      char *overlay_root;
 diff --git a/src/opkg.c b/src/opkg.c
-index 7510fe8..80a52f1 100644
+index 544c58a..4e0dddc 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
 @@ -60,6 +60,7 @@ enum {

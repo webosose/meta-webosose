@@ -1,4 +1,4 @@
-From ce86ec9e659d00f3cfc7019475073d7c23f00dee Mon Sep 17 00:00:00 2001
+From aeab2198d72c9b8aafabc9c6cf0357e2a74e0521 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 16:43:49 +0530
 Subject: [PATCH] Sort opkg list file content to speed package removal
@@ -10,10 +10,10 @@ Upstream-Status: Pending
  1 file changed, 12 insertions(+)
 
 diff --git a/libopkg/pkg.c b/libopkg/pkg.c
-index 88012fa..30a42a7 100644
+index 6b1bd8f..623f34c 100644
 --- a/libopkg/pkg.c
 +++ b/libopkg/pkg.c
-@@ -1503,6 +1503,18 @@ int pkg_write_filelist(pkg_t * pkg)
+@@ -1522,6 +1522,18 @@ int pkg_write_filelist(pkg_t * pkg)
      hash_table_foreach(&opkg_config->file_hash, pkg_write_filelist_helper,
                         &data);
      fclose(data.stream);
