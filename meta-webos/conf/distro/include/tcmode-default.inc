@@ -18,14 +18,3 @@ PACKAGE_ARCH:pn-linux-libc-headers = "${TUNE_PKGARCH}"
 PACKAGE_ARCH:pn-libgcc-initial = "${TUNE_PKGARCH}"
 
 LIBC_DEPENDENCIES:remove = "libsegfault"
-
-# https://lists.openembedded.org/g/openembedded-core/message/179469
-# Allow to independently set P_V for llvm* recipes and actual llvm version used in other places
-# This is needed for meta-clang which provides different llvm version from clang recipes, see:
-# https://github.com/kraj/meta-clang/pull/766
-LLVM_PREFERRED_VERSION ?= "17.%"
-LLVMVERSION ?= "${LLVM_PREFERRED_VERSION}"
-
-PREFERRED_VERSION_llvm = "${LLVM_PREFERRED_VERSION}"
-PREFERRED_VERSION_llvm-native = "${LLVM_PREFERRED_VERSION}"
-PREFERRED_VERSION_nativesdk-llvm = "${LLVM_PREFERRED_VERSION}"
