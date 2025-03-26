@@ -5,6 +5,7 @@ sys:x:3:sys
 adm:x:4:
 tty:x:5:
 disk:x:6:system,sdcard,usb
+lp:*:7:
 mail:x:8:mail
 wheel:x:10:root
 man:*:12:
@@ -30,7 +31,12 @@ compositor:x:505:wam,graphics,media
 pulse-access:x:506:root,wam,system
 pulse:x:507:pulse
 se:x:509:root,wam,system
+tape:x:992:
+kvm:x:993:
+dialout:x:994:
+cdrom:x:995:
+sgx:x:998:
 media:x:1013:media,wam
-nogroup:x:65534:nobody,sshd
-blemesh:x:2024:
 system:x:1016:system
+blemesh:x:2024:
+nogroup:x:65534:nobody,sshd

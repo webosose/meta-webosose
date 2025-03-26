@@ -11,7 +11,6 @@ backup:x:34:34:backup:/var/backups:/bin/false
 operator:x:37:37:Operator:/var:/bin/false
 haldaemon:x:68:68:hald:/:/bin/false
 dbus:x:81:81:dbus:/var/run/dbus:/bin/false
-nobody:x:99:99:nobody:/home:/bin/false
 sshd:x:103:99:Operator:/var:/bin/false
 developer:x:504:504:developer:/home/developer:/bin/sh
 wam:x:505:505::/var/lib/wam:/bin/false
@@ -33,3 +32,4 @@ network:x:1017:1017::/var:/bin/false
 log:x:2001:2001::/var:/bin/false
 dev-func:x:2002:2002::/var:/bin/false
 debug:x:2003:2003::/var:/bin/false
+nobody:x:65534:65534:nobody:/home:/bin/false
