@@ -83,11 +83,11 @@ RPI_KERNEL_MODULES:append:raspberrypi4 = " \
     kernel-module-sch-fq-codel \
     kernel-module-uio-pdrv-genirq \
     kernel-module-v3d \
-    ${@bb.utils.contains('USE_MIC_ARRAY', '1', '${RPI_KERNEL_MODULES_FOR_MIC_ARRAY}', '', d)} \
+    ${@oe.utils.conditional('USE_MIC_ARRAY', '1', '${RPI_KERNEL_MODULES_FOR_MIC_ARRAY}', '', d)} \
 "
 
 RPI_KERNEL_DEVICETREE_OVERLAYS:append = " \
-    ${@bb.utils.contains('USE_MIC_ARRAY', '1', '${RPI_KERNEL_DEVICETREE_OVERLAYS_FOR_MIC_ARRAY}', '', d)} \
+    ${@oe.utils.conditional('USE_MIC_ARRAY', '1', '${RPI_KERNEL_DEVICETREE_OVERLAYS_FOR_MIC_ARRAY}', '', d)} \
 "
 
 KERNEL_MODULE_AUTOLOAD:append = " uinput bridge hmac vc4"
