@@ -116,6 +116,14 @@ EXTRA_WEBOS_WERROR:pn-rocksdb = ""
 # https://git.openembedded.org/meta-openembedded/commit/?id=df5b764f99dbb19048ebef9d6b85e4d3625b4272
 # https://github.com/grpc/grpc/commit/9454ab091243b0539ac9ba578e9ae9d5de5d26f0#diff-78e2a4b53390e4455f4e90b043d1bb887686ffa1323968ccf161422298c543c9R514
 EXTRA_WEBOS_WERROR:pn-grpc = ""
+# src/os/linux/main.c: In function 'usage':
+# src/os/linux/main.c:36:1: error: control reaches end of non-void function [-Werror=return-type]
+# http://gecko.lge.com:8000/Errors/Details/583310
+EXTRA_WEBOS_WERROR:pn-dialog-lvgl = ""
+# ../../libiodbc-3.52.15/iodbcinst/unicode.c: In function '_WCHARSIZE':
+# ../../libiodbc-3.52.15/iodbcinst/unicode.c:695:1: error: control reaches end of non-void function [-Werror=return-type]
+# http://gecko.lge.com:8000/Errors/Details/583308
+EXTRA_WEBOS_WERROR:pn-libiodbc = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
