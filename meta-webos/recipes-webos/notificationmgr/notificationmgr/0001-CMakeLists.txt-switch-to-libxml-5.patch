@@ -1,0 +1,90 @@
+From 91372534fdc81167f8295a074f7f8a36a18d0083 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sun, 14 Apr 2024 21:36:11 +0200
+Subject: [PATCH] CMakeLists.txt: switch to libxml++5
+
+:Release Notes:
+older libxml++ was removed from meta-oe in:
+https://git.openembedded.org/meta-openembedded/commit/?id=04eefd302d58c403e011ad34d1d346703a364a53
+
+:Detailed Notes:
+Add dependency on glibmm and missing include which used to be pulled
+by old libxml++, but with new libxml++ it fails as shown in:
+http://gecko.lge.com:8000/Errors/Details/813119
+
+FAILED: CMakeFiles/notificationmgr.dir/src/sax_parser.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot -DBOOST_BIND_NO_PLACEHOLDERS -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/inc -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/build/Configured/src -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/src -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git=/usr/src/debug/notificationmgr/1.0.0-27  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git=/usr/src/debug/notificationmgr/1.0.0-27  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/build=/usr/src/debug/notificationmgr/1.0.0-27  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/build=/usr/src/debug/notificationmgr/1.0.0-27  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot-native=  -fvisibility-inlines-hidden -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/libxml++-5.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/libxml++-5.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/libxml2 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -Wall -std=c++11 -Wl,--no-undefined -DNDEBUG -MD -MT CMakeFiles/notificationmgr.dir/src/sax_parser.cpp.o -MF CMakeFiles/notificationmgr.dir/src/sax_parser.cpp.o.d -o CMakeFiles/notificationmgr.dir/src/sax_parser.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/src/sax_parser.cpp
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/src/sax_parser.cpp:18:10: fatal error: glibmm/convert.h: No such file or directory
+   18 | #include <glibmm/convert.h> //For Glib::ConvertError
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+
+FAILED: CMakeFiles/notificationmgr.dir/src/NotificationService.cpp.o
+ccache TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot -DBOOST_BIND_NO_PLACEHOLDERS -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/inc -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/build/Configured/src -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/src -mcpu=cortex-a72+crc -mbranch-protection=standard -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git=/usr/src/debug/notificationmgr/1.0.0-27  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git=/usr/src/debug/notificationmgr/1.0.0-27  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/build=/usr/src/debug/notificationmgr/1.0.0-27  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/build=/usr/src/debug/notificationmgr/1.0.0-27  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot-native=  -fvisibility-inlines-hidden -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -DUSE_PMLOG_DECLARATION -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/glib-2.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/glib-2.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/libxml++-5.0 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/lib/libxml++-5.0/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include/libxml2 -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/recipe-sysroot/usr/include -Wall -std=c++11 -Wl,--no-undefined -DNDEBUG -MD -MT CMakeFiles/notificationmgr.dir/src/NotificationService.cpp.o -MF CMakeFiles/notificationmgr.dir/src/NotificationService.cpp.o.d -o CMakeFiles/notificationmgr.dir/src/NotificationService.cpp.o -c TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/notificationmgr/1.0.0-27/git/src/NotificationService.cpp
+In file included from ../git/src/NotificationService.cpp:41:
+../git/src/sax_parser.h:34:39: error: 'Glib' does not name a type
+   34 |   virtual void on_start_element(const Glib::ustring& name,
+      |                                       ^~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRQ-504] Create GPVB with Yocto 5.0 Scarthgap
+
+Change-Id: I3e42ca4b3aaa62dceb5032a91d2aab24ab941189
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/notificationmgr/+/402149 CMakeLists.txt: switch to libxml++5]
+
+ CMakeLists.txt   | 7 ++++++-
+ src/sax_parser.h | 1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9af2c8..8d279f7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,6 +30,10 @@ pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+ include_directories(${GLIB2_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${GLIB2_CFLAGS})
+ 
++pkg_check_modules(GLIBMM REQUIRED glibmm-2.4)
++include_directories(${GLIBMM_INCLUDE_DIRS})
++webos_add_compiler_flags(ALL ${GLIBMM_CFLAGS})
++
+ pkg_check_modules(LUNASERVICE REQUIRED luna-service2)
+ include_directories(${LUNASERVICE_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${LUNASERVICE_CFLAGS})
+@@ -48,7 +52,7 @@ webos_add_compiler_flags(ALL ${Boost_CFLAGS_OTHER})
+ add_definitions(-DBOOST_BIND_NO_PLACEHOLDERS)
+ 
+ # -- check for libxml++
+-pkg_check_modules(LIBXMLXX REQUIRED libxml++-2.6)
++pkg_check_modules(LIBXMLXX REQUIRED libxml++-5.0)
+ webos_add_compiler_flags(ALL ${LIBXMLXX_CFLAGS})
+ 
+ pkg_check_modules(OPENSSL REQUIRED openssl)
+@@ -69,6 +73,7 @@ add_executable(notificationmgr ${SOURCES})
+ 
+ target_link_libraries(notificationmgr
+     ${GLIB2_LDFLAGS}
++    ${GLIBMM_LDFLAGS}
+     ${LUNASERVICE_LDFLAGS}
+     ${PBNJSON_CPP_LDFLAGS}
+     ${PMLOG_LDFLAGS}
+diff --git a/src/sax_parser.h b/src/sax_parser.h
+index 33d196e..e686b66 100755
+--- a/src/sax_parser.h
++++ b/src/sax_parser.h
+@@ -18,6 +18,7 @@
+ #define __LIBXMLPP_MYPARSER_H
+ 
+ #include <libxml++/libxml++.h>
++#include <glibmm/ustring.h>
+ #include <pbnjson.hpp>
+ 
+ class MySaxParser : public xmlpp::SaxParser

@@ -10,10 +10,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
-DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib boost libxml++"
+DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib boost libxml++-5.0 glibmm"
 
 WEBOS_VERSION = "1.0.0-28_4d4e8f2f68f6f3541f75998d11aec7f42f278e37"
-PR = "r11"
+PR = "r12"
 
 inherit webos_component
 inherit webos_cmake
@@ -22,7 +22,9 @@ inherit webos_daemon
 inherit webos_system_bus
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-CMakeLists.txt-switch-to-libxml-5.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
