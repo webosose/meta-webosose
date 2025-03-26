@@ -10,11 +10,11 @@ LIC_FILES_CHKSUM = " \
 
 SECTION = "webos/services"
 
-DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support nyx-lib"
+DEPENDS = "luna-service2 libpbnjson glib-2.0 luna-prefs openssl glib-2.0-native wca-support-api wca-support nyx-lib python3-packaging-native"
 RDEPENDS:${PN} = "connman connman-client"
 
 WEBOS_VERSION = "1.1.0-48_cd4fe2026fdb73413cec39a311a7d9c47d08128c"
-PR = "r17"
+PR = "r18"
 
 inherit webos_component
 inherit webos_public_repo
@@ -23,6 +23,7 @@ inherit webos_cmake
 inherit webos_daemon
 inherit webos_system_bus
 inherit webos_machine_dep
+inherit python3native
 
 # Set EXTRA_OECMAKE in webos-connman-adapter.bbappend to override default value for wifi and wired interfaces, for eg.
 # EXTRA_OECMAKE += "-DWIFI_IFACE_NAME=wlan0 -DWIRED_IFACE_NAME=eth1"
