@@ -12,7 +12,7 @@ WEBOS_REPO_NAME = "com.webos.service.camera"
 
 S = "${WORKDIR}/git/src/libs"
 
-PR = "${INC_PR}.2"
+PR = "${INC_PR}.3"
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 
@@ -23,6 +23,7 @@ PACKAGECONFIG[system-libcxx] = ",,libcxx"
 do_install:append() {
     install -d ${D}/${LIBCBE_DIR}
     mv ${D}/${libdir}/*.so* ${D}/${LIBCBE_DIR}
+    mv -n ${D}${includedir}/camera ${D}${includedir}/camera-clang
 }
 
 FILES:${PN} += "${LIBCBE_DIR}/lib*${SOLIBS}"
