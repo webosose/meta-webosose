@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos20"
+EXTENDPRAUTO:append = "webos21"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -10,10 +10,6 @@ SRC_URI:append:webos = " \
     file://0004-oomd-to-some.patch \
     file://0005-oomd-change-duration.patch \
     file://0006-Change-ownership-of-media-directory-to-support-non-r.patch \
-"
-
-SRC_URI:append = " \
-    file://0007-remove-broken-link-for-TAS-error.patch \
 "
 
 inherit webos_prerelease_dep
