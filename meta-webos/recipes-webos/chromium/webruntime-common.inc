@@ -100,6 +100,10 @@ GN_ARGS_NEON ?= ""
 GN_ARGS_NEON:armv6 = "arm_use_neon=false"
 GN_ARGS += "${GN_ARGS_NEON}"
 
+# Media Wrapper is used to adapt webruntime to clang build
+GN_ARGS_MEDIA_WRAPPER ?= ""
+GN_ARGS += "${GN_ARGS_MEDIA_WRAPPER}"
+
 # Handle crash while building v8
 GN_ARGS:append:aarch64 = ' v8_enable_external_code_space=false'
 GN_ARGS:append:x86-64 = ' v8_enable_external_code_space=false'
