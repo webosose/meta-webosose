@@ -90,10 +90,10 @@ index 102a2603e..b167f2dab 100644
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index d24329dcd..63ee334c7 100644
+index 50b7b7edd..aaafbb8bd 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -132,6 +132,19 @@ struct media_player {
+@@ -133,6 +133,19 @@ struct media_player {
  
  static GSList *adapters = NULL;
  
@@ -113,7 +113,7 @@ index d24329dcd..63ee334c7 100644
  static void endpoint_request_free(struct endpoint_request *request)
  {
  	if (request->call)
-@@ -1437,6 +1450,9 @@ media_endpoint_create(struct media_adapter *adapter,
+@@ -1481,6 +1494,9 @@ media_endpoint_create(struct media_adapter *adapter,
  	}
  
  	endpoint->adapter = adapter;
@@ -123,7 +123,7 @@ index d24329dcd..63ee334c7 100644
  
  	for (i = 0; i < ARRAY_SIZE(init_table); i++) {
  		init = &init_table[i];
-@@ -3227,6 +3243,7 @@ int media_register(struct btd_adapter *btd_adapter)
+@@ -3305,6 +3321,7 @@ int media_register(struct btd_adapter *btd_adapter)
  		return -1;
  	}
  
@@ -132,7 +132,7 @@ index d24329dcd..63ee334c7 100644
  
  	return 0;
 diff --git a/profiles/audio/media.h b/profiles/audio/media.h
-index 0eeb5746a..ad33c8816 100644
+index 2b579877b..704a25ea9 100644
 --- a/profiles/audio/media.h
 +++ b/profiles/audio/media.h
 @@ -10,6 +10,7 @@
@@ -143,13 +143,13 @@ index 0eeb5746a..ad33c8816 100644
  
  typedef void (*media_endpoint_cb_t) (struct media_endpoint *endpoint,
  					void *ret, int size, void *user_data);
-@@ -25,3 +26,4 @@ struct btd_adapter *media_endpoint_get_btd_adapter(
- bool media_endpoint_is_broadcast(
- 	struct media_endpoint *endpoint);
+@@ -24,3 +25,4 @@ struct btd_adapter *media_endpoint_get_btd_adapter(
+ 					struct media_endpoint *endpoint);
+ bool media_endpoint_is_broadcast(struct media_endpoint *endpoint);
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index 5ebfc4752..e2b66e1d3 100644
+index ee70b00d2..f8883b19e 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
 @@ -67,6 +67,7 @@
@@ -160,7 +160,7 @@ index 5ebfc4752..e2b66e1d3 100644
  
  #define MODE_OFF		0x00
  #define MODE_CONNECTABLE	0x01
-@@ -285,6 +286,9 @@ struct btd_adapter {
+@@ -287,6 +288,9 @@ struct btd_adapter {
  	bool filtered_discovery;	/* we are doing filtered discovery */
  	bool no_scan_restart_delay;	/* when this flag is set, restart scan
  					 * without delay */
@@ -170,7 +170,7 @@ index 5ebfc4752..e2b66e1d3 100644
  	uint8_t discovery_type;		/* current active discovery type */
  	uint8_t discovery_enable;	/* discovery enabled/disabled */
  	bool discovery_suspended;	/* discovery has been suspended */
-@@ -363,6 +367,11 @@ typedef enum {
+@@ -365,6 +369,11 @@ typedef enum {
  	ADAPTER_AUTHORIZE_CHECK_CONNECTED
  } adapter_authorize_type;
  
@@ -182,7 +182,7 @@ index 5ebfc4752..e2b66e1d3 100644
  static struct btd_adapter *btd_adapter_lookup(uint16_t index)
  {
  	GList *list;
-@@ -565,6 +574,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
+@@ -567,6 +576,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
  
  	g_key_file_set_boolean(key_file, "General", "Discoverable",
  							discoverable);
@@ -191,7 +191,7 @@ index 5ebfc4752..e2b66e1d3 100644
  
  	if (adapter->discoverable_timeout != btd_opts.discovto)
  		g_key_file_set_integer(key_file, "General",
-@@ -3497,6 +3508,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
+@@ -3505,6 +3516,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
  
  	return TRUE;
  }
@@ -222,15 +222,15 @@ index 5ebfc4752..e2b66e1d3 100644
  
  static void property_append_experimental(void *data, void *user_data)
  {
-@@ -3898,6 +3933,7 @@ static const GDBusPropertyTable adapter_properties[] = {
- 	{ "Roles", "as", property_get_roles },
- 	{ "ExperimentalFeatures", "as", property_get_experimental, NULL,
+@@ -3931,6 +3966,7 @@ static const GDBusPropertyTable adapter_properties[] = {
  					property_experimental_exists },
+ 	{ "Manufacturer", "q", property_get_manufacturer },
+ 	{ "Version", "y", property_get_version },
 +        { "DelayReport", "b", property_get_delay_report_feature, property_set_delay_report_feature },
  	{ }
  };
  
-@@ -5276,6 +5312,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
+@@ -5317,6 +5353,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
  	return false;
  }
  
@@ -242,7 +242,7 @@ index 5ebfc4752..e2b66e1d3 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter)
  {
  	if (!adapter)
-@@ -6817,6 +6858,15 @@ static void load_config(struct btd_adapter *adapter)
+@@ -6858,6 +6899,15 @@ static void load_config(struct btd_adapter *adapter)
  		gerr = NULL;
  	}
  
@@ -258,7 +258,7 @@ index 5ebfc4752..e2b66e1d3 100644
  	g_key_file_free(key_file);
  }
  
-@@ -6853,6 +6903,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6894,6 +6944,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  						btd_opts.did_version);
  	adapter->discoverable_timeout = btd_opts.discovto;
  	adapter->pairable_timeout = btd_opts.pairto;
@@ -266,7 +266,7 @@ index 5ebfc4752..e2b66e1d3 100644
  
  	DBG("System name: %s", adapter->system_name);
  	DBG("Major class: %u", adapter->major_class);
-@@ -6863,6 +6914,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6904,6 +6955,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  	if (blocked > 0)
  		DBG("Power state: %s",
  			adapter_power_state_str(adapter->power_state));
@@ -308,7 +308,7 @@ index b7e7ebd61..176689859 100644
  	uint16_t	did_source;
  	uint16_t	did_vendor;
 diff --git a/src/main.c b/src/main.c
-index 2134fcf75..a8cb58ffb 100644
+index b1339c230..dcccd030e 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -82,6 +82,7 @@ static const char *supported_options[] = {
@@ -319,7 +319,7 @@ index 2134fcf75..a8cb58ffb 100644
  	"Privacy",
  	"JustWorksRepairing",
  	"TemporaryTimeout",
-@@ -1032,6 +1033,9 @@ static void parse_general(GKeyFile *config)
+@@ -1036,6 +1037,9 @@ static void parse_general(GKeyFile *config)
  	parse_config_u32(config, "General", "RemoteNameRequestRetryDelay",
  					&btd_opts.name_request_retry_delay,
  					0, UINT32_MAX);
@@ -330,7 +330,7 @@ index 2134fcf75..a8cb58ffb 100644
  
  static void parse_gatt_cache(GKeyFile *config)
 diff --git a/src/main.conf b/src/main.conf
-index d108934a8..81225861c 100644
+index 085c81a46..b3ce9a69a 100644
 --- a/src/main.conf
 +++ b/src/main.conf
 @@ -69,6 +69,9 @@

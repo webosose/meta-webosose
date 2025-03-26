@@ -75,10 +75,10 @@ index 90d0c0c8e..369e9e91c 100644
  		return -EIO;
  
 diff --git a/obexd/client/pbap.c b/obexd/client/pbap.c
-index 1ed8c68ec..3af55440b 100644
+index 2d2aa9508..d3821b80a 100644
 --- a/obexd/client/pbap.c
 +++ b/obexd/client/pbap.c
-@@ -1302,7 +1302,7 @@ int pbap_init(void)
+@@ -1303,7 +1303,7 @@ int pbap_init(void)
  
  	DBG("");
  

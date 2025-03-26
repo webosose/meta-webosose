@@ -49,10 +49,10 @@ index dda9a303f..4063650c7 100644
  }
  
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 66f512e00..3e3a1013a 100644
+index 62f53defa..1ce2792cb 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1913,7 +1913,7 @@ static uint32_t media_player_get_position(void *user_data)
+@@ -1970,7 +1970,7 @@ static uint32_t media_player_get_position(void *user_data)
  	sec = (uint32_t) timedelta;
  	msec = (uint32_t) ((timedelta - sec) * 1000);
  
@@ -62,10 +62,10 @@ index 66f512e00..3e3a1013a 100644
  
  static uint32_t media_player_get_duration(void *user_data)
 diff --git a/src/device.c b/src/device.c
-index ec407a808..caa8c55ca 100644
+index 41c6a7987..7e98da6ba 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2289,6 +2289,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -2299,6 +2299,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  					DEVICE_INTERFACE, "KeyCode");
  }
  
@@ -88,7 +88,7 @@ index ec407a808..caa8c55ca 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3283,6 +3299,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
+@@ -3293,6 +3309,12 @@ static DBusMessage *cancel_pairing(DBusConnection *conn, DBusMessage *msg,
  	return dbus_message_new_method_return(msg);
  }
  
@@ -101,7 +101,7 @@ index ec407a808..caa8c55ca 100644
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
-@@ -4351,7 +4373,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4363,7 +4385,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  
  	if (g_dbus_register_interface(dbus_conn,
  					device->path, DEVICE_INTERFACE,
@@ -111,10 +111,10 @@ index ec407a808..caa8c55ca 100644
  					device_free) == FALSE) {
  		error("Unable to register device interface for %s", address);
 diff --git a/src/device.h b/src/device.h
-index 9dcb3c140..ae54e71cf 100644
+index 2c9a84a41..d2ff12306 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -198,3 +198,6 @@ void btd_device_foreach_ad(struct btd_device *dev, bt_device_ad_func_t func,
+@@ -201,3 +201,6 @@ void btd_device_foreach_ad(struct btd_device *dev, bt_device_ad_func_t func,
  							void *data);
  
  void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);

@@ -1,4 +1,4 @@
-From dcc06f3359fd20877f9b420044042a752ed14c24 Mon Sep 17 00:00:00 2001
+From 4b83704a797e531deb5256c189e961d760ae0d91 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Tue, 5 Feb 2019 18:10:55 +0530
 Subject: [PATCH] avrcp getting remote device features list
@@ -80,7 +80,7 @@ index 4063650c7..f3f2009f4 100644
  }
  
 diff --git a/src/device.c b/src/device.c
-index caa8c55ca..fd26b6057 100644
+index 7e98da6ba..d4f67eb03 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -298,6 +298,8 @@ struct btd_device {
@@ -92,7 +92,7 @@ index caa8c55ca..fd26b6057 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1536,6 +1538,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
+@@ -1529,6 +1531,46 @@ static gboolean dev_property_get_key_code(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -139,7 +139,7 @@ index caa8c55ca..fd26b6057 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -2305,6 +2347,25 @@ void media_metadata_request(struct btd_device *dev)
+@@ -2315,6 +2357,25 @@ void media_metadata_request(struct btd_device *dev)
  			DBUS_TYPE_INVALID);
  }
  
@@ -165,7 +165,7 @@ index caa8c55ca..fd26b6057 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3346,6 +3407,10 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3356,6 +3417,10 @@ static const GDBusPropertyTable device_properties[] = {
  				NULL, dev_property_manufacturer_data_exist },
  	{ "KeyCode", "a{sv}", dev_property_get_key_code,
  				NULL, dev_property_key_code_exist},
@@ -176,7 +176,7 @@ index caa8c55ca..fd26b6057 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4388,6 +4453,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4400,6 +4465,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->passththough_key.state = NULL;
  	device->passththough_key.key = NULL;
  
@@ -187,7 +187,7 @@ index caa8c55ca..fd26b6057 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index ae54e71cf..6856177d6 100644
+index d2ff12306..19e49717a 100644
 --- a/src/device.h
 +++ b/src/device.h
 @@ -10,6 +10,10 @@
@@ -201,7 +201,7 @@ index ae54e71cf..6856177d6 100644
  
  struct btd_device;
  
-@@ -201,3 +205,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+@@ -204,3 +208,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
  
  void media_play_request(struct btd_device *dev);
  void media_metadata_request(struct btd_device *dev);

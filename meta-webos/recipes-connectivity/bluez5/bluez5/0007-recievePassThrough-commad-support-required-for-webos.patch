@@ -56,7 +56,7 @@ index 6f64f162b..b002470f9 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index 43642d4f8..ec407a808 100644
+index bc92fe74c..41c6a7987 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -185,6 +185,11 @@ enum {
@@ -80,7 +80,7 @@ index 43642d4f8..ec407a808 100644
  };
  
  static const uint16_t uuid_list[] = {
-@@ -1463,6 +1470,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
+@@ -1456,6 +1463,18 @@ dev_property_manufacturer_data_exist(const GDBusPropertyTable *property,
  	return bt_ad_has_manufacturer_data(device->ad, NULL);
  }
  
@@ -99,7 +99,7 @@ index 43642d4f8..ec407a808 100644
  static void append_service_data(void *data, void *user_data)
  {
  	struct bt_ad_service_data *sd = data;
-@@ -1481,13 +1500,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1474,13 +1493,13 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	struct btd_device *device = data;
  	DBusMessageIter dict;
  
@@ -114,7 +114,7 @@ index 43642d4f8..ec407a808 100644
  	bt_ad_foreach_service_data(device->ad, append_service_data, &dict);
  
  	dbus_message_iter_close_container(iter, &dict);
-@@ -1495,6 +1514,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
+@@ -1488,6 +1507,28 @@ dev_property_get_service_data(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -143,7 +143,7 @@ index 43642d4f8..ec407a808 100644
  static gboolean
  dev_property_service_data_exist(const GDBusPropertyTable *property,
  								void *data)
-@@ -2239,6 +2280,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
+@@ -2249,6 +2290,15 @@ void device_set_manufacturer_data(struct btd_device *dev, GSList *list,
  	g_slist_foreach(list, add_manufacturer_data, dev);
  }
  
@@ -159,7 +159,7 @@ index 43642d4f8..ec407a808 100644
  static void add_service_data(void *data, void *user_data)
  {
  	struct eir_sd *sd = data;
-@@ -3272,6 +3322,8 @@ static const GDBusPropertyTable device_properties[] = {
+@@ -3282,6 +3332,8 @@ static const GDBusPropertyTable device_properties[] = {
  	{ "Adapter", "o", dev_property_get_adapter },
  	{ "ManufacturerData", "a{qv}", dev_property_get_manufacturer_data,
  				NULL, dev_property_manufacturer_data_exist },
@@ -168,7 +168,7 @@ index 43642d4f8..ec407a808 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4311,6 +4363,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4323,6 +4375,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->sirks = queue_new();
  	device->temporary = true;
  
@@ -179,10 +179,10 @@ index 43642d4f8..ec407a808 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index 3252e14ef..9dcb3c140 100644
+index 8bb38669d..2c9a84a41 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -196,3 +196,5 @@ typedef void (*bt_device_ad_func_t)(void *data, void *user_data);
+@@ -199,3 +199,5 @@ typedef void (*bt_device_ad_func_t)(void *data, void *user_data);
  
  void btd_device_foreach_ad(struct btd_device *dev, bt_device_ad_func_t func,
  							void *data);

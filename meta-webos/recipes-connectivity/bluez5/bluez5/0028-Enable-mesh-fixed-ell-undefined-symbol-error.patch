@@ -25,10 +25,10 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 93931d121..d9a2d2921 100644
+index e7221bd61..41de3fa0d 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -698,7 +698,7 @@ ell/internal: Makefile
+@@ -802,7 +802,7 @@ ell/internal: Makefile
  		fi \
  	done > $@
  

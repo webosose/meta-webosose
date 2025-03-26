@@ -1,4 +1,4 @@
-From 15f90c1ce644fc1121c68b1224a0f2f659bb29bf Mon Sep 17 00:00:00 2001
+From 1229b7c218debbd4dde9c5e0247fff9b961a108d Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 25 Jan 2021 16:27:58 +0530
 Subject: [PATCH] Add support for meshd to use RAW channel
@@ -105,7 +105,7 @@ index 145bcfa98..489bbef64 100644
  			usage();
  			status = EXIT_SUCCESS;
 diff --git a/mesh/mesh-io-generic.c b/mesh/mesh-io-generic.c
-index 00932ade7..f50d282f7 100644
+index 13a863b48..ccb396a7d 100644
 --- a/mesh/mesh-io-generic.c
 +++ b/mesh/mesh-io-generic.c
 @@ -38,6 +38,7 @@ struct mesh_io_private {

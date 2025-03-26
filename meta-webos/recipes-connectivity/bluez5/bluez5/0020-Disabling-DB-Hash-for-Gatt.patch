@@ -1,4 +1,4 @@
-From d8d5b1de4d9a08fc5d3a4976029739334090dddd Mon Sep 17 00:00:00 2001
+From 46b68afb4a44acd6d4c6fc7b459f80d55650b7c7 Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Tue, 28 Jul 2020 16:04:27 +0530
 Subject: [PATCH] Disabling DB Hash for Gatt

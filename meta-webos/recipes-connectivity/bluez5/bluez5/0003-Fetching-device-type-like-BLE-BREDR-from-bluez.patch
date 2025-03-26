@@ -35,7 +35,7 @@ index 9b58e0c4e..021bd29ae 100644
  	uint16_t	vendor_src;
  	uint16_t	vendor;
  	uint16_t	product;
-@@ -1020,6 +1021,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
+@@ -1013,6 +1014,21 @@ static gboolean dev_property_get_class(const GDBusPropertyTable *property,
  	return TRUE;
  }
  
@@ -57,7 +57,7 @@ index 9b58e0c4e..021bd29ae 100644
  static gboolean get_appearance(const GDBusPropertyTable *property, void *data,
  							uint16_t *appearance)
  {
-@@ -3168,6 +3184,7 @@ static const GDBusMethodTable device_methods[] = {
+@@ -3178,6 +3194,7 @@ static const GDBusMethodTable device_methods[] = {
  static const GDBusPropertyTable device_properties[] = {
  	{ "Address", "s", dev_property_get_address },
  	{ "AddressType", "s", property_get_address_type },

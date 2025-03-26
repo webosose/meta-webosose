@@ -28,10 +28,10 @@ Upstream-Status: Inappropriate [webos specific]
  2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 3e3a1013a..d24329dcd 100644
+index 1ce2792cb..50b7b7edd 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1928,8 +1928,8 @@ static void media_player_set_volume(int8_t volume, struct btd_device *dev,
+@@ -1985,8 +1985,8 @@ static void media_player_set_volume(int8_t volume, struct btd_device *dev,
  {
  	struct media_player *mp = user_data;
  
@@ -43,10 +43,10 @@ index 3e3a1013a..d24329dcd 100644
  	mp->volume = volume;
  }
 diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
-index 96fa29e7c..f2ad172ef 100644
+index 83dec8f0d..155695b1a 100644
 --- a/profiles/audio/transport.c
 +++ b/profiles/audio/transport.c
-@@ -779,8 +779,8 @@ static void set_volume(const GDBusPropertyTable *property,
+@@ -811,8 +811,8 @@ static void set_volume(const GDBusPropertyTable *property,
  	}
  
  	volume = (int8_t)arg;
@@ -57,7 +57,7 @@ index 96fa29e7c..f2ad172ef 100644
  
  	notify = transport->source_watch ? true : false;
  	if (notify) {
-@@ -1967,8 +1967,8 @@ void media_transport_update_volume(struct media_transport *transport,
+@@ -1717,8 +1717,8 @@ void media_transport_update_volume(struct media_transport *transport,
  		return;
  
  	/* Check if volume really changed */

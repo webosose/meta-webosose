@@ -28,10 +28,10 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/src/device.c b/src/device.c
-index 8bb363d25..cdec9900a 100644
+index 7cd991748..150d0745a 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -2203,13 +2203,13 @@ static void device_profile_connected(struct btd_device *dev,
+@@ -2213,13 +2213,13 @@ static void device_profile_connected(struct btd_device *dev,
  
  	DBG("%s %s (%d)", profile->name, strerror(-err), -err);
  

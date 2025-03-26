@@ -9,6 +9,18 @@ Added Notification property in org.bluez.obex.MessageAccess1
 :Detailed Notes:
 New Properties Notification is added for MAP.
 
+Move the obex-api changes to doc/org.bluez.obex.MessageAccess.rst
+but they still need to be converted to rst formatting as other
+files were in:
+  commit 345ad5e352b1b77c18ceecb06523a0d1352dee38
+  Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+  Date:   Thu Oct 12 13:20:44 2023 -0700
+
+    doc/obex-*-api: Rename to org.bluez.obex.*.rst
+
+    This renames obex-*-api.txt to org.bluez.obex.*.rst and generate
+    manpages org.bluez.obex.*.5.
+
 :QA Notes:
 NA
 
@@ -17,18 +29,19 @@ NA
 ---
 Upstream-Status: Inappropriate [webos specific]
 
- doc/obex-api.txt   |  48 ++++++++++++++
- obexd/client/map.c | 153 ++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 198 insertions(+), 3 deletions(-)
+ doc/org.bluez.obex.MessageAccess.rst |  49 +++++++++
+ obexd/client/map.c                   | 153 ++++++++++++++++++++++++++-
+ 2 files changed, 199 insertions(+), 3 deletions(-)
 
-diff --git a/doc/obex-api.txt b/doc/obex-api.txt
-index f39355af0..85301dcda 100644
---- a/doc/obex-api.txt
-+++ b/doc/obex-api.txt
-@@ -799,6 +799,54 @@ Filter:		uint16 Offset:
- 			Possible values: True for high priority or False for
- 			non-high priority
+diff --git a/doc/org.bluez.obex.MessageAccess.rst b/doc/org.bluez.obex.MessageAccess.rst
+index 4f7f07d1b..2508ecdfc 100644
+--- a/doc/org.bluez.obex.MessageAccess.rst
++++ b/doc/org.bluez.obex.MessageAccess.rst
+@@ -199,3 +199,52 @@ object, dict PushMessage(string sourcefile, string folder, dict args)
  
+ 	:org.bluez.obex.Error.InvalidArguments:
+ 	:org.bluez.obex.Error.Failed:
++
 +Properties dict Notification [readonly]
 +
 +			Notification data contains list of below property
@@ -77,9 +90,6 @@ index f39355af0..85301dcda 100644
 +
 +				Message Priority, only available for "NewMessage"
 +
- Message hierarchy
- =================
- 
 diff --git a/obexd/client/map.c b/obexd/client/map.c
 index 2eb2c17a6..ada9377b8 100644
 --- a/obexd/client/map.c

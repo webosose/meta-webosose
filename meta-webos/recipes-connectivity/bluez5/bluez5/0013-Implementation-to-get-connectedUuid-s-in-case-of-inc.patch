@@ -24,10 +24,10 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/src/device.c b/src/device.c
-index fd26b6057..fa8d310b2 100644
+index d4f67eb03..53628b290 100644
 --- a/src/device.c
 +++ b/src/device.c
-@@ -7414,9 +7414,11 @@ static void service_state_changed(struct btd_service *service,
+@@ -7429,9 +7429,11 @@ static void service_state_changed(struct btd_service *service,
  				new_state == BTD_SERVICE_STATE_DISCONNECTING)
  		return;
  
