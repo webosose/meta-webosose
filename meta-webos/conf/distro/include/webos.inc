@@ -130,6 +130,9 @@ EXTRA_WEBOS_WERROR:pn-libiodbc = ""
 # and many more
 # http://gecko.lge.com:8000/Errors/Details/597615
 EXTRA_WEBOS_WERROR:pn-libcbor = ""
+# src/cpp/parser.cpp:463:1: error: control reaches end of non-void function [-Werror=return-type]
+# http://gecko.lge.com:8000/Errors/Details/749006
+EXTRA_WEBOS_WERROR:pn-python3-fastnumbers = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
