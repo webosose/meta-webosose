@@ -27,10 +27,10 @@ upgrade oe-core instead of removing individual files from our other layers.
 * If you're looking for backports from kirkstone to honister, check honister branch.
 * If you're looking for backports from langdale, mickledore, nanbield, scarthgap to kirkstone, check kirkstone branch.
 * If you're looking for backports from mickledore, nanbield, scarthgap to langdale, check langdale branch.
+* If you're looking for backports from nanbield, scarthgap to mickledore, check mickledore branch.
 
-* Backports from 4.3 (Nanbield) to 4.2 (Mickledore) are in "meta-webos-backports-4.3" subdirectory.
-* Backports from 5.0 (Scarthgap) to 4.2 (Mickledore) are in "meta-webos-backports-5.0" subdirectory.
-* Backports from 5.1 (Styhead) to 4.2 (Mickledore) are in "meta-webos-backports-5.1" subdirectory.
-* Backports from 5.2 (Walnascar) to 4.2 (Mickledore) are in "meta-webos-backports-5.2" subdirectory.
+* Backports from 5.0 (Scarthgap) to 4.3 (Nanbield) are in "meta-webos-backports-5.0" subdirectory.
+* Backports from 5.1 (Styhead) to 4.3 (Nanbield) are in "meta-webos-backports-5.1" subdirectory.
+* Backports from 5.2 (Walnascar) to 4.3 (Nanbield) are in "meta-webos-backports-5.2" subdirectory.
 
 See https://wiki.yoctoproject.org/wiki/Releases for complete list of releases.
