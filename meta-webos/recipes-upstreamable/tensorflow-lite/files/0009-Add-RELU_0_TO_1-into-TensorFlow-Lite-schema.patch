@@ -1,0 +1,424 @@
+From 658d6c7d95390a3a0e7c6de5a9659b230e8c5a57 Mon Sep 17 00:00:00 2001
+From: "Jae H. Yoo" <jaeyoo@google.com>
+Date: Mon, 2 May 2022 17:20:06 -0700
+Subject: [PATCH] Add RELU_0_TO_1 into TensorFlow Lite schema
+
+PiperOrigin-RevId: 446069259
+---
+Upstream-Status: Pending
+
+ tensorflow/lite/builtin_ops.h                 |  1 +
+ .../lite/core/api/flatbuffer_conversions.cc   |  1 +
+ .../lite/core/shims/builtin_ops_list.inc      |  1 +
+ tensorflow/lite/kernels/BUILD                 |  6 +-
+ tensorflow/lite/kernels/activations.cc        | 61 +++++++++++++++----
+ tensorflow/lite/kernels/activations_test.cc   | 59 ++++++++++++++++++
+ tensorflow/lite/kernels/builtin_op_kernels.h  |  1 +
+ .../internal/optimized/optimized_ops.h        |  1 +
+ .../internal/reference/reference_ops.h        | 14 +++++
+ tensorflow/lite/kernels/register.cc           |  1 +
+ tensorflow/lite/kernels/register_ref.cc       |  2 +
+ tensorflow/lite/schema/schema.fbs             |  1 +
+ tensorflow/lite/schema/schema_generated.h     | 13 ++--
+ .../serialization/option_writer_generator.cc  |  1 +
+ .../lite/tools/versioning/runtime_version.cc  |  1 +
+ 15 files changed, 146 insertions(+), 18 deletions(-)
+
+diff --git a/tensorflow/lite/builtin_ops.h b/tensorflow/lite/builtin_ops.h
+index 19ce3e2c07e..75a555bd109 100644
+--- a/tensorflow/lite/builtin_ops.h
++++ b/tensorflow/lite/builtin_ops.h
+@@ -179,6 +179,7 @@ typedef enum {
+   kTfLiteBuiltinMultinomial = 149,
+   kTfLiteBuiltinGelu = 150,
+   kTfLiteBuiltinDynamicUpdateSlice = 151,
++  kTfLiteBuiltinRelu0To1 = 152,
+ } TfLiteBuiltinOperator;
+ 
+ #ifdef __cplusplus
+diff --git a/tensorflow/lite/core/api/flatbuffer_conversions.cc b/tensorflow/lite/core/api/flatbuffer_conversions.cc
+index e92d754fe37..bbfb78cbc33 100644
+--- a/tensorflow/lite/core/api/flatbuffer_conversions.cc
++++ b/tensorflow/lite/core/api/flatbuffer_conversions.cc
+@@ -848,6 +848,7 @@ TfLiteStatus ParseOpDataTfLite(const Operator* op, BuiltinOperator op_type,
+     case BuiltinOperator_MATRIX_DIAG:
+     case BuiltinOperator_MATRIX_SET_DIAG:
+     case BuiltinOperator_RELU_N1_TO_1:
++    case BuiltinOperator_RELU_0_TO_1:
+     case BuiltinOperator_SELECT:
+     case BuiltinOperator_SELECT_V2:
+     case BuiltinOperator_SLICE:
+diff --git a/tensorflow/lite/core/shims/builtin_ops_list.inc b/tensorflow/lite/core/shims/builtin_ops_list.inc
+index f48f3b68ff6..cb1b6470018 100644
+--- a/tensorflow/lite/core/shims/builtin_ops_list.inc
++++ b/tensorflow/lite/core/shims/builtin_ops_list.inc
+@@ -164,3 +164,4 @@ TFLITE_OP(Register_RANDOM_UNIFORM)
+ TFLITE_OP(Register_MULTINOMIAL)
+ TFLITE_OP(Register_GELU)
+ TFLITE_OP(Register_DYNAMIC_UPDATE_SLICE)
++TFLITE_OP(Register_RELU_0_TO_1)
+diff --git a/tensorflow/lite/kernels/BUILD b/tensorflow/lite/kernels/BUILD
+index 1c0ffa793f0..d547eb41b8f 100644
+--- a/tensorflow/lite/kernels/BUILD
++++ b/tensorflow/lite/kernels/BUILD
+@@ -2754,7 +2754,11 @@ cc_test(
+     ],
+ )
+ 
+-tflite_portable_test_suite_combined(combine_conditions = {"deps": [":test_main"]})
++tflite_portable_test_suite_combined(
++    combine_conditions = {"deps": [":test_main"]},
++    # TODO(b/229985981) : Remove `nnapi_args` after adding Relu0To1 is completed.
++    nnapi_args = ["--gunit_filter=-*QuantizedActivationsOpTest.Relu0To1*"],
++)
+ 
+ # Note this is created mainly for validating external delegates in OSS.
+ tflite_combine_cc_tests(
+diff --git a/tensorflow/lite/kernels/activations.cc b/tensorflow/lite/kernels/activations.cc
+index 8953a5ce814..2f392d8cfb1 100644
+--- a/tensorflow/lite/kernels/activations.cc
++++ b/tensorflow/lite/kernels/activations.cc
+@@ -885,6 +885,36 @@ TfLiteStatus HardSwishEval(TfLiteContext* context, TfLiteNode* node) {
+   }
+ }
+ 
++TfLiteStatus Relu0to1Eval(TfLiteContext* context, TfLiteNode* node) {
++  const TfLiteTensor* input;
++  TF_LITE_ENSURE_OK(context, GetInputSafe(context, node, 0, &input));
++  TfLiteTensor* output;
++  TF_LITE_ENSURE_OK(context, GetOutputSafe(context, node, 0, &output));
++  const ReluOpData* data = reinterpret_cast<ReluOpData*>(node->user_data);
++  switch (input->type) {
++    case kTfLiteFloat32: {
++      optimized_ops::Relu0To1(
++          GetTensorShape(input), GetTensorData<float>(input),
++          GetTensorShape(output), GetTensorData<float>(output));
++      return kTfLiteOk;
++    }
++    case kTfLiteUInt8: {
++      QuantizedReluX<uint8_t>(0.0f, 1.0f, input, output, data);
++      return kTfLiteOk;
++    }
++    case kTfLiteInt8: {
++      QuantizedReluX<int8_t>(0, 1, input, output, data);
++      return kTfLiteOk;
++    }
++    default:
++      TF_LITE_KERNEL_LOG(context,
++                         "Only float32, uint8, int8 supported "
++                         "currently, got %s.",
++                         TfLiteTypeGetName(input->type));
++      return kTfLiteError;
++  }
++}
++
+ TfLiteStatus Relu6Eval(TfLiteContext* context, TfLiteNode* node) {
+   const TfLiteTensor* input;
+   TF_LITE_ENSURE_OK(context, GetInputSafe(context, node, 0, &input));
+@@ -1118,13 +1148,13 @@ TfLiteStatus SoftmaxQuantized<int8_t, int8_t>(TfLiteContext* context,
+                            GetTensorData<int8_t>(output));
+   } else {
+ #ifdef TFLITE_SOFTMAX_USE_UINT16_LUT
+-  optimized_ops::SoftmaxInt8LUT(
+-      data->params, GetTensorShape(input), GetTensorData<int8_t>(input),
+-      GetTensorShape(output), GetTensorData<int8_t>(output));
++    optimized_ops::SoftmaxInt8LUT(
++        data->params, GetTensorShape(input), GetTensorData<int8_t>(input),
++        GetTensorShape(output), GetTensorData<int8_t>(output));
+ #else
+-  optimized_ops::Softmax(data->params, GetTensorShape(input),
+-                         GetTensorData<int8_t>(input), GetTensorShape(output),
+-                         GetTensorData<int8_t>(output));
++    optimized_ops::Softmax(data->params, GetTensorShape(input),
++                           GetTensorData<int8_t>(input), GetTensorShape(output),
++                           GetTensorData<int8_t>(output));
+ #endif
+   }
+   return kTfLiteOk;
+@@ -1142,13 +1172,13 @@ TfLiteStatus SoftmaxQuantized<uint8_t, uint8_t>(TfLiteContext* context,
+         GetTensorShape(output), GetTensorData<uint8_t>(output));
+   } else {
+ #ifdef TFLITE_SOFTMAX_USE_UINT16_LUT
+-  optimized_ops::SoftmaxInt8LUT(
+-      data->params, GetTensorShape(input), GetTensorData<uint8_t>(input),
+-      GetTensorShape(output), GetTensorData<uint8_t>(output));
++    optimized_ops::SoftmaxInt8LUT(
++        data->params, GetTensorShape(input), GetTensorData<uint8_t>(input),
++        GetTensorShape(output), GetTensorData<uint8_t>(output));
+ #else
+-  optimized_ops::Softmax(data->params, GetTensorShape(input),
+-                         GetTensorData<uint8_t>(input), GetTensorShape(output),
+-                         GetTensorData<uint8_t>(output));
++    optimized_ops::Softmax(
++        data->params, GetTensorShape(input), GetTensorData<uint8_t>(input),
++        GetTensorShape(output), GetTensorData<uint8_t>(output));
+ #endif
+   }
+   return kTfLiteOk;
+@@ -1586,6 +1616,13 @@ TfLiteRegistration* Register_RELU6() {
+   return &r;
+ }
+ 
++TfLiteRegistration* Register_RELU_0_TO_1() {
++  static TfLiteRegistration r = {activations::ReluInit, activations::ReluFree,
++                                 activations::ReluPrepare,
++                                 activations::Relu0to1Eval};
++  return &r;
++}
++
+ TfLiteRegistration* Register_TANH_REF() {
+   static TfLiteRegistration r = {
+       activations::Init, activations::Free,
+diff --git a/tensorflow/lite/kernels/activations_test.cc b/tensorflow/lite/kernels/activations_test.cc
+index 826b92b77a3..67eedb3f65d 100644
+--- a/tensorflow/lite/kernels/activations_test.cc
++++ b/tensorflow/lite/kernels/activations_test.cc
+@@ -335,6 +335,20 @@ TEST(FloatActivationsOpTest, Relu) {
+                              }));
+ }
+ 
++TEST(FloatActivationsOpTest, Relu0To1) {
++  FloatActivationsOpModel m(BuiltinOperator_RELU_0_TO_1,
++                            /*input=*/{TensorType_FLOAT32, {1, 2, 4, 1}});
++  m.SetInput({
++      0.0, -0.6, 0.2, -0.4,  //
++      0.3, -2.0, 1.1, -0.1,  //
++  });
++  m.Invoke();
++  EXPECT_THAT(m.GetOutput(), ElementsAreArray({
++                                 0.0, 0.0, 0.2, 0.0,  //
++                                 0.3, 0.0, 1.0, 0.0,  //
++                             }));
++}
++
+ TEST(FloatActivationsOpTest, Relu1) {
+   FloatActivationsOpModel m(BuiltinOperator_RELU_N1_TO_1,
+                             /*input=*/{TensorType_FLOAT32, {1, 2, 4, 1}});
+@@ -653,6 +667,28 @@ TEST_P(LeakyReluOpTest, LeakyReluInt16) {
+       GetRegistration());
+ }
+ 
++TEST(QuantizedActivationsOpTest, Relu0To1Int8) {
++  const float kMin = 0;
++  const float kMax = 1;
++  QuantizedActivationsOpModel m(
++      BuiltinOperator_RELU_0_TO_1,
++      /*input=*/{TensorType_INT8, {1, 2, 4, 1}, 2 * kMin, kMax},
++      /*output=*/{TensorType_INT8, {1, 2, 4, 1}, 2 * kMin, kMax});
++
++  m.SetInput<int8_t>({
++      0.0, -0.6, 0.2, -0.4,  //
++      0.3, -2.0, 1.1, -0.1,  //
++  });
++  ASSERT_EQ(m.Invoke(), kTfLiteOk);
++
++  EXPECT_THAT(m.GetDequantizedOutput<int8_t>(), ElementsAreArray(ArrayFloatNear(
++                                                    {
++                                                        0.0, 0.0, 0.2, 0.0,  //
++                                                        0.3, 0.0, 1.0, 0.0,  //
++                                                    },
++                                                    kQuantizedTolerance)));
++}
++
+ TEST(QuantizedActivationsOpTest, Relu1Int8) {
+   const float kMin = -1;
+   const float kMax = 1;
+@@ -676,6 +712,29 @@ TEST(QuantizedActivationsOpTest, Relu1Int8) {
+                   kQuantizedTolerance)));
+ }
+ 
++TEST(QuantizedActivationsOpTest, Relu0To1UInt8) {
++  const float kMin = 0;
++  const float kMax = 1;
++  QuantizedActivationsOpModel m(
++      BuiltinOperator_RELU_0_TO_1,
++      /*input=*/{TensorType_UINT8, {1, 2, 4, 1}, 2 * kMin, kMax},
++      /*output=*/{TensorType_UINT8, {1, 2, 4, 1}, 2 * kMin, kMax});
++
++  m.SetInput<uint8_t>({
++      0.0, -0.6, 0.2, -0.4,  //
++      0.3, -2.0, 1.1, -0.1,  //
++  });
++  ASSERT_EQ(m.Invoke(), kTfLiteOk);
++
++  EXPECT_THAT(m.GetDequantizedOutput<uint8_t>(),
++              ElementsAreArray(ArrayFloatNear(
++                  {
++                      0.0, 0.0, 0.2, 0.0,  //
++                      0.3, 0.0, 1.0, 0.0,  //
++                  },
++                  kQuantizedTolerance)));
++}
++
+ TEST(QuantizedActivationsOpTest, Relu1UInt8) {
+   const float kMin = -1;
+   const float kMax = 1;
+diff --git a/tensorflow/lite/kernels/builtin_op_kernels.h b/tensorflow/lite/kernels/builtin_op_kernels.h
+index 399d21284a3..5af3dce7ea1 100644
+--- a/tensorflow/lite/kernels/builtin_op_kernels.h
++++ b/tensorflow/lite/kernels/builtin_op_kernels.h
+@@ -135,6 +135,7 @@ TfLiteRegistration* Register_REDUCE_PROD();
+ TfLiteRegistration* Register_RELU();
+ TfLiteRegistration* Register_RELU6();
+ TfLiteRegistration* Register_RELU_N1_TO_1();
++TfLiteRegistration* Register_RELU_0_TO_1();
+ TfLiteRegistration* Register_RESHAPE();
+ TfLiteRegistration* Register_RESIZE_BILINEAR();
+ TfLiteRegistration* Register_RESIZE_NEAREST_NEIGHBOR();
+diff --git a/tensorflow/lite/kernels/internal/optimized/optimized_ops.h b/tensorflow/lite/kernels/internal/optimized/optimized_ops.h
+index 162d16d4484..0b139862888 100644
+--- a/tensorflow/lite/kernels/internal/optimized/optimized_ops.h
++++ b/tensorflow/lite/kernels/internal/optimized/optimized_ops.h
+@@ -96,6 +96,7 @@ using reference_ops::LessWithScaling;
+ using reference_ops::Mean;
+ using reference_ops::ProcessBroadcastShapes;
+ using reference_ops::RankOneSelect;
++using reference_ops::Relu0To1;  // NOLINT
+ using reference_ops::Relu1;
+ using reference_ops::Relu6;
+ using reference_ops::ReluX;
+diff --git a/tensorflow/lite/kernels/internal/reference/reference_ops.h b/tensorflow/lite/kernels/internal/reference/reference_ops.h
+index ba8107e8f3f..6166c48d5a5 100644
+--- a/tensorflow/lite/kernels/internal/reference/reference_ops.h
++++ b/tensorflow/lite/kernels/internal/reference/reference_ops.h
+@@ -103,6 +103,20 @@ inline void Relu(const RuntimeShape& input_shape, const T* input_data,
+   }
+ }
+ 
++template <typename T>
++inline void Relu0To1(const RuntimeShape& input_shape, const T* input_data,
++                     const RuntimeShape& output_shape, T* output_data) {
++  ruy::profiler::ScopeLabel label("Relu0To1 (not fused)");
++  const int flat_size = MatchingFlatSize(input_shape, output_shape);
++  for (int i = 0; i < flat_size; ++i) {
++    const T val = input_data[i];
++    const T upper = 1;
++    const T lower = 0;
++    const T clamped = val > upper ? upper : val < lower ? lower : val;
++    output_data[i] = clamped;
++  }
++}
++
+ template <typename T>
+ inline void Relu1(const RuntimeShape& input_shape, const T* input_data,
+                   const RuntimeShape& output_shape, T* output_data) {
+diff --git a/tensorflow/lite/kernels/register.cc b/tensorflow/lite/kernels/register.cc
+index 030a742d42b..cf11dd7b5b5 100644
+--- a/tensorflow/lite/kernels/register.cc
++++ b/tensorflow/lite/kernels/register.cc
+@@ -40,6 +40,7 @@ BuiltinOpResolver::BuiltinOpResolver() {
+   AddBuiltin(BuiltinOperator_RELU, Register_RELU(), /* min_version = */ 1,
+              /* max_version = */ 3);
+   AddBuiltin(BuiltinOperator_RELU_N1_TO_1, Register_RELU_N1_TO_1());
++  AddBuiltin(BuiltinOperator_RELU_0_TO_1, Register_RELU_0_TO_1());
+   AddBuiltin(BuiltinOperator_RELU6, Register_RELU6(), /* min_version = */ 1,
+              /* max_version = */ 3);
+   AddBuiltin(BuiltinOperator_TANH, Register_TANH(), /* min_version = */ 1,
+diff --git a/tensorflow/lite/kernels/register_ref.cc b/tensorflow/lite/kernels/register_ref.cc
+index 02ab7f778a6..b180716c75a 100644
+--- a/tensorflow/lite/kernels/register_ref.cc
++++ b/tensorflow/lite/kernels/register_ref.cc
+@@ -39,6 +39,7 @@ namespace builtin {
+ TfLiteRegistration* Register_ABS();
+ TfLiteRegistration* Register_RELU();
+ TfLiteRegistration* Register_RELU_N1_TO_1();
++TfLiteRegistration* Register_RELU_0_TO_1();
+ TfLiteRegistration* Register_RELU6();
+ TfLiteRegistration* Register_TANH_REF();
+ TfLiteRegistration* Register_LOGISTIC_REF();
+@@ -209,6 +210,7 @@ BuiltinRefOpResolver::BuiltinRefOpResolver() {
+   AddBuiltin(BuiltinOperator_RELU, Register_RELU(), /* min_version = */ 1,
+              /* max_version = */ 3);
+   AddBuiltin(BuiltinOperator_RELU_N1_TO_1, Register_RELU_N1_TO_1());
++  AddBuiltin(BuiltinOperator_RELU_0_TO_1, Register_RELU_0_TO_1());
+   AddBuiltin(BuiltinOperator_RELU6, Register_RELU6(), /* min_version = */ 1,
+              /* max_version = */ 3);
+   AddBuiltin(BuiltinOperator_TANH, Register_TANH_REF(), /* min_version = */ 1,
+diff --git a/tensorflow/lite/schema/schema.fbs b/tensorflow/lite/schema/schema.fbs
+index 1282e8244e8..d7320e3d263 100644
+--- a/tensorflow/lite/schema/schema.fbs
++++ b/tensorflow/lite/schema/schema.fbs
+@@ -386,6 +386,7 @@ enum BuiltinOperator : int32 {
+   MULTINOMIAL = 149,
+   GELU = 150,
+   DYNAMIC_UPDATE_SLICE = 151,
++  RELU_0_TO_1 = 152,
+ }
+ // LINT.ThenChange(nnapi_linter/linter.proto)
+ 
+diff --git a/tensorflow/lite/schema/schema_generated.h b/tensorflow/lite/schema/schema_generated.h
+index e5ce189f147..5536e89821c 100755
+--- a/tensorflow/lite/schema/schema_generated.h
++++ b/tensorflow/lite/schema/schema_generated.h
+@@ -875,11 +875,12 @@ enum BuiltinOperator {
+   BuiltinOperator_MULTINOMIAL = 149,
+   BuiltinOperator_GELU = 150,
+   BuiltinOperator_DYNAMIC_UPDATE_SLICE = 151,
++  BuiltinOperator_RELU_0_TO_1 = 152,
+   BuiltinOperator_MIN = BuiltinOperator_ADD,
+-  BuiltinOperator_MAX = BuiltinOperator_DYNAMIC_UPDATE_SLICE
++  BuiltinOperator_MAX = BuiltinOperator_RELU_0_TO_1
+ };
+ 
+-inline const BuiltinOperator (&EnumValuesBuiltinOperator())[152] {
++inline const BuiltinOperator (&EnumValuesBuiltinOperator())[153] {
+   static const BuiltinOperator values[] = {
+     BuiltinOperator_ADD,
+     BuiltinOperator_AVERAGE_POOL_2D,
+@@ -1032,13 +1033,14 @@ inline const BuiltinOperator (&EnumValuesBuiltinOperator())[152] {
+     BuiltinOperator_RANDOM_UNIFORM,
+     BuiltinOperator_MULTINOMIAL,
+     BuiltinOperator_GELU,
+-    BuiltinOperator_DYNAMIC_UPDATE_SLICE
++    BuiltinOperator_DYNAMIC_UPDATE_SLICE,
++    BuiltinOperator_RELU_0_TO_1
+   };
+   return values;
+ }
+ 
+ inline const char * const *EnumNamesBuiltinOperator() {
+-  static const char * const names[153] = {
++  static const char * const names[154] = {
+     "ADD",
+     "AVERAGE_POOL_2D",
+     "CONCATENATION",
+@@ -1191,13 +1193,14 @@ inline const char * const *EnumNamesBuiltinOperator() {
+     "MULTINOMIAL",
+     "GELU",
+     "DYNAMIC_UPDATE_SLICE",
++    "RELU_0_TO_1",
+     nullptr
+   };
+   return names;
+ }
+ 
+ inline const char *EnumNameBuiltinOperator(BuiltinOperator e) {
+-  if (flatbuffers::IsOutRange(e, BuiltinOperator_ADD, BuiltinOperator_DYNAMIC_UPDATE_SLICE)) return "";
++  if (flatbuffers::IsOutRange(e, BuiltinOperator_ADD, BuiltinOperator_RELU_0_TO_1)) return "";
+   const size_t index = static_cast<size_t>(e);
+   return EnumNamesBuiltinOperator()[index];
+ }
+diff --git a/tensorflow/lite/tools/serialization/option_writer_generator.cc b/tensorflow/lite/tools/serialization/option_writer_generator.cc
+index 9d8e0f665cc..0c9172f0dab 100644
+--- a/tensorflow/lite/tools/serialization/option_writer_generator.cc
++++ b/tensorflow/lite/tools/serialization/option_writer_generator.cc
+@@ -200,6 +200,7 @@ class OpOptionData {
+     op_to_option_["LOGISTIC"] = "";
+     op_to_option_["RELU"] = "";
+     op_to_option_["RELU_N1_TO_1"] = "";
++    op_to_option_["RELU_0_TO_1"] = "";
+     op_to_option_["RELU6"] = "";
+     op_to_option_["ROUND"] = "";
+     op_to_option_["TANH"] = "";
+diff --git a/tensorflow/lite/tools/versioning/runtime_version.cc b/tensorflow/lite/tools/versioning/runtime_version.cc
+index 8fdc004786c..034f90893e0 100644
+--- a/tensorflow/lite/tools/versioning/runtime_version.cc
++++ b/tensorflow/lite/tools/versioning/runtime_version.cc
+@@ -321,6 +321,7 @@ std::string FindMinimumRuntimeVersionForOp(tflite::BuiltinOperator op_code,
+               {{BuiltinOperator_RELU, 2}, "2.1.0"},
+               {{BuiltinOperator_RELU, 3}, "2.5.0"},
+               {{BuiltinOperator_RELU_N1_TO_1, 1}, "1.5.0"},
++              {{BuiltinOperator_RELU_0_TO_1, 1}, "2.10.0"},
+               {{BuiltinOperator_PRELU, 1}, "1.8.0"},
+               {{BuiltinOperator_EXP, 1}, "1.7.0"},
+               {{BuiltinOperator_COS, 1}, "1.14.0"},

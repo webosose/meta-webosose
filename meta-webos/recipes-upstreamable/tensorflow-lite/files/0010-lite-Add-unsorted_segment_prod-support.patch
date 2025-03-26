@@ -1,0 +1,949 @@
+From 25a797d5181eb65fc6473ff6861818f124e52afa Mon Sep 17 00:00:00 2001
+From: Terry Heo <terryheo@google.com>
+Date: Thu, 12 May 2022 15:14:09 -0700
+Subject: [PATCH] lite: Add unsorted_segment_prod support
+
+This operator is needed to calculate the runtime shape of einsum operator.
+
+Added conversion logic and tests as well.
+
+PiperOrigin-RevId: 448349991
+---
+Upstream-Status: Pending
+
+ tensorflow/compiler/mlir/lite/ir/tfl_ops.td   |  19 +++
+ .../compiler/mlir/lite/tests/legalize-tf.mlir |   9 ++
+ .../unsorted_segment_prod.mlir                |  70 ++++++++
+ .../mlir/lite/transforms/legalize_patterns.td |   5 +
+ tensorflow/lite/builtin_ops.h                 |   1 +
+ tensorflow/lite/c/builtin_op_data.h           |   3 +
+ .../lite/core/api/flatbuffer_conversions.cc   |  10 ++
+ .../lite/core/shims/builtin_ops_list.inc      |   1 +
+ tensorflow/lite/kernels/BUILD                 |  14 ++
+ tensorflow/lite/kernels/builtin_op_kernels.h  |   1 +
+ .../internal/reference/reference_ops.h        |  22 +++
+ tensorflow/lite/kernels/register.cc           |   2 +
+ tensorflow/lite/kernels/register_ref.cc       |   3 +
+ .../lite/kernels/unsorted_segment_prod.cc     | 127 +++++++++++++++
+ .../kernels/unsorted_segment_prod_test.cc     | 102 ++++++++++++
+ tensorflow/lite/schema/schema.fbs             |   6 +
+ tensorflow/lite/schema/schema_generated.h     | 149 ++++++++++++++++--
+ .../serialization/option_writer_generator.cc  |   1 +
+ .../lite/tools/versioning/runtime_version.cc  |   1 +
+ 19 files changed, 536 insertions(+), 10 deletions(-)
+ create mode 100644 tensorflow/compiler/mlir/lite/tests/mlir2flatbuffer/unsorted_segment_prod.mlir
+ create mode 100644 tensorflow/lite/kernels/unsorted_segment_prod.cc
+ create mode 100644 tensorflow/lite/kernels/unsorted_segment_prod_test.cc
+
+diff --git a/tensorflow/compiler/mlir/lite/ir/tfl_ops.td b/tensorflow/compiler/mlir/lite/ir/tfl_ops.td
+index 88b894def43..698ea3c17e7 100644
+--- a/tensorflow/compiler/mlir/lite/ir/tfl_ops.td
++++ b/tensorflow/compiler/mlir/lite/ir/tfl_ops.td
+@@ -4859,6 +4859,25 @@ def TFL_SegmentSumOp: TFL_Op<"segment_sum", [
+   let results = (outs TFL_TensorOf<[F32, I32]>:$output);
+ }
+ 
++def TFL_UnsortedSegmentProdOp: TFL_Op<"unsorted_segment_prod", [
++    NoSideEffect,
++    PredOpTrait<"input and output must have same element type",
++      TFL_TCresVTEtIsSameAsOp<0, 0>>]> {
++  let summary = "UnsortedSegmentProd operator";
++
++  let description = [{
++    Computes the product along segments of a tensor.
++  }];
++
++  let arguments = (ins
++    TFL_TensorOf<[F32, I32]>:$input,
++    TFL_I32Tensor:$segment_ids,
++    I32Attr:$num_segments
++  );
++  let results = (outs TFL_TensorOf<[F32, I32]>:$output);
++  let hasOptions = 1;
++}
++
+ def TFL_YieldOp : Op<TFL_Dialect, "yield",
+   [NoSideEffect,
+    Terminator,
+diff --git a/tensorflow/compiler/mlir/lite/tests/legalize-tf.mlir b/tensorflow/compiler/mlir/lite/tests/legalize-tf.mlir
+index 75b6a3f0ee3..b140752d7bd 100644
+--- a/tensorflow/compiler/mlir/lite/tests/legalize-tf.mlir
++++ b/tensorflow/compiler/mlir/lite/tests/legalize-tf.mlir
+@@ -2034,6 +2034,15 @@ func.func @segmentsum_i64(%arg0: tensor<3x3xf32>, %arg1: tensor<i64>) -> tensor<
+   // CHECK: "tfl.segment_sum"
+ }
+ 
++func.func @unsorted_segment_prod(%arg0: tensor<8xf32>, %arg1: tensor<8xi32>) -> tensor<8xf32> {
++  %num_segments = "tf.Const"() {value = dense<8> : tensor<i32>} : () -> tensor<i32>
++  %0 = "tf.UnsortedSegmentProd"(%arg0, %arg1, %num_segments) : (tensor<8xf32>, tensor<8xi32>, tensor<i32>) -> tensor<8xf32>
++  func.return %0 : tensor<8xf32>
++  // CHECK-LABEL: unsorted_segment_prod
++  // CHECK:  [[BCT:%.*]] = "tfl.unsorted_segment_prod"(%arg0, %arg1) {num_segments = 8 : i32} : (tensor<8xf32>, tensor<8xi32>) -> tensor<8xf32>
++  // CHECK:  return [[BCT]] : tensor<8xf32>
++}
++
+ func.func @rfft2d(%arg0: tensor<10x20x10x30xf32>, %arg1: tensor<2xi32>) -> tensor<10x20x10x30xcomplex<f32>> {
+   %0 = "tf.RFFT2D"(%arg0, %arg1) : (tensor<10x20x10x30xf32>, tensor<2xi32>) -> tensor<10x20x10x30xcomplex<f32>>
+   func.return %0 : tensor<10x20x10x30xcomplex<f32>>
+diff --git a/tensorflow/compiler/mlir/lite/tests/mlir2flatbuffer/unsorted_segment_prod.mlir b/tensorflow/compiler/mlir/lite/tests/mlir2flatbuffer/unsorted_segment_prod.mlir
+new file mode 100644
+index 00000000000..bef3580671b
+--- /dev/null
++++ b/tensorflow/compiler/mlir/lite/tests/mlir2flatbuffer/unsorted_segment_prod.mlir
+@@ -0,0 +1,70 @@
++// RUN: flatbuffer_translate -mlir-to-tflite-flatbuffer %s -o - | flatbuffer_to_string - | FileCheck %s
++
++func.func @main(tensor<8xi32>, tensor<8xi32>) -> tensor<8xi32> {
++^bb0(%arg0: tensor<8xi32>, %arg1: tensor<8xi32>):
++// CHECK: {
++// CHECK-NEXT:   version: 3,
++// CHECK-NEXT:   operator_codes: [ {
++// CHECK-NEXT:     deprecated_builtin_code: 127,
++// CHECK-NEXT:     version: 1,
++// CHECK-NEXT:     builtin_code: UNSORTED_SEGMENT_PROD
++// CHECK-NEXT:   } ],
++// CHECK-NEXT:   subgraphs: [ {
++// CHECK-NEXT:     tensors: [ {
++// CHECK-NEXT:       shape: [ 8 ],
++// CHECK-NEXT:       type: INT32,
++// CHECK-NEXT:       buffer: 1,
++// CHECK-NEXT:       name: "arg0",
++// CHECK-NEXT:       quantization: {
++// CHECK-EMPTY:
++// CHECK-NEXT:       }
++// CHECK-NEXT:     }, {
++// CHECK-NEXT:       shape: [ 8 ],
++// CHECK-NEXT:       type: INT32,
++// CHECK-NEXT:       buffer: 2,
++// CHECK-NEXT:       name: "arg1",
++// CHECK-NEXT:       quantization: {
++// CHECK-EMPTY:
++// CHECK-NEXT:       }
++// CHECK-NEXT:     }, {
++// CHECK-NEXT:       shape: [ 8 ],
++// CHECK-NEXT:       type: INT32,
++// CHECK-NEXT:       buffer: 3,
++// CHECK-NEXT:       name: "tfl.unsorted_segment_prod",
++// CHECK-NEXT:       quantization: {
++// CHECK-EMPTY:
++// CHECK-NEXT:       }
++// CHECK-NEXT:     } ],
++// CHECK-NEXT:     inputs: [ 0, 1 ],
++// CHECK-NEXT:     outputs: [ 2 ],
++// CHECK-NEXT:     operators: [ {
++// CHECK-NEXT:       inputs: [ 0, 1 ],
++// CHECK-NEXT:       outputs: [ 2 ]
++// CHECK-NEXT:       builtin_options_type: UnsortedSegmentProdOptions,
++// CHECK-NEXT:       builtin_options: {
++// CHECK-NEXT:       num_segments: 8
++// CHECK-NEXT:       }
++// CHECK-NEXT:     } ]
++// CHECK-NEXT:    name: "main"
++// CHECK-NEXT:   } ],
++// CHECK-NEXT:   description: "MLIR Converted.",
++// CHECK-NEXT:   buffers: [ {
++// CHECK-EMPTY:
++// CHECK-NEXT:   }, {
++// CHECK-EMPTY:
++// CHECK-NEXT:   }, {
++// CHECK-EMPTY:
++// CHECK-NEXT:   }, {
++// CHECK-EMPTY:
++// CHECK-NEXT:   }, {
++// CHECK-NEXT:     data: [ 50, 46, 49, 48, 46, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
++// CHECK-NEXT:   } ],
++// CHECK-NEXT:   metadata: [ {
++// CHECK-NEXT:   name: "min_runtime_version",
++// CHECK-NEXT:   buffer: 4
++// CHECK-NEXT:   } ]
++// CHECK-NEXT:   signature_defs: [ ]
++// CHECK-NEXT: }
++  %0 = "tfl.unsorted_segment_prod"(%arg0, %arg1) {num_segments = 8 : i32} : (tensor<8xi32>, tensor<8xi32>) -> tensor<8xi32>
++  func.return %0 : tensor<8xi32>
++}
+diff --git a/tensorflow/compiler/mlir/lite/transforms/legalize_patterns.td b/tensorflow/compiler/mlir/lite/transforms/legalize_patterns.td
+index f5a69bd7cd1..94c986cc923 100644
+--- a/tensorflow/compiler/mlir/lite/transforms/legalize_patterns.td
++++ b/tensorflow/compiler/mlir/lite/transforms/legalize_patterns.td
+@@ -206,6 +206,11 @@ def LegalizeSqrt : Pat<(TF_SqrtOp $arg), (TFL_SqrtOp $arg)>;
+ def LegalizeSquare : Pat<(TF_SquareOp $arg), (TFL_SquareOp $arg)>;
+ def LegalizeSegmentSum : Pat<(TF_SegmentSumOp $data, $segment_ids),
+                              (TFL_SegmentSumOp $data, (CreateTFCastToInt32Op $segment_ids))>;
++def LegalizeUnsortedSegmentProd :
++  Pat<(TF_UnsortedSegmentProdOp $data, $segment_ids,
++        (Arith_ConstantOp ElementsAttr:$num_segments)),
++      (TFL_UnsortedSegmentProdOp $data, (CreateTFCastToInt32Op $segment_ids),
++        ExtractSingleElementAsInt32:$num_segments)>;
+ def LegalizeSelect : Pat<(TF_SelectOp $cond, $x, $y),
+                          (TFL_SelectOp $cond, $x, $y)>;
+ def LegalizeSelectV2SameStaticShape : Pat<(TF_SelectV2Op:$src_op $cond, $x, $y),
+diff --git a/tensorflow/lite/builtin_ops.h b/tensorflow/lite/builtin_ops.h
+index 75a555bd109..67014928d22 100644
+--- a/tensorflow/lite/builtin_ops.h
++++ b/tensorflow/lite/builtin_ops.h
+@@ -180,6 +180,7 @@ typedef enum {
+   kTfLiteBuiltinGelu = 150,
+   kTfLiteBuiltinDynamicUpdateSlice = 151,
+   kTfLiteBuiltinRelu0To1 = 152,
++  kTfLiteBuiltinUnsortedSegmentProd = 153,
+ } TfLiteBuiltinOperator;
+ 
+ #ifdef __cplusplus
+diff --git a/tensorflow/lite/c/builtin_op_data.h b/tensorflow/lite/c/builtin_op_data.h
+index 7f160972eef..b8fdb7d1f23 100644
+--- a/tensorflow/lite/c/builtin_op_data.h
++++ b/tensorflow/lite/c/builtin_op_data.h
+@@ -518,6 +518,9 @@ typedef struct {
+   bool approximate;
+ } TfLiteGeluParams;
+ 
++typedef struct {
++  int num_segments;
++} TfLiteUnsortedSegmentProdParams;
+ #ifdef __cplusplus
+ }  // extern "C"
+ #endif  // __cplusplus
+diff --git a/tensorflow/lite/core/api/flatbuffer_conversions.cc b/tensorflow/lite/core/api/flatbuffer_conversions.cc
+index bbfb78cbc33..5175d903982 100644
+--- a/tensorflow/lite/core/api/flatbuffer_conversions.cc
++++ b/tensorflow/lite/core/api/flatbuffer_conversions.cc
+@@ -836,6 +836,16 @@ TfLiteStatus ParseOpDataTfLite(const Operator* op, BuiltinOperator op_type,
+       *builtin_data = params.release();
+       return kTfLiteOk;
+     }
++    case BuiltinOperator_UNSORTED_SEGMENT_PROD: {
++      auto params = safe_allocator.Allocate<TfLiteUnsortedSegmentProdParams>();
++      TF_LITE_ENSURE(error_reporter, params != nullptr);
++      if (const auto* unsorted_segment_prod_params =
++              op->builtin_options_as_UnsortedSegmentProdOptions()) {
++        params->num_segments = unsorted_segment_prod_params->num_segments();
++      }
++      *builtin_data = params.release();
++      return kTfLiteOk;
++    }
+     // Below are the ops with no builtin_data structure.
+     // TODO(aselle): Implement call in BuiltinOptions, but nullptrs are
+     // ok for now, since there is no call implementation either.
+diff --git a/tensorflow/lite/core/shims/builtin_ops_list.inc b/tensorflow/lite/core/shims/builtin_ops_list.inc
+index cb1b6470018..f1335263325 100644
+--- a/tensorflow/lite/core/shims/builtin_ops_list.inc
++++ b/tensorflow/lite/core/shims/builtin_ops_list.inc
+@@ -165,3 +165,4 @@ TFLITE_OP(Register_MULTINOMIAL)
+ TFLITE_OP(Register_GELU)
+ TFLITE_OP(Register_DYNAMIC_UPDATE_SLICE)
+ TFLITE_OP(Register_RELU_0_TO_1)
++TFLITE_OP(Register_UNSORTED_SEGMENT_PROD)
+diff --git a/tensorflow/lite/kernels/BUILD b/tensorflow/lite/kernels/BUILD
+index d547eb41b8f..10ed48935a3 100644
+--- a/tensorflow/lite/kernels/BUILD
++++ b/tensorflow/lite/kernels/BUILD
+@@ -649,6 +649,7 @@ BUILTIN_KERNEL_SRCS = [
+     "unidirectional_sequence_rnn.cc",
+     "unique.cc",
+     "unpack.cc",
++    "unsorted_segment_prod.cc",
+     "where.cc",
+     "while.cc",
+     "zeros_like.cc",
+@@ -2754,6 +2755,19 @@ cc_test(
+     ],
+ )
+ 
++cc_test(
++    name = "unsorted_segment_prod_test",
++    size = "small",
++    srcs = ["unsorted_segment_prod_test.cc"],
++    deps = [
++        ":test_main",
++        ":test_util",
++        "//tensorflow/lite/schema:schema_fbs",
++        "@com_google_googletest//:gtest",
++        "@flatbuffers",
++    ],
++)
++
+ tflite_portable_test_suite_combined(
+     combine_conditions = {"deps": [":test_main"]},
+     # TODO(b/229985981) : Remove `nnapi_args` after adding Relu0To1 is completed.
+diff --git a/tensorflow/lite/kernels/builtin_op_kernels.h b/tensorflow/lite/kernels/builtin_op_kernels.h
+index 5af3dce7ea1..01d2016fde1 100644
+--- a/tensorflow/lite/kernels/builtin_op_kernels.h
++++ b/tensorflow/lite/kernels/builtin_op_kernels.h
+@@ -176,6 +176,7 @@ TfLiteRegistration* Register_UNIDIRECTIONAL_SEQUENCE_LSTM();
+ TfLiteRegistration* Register_UNIDIRECTIONAL_SEQUENCE_RNN();
+ TfLiteRegistration* Register_UNIQUE();
+ TfLiteRegistration* Register_UNPACK();
++TfLiteRegistration* Register_UNSORTED_SEGMENT_PROD();
+ TfLiteRegistration* Register_VAR_HANDLE();
+ TfLiteRegistration* Register_WHERE();
+ TfLiteRegistration* Register_WHILE();
+diff --git a/tensorflow/lite/kernels/internal/reference/reference_ops.h b/tensorflow/lite/kernels/internal/reference/reference_ops.h
+index 6166c48d5a5..c6cafa0c7ff 100644
+--- a/tensorflow/lite/kernels/internal/reference/reference_ops.h
++++ b/tensorflow/lite/kernels/internal/reference/reference_ops.h
+@@ -1101,6 +1101,28 @@ inline void SegmentSum(const RuntimeShape& input_shape, const T* input_data,
+   }
+ }
+ 
++template <typename T>
++inline void UnsortedSegmentProd(const RuntimeShape& input_shape,
++                                const T* input_data,
++                                const RuntimeShape& segment_ids_shape,
++                                const int32_t* segment_ids_data,
++                                const int32_t num_segments,
++                                const RuntimeShape& output_shape,
++                                T* output_data) {
++  for (int i = 0; i < output_shape.FlatSize(); ++i) {
++    output_data[i] = 1;
++  }
++  const int segment_flat_size =
++      MatchingFlatSizeSkipDim(input_shape, 0, output_shape);
++  for (int i = 0; i < input_shape.Dims(0); i++) {
++    int output_index = segment_ids_data[i];
++    for (int j = 0; j < segment_flat_size; ++j) {
++      output_data[output_index * segment_flat_size + j] *=
++          input_data[i * segment_flat_size + j];
++    }
++  }
++}
++
+ }  // namespace reference_ops
+ }  // namespace tflite
+ 
+diff --git a/tensorflow/lite/kernels/register.cc b/tensorflow/lite/kernels/register.cc
+index cf11dd7b5b5..7462e11888b 100644
+--- a/tensorflow/lite/kernels/register.cc
++++ b/tensorflow/lite/kernels/register.cc
+@@ -343,6 +343,8 @@ BuiltinOpResolver::BuiltinOpResolver() {
+              /* max_version = */ 2);
+   AddBuiltin(BuiltinOperator_DYNAMIC_UPDATE_SLICE,
+              Register_DYNAMIC_UPDATE_SLICE());
++  AddBuiltin(BuiltinOperator_UNSORTED_SEGMENT_PROD,
++             Register_UNSORTED_SEGMENT_PROD());
+   AddCustom("NumericVerify", tflite::ops::custom::Register_NUMERIC_VERIFY());
+   // TODO(andrewharp, ahentz): Move these somewhere more appropriate so that
+   // custom ops aren't always included by default.
+diff --git a/tensorflow/lite/kernels/register_ref.cc b/tensorflow/lite/kernels/register_ref.cc
+index b180716c75a..0b5d55a6b37 100644
+--- a/tensorflow/lite/kernels/register_ref.cc
++++ b/tensorflow/lite/kernels/register_ref.cc
+@@ -171,6 +171,7 @@ TfLiteRegistration* Register_RANDOM_UNIFORM();
+ TfLiteRegistration* Register_MULTINOMIAL();
+ TfLiteRegistration* Register_GELU();
+ TfLiteRegistration* Register_DYNAMIC_UPDATE_SLICE();
++TfLiteRegistration* Register_UNSORTED_SEGMENT_PROD();
+ 
+ namespace {
+ 
+@@ -499,6 +500,8 @@ BuiltinRefOpResolver::BuiltinRefOpResolver() {
+              /* max_version = */ 2);
+   AddBuiltin(BuiltinOperator_DYNAMIC_UPDATE_SLICE,
+              Register_DYNAMIC_UPDATE_SLICE());
++  AddBuiltin(BuiltinOperator_UNSORTED_SEGMENT_PROD,
++             Register_UNSORTED_SEGMENT_PROD());
+   AddCustom("NumericVerify",
+             tflite::ops::custom::Register_NUMERIC_VERIFY_REF());
+   // TODO(andrewharp, ahentz): Move these somewhere more appropriate so that
+diff --git a/tensorflow/lite/kernels/unsorted_segment_prod.cc b/tensorflow/lite/kernels/unsorted_segment_prod.cc
+new file mode 100644
+index 00000000000..8fc0acb93e9
+--- /dev/null
++++ b/tensorflow/lite/kernels/unsorted_segment_prod.cc
+@@ -0,0 +1,127 @@
++/* Copyright 2022 The TensorFlow Authors. All Rights Reserved.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++==============================================================================*/
++
++#include <stdint.h>
++
++#include "tensorflow/lite/c/common.h"
++#include "tensorflow/lite/kernels/internal/reference/reference_ops.h"
++#include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
++#include "tensorflow/lite/kernels/kernel_util.h"
++
++namespace tflite {
++namespace ops {
++namespace builtin {
++namespace unsorted_segment_prod {
++
++static const int kInputDataTensor = 0;
++static const int kInputSegmentIdsTensor = 1;
++static const int kOutputTensor = 0;
++
++TfLiteStatus ResizeOutputTensor(TfLiteContext* context,
++                                const TfLiteTensor* data,
++                                const int num_segments, TfLiteTensor* output) {
++  const int data_rank = NumDimensions(data);
++  TfLiteIntArray* output_shape = TfLiteIntArrayCreate(NumDimensions(data));
++  output_shape->data[0] = num_segments;
++  for (int i = 1; i < data_rank; ++i) {
++    output_shape->data[i] = data->dims->data[i];
++  }
++  return context->ResizeTensor(context, output, output_shape);
++}
++
++TfLiteStatus Prepare(TfLiteContext* context, TfLiteNode* node) {
++  TF_LITE_ENSURE_EQ(context, NumInputs(node), 2);
++  TF_LITE_ENSURE_EQ(context, NumOutputs(node), 1);
++  const TfLiteTensor* data;
++  TF_LITE_ENSURE_OK(context,
++                    GetInputSafe(context, node, kInputDataTensor, &data));
++  const TfLiteTensor* segment_ids;
++  TF_LITE_ENSURE_OK(context, GetInputSafe(context, node, kInputSegmentIdsTensor,
++                                          &segment_ids));
++  TfLiteTensor* output;
++  TF_LITE_ENSURE_OK(context,
++                    GetOutputSafe(context, node, kOutputTensor, &output));
++  TF_LITE_ENSURE(context,
++                 data->type == kTfLiteInt32 || data->type == kTfLiteFloat32);
++  TF_LITE_ENSURE_EQ(context, segment_ids->type, kTfLiteInt32);
++
++  if (!IsConstantTensor(data) || !IsConstantTensor(segment_ids)) {
++    SetTensorToDynamic(output);
++    return kTfLiteOk;
++  }
++
++  const auto no_segments =
++      reinterpret_cast<const TfLiteUnsortedSegmentProdParams*>(
++          node->builtin_data)
++          ->num_segments;
++  return ResizeOutputTensor(context, data, no_segments, output);
++}
++
++TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) {
++  const auto* params = reinterpret_cast<const TfLiteUnsortedSegmentProdParams*>(
++      node->builtin_data);
++  const TfLiteTensor* data;
++  TF_LITE_ENSURE_OK(context,
++                    GetInputSafe(context, node, kInputDataTensor, &data));
++  const TfLiteTensor* segment_ids;
++  TF_LITE_ENSURE_OK(context, GetInputSafe(context, node, kInputSegmentIdsTensor,
++                                          &segment_ids));
++  TfLiteTensor* output;
++  TF_LITE_ENSURE_OK(context,
++                    GetOutputSafe(context, node, kOutputTensor, &output));
++
++  if (IsDynamicTensor(output)) {
++    TF_LITE_ENSURE_OK(
++        context,
++        ResizeOutputTensor(context, data, params->num_segments, output));
++  }
++  TF_LITE_ENSURE_EQ(context, GetTensorShape(data).Dims(0),
++                    GetTensorShape(segment_ids).Dims(0));
++
++#define TF_LITE_UNSORTED_SEGMENT_PROD(dtype)                            \
++  reference_ops::UnsortedSegmentProd<dtype>(                            \
++      GetTensorShape(data), GetTensorData<dtype>(data),                 \
++      GetTensorShape(segment_ids), GetTensorData<int32_t>(segment_ids), \
++      params->num_segments, GetTensorShape(output),                     \
++      GetTensorData<dtype>(output));
++  switch (data->type) {
++    case kTfLiteInt32:
++      TF_LITE_UNSORTED_SEGMENT_PROD(int32_t);
++      break;
++    case kTfLiteFloat32:
++      TF_LITE_UNSORTED_SEGMENT_PROD(float);
++      break;
++    default:
++      TF_LITE_KERNEL_LOG(
++          context, "Currently UnsortedSegmentProd doesn't support type: %s",
++          TfLiteTypeGetName(data->type));
++      return kTfLiteError;
++  }
++#undef TF_LITE_UNSORTED_SEGMENT_PROD
++  return kTfLiteOk;
++}
++
++}  // namespace unsorted_segment_prod
++
++TfLiteRegistration* Register_UNSORTED_SEGMENT_PROD() {
++  static TfLiteRegistration r = {nullptr, nullptr,
++                                 unsorted_segment_prod::Prepare,
++                                 unsorted_segment_prod::Eval};
++  return &r;
++}
++
++}  // namespace builtin
++}  // namespace ops
++}  // namespace tflite
+diff --git a/tensorflow/lite/kernels/unsorted_segment_prod_test.cc b/tensorflow/lite/kernels/unsorted_segment_prod_test.cc
+new file mode 100644
+index 00000000000..d892943d9a8
+--- /dev/null
++++ b/tensorflow/lite/kernels/unsorted_segment_prod_test.cc
+@@ -0,0 +1,102 @@
++/* Copyright 2022 The TensorFlow Authors. All Rights Reserved.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++==============================================================================*/
++#include <stdint.h>
++
++#include <vector>
++
++#include <gtest/gtest.h>
++#include "tensorflow/lite/kernels/test_util.h"
++#include "tensorflow/lite/schema/schema_generated.h"
++
++namespace tflite {
++namespace {
++
++using ::testing::ElementsAreArray;
++
++template <typename T>
++class UnsortedSegmentProdOpModel : public SingleOpModel {
++ public:
++  UnsortedSegmentProdOpModel(const TensorData& data,
++                             const TensorData& segment_ids, int num_segments) {
++    data_id_ = AddInput(data);
++    segment_ids_id_ = AddInput(segment_ids);
++    output_id_ = AddOutput(data.type);
++    SetBuiltinOp(
++        BuiltinOperator_UNSORTED_SEGMENT_PROD,
++        BuiltinOptions_UnsortedSegmentProdOptions,
++        CreateUnsortedSegmentProdOptions(builder_, num_segments).Union());
++    BuildInterpreter({GetShape(data_id_), GetShape(segment_ids_id_)});
++  }
++
++  int data() const { return data_id_; }
++  int segment_ids() const { return segment_ids_id_; }
++  std::vector<T> GetOutput() { return ExtractVector<T>(output_id_); }
++  std::vector<int32_t> GetOutputShape() { return GetTensorShape(output_id_); }
++
++ protected:
++  int data_id_;
++  int segment_ids_id_;
++  int output_id_;
++};
++
++TEST(UnsortedSegmentProdOpModelTest, Int32Test_Simple) {
++  UnsortedSegmentProdOpModel<int32_t> model({TensorType_INT32, {8}},
++                                            {TensorType_INT32, {8}}, 8);
++  model.PopulateTensor<int32_t>(model.data(), {1, 2, 3, 4, 4, 3, 2, 1});
++  model.PopulateTensor<int32_t>(model.segment_ids(), {1, 0, 1, 7, 7, 7, 7, 7});
++  ASSERT_EQ(model.Invoke(), kTfLiteOk);
++  EXPECT_THAT(model.GetOutput(), ElementsAreArray({2, 3, 1, 1, 1, 1, 1, 96}));
++  EXPECT_THAT(model.GetOutputShape(), ElementsAreArray({8}));
++}
++
++TEST(UnsortedSegmentProdOpModelTest, Int32Test_Simple2D) {
++  UnsortedSegmentProdOpModel<int32_t> model({TensorType_INT32, {3, 4}},
++                                            {TensorType_INT32, {3}}, 2);
++  model.PopulateTensor<int32_t>(model.data(),
++                                {1, 2, 3, 4, 5, 6, 7, 8, 4, 3, 2, 1});
++  model.PopulateTensor<int32_t>(model.segment_ids(), {0, 1, 0});
++  ASSERT_EQ(model.Invoke(), kTfLiteOk);
++  EXPECT_THAT(model.GetOutput(), ElementsAreArray({4, 6, 6, 4, 5, 6, 7, 8}));
++  EXPECT_THAT(model.GetOutputShape(), ElementsAreArray({2, 4}));
++}
++
++TEST(UnsortedSegmentProdOpModelTest, FloatTest_Simple) {
++  UnsortedSegmentProdOpModel<float> model({TensorType_FLOAT32, {8}},
++                                          {TensorType_INT32, {8}}, 8);
++  model.PopulateTensor<float>(model.data(),
++                              {1.0, 2.0, 3.0, 4.0, 4.0, 3.0, 2.0, 1.0});
++  model.PopulateTensor<int32_t>(model.segment_ids(), {1, 0, 1, 7, 7, 7, 7, 7});
++  ASSERT_EQ(model.Invoke(), kTfLiteOk);
++  EXPECT_THAT(model.GetOutput(),
++              ElementsAreArray(
++                  ArrayFloatNear({2.0, 3.0, 1.0, 1.0, 1.0, 1.0, 1.0, 96.0})));
++  EXPECT_THAT(model.GetOutputShape(), ElementsAreArray({8}));
++}
++
++TEST(UnsortedSegmentProdOpModelTest, FloatTest_Simple2D) {
++  UnsortedSegmentProdOpModel<float> model({TensorType_FLOAT32, {3, 4}},
++                                          {TensorType_INT32, {3}}, 2);
++  model.PopulateTensor<float>(model.data(), {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0,
++                                             8.0, 4.0, 3.0, 2.0, 1.0});
++  model.PopulateTensor<int32_t>(model.segment_ids(), {0, 1, 0});
++  ASSERT_EQ(model.Invoke(), kTfLiteOk);
++  EXPECT_THAT(model.GetOutput(),
++              ElementsAreArray(
++                  ArrayFloatNear({4.0, 6.0, 6.0, 4.0, 5.0, 6.0, 7.0, 8.0})));
++  EXPECT_THAT(model.GetOutputShape(), ElementsAreArray({2, 4}));
++}
++
++}  // namespace
++}  // namespace tflite
+diff --git a/tensorflow/lite/schema/schema.fbs b/tensorflow/lite/schema/schema.fbs
+index d7320e3d263..af5cf48a109 100644
+--- a/tensorflow/lite/schema/schema.fbs
++++ b/tensorflow/lite/schema/schema.fbs
+@@ -387,6 +387,7 @@ enum BuiltinOperator : int32 {
+   GELU = 150,
+   DYNAMIC_UPDATE_SLICE = 151,
+   RELU_0_TO_1 = 152,
++  UNSORTED_SEGMENT_PROD = 153,
+ }
+ // LINT.ThenChange(nnapi_linter/linter.proto)
+ 
+@@ -509,6 +510,7 @@ union BuiltinOptions {
+   BucketizeOptions,
+   GeluOptions,
+   DynamicUpdateSliceOptions,
++  UnsortedSegmentProdOptions,
+ }
+ 
+ enum Padding : byte { SAME, VALID }
+@@ -1110,6 +1112,10 @@ table GeluOptions {
+ table DynamicUpdateSliceOptions {
+ }
+ 
++table UnsortedSegmentProdOptions {
++  num_segments:int;
++}
++
+ // An OperatorCode can be an enum value (BuiltinOperator) if the operator is a
+ // builtin, or a string if the operator is custom.
+ table OperatorCode {
+diff --git a/tensorflow/lite/schema/schema_generated.h b/tensorflow/lite/schema/schema_generated.h
+index 5536e89821c..d30dbfe8dfa 100755
+--- a/tensorflow/lite/schema/schema_generated.h
++++ b/tensorflow/lite/schema/schema_generated.h
+@@ -397,6 +397,9 @@ struct GeluOptionsT;
+ struct DynamicUpdateSliceOptions;
+ struct DynamicUpdateSliceOptionsT;
+ 
++struct UnsortedSegmentProdOptions;
++struct UnsortedSegmentProdOptionsT;
++
+ struct OperatorCode;
+ struct OperatorCodeT;
+ 
+@@ -876,11 +879,12 @@ enum BuiltinOperator {
+   BuiltinOperator_GELU = 150,
+   BuiltinOperator_DYNAMIC_UPDATE_SLICE = 151,
+   BuiltinOperator_RELU_0_TO_1 = 152,
++  BuiltinOperator_UNSORTED_SEGMENT_PROD = 153,
+   BuiltinOperator_MIN = BuiltinOperator_ADD,
+-  BuiltinOperator_MAX = BuiltinOperator_RELU_0_TO_1
++  BuiltinOperator_MAX = BuiltinOperator_UNSORTED_SEGMENT_PROD
+ };
+ 
+-inline const BuiltinOperator (&EnumValuesBuiltinOperator())[153] {
++inline const BuiltinOperator (&EnumValuesBuiltinOperator())[154] {
+   static const BuiltinOperator values[] = {
+     BuiltinOperator_ADD,
+     BuiltinOperator_AVERAGE_POOL_2D,
+@@ -1034,13 +1038,14 @@ inline const BuiltinOperator (&EnumValuesBuiltinOperator())[153] {
+     BuiltinOperator_MULTINOMIAL,
+     BuiltinOperator_GELU,
+     BuiltinOperator_DYNAMIC_UPDATE_SLICE,
+-    BuiltinOperator_RELU_0_TO_1
++    BuiltinOperator_RELU_0_TO_1,
++    BuiltinOperator_UNSORTED_SEGMENT_PROD
+   };
+   return values;
+ }
+ 
+ inline const char * const *EnumNamesBuiltinOperator() {
+-  static const char * const names[154] = {
++  static const char * const names[155] = {
+     "ADD",
+     "AVERAGE_POOL_2D",
+     "CONCATENATION",
+@@ -1194,13 +1199,14 @@ inline const char * const *EnumNamesBuiltinOperator() {
+     "GELU",
+     "DYNAMIC_UPDATE_SLICE",
+     "RELU_0_TO_1",
++    "UNSORTED_SEGMENT_PROD",
+     nullptr
+   };
+   return names;
+ }
+ 
+ inline const char *EnumNameBuiltinOperator(BuiltinOperator e) {
+-  if (flatbuffers::IsOutRange(e, BuiltinOperator_ADD, BuiltinOperator_RELU_0_TO_1)) return "";
++  if (flatbuffers::IsOutRange(e, BuiltinOperator_ADD, BuiltinOperator_UNSORTED_SEGMENT_PROD)) return "";
+   const size_t index = static_cast<size_t>(e);
+   return EnumNamesBuiltinOperator()[index];
+ }
+@@ -1324,11 +1330,12 @@ enum BuiltinOptions {
+   BuiltinOptions_BucketizeOptions = 115,
+   BuiltinOptions_GeluOptions = 116,
+   BuiltinOptions_DynamicUpdateSliceOptions = 117,
++  BuiltinOptions_UnsortedSegmentProdOptions = 118,
+   BuiltinOptions_MIN = BuiltinOptions_NONE,
+-  BuiltinOptions_MAX = BuiltinOptions_DynamicUpdateSliceOptions
++  BuiltinOptions_MAX = BuiltinOptions_UnsortedSegmentProdOptions
+ };
+ 
+-inline const BuiltinOptions (&EnumValuesBuiltinOptions())[118] {
++inline const BuiltinOptions (&EnumValuesBuiltinOptions())[119] {
+   static const BuiltinOptions values[] = {
+     BuiltinOptions_NONE,
+     BuiltinOptions_Conv2DOptions,
+@@ -1447,13 +1454,14 @@ inline const BuiltinOptions (&EnumValuesBuiltinOptions())[118] {
+     BuiltinOptions_RandomOptions,
+     BuiltinOptions_BucketizeOptions,
+     BuiltinOptions_GeluOptions,
+-    BuiltinOptions_DynamicUpdateSliceOptions
++    BuiltinOptions_DynamicUpdateSliceOptions,
++    BuiltinOptions_UnsortedSegmentProdOptions
+   };
+   return values;
+ }
+ 
+ inline const char * const *EnumNamesBuiltinOptions() {
+-  static const char * const names[119] = {
++  static const char * const names[120] = {
+     "NONE",
+     "Conv2DOptions",
+     "DepthwiseConv2DOptions",
+@@ -1572,13 +1580,14 @@ inline const char * const *EnumNamesBuiltinOptions() {
+     "BucketizeOptions",
+     "GeluOptions",
+     "DynamicUpdateSliceOptions",
++    "UnsortedSegmentProdOptions",
+     nullptr
+   };
+   return names;
+ }
+ 
+ inline const char *EnumNameBuiltinOptions(BuiltinOptions e) {
+-  if (flatbuffers::IsOutRange(e, BuiltinOptions_NONE, BuiltinOptions_DynamicUpdateSliceOptions)) return "";
++  if (flatbuffers::IsOutRange(e, BuiltinOptions_NONE, BuiltinOptions_UnsortedSegmentProdOptions)) return "";
+   const size_t index = static_cast<size_t>(e);
+   return EnumNamesBuiltinOptions()[index];
+ }
+@@ -2055,6 +2064,10 @@ template<> struct BuiltinOptionsTraits<tflite::DynamicUpdateSliceOptions> {
+   static const BuiltinOptions enum_value = BuiltinOptions_DynamicUpdateSliceOptions;
+ };
+ 
++template<> struct BuiltinOptionsTraits<tflite::UnsortedSegmentProdOptions> {
++  static const BuiltinOptions enum_value = BuiltinOptions_UnsortedSegmentProdOptions;
++};
++
+ struct BuiltinOptionsUnion {
+   BuiltinOptions type;
+   void *value;
+@@ -3023,6 +3036,14 @@ struct BuiltinOptionsUnion {
+     return type == BuiltinOptions_DynamicUpdateSliceOptions ?
+       reinterpret_cast<const tflite::DynamicUpdateSliceOptionsT *>(value) : nullptr;
+   }
++  tflite::UnsortedSegmentProdOptionsT *AsUnsortedSegmentProdOptions() {
++    return type == BuiltinOptions_UnsortedSegmentProdOptions ?
++      reinterpret_cast<tflite::UnsortedSegmentProdOptionsT *>(value) : nullptr;
++  }
++  const tflite::UnsortedSegmentProdOptionsT *AsUnsortedSegmentProdOptions() const {
++    return type == BuiltinOptions_UnsortedSegmentProdOptions ?
++      reinterpret_cast<const tflite::UnsortedSegmentProdOptionsT *>(value) : nullptr;
++  }
+ };
+ 
+ bool VerifyBuiltinOptions(flatbuffers::Verifier &verifier, const void *obj, BuiltinOptions type);
+@@ -10662,6 +10683,60 @@ inline flatbuffers::Offset<DynamicUpdateSliceOptions> CreateDynamicUpdateSliceOp
+ 
+ flatbuffers::Offset<DynamicUpdateSliceOptions> CreateDynamicUpdateSliceOptions(flatbuffers::FlatBufferBuilder &_fbb, const DynamicUpdateSliceOptionsT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
+ 
++struct UnsortedSegmentProdOptionsT : public flatbuffers::NativeTable {
++  typedef UnsortedSegmentProdOptions TableType;
++  int32_t num_segments;
++  UnsortedSegmentProdOptionsT()
++      : num_segments(0) {
++  }
++};
++
++struct UnsortedSegmentProdOptions FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
++  typedef UnsortedSegmentProdOptionsT NativeTableType;
++  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
++    VT_NUM_SEGMENTS = 4
++  };
++  int32_t num_segments() const {
++    return GetField<int32_t>(VT_NUM_SEGMENTS, 0);
++  }
++  bool Verify(flatbuffers::Verifier &verifier) const {
++    return VerifyTableStart(verifier) &&
++           VerifyField<int32_t>(verifier, VT_NUM_SEGMENTS) &&
++           verifier.EndTable();
++  }
++  UnsortedSegmentProdOptionsT *UnPack(const flatbuffers::resolver_function_t *_resolver = nullptr) const;
++  void UnPackTo(UnsortedSegmentProdOptionsT *_o, const flatbuffers::resolver_function_t *_resolver = nullptr) const;
++  static flatbuffers::Offset<UnsortedSegmentProdOptions> Pack(flatbuffers::FlatBufferBuilder &_fbb, const UnsortedSegmentProdOptionsT* _o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
++};
++
++struct UnsortedSegmentProdOptionsBuilder {
++  flatbuffers::FlatBufferBuilder &fbb_;
++  flatbuffers::uoffset_t start_;
++  void add_num_segments(int32_t num_segments) {
++    fbb_.AddElement<int32_t>(UnsortedSegmentProdOptions::VT_NUM_SEGMENTS, num_segments, 0);
++  }
++  explicit UnsortedSegmentProdOptionsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
++        : fbb_(_fbb) {
++    start_ = fbb_.StartTable();
++  }
++  UnsortedSegmentProdOptionsBuilder &operator=(const UnsortedSegmentProdOptionsBuilder &);
++  flatbuffers::Offset<UnsortedSegmentProdOptions> Finish() {
++    const auto end = fbb_.EndTable(start_);
++    auto o = flatbuffers::Offset<UnsortedSegmentProdOptions>(end);
++    return o;
++  }
++};
++
++inline flatbuffers::Offset<UnsortedSegmentProdOptions> CreateUnsortedSegmentProdOptions(
++    flatbuffers::FlatBufferBuilder &_fbb,
++    int32_t num_segments = 0) {
++  UnsortedSegmentProdOptionsBuilder builder_(_fbb);
++  builder_.add_num_segments(num_segments);
++  return builder_.Finish();
++}
++
++flatbuffers::Offset<UnsortedSegmentProdOptions> CreateUnsortedSegmentProdOptions(flatbuffers::FlatBufferBuilder &_fbb, const UnsortedSegmentProdOptionsT *_o, const flatbuffers::rehasher_function_t *_rehasher = nullptr);
++
+ struct OperatorCodeT : public flatbuffers::NativeTable {
+   typedef OperatorCode TableType;
+   int8_t deprecated_builtin_code;
+@@ -11163,6 +11238,9 @@ struct Operator FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   const tflite::DynamicUpdateSliceOptions *builtin_options_as_DynamicUpdateSliceOptions() const {
+     return builtin_options_type() == tflite::BuiltinOptions_DynamicUpdateSliceOptions ? static_cast<const tflite::DynamicUpdateSliceOptions *>(builtin_options()) : nullptr;
+   }
++  const tflite::UnsortedSegmentProdOptions *builtin_options_as_UnsortedSegmentProdOptions() const {
++    return builtin_options_type() == tflite::BuiltinOptions_UnsortedSegmentProdOptions ? static_cast<const tflite::UnsortedSegmentProdOptions *>(builtin_options()) : nullptr;
++  }
+   const flatbuffers::Vector<uint8_t> *custom_options() const {
+     return GetPointer<const flatbuffers::Vector<uint8_t> *>(VT_CUSTOM_OPTIONS);
+   }
+@@ -11667,6 +11745,10 @@ template<> inline const tflite::DynamicUpdateSliceOptions *Operator::builtin_opt
+   return builtin_options_as_DynamicUpdateSliceOptions();
+ }
+ 
++template<> inline const tflite::UnsortedSegmentProdOptions *Operator::builtin_options_as<tflite::UnsortedSegmentProdOptions>() const {
++  return builtin_options_as_UnsortedSegmentProdOptions();
++}
++
+ struct OperatorBuilder {
+   flatbuffers::FlatBufferBuilder &fbb_;
+   flatbuffers::uoffset_t start_;
+@@ -15776,6 +15858,32 @@ inline flatbuffers::Offset<DynamicUpdateSliceOptions> CreateDynamicUpdateSliceOp
+       _fbb);
+ }
+ 
++inline UnsortedSegmentProdOptionsT *UnsortedSegmentProdOptions::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
++  auto _o = new UnsortedSegmentProdOptionsT();
++  UnPackTo(_o, _resolver);
++  return _o;
++}
++
++inline void UnsortedSegmentProdOptions::UnPackTo(UnsortedSegmentProdOptionsT *_o, const flatbuffers::resolver_function_t *_resolver) const {
++  (void)_o;
++  (void)_resolver;
++  { auto _e = num_segments(); _o->num_segments = _e; }
++}
++
++inline flatbuffers::Offset<UnsortedSegmentProdOptions> UnsortedSegmentProdOptions::Pack(flatbuffers::FlatBufferBuilder &_fbb, const UnsortedSegmentProdOptionsT* _o, const flatbuffers::rehasher_function_t *_rehasher) {
++  return CreateUnsortedSegmentProdOptions(_fbb, _o, _rehasher);
++}
++
++inline flatbuffers::Offset<UnsortedSegmentProdOptions> CreateUnsortedSegmentProdOptions(flatbuffers::FlatBufferBuilder &_fbb, const UnsortedSegmentProdOptionsT *_o, const flatbuffers::rehasher_function_t *_rehasher) {
++  (void)_rehasher;
++  (void)_o;
++  struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const UnsortedSegmentProdOptionsT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
++  auto _num_segments = _o->num_segments;
++  return tflite::CreateUnsortedSegmentProdOptions(
++      _fbb,
++      _num_segments);
++}
++
+ inline OperatorCodeT *OperatorCode::UnPack(const flatbuffers::resolver_function_t *_resolver) const {
+   auto _o = new OperatorCodeT();
+   UnPackTo(_o, _resolver);
+@@ -16719,6 +16827,10 @@ inline bool VerifyBuiltinOptions(flatbuffers::Verifier &verifier, const void *ob
+       auto ptr = reinterpret_cast<const tflite::DynamicUpdateSliceOptions *>(obj);
+       return verifier.VerifyTable(ptr);
+     }
++    case BuiltinOptions_UnsortedSegmentProdOptions: {
++      auto ptr = reinterpret_cast<const tflite::UnsortedSegmentProdOptions *>(obj);
++      return verifier.VerifyTable(ptr);
++    }
+     default: return true;
+   }
+ }
+@@ -17205,6 +17317,10 @@ inline void *BuiltinOptionsUnion::UnPack(const void *obj, BuiltinOptions type, c
+       auto ptr = reinterpret_cast<const tflite::DynamicUpdateSliceOptions *>(obj);
+       return ptr->UnPack(resolver);
+     }
++    case BuiltinOptions_UnsortedSegmentProdOptions: {
++      auto ptr = reinterpret_cast<const tflite::UnsortedSegmentProdOptions *>(obj);
++      return ptr->UnPack(resolver);
++    }
+     default: return nullptr;
+   }
+ }
+@@ -17679,6 +17795,10 @@ inline flatbuffers::Offset<void> BuiltinOptionsUnion::Pack(flatbuffers::FlatBuff
+       auto ptr = reinterpret_cast<const tflite::DynamicUpdateSliceOptionsT *>(value);
+       return CreateDynamicUpdateSliceOptions(_fbb, ptr, _rehasher).Union();
+     }
++    case BuiltinOptions_UnsortedSegmentProdOptions: {
++      auto ptr = reinterpret_cast<const tflite::UnsortedSegmentProdOptionsT *>(value);
++      return CreateUnsortedSegmentProdOptions(_fbb, ptr, _rehasher).Union();
++    }
+     default: return 0;
+   }
+ }
+@@ -18153,6 +18273,10 @@ inline BuiltinOptionsUnion::BuiltinOptionsUnion(const BuiltinOptionsUnion &u) FL
+       value = new tflite::DynamicUpdateSliceOptionsT(*reinterpret_cast<tflite::DynamicUpdateSliceOptionsT *>(u.value));
+       break;
+     }
++    case BuiltinOptions_UnsortedSegmentProdOptions: {
++      value = new tflite::UnsortedSegmentProdOptionsT(*reinterpret_cast<tflite::UnsortedSegmentProdOptionsT *>(u.value));
++      break;
++    }
+     default:
+       break;
+   }
+@@ -18745,6 +18869,11 @@ inline void BuiltinOptionsUnion::Reset() {
+       delete ptr;
+       break;
+     }
++    case BuiltinOptions_UnsortedSegmentProdOptions: {
++      auto ptr = reinterpret_cast<tflite::UnsortedSegmentProdOptionsT *>(value);
++      delete ptr;
++      break;
++    }
+     default: break;
+   }
+   value = nullptr;
+diff --git a/tensorflow/lite/tools/serialization/option_writer_generator.cc b/tensorflow/lite/tools/serialization/option_writer_generator.cc
+index 0c9172f0dab..5393a6df39d 100644
+--- a/tensorflow/lite/tools/serialization/option_writer_generator.cc
++++ b/tensorflow/lite/tools/serialization/option_writer_generator.cc
+@@ -95,6 +95,7 @@ static const char* param_structs[] = {"TfLiteAddParams",
+                                       "TfLiteHashtableSizeParams",
+                                       "TfLiteConv3DTransposeParams",
+                                       "TfLiteVarHandleParams",
++                                      "TfLiteUnsortedSegmentProdParams",
+                                       nullptr};
+ }  // namespace
+ 
+diff --git a/tensorflow/lite/tools/versioning/runtime_version.cc b/tensorflow/lite/tools/versioning/runtime_version.cc
+index 034f90893e0..605d25c68ae 100644
+--- a/tensorflow/lite/tools/versioning/runtime_version.cc
++++ b/tensorflow/lite/tools/versioning/runtime_version.cc
+@@ -377,6 +377,7 @@ std::string FindMinimumRuntimeVersionForOp(tflite::BuiltinOperator op_code,
+               {{BuiltinOperator_GELU, 1}, "2.9.0"},
+               {{BuiltinOperator_GELU, 2}, "2.9.0"},
+               {{BuiltinOperator_DYNAMIC_UPDATE_SLICE, 1}, "2.9.0"},
++              {{BuiltinOperator_UNSORTED_SEGMENT_PROD, 1}, "2.10.0"},
+           });
+ 
+   std::pair<BuiltinOperator, int> version_key = {op_code, op_version};

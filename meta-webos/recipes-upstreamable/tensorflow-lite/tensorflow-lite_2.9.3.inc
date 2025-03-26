@@ -11,8 +11,8 @@ SRCREV_FORMAT = "tensorflow"
 # Matches v${PV} tag
 SRCREV_tensorflow = "a5ed5f39b675a1c6f315e0caf3ad4b38478fa571"
 
-# v1.12.0
-SRCREV_flatbuffers = "6df40a2471737b27271bdd9b900ab5f3aec746c7"
+# v2.0.6
+SRCREV_flatbuffers = "3d79a88adb0eceb2ab5ff994c9b4c03b4b3c0daf"
 SRCREV_eigen = "008ff3483a8c5604639e1c4d204eae30ad737af6"
 SRCREV_neon2sse = "1200fe90bb174a6224a525ee60148671a786a71f"
 SRCREV_fft2d = "c6fd2dd6d21397baa6653139d31d84540d5449a2"
@@ -44,6 +44,14 @@ SRC_URI += " \
     file://0007-enable-nnapi-delegate.patch \
     file://0008-Fix-memory-leak-from-xnnpack-delegate.patch \
     file://0009-Pass-the-RNN-nodes-not-checking-if-it-iss-half_pixel.patch \
+    \
+    file://0007-Allow-to-set-XNNpack-flag-options-via-tflite-acceler.patch \
+    file://0008-Add-support-for-disabling-default-XNNPack-delegate-i.patch \
+    file://0009-Add-RELU_0_TO_1-into-TensorFlow-Lite-schema.patch \
+    file://0010-lite-Add-unsorted_segment_prod-support.patch \
+    file://0011-lite-Switch-to-Flatbuffer-2.0.5.patch \
+    file://0012-Update-FlatBuffer-to-2.0.6.patch \
+    file://0013-tensorflow-lite-delegates-gpu-gl-regen-with-flatc-2..patch \
     file://0014-Fix-build-with-gcc-13.patch \
     file://CVE2023/0001-CVE-2023-25659-Add-out-of-bounds-array-check-to-dynamic_stitch_op.patch \
     file://CVE2023/0002-CVE-2023-25660-Quick-fix-for-a-vuln-in-printing-empty-tensors.patch \
@@ -67,7 +75,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r8"
+PR = "r9"
 S = "${WORKDIR}/git"
 
 DEPENDS += " \

@@ -1,0 +1,273 @@
+From ad10688adf69bf32b80071ac03d6bdd710ef7de1 Mon Sep 17 00:00:00 2001
+From: "A. Unique TensorFlower" <gardener@tensorflow.org>
+Date: Tue, 19 Apr 2022 05:45:38 -0700
+Subject: [PATCH] Allow to set XNNpack flag options via tflite accelerator
+ settings.
+
+PiperOrigin-RevId: 442787799
+---
+Upstream-Status: Pending
+
+ .../configuration/configuration.proto         | 14 ++++
+ .../configuration/configuration_generated.h   | 65 +++++++++++++++++--
+ .../configuration/flatbuffer_to_proto.cc      |  1 +
+ .../configuration/flatbuffer_to_proto_test.cc |  3 +
+ .../configuration/proto_to_flatbuffer.cc      |  8 ++-
+ .../configuration/xnnpack_plugin.cc           |  1 +
+ .../configuration/xnnpack_plugin_test.cc      |  8 ++-
+ 7 files changed, 92 insertions(+), 8 deletions(-)
+
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/configuration.proto b/tensorflow/lite/experimental/acceleration/configuration/configuration.proto
+index fe8b738d7a4..5bd3f109400 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/configuration.proto
++++ b/tensorflow/lite/experimental/acceleration/configuration/configuration.proto
+@@ -258,8 +258,22 @@ message HexagonSettings {
+ //
+ // See
+ // https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h
++enum XNNPackFlags {
++  // These flags match the flags in xnnpack_delegate.h.
++  TFLITE_XNNPACK_DELEGATE_NO_FLAGS = 0;
++  // Enable fast signed integer XNNpack kernels.
++  TFLITE_XNNPACK_DELEGATE_FLAG_QS8 = 1;
++  // Enable fast unsigned integer XNNpack kernels.
++  TFLITE_XNNPACK_DELEGATE_FLAG_QU8 = 2;
++  // Enable both, signed and unsigned integer XNNpack kernels.
++  TFLITE_XNNPACK_DELEGATE_FLAG_QS8_QU8 = 3;
++  // Force 16-bit floating point inference.
++  TFLITE_XNNPACK_DELEGATE_FLAG_FORCE_FP16 = 4;
++}
++
+ message XNNPackSettings {
+   optional int32 num_threads = 1;
++  optional XNNPackFlags flags = 2 [default = TFLITE_XNNPACK_DELEGATE_NO_FLAGS];
+ }
+ 
+ // CoreML Delegate settings.
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/configuration_generated.h b/tensorflow/lite/experimental/acceleration/configuration/configuration_generated.h
+index 40b0f0322bc..c3ccb96a18c 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/configuration_generated.h
++++ b/tensorflow/lite/experimental/acceleration/configuration/configuration_generated.h
+@@ -398,6 +398,45 @@ inline const char *EnumNameGPUInferenceUsage(GPUInferenceUsage e) {
+   return EnumNamesGPUInferenceUsage()[index];
+ }
+ 
++enum XNNPackFlags {
++  XNNPackFlags_TFLITE_XNNPACK_DELEGATE_NO_FLAGS = 0,
++  XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QS8 = 1,
++  XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QU8 = 2,
++  XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QS8_QU8 = 3,
++  XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_FORCE_FP16 = 4,
++  XNNPackFlags_MIN = XNNPackFlags_TFLITE_XNNPACK_DELEGATE_NO_FLAGS,
++  XNNPackFlags_MAX = XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_FORCE_FP16
++};
++
++inline const XNNPackFlags (&EnumValuesXNNPackFlags())[5] {
++  static const XNNPackFlags values[] = {
++    XNNPackFlags_TFLITE_XNNPACK_DELEGATE_NO_FLAGS,
++    XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QS8,
++    XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QU8,
++    XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QS8_QU8,
++    XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_FORCE_FP16
++  };
++  return values;
++}
++
++inline const char * const *EnumNamesXNNPackFlags() {
++  static const char * const names[6] = {
++    "TFLITE_XNNPACK_DELEGATE_NO_FLAGS",
++    "TFLITE_XNNPACK_DELEGATE_FLAG_QS8",
++    "TFLITE_XNNPACK_DELEGATE_FLAG_QU8",
++    "TFLITE_XNNPACK_DELEGATE_FLAG_QS8_QU8",
++    "TFLITE_XNNPACK_DELEGATE_FLAG_FORCE_FP16",
++    nullptr
++  };
++  return names;
++}
++
++inline const char *EnumNameXNNPackFlags(XNNPackFlags e) {
++  if (flatbuffers::IsOutRange(e, XNNPackFlags_TFLITE_XNNPACK_DELEGATE_NO_FLAGS, XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_FORCE_FP16)) return "";
++  const size_t index = static_cast<size_t>(e);
++  return EnumNamesXNNPackFlags()[index];
++}
++
+ namespace CoreMLSettings_ {
+ 
+ enum EnabledDevices {
+@@ -1319,22 +1358,29 @@ flatbuffers::Offset<HexagonSettings> CreateHexagonSettings(flatbuffers::FlatBuff
+ struct XNNPackSettingsT : public flatbuffers::NativeTable {
+   typedef XNNPackSettings TableType;
+   int32_t num_threads;
++  tflite::XNNPackFlags flags;
+   XNNPackSettingsT()
+-      : num_threads(0) {
++      : num_threads(0),
++        flags(tflite::XNNPackFlags_TFLITE_XNNPACK_DELEGATE_NO_FLAGS) {
+   }
+ };
+ 
+ struct XNNPackSettings FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   typedef XNNPackSettingsT NativeTableType;
+   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+-    VT_NUM_THREADS = 4
++    VT_NUM_THREADS = 4,
++    VT_FLAGS = 6
+   };
+   int32_t num_threads() const {
+     return GetField<int32_t>(VT_NUM_THREADS, 0);
+   }
++  tflite::XNNPackFlags flags() const {
++    return static_cast<tflite::XNNPackFlags>(GetField<int32_t>(VT_FLAGS, 0));
++  }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+            VerifyField<int32_t>(verifier, VT_NUM_THREADS) &&
++           VerifyField<int32_t>(verifier, VT_FLAGS) &&
+            verifier.EndTable();
+   }
+   XNNPackSettingsT *UnPack(const flatbuffers::resolver_function_t *_resolver = nullptr) const;
+@@ -1348,6 +1394,9 @@ struct XNNPackSettingsBuilder {
+   void add_num_threads(int32_t num_threads) {
+     fbb_.AddElement<int32_t>(XNNPackSettings::VT_NUM_THREADS, num_threads, 0);
+   }
++  void add_flags(tflite::XNNPackFlags flags) {
++    fbb_.AddElement<int32_t>(XNNPackSettings::VT_FLAGS, static_cast<int32_t>(flags), 0);
++  }
+   explicit XNNPackSettingsBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+@@ -1362,8 +1411,10 @@ struct XNNPackSettingsBuilder {
+ 
+ inline flatbuffers::Offset<XNNPackSettings> CreateXNNPackSettings(
+     flatbuffers::FlatBufferBuilder &_fbb,
+-    int32_t num_threads = 0) {
++    int32_t num_threads = 0,
++    tflite::XNNPackFlags flags = tflite::XNNPackFlags_TFLITE_XNNPACK_DELEGATE_NO_FLAGS) {
+   XNNPackSettingsBuilder builder_(_fbb);
++  builder_.add_flags(flags);
+   builder_.add_num_threads(num_threads);
+   return builder_.Finish();
+ }
+@@ -3444,7 +3495,8 @@ inline flatbuffers::Offset<HexagonSettings> CreateHexagonSettings(flatbuffers::F
+ 
+ inline bool operator==(const XNNPackSettingsT &lhs, const XNNPackSettingsT &rhs) {
+   return
+-      (lhs.num_threads == rhs.num_threads);
++      (lhs.num_threads == rhs.num_threads) &&
++      (lhs.flags == rhs.flags);
+ }
+ 
+ inline bool operator!=(const XNNPackSettingsT &lhs, const XNNPackSettingsT &rhs) {
+@@ -3462,6 +3514,7 @@ inline void XNNPackSettings::UnPackTo(XNNPackSettingsT *_o, const flatbuffers::r
+   (void)_o;
+   (void)_resolver;
+   { auto _e = num_threads(); _o->num_threads = _e; }
++  { auto _e = flags(); _o->flags = _e; }
+ }
+ 
+ inline flatbuffers::Offset<XNNPackSettings> XNNPackSettings::Pack(flatbuffers::FlatBufferBuilder &_fbb, const XNNPackSettingsT* _o, const flatbuffers::rehasher_function_t *_rehasher) {
+@@ -3473,9 +3526,11 @@ inline flatbuffers::Offset<XNNPackSettings> CreateXNNPackSettings(flatbuffers::F
+   (void)_o;
+   struct _VectorArgs { flatbuffers::FlatBufferBuilder *__fbb; const XNNPackSettingsT* __o; const flatbuffers::rehasher_function_t *__rehasher; } _va = { &_fbb, _o, _rehasher}; (void)_va;
+   auto _num_threads = _o->num_threads;
++  auto _flags = _o->flags;
+   return tflite::CreateXNNPackSettings(
+       _fbb,
+-      _num_threads);
++      _num_threads,
++      _flags);
+ }
+ 
+ 
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto.cc b/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto.cc
+index 1a6f4f40d47..75674570f22 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto.cc
++++ b/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto.cc
+@@ -245,6 +245,7 @@ proto::HexagonSettings ConvertHexagonSettings(const HexagonSettings& settings) {
+ proto::XNNPackSettings ConvertXNNPackSettings(const XNNPackSettings& settings) {
+   proto::XNNPackSettings proto_settings;
+   proto_settings.set_num_threads(settings.num_threads());
++  proto_settings.set_flags(::tflite::proto::XNNPackFlags(settings.flags()));
+   return proto_settings;
+ }
+ 
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto_test.cc b/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto_test.cc
+index 298788f0723..0adab38e97e 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto_test.cc
++++ b/tensorflow/lite/experimental/acceleration/configuration/flatbuffer_to_proto_test.cc
+@@ -407,8 +407,11 @@ TEST_F(ConversionTest, XNNPackSettings) {
+       settings_.tflite_settings->xnnpack_settings.get();
+ 
+   input_settings->num_threads = 2;
++  input_settings->flags =
++      tflite::XNNPackFlags::XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QS8_QU8;
+   const proto::ComputeSettings compute = ConvertFromFlatbuffer(settings_);
+   EXPECT_EQ(compute.tflite_settings().xnnpack_settings().num_threads(), 2);
++  EXPECT_EQ(compute.tflite_settings().xnnpack_settings().flags(), 3);
+ }
+ 
+ TEST_F(ConversionTest, CoreMLSettings) {
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/proto_to_flatbuffer.cc b/tensorflow/lite/experimental/acceleration/configuration/proto_to_flatbuffer.cc
+index ba5f5419ae6..dc883781729 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/proto_to_flatbuffer.cc
++++ b/tensorflow/lite/experimental/acceleration/configuration/proto_to_flatbuffer.cc
+@@ -14,6 +14,8 @@ limitations under the License.
+ ==============================================================================*/
+ #include "tensorflow/lite/experimental/acceleration/configuration/proto_to_flatbuffer.h"
+ 
++#include <cstdint>
++
+ #include "flatbuffers/flatbuffers.h"  // from @flatbuffers
+ #include "tensorflow/lite/experimental/acceleration/configuration/configuration.pb.h"
+ #include "tensorflow/lite/experimental/acceleration/configuration/configuration_generated.h"
+@@ -231,8 +233,10 @@ Offset<HexagonSettings> ConvertHexagonSettings(
+ 
+ Offset<XNNPackSettings> ConvertXNNPackSettings(
+     const proto::XNNPackSettings& settings, FlatBufferBuilder* builder) {
+-  return CreateXNNPackSettings(*builder,
+-                               /*num_threads=*/settings.num_threads());
++  return CreateXNNPackSettings(
++      *builder,
++      /*num_threads=*/settings.num_threads(),
++      /*flags=*/tflite::XNNPackFlags(settings.flags()));
+ }
+ 
+ Offset<CoreMLSettings> ConvertCoreMLSettings(
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin.cc b/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin.cc
+index 467cce1a604..ce9425b9175 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin.cc
++++ b/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin.cc
+@@ -37,6 +37,7 @@ class XNNPackPlugin : public DelegatePluginInterface {
+     const auto* xnnpack_settings = tflite_settings.xnnpack_settings();
+     if (xnnpack_settings) {
+       options_.num_threads = xnnpack_settings->num_threads();
++      options_.flags = xnnpack_settings->flags();
+     }
+   }
+ 
+diff --git a/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin_test.cc b/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin_test.cc
+index 723fa18bb78..203993febd8 100644
+--- a/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin_test.cc
++++ b/tensorflow/lite/experimental/acceleration/configuration/xnnpack_plugin_test.cc
+@@ -28,14 +28,20 @@ namespace tflite {
+ class XnnpackPluginTest : public testing::Test {
+  public:
+   static constexpr int kNumThreadsForTest = 7;
++  static constexpr tflite::XNNPackFlags kFlagsForTest =
++      tflite::XNNPackFlags::XNNPackFlags_TFLITE_XNNPACK_DELEGATE_FLAG_QS8_QU8;
+   void SetUp() override {
+     // Construct a FlatBuffer that contains
+     //   TFLiteSettings {
+     //     delegate: Delegate.XNNPACK,
+-    //     XNNPackSettings { num_threads: kNumThreadsForTest }
++    //     XNNPackSettings { num_threads: kNumThreadsForTest
++    //                       flags: TFLITE_XNNPACK_DELEGATE_FLAG_QS8 |
++    //                           TFLITE_XNNPACK_DELEGATE_FLAG_QU8
++    //     }
+     //   }.
+     XNNPackSettingsBuilder xnnpack_settings_builder(flatbuffer_builder_);
+     xnnpack_settings_builder.add_num_threads(kNumThreadsForTest);
++    xnnpack_settings_builder.add_flags(kFlagsForTest);
+     flatbuffers::Offset<XNNPackSettings> xnnpack_settings =
+         xnnpack_settings_builder.Finish();
+     TFLiteSettingsBuilder tflite_settings_builder(flatbuffer_builder_);

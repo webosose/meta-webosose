@@ -1,0 +1,365 @@
+From 0edec4a8f286bb183a761c8f2847ee028a8a2967 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Sat, 24 Dec 2022 19:32:57 +0000
+Subject: [PATCH] tensorflow/lite/delegates/gpu/gl: regen with flatc 2.0.6
+
+---
+Upstream-Status: Pending
+
+ .../lite/delegates/gpu/gl/common_generated.h  | 15 +++---
+ .../gpu/gl/compiled_model_generated.h         | 52 ++++++++-----------
+ .../delegates/gpu/gl/metadata_generated.h     |  6 ++-
+ .../delegates/gpu/gl/workgroups_generated.h   |  8 +--
+ 4 files changed, 39 insertions(+), 42 deletions(-)
+
+diff --git a/tensorflow/lite/delegates/gpu/gl/common_generated.h b/tensorflow/lite/delegates/gpu/gl/common_generated.h
+index ba966369556..0ab711e7600 100644
+--- a/tensorflow/lite/delegates/gpu/gl/common_generated.h
++++ b/tensorflow/lite/delegates/gpu/gl/common_generated.h
+@@ -38,9 +38,9 @@ struct Uint3 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<uint32_t>(verifier, VT_X) &&
+-           VerifyField<uint32_t>(verifier, VT_Y) &&
+-           VerifyField<uint32_t>(verifier, VT_Z) &&
++           VerifyField<uint32_t>(verifier, VT_X, 4) &&
++           VerifyField<uint32_t>(verifier, VT_Y, 4) &&
++           VerifyField<uint32_t>(verifier, VT_Z, 4) &&
+            verifier.EndTable();
+   }
+ };
+@@ -62,7 +62,6 @@ struct Uint3Builder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  Uint3Builder &operator=(const Uint3Builder &);
+   flatbuffers::Offset<Uint3> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<Uint3>(end);
+@@ -96,8 +95,8 @@ struct Uint2 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<uint32_t>(verifier, VT_X) &&
+-           VerifyField<uint32_t>(verifier, VT_Y) &&
++           VerifyField<uint32_t>(verifier, VT_X, 4) &&
++           VerifyField<uint32_t>(verifier, VT_Y, 4) &&
+            verifier.EndTable();
+   }
+ };
+@@ -116,7 +115,6 @@ struct Uint2Builder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  Uint2Builder &operator=(const Uint2Builder &);
+   flatbuffers::Offset<Uint2> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<Uint2>(end);
+@@ -144,7 +142,7 @@ struct Uint1 FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<uint32_t>(verifier, VT_X) &&
++           VerifyField<uint32_t>(verifier, VT_X, 4) &&
+            verifier.EndTable();
+   }
+ };
+@@ -160,7 +158,6 @@ struct Uint1Builder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  Uint1Builder &operator=(const Uint1Builder &);
+   flatbuffers::Offset<Uint1> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<Uint1>(end);
+diff --git a/tensorflow/lite/delegates/gpu/gl/compiled_model_generated.h b/tensorflow/lite/delegates/gpu/gl/compiled_model_generated.h
+index cae0c6c933d..ea44df3fb77 100644
+--- a/tensorflow/lite/delegates/gpu/gl/compiled_model_generated.h
++++ b/tensorflow/lite/delegates/gpu/gl/compiled_model_generated.h
+@@ -174,7 +174,7 @@ template<> struct DataVariantTraits<tflite::gpu::gl::data::DataUint32> {
+ };
+ 
+ bool VerifyDataVariant(flatbuffers::Verifier &verifier, const void *obj, DataVariant type);
+-bool VerifyDataVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
++bool VerifyDataVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<DataVariant> *types);
+ 
+ enum class AccessType : int8_t {
+   READ = 0,
+@@ -288,7 +288,7 @@ template<> struct ObjectVariantTraits<tflite::gpu::gl::data::ObjectRef> {
+ };
+ 
+ bool VerifyObjectVariant(flatbuffers::Verifier &verifier, const void *obj, ObjectVariant type);
+-bool VerifyObjectVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
++bool VerifyObjectVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<ObjectVariant> *types);
+ 
+ enum class ObjectSize : uint8_t {
+   NONE = 0,
+@@ -343,7 +343,7 @@ template<> struct ObjectSizeTraits<tflite::gpu::gl::data::Uint3> {
+ };
+ 
+ bool VerifyObjectSize(flatbuffers::Verifier &verifier, const void *obj, ObjectSize type);
+-bool VerifyObjectSizeVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types);
++bool VerifyObjectSizeVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<ObjectSize> *types);
+ 
+ struct Program FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   typedef ProgramBuilder Builder;
+@@ -385,7 +385,7 @@ struct Program FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+            verifier.VerifyTable(number_workgroups()) &&
+            VerifyOffset(verifier, VT_WORKGROUP_SIZE) &&
+            verifier.VerifyTable(workgroup_size()) &&
+-           VerifyField<uint32_t>(verifier, VT_SHADER_INDEX) &&
++           VerifyField<uint32_t>(verifier, VT_SHADER_INDEX, 4) &&
+            VerifyOffset(verifier, VT_BINARY) &&
+            verifier.VerifyTable(binary()) &&
+            verifier.EndTable();
+@@ -418,7 +418,6 @@ struct ProgramBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  ProgramBuilder &operator=(const ProgramBuilder &);
+   flatbuffers::Offset<Program> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<Program>(end);
+@@ -478,7 +477,7 @@ struct ProgramBinary FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<uint32_t>(verifier, VT_FORMAT) &&
++           VerifyField<uint32_t>(verifier, VT_FORMAT, 4) &&
+            VerifyOffset(verifier, VT_BINARY) &&
+            verifier.VerifyVector(binary()) &&
+            verifier.EndTable();
+@@ -499,7 +498,6 @@ struct ProgramBinaryBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  ProgramBinaryBuilder &operator=(const ProgramBinaryBuilder &);
+   flatbuffers::Offset<ProgramBinary> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<ProgramBinary>(end);
+@@ -555,7 +553,6 @@ struct DataFloatBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  DataFloatBuilder &operator=(const DataFloatBuilder &);
+   flatbuffers::Offset<DataFloat> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<DataFloat>(end);
+@@ -607,7 +604,6 @@ struct DataInt32Builder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  DataInt32Builder &operator=(const DataInt32Builder &);
+   flatbuffers::Offset<DataInt32> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<DataInt32>(end);
+@@ -659,7 +655,6 @@ struct DataUint32Builder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  DataUint32Builder &operator=(const DataUint32Builder &);
+   flatbuffers::Offset<DataUint32> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<DataUint32>(end);
+@@ -718,8 +713,8 @@ struct UniformParameter FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+     return VerifyTableStart(verifier) &&
+            VerifyOffset(verifier, VT_NAME) &&
+            verifier.VerifyString(name()) &&
+-           VerifyField<int8_t>(verifier, VT_TYPE) &&
+-           VerifyField<uint8_t>(verifier, VT_DATA_TYPE) &&
++           VerifyField<int8_t>(verifier, VT_TYPE, 1) &&
++           VerifyField<uint8_t>(verifier, VT_DATA_TYPE, 1) &&
+            VerifyOffset(verifier, VT_DATA) &&
+            VerifyDataVariant(verifier, data(), data_type()) &&
+            verifier.EndTable();
+@@ -758,7 +753,6 @@ struct UniformParameterBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  UniformParameterBuilder &operator=(const UniformParameterBuilder &);
+   flatbuffers::Offset<UniformParameter> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<UniformParameter>(end);
+@@ -850,14 +844,14 @@ struct Object FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<int8_t>(verifier, VT_ACCESS) &&
+-           VerifyField<uint32_t>(verifier, VT_BINDING) &&
+-           VerifyField<int8_t>(verifier, VT_DATA_TYPE) &&
+-           VerifyField<int8_t>(verifier, VT_TYPE) &&
+-           VerifyField<uint8_t>(verifier, VT_SIZE_TYPE) &&
++           VerifyField<int8_t>(verifier, VT_ACCESS, 1) &&
++           VerifyField<uint32_t>(verifier, VT_BINDING, 4) &&
++           VerifyField<int8_t>(verifier, VT_DATA_TYPE, 1) &&
++           VerifyField<int8_t>(verifier, VT_TYPE, 1) &&
++           VerifyField<uint8_t>(verifier, VT_SIZE_TYPE, 1) &&
+            VerifyOffset(verifier, VT_SIZE) &&
+            VerifyObjectSize(verifier, size(), size_type()) &&
+-           VerifyField<uint8_t>(verifier, VT_OBJECT_TYPE) &&
++           VerifyField<uint8_t>(verifier, VT_OBJECT_TYPE, 1) &&
+            VerifyOffset(verifier, VT_OBJECT) &&
+            VerifyObjectVariant(verifier, object(), object_type()) &&
+            verifier.EndTable();
+@@ -916,7 +910,6 @@ struct ObjectBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  ObjectBuilder &operator=(const ObjectBuilder &);
+   flatbuffers::Offset<Object> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<Object>(end);
+@@ -956,7 +949,7 @@ struct ObjectRef FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<uint32_t>(verifier, VT_GLOBAL_ID) &&
++           VerifyField<uint32_t>(verifier, VT_GLOBAL_ID, 4) &&
+            verifier.EndTable();
+   }
+ };
+@@ -972,7 +965,6 @@ struct ObjectRefBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  ObjectRefBuilder &operator=(const ObjectRefBuilder &);
+   flatbuffers::Offset<ObjectRef> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<ObjectRef>(end);
+@@ -1015,7 +1007,6 @@ struct ObjectDataBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  ObjectDataBuilder &operator=(const ObjectDataBuilder &);
+   flatbuffers::Offset<ObjectData> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<ObjectData>(end);
+@@ -1087,7 +1078,6 @@ struct CompiledModelBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  CompiledModelBuilder &operator=(const CompiledModelBuilder &);
+   flatbuffers::Offset<CompiledModel> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<CompiledModel>(end);
+@@ -1131,7 +1121,7 @@ struct Parameters FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+   }
+   bool Verify(flatbuffers::Verifier &verifier) const {
+     return VerifyTableStart(verifier) &&
+-           VerifyField<uint8_t>(verifier, VT_DYNAMIC_BATCH) &&
++           VerifyField<uint8_t>(verifier, VT_DYNAMIC_BATCH, 1) &&
+            verifier.EndTable();
+   }
+ };
+@@ -1147,7 +1137,6 @@ struct ParametersBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  ParametersBuilder &operator=(const ParametersBuilder &);
+   flatbuffers::Offset<Parameters> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<Parameters>(end);
+@@ -1184,7 +1173,7 @@ inline bool VerifyDataVariant(flatbuffers::Verifier &verifier, const void *obj,
+   }
+ }
+ 
+-inline bool VerifyDataVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types) {
++inline bool VerifyDataVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<DataVariant> *types) {
+   if (!values || !types) return !values && !types;
+   if (values->size() != types->size()) return false;
+   for (flatbuffers::uoffset_t i = 0; i < values->size(); ++i) {
+@@ -1213,7 +1202,7 @@ inline bool VerifyObjectVariant(flatbuffers::Verifier &verifier, const void *obj
+   }
+ }
+ 
+-inline bool VerifyObjectVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types) {
++inline bool VerifyObjectVariantVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<ObjectVariant> *types) {
+   if (!values || !types) return !values && !types;
+   if (values->size() != types->size()) return false;
+   for (flatbuffers::uoffset_t i = 0; i < values->size(); ++i) {
+@@ -1246,7 +1235,7 @@ inline bool VerifyObjectSize(flatbuffers::Verifier &verifier, const void *obj, O
+   }
+ }
+ 
+-inline bool VerifyObjectSizeVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<uint8_t> *types) {
++inline bool VerifyObjectSizeVector(flatbuffers::Verifier &verifier, const flatbuffers::Vector<flatbuffers::Offset<void>> *values, const flatbuffers::Vector<ObjectSize> *types) {
+   if (!values || !types) return !values && !types;
+   if (values->size() != types->size()) return false;
+   for (flatbuffers::uoffset_t i = 0; i < values->size(); ++i) {
+@@ -1275,6 +1264,11 @@ inline bool CompiledModelBufferHasIdentifier(const void *buf) {
+       buf, CompiledModelIdentifier());
+ }
+ 
++inline bool SizePrefixedCompiledModelBufferHasIdentifier(const void *buf) {
++  return flatbuffers::BufferHasIdentifier(
++      buf, CompiledModelIdentifier(), true);
++}
++
+ inline bool VerifyCompiledModelBuffer(
+     flatbuffers::Verifier &verifier) {
+   return verifier.VerifyBuffer<tflite::gpu::gl::data::CompiledModel>(CompiledModelIdentifier());
+diff --git a/tensorflow/lite/delegates/gpu/gl/metadata_generated.h b/tensorflow/lite/delegates/gpu/gl/metadata_generated.h
+index d205d288bf9..dcbd9dcd483 100644
+--- a/tensorflow/lite/delegates/gpu/gl/metadata_generated.h
++++ b/tensorflow/lite/delegates/gpu/gl/metadata_generated.h
+@@ -44,7 +44,6 @@ struct FlowMetadataBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  FlowMetadataBuilder &operator=(const FlowMetadataBuilder &);
+   flatbuffers::Offset<FlowMetadata> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<FlowMetadata>(end);
+@@ -77,6 +76,11 @@ inline bool FlowMetadataBufferHasIdentifier(const void *buf) {
+       buf, FlowMetadataIdentifier());
+ }
+ 
++inline bool SizePrefixedFlowMetadataBufferHasIdentifier(const void *buf) {
++  return flatbuffers::BufferHasIdentifier(
++      buf, FlowMetadataIdentifier(), true);
++}
++
+ inline bool VerifyFlowMetadataBuffer(
+     flatbuffers::Verifier &verifier) {
+   return verifier.VerifyBuffer<tflite::gpu::gl::data::FlowMetadata>(FlowMetadataIdentifier());
+diff --git a/tensorflow/lite/delegates/gpu/gl/workgroups_generated.h b/tensorflow/lite/delegates/gpu/gl/workgroups_generated.h
+index b7d2f780e72..fa961c9c1be 100644
+--- a/tensorflow/lite/delegates/gpu/gl/workgroups_generated.h
++++ b/tensorflow/lite/delegates/gpu/gl/workgroups_generated.h
+@@ -58,7 +58,6 @@ struct HardcodedWorkgroupBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  HardcodedWorkgroupBuilder &operator=(const HardcodedWorkgroupBuilder &);
+   flatbuffers::Offset<HardcodedWorkgroup> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<HardcodedWorkgroup>(end);
+@@ -124,7 +123,6 @@ struct HardcodedWorkgroupsBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  HardcodedWorkgroupsBuilder &operator=(const HardcodedWorkgroupsBuilder &);
+   flatbuffers::Offset<HardcodedWorkgroups> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<HardcodedWorkgroups>(end);
+@@ -182,7 +180,6 @@ struct CustomWorkgroupsBuilder {
+         : fbb_(_fbb) {
+     start_ = fbb_.StartTable();
+   }
+-  CustomWorkgroupsBuilder &operator=(const CustomWorkgroupsBuilder &);
+   flatbuffers::Offset<CustomWorkgroups> Finish() {
+     const auto end = fbb_.EndTable(start_);
+     auto o = flatbuffers::Offset<CustomWorkgroups>(end);
+@@ -224,6 +221,11 @@ inline bool CustomWorkgroupsBufferHasIdentifier(const void *buf) {
+       buf, CustomWorkgroupsIdentifier());
+ }
+ 
++inline bool SizePrefixedCustomWorkgroupsBufferHasIdentifier(const void *buf) {
++  return flatbuffers::BufferHasIdentifier(
++      buf, CustomWorkgroupsIdentifier(), true);
++}
++
+ inline bool VerifyCustomWorkgroupsBuffer(
+     flatbuffers::Verifier &verifier) {
+   return verifier.VerifyBuffer<tflite::gpu::gl::data::CustomWorkgroups>(CustomWorkgroupsIdentifier());
