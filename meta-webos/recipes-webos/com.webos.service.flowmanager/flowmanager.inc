@@ -1,4 +1,4 @@
-WEBOS_VERSION = "1.0.0-10_7641c8eb6af2f8f6b2f51c525752bc6e113ce947"
+WEBOS_VERSION = "1.0.0-11_09b393ce96705c346fd7d30492417748fa897c82"
 
 inherit webos_component
 inherit webos_public_repo
