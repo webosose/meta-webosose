@@ -25,7 +25,7 @@ PR = "r20"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.69_c1f5722814fc655d1b29efdaad55c6f689592d9e"
+WEBOS_VERSION = "1.0.0-gav.71_c3c01d24ea28e1ee9ebde35441a1fe798da8f1ed"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
@@ -49,4 +49,7 @@ PACKAGECONFIG[use-camsrc] = "-DUSE_CAMSRC:BOOL=True,-DUSE_CAMSRC:BOOL=False,"
 # Pro UMS
 PACKAGECONFIG[pro-ums] = "-DPRO_UMS:BOOL=True,-DPRO_UMS:BOOL=False,"
 
-PACKAGECONFIG:webos = "use-display-resource use-camsrc"
+# for wayland compositer
+PACKAGECONFIG[use-compositer-ver4] = "-DUSE_COMPOSITER_VER4:BOOL=True,-DUSE_COMPOSITER_VER4:BOOL=False,"
+
+PACKAGECONFIG:webos = "use-display-resource use-camsrc use-compositer-ver4"
