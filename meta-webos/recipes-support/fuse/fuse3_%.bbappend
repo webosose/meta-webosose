@@ -1,6 +1,6 @@
 # Copyright (c) 2020-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos3"
+EXTENDPRAUTO:append = "webos4"
 
 VIRTUAL-RUNTIME_bash ?= "bash"
 # ERROR: fuse3-3.9.2-r0 do_package_qa: QA Issue: fuse3-ptest rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
