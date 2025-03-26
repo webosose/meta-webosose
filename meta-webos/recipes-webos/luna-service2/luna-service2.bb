@@ -15,7 +15,7 @@ VIRTUAL-RUNTIME_cpushareholder ?= "cpushareholder-stub"
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
-WEBOS_VERSION = "3.21.2-44_f116a5088f4d6918c50ad90eb7f8b0aa3decd12d"
+WEBOS_VERSION = "3.21.2-46_cbc0dcc0da0af19eff5b007fde6a65a7ded02f35"
 PR = "r36"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
@@ -60,15 +60,3 @@ FILES:${PN}-perf += "${webos_testsdir}/${BPN}-perf"
 INSANE_SKIP:${PN}-ptest += "libdir"
 # luna-service2-dbg: found library in wrong location: /usr/opt/webos/tests/luna-service2/lib/.debug/libls-hublib-test.so
 INSANE_SKIP:${PN}-dbg += "libdir"
-
-# FIXME-buildpaths!!!
-# [WRP-10883] buildpath QA issues
-# http://gecko.lge.com:8000/Errors/Details/894434
-# ERROR: QA Issue: File /usr/opt/webos/tests/luna-service2/integration/test_monitor in package luna-service2-ptest contains reference to TMPDIR [buildpaths]
-# ERROR: QA Issue: File /usr/opt/webos/tests/luna-service2/integration/.debug/luna-send-q in package luna-service2-dbg contains reference to TMPDIR [buildpaths]
-ERROR_QA:remove = "buildpaths"
-WARN_QA:append = " buildpaths"
-
-# http://gecko.lge.com:8000/Errors/Details/984690
-# luna-service2/3.21.2-44/git/src/libluna-service2/transport_message.c:1249:12: error: implicit declaration of function '_LSTransportSendQueryPid'; did you mean '_LSTransportSendReply'? [-Wimplicit-function-declaration]
-CFLAGS += "-Wno-error=implicit-function-declaration"
