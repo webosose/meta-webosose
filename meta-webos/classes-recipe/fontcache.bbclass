@@ -6,4 +6,4 @@
 
 FONT_EXTRA_RDEPENDS = ""
 
-require ${COREBASE}/meta/classes/fontcache.bbclass
+require ${COREBASE}/meta/classes-recipe/fontcache.bbclass

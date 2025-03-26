@@ -4,7 +4,7 @@
 # a webos_deploy_fixup task.
 #
 
-require ${COREBASE}/meta/classes/image.bbclass
+require ${COREBASE}/meta/classes-recipe/image.bbclass
 
 inherit webos_deploy
 

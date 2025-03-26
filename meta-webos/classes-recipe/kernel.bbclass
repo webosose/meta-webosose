@@ -6,7 +6,7 @@
 # task.
 #
 
-require ${COREBASE}/meta/classes/kernel.bbclass
+require ${COREBASE}/meta/classes-recipe/kernel.bbclass
 
 inherit webos_deploy
 

@@ -6,7 +6,7 @@
 # to "none"
 #
 
-require ${COREBASE}/meta/classes/allarch.bbclass
+require ${COREBASE}/meta/classes-recipe/allarch.bbclass
 
 python () {
     if d.getVar("PACKAGE_ARCH") == "all":
