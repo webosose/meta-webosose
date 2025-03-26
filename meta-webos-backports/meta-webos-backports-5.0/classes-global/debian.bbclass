@@ -1,3 +1,9 @@
+#
+# Copyright OpenEmbedded Contributors
+#
+# SPDX-License-Identifier: MIT
+#
+
 # Debian package renaming only occurs when a package is built
 # We therefore have to make sure we build all runtime packages
 # before building the current package to make the packages runtime
