@@ -1,4 +1,4 @@
-From 1fe7829e8299c35030e1db04a1c26feeff60c13c Mon Sep 17 00:00:00 2001
+From c655fd2d2be8dddc8af6c988a28eff2c49721029 Mon Sep 17 00:00:00 2001
 From: Hyunkook Khang <hyunkook.khang@lge.com>
 Date: Tue, 20 Sep 2016 10:25:36 +0900
 Subject: [PATCH] server: Fix crash when accessing client which is already
@@ -21,10 +21,10 @@ Upstream-Status: Submitted
  1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/src/wayland-server.c b/src/wayland-server.c
-index 02f1365..ec3949c 100644
+index 8e24b41..12837b4 100644
 --- a/src/wayland-server.c
 +++ b/src/wayland-server.c
-@@ -1401,10 +1401,16 @@ wl_display_terminate(struct wl_display *display)
+@@ -1424,10 +1424,16 @@ wl_display_terminate(struct wl_display *display)
  WL_EXPORT void
  wl_display_run(struct wl_display *display)
  {
@@ -41,7 +41,7 @@ index 02f1365..ec3949c 100644
  		wl_event_loop_dispatch(display->loop, -1);
  	}
  }
-@@ -1422,7 +1428,7 @@ wl_display_flush_clients(struct wl_display *display)
+@@ -1445,7 +1451,7 @@ wl_display_flush_clients(struct wl_display *display)
  						  WL_EVENT_WRITABLE |
  						  WL_EVENT_READABLE);
  		} else if (ret < 0) {

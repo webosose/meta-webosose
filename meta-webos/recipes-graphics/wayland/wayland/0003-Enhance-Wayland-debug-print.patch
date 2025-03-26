@@ -1,4 +1,4 @@
-From 0bedc5002da99dc66e883463ad33793ded8a2359 Mon Sep 17 00:00:00 2001
+From 5a5f932ab313e23121677b27c1b2bb06aa820df2 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 27 Jan 2015 16:45:01 +0900
 Subject: [PATCH] Enhance Wayland debug print
@@ -29,12 +29,12 @@ Upstream-Status: Inappropriate [webOS specific]
  9 files changed, 189 insertions(+), 11 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 3bc25c9..f23a74d 100644
+index 8bb47c2..9386d24 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -14,6 +14,10 @@ config_h = configuration_data()
- config_h.set_quoted('PACKAGE', meson.project_name())
- config_h.set_quoted('PACKAGE_VERSION', meson.project_version())
+@@ -21,6 +21,10 @@ if host_machine.system() != 'freebsd'
+ endif
+ add_project_arguments(cc_args, language: 'c')
  
 +if get_option('pmlog')
 +	config_h.set('HAVE_PMLOG', 1)
@@ -44,7 +44,7 @@ index 3bc25c9..f23a74d 100644
  	'-Wno-unused-parameter',
  	'-Wstrict-prototypes',
 diff --git a/meson_options.txt b/meson_options.txt
-index 4433fa0..e7cebb3 100644
+index b8e2ec6..eb72d74 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -22,3 +22,7 @@ option('icon_directory',
@@ -56,7 +56,7 @@ index 4433fa0..e7cebb3 100644
 +  type: 'boolean',
 +  value: 'true')
 diff --git a/src/connection.c b/src/connection.c
-index dc499ea..10a2089 100644
+index bf97676..e49e0c6 100644
 --- a/src/connection.c
 +++ b/src/connection.c
 @@ -39,6 +39,8 @@
@@ -172,10 +172,10 @@ index dc499ea..10a2089 100644
  }
  
 diff --git a/src/meson.build b/src/meson.build
-index ae8f387..5cb4f86 100644
+index a8a1d2b..93c36c9 100644
 --- a/src/meson.build
 +++ b/src/meson.build
-@@ -3,6 +3,7 @@ wayland_version_h.set('WAYLAND_VERSION', meson.project_version())
+@@ -7,6 +7,7 @@ wayland_version_h.set('WAYLAND_VERSION', meson.project_version())
  wayland_version_h.set('WAYLAND_VERSION_MAJOR', wayland_version[0].to_int())
  wayland_version_h.set('WAYLAND_VERSION_MINOR', wayland_version[1].to_int())
  wayland_version_h.set('WAYLAND_VERSION_MICRO', wayland_version[2].to_int())
@@ -183,7 +183,7 @@ index ae8f387..5cb4f86 100644
  configure_file(
  	input: 'wayland-version.h.in',
  	output: 'wayland-version.h',
-@@ -11,10 +12,10 @@ configure_file(
+@@ -15,10 +16,10 @@ configure_file(
  	install_dir: join_paths(get_option('prefix'), get_option('includedir'))
  )
  
@@ -197,10 +197,10 @@ index ae8f387..5cb4f86 100644
  
  wayland_util_dep = declare_dependency(
 diff --git a/src/wayland-client.c b/src/wayland-client.c
-index 22f007d..b562a52 100644
+index 0c10b34..fae324a 100644
 --- a/src/wayland-client.c
 +++ b/src/wayland-client.c
-@@ -854,7 +854,7 @@ wl_proxy_marshal_array_flags(struct wl_proxy *proxy, uint32_t opcode,
+@@ -861,7 +861,7 @@ wl_proxy_marshal_array_flags(struct wl_proxy *proxy, uint32_t opcode,
  	}
  
  	if (debug_client)
@@ -209,7 +209,7 @@ index 22f007d..b562a52 100644
  
  	if (wl_closure_send(closure, proxy->display->connection)) {
  		wl_log("Error sending request: %s\n", strerror(errno));
-@@ -1570,7 +1570,7 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
+@@ -1582,7 +1582,7 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
  	proxy_destroyed = !!(proxy->flags & WL_PROXY_FLAG_DESTROYED);
  	if (proxy_destroyed) {
  		if (debug_client)
@@ -218,7 +218,7 @@ index 22f007d..b562a52 100644
  		destroy_queued_closure(closure);
  		return;
  	}
-@@ -1579,13 +1579,13 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
+@@ -1591,13 +1591,13 @@ dispatch_event(struct wl_display *display, struct wl_event_queue *queue)
  
  	if (proxy->dispatcher) {
  		if (debug_client)
@@ -235,10 +235,10 @@ index 22f007d..b562a52 100644
  		wl_closure_invoke(closure, WL_CLOSURE_INVOKE_CLIENT,
  				  &proxy->object, opcode, proxy->user_data);
 diff --git a/src/wayland-private.h b/src/wayland-private.h
-index 210451e..7aeb51f 100644
+index 9274f1b..1105948 100644
 --- a/src/wayland-private.h
 +++ b/src/wayland-private.h
-@@ -212,7 +212,7 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection);
+@@ -213,7 +213,7 @@ wl_closure_queue(struct wl_closure *closure, struct wl_connection *connection);
  void
  wl_closure_print(struct wl_closure *closure,
  		 struct wl_object *target, int send, int discarded,
@@ -248,7 +248,7 @@ index 210451e..7aeb51f 100644
  void
  wl_closure_destroy(struct wl_closure *closure);
 diff --git a/src/wayland-server.c b/src/wayland-server.c
-index ec3949c..71d5132 100644
+index 12837b4..2969164 100644
 --- a/src/wayland-server.c
 +++ b/src/wayland-server.c
 @@ -145,6 +145,7 @@ struct wl_protocol_logger {
@@ -276,7 +276,7 @@ index ec3949c..71d5132 100644
  
  	if (!wl_list_empty(&display->protocol_loggers)) {
  		message.resource = resource;
-@@ -1044,6 +1051,70 @@ handle_display_terminate(int fd, uint32_t mask, void *data) {
+@@ -1047,6 +1054,70 @@ handle_display_terminate(int fd, uint32_t mask, void *data) {
  	return 0;
  }
  
@@ -347,7 +347,7 @@ index ec3949c..71d5132 100644
  /** Create Wayland display object.
   *
   * \return The Wayland display object. Null if failed to create
-@@ -1102,6 +1173,8 @@ wl_display_create(void)
+@@ -1105,6 +1176,8 @@ wl_display_create(void)
  
  	wl_array_init(&display->additional_shm_formats);
  
@@ -356,7 +356,7 @@ index ec3949c..71d5132 100644
  	return display;
  
  err_term_source:
-@@ -1182,6 +1255,8 @@ wl_display_destroy(struct wl_display *display)
+@@ -1185,6 +1258,8 @@ wl_display_destroy(struct wl_display *display)
  
  	wl_list_remove(&display->protocol_loggers);
  
@@ -366,10 +366,10 @@ index ec3949c..71d5132 100644
  }
  
 diff --git a/src/wayland-util.c b/src/wayland-util.c
-index c89a67b..dbc9ffd 100644
+index bb2a183..7f07b62 100644
 --- a/src/wayland-util.c
 +++ b/src/wayland-util.c
-@@ -30,8 +30,14 @@
+@@ -31,8 +31,14 @@
  #include <string.h>
  #include <stdarg.h>
  
@@ -384,7 +384,7 @@ index c89a67b..dbc9ffd 100644
  
  WL_EXPORT void
  wl_list_init(struct wl_list *list)
-@@ -395,6 +399,25 @@ wl_map_for_each(struct wl_map *map, wl_iterator_func_t func, void *data)
+@@ -435,6 +439,25 @@ wl_map_for_each(struct wl_map *map, wl_iterator_func_t func, void *data)
  static void
  wl_log_stderr_handler(const char *fmt, va_list arg)
  {

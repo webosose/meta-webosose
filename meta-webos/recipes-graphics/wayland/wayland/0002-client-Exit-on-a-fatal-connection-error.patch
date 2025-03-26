@@ -1,4 +1,4 @@
-From e3fac818e3982d2c63791fa544a6c3e02076bdb2 Mon Sep 17 00:00:00 2001
+From d6e19e3e99fb97538ee05033c37d83f31055e052 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Mon, 13 Aug 2018 14:29:34 +0900
 Subject: [PATCH] client: Exit on a fatal connection error
@@ -18,7 +18,7 @@ Upstream-Status: Inappropriate [webOS specific]
  1 file changed, 7 insertions(+)
 
 diff --git a/src/wayland-client.c b/src/wayland-client.c
-index 4fd7c90..22f007d 100644
+index 90fb9c7..0c10b34 100644
 --- a/src/wayland-client.c
 +++ b/src/wayland-client.c
 @@ -153,6 +153,13 @@ display_fatal_error(struct wl_display *display, int error)
