@@ -93,15 +93,11 @@ do_locate_enactjs_appinfo() {
 }
 addtask do_locate_enactjs_appinfo after do_configure before do_install
 
-do_compile() {
+do_npm_shrink_enact_override() {
     working=$(pwd)
 
     bbnote "Using Enact project at ${WEBOS_ENACTJS_PROJECT_PATH}"
     cd ${S}/${WEBOS_ENACTJS_PROJECT_PATH}
-
-    # clear local cache prior to each compile
-    bbnote "Clearing any existing node_modules"
-    rm -fr node_modules
 
     # ensure an NPM shrinkwrap file exists so app has its dependencies locked in
     if [ ! -f npm-shrinkwrap.json ] ; then
@@ -130,16 +126,36 @@ do_compile() {
         if [ -d ${FRAMEWORK_PATH} ] ; then
             bbnote "Using system submission Enact framework from ${FRAMEWORK_PATH}"
             ${ENACT_BOOTSTRAP_OVERRIDE} "${FRAMEWORK_PATH}"
+            if [ ! -d node_modules ] ; then
+                mkdir node_modules
+            fi
+            cp -r ${FRAMEWORK_PATH}/node_modules_override/* node_modules
         else
             FRAMEWORK_ALLARCH_PATH="${WEBOS_ENACTJS_FRAMEWORK_ALLARCH}${ENACTJS_FRAMEWORK_VARIANT}"
             if [ -d ${FRAMEWORK_ALLARCH_PATH} ] ; then
                 bbnote "Using system submission Enact framework from ${FRAMEWORK_ALLARCH_PATH}"
                 ${ENACT_BOOTSTRAP_OVERRIDE} "${FRAMEWORK_ALLARCH_PATH}"
+                if [ ! -d node_modules ] ; then
+                    mkdir node_modules
+                fi
+                cp -r ${FRAMEWORK_ALLARCH_PATH}/node_modules_override/* node_modules
             else
                 bbwarn "Enact framework submission could not be found"
             fi
         fi
     fi
+}
+addtask do_npm_shrink_enact_override after do_patch do_prepare_recipe_sysroot before do_configure
+
+do_compile() {
+    working=$(pwd)
+
+    bbnote "Using Enact project at ${WEBOS_ENACTJS_PROJECT_PATH}"
+    cd ${S}/${WEBOS_ENACTJS_PROJECT_PATH}
+
+    # clear local cache prior to each compile
+    bbnote "Clearing any existing node_modules"
+    rm -fr node_modules
 
     NPM_OPTS="${WEBOS_NPM_INSTALL_FLAGS} install"
     if [ -z "${WEBOS_ENACTJS_PACK_OVERRIDE}" ] ; then
