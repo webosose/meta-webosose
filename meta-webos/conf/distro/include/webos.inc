@@ -383,8 +383,9 @@ DEFAULT_WARN_QA = "\
     missing-update-alternatives native-last missing-ptest \
     license-exists license-no-generic license-syntax license-format \
     license-incompatible license-file-missing obsolete-license \
+    virtual-slash \
 "
-ERROR_QA:append = " ${DEFAULT_WARN_QA}"
+ERROR_QA:append = " ${DEFAULT_WARN_QA} patch-status"
 WARN_QA:remove = "${DEFAULT_WARN_QA}"
 
 # Default WEBOS_TARGET_* values (see webos_cmake.bbclass)
