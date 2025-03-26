@@ -1,0 +1,48 @@
+From 4cdb78770f1aaaf64a9053b54446005fa91694f3 Mon Sep 17 00:00:00 2001
+From: "jaekyu.lee" <jaekyu.lee@lge.com>
+Date: Tue, 31 Dec 2024 15:05:30 +0900
+Subject: [PATCH] Add /var/cache/xdg directory to tmpfiles configuration
+
+:Release Notes:
+Add configuration for /var/cache/xdg directory in tmpfiles.d.
+This change fix enactbrowser not launched issue
+
+:Detailed Notes:
+A new directory, /var/cache/xdg, has been added to the tmpfiles
+configuration with permissions set to 755. This change ensures that
+the directory is created with the correct permissions during system
+initialization, facilitating proper cache management for XDG
+compliant applications.
+
+This chanage fix below errors
+[2580:2590:ERROR:disk_cache.cc(208)] Unable to create cache
+[2540:2540:INFO:url_database.cc(36)] URLDatabasedb_file_path_ = /var/cache/xdg/browser_shell-0/URLDatabase.db
+
+:Testing Performed:
+Tested on rpi4
+GPVB: http://gpro.lge.com/c/scm/setup-gpverf-build/+/463226
+CAT passsed http://qrio.lge.com/#/report?reportId=6773978ff1b60a6653398811
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-14562] com.webos.app.enactbrowser not works after yocto 5. upgrade
+
+Change-Id: I5f491993e7602c42d20b1d8163feca41a28d8732
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/webos-initscripts/+/463470 Add /var/cache/xdg directory to tmpfiles configuration]
+
+ common/etc/tmpfiles.d/31-var.conf.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/common/etc/tmpfiles.d/31-var.conf.in b/common/etc/tmpfiles.d/31-var.conf.in
+index 22357f7..0ef5651 100644
+--- a/common/etc/tmpfiles.d/31-var.conf.in
++++ b/common/etc/tmpfiles.d/31-var.conf.in
+@@ -19,4 +19,5 @@ d        /var/preferences            777     root   -
+ d        /var/home/root              -       -      -
+ d        /var/tmp                    -       -      -
+ d        /var/file-cache             -       -      -
++d        /var/cache/xdg              755     -      -
+ L        @WEBOS_INSTALL_LOCALSTATEDIR@/spool/rdxd/previous_boot_logs.tar.gz - - - - @WEBOS_INSTALL_LOGDIR@/previous_boot_logs.tar.gz

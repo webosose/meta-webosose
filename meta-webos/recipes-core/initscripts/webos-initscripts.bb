@@ -20,14 +20,16 @@ PROVIDES = "initscripts"
 RPROVIDES:${PN} = "initscripts initd-functions"
 
 WEBOS_VERSION = "3.0.0-102_3ac4a454a79375f9bfaf97a8964de04ef90089ac"
-PR = "r19"
+PR = "r20"
 
 inherit webos_component
 inherit webos_enhanced_submissions
 inherit webos_cmake
 inherit webos_public_repo
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-Add-var-cache-xdg-directory-to-tmpfiles-configuratio.patch  \
+"
 S = "${WORKDIR}/git"
 
 EXTRA_OECMAKE += "-DWEBOS_QTTESTABILITY_ENABLED:BOOL=${@ '1' if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else '0'}"
