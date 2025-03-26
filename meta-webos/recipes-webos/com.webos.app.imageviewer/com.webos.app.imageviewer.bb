@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.0.1-15_ca49d724d66ff827acee8eb5e95c380fd3fc1de2"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -24,5 +24,5 @@ WEBOS_ENACTJS_APP_ID = "com.webos.app.imageviewer"
 WEBOS_LOCALIZATION_DATA_PATH = "${S}"
 WEBOS_LOCALIZATION_XLIFF_BASENAME = "imageviewer"
 
-# Workaround for network access issue during do_compile task
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+do_npm_install[network] = "1"

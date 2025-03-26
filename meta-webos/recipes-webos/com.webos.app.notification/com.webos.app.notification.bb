@@ -12,7 +12,7 @@ LIC_FILES_CHKSUM = " \
 WEBOS_VERSION = "0.1.0-17_843ac43ece5a0644799466ada5f4845993744124"
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-PR = "r4"
+PR = "r5"
 
 inherit webos_enhanced_submissions
 inherit webos_enactjs_app
@@ -20,5 +20,5 @@ inherit webos_public_repo
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.notification"
 
-# Workaround for network access issue during do_compile task
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+do_npm_install[network] = "1"

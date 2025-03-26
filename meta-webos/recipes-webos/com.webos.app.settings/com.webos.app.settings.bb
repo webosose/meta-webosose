@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.1.0-37_48b79a6f61ba58d53feb70e0b61177e950d3b7c4"
-PR = "r5"
+PR = "r6"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -22,5 +22,5 @@ S = "${WORKDIR}/git"
 
 WEBOS_ENACTJS_APP_ID = "com.palm.app.settings"
 
-# Workaround for network access issue during do_compile task
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+do_npm_install[network] = "1"

@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.0.1-8_347c8e1fb0c3e856ad76bbad96dba12dc2a0cfb5"
-PR = "r0"
+PR = "r1"
 
 
 inherit webos_enhanced_submissions
@@ -24,6 +24,6 @@ S = "${WORKDIR}/git"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.videocall"
 
-# Workaround for network access issue during do_compile task
-# http://gecko.lge.com/Errors/Details/447640
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+# http://gecko.lge.com:8000/Builds/Details/2627510
+do_npm_install[network] = "1"

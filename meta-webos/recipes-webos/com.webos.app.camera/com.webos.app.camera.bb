@@ -11,7 +11,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.0.1-18_62dac33d771e4a3b14bf740dccf3323793211231"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -23,5 +23,5 @@ S = "${WORKDIR}/git"
 
 WEBOS_ENACTJS_APP_ID = "com.webos.app.camera"
 
-# Workaround for network access issue during do_compile task
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+do_npm_install[network] = "1"

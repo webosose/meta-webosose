@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "1.0.0-17.browsershell.15_b9eab572b47b35018320bd6512a20d6cf8412ffe"
-PR = "r25"
+PR = "r26"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -70,10 +70,10 @@ do_install:prepend() {
     cd ${S}
 }
 
-do_compile:append() {
+do_npm_install:append() {
     if ${SUPPORT_BROWSERSHELL}; then
         # download npm libraries for uioverlay
-        cd uioverlay
+        cd ${S}/uioverlay
         rm -rf node_modules
         ${WEBOS_NPM_BIN} ${WEBOS_NPM_INSTALL_FLAGS} install
         git apply --no-index --verbose ../samples/enact-based/enact_agate_internal_l.patch
@@ -105,8 +105,8 @@ do_install:append() {
 
 FILES:${PN} += "${webos_applicationsdir}"
 
-# Workaround for network access issue during do_compile task
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+do_npm_install[network] = "1"
 
 PR:append = "${@bb.utils.contains('DISTRO_FEATURES', 'smack', 'smack2', '', d)}"
 SRC_URI += "\

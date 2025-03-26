@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 WEBOS_VERSION = "0.0.1-13_92b0f70dcdd2ed24fa21ca3154c1ab84f075428b"
-PR = "r3"
+PR = "r4"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -24,5 +24,5 @@ WEBOS_ENACTJS_APP_ID = "com.webos.app.videoplayer"
 WEBOS_LOCALIZATION_DATA_PATH = "${S}"
 WEBOS_LOCALIZATION_XLIFF_BASENAME = "videoplayer"
 
-# Workaround for network access issue during do_compile task
-do_compile[network] = "1"
+# FIXME: Workaround for network access issue during do_npm_install task
+do_npm_install[network] = "1"
