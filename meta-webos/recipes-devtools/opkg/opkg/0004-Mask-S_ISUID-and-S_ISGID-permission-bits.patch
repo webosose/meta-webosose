@@ -1,4 +1,4 @@
-From 4e4458d33ffb3c052791bfbf421bb0162d5fdff9 Mon Sep 17 00:00:00 2001
+From 6e1830f99f81273803c5f903f067c4be6a828e00 Mon Sep 17 00:00:00 2001
 From: Rohit Anand <rohit.anand@lge.com>
 Date: Mon, 30 May 2016 17:23:37 +0530
 Subject: [PATCH] Mask S_ISUID and S_ISGID permission bits
@@ -12,7 +12,7 @@ Upstream-Status: Pending
  3 files changed, 11 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index c149f5c..4d41260 100644
+index 7f71168..88d3bf6 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
 @@ -27,6 +27,7 @@
@@ -23,7 +23,7 @@ index c149f5c..4d41260 100644
  #include "file_util.h"
  #include "sprintf_alloc.h"
  #include "xfuncs.h"
-@@ -654,6 +655,14 @@ static int find_inner(struct archive *outer, const char *arname)
+@@ -670,6 +671,14 @@ static int find_inner(struct archive *outer, const char *arname)
          if (!entry)
              return -1;
  
@@ -39,7 +39,7 @@ index c149f5c..4d41260 100644
           * other prefixes.
           *
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 4936cc4..f04518f 100644
+index 0143b18..3e8a683 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
 @@ -125,6 +125,7 @@ typedef struct opkg_conf {

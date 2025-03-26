@@ -1,4 +1,4 @@
-From b8fbeb83238303d7472d9d6e9201cd89de1bbefa Mon Sep 17 00:00:00 2001
+From 591126ff8e12bc6c9b02b2c350f80d963d0d8423 Mon Sep 17 00:00:00 2001
 From: Soonwon Hong <soonwon.hong@lge.com>
 Date: Fri, 19 May 2017 09:47:01 +0900
 Subject: [PATCH] Add symlink path validity
@@ -13,10 +13,10 @@ Upstream-Status: Pending
  4 files changed, 10 insertions(+)
 
 diff --git a/libopkg/opkg_archive.c b/libopkg/opkg_archive.c
-index f19cece..c149f5c 100644
+index 03a4afb..7f71168 100644
 --- a/libopkg/opkg_archive.c
 +++ b/libopkg/opkg_archive.c
-@@ -883,6 +883,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
+@@ -912,6 +912,9 @@ struct opkg_ar *ar_open_pkg_data_archive(const char *filename)
      ar->extract_flags = ARCHIVE_EXTRACT_OWNER | ARCHIVE_EXTRACT_PERM |
          ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_UNLINK | ARCHIVE_EXTRACT_NO_OVERWRITE;
  
@@ -27,7 +27,7 @@ index f19cece..c149f5c 100644
          ar->extract_flags &= ~ARCHIVE_EXTRACT_OWNER;
  
 diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
-index b49f5fb..5dcdc3d 100644
+index 37fcd2c..fa2bb69 100644
 --- a/libopkg/opkg_conf.c
 +++ b/libopkg/opkg_conf.c
 @@ -75,6 +75,7 @@ static opkg_option_t options[] = {
@@ -39,7 +39,7 @@ index b49f5fb..5dcdc3d 100644
      {"offline_root", OPKG_OPT_TYPE_STRING, &_conf.offline_root},
      {"overlay_root", OPKG_OPT_TYPE_STRING, &_conf.overlay_root},
 diff --git a/libopkg/opkg_conf.h b/libopkg/opkg_conf.h
-index 28e0624..4936cc4 100644
+index b7caa74..0143b18 100644
 --- a/libopkg/opkg_conf.h
 +++ b/libopkg/opkg_conf.h
 @@ -107,6 +107,7 @@ typedef struct opkg_conf {
