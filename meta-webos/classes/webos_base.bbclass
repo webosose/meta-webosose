@@ -38,7 +38,9 @@ python do_write_bom_data() {
         "python3-icontract-native",
         "python3-lief-native",
         "python3-pylddwrap-native",
-        "python3-rich-native"
+        "python3-rich-native",
+        "python3-pip-native",
+        "python3-poetry-core-native"
     ]
 
     jsondata = {}
