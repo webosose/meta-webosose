@@ -91,9 +91,8 @@ python verify_acg () {
     def herror(c, m):
         oe.qa.handle_error(c, m, d)
 
-    import verify_ls2_acg
-    verify_ls2_acg.handle_error = herror
-    if not verify_ls2_acg.Verify("${IMAGE_ROOTFS}"):
+    webos.verify_ls2_acg.handle_error = herror
+    if not webos.verify_ls2_acg.Verify("${IMAGE_ROOTFS}"):
         bb.note("LS2 hub config not found, ACG verification skipped")
 }
 
