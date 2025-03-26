@@ -15,8 +15,8 @@ RDEPENDS:${PN} = "qtbase-plugins configd"
 
 PACKAGECONFIG[libim] = "CONFIG+=enable-libim,CONFIG-=enable-libim,libim"
 
-WEBOS_VERSION = "0.99.0+20-102_b3c5fe41a33b6dd3d5c11b704c6ff2c8974ef7b6"
-PR = "r37"
+WEBOS_VERSION = "0.99.0+20-103_71e5f78c3c8610e522e4ed01f536f740818efebb"
+PR = "r38"
 
 inherit webos_daemon
 inherit webos_enhanced_submissions
@@ -61,12 +61,3 @@ do_install:append() {
 }
 
 FILES:${PN} += "${OE_QMAKE_PATH_QT_ARCHDATA}"
-
-# FIXME-buildpaths!!!
-# [WRP-10883] buildpath QA issues
-# http://gecko.lge.com:8000/Errors/Details/894427
-# ERROR: QA Issue: File /usr/lib/mkspecs/features/maliit-plugins.prf in package maliit-framework-webos-dev contains reference to TMPDIR
-# File /usr/lib/mkspecs/features/maliit-defines.prf in package maliit-framework-webos-dev contains reference to TMPDIR
-# File /usr/lib/mkspecs/features/maliit-framework.prf in package maliit-framework-webos-dev contains reference to TMPDIR [buildpaths]
-ERROR_QA:remove = "buildpaths"
-WARN_QA:append = " buildpaths"
