@@ -1,7 +1,7 @@
-From d4a7d3fba32afb21fe8c96bec64de1a5be78dcc4 Mon Sep 17 00:00:00 2001
+From f25b3cbb5a264c17fc33aaa70fe4ae03be76d451 Mon Sep 17 00:00:00 2001
 From: "sapna.kumari" <sapna.kumari@lge.com>
 Date: Wed, 19 Aug 2020 06:52:43 +0000
-Subject: [PATCH] rpi : gstreamer1.0=webosrpi2 g-media-pipeline=21.gav.10
+Subject: [PATCH] Add support for seamless seek trickplay
 
 ---
 Upstream-Status: Pending
@@ -13,10 +13,10 @@ Upstream-Status: Pending
  4 files changed, 315 insertions(+)
 
 diff --git a/gst/gstpipeline.c b/gst/gstpipeline.c
-index 032fe69..026596f 100644
+index f2e694f..7bd9a89 100644
 --- a/gst/gstpipeline.c
 +++ b/gst/gstpipeline.c
-@@ -328,6 +328,13 @@ reset_start_time (GstPipeline * pipeline, GstClockTime start_time)
+@@ -332,6 +332,13 @@ reset_start_time (GstPipeline * pipeline, GstClockTime start_time)
    GST_OBJECT_UNLOCK (pipeline);
  }
  
@@ -29,8 +29,8 @@ index 032fe69..026596f 100644
 +
  /**
   * gst_pipeline_new:
-  * @name: (allow-none): name of new pipeline
-@@ -388,6 +395,152 @@ pipeline_update_start_time (GstElement * element)
+  * @name: (nullable): name of new pipeline
+@@ -392,6 +399,152 @@ pipeline_update_start_time (GstElement * element)
    GST_OBJECT_UNLOCK (element);
  }
  
@@ -204,7 +204,7 @@ index 6406fb8..c87da57 100644
  
  G_END_DECLS
 diff --git a/libs/gst/base/gstbasesink.c b/libs/gst/base/gstbasesink.c
-index 8bfc495..48ca987 100644
+index 294d946..6cc447b 100644
 --- a/libs/gst/base/gstbasesink.c
 +++ b/libs/gst/base/gstbasesink.c
 @@ -278,6 +278,8 @@ struct _GstBaseSinkPrivate
@@ -225,7 +225,7 @@ index 8bfc495..48ca987 100644
    GST_OBJECT_FLAG_SET (basesink, GST_ELEMENT_FLAG_SINK);
  }
  
-@@ -2323,6 +2327,8 @@ gst_base_sink_wait_clock (GstBaseSink * sink, GstClockTime time,
+@@ -2334,6 +2338,8 @@ gst_base_sink_wait_clock (GstBaseSink * sink, GstClockTime time,
    GstClock *clock;
    GstClockTime base_time;
  
@@ -234,7 +234,7 @@ index 8bfc495..48ca987 100644
    if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (time)))
      goto invalid_time;
  
-@@ -2333,6 +2339,12 @@ gst_base_sink_wait_clock (GstBaseSink * sink, GstClockTime time,
+@@ -2344,6 +2350,12 @@ gst_base_sink_wait_clock (GstBaseSink * sink, GstClockTime time,
    if (G_UNLIKELY ((clock = GST_ELEMENT_CLOCK (sink)) == NULL))
      goto no_clock;
  
@@ -247,7 +247,7 @@ index 8bfc495..48ca987 100644
    base_time = GST_ELEMENT_CAST (sink)->base_time;
    GST_LOG_OBJECT (sink,
        "time %" GST_TIME_FORMAT ", base_time %" GST_TIME_FORMAT,
-@@ -4329,6 +4341,92 @@ gst_base_sink_perform_seek (GstBaseSink * sink, GstPad * pad, GstEvent * event)
+@@ -4340,6 +4352,92 @@ gst_base_sink_perform_seek (GstBaseSink * sink, GstPad * pad, GstEvent * event)
    return res;
  }
  
@@ -340,7 +340,7 @@ index 8bfc495..48ca987 100644
  static void
  set_step_info (GstBaseSink * sink, GstStepInfo * current, GstStepInfo * pending,
      guint seqnum, GstFormat format, guint64 amount, gdouble rate,
-@@ -5015,6 +5113,58 @@ gst_base_sink_send_event (GstElement * element, GstEvent * event)
+@@ -5026,6 +5124,58 @@ gst_base_sink_send_event (GstElement * element, GstEvent * event)
        result = gst_base_sink_perform_step (basesink, pad, event);
        forward = FALSE;
        break;
@@ -400,10 +400,10 @@ index 8bfc495..48ca987 100644
        break;
    }
 diff --git a/libs/gst/base/gstbasesink.h b/libs/gst/base/gstbasesink.h
-index 7ce8650..0f05421 100644
+index 8edae03..f5c4837 100644
 --- a/libs/gst/base/gstbasesink.h
 +++ b/libs/gst/base/gstbasesink.h
-@@ -203,6 +203,9 @@ struct _GstBaseSinkClass {
+@@ -209,6 +209,9 @@ struct _GstBaseSinkClass {
    /* Render a BufferList */
    GstFlowReturn (*render_list)  (GstBaseSink *sink, GstBufferList *buffer_list);
  

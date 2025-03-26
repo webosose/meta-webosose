@@ -6,7 +6,7 @@ PREFERRED_VERSION_webruntime-clang = "${PREFERRED_VERSION_webruntime}"
 PREFERRED_VERSION_mksnapshot-cross-${TARGET_ARCH} = "${PREFERRED_VERSION_webruntime}"
 
 # Prefer gstreamer version 1.20.% from oe-core for webos
-GSTREAMER_VERSION = "1.20.%"
+GSTREAMER_VERSION = "1.22.%"
 
 PREFERRED_VERSION_gstreamer1.0              = "${GSTREAMER_VERSION}"
 PREFERRED_VERSION_gstreamer1.0-plugins-bad  = "${GSTREAMER_VERSION}"

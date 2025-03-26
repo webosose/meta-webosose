@@ -1,4 +1,4 @@
-From 0dc7dc3fdaf291b6f7741dc4657b824a1389479e Mon Sep 17 00:00:00 2001
+From 8b89e464086937d437ec133221afbcf240aa0368 Mon Sep 17 00:00:00 2001
 From: Raveendra Angadi <raveendra.angadi@lge.com>
 Date: Mon, 17 Oct 2022 20:27:49 +0530
 Subject: [PATCH] h264parse: resolution changed event support
@@ -13,7 +13,7 @@ Upstream-Status: Pending
  3 files changed, 34 insertions(+)
 
 diff --git a/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.c b/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.c
-index 387cde20fb..e7f107bfda 100644
+index e08e3f00f5..8d8ca12fa7 100644
 --- a/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.c
 +++ b/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.c
 @@ -75,6 +75,13 @@ enum
@@ -51,7 +51,7 @@ index 387cde20fb..e7f107bfda 100644
    /**
     * GstH264Parse:update-timecode:
     *
-@@ -2020,6 +2034,7 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
+@@ -2045,6 +2059,7 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
    GstH264SPS *sps;
    GstCaps *sink_caps, *src_caps;
    gboolean modified = FALSE;
@@ -59,7 +59,7 @@ index 387cde20fb..e7f107bfda 100644
    GstBuffer *buf = NULL;
    GstStructure *s = NULL;
  
-@@ -2091,6 +2106,7 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
+@@ -2116,6 +2131,7 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
        h264parse->width = crop_width;
        h264parse->height = crop_height;
        modified = TRUE;
@@ -67,7 +67,7 @@ index 387cde20fb..e7f107bfda 100644
      }
  
      /* 0/1 is set as the default in the codec parser, we will set
-@@ -2103,8 +2119,16 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
+@@ -2128,8 +2144,16 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
        h264parse->fps_num = fps_num;
        h264parse->fps_den = fps_den;
        modified = TRUE;
@@ -85,10 +85,10 @@ index 387cde20fb..e7f107bfda 100644
        if (G_UNLIKELY ((h264parse->parsed_par_n != vui->par_n)
                || (h264parse->parsed_par_d != vui->par_d))) {
 diff --git a/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.h b/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.h
-index 1ec700a624..1faa7a71d9 100644
+index 1275dddf52..f5a46809dc 100644
 --- a/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.h
 +++ b/subprojects/gst-plugins-bad/gst/videoparsers/gsth264parse.h
-@@ -171,6 +171,9 @@ struct _GstH264Parse
+@@ -172,6 +172,9 @@ struct _GstH264Parse
  struct _GstH264ParseClass
  {
    GstBaseParseClass parent_class;
@@ -99,7 +99,7 @@ index 1ec700a624..1faa7a71d9 100644
  
  G_END_DECLS
 diff --git a/subprojects/gst-plugins-bad/gst/videoparsers/meson.build b/subprojects/gst-plugins-bad/gst/videoparsers/meson.build
-index 147a2650e4..e87c97f0cd 100644
+index 37b7833467..a9f32281a2 100644
 --- a/subprojects/gst-plugins-bad/gst/videoparsers/meson.build
 +++ b/subprojects/gst-plugins-bad/gst/videoparsers/meson.build
 @@ -17,6 +17,13 @@ vparse_sources = [
