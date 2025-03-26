@@ -30,3 +30,10 @@ TOOLCHAIN_OPTIONS:append = " ${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 
 # pass dyld-prefix with usrmerge otherwise the default loader from clang++ will be non-existent (on target)
 # /lib64/ld-linux-x86-64.so.2 instead of expected /usr/lib/ld-linux-x86-64.so.2 for qemux86-64
 TUNE_CCARGS:append = "${@bb.utils.contains("DISTRO_FEATURES", "usrmerge", " --dyld-prefix=/usr", "", d)}"
+
+# The same as in
+# https://github.com/kraj/meta-clang/commit/4cf1e9e0baf30568851c6646510d18bad50c613b
+# but applied without toolchain-clang override which this doesn't use
+# fixes:
+# http://gecko.lge.com:8000/Builds/Details/1431440
+DEBUG_PREFIX_MAP:remove = "-fcanon-prefix-map"
