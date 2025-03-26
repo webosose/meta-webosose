@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append:rpi = "webosrpi40"
+EXTENDPRAUTO:append:rpi = "webosrpi41"
 
 SHRT_VER = "${@oe.utils.trim_version('${PV}', 2)}"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}-${SHRT_VER}:${THISDIR}/${BPN}:"
