@@ -124,6 +124,12 @@ EXTRA_WEBOS_WERROR:pn-dialog-lvgl = ""
 # ../../libiodbc-3.52.15/iodbcinst/unicode.c:695:1: error: control reaches end of non-void function [-Werror=return-type]
 # http://gecko.lge.com:8000/Errors/Details/583308
 EXTRA_WEBOS_WERROR:pn-libiodbc = ""
+# libcbor/0.10.2-r0/git/src/cbor.c:151:1: error: control reaches end of non-void function [-Werror=return-type]
+# libcbor/0.10.2-r0/git/src/cbor/serialization.c:41:1: error: control reaches end of non-void function [-Werror=return-type]
+# libcbor/0.10.2-r0/git/src/cbor/floats_ctrls.c:59:1: error: control reaches end of non-void function [-Werror=return-type]
+# and many more
+# http://gecko.lge.com:8000/Errors/Details/597615
+EXTRA_WEBOS_WERROR:pn-libcbor = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
