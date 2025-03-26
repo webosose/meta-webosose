@@ -1,4 +1,4 @@
-From d80e300284afc9baff76fb50ca7bd0e95b421dac Mon Sep 17 00:00:00 2001
+From 2914b526b9e66b870910035db7286873db55e4b2 Mon Sep 17 00:00:00 2001
 From: "rajeshgopu.iv" <rajeshgopu.iv@lge.com>
 Date: Mon, 27 May 2024 15:21:38 +0530
 Subject: [PATCH] support fuse_passthrough to lib_fuse
@@ -56,7 +56,7 @@ Upstream-Status: Pending
  6 files changed, 63 insertions(+), 3 deletions(-)
 
 diff --git a/example/passthrough_hp.cc b/example/passthrough_hp.cc
-index 4e32789..f251d9c 100644
+index 8524eef..04312ca 100644
 --- a/example/passthrough_hp.cc
 +++ b/example/passthrough_hp.cc
 @@ -155,6 +155,7 @@ struct Fs {
@@ -67,7 +67,7 @@ index 4e32789..f251d9c 100644
      size_t num_threads;
      bool clone_fd;
      std::string fuse_mount_options;
-@@ -210,6 +211,8 @@ static void sfs_init(void *userdata, fuse_conn_info *conn) {
+@@ -211,6 +212,8 @@ static void sfs_init(void *userdata, fuse_conn_info *conn) {
              conn->want |= FUSE_CAP_SPLICE_WRITE;
          if (conn->capable & FUSE_CAP_SPLICE_READ)
              conn->want |= FUSE_CAP_SPLICE_READ;
@@ -76,7 +76,7 @@ index 4e32789..f251d9c 100644
      }
  }
  
-@@ -835,6 +838,13 @@ static void sfs_create(fuse_req_t req, fuse_ino_t parent, const char *name,
+@@ -839,6 +842,13 @@ static void sfs_create(fuse_req_t req, fuse_ino_t parent, const char *name,
      Inode& inode = get_inode(e.ino);
      lock_guard<mutex> g {inode.m};
      inode.nopen++;
@@ -90,9 +90,9 @@ index 4e32789..f251d9c 100644
      fuse_reply_create(req, &e, fi);
  }
  
-@@ -889,6 +899,14 @@ static void sfs_open(fuse_req_t req, fuse_ino_t ino, fuse_file_info *fi) {
-     fi->keep_cache = (fs.timeout != 0);
-     fi->noflush = (fs.timeout == 0 && (fi->flags & O_ACCMODE) == O_RDONLY);
+@@ -897,6 +907,14 @@ static void sfs_open(fuse_req_t req, fuse_ino_t ino, fuse_file_info *fi) {
+ 	    fi->direct_io = 1;
+ 
      fi->fh = fd;
 +    if (fs.passthrough)
 +    {
@@ -105,15 +105,15 @@ index 4e32789..f251d9c 100644
      fuse_reply_open(req, fi);
  }
  
-@@ -1207,6 +1225,7 @@ static cxxopts::ParseResult parse_options(int argc, char **argv) {
+@@ -1215,6 +1233,7 @@ static cxxopts::ParseResult parse_options(int argc, char **argv) {
          ("help", "Print help")
-         ("nocache", "Disable all caching")
+         ("nocache", "Disable attribute all caching")
          ("nosplice", "Do not use splice(2) to transfer data")
 +        ("nopassthrough", "Do not use pass-through mode for read/write")
          ("single", "Run single-threaded")
          ("o", "Mount options (see mount.fuse(5) - only use if you know what "
                "you are doing)", cxxopts::value(mount_options))
-@@ -1249,6 +1268,7 @@ static cxxopts::ParseResult parse_options(int argc, char **argv) {
+@@ -1258,6 +1277,7 @@ static cxxopts::ParseResult parse_options(int argc, char **argv) {
      if (resolved_path == NULL)
          warn("WARNING: realpath() failed with");
      fs.source = std::string {resolved_path};
@@ -121,7 +121,7 @@ index 4e32789..f251d9c 100644
      free(resolved_path);
  
      std::vector<std::string> flattened_mount_opts;
-@@ -1326,7 +1346,7 @@ int main(int argc, char *argv[]) {
+@@ -1335,7 +1355,7 @@ int main(int argc, char *argv[]) {
      fuse_args args = FUSE_ARGS_INIT(0, nullptr);
      if (fuse_opt_add_arg(&args, argv[0]) ||
          fuse_opt_add_arg(&args, "-o") ||
@@ -131,7 +131,7 @@ index 4e32789..f251d9c 100644
          errx(3, "ERROR: Out of memory");
  
 diff --git a/include/fuse_common.h b/include/fuse_common.h
-index 3a1e1f8..7e33398 100644
+index 381149a..37459d5 100644
 --- a/include/fuse_common.h
 +++ b/include/fuse_common.h
 @@ -105,6 +105,11 @@ struct fuse_file_info {
@@ -207,10 +207,10 @@ index 1b9d0df..393b251 100644
  struct fuse_lseek_in {
  	uint64_t	fh;
 diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index 9142b1c..b5edb91 100644
+index 3ac97eb..da5fd9f 100644
 --- a/include/fuse_lowlevel.h
 +++ b/include/fuse_lowlevel.h
-@@ -1377,6 +1377,8 @@ int fuse_reply_attr(fuse_req_t req, const struct stat *attr,
+@@ -1378,6 +1378,8 @@ int fuse_reply_attr(fuse_req_t req, const struct stat *attr,
   */
  int fuse_reply_readlink(fuse_req_t req, const char *link);
  
@@ -220,7 +220,7 @@ index 9142b1c..b5edb91 100644
   * Reply with open parameters
   *
 diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 1ce6083..6cab91e 100644
+index fdef193..0bb7522 100644
 --- a/lib/fuse_lowlevel.c
 +++ b/lib/fuse_lowlevel.c
 @@ -27,6 +27,7 @@
@@ -231,7 +231,7 @@ index 1ce6083..6cab91e 100644
  
  #ifndef F_LINUX_SPECIFIC_BASE
  #define F_LINUX_SPECIFIC_BASE       1024
-@@ -395,6 +396,7 @@ static void fill_open(struct fuse_open_out *arg,
+@@ -400,6 +401,7 @@ static void fill_open(struct fuse_open_out *arg,
  		      const struct fuse_file_info *f)
  {
  	arg->fh = f->fh;
@@ -239,7 +239,7 @@ index 1ce6083..6cab91e 100644
  	if (f->direct_io)
  		arg->open_flags |= FOPEN_DIRECT_IO;
  	if (f->keep_cache)
-@@ -461,6 +463,15 @@ int fuse_reply_readlink(fuse_req_t req, const char *linkname)
+@@ -466,6 +468,15 @@ int fuse_reply_readlink(fuse_req_t req, const char *linkname)
  	return send_reply_ok(req, linkname, strlen(linkname));
  }
  
@@ -255,7 +255,7 @@ index 1ce6083..6cab91e 100644
  int fuse_reply_open(fuse_req_t req, const struct fuse_file_info *f)
  {
  	struct fuse_open_out arg;
-@@ -2016,6 +2027,8 @@ void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
+@@ -2021,6 +2032,8 @@ void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
  		}
  		if (arg->minor >= 38)
  			se->conn.capable |= FUSE_CAP_EXPIRE_ONLY;
@@ -264,7 +264,7 @@ index 1ce6083..6cab91e 100644
  	} else {
  		se->conn.max_readahead = 0;
  	}
-@@ -2142,6 +2155,8 @@ void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
+@@ -2147,6 +2160,8 @@ void do_init(fuse_req_t req, fuse_ino_t nodeid, const void *inarg)
  		outargflags |= FUSE_CACHE_SYMLINKS;
  	if (se->conn.want & FUSE_CAP_EXPLICIT_INVAL_DATA)
  		outargflags |= FUSE_EXPLICIT_INVAL_DATA;
@@ -274,10 +274,10 @@ index 1ce6083..6cab91e 100644
  		outargflags |= FUSE_SETXATTR_EXT;
  
 diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
-index 55ab9e5..cbec8ec 100644
+index c0d58bf..8492070 100644
 --- a/lib/fuse_versionscript
 +++ b/lib/fuse_versionscript
-@@ -168,6 +168,7 @@ FUSE_3.7 {
+@@ -166,6 +166,7 @@ FUSE_3.7 {
  	global:
  		fuse_set_log_func;
  		fuse_log;
