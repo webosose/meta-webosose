@@ -136,6 +136,9 @@ EXTRA_WEBOS_WERROR:pn-python3-fastnumbers = ""
 # rust-llvm/1.74.1/rustc-1.74.1-src/src/llvm-project/llvm/lib/ExecutionEngine/JITLink/aarch32.cpp:182:1: error: no return statement in function returning non-void [-Werror=return-type]
 # http://gecko.lge.com:8000/Errors/Details/755893
 EXTRA_WEBOS_WERROR:pn-rust-llvm = ""
+# src/core/lib/promise/party.h:567:5: error: control reaches end of non-void function [-Werror=return-type]
+# http://gecko.lge.com:8000/Errors/Details/793628
+EXTRA_WEBOS_WERROR:pn-python3-grpcio = ""
 
 TARGET_CC_ARCH:append = " ${EXTRA_WEBOS_WERROR}"
 
