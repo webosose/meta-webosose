@@ -3,8 +3,24 @@ From: Martin Jansa <martin.jansa@lge.com>
 Date: Mon, 18 May 2020 16:57:25 -0700
 Subject: [PATCH] hciuart: lower the speed and restart on failure
 
+:Release Notes:
+hciuart: lower the speed and restart on failure
+
+:Detailed Notes:
+The baud rate is set to 460800 bits per second
+Restart service on failure
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRQ-10121]
+
 ---
-Upstream-Status: Pending
+Upstream-Status: Inappropriate [webOS specific]
 
  debian/pi-bluetooth.hciuart.service | 1 +
  usr/bin/btuart                      | 2 +-
