@@ -1,4 +1,4 @@
-From 6ce0795711c912487972ae6fbcb68b31229a7f59 Mon Sep 17 00:00:00 2001
+From 53b000c8e0e895adf33a01ddd4855985ae2f94a3 Mon Sep 17 00:00:00 2001
 From: Jaeyoon Jung <jaeyoon.jung@lge.com>
 Date: Tue, 15 Oct 2024 17:02:33 +0900
 Subject: [PATCH] Allow multiple -f flags
@@ -13,9 +13,9 @@ Upstream-Status: Backport [https://git.yoctoproject.org/opkg/commit/?id=36d08b93
  libopkg/opkg_conf.c              | 46 ++++++++++++++++++++++----------
  libopkg/opkg_conf.h              |  3 ++-
  src/opkg.c                       |  5 ++--
- tests/Makefile                   |  3 ++-
+ tests/Makefile                   |  1 +
  tests/misc/print_architecture.py | 25 +++++++++++++++++
- 5 files changed, 64 insertions(+), 18 deletions(-)
+ 5 files changed, 63 insertions(+), 17 deletions(-)
  create mode 100644 tests/misc/print_architecture.py
 
 diff --git a/libopkg/opkg_conf.c b/libopkg/opkg_conf.c
@@ -119,10 +119,10 @@ index 8022c7c..c40e801 100644
      char *tmp_dir;
      char *intercepts_dir; /* set to "/dev/null" to disable intercepts */
 diff --git a/src/opkg.c b/src/opkg.c
-index 39c9225..81e7c81 100644
+index b912bcc..7ee994d 100644
 --- a/src/opkg.c
 +++ b/src/opkg.c
-@@ -152,7 +152,8 @@ static int args_parse(int argc, char *argv[])
+@@ -153,7 +153,8 @@ static int args_parse(int argc, char *argv[])
              opkg_config->dest_str = xstrdup(optarg);
              break;
          case 'f':
@@ -132,7 +132,7 @@ index 39c9225..81e7c81 100644
              break;
          case 'o':
              opkg_config->offline_root = xstrdup(optarg);
-@@ -343,7 +344,7 @@ static void usage()
+@@ -344,7 +345,7 @@ static void usage()
      printf("\t                                  3 debug\n");
      printf("\t                                  4 debug level 2\n");
      printf("\t-f <conf_file>                  Use <conf_file> as the opkg configuration file\n");
@@ -142,18 +142,16 @@ index 39c9225..81e7c81 100644
      printf("\t-t, --tmp-dir <directory>       Specify tmp-dir.\n");
      printf("\t-l, --lists-dir <directory>     Specify lists-dir.\n");
 diff --git a/tests/Makefile b/tests/Makefile
-index e68a741..9b28379 100644
+index 8453939..cdd9ad3 100644
 --- a/tests/Makefile
 +++ b/tests/Makefile
-@@ -101,7 +101,8 @@ REGRESSION_TESTS := core/01_install.py \
- 		    regress/issue14459.py \
+@@ -102,6 +102,7 @@ REGRESSION_TESTS := core/01_install.py \
  		    misc/filehash.py \
  		    misc/update_loses_autoinstalled_flag.py \
--		    misc/version_comparisons.py
-+		    misc/version_comparisons.py \
-+		    misc/print_architecture.py
- 
- RUN_TESTS := $(REGRESSION_TESTS:%.py=run-%.py)
+ 		    misc/version_comparisons.py \
++		    misc/print_architecture.py \
+ 		    security/cve_2020_7982.py \
+ # intentional blank line
  
 diff --git a/tests/misc/print_architecture.py b/tests/misc/print_architecture.py
 new file mode 100644
