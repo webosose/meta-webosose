@@ -1,4 +1,4 @@
-From 11983bece6c2e5e859ed99d919a3cf8dcf833897 Mon Sep 17 00:00:00 2001
+From fe8a4508b9c0e9764a1b7350f7a68f70439df90a Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] systemd-oomd: modify oomd.conf
@@ -9,10 +9,10 @@ Upstream-Status: Pending
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/oom/oomd.conf b/src/oom/oomd.conf
-index b3a457f887..636edc6e87 100644
+index 1c8fa7684d..4761ffbf7d 100644
 --- a/src/oom/oomd.conf
 +++ b/src/oom/oomd.conf
-@@ -16,5 +16,5 @@
+@@ -18,5 +18,5 @@
  
  [OOM]
  #SwapUsedLimit=90%

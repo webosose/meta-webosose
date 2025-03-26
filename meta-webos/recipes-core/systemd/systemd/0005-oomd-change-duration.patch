@@ -1,4 +1,4 @@
-From d997013d3cae842ff5bfea4cbc59978ad118dec7 Mon Sep 17 00:00:00 2001
+From cc0817d1a482d54f9136d5f3e0d190909ce3ec98 Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Tue, 23 Nov 2021 10:42:42 +0900
 Subject: [PATCH] oomd: change duration

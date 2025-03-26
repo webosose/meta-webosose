@@ -1,4 +1,4 @@
-From 316b49b080bc7019fa0298e19cd957e564d67ad1 Mon Sep 17 00:00:00 2001
+From 736a50f53946119b90b91ba75f1bcab19b3dc16a Mon Sep 17 00:00:00 2001
 From: Hotaek Jung <hotaek.jung@lge.com>
 Date: Mon, 12 Jul 2021 19:16:26 +0900
 Subject: [PATCH] Add webos interface
@@ -68,7 +68,7 @@ index 0000000000..cef8430362
 +
 +</busconfig>
 diff --git a/src/oom/meson.build b/src/oom/meson.build
-index 1c4e7f1e64..33f25f55e5 100644
+index 690ed7ac6b..83e605313f 100644
 --- a/src/oom/meson.build
 +++ b/src/oom/meson.build
 @@ -5,6 +5,10 @@ systemd_oomd_sources = files(
@@ -81,8 +81,8 @@ index 1c4e7f1e64..33f25f55e5 100644
 +        'webos-manager.h',
  )
  
- oomctl_sources = files('oomctl.c')
-@@ -13,6 +17,9 @@ if conf.get('ENABLE_OOMD') == 1
+ executables += [
+@@ -34,6 +38,9 @@ if conf.get('ENABLE_OOMD') == 1
          install_data('org.freedesktop.oom1.conf',
                       install_dir : dbuspolicydir)
  
@@ -93,19 +93,19 @@ index 1c4e7f1e64..33f25f55e5 100644
                       install_dir : dbussystemservicedir)
  
 diff --git a/src/oom/oomd-manager.c b/src/oom/oomd-manager.c
-index 08a29ec77b..bfed4bebd0 100644
+index 6081254b3d..6ee1465bb9 100644
 --- a/src/oom/oomd-manager.c
 +++ b/src/oom/oomd-manager.c
-@@ -14,6 +14,8 @@
- #include "oomd-manager.h"
+@@ -16,6 +16,8 @@
  #include "path-util.h"
  #include "percent-util.h"
+ #include "varlink-io.systemd.oom.h"
 +#include "webos-manager.h"
 +#include "webos-manager-bus.h"
  
  typedef struct ManagedOOMMessage {
          ManagedOOMMode mode;
-@@ -392,6 +394,9 @@ static int monitor_swap_contexts_handler(sd_event_source *s, uint64_t usec, void
+@@ -397,6 +399,9 @@ static int monitor_swap_contexts_handler(sd_event_source *s, uint64_t usec, void
                            m->system_context.swap_used, m->system_context.swap_total,
                            PERMYRIAD_AS_PERCENT_FORMAT_VAL(m->swap_used_limit_permyriad));
  
@@ -115,7 +115,7 @@ index 08a29ec77b..bfed4bebd0 100644
                  r = get_monitored_cgroup_contexts_candidates(m->monitored_swap_cgroup_contexts, &candidates);
                  if (r == -ENOMEM)
                          return log_oom();
-@@ -515,6 +520,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
+@@ -520,6 +525,8 @@ static int monitor_memory_pressure_contexts_handler(sd_event_source *s, uint64_t
                                  log_debug_errno(r, "Failed to update monitored memory pressure candidate cgroup contexts, ignoring: %m");
                          else
                                  clear_candidates = NULL;
@@ -125,7 +125,7 @@ index 08a29ec77b..bfed4bebd0 100644
                          r = oomd_kill_by_pgscan_rate(m->monitored_mem_pressure_cgroup_contexts_candidates,
                                                       /* prefix= */ t->path,
 diff --git a/src/oom/oomd.c b/src/oom/oomd.c
-index 60e81e7abe..588f7c6866 100644
+index ecc2eda5dc..b8e8e445f0 100644
 --- a/src/oom/oomd.c
 +++ b/src/oom/oomd.c
 @@ -17,6 +17,8 @@
@@ -137,7 +137,7 @@ index 60e81e7abe..588f7c6866 100644
  
  static bool arg_dry_run = false;
  static int arg_swap_used_limit_permyriad = -1;
-@@ -192,6 +194,9 @@ static int run(int argc, char *argv[]) {
+@@ -187,6 +189,9 @@ static int run(int argc, char *argv[]) {
  
          log_debug("systemd-oomd started%s.", arg_dry_run ? " in dry run mode" : "");
  
@@ -265,15 +265,15 @@ index 0000000000..bed7413c6a
 +
 +int webos_manager_start(Manager *m);
 diff --git a/units/systemd-oomd.service.in b/units/systemd-oomd.service.in
-index ad187c6453..d853fe5490 100644
+index 94b1b0c786..10d6729426 100644
 --- a/units/systemd-oomd.service.in
 +++ b/units/systemd-oomd.service.in
 @@ -28,7 +28,7 @@ After=systemd-oomd.socket
  AmbientCapabilities=CAP_KILL CAP_DAC_OVERRIDE
  BusName=org.freedesktop.oom1
  CapabilityBoundingSet=CAP_KILL CAP_DAC_OVERRIDE
--ExecStart={{ROOTLIBEXECDIR}}/systemd-oomd
-+ExecStart={{ROOTLIBEXECDIR}}/systemd-oomd --dry-run
+-ExecStart={{LIBEXECDIR}}/systemd-oomd
++ExecStart={{LIBEXECDIR}}/systemd-oomd --dry-run
  IPAddressDeny=any
  LockPersonality=yes
  MemoryDenyWriteExecute=yes
