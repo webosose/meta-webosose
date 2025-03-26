@@ -12,7 +12,7 @@ DEPENDS:remove = "libatomic-ops"
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing-1 libpbnjson"
 
 WEBOS_VERSION = "15.0-59_20a7d627df8ba33337749faf0891cda380854aa8"
-EXTENDPRAUTO:append = "webos16"
+EXTENDPRAUTO:append = "webos17"
 
 inherit webos_enhanced_submissions
 
@@ -20,7 +20,9 @@ inherit webos_public_repo
 
 WEBOS_REPO_NAME = "pulseaudio-webos"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-meson.build-use-C-17.patch \
+"
 
 S = "${WORKDIR}/git"
 

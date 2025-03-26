@@ -1,0 +1,82 @@
+From 37c942a94db34e9e31028584bbc2b38a615db1e8 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Wed, 13 Dec 2023 19:11:38 +0100
+Subject: [PATCH] meson.build: use C++17
+
+:Release Notes:
+Switch from C++14 to C++17, because C++17 is now needed after abseil-cpp
+dropped -DCMAKE_CXX_STANDARD=14 in:
+https://git.openembedded.org/meta-openembedded/commit/?id=190f7b50ac3d7d30cf9d31167fb74f7146c3c8ff
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/745180
+
+ccache aarch64-webos-linux-g++ -mcpu=cortex-a72 -march=armv8-a+crc -mbranch-protection=standard -fstack-protector-strong -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot -Isrc/modules/agc/libwebrtc-agc-util.so.p -Isrc/modules/agc -I../git/src/modules/agc -I. -I../git -Isrc -I../git/src -ITOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/webrtc-audio-processing-1 -fdiagnostics-color=always -D_FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -std=c++14 -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/git=/usr/src/debug/pulseaudio/15.0-52 -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/git=/usr/src/debug/pulseaudio/15.0-52 -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/build=/usr/src/debug/pulseaudio/15.0-52 -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/build=/usr/src/debug/pulseaudio/15.0-52 -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot= -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot= -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot-native= -fvisibility-inlines-hidden -fPIC -DWEBRTC_LIBRARY_IMPL -DWEBRTC_POSIX -DNOMINMAX -DHAVE_CONFIG_H -D_GNU_SOURCE -D__INCLUDED_FROM_PULSE_AUDIO -MD -MQ src/modules/agc/libwebrtc-agc-util.so.p/webrtc-1.cc.o -MF src/modules/agc/libwebrtc-agc-util.so.p/webrtc-1.cc.o.d -o src/modules/agc/libwebrtc-agc-util.so.p/webrtc-1.cc.o -c ../git/src/modules/agc/webrtc-1.cc
+In file included from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/types/optional.h:39,
+                 from TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/webrtc-audio-processing-1/modules/audio_processing/include/audio_processing.h:26,
+                 from ../git/src/modules/agc/webrtc-1.cc:19:
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/utility/utility.h:164:12: error: 'in_place_t' has not been declared in 'std'
+  164 | using std::in_place_t;
+      |            ^~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/utility/utility.h:165:12: error: 'in_place' has not been declared in 'std'
+  165 | using std::in_place;
+      |            ^~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/utility/utility.h:181:12: error: 'in_place_type' has not been declared in 'std'
+  181 | using std::in_place_type;
+      |            ^~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/utility/utility.h:182:12: error: 'in_place_type_t' has not been declared in 'std'
+  182 | using std::in_place_type_t;
+      |            ^~~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/utility/utility.h:198:12: error: 'in_place_index' has not been declared in 'std'
+  198 | using std::in_place_index;
+      |            ^~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/utility/utility.h:199:12: error: 'in_place_index_t' has not been declared in 'std'
+  199 | using std::in_place_index_t;
+      |            ^~~~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/types/optional.h:47:12: error: 'bad_optional_access' has not been declared in 'std'
+   47 | using std::bad_optional_access;
+      |            ^~~~~~~~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/types/optional.h:48:12: error: 'optional' has not been declared in 'std'
+   48 | using std::optional;
+      |            ^~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/types/optional.h:49:12: error: 'make_optional' has not been declared in 'std'
+   49 | using std::make_optional;
+      |            ^~~~~~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/types/optional.h:50:12: error: 'nullopt_t' has not been declared in 'std'
+   50 | using std::nullopt_t;
+      |            ^~~~~~~~~
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/pulseaudio/15.0-52/recipe-sysroot/usr/include/absl/types/optional.h:51:12: error: 'nullopt' has not been declared in 'std'
+   51 | using std::nullopt;
+      |            ^~~~~~~
+...
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+
+Change-Id: I3f5a99e21d019153800456a8935c671ba8c7c30a
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/pulseaudio-webos/+/383765 meson.build: use C++17]
+
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 4aea61e71..e79cb93da 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,7 +1,7 @@
+ project('pulseaudio', 'c', 'cpp',
+         version : '15.0.0',
+         meson_version : '>= 0.50.0',
+-        default_options : [ 'c_std=gnu11', 'cpp_std=c++14' ]
++        default_options : [ 'c_std=gnu11', 'cpp_std=c++17' ]
+         )
+ 
+ meson.add_dist_script('scripts/save-tarball-version.sh', meson.project_version())
