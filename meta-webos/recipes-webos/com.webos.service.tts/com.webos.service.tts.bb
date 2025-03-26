@@ -13,7 +13,7 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "glib-2.0 luna-service2 libpbnjson pmloglib json-c pulseaudio googleapis grpc"
 
 WEBOS_VERSION = "1.0.0-31_1cfc3af67708cddfe81efba2b79a8c5704ed3c0d"
-PR = "r9"
+PR = "r10"
 
 inherit webos_component
 inherit webos_public_repo
@@ -22,7 +22,9 @@ inherit webos_cmake
 inherit webos_pkgconfig
 inherit webos_system_bus
 
-SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
+SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
+    file://0001-google-add-gpr-lib-to-TTS_ENGINE-call.patch \
+"
 S = "${WORKDIR}/git"
 
 inherit webos_systemd
