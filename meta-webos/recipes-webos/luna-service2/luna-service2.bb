@@ -16,7 +16,7 @@ VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN} = "luna-service2-security-conf ${VIRTUAL-RUNTIME_cpushareholder} ${VIRTUAL-RUNTIME_bash}"
 
 WEBOS_VERSION = "3.21.2-44_f116a5088f4d6918c50ad90eb7f8b0aa3decd12d"
-PR = "r35"
+PR = "r36"
 
 EXTRA_OECMAKE += "${@ '-DWEBOS_DISTRO_PRERELEASE:STRING="devel"' \
                   if d.getVar('WEBOS_DISTRO_PRERELEASE') != '' else ''}"
@@ -42,7 +42,6 @@ inherit webos_systemd
 WEBOS_SYSTEMD_SERVICE = "ls-hubd.service"
 
 PACKAGECONFIG ?= ""
-PACKAGECONFIG[ppm] = "-DWEBOS_PPM_ENABLED:BOOL=True,-DWEBOS_PPM_ENABLED:BOOL=False,,com.webos.service.ppm"
 # Disable LTTng tracepoints explicitly.
 # LTTng tracepoints in LS2 can cause out of memory, because LS2 is used by many components.
 # To enable tracepoints back use WEBOS_LTTNG_ENABLED:pn-luna-service2 = "1"
