@@ -1,4 +1,4 @@
-From 133fc1ac84d46d4442faf1d0ce7e331065fd44da Mon Sep 17 00:00:00 2001
+From f76923a726edf1699a5a74a7335125bd168a40d4 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Mon, 10 Aug 2020 13:27:14 +0530
 Subject: [PATCH] Added MessageHandle property in org.bluez.obex.Transfer1
@@ -24,7 +24,7 @@ Upstream-Status: Inappropriate [webos specific]
  3 files changed, 58 insertions(+), 7 deletions(-)
 
 diff --git a/gobex/gobex-transfer.c b/gobex/gobex-transfer.c
-index c94d018b2..e93cf79d6 100644
+index c94d018..b5bdfdf 100644
 --- a/gobex/gobex-transfer.c
 +++ b/gobex/gobex-transfer.c
 @@ -38,6 +38,7 @@ struct transfer {
@@ -40,7 +40,7 @@ index c94d018b2..e93cf79d6 100644
  
  	if (transfer->opcode == G_OBEX_OP_PUT) {
 +		if(transfer->first_response)
-+			transfer->first_response(obex, &err, rsp, transfer->user_data);
++			transfer->first_response(obex, err, rsp, transfer->user_data);
  		req = g_obex_packet_new(transfer->opcode, FALSE,
  							G_OBEX_HDR_INVALID);
  		g_obex_packet_add_body(req, put_get_data, transfer);
@@ -73,7 +73,7 @@ index c94d018b2..e93cf79d6 100644
  }
  
 diff --git a/gobex/gobex.h b/gobex/gobex.h
-index f16e4426c..434beecf8 100644
+index f16e442..434beec 100644
 --- a/gobex/gobex.h
 +++ b/gobex/gobex.h
 @@ -28,6 +28,9 @@ typedef void (*GObexRequestFunc) (GObex *obex, GObexPacket *req,
@@ -98,7 +98,7 @@ index f16e4426c..434beecf8 100644
  guint g_obex_get_req(GObex *obex, GObexDataConsumer data_func,
  			GObexFunc complete_func, gpointer user_data,
 diff --git a/obexd/client/transfer.c b/obexd/client/transfer.c
-index a7a85a0c0..55184f944 100644
+index a7a85a0..55184f9 100644
 --- a/obexd/client/transfer.c
 +++ b/obexd/client/transfer.c
 @@ -67,6 +67,7 @@ struct obc_transfer {
@@ -190,4 +190,3 @@ index a7a85a0c0..55184f944 100644
 +					xfer_complete,transfer, err);
  	if (transfer->xfer == 0)
  		return FALSE;
- 

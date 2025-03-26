@@ -1,4 +1,4 @@
-From 5ea04c913ef3358446d19fda94ea0e79069405b7 Mon Sep 17 00:00:00 2001
+From 42512ee1ee75140f8b7e293a8057240bdb7780a0 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -23,10 +23,11 @@ Upstream-Status: Inappropriate [webos specific]
 
  profiles/audio/avrcp.c |  1 +
  src/device.c           | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ src/device.h           |  1 +
+ 3 files changed, 23 insertions(+)
 
 diff --git a/profiles/audio/avrcp.c b/profiles/audio/avrcp.c
-index f3f2009f4..4f17740da 100644
+index f3f2009..4f17740 100644
 --- a/profiles/audio/avrcp.c
 +++ b/profiles/audio/avrcp.c
 @@ -3998,6 +3998,7 @@ static gboolean avrcp_get_capabilities_resp(struct avctp *conn, uint8_t code,
@@ -38,7 +39,7 @@ index f3f2009f4..4f17740da 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index 150d0745a..df0aa3f7e 100644
+index 150d074..df0aa3f 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -300,6 +300,7 @@ struct btd_device {
@@ -90,3 +91,13 @@ index 150d0745a..df0aa3f7e 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
+diff --git a/src/device.h b/src/device.h
+index 19e4971..c68e828 100644
+--- a/src/device.h
++++ b/src/device.h
+@@ -209,3 +209,4 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
+ void media_play_request(struct btd_device *dev);
+ void media_metadata_request(struct btd_device *dev);
+ void set_avrcp_feature(struct btd_device *dev, uint8_t feature, bool is_controller);
++void set_avrcp_ct_supported_events(struct btd_device* dev, uint16_t supportedEvents);
+

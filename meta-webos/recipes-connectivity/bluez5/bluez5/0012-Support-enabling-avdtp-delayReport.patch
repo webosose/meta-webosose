@@ -1,4 +1,4 @@
-From 00ad4e7209dff3c93e3febfa360044bdbcf7b031 Mon Sep 17 00:00:00 2001
+From 1f1ffee8ae076e40d0a0e568afd582a8406b5d80 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 4 Jun 2020 04:49:48 +0000
 Subject: [PATCH] Support enabling avdtp delayReport
@@ -34,7 +34,7 @@ Upstream-Status: Pending
  11 files changed, 97 insertions(+)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index b43161a13..5ce43946b 100644
+index b43161a..5ce4394 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
 @@ -2391,6 +2391,14 @@ found:
@@ -53,7 +53,7 @@ index b43161a13..5ce43946b 100644
  {
  	struct a2dp_channel *chan = user_data;
 diff --git a/profiles/audio/a2dp.h b/profiles/audio/a2dp.h
-index 615b641c9..af67ee6ee 100644
+index 615b641..af67ee6 100644
 --- a/profiles/audio/a2dp.h
 +++ b/profiles/audio/a2dp.h
 @@ -77,6 +77,7 @@ gboolean a2dp_cancel(unsigned int id);
@@ -65,7 +65,7 @@ index 615b641c9..af67ee6ee 100644
  const char *a2dp_setup_remote_path(struct a2dp_setup *setup);
  struct avdtp *a2dp_avdtp_get(struct btd_device *device);
 diff --git a/profiles/audio/avdtp.c b/profiles/audio/avdtp.c
-index 3667e0840..85faf0fba 100644
+index 3667e08..85faf0f 100644
 --- a/profiles/audio/avdtp.c
 +++ b/profiles/audio/avdtp.c
 @@ -469,6 +469,11 @@ static gboolean try_send(int sk, void *data, size_t len)
@@ -81,7 +81,7 @@ index 3667e0840..85faf0fba 100644
  				uint8_t message_type, uint8_t signal_id,
  				void *data, size_t len)
 diff --git a/profiles/audio/avdtp.h b/profiles/audio/avdtp.h
-index 102a2603e..b167f2dab 100644
+index 102a260..b167f2d 100644
 --- a/profiles/audio/avdtp.h
 +++ b/profiles/audio/avdtp.h
 @@ -311,3 +311,4 @@ struct avdtp_server *avdtp_get_server(struct avdtp_local_sep *lsep);
@@ -90,7 +90,7 @@ index 102a2603e..b167f2dab 100644
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index af5d809ba..27d621b86 100644
+index af5d809..27d621b 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
 @@ -133,6 +133,19 @@ struct media_player {
@@ -132,7 +132,7 @@ index af5d809ba..27d621b86 100644
  
  	return 0;
 diff --git a/profiles/audio/media.h b/profiles/audio/media.h
-index 2b579877b..704a25ea9 100644
+index 2b57987..704a25e 100644
 --- a/profiles/audio/media.h
 +++ b/profiles/audio/media.h
 @@ -10,6 +10,7 @@
@@ -149,7 +149,7 @@ index 2b579877b..704a25ea9 100644
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index 022390f0d..5c3b9037e 100644
+index 022390f..5c3b903 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
 @@ -67,6 +67,7 @@
@@ -275,7 +275,7 @@ index 022390f0d..5c3b9037e 100644
  	adapter->auths = g_queue_new();
  	adapter->exps = queue_new();
 diff --git a/src/adapter.h b/src/adapter.h
-index ca96c1f65..908cba088 100644
+index ca96c1f..908cba0 100644
 --- a/src/adapter.h
 +++ b/src/adapter.h
 @@ -26,6 +26,7 @@
@@ -296,7 +296,7 @@ index ca96c1f65..908cba088 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter);
  
 diff --git a/src/btd.h b/src/btd.h
-index b7e7ebd61..176689859 100644
+index b7e7ebd..1766898 100644
 --- a/src/btd.h
 +++ b/src/btd.h
 @@ -129,6 +129,7 @@ struct btd_opts {
@@ -308,7 +308,7 @@ index b7e7ebd61..176689859 100644
  	uint16_t	did_source;
  	uint16_t	did_vendor;
 diff --git a/src/main.c b/src/main.c
-index b1339c230..dcccd030e 100644
+index b1339c2..57b39bd 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -82,6 +82,7 @@ static const char *supported_options[] = {
@@ -325,12 +325,12 @@ index b1339c230..dcccd030e 100644
  					0, UINT32_MAX);
 +
 +	parse_config_bool(config, "General", "DelayReport",
-+					&btd_opts.delay_report);
++					(bool *)&btd_opts.delay_report);
  }
  
  static void parse_gatt_cache(GKeyFile *config)
 diff --git a/src/main.conf b/src/main.conf
-index 085c81a46..b3ce9a69a 100644
+index 085c81a..b3ce9a6 100644
 --- a/src/main.conf
 +++ b/src/main.conf
 @@ -69,6 +69,9 @@
