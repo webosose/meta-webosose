@@ -5,8 +5,8 @@ LICENSE = "LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=2d5025d4aa3495befef8f17206a5b0a1"
 
 SRCREV = "bb4ced89842f8d2dc0b8a6bc5d631bb36355207b"
-PR = "r2"
-PV = "1.3.5+git${SRCPV}"
+PR = "r3"
+PV = "1.3.5+git"
 
 inherit autotools-brokensep
 

@@ -8,8 +8,8 @@ DEPENDS = "sp-measure"
 RDEPENDS:${PN} = "sp-measure"
 
 SRCREV = "65e6a729ce04cd90206689ae28fbabc4baf801f6"
-PR = "r6"
-PV = "1.3.2+git${SRCPV}"
+PR = "r7"
+PV = "1.3.2+git"
 
 inherit autotools-brokensep
 

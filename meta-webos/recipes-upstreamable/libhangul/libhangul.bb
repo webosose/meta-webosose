@@ -7,14 +7,14 @@ SECTION = "libs"
 LICENSE = "LGPL-2.1-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=a6f89e2100d9b6cdffcea4f398e37343"
 
-PR = "r3"
+PR = "r4"
 
 inherit gettext
 inherit autotools
 inherit pkgconfig
 
 SRCREV = "4a71565b289ac0503673002527584dd356f70719"
-PV = "0.1.0+git${SRCPV}"
+PV = "0.1.0+git"
 
 EXTRA_OECONF += "--libdir=${libdir}/maliit/plugins"
 

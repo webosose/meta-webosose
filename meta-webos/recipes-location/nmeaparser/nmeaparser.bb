@@ -7,8 +7,8 @@ SECTION = "location"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=cf0a9a81f2741b7dba6a03714bd18a38"
 
-PR = "r1"
-PV = "1.0+git${SRCPV}"
+PR = "r2"
+PV = "1.0+git"
 
 inherit webos_cmake
 

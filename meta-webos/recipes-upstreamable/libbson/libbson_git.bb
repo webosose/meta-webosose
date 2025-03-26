@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=3b83ef96387f14655fc854ddc3c6bd57"
 
 SECTION = "libs"
 
-PR = "r2"
-PV = "0.98.0+git${SRCPV}"
+PR = "r3"
+PV = "0.98.0+git"
 # corresponds to 0.98.0
 SRCREV = "b2d142f48676124e80578b5d491bd9aec50e748d"
 SRC_URI = "git://github.com/mongodb/${BPN};branch=master;protocol=https \

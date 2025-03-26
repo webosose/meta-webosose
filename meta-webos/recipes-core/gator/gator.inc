@@ -5,8 +5,8 @@
 LICENSE = "GPL-2.0-only"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 
-INC_PR = "r5"
+INC_PR = "r6"
 
 SRC_URI = "git://github.com/ARM-software/gator.git;protocol=https;branch=main" 
 SRCREV = "3ff46fedd4d097813156069edab9704cc65e0a42"
-PV = "6.7+git${SRCPV}"
+PV = "6.7+git"
