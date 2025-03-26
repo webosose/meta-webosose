@@ -1,6 +1,6 @@
 # Copyright (c) 2013-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos25"
+EXTENDPRAUTO:append = "webos26"
 
 inherit update-alternatives
 ALTERNATIVE:${PN}-conf = "openssl-cnf2"
@@ -21,5 +21,4 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI += " \
     file://0471-Coverity-1528492-Fix-possible-memory-leak-if-t-NULL.patch \
-    file://0472-Fix-a-mem-leak-when-the-FIPS-provider-is-used-in-a-d.patch \
 "
