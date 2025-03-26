@@ -25,7 +25,7 @@ PR = "r20"
 DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad umediaserver media-resource-calculator com.webos.service.camera webos-wayland-extensions"
 DEPENDS:append:rpi = " userland"
 
-WEBOS_VERSION = "1.0.0-gav.72_0eea6c8b77c1be7b51db8c2c5f8556212b2d3f92"
+WEBOS_VERSION = "1.0.0-gav.74_34ab300c64090fc1fc88c04ef592aa782f90781d"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
