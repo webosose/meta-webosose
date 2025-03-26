@@ -10,11 +10,11 @@ require com.webos.service.camera.inc
 
 WEBOS_REPO_NAME = "com.webos.service.camera"
 
-PR = "${INC_PR}.0"
+S = "${WORKDIR}/git/src/common"
+
+PR = "${INC_PR}.1"
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
-
-EXTRA_OECMAKE += "-DBUILD_UTILS_ONLY=ON"
 
 PACKAGECONFIG += "${@bb.utils.contains('USE_WEBRUNTIME_LIBCXX', '1', 'webruntime-libcxx', 'system-libcxx', d)}"
 PACKAGECONFIG[webruntime-libcxx] = ",,chromium-toolchain-native chromium-stdlib"

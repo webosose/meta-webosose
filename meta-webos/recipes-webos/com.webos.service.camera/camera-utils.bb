@@ -8,8 +8,13 @@ require com.webos.service.camera.inc
 
 WEBOS_REPO_NAME = "com.webos.service.camera"
 
-PR = "${INC_PR}.0"
+S = "${WORKDIR}/git/src/common"
+
+PR = "${INC_PR}.1"
 
 DEPENDS = "glib-2.0 luna-service2 pmloglib nlohmann-json"
 
-EXTRA_OECMAKE += "-DBUILD_UTILS_ONLY=ON"
+# FIXME-buildpaths!!!
+# File /usr/lib/.debug/libcamera_common.so.1.0.0 in package camera-utils-dbg contains reference to TMPDIR [buildpaths]
+ERROR_QA:remove = "buildpaths"
+WARN_QA:append = " buildpaths"

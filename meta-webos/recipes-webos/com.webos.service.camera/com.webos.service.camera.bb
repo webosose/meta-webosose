@@ -6,9 +6,9 @@ SECTION = "webos/services"
 
 require com.webos.service.camera.inc
 
-PR = "${INC_PR}.0"
+PR = "${INC_PR}.1"
 
-DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json"
+DEPENDS = "glib-2.0 luna-service2 json-c alsa-lib pmloglib udev nlohmann-json camera-utils"
 
 # depends on edgeai-vision
 PACKAGECONFIG ??= " \
