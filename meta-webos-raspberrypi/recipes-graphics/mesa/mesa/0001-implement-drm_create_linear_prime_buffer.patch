@@ -1,4 +1,4 @@
-From f23a2917aed591d1cf1e015da0bdb51243b19279 Mon Sep 17 00:00:00 2001
+From 7c3b7019059d428364901b74a1e1f1db6fb91e3a Mon Sep 17 00:00:00 2001
 From: Martin Jansa <martin.jansa@lge.com>
 Date: Fri, 7 Feb 2020 07:10:42 -0800
 Subject: [PATCH] implement drm_create_linear_prime_buffer
@@ -11,6 +11,7 @@ Upstream-Status: Pending
 
  include/GL/internal/dri_interface.h         |  1 +
  src/egl/drivers/dri2/egl_dri2.c             |  3 ++-
+ src/egl/drivers/dri2/platform_wayland.c     |  1 +
  src/egl/wayland/wayland-drm/meson.build     |  1 +
  src/egl/wayland/wayland-drm/wayland-drm.c   | 28 +++++++++++++++++----
  src/egl/wayland/wayland-drm/wayland-drm.h   |  2 +-
@@ -18,13 +19,13 @@ Upstream-Status: Pending
  src/gallium/frontends/dri/dri2.c            | 21 +++++++++++++---
  src/gbm/backends/dri/gbm_dri.c              |  1 +
  src/loader/loader_dri3_helper.c             |  1 +
- 9 files changed, 60 insertions(+), 10 deletions(-)
+ 10 files changed, 61 insertions(+), 10 deletions(-)
 
 diff --git a/include/GL/internal/dri_interface.h b/include/GL/internal/dri_interface.h
-index 10ce61e8eda..db38cacddcd 100644
+index f4fc777d7e8..c5f97e8cc6a 100644
 --- a/include/GL/internal/dri_interface.h
 +++ b/include/GL/internal/dri_interface.h
-@@ -1433,6 +1433,7 @@ struct __DRIimageExtensionRec {
+@@ -1505,6 +1505,7 @@ struct __DRIimageExtensionRec {
      */
     __DRIimage *(*createImageFromFds)(__DRIscreen *screen,
                                       int width, int height, int fourcc,
@@ -33,10 +34,10 @@ index 10ce61e8eda..db38cacddcd 100644
                                       int *strides, int *offsets,
                                       void *loaderPrivate);
 diff --git a/src/egl/drivers/dri2/egl_dri2.c b/src/egl/drivers/dri2/egl_dri2.c
-index 93e3af618f9..41a6f307d23 100644
+index 0ebc46ee845..0acc7390d49 100644
 --- a/src/egl/drivers/dri2/egl_dri2.c
 +++ b/src/egl/drivers/dri2/egl_dri2.c
-@@ -3188,7 +3188,7 @@ dri2_destroy_image_khr(_EGLDisplay *disp, _EGLImage *image)
+@@ -3144,7 +3144,7 @@ dri2_destroy_image_khr(_EGLDisplay *disp, _EGLImage *image)
  
  static void
  dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
@@ -45,7 +46,7 @@ index 93e3af618f9..41a6f307d23 100644
  {
     _EGLDisplay *disp = user_data;
     struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
-@@ -3209,6 +3209,7 @@ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
+@@ -3165,6 +3165,7 @@ dri2_wl_reference_buffer(void *user_data, uint32_t name, int fd,
                                                  buffer->width,
                                                  buffer->height,
                                                  buffer->format,
@@ -53,6 +54,18 @@ index 93e3af618f9..41a6f307d23 100644
                                                  &fd, 1,
                                                  buffer->stride,
                                                  buffer->offset,
+diff --git a/src/egl/drivers/dri2/platform_wayland.c b/src/egl/drivers/dri2/platform_wayland.c
+index 4a896269d0c..87662fe44b9 100644
+--- a/src/egl/drivers/dri2/platform_wayland.c
++++ b/src/egl/drivers/dri2/platform_wayland.c
+@@ -1117,6 +1117,7 @@ get_back_bo(struct dri2_egl_surface *dri2_surf)
+                                                    dri2_surf->base.Height,
+                                                    loader_image_format_to_fourcc(
+                                                       linear_dri_image_format),
++                                                   DRM_FORMAT_MOD_INVALID,
+                                                    &buffer_fds[0], num_planes,
+                                                    &strides[0],
+                                                    &offsets[0],
 diff --git a/src/egl/wayland/wayland-drm/meson.build b/src/egl/wayland/wayland-drm/meson.build
 index b4782a013c9..2b400b8fa49 100644
 --- a/src/egl/wayland/wayland-drm/meson.build
@@ -187,10 +200,10 @@ index eaf2654ab26..d6913d680ba 100644
  
  </protocol>
 diff --git a/src/gallium/frontends/dri/dri2.c b/src/gallium/frontends/dri/dri2.c
-index 4b77601a82c..8d6bdb7d738 100644
+index f45f95b659d..e51efdeecae 100644
 --- a/src/gallium/frontends/dri/dri2.c
 +++ b/src/gallium/frontends/dri/dri2.c
-@@ -1509,13 +1509,28 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
+@@ -1599,13 +1599,28 @@ dri2_from_planar(__DRIimage *image, int plane, void *loaderPrivate)
     return img;
  }
  
@@ -223,10 +236,10 @@ index 4b77601a82c..8d6bdb7d738 100644
  }
  
 diff --git a/src/gbm/backends/dri/gbm_dri.c b/src/gbm/backends/dri/gbm_dri.c
-index 560b97f2b70..bc38c6991ca 100644
+index ed76087b20b..c2d647b05b9 100644
 --- a/src/gbm/backends/dri/gbm_dri.c
 +++ b/src/gbm/backends/dri/gbm_dri.c
-@@ -1032,6 +1032,7 @@ gbm_dri_bo_import(struct gbm_device *gbm,
+@@ -948,6 +948,7 @@ gbm_dri_bo_import(struct gbm_device *gbm,
                                               fd_data->width,
                                               fd_data->height,
                                               fourcc,
@@ -235,13 +248,13 @@ index 560b97f2b70..bc38c6991ca 100644
                                               &stride, &offset,
                                               NULL);
 diff --git a/src/loader/loader_dri3_helper.c b/src/loader/loader_dri3_helper.c
-index 8e775a4735f..49aefb46613 100644
+index 11bf6472894..f57bd5d9a8d 100644
 --- a/src/loader/loader_dri3_helper.c
 +++ b/src/loader/loader_dri3_helper.c
-@@ -1853,6 +1853,7 @@ loader_dri3_create_image(xcb_connection_t *c,
+@@ -1866,6 +1866,7 @@ loader_dri3_create_image(xcb_connection_t *c,
                                              bp_reply->width,
                                              bp_reply->height,
-                                             image_format_to_fourcc(format),
+                                             loader_image_format_to_fourcc(format),
 +                                            DRM_FORMAT_MOD_INVALID,
                                              fds, 1,
                                              &stride, &offset, loaderPrivate);
