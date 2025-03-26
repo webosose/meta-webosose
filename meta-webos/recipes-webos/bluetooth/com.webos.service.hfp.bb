@@ -10,10 +10,10 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=63319cd2c369569050a7c0cc246fc8ba \
 "
 
-DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson"
+DEPENDS = "glib-2.0 glib-2.0-native luna-service2 pmloglib libpbnjson python3-packaging-native"
 
 WEBOS_VERSION = "1.0.0-35_1c8e66b1e794a31d36d11fdc2afd4834184d70dd"
-PR = "r9"
+PR = "r10"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -23,6 +23,7 @@ inherit webos_system_bus
 inherit webos_public_repo
 inherit webos_machine_dep
 inherit webos_machine_impl_dep
+inherit python3native
 
 # Set WEBOS_HFP_ENABLED_ROLE to a space-separted list of
 # HFP (Hands Free Profile) role to be supported by the
