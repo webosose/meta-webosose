@@ -6,7 +6,7 @@ SECTION = "webos/base"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = " \
-    file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
     file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
 "
 
@@ -15,8 +15,8 @@ DEPENDS = "pmloglib zlib glib-2.0 libpbnjson pmloglib-private luna-service2"
 # provided by busybox.
 RDEPENDS:${PN} = "busybox"
 
-WEBOS_VERSION = "3.1.0-15_4b4e74c08a7aa02d4eee9ec94d4459a1ca640c77"
-PR = "r13"
+WEBOS_VERSION = "3.1.0-19_bbaf3b110429a8eaa6ba747019253bf4957a455f"
+PR = "r14"
 
 inherit webos_component
 inherit webos_public_repo
@@ -40,11 +40,3 @@ do_install:append() {
     fi
 }
 FILES:${PN} += "${datadir}/PmLogDaemon"
-
-# http://gecko.lge.com:8000/Errors/Details/821710
-# pmlogdaemon/3.1.0-14/git/src/main.c:685:14: error: implicit declaration of function 'open'; did you mean 'popen'? [-Wimplicit-function-declaration]
-# pmlogdaemon/3.1.0-14/git/src/main.c:698:18: error: implicit declaration of function 'fcntl' [-Wimplicit-function-declaration]
-# pmlogdaemon/3.1.0-14/git/src/main.c:2484:10: error: implicit declaration of function 'inotify_init' [-Wimplicit-function-declaration]
-# pmlogdaemon/3.1.0-14/git/src/main.c:2492:10: error: implicit declaration of function 'inotify_add_watch'; did you mean 'g_io_add_watch'? [-Wimplicit-function-declaration]
-# pmlogdaemon/3.1.0-14/git/src/main.c:2532:5: error: implicit declaration of function 'inotify_rm_watch' [-Wimplicit-function-declaration]
-CFLAGS += "-Wno-error=implicit-function-declaration"
