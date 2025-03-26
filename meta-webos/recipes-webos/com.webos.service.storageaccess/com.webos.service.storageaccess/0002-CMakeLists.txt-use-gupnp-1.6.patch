@@ -1,0 +1,40 @@
+From a2be093fa1e900106e3522b80e02ea2e2ea8da92 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Tue, 14 Nov 2023 13:43:34 +0100
+Subject: [PATCH] CMakeLists.txt: use gupnp-1.6
+
+:Release Notes:
+Updated in meta-oe with:
+https://git.openembedded.org/meta-openembedded/commit/?id=41f613ebc62bfbc114b2f49eb2388ff1dc823028
+
+:Detailed Notes:
+
+:Testing Performed:
+Only build tested.
+
+:QA Notes:
+No change to image.
+
+:Issues Addressed:
+[WRP-29491] Create GPVB with Yocto 5.0 Scarthgap
+
+Change-Id: I604ab15d7031c7dc42d6d27bcf1407eb55723cf0
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.storageaccess/+/380002 CMakeLists.txt: use gupnp-1.6]
+
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1ef1832..1304bc8 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -40,7 +40,7 @@ pkg_check_modules(LIBXML2 REQUIRED libxml-2.0)
+ include_directories(${LIBXML2_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${LIBXML2_CFLAGS_OTHER})
+ 
+-pkg_check_modules(GUPNP REQUIRED gupnp-1.2)
++pkg_check_modules(GUPNP REQUIRED gupnp-1.6)
+ include_directories(${GUPNP_INCLUDE_DIRS})
+ webos_add_compiler_flags(ALL ${GUPNP_CFLAGS_OTHER})
+ 
