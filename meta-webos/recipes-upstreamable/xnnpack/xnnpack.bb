@@ -56,7 +56,7 @@ SRC_URI += " \
 
 inherit cmake
 
-PR = "r3"
+PR = "r4"
 S = "${WORKDIR}/git"
 
 ARM_INSTRUCTION_SET = "arm"
@@ -68,7 +68,9 @@ do_generate_toolchain_file:append:arm() {
 }
 
 # tensorflow-lite doesn't respect TUNE_CCARGS correctly and adds its own
-# flags like -march=armv8.2-a+fp16+dotprod which then cause:
+# flags like -march=armv8.2-a+fp16+dotprod in BUILD.bazel:
+# https://github.com/google/XNNPACK/blob/ad67df831a376ce50336be671340d1fc6a8a7fa0/BUILD.bazel#L2749
+# which is then added similarly by the CMakeLists.txt added here, which then cause:
 # rpi4: cc1: warning: switch '-mcpu=cortex-a72' conflicts with '-march=armv8.2-a+fp16+dotprod' switch
 # rpi3: cc1: warning: switch '-mcpu=armv8-a' conflicts with '-march=armv8.2-a' switch
 # and:
@@ -77,7 +79,8 @@ do_generate_toolchain_file:append:arm() {
 # tensorflow-lite/2.9.2-r0/build/xnnpack/src/f16-gemm/gen-inc/1x16inc-minmax-aarch64-neonfp16arith-ld32.S:64: Error: selected processor does not support `fmla v16.8h,v20.8h,v0.h[0]'
 # -mcpu=cortex-a72+crc+crypto is used for raspberrypi4-64 with dunfell
 # -mcpu=cortex-a72 with kirkstone and newer where crypto is disabled since oe-core commit 2568d537087adb0b592aa250bf628a7b48c3a9d3
-MCPU_OPTS_TO_REMOVE = "-mcpu=cortex-a72+crc+crypto -mcpu=cortex-a72 -mcpu=cortex-a53+crc -mcpu=cortex-a53"
+# -mcpu=cortex-a72+crc is used since scarthgap with https://git.openembedded.org/openembedded-core/diff/meta/conf/machine/include/arm/armv8a/tune-cortexa72.inc?id=e64f0c1b6ac5d598a79a21de5f3060f83cb9523e
+MCPU_OPTS_TO_REMOVE = "-mcpu=cortex-a72+crc+crypto -mcpu=cortex-a72 -mcpu=cortex-a53+crc -mcpu=cortex-a53 -mcpu=cortex-a72+crc"
 TUNE_CCARGS:remove = "${MCPU_OPTS_TO_REMOVE}"
 
 # For these we can set *_SOURCE_DIR to avoid copy in do_configure:prepend:
