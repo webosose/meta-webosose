@@ -1,4 +1,4 @@
-From 7084f0e9638e0c90f50c0cabe6d15ea92cd60298 Mon Sep 17 00:00:00 2001
+From a2064617fa5db4c5ad4120133406f8e3de1fdb9c Mon Sep 17 00:00:00 2001
 From: "vijaya.sundaram" <vijaya.sundaram@lge.com>
 Date: Fri, 1 Jun 2018 11:43:15 +0530
 Subject: [PATCH] Fetching device type like BLE, BREDR from bluez
@@ -25,7 +25,7 @@ Upstream-Status: Pending
  1 file changed, 17 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index 9a4f2ce45..c21fcaa76 100644
+index 995d39f2c..b1fe7fd7c 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -206,6 +206,7 @@ struct btd_device {

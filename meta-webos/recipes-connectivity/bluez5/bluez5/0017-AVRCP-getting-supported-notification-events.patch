@@ -1,4 +1,4 @@
-From 6fbb9d13f15635271529c508ba5a82ab5245b61f Mon Sep 17 00:00:00 2001
+From 9c23c9ab97a20f41e0e49b61809ab0e528fb3f37 Mon Sep 17 00:00:00 2001
 From: "ramya.hegde" <ramya.hegde@lge.com>
 Date: Mon, 11 May 2020 15:54:12 +0530
 Subject: [PATCH] AVRCP getting supported notification events
@@ -39,7 +39,7 @@ index 61478e913..ff9d9f97d 100644
  	if (!session->controller || !session->controller->player)
  		return FALSE;
 diff --git a/src/device.c b/src/device.c
-index efb55a22d..6a18c3451 100644
+index be4b1d670..06863a304 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -284,6 +284,7 @@ struct btd_device {

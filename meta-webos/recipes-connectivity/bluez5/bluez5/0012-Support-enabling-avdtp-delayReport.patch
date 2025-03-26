@@ -1,4 +1,4 @@
-From 9052c6a17f1a27a7f516850a167b51ce83806872 Mon Sep 17 00:00:00 2001
+From 7c3eb3855096453d6f59d9d3b55a22c1d3ba4c3c Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Thu, 4 Jun 2020 04:49:48 +0000
 Subject: [PATCH] Support enabling avdtp delayReport
@@ -35,7 +35,7 @@ Upstream-Status: Pending
  11 files changed, 104 insertions(+)
 
 diff --git a/profiles/audio/a2dp.c b/profiles/audio/a2dp.c
-index 276512208..fb6c9f680 100644
+index 47b5dd7c3..7865bce7f 100644
 --- a/profiles/audio/a2dp.c
 +++ b/profiles/audio/a2dp.c
 @@ -2390,6 +2390,14 @@ found:
@@ -91,10 +91,10 @@ index 102a2603e..b167f2dab 100644
  uint16_t avdtp_get_version(struct avdtp *session);
 +void avdtp_local_sep_set_delay_report(struct avdtp_local_sep *lsep, bool delay_reporting);
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index 7f1ff346b..617763982 100644
+index a9c42450c..3f147b697 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -120,6 +120,19 @@ struct media_player {
+@@ -128,6 +128,19 @@ struct media_player {
  
  static GSList *adapters = NULL;
  
@@ -114,7 +114,7 @@ index 7f1ff346b..617763982 100644
  static void endpoint_request_free(struct endpoint_request *request)
  {
  	if (request->call)
-@@ -807,6 +820,9 @@ static struct media_endpoint *media_endpoint_create(struct media_adapter *adapte
+@@ -1314,6 +1327,9 @@ media_endpoint_create(struct media_adapter *adapter,
  	}
  
  	endpoint->adapter = adapter;
@@ -122,9 +122,9 @@ index 7f1ff346b..617763982 100644
 +
 +       DBG("delay_reporting %d", delay_reporting);
  
- 	if (strcasecmp(uuid, A2DP_SOURCE_UUID) == 0)
- 		succeeded = endpoint_init_a2dp_source(endpoint,
-@@ -2427,6 +2443,7 @@ int media_register(struct btd_adapter *btd_adapter)
+ 	for (i = 0; i < ARRAY_SIZE(init_table); i++) {
+ 		init = &init_table[i];
+@@ -3050,6 +3066,7 @@ int media_register(struct btd_adapter *btd_adapter)
  		return -1;
  	}
  
@@ -150,7 +150,7 @@ index 96bea9db4..e9d10fd3c 100644
  int8_t media_player_get_device_volume(struct btd_device *device);
 +void media_set_delay_reporting(struct media_adapter* adapter, bool delay_reporting);
 diff --git a/src/adapter.c b/src/adapter.c
-index b159d2135..9ebcf6368 100644
+index 8fb2acdc8..f22f17508 100644
 --- a/src/adapter.c
 +++ b/src/adapter.c
 @@ -67,6 +67,7 @@
@@ -161,7 +161,7 @@ index b159d2135..9ebcf6368 100644
  
  #define MODE_OFF		0x00
  #define MODE_CONNECTABLE	0x01
-@@ -271,6 +272,9 @@ struct btd_adapter {
+@@ -280,6 +281,9 @@ struct btd_adapter {
  	bool filtered_discovery;	/* we are doing filtered discovery */
  	bool no_scan_restart_delay;	/* when this flag is set, restart scan
  					 * without delay */
@@ -171,7 +171,7 @@ index b159d2135..9ebcf6368 100644
  	uint8_t discovery_type;		/* current active discovery type */
  	uint8_t discovery_enable;	/* discovery enabled/disabled */
  	bool discovery_suspended;	/* discovery has been suspended */
-@@ -330,6 +334,11 @@ typedef enum {
+@@ -357,6 +361,11 @@ typedef enum {
  	ADAPTER_AUTHORIZE_CHECK_CONNECTED
  } adapter_authorize_type;
  
@@ -183,7 +183,7 @@ index b159d2135..9ebcf6368 100644
  static struct btd_adapter *btd_adapter_lookup(uint16_t index)
  {
  	GList *list;
-@@ -532,6 +541,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
+@@ -559,6 +568,8 @@ static void store_adapter_info(struct btd_adapter *adapter)
  
  	g_key_file_set_boolean(key_file, "General", "Discoverable",
  							discoverable);
@@ -192,7 +192,7 @@ index b159d2135..9ebcf6368 100644
  
  	if (adapter->discoverable_timeout != btd_opts.discovto)
  		g_key_file_set_integer(key_file, "General",
-@@ -3312,6 +3323,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
+@@ -3476,6 +3487,30 @@ static gboolean property_get_roles(const GDBusPropertyTable *property,
  
  	return TRUE;
  }
@@ -223,15 +223,15 @@ index b159d2135..9ebcf6368 100644
  
  static void property_append_experimental(void *data, void *user_data)
  {
-@@ -3714,6 +3749,7 @@ static const GDBusPropertyTable adapter_properties[] = {
+@@ -3880,6 +3915,7 @@ static const GDBusPropertyTable adapter_properties[] = {
  	{ "Roles", "as", property_get_roles },
  	{ "ExperimentalFeatures", "as", property_get_experimental, NULL,
- 					property_experimental_exits },
+ 					property_experimental_exists },
 +        { "DelayReport", "b", property_get_delay_report_feature, property_set_delay_report_feature },
  	{ }
  };
  
-@@ -5091,6 +5127,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
+@@ -5257,6 +5293,11 @@ bool btd_adapter_get_bredr(struct btd_adapter *adapter)
  	return false;
  }
  
@@ -243,7 +243,7 @@ index b159d2135..9ebcf6368 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter)
  {
  	if (!adapter)
-@@ -6617,6 +6658,15 @@ static void load_config(struct btd_adapter *adapter)
+@@ -6786,6 +6827,15 @@ static void load_config(struct btd_adapter *adapter)
  		gerr = NULL;
  	}
  
@@ -259,7 +259,7 @@ index b159d2135..9ebcf6368 100644
  	g_key_file_free(key_file);
  }
  
-@@ -6649,6 +6699,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+@@ -6822,6 +6872,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
  						btd_opts.did_version);
  	adapter->discoverable_timeout = btd_opts.discovto;
  	adapter->pairable_timeout = btd_opts.pairto;
@@ -267,16 +267,16 @@ index b159d2135..9ebcf6368 100644
  
  	DBG("System name: %s", adapter->system_name);
  	DBG("Major class: %u", adapter->major_class);
-@@ -6656,6 +6707,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
- 	DBG("Modalias: %s", adapter->modalias);
- 	DBG("Discoverable timeout: %u seconds", adapter->discoverable_timeout);
- 	DBG("Pairable timeout: %u seconds", adapter->pairable_timeout);
+@@ -6832,6 +6883,7 @@ static struct btd_adapter *btd_adapter_new(uint16_t index)
+ 	if (blocked > 0)
+ 		DBG("Power state: %s",
+ 			adapter_power_state_str(adapter->power_state));
 +	DBG("DelayReport %d", adapter->delay_report);
  
  	adapter->auths = g_queue_new();
  	adapter->exps = queue_new();
 diff --git a/src/adapter.h b/src/adapter.h
-index b09044edd..d327c69b8 100644
+index 78eb069ae..3da7816f2 100644
 --- a/src/adapter.h
 +++ b/src/adapter.h
 @@ -26,6 +26,7 @@
@@ -297,7 +297,7 @@ index b09044edd..d327c69b8 100644
  struct btd_gatt_database *btd_adapter_get_database(struct btd_adapter *adapter);
  
 diff --git a/src/btd.h b/src/btd.h
-index c02b2691e..68d5ccd4a 100644
+index 63be6d8d4..c3f9013b5 100644
 --- a/src/btd.h
 +++ b/src/btd.h
 @@ -115,6 +115,7 @@ struct btd_opts {

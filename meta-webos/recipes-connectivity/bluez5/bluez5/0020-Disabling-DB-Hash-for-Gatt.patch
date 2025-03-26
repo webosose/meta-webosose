@@ -1,4 +1,4 @@
-From 6977994366e9391ee1b7d7423ce057898d6e9af4 Mon Sep 17 00:00:00 2001
+From 9ea25f1fd32f0be2772a89ea1fc9ff6f6250560d Mon Sep 17 00:00:00 2001
 From: Vibhanshu Dhote <vibhanshu.dhote@lge.com>
 Date: Tue, 28 Jul 2020 16:04:27 +0530
 Subject: [PATCH] Disabling DB Hash for Gatt
@@ -23,7 +23,7 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/src/gatt-database.c b/src/gatt-database.c
-index cf651b5f5..9812c3157 100644
+index ea282d4bc..803dad80d 100644
 --- a/src/gatt-database.c
 +++ b/src/gatt-database.c
 @@ -1191,11 +1191,13 @@ static void db_hash_read_cb(struct gatt_db_attribute *attrib,
@@ -41,7 +41,7 @@ index cf651b5f5..9812c3157 100644
  	state = find_device_state(database, &bdaddr, bdaddr_type);
  	if (state)
  		state->change_aware = true;
-@@ -1251,6 +1253,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
+@@ -1252,6 +1254,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
  	gatt_db_attribute_set_fixed_length(database->cli_feat, CLI_FEAT_SIZE);
  
  	/* Only expose database hash chrc if supported */
@@ -49,7 +49,7 @@ index cf651b5f5..9812c3157 100644
  	if (gatt_db_hash_support(database->db)) {
  		bt_uuid16_create(&uuid, GATT_CHARAC_DB_HASH);
  		database->db_hash = gatt_db_service_add_characteristic(service,
-@@ -1258,6 +1261,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
+@@ -1259,6 +1262,7 @@ static void populate_gatt_service(struct btd_gatt_database *database)
  				db_hash_read_cb, NULL, database);
  		gatt_db_attribute_set_fixed_length(database->db_hash, 16);
  	}

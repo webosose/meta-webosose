@@ -1,4 +1,4 @@
-From 49fb6333df5255cf3b4aba4d26c1b141b08945d7 Mon Sep 17 00:00:00 2001
+From a329e8a0fb56137887aa80717c288559093da568 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Wed, 30 Jan 2019 15:17:11 +0530
 Subject: [PATCH] Added dbus signal for MediaPlayRequest
@@ -49,10 +49,10 @@ index 80f34c7a7..1b3e6090a 100644
  }
  
 diff --git a/profiles/audio/media.c b/profiles/audio/media.c
-index c5d8ab14e..97c453021 100644
+index c9328ab9b..bea2e6358 100644
 --- a/profiles/audio/media.c
 +++ b/profiles/audio/media.c
-@@ -1229,7 +1229,7 @@ static uint32_t media_player_get_position(void *user_data)
+@@ -1761,7 +1761,7 @@ static uint32_t media_player_get_position(void *user_data)
  	sec = (uint32_t) timedelta;
  	msec = (uint32_t) ((timedelta - sec) * 1000);
  
@@ -62,7 +62,7 @@ index c5d8ab14e..97c453021 100644
  
  static uint32_t media_player_get_duration(void *user_data)
 diff --git a/src/device.c b/src/device.c
-index 2eef2a8cf..275f4a9a6 100644
+index 07dad435b..3f9f1190d 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -2087,6 +2087,22 @@ void recieve_passThrough_commands(struct btd_device *dev, const char* code, cons
@@ -101,7 +101,7 @@ index 2eef2a8cf..275f4a9a6 100644
  static const GDBusMethodTable device_methods[] = {
  	{ GDBUS_ASYNC_METHOD("Disconnect", NULL, NULL, dev_disconnect) },
  	{ GDBUS_ASYNC_METHOD("Connect", NULL, NULL, dev_connect) },
-@@ -4078,7 +4100,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4081,7 +4103,7 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  
  	if (g_dbus_register_interface(dbus_conn,
  					device->path, DEVICE_INTERFACE,
@@ -111,10 +111,10 @@ index 2eef2a8cf..275f4a9a6 100644
  					device_free) == FALSE) {
  		error("Unable to register device interface for %s", address);
 diff --git a/src/device.h b/src/device.h
-index b7a5aaa98..fe2387fb3 100644
+index 6297e04c0..549e53b81 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -188,3 +188,6 @@ void btd_device_set_volume(struct btd_device *dev, int8_t volume);
+@@ -190,3 +190,6 @@ void btd_device_set_volume(struct btd_device *dev, int8_t volume);
  int8_t btd_device_get_volume(struct btd_device *dev);
  
  void recieve_passThrough_commands(struct btd_device *dev, const char* code, const char* state);

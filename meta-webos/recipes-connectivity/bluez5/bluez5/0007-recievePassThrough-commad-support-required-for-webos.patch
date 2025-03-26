@@ -1,4 +1,4 @@
-From 76f3a04a8135315944af66b322bb646d66b6366c Mon Sep 17 00:00:00 2001
+From 30b1947069401365ed1fe5ff5531e7cca6f15d3b Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 13 Jan 2019 13:35:55 +0530
 Subject: [PATCH] recievePassThrough commad support required for webos
@@ -56,7 +56,7 @@ index 6f64f162b..b002470f9 100644
  		break;
  	}
 diff --git a/src/device.c b/src/device.c
-index fea01d20a..2eef2a8cf 100644
+index 750232410..07dad435b 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -170,6 +170,11 @@ enum {
@@ -168,7 +168,7 @@ index fea01d20a..2eef2a8cf 100644
  	{ "ServiceData", "a{sv}", dev_property_get_service_data,
  				NULL, dev_property_service_data_exist },
  	{ "TxPower", "n", dev_property_get_tx_power, NULL,
-@@ -4037,6 +4089,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
+@@ -4040,6 +4092,9 @@ static struct btd_device *device_new(struct btd_adapter *adapter,
  	device->adapter = adapter;
  	device->temporary = true;
  
@@ -179,10 +179,10 @@ index fea01d20a..2eef2a8cf 100644
  					gatt_service_removed, device, NULL);
  
 diff --git a/src/device.h b/src/device.h
-index d7f886224..b7a5aaa98 100644
+index 9e81fda9e..6297e04c0 100644
 --- a/src/device.h
 +++ b/src/device.h
-@@ -186,3 +186,5 @@ void btd_device_cleanup(void);
+@@ -188,3 +188,5 @@ void btd_device_cleanup(void);
  
  void btd_device_set_volume(struct btd_device *dev, int8_t volume);
  int8_t btd_device_get_volume(struct btd_device *dev);

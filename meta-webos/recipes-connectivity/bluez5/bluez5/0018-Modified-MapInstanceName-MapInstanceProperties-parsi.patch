@@ -1,4 +1,4 @@
-From 9336709205cbd1d67f01cc0e841579013c4d254b Mon Sep 17 00:00:00 2001
+From 2aa47e4e4e88b83c3a9a524fc21e69535ec56815 Mon Sep 17 00:00:00 2001
 From: Rakes Pani <rakes.pani@lge.com>
 Date: Tue, 14 Jul 2020 10:37:18 +0900
 Subject: [PATCH] Modified MapInstanceName & MapInstanceProperties parsing and
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 167 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index 6a18c3451..f6635fb13 100644
+index 06863a304..7eed7d739 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -220,6 +220,8 @@ struct btd_device {
@@ -222,7 +222,7 @@ index 6a18c3451..f6635fb13 100644
  	/* Load device id */
  	source = g_key_file_get_integer(key_file, "DeviceID", "Source", NULL);
  	if (source) {
-@@ -4988,6 +5110,29 @@ static int update_record(struct browse_req *req, const char *uuid,
+@@ -4998,6 +5120,29 @@ static int update_record(struct browse_req *req, const char *uuid,
  	return 0;
  }
  
@@ -252,7 +252,7 @@ index 6a18c3451..f6635fb13 100644
  static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
  {
  	struct btd_device *device = req->device;
-@@ -5045,6 +5190,23 @@ static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
+@@ -5055,6 +5200,23 @@ static void update_bredr_services(struct browse_req *req, sdp_list_t *recs)
  		if (!profile_uuid)
  			continue;
  
@@ -276,7 +276,7 @@ index 6a18c3451..f6635fb13 100644
  		if (bt_uuid_strcmp(profile_uuid, PNP_UUID) == 0) {
  			uint16_t source, vendor, product, version;
  			sdp_data_t *pdlist;
-@@ -5223,6 +5385,10 @@ static void search_cb(sdp_list_t *recs, int err, gpointer user_data)
+@@ -5233,6 +5395,10 @@ static void search_cb(sdp_list_t *recs, int err, gpointer user_data)
  	/* Propagate services changes */
  	g_dbus_emit_property_changed(dbus_conn, req->device->path,
  						DEVICE_INTERFACE, "UUIDs");

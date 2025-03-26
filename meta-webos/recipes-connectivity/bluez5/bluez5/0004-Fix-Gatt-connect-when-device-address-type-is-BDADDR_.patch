@@ -1,4 +1,4 @@
-From 1c436e8b0c6acc38830f93d7f94686bdd3117cc5 Mon Sep 17 00:00:00 2001
+From 9acc3246d1c47383edf4dfee3054734f9adf09ae Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Sun, 22 Jul 2018 18:59:45 +0530
 Subject: [PATCH] Fix Gatt connect when device address type is BDADDR_LE_PUBLIC
@@ -30,7 +30,7 @@ Upstream-Status: Pending
  1 file changed, 28 insertions(+)
 
 diff --git a/src/device.c b/src/device.c
-index c21fcaa76..a3c51c0f5 100644
+index b1fe7fd7c..bda45dfdf 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -2366,6 +2366,33 @@ static DBusMessage *dev_connect(DBusConnection *conn, DBusMessage *msg,

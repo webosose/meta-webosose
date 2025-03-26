@@ -1,4 +1,4 @@
-From 762ead4c8d565ada8022e9d544963522fa70de8b Mon Sep 17 00:00:00 2001
+From 91af1c0af8c0b0c15c02b577290a60e15cabed1d Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Mon, 21 Jan 2019 12:44:19 +0530
 Subject: [PATCH] Fix volume property not able to set
@@ -26,10 +26,10 @@ Upstream-Status: Pending
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/profiles/audio/transport.c b/profiles/audio/transport.c
-index 5848e4019..19a39af47 100644
+index 41339da51..2827ff42d 100644
 --- a/profiles/audio/transport.c
 +++ b/profiles/audio/transport.c
-@@ -810,7 +810,7 @@ static int media_transport_init_source(struct media_transport *transport)
+@@ -1065,7 +1065,7 @@ static int media_transport_init_source(struct media_transport *transport)
  	transport->data = a2dp;
  	transport->destroy = destroy_a2dp;
  

@@ -1,4 +1,4 @@
-From 163333cd51ea3dd9f5f7bd44310b7c4e385865a0 Mon Sep 17 00:00:00 2001
+From 87032726d8ab8fdbb172ce098560c1fd80a7e184 Mon Sep 17 00:00:00 2001
 From: "sameer.mulla" <sameer.mulla@lge.com>
 Date: Tue, 22 Jan 2019 23:25:18 +0530
 Subject: [PATCH] Implementation to get connected profiles uuids
@@ -25,7 +25,7 @@ Upstream-Status: Inappropriate [webos specific]
  1 file changed, 49 insertions(+), 1 deletion(-)
 
 diff --git a/src/device.c b/src/device.c
-index a3c51c0f5..fea01d20a 100644
+index bda45dfdf..750232410 100644
 --- a/src/device.c
 +++ b/src/device.c
 @@ -215,6 +215,7 @@ struct btd_device {
