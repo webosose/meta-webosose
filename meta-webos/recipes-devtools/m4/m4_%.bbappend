@@ -1,6 +1,6 @@
 # Copyright (c) 2019-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos2"
+EXTENDPRAUTO:append = "webos3"
 
 # We need to revert RDEPENDS changes from
 #
@@ -14,9 +14,12 @@ EXTENDPRAUTO:append = "webos2"
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-October/156694.html
 # it doesn't work when GLIBC_GENERATE_LOCALES are restricted like they are in our builds:
 # meta-webos/conf/distro/include/webos-toolchain.inc:GLIBC_GENERATE_LOCALES = "en_US.UTF-8"
+# and locale-base-fr-fr added in:
+# https://git.openembedded.org/openembedded-core/commit/meta/recipes-devtools/m4?id=e15ad965f22fe14270274687eff9849256a74fec
 
 RDEPENDS:${PN}-ptest:remove:libc-glibc = " \
     locale-base-fr-fr.iso-8859-1 \
+    locale-base-fr-fr \
 "
 
 # ERROR: QA Issue: m4-ptest rdepends on bash, but it isn't a build dependency, missing bash in DEPENDS or PACKAGECONFIG? [build-deps]
