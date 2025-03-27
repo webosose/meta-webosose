@@ -1,6 +1,6 @@
 # Copyright (c) 2017-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos23"
+EXTENDPRAUTO:append = "webos24"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
 SRC_URI:append:webos = " \
@@ -27,6 +27,7 @@ PACKAGECONFIG:remove = " \
     networkd    \
     resolved    \
     nss-resolve \
+    sysusers    \
     timedated   \
     timesyncd   \
 "
