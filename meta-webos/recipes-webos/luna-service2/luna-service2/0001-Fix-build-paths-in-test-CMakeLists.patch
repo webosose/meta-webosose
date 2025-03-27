@@ -1,0 +1,71 @@
+From 29287a07db500753260f7449ebf628cc1807a821 Mon Sep 17 00:00:00 2001
+From: Nguyen Dat Tho <tho3.nguyen@lge.com>
+Date: Mon, 30 Dec 2024 13:28:35 +0900
+Subject: [PATCH] Fix build paths in test CMakeLists
+
+:Release Notes:
+Update the definition paths for ls-monitor and luna-send.
+
+:Detailed Notes:
+The CMakeLists.txt files for ls-monitor and luna-send tests have been
+modified to use the installation directories defined by WEBOS_INSTALL
+variables instead of relative build paths. This ensures that the tests
+refer to the correct executable locations, enhancing build consistency
+across environments.
+
+:Testing Performed:
+Locally build tested.
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-8224] buildpath QA issues
+
+Change-Id: I082dff04d55948bf3281727a5f6d7706ac749b8a
+Reviewed-on: http://gpro.lge.com/c/webos/luna-service2/+/463348
+---
+Upstream-Status: Backport [29287a0 (tag: submissions/45) Fix build paths in test CMakeLists]
+
+ src/ls-monitor/test/CMakeLists.txt | 4 ++--
+ src/luna-send/test/CMakeLists.txt  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/ls-monitor/test/CMakeLists.txt b/src/ls-monitor/test/CMakeLists.txt
+index d9d85b8..92ab934 100644
+--- a/src/ls-monitor/test/CMakeLists.txt
++++ b/src/ls-monitor/test/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2015-2018 LG Electronics, Inc.
++# Copyright (c) 2015-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -14,7 +14,7 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ 
+-add_definitions(-DLS_MONITOR="${CMAKE_CURRENT_BINARY_DIR}/../ls-monitor")
++add_definitions(-DLS_MONITOR="${WEBOS_INSTALL_SBINDIR}/ls-monitor")
+ 
+ set(INTEGRATION_TEST_SOURCES
+     "test_monitor.cpp"
+diff --git a/src/luna-send/test/CMakeLists.txt b/src/luna-send/test/CMakeLists.txt
+index ee9a576..5914504 100644
+--- a/src/luna-send/test/CMakeLists.txt
++++ b/src/luna-send/test/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2015-2018 LG Electronics, Inc.
++# Copyright (c) 2015-2025 LG Electronics, Inc.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+ # you may not use this file except in compliance with the License.
+@@ -14,7 +14,7 @@
+ #
+ # SPDX-License-Identifier: Apache-2.0
+ 
+-add_definitions(-DLUNA_SEND="${CMAKE_CURRENT_BINARY_DIR}/../luna-send")
++add_definitions(-DLUNA_SEND="${WEBOS_INSTALL_BINDIR}/luna-send")
+ 
+ set(INTEGRATION_TEST_SOURCES
+     "luna-send-q.cpp"
