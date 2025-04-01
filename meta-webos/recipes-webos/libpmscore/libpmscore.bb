@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2024 LG Electronics, Inc.
+# Copyright (c) 2020-2025 LG Electronics, Inc.
 
 SUMMARY = "pmscore handles device states"
 AUTHOR = "Yogish S <yogish.s@lge.com>"

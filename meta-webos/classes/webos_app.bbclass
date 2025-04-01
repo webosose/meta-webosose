@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2024 LG Electronics, Inc.
+# Copyright (c) 2014-2025 LG Electronics, Inc.
 #
 # This class is intended to be inherited by every recipe whose component is an
 # application for the webOS platform. The definition of an application is that

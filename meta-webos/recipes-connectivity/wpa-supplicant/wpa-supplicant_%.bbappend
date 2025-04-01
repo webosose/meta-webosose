@@ -1,6 +1,6 @@
-# Copyright (c) 2017-2024 LG Electronics, Inc.
+# Copyright (c) 2017-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webos9"
+EXTENDPRAUTO:append = "webos10"
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 
@@ -57,8 +57,3 @@ do_install:append() {
 }
 
 FILES:${PN} += "${systemd_unitdir}"
-
-# http://gecko.lge.com:8000/Errors/Details/819468
-# caused by 0001-Add-p2p-changes.patch
-# notify.c:769:25: error: implicit declaration of function 'wpas_dbus_signal_p2p_peer_joined_with_ip'; did you mean 'wpas_dbus_signal_p2p_peer_joined'? [-Wimplicit-function-declaration]
-CFLAGS += "-Wno-error=implicit-function-declaration"

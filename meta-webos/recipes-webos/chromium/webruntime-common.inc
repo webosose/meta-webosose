@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 LG Electronics, Inc.
+# Copyright (c) 2021-2025 LG Electronics, Inc.
 # This file configures common SRC_URI for both of mksnapshot and webruntime
 # Also it contains variables for gn command such as GN_ARGS
 
@@ -99,6 +99,10 @@ GN_ARGS:append:armv6 = ' use_allocator="none"'
 GN_ARGS_NEON ?= ""
 GN_ARGS_NEON:armv6 = "arm_use_neon=false"
 GN_ARGS += "${GN_ARGS_NEON}"
+
+# Media Wrapper is used to adapt webruntime to clang build
+GN_ARGS_MEDIA_WRAPPER ?= ""
+GN_ARGS += "${GN_ARGS_MEDIA_WRAPPER}"
 
 # Handle crash while building v8
 GN_ARGS:append:aarch64 = ' v8_enable_external_code_space=false'

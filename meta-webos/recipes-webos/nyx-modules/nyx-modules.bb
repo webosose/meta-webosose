@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 SUMMARY = "webOS portability layer - ${MACHINE}-specific modules"
 AUTHOR = "Yogish S <yogish.s@lge.com>"
@@ -12,11 +12,11 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "nyx-lib glib-2.0 luna-service2 openssl udev nmeaparser"
 
-RDEPENDS:${PN} = "lsb-release gzip"
+RDEPENDS:${PN} = "lsb-release"
 
 WEBOS_VERSION = "7.1.0-25_802df9c1da7fb70c9d7506d4b863cd858153a1b1"
 
-PR = "r21"
+PR = "r22"
 
 EXTRA_OECMAKE += "\
     -DDISTRO_VERSION:STRING='${DISTRO_VERSION}' \

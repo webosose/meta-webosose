@@ -1,7 +1,7 @@
 # Backport from
 # https://git.openembedded.org/meta-openembedded/commit/?id=85c7e7bda4a03bf8b13c023f8c74ab12a0f0f333
 
-# Copyright (c) 2012-2014 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 SUMMARY = "c-ares is a C library that resolves names asynchronously."
 HOMEPAGE = "http://daniel.haxx.se/projects/c-ares/"
 SECTION = "libs"

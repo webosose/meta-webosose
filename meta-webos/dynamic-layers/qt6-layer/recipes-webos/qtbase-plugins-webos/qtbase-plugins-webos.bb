@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2024 LG Electronics, Inc.
+# Copyright (c) 2020-2025 LG Electronics, Inc.
 
 SUMMARY = "webOS extension for qtbase plugins"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
@@ -11,18 +11,21 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtbase"
 
-WEBOS_VERSION = "1.0.0-32_0ceae3aa73e72e27e4f864ad97b277477c7efec5"
-PR = "r9"
+WEBOS_VERSION = "1.0.0-33_82de55b24bdab921b0a41bb08631cea7e881e376"
+PR = "r11"
 
 inherit webos_qmake6
 inherit webos_enhanced_submissions
 inherit webos_public_repo
 inherit webos_machine_impl_dep
 inherit webos_qt_global
+inherit features_check
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 
 S = "${WORKDIR}/git"
+
+REQUIRED_COMBINED_FEATURES = "webos-graphics-drm"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 PACKAGECONFIG ??= ""

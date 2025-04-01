@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 SUMMARY = "webOS logging daemon"
 AUTHOR = "Sukil Hong <sukil.hong@lge.com>"

@@ -1,0 +1,93 @@
+From e7cc129217ebd7c99284d6a95d27ceb846fe8c18 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin2.jansa@lgepartner.com>
+Date: Fri, 3 Jan 2025 13:52:32 +0000
+Subject: [PATCH] CMakeLists.txt: fix linkage order for WRAPPER_LIB
+
+:Release Notes:
+Currently the cmdline has:
+
+-lresource_mgr_client \
+-lmedia-resource-calculator \
+-lgst-video-encoder \
+-Lgstplayer-1.0 \
+CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp.o \
+CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.cpp.o \
+CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/res_calculator.cpp.o \
+CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o \
+CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o \
+
+if you move the wrapper .o files before -l then it builds fine.
+
+:Detailed Notes:
+Fixes:
+http://gecko.lge.com:8000/Errors/Details/1076014
+
+FAILED: libmedia-codec-interface-wrapper.so.1.0
+: && TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/aarch64-webos-linux-g++ --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot -fPIC -mbranch-protection=standard -fstack-protector-all  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security -Werror=return-type -funwind-tables  --sysroot=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot  -O2 -pipe -g -feliminate-unused-debug-types -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/git=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/git=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/build=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/build=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native=  -fvisibility-inlines-hidden -std=c++14  -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -fcanon-prefix-map  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/git=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/git=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/build=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/build=/usr/src/debug/media-codec-interface-wrapper/1.0.0-36  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot=  -fmacro-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot=  -fdebug-prefix-map=TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native=  -Wl,-z,relro,-z,now -Wl,-z,defs -lresource_mgr_client -lmedia-resource-calculator -lgst-video-encoder -shared -Wl,-soname,libmedia-codec-interface-wrapper.so.1 -o libmedia-codec-interface-wrapper.so.1.0 CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp.o CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.cpp.o CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/res_calculator.cpp.o CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o -Lgstplayer-1.0   -Lgstvideo-1.0   -Lgstbase-1.0   -Lgstreamer-1.0   -Lgobject-2.0   -Lglib-2.0  && :
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o: in function `ResourceManagerClientRegisterPipeline':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp:24:(.text+0x35c): undefined reference to `uMediaServer::ResourceManagerClient::registerPipeline(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o: in function `ResourceManagerClientAcquire':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp:32:(.text+0x4c4): undefined reference to `uMediaServer::ResourceManagerClient::acquire(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o: in function `ResourceManagerClientRelease':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp:38:(.text+0x624): undefined reference to `uMediaServer::ResourceManagerClient::release(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o: in function `ResourceManagerClientNotifyForeground':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp:43:(.text+0x72c): undefined reference to `uMediaServer::ResourceManagerClient::notifyForeground()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp.o: in function `ResourceManagerClientNotifyBackground':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client.cpp:48:(.text+0x780): undefined reference to `uMediaServer::ResourceManagerClient::notifyBackground()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o: in function `stdlibcpp::ResourceManagerClientImpl::ResourceManagerClientImpl(void*)':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp:5:(.text+0x90): undefined reference to `uMediaServer::ResourceManagerClient::ResourceManagerClient()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o: in function `stdlibcpp::ResourceManagerClientImpl::ResourceManagerClientImpl(void*, char const*)':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp:9:(.text+0x168): undefined reference to `uMediaServer::ResourceManagerClient::ResourceManagerClient(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o: in function `stdlibcpp::ResourceManagerClientImpl::~ResourceManagerClientImpl()':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.h:9:(.text._ZN9stdlibcpp25ResourceManagerClientImplD2Ev[_ZN9stdlibcpp25ResourceManagerClientImplD5Ev]+0x5c): undefined reference to `uMediaServer::ResourceManagerClient::~ResourceManagerClient()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o: in function `stdlibcpp::ResourceManagerClientImpl::~ResourceManagerClientImpl()':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.h:9:(.text._ZN9stdlibcpp25ResourceManagerClientImplD0Ev[_ZN9stdlibcpp25ResourceManagerClientImplD5Ev]+0x3c): undefined reference to `uMediaServer::ResourceManagerClient::~ResourceManagerClient()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/resource_manager_client_impl.cpp.o:(.data.rel.ro._ZTIN9stdlibcpp25ResourceManagerClientImplE[_ZTIN9stdlibcpp25ResourceManagerClientImplE]+0x10): undefined reference to `typeinfo for uMediaServer::ResourceManagerClient'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp.o: in function `stdlibcpp::BufferEncoderImpl::~BufferEncoderImpl()':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.h:9:(.text+0xe0): undefined reference to `mrf::BufferEncoder::~BufferEncoder()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp.o: in function `BufferEncoderEncodeBuffer':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp:27:(.text+0x1a4): undefined reference to `mrf::BufferEncoder::EncodeBuffer(unsigned char const*, unsigned long, unsigned char const*, unsigned long, unsigned char const*, unsigned long, unsigned long, bool)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp.o: in function `BufferEncoderDestroy':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp:33:(.text+0x1fc): undefined reference to `mrf::BufferEncoder::Destroy()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp.o: in function `BufferEncoderUpdateEncodingParams':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib.cpp:40:(.text+0x250): undefined reference to `mrf::BufferEncoder::UpdateEncodingParams(unsigned int, unsigned int)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.cpp.o: in function `stdlibcpp::BufferEncoderImpl::BufferEncoderImpl(void*)':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.cpp:5:(.text+0xc0): undefined reference to `mrf::BufferEncoder::BufferEncoder()'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.cpp.o: in function `stdlibcpp::BufferEncoderImpl::InitializeWithHandler(void (*)(void*, unsigned char const*, unsigned long, unsigned long, bool), unsigned int, unsigned int, int, int, int, unsigned long, unsigned char, unsigned int, int)':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/buffer_encoder_lib_impl.cpp:36:(.text+0x178): undefined reference to `mrf::BufferEncoder::Initialize(mrf::EncoderConfig const*, std::function<void (unsigned char const*, unsigned long, unsigned long, bool)>)'
+TOPDIR/BUILD/work/raspberrypi4_64-webos-linux/media-codec-interface-wrapper/1.0.0-36/recipe-sysroot-native/usr/bin/aarch64-webos-linux/../../libexec/aarch64-webos-linux/gcc/aarch64-webos-linux/13.3.0/ld: CMakeFiles/media-codec-interface-wrapper.dir/src/resource/resource_wrapper/stdlibcpp/res_calculator.cpp.o: in function `CreateResourceCalculator':
+/usr/src/debug/media-codec-interface-wrapper/1.0.0-36/src/resource/resource_wrapper/stdlibcpp/res_calculator.cpp:8:(.text+0x4c): undefined reference to `mrc::ResourceCalculator::create()'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+:Testing Performed:
+QWTC-11286, QWTC-11287
+
+:QA Notes:
+
+:Issues Addressed:
+[WRR-1643] Prepare wrapper changes for integration
+
+Change-Id: I5c3ceb6dc1a537851e111702762e3a1511d33d41
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/media-codec-interface/+/463986 CMakeLists.txt: fix linkage order for WRAPPER_LIB]
+
+ CMakeLists.txt | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 85e914e..1ebd41d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -73,10 +73,7 @@ if(${WRAPPER_BUILD})
+   include_directories(${GST-VIDEO-ENCODER_INCLUDE_DIRS})
+ 
+   set(WRAPPER_LIBRARIES "-lresource_mgr_client -lmedia-resource-calculator -lgst-video-encoder")
+-
+-  set_target_properties (${WRAPPER_LIB} PROPERTIES LINK_FLAGS "-Wl,-z,defs ${WRAPPER_LIBRARIES}")
+-
+-  target_link_libraries(${WRAPPER_LIB})
++  target_link_libraries(${WRAPPER_LIB} ${WRAPPER_LIBRARIES})
+ 
+   install(TARGETS ${WRAPPER_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+   install(FILES ${WRAPPER_HEADERS} DESTINATION include)

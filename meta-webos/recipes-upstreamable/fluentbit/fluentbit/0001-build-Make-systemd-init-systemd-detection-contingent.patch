@@ -1,0 +1,61 @@
+From 046d04ed331236b0346146f5ce16237518adc936 Mon Sep 17 00:00:00 2001
+From: Paulo Neves <ptsneves@users.noreply.github.com>
+Date: Thu, 9 Mar 2023 14:31:06 +0100
+Subject: [PATCH] build: Make systemd init systemd detection contingent on
+ pkgconfig (#5818)
+
+Use pkg-config to get systemd.pc variables and systemdunitdir. Those
+variable ensure that .service files are installed in the correct paths
+and only when systemd is detected.
+
+Signed-off-by: Paulo Neves <ptsneves@gmail.com>
+---
+Upstream-Status: Backport [v2.1.0-rc1 6ee3b8a05]
+
+ cmake/FindJournald.cmake | 4 ++++
+ src/CMakeLists.txt       | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/FindJournald.cmake b/cmake/FindJournald.cmake
+index f5a3a832b..9e6657a29 100644
+--- a/cmake/FindJournald.cmake
++++ b/cmake/FindJournald.cmake
+@@ -5,6 +5,8 @@
+ #  JOURNALD_INCLUDE_DIR - the Journald include directory
+ #  JOURNALD_LIBRARIES - Link these to use Journald
+ #  JOURNALD_DEFINITIONS - Compiler switches required for using Journald
++#  SYSTEMD_UNITDIR - The systemd units' directory
++#
+ # Redistribution and use is allowed according to the terms of the BSD license.
+ # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+ #
+@@ -16,7 +18,9 @@
+ # in the FIND_PATH() and FIND_LIBRARY() calls
+ find_package(PkgConfig)
+ pkg_check_modules(PC_JOURNALD QUIET systemd)
++pkg_get_variable(PC_SYSTEMD_UNITDIR systemd "systemdsystemunitdir")
+ 
++set(SYSTEMD_UNITDIR ${PC_SYSTEMD_UNITDIR})
+ set(JOURNALD_FOUND ${PC_JOURNALD_FOUND})
+ set(JOURNALD_DEFINITIONS ${PC_JOURNALD_CFLAGS_OTHER})
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 76940076d..4394c3a31 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -410,13 +410,13 @@ if(FLB_BINARY)
+   endif()
+ 
+   # Detect init system, install upstart, systemd or init.d script
+-  if(IS_DIRECTORY /lib/systemd/system)
++  if(DEFINED SYSTEMD_UNITDIR)
+     set(FLB_SYSTEMD_SCRIPT "${PROJECT_SOURCE_DIR}/init/${FLB_OUT_NAME}.service")
+     configure_file(
+       "${PROJECT_SOURCE_DIR}/init/systemd.in"
+       ${FLB_SYSTEMD_SCRIPT}
+       )
+-    install(FILES ${FLB_SYSTEMD_SCRIPT} DESTINATION /lib/systemd/system)
++    install(FILES ${FLB_SYSTEMD_SCRIPT} DESTINATION ${SYSTEMD_UNITDIR})
+     install(DIRECTORY DESTINATION ${FLB_INSTALL_CONFDIR})
+   elseif(IS_DIRECTORY /usr/share/upstart)
+     set(FLB_UPSTART_SCRIPT "${PROJECT_SOURCE_DIR}/init/${FLB_OUT_NAME}.conf")

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 AUTHOR = "Herb Kuta <herb.kuta@lge.com>"
 
@@ -6,7 +6,7 @@ inherit webos_filesystem_paths
 inherit webos_machine_impl_dep
 inherit webos_prerelease_dep
 
-EXTENDPRAUTO:append = "webos17"
+EXTENDPRAUTO:append = "webos18"
 
 BASEFILESISSUEINSTALL = ""
 
@@ -18,6 +18,7 @@ dirs700 = " \
 dirs755 += " \
     ${webos_db8datadir} \
     ${webos_cryptofsdir} \
+    ${webos_systemdir} \
     ${webos_preferencesdir} \
     ${webos_optdir} \
 "

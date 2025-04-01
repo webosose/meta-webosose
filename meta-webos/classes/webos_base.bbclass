@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 #
 # webos_base
 #
@@ -28,9 +28,26 @@ python do_write_bom_data() {
             else:
                 return json.JSONEncoder().iterencode(obj, _one_shot)
 
+    bom_exception_list = [
+        "lib32-lsb-release",
+        "lsb-release",
+        "cve-update-nvd2-native",
+        "python3-asttokens-native",
+        "python3-checksec-py-native",
+        "python3-docopt-native",
+        "python3-icontract-native",
+        "python3-lief-native",
+        "python3-pylddwrap-native",
+        "python3-rich-native",
+        "python3-pip-native",
+        "python3-poetry-core-native"
+    ]
+
     jsondata = {}
     jsondata["section"] = d.getVar("SECTION")
-    jsondata["src_uri"] = d.getVar("SRC_URI")
+    src_uri = d.getVar("SRC_URI")
+    src_uri = src_uri.replace(d.getVar("TOPDIR"), "TOPDIR")
+    jsondata["src_uri"] = src_uri
     jsondata["srcrev"] = "".join(d.getVar("SRCREV").split())
     jsondata["recipe"] = d.getVar("PN")
     jsondata["file"] = d.getVar("FILE")[len(d.getVar("TOPDIR")):]
@@ -61,9 +78,19 @@ python do_write_bom_data() {
     jsondata["webos_submission"] = d.getVar("WEBOS_SUBMISSION")
     jsondata["webos_prebuilt_binaries"] = bb.data.inherits_class('webos_prebuilt_binaries', d)
 
-    datafile = os.path.join(d.getVar("TOPDIR"), "webos-bom.json")
-    lock = bb.utils.lockfile(datafile + '.lock')
-    with open(datafile, "a") as f:
+    if jsondata["recipe"] not in bom_exception_list:
+        datafile = os.path.join(d.getVar("TOPDIR"), "webos-bom.json")
+
+        lock = bb.utils.lockfile(datafile + '.lock')
+        with open(datafile, "a") as f:
+            json.dump(jsondata, f, sort_keys=True, cls=WebosBomJSONEncoder)
+            f.write(',\n')
+        bb.utils.unlockfile(lock)
+
+    full_datafile = os.path.join(d.getVar("TOPDIR"), "webos-bom-full.json")
+
+    lock = bb.utils.lockfile(full_datafile + '.lock')
+    with open(full_datafile, "a") as f:
         json.dump(jsondata, f, sort_keys=True, cls=WebosBomJSONEncoder)
         f.write(',\n')
     bb.utils.unlockfile(lock)
@@ -152,15 +179,15 @@ def write_compile_option(d):
     CFLAGS = d.getVar('CFLAGS')
     CXXFLAGS = d.getVar('CXXFLAGS')
     if CFLAGS.find('none') == -1:
-        compile_data["cflags"] = pruneString(CFLAGS)
-        compile_data["cc"] = pruneString(d.getVar('CC'))
+        compile_data["cflags"] = pruneString(CFLAGS).replace(d.getVar("TOPDIR"), "TOPDIR")
+        compile_data["cc"] = pruneString(d.getVar('CC')).replace(d.getVar("TOPDIR"), "TOPDIR")
 
     if CXXFLAGS.find('none') == -1:
-        compile_data["cxxflags"] = pruneString(CXXFLAGS)
-        compile_data["cxx"] = pruneString(d.getVar('CXX'))
+        compile_data["cxxflags"] = pruneString(CXXFLAGS).replace(d.getVar("TOPDIR"), "TOPDIR")
+        compile_data["cxx"] = pruneString(d.getVar('CXX')).replace(d.getVar("TOPDIR"), "TOPDIR")
 
     if compile_data.get("cc") != None or compile_data.get("cxx") != None:
-        compile_data["ldflags"] = pruneString(d.getVar('LDFLAGS'))
+        compile_data["ldflags"] = pruneString(d.getVar('LDFLAGS')).replace(d.getVar("TOPDIR"), "TOPDIR")
 
     if compile_data.get("cc") is None and compile_data.get("cxx") is None:
         return

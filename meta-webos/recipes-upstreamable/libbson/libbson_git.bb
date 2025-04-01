@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2024 LG Electronics, Inc.
+# Copyright (c) 2014-2025 LG Electronics, Inc.
 
 SUMMARY = "A BSON utility library"
 DESCRIPTION = "libbson is a library providing useful routines related to building, parsing, and iterating BSON documents."

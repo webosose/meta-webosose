@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2024 LG Electronics, Inc.
+# Copyright (c) 2014-2025 LG Electronics, Inc.
 
 SUMMARY = "QML widgets and runtime framework for webOS apps"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"

@@ -1,23 +1,15 @@
-# Copyright (c) 2017-2024 LG Electronics, Inc.
+# Copyright (c) 2017-2025 LG Electronics, Inc.
 
-EXTENDPRAUTO:append = "webosrpi12"
+EXTENDPRAUTO:append:rpi = "webosrpi13"
 
-do_deploy:append() {
-    echo "gpu_mem=300" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "dtparam=audio=on" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-}
-
-do_deploy:append:raspberrypi4() {
-    echo >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "[pi4]" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "max_framebuffers=2" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "# Enable I2C" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "dtparam=i2c1=on" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "dtparam=i2c_arm=on" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "# Enable spi" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "dtparam=spi=on" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "start_x=1" >>${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "# dtoverlay=seeed-4mic-voicecard" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "# dtoverlay=seeed-8mic-voicecard" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    echo "dtparam=i2s=on" >> ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
+do_deploy:append:rpi() {
+    echo "dtparam=audio=on" >> ${CONFIG}
+    echo >> ${CONFIG}
+    echo "[pi4]" >> ${CONFIG}
+    echo "max_framebuffers=2" >> ${CONFIG}
+    if [ "${USE_MIC_ARRAY}" = "1" ]; then
+        echo "# dtoverlay=seeed-4mic-voicecard" >> ${CONFIG}
+        echo "# dtoverlay=seeed-8mic-voicecard" >> ${CONFIG}
+        echo "dtparam=i2s=on" >> ${CONFIG}
+    fi
 }

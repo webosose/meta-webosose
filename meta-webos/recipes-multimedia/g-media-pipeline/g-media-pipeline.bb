@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2024 LG Electronics, Inc.
+# Copyright (c) 2018-2025 LG Electronics, Inc.
 
 SUMMARY = "G media pipeline is a media pipeline which uses GStreamer"
 AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"
@@ -35,7 +35,7 @@ DEPENDS = "boost gstreamer1.0 gstreamer1.0-plugins-base gstreamer1.0-plugins-bad
 RDEPENDS:${PN} = "gstreamer1.0-plugins-webosrs"
 DEPENDS:append:rpi = " virtual/libomxil"
 
-WEBOS_VERSION = "1.0.0-gav.56_72e7a4fc16ae51d8c907e804a4fbaa4831c7b474"
+WEBOS_VERSION = "1.0.0-gav.57_69df0b31229ed04eebcd6165104afe68f0d6b78f"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"

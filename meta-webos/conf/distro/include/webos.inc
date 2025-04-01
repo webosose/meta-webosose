@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 MAINTAINER = "Joseph Park <dongseon.park@lge.com>"
 
@@ -26,7 +26,7 @@ require conf/distro/include/no-static-libs.inc
 # Enable security flags
 # can be dropped once the same is included in defaultsetup.inc:
 # http://lists.openembedded.org/pipermail/openembedded-core/2018-July/153408.html
-require conf/distro/include/security_flags.inc
+require ${COREBASE}/meta/conf/distro/include/security_flags.inc
 SECURITY_STACK_PROTECTOR = "-fstack-protector-all"
 
 # Enable -Werror=return-type flag
@@ -224,6 +224,9 @@ BUILDCFG_VARS += "WEBOS_DISTRO_TOPDIR_REVISION WEBOS_DISTRO_TOPDIR_DESCRIBE"
 # Add build timestamp to what's displayed in build-id.txt for use in pruning script
 BUILDCFG_VARS += "DATETIME"
 
+# Describe webos profile in build configurations at the beginning of the build
+BUILDCFG_VARS += "WEBOS_TARGET_DISTRO_VARIANT DISTRO_FEATURES MACHINE_FEATURES IMAGE_FEATURES"
+
 # Add the same variables from BUILDCFG_VARS to /etc/buildinfo as well
 IMAGE_BUILDINFO_VARS = "${BUILDCFG_VARS}"
 
@@ -301,7 +304,7 @@ PTEST_ENABLED:pn-valgrind = "0"
 PTEST_ENABLED:pn-parted = "0"
 PTEST_ENABLED:pn-apr = "0"
 
-INHERIT_DISTRO ?= "debian devshell ccache sstate license buildstats-summary webos_base remove-libtool image-buildinfo ccache_stats"
+INHERIT_DISTRO ?= "devshell ccache sstate license buildstats-summary webos_base remove-libtool image-buildinfo ccache_stats"
 
 # Inherit icecc here, so that all builders have the same sstate signatures
 INHERIT_DISTRO += "icecc"
@@ -403,6 +406,9 @@ PACKAGE_ARCH:pn-packagegroup-cross-canadian-qemux86 = "${SDK_ARCH}-${SDKPKGSUFFI
 # qemu: uncaught target signal 4 (Illegal instruction) - core dumped
 # because -cpu options are missing in QEMU_OPTIONS
 PACKAGE_ARCH:pn-qemuwrapper-cross = "${TUNE_PKGARCH}"
+
+# Added here as no better place for qemu machine
+MACHINE_FEATURES:append:qemuall = " webos-graphics-drm"
 
 # This is needed e.g. for nodejs where PACKAGE_ARCH is set to MACHINE_ARCH
 # but instead of depending on qemuwrapper-cross it creates its own qemu wrapper

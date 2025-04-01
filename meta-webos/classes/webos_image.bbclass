@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 # IMAGE_FEATURES controls the contents of webOS OSE images
 #
@@ -38,7 +38,7 @@ WEBOS_IMAGE_DEFAULT_FEATURES:append:emulator = " ${WEBOS_IMAGE_DEFAULT_SSH_IMAGE
 WEBOS_IMAGE_DEFAULT_FEATURES:append = "${@ ' webos-production-image' if d.getVar('WEBOS_DISTRO_PRERELEASE') == '' else ''}"
 
 WEBOS_IMAGE_BASE_INSTALL = " \
-    packagegroup-core-boot \
+    packagegroup-webos-core-boot \
     ${WEBOS_IMAGE_EXTRA_INSTALL} \
 "
 
@@ -64,7 +64,7 @@ IMAGE_CLASSES += "${@bb.utils.contains('IMAGE_FEATURES', 'webos-validate-ls2-con
 
 # webOS supports the generation of oss package information file.
 # $ bitbake -c write_oss_pkg_info <image>
-IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency webos_ls2_api_info \
+IMAGE_CLASSES += "webos_oss_pkg_info pkg_dependency \
     ${@bb.utils.contains('IMAGE_FEATURES', 'webos-extract-ls2-api', 'webos_ls2_api_list', '', d)} \
     ${@bb.utils.contains('IMAGE_FEATURES', 'webos-checksec-scan', 'webos_checksec_scan', '', d)} \
 "

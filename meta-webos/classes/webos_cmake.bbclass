@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 #
 # webos_cmake
 #
@@ -93,6 +93,7 @@ export webos_bootdir
 export webos_browserpluginsdir
 export webos_browserstoragedir
 export webos_cryptofsdir
+export webos_systemdir
 export webos_customizationdir
 export webos_db8datadir
 export webos_db8mediadir
@@ -103,6 +104,7 @@ export webos_downloadeddir
 export webos_downloaded_frameworksdir
 export webos_downloaded_pluginsdir
 export webos_downloaded_servicesdir
+export webos_updateddir
 export webos_emulatorshareddir
 export webos_execstatedir
 export webos_filecachedir

@@ -1,9 +1,9 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 require conf/distro/include/webos.inc
 
 # Increment when features are changed
-_pr_suffix .= ".1"
+_pr_suffix .= ".2"
 
 # Keep in sync with setting in oe-core/meta/conf/distro/include/default-distrovars.inc
 # TODO: Maybe change this to use "_remove" when it's introduced in bitbake
@@ -13,6 +13,7 @@ _pr_suffix .= ".1"
 WEBOS_DISTRO_FEATURES_DEFAULT = "debuginfod"
 WEBOS_DISTRO_FEATURES_OPENGL = ""
 WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM = ""
+WEBOS_DISTRO_FEATURES_GRAPHICS_BACKEND = ""
 # Remove pci pcmcia
 WEBOS_DISTRO_FEATURES_BUSES = ""
 WEBOS_DISTRO_FEATURES_USB = ""
@@ -34,6 +35,7 @@ DISTRO_FEATURES = " \
   ${WEBOS_DISTRO_FEATURES_DEFAULT} \
   ${WEBOS_DISTRO_FEATURES_OPENGL} \
   ${WEBOS_DISTRO_FEATURES_WINDOW_SYSTEM} \
+  ${WEBOS_DISTRO_FEATURES_GRAPHICS_BACKEND} \
   ${WEBOS_DISTRO_FEATURES_BUSES} \
   ${WEBOS_DISTRO_FEATURES_USB} \
   ${WEBOS_DISTRO_FEATURES_CONNECTIVITY} \

@@ -1,10 +1,10 @@
-# Copyright (c) 2022-2024 LG Electronics, Inc.
+# Copyright (c) 2022-2025 LG Electronics, Inc.
 
 require tensorflow-lite_2.9.3.inc
 
 inherit pkgconfig
 
-PR = "r4"
+PR = "r6"
 
 DEPENDS += " \
     tensorflow-lite \
@@ -13,9 +13,10 @@ DEPENDS += " \
 SRC_URI += " \
     file://0001-add-auto-delegation-option.patch \
     file://0002-Enable-NNAPI-Options-in-benchmark_model-test.patch \
+    file://0003-add-nnapi-auto-delegation-option.patch \
 "
 
-PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'auto-acceleration', 'ads', '', d)}"
+PACKAGECONFIG += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-auto-acceleration', 'ads', '', d)}"
 
 PACKAGECONFIG[ads] = "-DENABLE_AUTO_DELEGATE=ON,-DENABLE_AUTO_DELEGATE=OFF,tflite-auto-delegation"
 

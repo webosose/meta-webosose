@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 # webOS system should be ready to have read-only /etc folder
 # thus we move timezone/localtime to other place (in volatile partition)

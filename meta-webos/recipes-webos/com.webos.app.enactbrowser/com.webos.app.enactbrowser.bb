@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2024 LG Electronics, Inc.
+# Copyright (c) 2018-2025 LG Electronics, Inc.
 
 SUMMARY = "Enact Based Web Browser"
 AUTHOR = "Luc Van Tran <luc2.tran@lge.com>"
@@ -9,8 +9,8 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=72b3e3cef46e5ab3e175e5b515dc3b18 \
 "
 
-WEBOS_VERSION = "1.0.0-17.browsershell.9_421ccbadead50ed8ec274e948044e28a59ea1ef0"
-PR = "r22"
+WEBOS_VERSION = "1.0.0-17.browsershell.14_cc56a521bbddb8ebab794dd42ed083ab0c167f7d"
+PR = "r24"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -31,6 +31,8 @@ SUPPORT_BROWSERSHELL = "true"
 WEBOS_ENACTJS_PACK_UIOVERLAY = "\
     && cd ../../uioverlay/ \
     && ${ENACT_DEV} pack ${WEBOS_ENACTJS_PACK_OPTS} -l=used -o ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay \
+    && rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay/resources \
+    && cp -rf ../samples/enact-based/resources/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/uioverlay/resources \
     && cd ../samples/enact-based \
 "
 WEBOS_ENACTJS_PACK_FOR_BROWSERSHELL = "${@oe.utils.conditional('SUPPORT_BROWSERSHELL', \
@@ -45,13 +47,12 @@ WEBOS_ENACTJS_PACK_OVERRIDE = "\
     rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources && \
     rm -fr ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/node_modules/@enact/moonstone/resources && \
     ln -sfn /usr/share/javascript/ilib/localedata/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ilibdata && \
-    cp -R --no-dereference --preserve=mode,links -v webos-locale.js label.js background.js defaults.js manifest.json pdf.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ && \
+    cp -R --no-dereference --preserve=mode,links -v webos-locale.js manifest.json pdf.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/ && \
     ${WEBOS_NODE_BIN} extract-inline.js ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID} \
 "
 
 WEBOS_ENACTJS_PACK_OVERRIDE += "\
     && cp -rf resources/ ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/resources \
-    && sed -i -E 's/(useBuiltInErrorPages:) *false/\1 true/g' ${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/defaults.js \
     && ./scripts/install-manifest.js --from=manifest.json --to=${D}${webos_applicationsdir}/${WEBOS_ENACTJS_APP_ID}/manifest.json --version_suffix=`git rev-parse HEAD` \
     ${WEBOS_ENACTJS_PACK_FOR_BROWSERSHELL} \
 "

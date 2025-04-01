@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2024 LG Electronics, Inc.
+# Copyright (c) 2017-2025 LG Electronics, Inc.
 
 # The MACHINE.conf for every MACHINE that has an Raspberry Pi BSP must require this
 # file.
@@ -6,12 +6,30 @@
 # All the MACHINE-s supported by this layer are real pieces of hardware.
 WEBOS_TARGET_MACHINE_IMPL = "hardware"
 
-MACHINE_FEATURES += "armnn auto-acceleration edgetpu gpu-delegate gl-backend"
+MACHINE_FEATURES += "webos-armnn webos-auto-acceleration webos-edgetpu webos-gpu-delegate webos-gl-backend webos-graphics-drm"
 
-# Set gpu memory to "128M"
-# Wen use default setting (64M), we got the below error
+# Below setting is worked with rpi-config_git.bb
+# Set gpu memory to "300M"
+# When use default setting (64M), we got the below error
 # [EXIT]: EGL Error : Could not create the egl surface: error = 0x3003
-GPU_MEM = "128"
+GPU_MEM = "300"
+# Set for I2C support
+ENABLE_I2C:raspberrypi4 = "1"
+# Set for SPI bus support
+ENABLE_SPI_BUS:raspberrypi4 = "1"
+# Set for video/camera support
+VIDEO_CAMERA:raspberrypi4 = "1"
+# Set for mic array
+USE_MIC_ARRAY:raspberrypi4 = "1"
+RPI_KERNEL_MODULES_FOR_MIC_ARRAY = " \
+    kernel-module-snd-soc-ac108 \
+    kernel-module-snd-soc-bcm2835-i2s \
+    kernel-module-snd-soc-seeed-voicecard \
+"
+RPI_KERNEL_DEVICETREE_OVERLAYS_FOR_MIC_ARRAY = " \
+    overlays/seeed-4mic-voicecard.dtbo \
+    overlays/seeed-8mic-voicecard.dtbo \
+"
 
 SKIP_RECIPE[omxplayer] ?= "not compatible with webOS Open components"
 SKIP_RECIPE[packagegroup-rpi-test] ?= "rdepends on omxplayer"
@@ -62,16 +80,13 @@ RPI_KERNEL_MODULES:append:raspberrypi4 = " \
     kernel-module-raspberrypi-hwmon \
     kernel-module-rpivid-mem \
     kernel-module-sch-fq-codel \
-    kernel-module-snd-soc-ac108 \
-    kernel-module-snd-soc-bcm2835-i2s \
-    kernel-module-snd-soc-seeed-voicecard \
     kernel-module-uio-pdrv-genirq \
     kernel-module-v3d \
+    ${@bb.utils.contains('USE_MIC_ARRAY', '1', '${RPI_KERNEL_MODULES_FOR_MIC_ARRAY}', '', d)} \
 "
 
-RPI_KERNEL_DEVICETREE_OVERLAYS += " \
-    overlays/seeed-4mic-voicecard.dtbo \
-    overlays/seeed-8mic-voicecard.dtbo \
+RPI_KERNEL_DEVICETREE_OVERLAYS:append = " \
+    ${@bb.utils.contains('USE_MIC_ARRAY', '1', '${RPI_KERNEL_DEVICETREE_OVERLAYS_FOR_MIC_ARRAY}', '', d)} \
 "
 
 KERNEL_MODULE_AUTOLOAD:append = " uinput bridge hmac vc4"

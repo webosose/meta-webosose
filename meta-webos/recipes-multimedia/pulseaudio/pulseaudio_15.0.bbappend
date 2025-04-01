@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2024 LG Electronics, Inc.
+# Copyright (c) 2022-2025 LG Electronics, Inc.
 
 AUTHOR = "Sushovan G <sushovan.g@lge.com>"
 
@@ -11,8 +11,8 @@ DEPENDS:remove = "libatomic-ops"
 
 DEPENDS += "pmloglib tensorflow-lite flatbuffers webrtc-audio-processing libpbnjson"
 
-WEBOS_VERSION = "15.0-58_a79e2208efd0afd061038a688d06df2ba9bf3e86"
-EXTENDPRAUTO:append = "webos14"
+WEBOS_VERSION = "15.0-59_20a7d627df8ba33337749faf0891cda380854aa8"
+EXTENDPRAUTO:append = "webos15"
 
 inherit webos_enhanced_submissions
 
@@ -106,15 +106,3 @@ python populate_packages:prepend() {
 VIRTUAL-RUNTIME_bash ?= "bash"
 RDEPENDS:${PN}-pa-info:append:class-target = " ${VIRTUAL-RUNTIME_bash}"
 RDEPENDS:${PN}-pa-info:remove:class-target = "${@oe.utils.conditional('WEBOS_PREFERRED_PROVIDER_FOR_BASH', 'busybox', 'bash', '', d)}"
-
-# http://gecko.lge.com:8000/Errors/Details/822524
-# src/pulsecore/resampler.c:1744:26: error: assignment to 'unsigned int (*)(pa_resampler *, const pa_memchunk *, unsigned int,  pa_memchunk *, unsigned int *)' from incompatible pointer type 'void (*)(pa_resampler *, const pa_memchunk *, unsigned int,  pa_memchunk *, unsigned int *)' [-Wincompatible-pointer-types]
-# src/pulsecore/resampler.c:1824:23: error: passing argument 1 of 'palm_free' from incompatible pointer type [-Wincompatible-pointer-types]
-# src/pulsecore/resampler.c:1846:19: error: passing argument 1 of 'palm_free' from incompatible pointer type [-Wincompatible-pointer-types]
-# src/pulsecore/resampler.c:2154:27: error: implicit declaration of function 'fabsf' [-Wimplicit-function-declaration]
-# src/pulsecore/resampler.c:2289:34: error: implicit declaration of function 'av_resample'; did you mean 'palm_resample'? [-Wimplicit-function-declaration]
-# src/pulsecore/resampler.c:2326:9: error: implicit declaration of function 'av_resample_close' [-Wimplicit-function-declaration]
-# src/pulsecore/resampler.c:2343:30: error: assignment to 'struct AVResampleContext *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-# src/pulsecore/resampler.c:2343:32: error: implicit declaration of function 'av_resample_init'; did you mean 'speex_resample_int'? [-Wimplicit-function-declaration]
-# src/pulse/simple.c:390:41: error: passing argument 3 of 'pa_stream_cork' from incompatible pointer type [-Wincompatible-pointer-types]
-CFLAGS += "-Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"

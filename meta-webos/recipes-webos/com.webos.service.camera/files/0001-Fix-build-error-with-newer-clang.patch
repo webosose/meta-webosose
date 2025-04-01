@@ -1,0 +1,40 @@
+From 5874201dcff0f2e9a475f822345499e064d7d6cd Mon Sep 17 00:00:00 2001
+From: "shl.lee" <shl.lee@lge.com>
+Date: Fri, 3 Jan 2025 19:26:36 +0900
+Subject: [PATCH] Fix build error with newer clang
+
+:Release Notes:
+Fix build error with newer clang
+
+:Detailed Notes:
+http://gecko.lge.com:8000/Errors/Details/1075914
+
+:Testing Performed:
+Local Build & Test : OK
+
+:QA Notes:
+N/A
+
+:Issues Addressed:
+[WRR-9659] Add CameraSharedMemory to CameraService
+
+Change-Id: Ic7ba5f55cb054ff2e0c692ae192d779826226f78
+---
+Upstream-Status: Submitted [http://gpro.lge.com/c/webosose/com.webos.service.camera/+/463963 Fix build error with newer clang]
+
+ include/public/camera/hal/camera_hal_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/public/camera/hal/camera_hal_types.h b/include/public/camera/hal/camera_hal_types.h
+index f286f51..43e1dd0 100644
+--- a/include/public/camera/hal/camera_hal_types.h
++++ b/include/public/camera/hal/camera_hal_types.h
+@@ -122,7 +122,7 @@ struct camera_resolution_t
+     camera_format_t e_format;
+ 
+     camera_resolution_t(std::vector<std::string> res, camera_format_t format)
+-        : c_res(move(res)), e_format(format)
++        : c_res(std::move(res)), e_format(format)
+     {
+     }
+ };

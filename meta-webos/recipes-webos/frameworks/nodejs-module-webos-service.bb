@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 SUMMARY = "Loadable Node.js module for webOS services"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"

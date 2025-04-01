@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 LG Electronics, Inc.
+# Copyright (c) 2021-2025 LG Electronics, Inc.
 
 SUMMARY = "Camera application"
 AUTHOR = "VINH VAN LE <vinh5.le@lge.com>"
@@ -10,7 +10,7 @@ LIC_FILES_CHKSUM = " \
     file://oss-pkg-info.yaml;md5=3072ffcf5bdbbc376ed21c9d378d14d5 \
 "
 
-WEBOS_VERSION = "0.0.1-17_79c8e8c4390b97abdf4616474d463babaec40557"
+WEBOS_VERSION = "0.0.1-18_62dac33d771e4a3b14bf740dccf3323793211231"
 PR = "r3"
 
 inherit webos_component

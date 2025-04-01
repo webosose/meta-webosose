@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2019-2024 LG Electronics, Inc.
+# Copyright (c) 2019-2025 LG Electronics, Inc.
 #
 # LICENSE@@@
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 SUMMARY = "The core of the Luna Surface Manager (compositor)"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
@@ -11,8 +11,8 @@ LIC_FILES_CHKSUM = " \
 
 DEPENDS = "qtdeclarative wayland-native qtwayland qtwayland-native qt-features-webos pmloglib webos-wayland-extensions glib-2.0 qtwayland-webos"
 
-WEBOS_VERSION = "2.0.0-414_19ece2134d7a6c1244edd9e283798fa95b9a4ee6"
-PR = "r62"
+WEBOS_VERSION = "2.0.0-420_5bbd010b7cb44af25d0d2910cec274a808aca091"
+PR = "r64"
 
 inherit webos_qmake6
 inherit webos_pkgconfig
@@ -33,6 +33,12 @@ OE_QMAKE_PATH_HEADERS = "${OE_QMAKE_PATH_QT_HEADERS}"
 
 # Enable LTTng tracing capability when enabled in webos_lttng class
 EXTRA_QMAKEVARS_PRE += "${@ 'CONFIG+=lttng' if '${WEBOS_LTTNG_ENABLED}' == '1' else '' }"
+
+# DRM/KMS configurations
+EGLFS_INTEGRATION ?= "eglfs_kms_webos"
+DRM_FORMAT ?= "abgr8888"
+EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('COMBINED_FEATURES', 'webos-graphics-drm', 'CONFIG+=backend_drm EGLFS_INTEGRATION=${EGLFS_INTEGRATION} DRM_FORMAT=${DRM_FORMAT}', '', d)}"
+EXTRA_QMAKEVARS_PRE:append:qemuall = " CONFIG+=virtual_display_support"
 
 EXTRA_QMAKEVARS_PRE += "${PACKAGECONFIG_CONFARGS}"
 
@@ -71,6 +77,9 @@ RDEPENDS:${PN} += "${VIRTUAL-RUNTIME_lsm-qpa}"
 inherit webos_system_bus
 inherit webos_qmllint
 
+# Make sure to contain com.webos.surfacemanager service's files only
+WEBOS_SYSTEM_BUS_MANIFEST_TYPE = "SERVICE"
+
 # qt-features-webos have its own logic to install system bus files reason for
 # that is because only qmake knows where substitued files will be placed.
 WEBOS_SYSTEM_BUS_SKIP_DO_TASKS = "1"
@@ -93,11 +102,10 @@ FILES:${PN}-gcov = " \
 PACKAGES =+ "${PN}-conf ${PN}-base ${PN}-base-tests"
 
 FILES:${PN}-conf += " \
-    ${sysconfdir}/surface-manager.d/ \
     ${webos_sysbus_apipermissionsdir} \
     ${webos_sysbus_groupsdir} \
     ${webos_sysbus_servicedir} \
-    ${webos_sysbus_manifestsdir}/luna-surfacemanager.manifest.json \
+    ${webos_sysbus_manifestsdir}/com.webos.surfacemanager.manifest.json \
     ${webos_sysbus_permissionsdir}/com.webos.surfacemanager.perm.json \
     ${webos_sysbus_rolesdir}/com.webos.surfacemanager.role.json \
 "
@@ -108,6 +116,7 @@ FILES:${PN}-base += " \
     ${OE_QMAKE_PATH_BINS}/ \
     ${datadir}/icons/ \
     ${datadir}/webos-keymap/webos-keymap.qmap \
+    ${sysconfdir}/surface-manager.d/ \
 "
 
 FILES:${PN}-base-tests += " \
@@ -118,4 +127,4 @@ FILES:${PN}-base-tests += " \
     ${webos_testsdir}/${BPN}/ \
 "
 
-RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components qtdeclarative-qmlplugins"
+RDEPENDS:${PN}-base += "xkeyboard-config qml-webos-framework qml-webos-bridge qml-webos-components qtdeclarative-qmlplugins notificationmgr"

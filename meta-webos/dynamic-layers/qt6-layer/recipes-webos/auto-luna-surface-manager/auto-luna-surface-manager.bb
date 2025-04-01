@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 LG Electronics, Inc.
+# Copyright (c) 2019-2025 LG Electronics, Inc.
 
 SUMMARY = "Surface Manager for webOS Auto Reference UX"
 AUTHOR = "Elvis Lee <kwangwoong.lee@lge.com>"
@@ -15,7 +15,7 @@ RDEPENDS:${PN} = " \
     qtbase-plugins-webos \
 "
 
-WEBOS_VERSION = "0.0.1-45_741ca8e031397515c95b142f87ec832f93206e4b"
+WEBOS_VERSION = "0.0.1-46_1440a606c4fb7a3c3b22e4957c883a9969356f74"
 PR = "r8"
 
 inherit webos_qmake6

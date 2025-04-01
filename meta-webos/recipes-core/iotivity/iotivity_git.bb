@@ -51,7 +51,7 @@ do_fetch[vardeps] = "SRCREV_main SRCREV_tinycbor SRCREV_gtest SRCREV_hippomocks 
 
 S = "${WORKDIR}/git"
 
-PR = "r9"
+PR = "r10"
 PV = "1.3.99+git${SRCPV}"
 
 inherit scons pkgconfig webos_filesystem_paths
@@ -283,10 +283,6 @@ COMPATIBLE_MACHINE:x86-64 = "(.*)"
 # cc1: all warnings being treated as error
 lcl_maybe_fortify = ""
 
-# http://caprica.lgsvl.com:8080/Errors/Details/1303314
-# resource/csdk/stack/samples/webos/secure/occlientbasicops/occlientbasicops.cpp:976:31: error: format not a string literal and no format arguments [-Werror=format-security]
-#         printf (error->message);
-#                               ^
-SECURITY_STRINGFORMAT = ""
-
-SRC_URI += "file://0001-Fix-missing-return-statement.patch"
+SRC_URI += "file://0001-Fix-missing-return-statement.patch \
+    file://0002-Fix-format-security-CFLAGS-error-with-GCC-14.patch \
+"

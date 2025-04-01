@@ -1,13 +1,16 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 SUMMARY = "webOS logging library - private interface"
 AUTHOR = "Sukil Hong <sukil.hong@lge.com>"
 SECTION = "webos/libs"
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Apache-2.0;md5=89aea4e17d99a7cacdbeed46a0096b10"
+LIC_FILES_CHKSUM = " \
+    file://LICENSE;md5=89aea4e17d99a7cacdbeed46a0096b10 \
+    file://oss-pkg-info.yaml;md5=2bdfe040dcf81b4038370ae96036c519 \
+"
 
-WEBOS_VERSION = "3.3.0-2_75eef528791b73b8bc4f84cf522c6a1c533edc32"
-PR = "r1"
+WEBOS_VERSION = "3.3.0-13_a8e65eb3bf328f981750f235b30a3c3b4c6e23f7"
+PR = "r3"
 
 inherit webos_component
 inherit webos_public_repo

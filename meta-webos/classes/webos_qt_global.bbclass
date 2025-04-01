@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2024 LG Electronics, Inc.
+# Copyright (c) 2021-2025 LG Electronics, Inc.
 
 inherit features_check
 REQUIRED_DISTRO_FEATURES = "webos-qt"
@@ -8,4 +8,4 @@ TARGET_CFLAGS:append = " -D__WEBOS__"
 TARGET_CXXFLAGS:append = " -D__WEBOS__"
 
 # Latest Qt version with patches verified
-WEBOS_PATCH_MAXVER = "6.7.2"
+WEBOS_PATCH_MAXVER = "6.8.1"

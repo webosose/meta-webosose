@@ -1,10 +1,10 @@
-# Copyright (c) 2023-2024 LG Electronics, Inc.
+# Copyright (c) 2023-2025 LG Electronics, Inc.
 
 require webruntime_108.bb
 
 PROVIDES = "virtual/webruntime"
 
-PR = "r4"
+PR = "r5"
 
 inherit clang_libc
 
@@ -57,6 +57,7 @@ GN_ARGS += "${@'cc_wrapper=\\\"ccache \\\"' if bb.data.inherits_class('ccache', 
 PACKAGECONFIG[umediaserver] = ",,umediaserver${DEPEXT}"
 PACKAGECONFIG[gstreamer] = "use_gst_media=true enable_webm_video_codecs=false,use_gst_media=false,g-media-pipeline${DEPEXT}"
 PACKAGECONFIG[webos-codec] = "use_webos_codec=true,use_webos_codec=false,media-codec-interface${DEPEXT}"
+PACKAGECONFIG[webos-camera] = "use_webos_camera=true,use_webos_camera=false, cambufferlib${DEPEXT}"
 
 do_configure:prepend() {
     ln -snf umedia_api_clang.pc ${STAGING_DATADIR}/pkgconfig/umedia_api.pc

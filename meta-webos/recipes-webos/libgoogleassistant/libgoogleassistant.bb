@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2024 LG Electronics, Inc.
+# Copyright (c) 2018-2025 LG Electronics, Inc.
 
 SUMMARY = "Google assistant engine library"
 AUTHOR = "Kyungjik Min <dp.min@lge.com>"

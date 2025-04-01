@@ -1,4 +1,4 @@
-# Copyright (c) 2012-2024 LG Electronics, Inc.
+# Copyright (c) 2012-2025 LG Electronics, Inc.
 
 SUMMARY = "webOS preferences manager"
 AUTHOR = "Rajesh Gopu I.V <rajeshgopu.iv@lge.com>"
@@ -13,8 +13,8 @@ LIC_FILES_CHKSUM = " \
 DEPENDS = "luna-service2 json-c sqlite3 glib-2.0 nyx-lib"
 RDEPENDS:${PN} = "luna-prefs-data"
 
-WEBOS_VERSION = "3.0.0-17_2162ebe4a03df228d60b5f517a8c05beacc9cc11"
-PR = "r17"
+WEBOS_VERSION = "3.0.0-22_c6aab21b1159ff70875149a57644e1ad34313489"
+PR = "r18"
 
 inherit webos_public_repo
 inherit webos_enhanced_submissions
@@ -25,12 +25,3 @@ inherit webos_system_bus
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE}"
 S = "${WORKDIR}/git"
-
-# http://gecko.lge.com:8000/Errors/Details/821703
-# luna-prefs/3.0.0-17/git/luna-prefs-service/accesschecker.c:39:39: error: initialization of 'LSMessage *' from incompatible pointer type 'LSMessage **' [-Wincompatible-pointer-types]
-# luna-prefs/3.0.0-17/git/luna-prefs-service/accesschecker.c:85:24: error: assignment to 'LSMessage **' from incompatible pointer type 'LSMessage *' [-Wincompatible-pointer-types]
-# luna-prefs/3.0.0-17/git/luna-prefs-service/main.c:487:48: error: passing argument 4 of 'checkAccess' from incompatible pointer type [-Wincompatible-pointer-types]
-# luna-prefs/3.0.0-17/git/luna-prefs-service/main.c:766:48: error: passing argument 4 of 'checkAccess' from incompatible pointer type [-Wincompatible-pointer-types]
-# luna-prefs/3.0.0-17/git/luna-prefs-service/main.c:959:48: error: passing argument 4 of 'checkAccess' from incompatible pointer type [-Wincompatible-pointer-types]
-# luna-prefs/3.0.0-17/git/luna-prefs-service/main.c:1072:49: error: passing argument 4 of 'checkAccess' from incompatible pointer type [-Wincompatible-pointer-types]
-CFLAGS += "-Wno-error=incompatible-pointer-types"

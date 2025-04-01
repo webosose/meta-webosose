@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2024 LG Electronics, Inc.
+# Copyright (c) 2019-2025 LG Electronics, Inc.
 
 SUMMARY = "General System Volume UI application"
 AUTHOR = "VINH VAN LE <vinh5.le@lge.com>"

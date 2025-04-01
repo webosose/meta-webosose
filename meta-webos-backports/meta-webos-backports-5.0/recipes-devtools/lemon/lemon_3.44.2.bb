@@ -1,7 +1,7 @@
 # Backport from
 # https://lore.kernel.org/openembedded-devel/20231220155334.1055853-1-ross.burton@arm.com/
 
-# Copyright (c) 2024 LG Electronics, Inc.
+# Copyright (c) 2024-2025 LG Electronics, Inc.
 DESCRIPTION = "The Lemon Parser Generator"
 HOMEPAGE = "https://sqlite.org/src/file/doc/lemon.html"
 LICENSE = "PD"

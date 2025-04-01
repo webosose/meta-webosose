@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2024 LG Electronics, Inc.
+# Copyright (c) 2013-2025 LG Electronics, Inc.
 
 SUMMARY = "webOS uMediaserver daemon and utilities"
 AUTHOR = "Sujeet Nayak <Sujeet.nayak@lge.com>"
@@ -15,7 +15,7 @@ DEPENDS += "gstreamer1.0 gstreamer1.0-plugins-base"
 DEPENDS += "${@'' if '${WEBOS_DISTRO_PRERELEASE}' == '' else 'pmtrace'}"
 RDEPENDS:${PN} = "umediaserver-configs"
 
-INC_PR = "r28"
+INC_PR = "r29"
 
 inherit webos_component
 inherit webos_enhanced_submissions
@@ -42,6 +42,7 @@ WEBOS_VERSION = "1.0.0-gav.50_b56a3469edb8aa87056482c0648d0819f3935f9c"
 
 SRC_URI = "${WEBOSOSE_GIT_REPO_COMPLETE} \
     file://0001-uMediaserver-add-missing-include-to-fix-build-with-b.patch \
+    file://0001-python-fix-build-with-python-3.13.patch \
 "
 S = "${WORKDIR}/git"
 
